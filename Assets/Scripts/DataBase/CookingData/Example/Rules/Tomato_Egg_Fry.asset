@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e288c9ac8365c114294a3c99f966bdc9, type: 3}
+  m_Name: Tomato_Egg_Fry
+  m_EditorClassIdentifier: 
+  containerTag: 3
+  ingredients:
+  - {fileID: 11400000, guid: 2094477f65df447428fc9664d95efb85, type: 2}
+  - {fileID: 11400000, guid: eaf8608ae29203a4897654c6537f4aa5, type: 2}
+  - {fileID: 11400000, guid: d8dc95d47cceb4545942ffdb0ba05705, type: 2}
+  toolTag: 4
+  outputs:
+  - {fileID: 11400000, guid: ab332ae451b06a34786536358c168e46, type: 2}
+  isFinal: 1
+  _derivedNormalIngredients:
+  - {fileID: 11400000, guid: 2094477f65df447428fc9664d95efb85, type: 2}
+  - {fileID: 11400000, guid: eaf8608ae29203a4897654c6537f4aa5, type: 2}
+  _derivedCommonMaterials:
+  - {fileID: 11400000, guid: d8dc95d47cceb4545942ffdb0ba05705, type: 2}

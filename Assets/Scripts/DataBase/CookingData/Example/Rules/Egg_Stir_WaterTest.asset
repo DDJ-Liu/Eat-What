@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e288c9ac8365c114294a3c99f966bdc9, type: 3}
+  m_Name: Egg_Stir_WaterTest
+  m_EditorClassIdentifier: 
+  containerTag: 2
+  ingredients:
+  - {fileID: 11400000, guid: 9afed672abf99744f953fa8d56edd4bf, type: 2}
+  - {fileID: 11400000, guid: 9d33f2f1b5a94c74ab40d3ec0dc05239, type: 2}
+  toolTag: 3
+  output: {fileID: 11400000, guid: eaf8608ae29203a4897654c6537f4aa5, type: 2}
+  _derivedNormalIngredients:
+  - {fileID: 11400000, guid: 9afed672abf99744f953fa8d56edd4bf, type: 2}
+  _derivedCommonMaterials:
+  - {fileID: 11400000, guid: 9d33f2f1b5a94c74ab40d3ec0dc05239, type: 2}

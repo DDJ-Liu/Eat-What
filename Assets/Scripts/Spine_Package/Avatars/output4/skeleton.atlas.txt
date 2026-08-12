@@ -1,0 +1,430 @@
+
+skeleton.png
+size: 707,200
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Body_Default/ArmLeft_Down
+  rotate: false
+  xy: 480, 94
+  size: 85, 104
+  orig: 422, 558
+  offset: 223, 188
+  index: -1
+Image/Body_Default/ArmLeft_Up
+  rotate: true
+  xy: 521, 9
+  size: 83, 101
+  orig: 422, 558
+  offset: 206, 245
+  index: -1
+Image/Body_Default/ArmRight_Down
+  rotate: true
+  xy: 414, 4
+  size: 86, 105
+  orig: 422, 558
+  offset: 127, 186
+  index: -1
+Image/Body_Default/ArmRight_Up
+  rotate: false
+  xy: 624, 21
+  size: 81, 99
+  orig: 422, 558
+  offset: 145, 246
+  index: -1
+Image/Body_Default/Body
+  rotate: false
+  xy: 180, 82
+  size: 108, 116
+  orig: 422, 558
+  offset: 166, 256
+  index: -1
+Image/Body_Default/Head
+  rotate: true
+  xy: 2, 2
+  size: 196, 176
+  orig: 422, 558
+  offset: 117, 333
+  index: -1
+Image/Body_Default/LegLeft_Down
+  rotate: true
+  xy: 567, 122
+  size: 76, 109
+  orig: 422, 558
+  offset: 202, 59
+  index: -1
+Image/Body_Default/LegLeft_Up
+  rotate: true
+  xy: 180, 4
+  size: 76, 122
+  orig: 422, 558
+  offset: 202, 135
+  index: -1
+Image/Body_Default/LegRight_Down
+  rotate: false
+  xy: 384, 92
+  size: 94, 106
+  orig: 422, 558
+  offset: 146, 59
+  index: -1
+Image/Body_Default/LegRight_Up
+  rotate: false
+  xy: 290, 82
+  size: 92, 116
+  orig: 422, 558
+  offset: 157, 128
+  index: -1
+Image/Body_Default/Loin
+  rotate: false
+  xy: 304, 2
+  size: 108, 78
+  orig: 422, 558
+  offset: 166, 212
+  index: -1
+
+skeleton2.png
+size: 173,109
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Body_Other/ArmRight_Down_A
+  rotate: false
+  xy: 2, 2
+  size: 86, 105
+  orig: 422, 558
+  offset: 127, 186
+  index: -1
+Image/Body_Other/ArmRight_Up_A
+  rotate: false
+  xy: 90, 8
+  size: 81, 99
+  orig: 422, 558
+  offset: 145, 246
+  index: -1
+
+skeleton3.png
+size: 455,126
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/BottomCloth/LegLeft_Down_A
+  rotate: false
+  xy: 377, 15
+  size: 76, 109
+  orig: 422, 558
+  offset: 202, 59
+  index: -1
+Image/BottomCloth/LegLeft_Up_A
+  rotate: false
+  xy: 299, 2
+  size: 76, 122
+  orig: 422, 558
+  offset: 202, 135
+  index: -1
+Image/BottomCloth/LegRight_Down_A
+  rotate: false
+  xy: 203, 18
+  size: 94, 106
+  orig: 422, 558
+  offset: 146, 59
+  index: -1
+Image/BottomCloth/LegRight_Up_A
+  rotate: false
+  xy: 109, 8
+  size: 92, 116
+  orig: 422, 558
+  offset: 157, 128
+  index: -1
+Image/BottomCloth/LoinCloth_A
+  rotate: true
+  xy: 2, 15
+  size: 109, 105
+  orig: 422, 558
+  offset: 166, 185
+  index: -1
+
+skeleton4.png
+size: 40,55
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Ear/Ear_A
+  rotate: false
+  xy: 2, 2
+  size: 36, 51
+  orig: 422, 558
+  offset: 152, 372
+  index: -1
+
+skeleton5.png
+size: 83,79
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Eyes/Eyes_A
+  rotate: false
+  xy: 2, 2
+  size: 79, 75
+  orig: 422, 558
+  offset: 211, 369
+  index: -1
+
+skeleton6.png
+size: 1127,558
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Hair/HairLongSide_Left_A
+  rotate: true
+  xy: 679, 257
+  size: 97, 369
+  orig: 422, 558
+  offset: 232, 96
+  index: -1
+Image/Hair/HairLongSide_Left_B
+  rotate: true
+  xy: 679, 158
+  size: 97, 369
+  orig: 422, 558
+  offset: 232, 96
+  index: -1
+Image/Hair/HairLongSide_Right_A
+  rotate: true
+  xy: 2, 15
+  size: 118, 370
+  orig: 422, 558
+  offset: 100, 95
+  index: -1
+Image/Hair/HairLongSide_Right_B
+  rotate: true
+  xy: 374, 15
+  size: 118, 370
+  orig: 422, 558
+  offset: 100, 95
+  index: -1
+Image/Hair/HairLong_Back_A
+  rotate: false
+  xy: 2, 135
+  size: 242, 421
+  orig: 422, 558
+  offset: 56, 94
+  index: -1
+Image/Hair/HairLong_Back_B
+  rotate: false
+  xy: 246, 135
+  size: 242, 421
+  orig: 422, 558
+  offset: 56, 94
+  index: -1
+Image/Hair/HairSide_Left_A
+  rotate: false
+  xy: 746, 2
+  size: 67, 154
+  orig: 422, 558
+  offset: 244, 311
+  index: -1
+Image/Hair/HairSide_Left_C
+  rotate: false
+  xy: 815, 2
+  size: 67, 154
+  orig: 422, 558
+  offset: 244, 311
+  index: -1
+Image/Hair/HairSide_Right_A
+  rotate: false
+  xy: 884, 2
+  size: 67, 154
+  orig: 422, 558
+  offset: 147, 311
+  index: -1
+Image/Hair/HairSide_Right_B
+  rotate: false
+  xy: 953, 2
+  size: 67, 154
+  orig: 422, 558
+  offset: 147, 311
+  index: -1
+Image/Hair/HairSide_Right_C
+  rotate: false
+  xy: 1022, 2
+  size: 67, 154
+  orig: 422, 558
+  offset: 147, 311
+  index: -1
+Image/Hair/Hair_Back_A
+  rotate: false
+  xy: 490, 356
+  size: 187, 200
+  orig: 422, 558
+  offset: 111, 315
+  index: -1
+Image/Hair/Hair_Back_B
+  rotate: false
+  xy: 490, 154
+  size: 187, 200
+  orig: 422, 558
+  offset: 111, 315
+  index: -1
+Image/Hair/Hair_Back_C
+  rotate: false
+  xy: 679, 356
+  size: 187, 200
+  orig: 422, 558
+  offset: 111, 315
+  index: -1
+Image/Hair/Hair_Front_A
+  rotate: true
+  xy: 868, 398
+  size: 158, 121
+  orig: 422, 558
+  offset: 160, 394
+  index: -1
+Image/Hair/Hair_Front_B
+  rotate: true
+  xy: 991, 398
+  size: 158, 121
+  orig: 422, 558
+  offset: 160, 394
+  index: -1
+Image/Hair/Hair_Inter_A
+  rotate: false
+  xy: 1050, 259
+  size: 75, 137
+  orig: 422, 558
+  offset: 134, 359
+  index: -1
+
+skeleton7.png
+size: 83,79
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Mouth/Mouth_A
+  rotate: false
+  xy: 2, 2
+  size: 79, 75
+  orig: 422, 558
+  offset: 211, 369
+  index: -1
+
+skeleton8.png
+size: 277,460
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Non/Non
+  rotate: false
+  xy: 2, 2
+  size: 273, 456
+  orig: 422, 558
+  offset: 56, 59
+  index: -1
+
+skeleton9.png
+size: 176,113
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Shoes/Shoes_Left_A
+  rotate: false
+  xy: 98, 2
+  size: 76, 109
+  orig: 422, 558
+  offset: 202, 59
+  index: -1
+Image/Shoes/Shoes_Right_A
+  rotate: false
+  xy: 2, 5
+  size: 94, 106
+  orig: 422, 558
+  offset: 146, 59
+  index: -1
+
+skeleton10.png
+size: 760,202
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/Skirt/Skirt
+  rotate: true
+  xy: 674, 91
+  size: 109, 84
+  orig: 422, 558
+  offset: 166, 196
+  index: -1
+Image/Skirt/SkirtBig_Back_A
+  rotate: true
+  xy: 2, 2
+  size: 198, 222
+  orig: 422, 558
+  offset: 122, 65
+  index: -1
+Image/Skirt/SkirtBig_Front_A
+  rotate: true
+  xy: 226, 2
+  size: 198, 222
+  orig: 422, 558
+  offset: 122, 65
+  index: -1
+Image/Skirt/SkirtLong_Front_A
+  rotate: true
+  xy: 450, 2
+  size: 198, 222
+  orig: 422, 558
+  offset: 122, 65
+  index: -1
+
+skeleton11.png
+size: 392,207
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Image/TopCloth/ArmLeft_Down_B
+  rotate: true
+  xy: 78, 2
+  size: 85, 104
+  orig: 422, 558
+  offset: 223, 188
+  index: -1
+Image/TopCloth/ArmLeft_Up_B
+  rotate: true
+  xy: 188, 15
+  size: 83, 101
+  orig: 422, 558
+  offset: 206, 245
+  index: -1
+Image/TopCloth/ArmRight_Down_B
+  rotate: false
+  xy: 299, 100
+  size: 86, 105
+  orig: 422, 558
+  offset: 127, 186
+  index: -1
+Image/TopCloth/ArmRight_Up_B
+  rotate: true
+  xy: 291, 17
+  size: 81, 99
+  orig: 422, 558
+  offset: 145, 246
+  index: -1
+Image/TopCloth/BodyCloth_A
+  rotate: false
+  xy: 2, 16
+  size: 74, 189
+  orig: 422, 558
+  offset: 184, 158
+  index: -1
+Image/TopCloth/BodyCloth_Down_B
+  rotate: false
+  xy: 188, 100
+  size: 109, 105
+  orig: 422, 558
+  offset: 166, 185
+  index: -1
+Image/TopCloth/BodyCloth_UP_B
+  rotate: false
+  xy: 78, 89
+  size: 108, 116
+  orig: 422, 558
+  offset: 166, 256
+  index: -1

@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Tool
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Customer
+  - Dialog
+  - RecipeBook
+  - Fridge
+  - CookTable
+  - CookTableEdit
+  - Ingredient
+  - Tool
+  - TableGrid
+  - Inventory
+  - ToolInteraction
+  - ToolInteractionPhysical
+  - Kitchens
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: DialogBackground
+    uniqueID: 3859992787
+    locked: 0
+  - name: DialogCharacter
+    uniqueID: 1222342205
+    locked: 0
+  - name: DialogText
+    uniqueID: 3939076989
+    locked: 0
+  - name: DialogFront
+    uniqueID: 2478837735
+    locked: 0
+  - name: Book
+    uniqueID: 2965631617
+    locked: 0
+  - name: Fridge
+    uniqueID: 3837677133
+    locked: 0
+  - name: Fridge_Item
+    uniqueID: 2492406277
+    locked: 0
+  - name: Fridge_Front
+    uniqueID: 2796239351
+    locked: 0
+  - name: Tool_Container
+    uniqueID: 3280688633
+    locked: 0
+  - name: Kitchen
+    uniqueID: 2695635463
+    locked: 0
+  - name: Ingredient
+    uniqueID: 1464287259
+    locked: 0
+  - name: IngredientUI
+    uniqueID: 404538915
+    locked: 0
+  - name: UI
+    uniqueID: 3279269031
+    locked: 0
+  - name: Inventory
+    uniqueID: 1569088281
+    locked: 0
+  - name: Tool
+    uniqueID: 1842156607
+    locked: 0
+  - name: Tool_UI
+    uniqueID: 3823280501
+    locked: 0
+  - name: ToolInteraction
+    uniqueID: 1778513565
+    locked: 0
+  - name: UI_Top
+    uniqueID: 2592636631
+    locked: 0
