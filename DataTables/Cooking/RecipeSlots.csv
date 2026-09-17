@@ -1,0 +1,6 @@
+slot_id,standard_ingredient,standard_action,required_count,sub_01,sub_02,sub_03,sub_04,sub_05,sub_06,sub_07,sub_08,sub_01_count,sub_02_count,sub_03_count,sub_04_count,sub_05_count,sub_06_count,sub_07_count,sub_08_count,comment
+slot_noodle_1,ing_noodle_dried,act_boil,1,ing_noodle_instant,,,,,,,,1,,,,,,,,面：挂面标准煮，泡面饼 1 顶 1
+slot_egg_3,ing_egg,act_whisk,3,ing_giant_egg,,,,,,,,1,,,,,,,,蛋×3 打散；巨蛋 1 顶 3（替代品数量比示范）
+slot_tomato_2,ing_tomato,act_cut,2,,,,,,,,,,,,,,,,,番茄×2 切块
+slot_scallion_1,ing_scallion,act_cut,1,,,,,,,,,,,,,,,,,小葱×1 切葱花（清汤面/番茄炒蛋共用槽）
+slot_cabbage_1,ing_cabbage,act_wash,1,,,,,,,,,,,,,,,,,白菜心×1 摘洗

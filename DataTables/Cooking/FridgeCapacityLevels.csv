@@ -1,0 +1,6 @@
+fcap_id,level_index,capacity,upgrade_condition,comment
+fcap_lv1,1,20,,正式游戏初始容量档
+fcap_lv2,2,30,,demo 由 CookingGameConfig.demo_fridge_capacity_level 读取
+fcap_lv3,3,40,,
+fcap_lv4,4,50,,
+fcap_lv5,5,60,,上限档

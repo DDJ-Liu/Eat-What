@@ -1,0 +1,295 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc587f211d041024db278bc3993ee03f, type: 3}
+  m_Name: CK01GeneratedDataCatalog
+  m_EditorClassIdentifier: 
+  tables:
+  - tableName: Recipes
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: rcp_qingtang_noodle
+      asset: {fileID: 11400000, guid: bb77fd3089eb1df47b0ecea375efcb1e, type: 2}
+    - stableId: rcp_tomato_egg
+      asset: {fileID: 11400000, guid: fa6d763fa0215cb41865b119011e0982, type: 2}
+    - stableId: rcp_kaishui_cabbage
+      asset: {fileID: 11400000, guid: 74b1c977a6747354587a5101fbbd0629, type: 2}
+  - tableName: RecipeSlots
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: slot_noodle_1
+      asset: {fileID: 11400000, guid: e46034d9bbc8aba4eadee27790843354, type: 2}
+    - stableId: slot_egg_3
+      asset: {fileID: 11400000, guid: 5379ece23adfd1841a10c0ffea16c9b0, type: 2}
+    - stableId: slot_tomato_2
+      asset: {fileID: 11400000, guid: 9e5b7d480e8fe3442b72c613d4592a06, type: 2}
+    - stableId: slot_scallion_1
+      asset: {fileID: 11400000, guid: 709058259c4893a4890017af38db6a82, type: 2}
+    - stableId: slot_cabbage_1
+      asset: {fileID: 11400000, guid: 43abb765c41027149a5c75a03104e4ee, type: 2}
+  - tableName: RecipeSteps
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: step_qt_01
+      asset: {fileID: 11400000, guid: a08c8f0c5ead0b34bb8d1f0bfe3a12d3, type: 2}
+    - stableId: step_qt_02
+      asset: {fileID: 11400000, guid: a2c2fefa044e0ea4eb9df224f68aba9b, type: 2}
+    - stableId: step_te_01
+      asset: {fileID: 11400000, guid: 1f14f7bcfda148748ae98ae604e4486a, type: 2}
+    - stableId: step_te_02
+      asset: {fileID: 11400000, guid: 6f3384c6091638b4eb187ea22d35ed58, type: 2}
+    - stableId: step_te_03
+      asset: {fileID: 11400000, guid: 0b08ae2dcaf644b40b65333c7519787f, type: 2}
+    - stableId: step_te_04
+      asset: {fileID: 11400000, guid: 6697092f2f10dc64bb1c290a8725366d, type: 2}
+    - stableId: step_kc_01
+      asset: {fileID: 11400000, guid: 42d613f53b3a1944eb1530b2f26c016f, type: 2}
+    - stableId: step_kc_02
+      asset: {fileID: 11400000, guid: 56f9ae8adceaef44384bfc526c13827b, type: 2}
+    - stableId: step_kc_03
+      asset: {fileID: 11400000, guid: eb9c0adbbd3f8074697982241a9d523f, type: 2}
+  - tableName: Items
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: ing_noodle_dried
+      asset: {fileID: 11400000, guid: 26bd090f9ebfa7c4b82efedb9d604fc4, type: 2}
+    - stableId: ing_noodle_instant
+      asset: {fileID: 11400000, guid: 89960b04ad4861247b0cc4729e83e80c, type: 2}
+    - stableId: ing_egg
+      asset: {fileID: 11400000, guid: 36094ac88636d064e95425c49f38ce84, type: 2}
+    - stableId: ing_giant_egg
+      asset: {fileID: 11400000, guid: 92b5d264a4aa5cd4ea4cdc2034975bf2, type: 2}
+    - stableId: ing_tomato
+      asset: {fileID: 11400000, guid: 0ae5cf637d6fc3648a283ee27a135994, type: 2}
+    - stableId: ing_cabbage
+      asset: {fileID: 11400000, guid: 48979b6bec8636a48955db0e7603c8ff, type: 2}
+    - stableId: ing_scallion
+      asset: {fileID: 11400000, guid: 2f8ebc15c9d173e448ac0e0691d0ca88, type: 2}
+    - stableId: ing_octopus_leg
+      asset: {fileID: 11400000, guid: 4555cc4084196074e8b35059199e5ff6, type: 2}
+    - stableId: ing_ham_sausage
+      asset: {fileID: 11400000, guid: b96c4d08c4acacc489ad5b64a9e8d494, type: 2}
+    - stableId: ing_milk_box
+      asset: {fileID: 11400000, guid: e4cdde6f64dd9ce489e793181870f68f, type: 2}
+    - stableId: stp_water
+      asset: {fileID: 11400000, guid: de47bce54771df6448c393b90ee7b72a, type: 2}
+    - stableId: stp_salt
+      asset: {fileID: 11400000, guid: 4a4a1d8f95eaeaa4481285961b84d122, type: 2}
+    - stableId: stp_oil
+      asset: {fileID: 11400000, guid: ebca4a6b12ee1b14e8e2decee57f9f0a, type: 2}
+    - stableId: prd_noodle_boiled
+      asset: {fileID: 11400000, guid: 144f6803843422b4197b3a1b295fc85b, type: 2}
+    - stableId: prd_egg_liquid
+      asset: {fileID: 11400000, guid: 533eb1817da929742a627d5eafd75f24, type: 2}
+    - stableId: prd_tomato_cut
+      asset: {fileID: 11400000, guid: 337744c6c794dc6489d918af09f3a493, type: 2}
+    - stableId: prd_scrambled_egg
+      asset: {fileID: 11400000, guid: e09076b34edc3d9469dbe35d31fa4e6b, type: 2}
+    - stableId: prd_cabbage_washed
+      asset: {fileID: 11400000, guid: 9229815512cd7184e95e31c5792eb6ad, type: 2}
+    - stableId: prd_clear_broth
+      asset: {fileID: 11400000, guid: 8f4696e78911b564bbf92fb38c5c6063, type: 2}
+    - stableId: prd_qingtang_dish
+      asset: {fileID: 11400000, guid: 8757cec613588b14ca8075fb1d25fc9f, type: 2}
+    - stableId: prd_tomato_egg_dish
+      asset: {fileID: 11400000, guid: cd828234091908446bebe0e0173c8fda, type: 2}
+    - stableId: prd_tomato_egg_soup
+      asset: {fileID: 11400000, guid: 05ef9c0bd779565468224e831dba8dd5, type: 2}
+    - stableId: prd_kaishui_dish
+      asset: {fileID: 11400000, guid: f168a4e30b7ea404ab1ad52f95438e36, type: 2}
+    - stableId: prd_unknown
+      asset: {fileID: 11400000, guid: d8c49c1c9217f6648bb80efee95aedd0, type: 2}
+  - tableName: InitialInventory
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: ing_noodle_dried
+      asset: {fileID: 11400000, guid: aef2fba518da6ac4d96658f47b887210, type: 2}
+    - stableId: ing_noodle_instant
+      asset: {fileID: 11400000, guid: a31c7972d70293145bc130a888922885, type: 2}
+    - stableId: ing_egg
+      asset: {fileID: 11400000, guid: 0d16bd8aab5d0154784e2825c7e6de97, type: 2}
+    - stableId: ing_giant_egg
+      asset: {fileID: 11400000, guid: 532201bf347ec674a8c912ddabd6f0c9, type: 2}
+    - stableId: ing_tomato
+      asset: {fileID: 11400000, guid: fc2bbc2c161b9c44ca387ef70658b28b, type: 2}
+    - stableId: ing_cabbage
+      asset: {fileID: 11400000, guid: b0b57f0514ac6674cad231358adeb8db, type: 2}
+    - stableId: ing_scallion
+      asset: {fileID: 11400000, guid: f01e2161845beee469f1d0698a9bf158, type: 2}
+    - stableId: ing_octopus_leg
+      asset: {fileID: 11400000, guid: e237ffafb7327f3418371b84378e43fe, type: 2}
+    - stableId: ing_ham_sausage
+      asset: {fileID: 11400000, guid: 57e94612b95ff7a4d94193de898be92a, type: 2}
+    - stableId: ing_milk_box
+      asset: {fileID: 11400000, guid: dbadcc09f442a4947933abacffd81d49, type: 2}
+  - tableName: Tags
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: tag_veg
+      asset: {fileID: 11400000, guid: 753c8df4c32f74842aa024768c884992, type: 2}
+    - stableId: tag_fruit
+      asset: {fileID: 11400000, guid: 4af22933d0c1ec94f961d32a6fb4eda5, type: 2}
+    - stableId: tag_egg
+      asset: {fileID: 11400000, guid: e7aa01c9645cbf748bd42d025e608db0, type: 2}
+    - stableId: tag_meat
+      asset: {fileID: 11400000, guid: eafe48ab3f0a31d49acf5b4bf6659fdd, type: 2}
+    - stableId: tag_seafood
+      asset: {fileID: 11400000, guid: d9e2d87344092ea49bed708558ae1ca6, type: 2}
+    - stableId: tag_staplefood
+      asset: {fileID: 11400000, guid: 49f32d1e3dd8367459a60cd57797ab82, type: 2}
+    - stableId: tag_dairy
+      asset: {fileID: 11400000, guid: 3a2ab6c4500c4aa46a86ebb56e790a4f, type: 2}
+    - stableId: tag_dish_boil
+      asset: {fileID: 11400000, guid: fbb62b60a01900d499dd073ea63cc83b, type: 2}
+    - stableId: tag_dish_stirfry
+      asset: {fileID: 11400000, guid: 6c4282bd1515fe046a96df117755ee93, type: 2}
+    - stableId: tag_dish_deepfry
+      asset: {fileID: 11400000, guid: 1b3df9747e17fb34691023c36cee1319, type: 2}
+    - stableId: tag_dish_stew
+      asset: {fileID: 11400000, guid: 9439341a691bd8444bec4305ed411183, type: 2}
+    - stableId: tag_flavor_yummy
+      asset: {fileID: 11400000, guid: 647b8f000193c1f4ca5dbce9c49dcbd2, type: 2}
+    - stableId: tag_flavor_confused
+      asset: {fileID: 11400000, guid: 29514042597c0fc49902db7dfecab5b8, type: 2}
+    - stableId: tag_flavor_spicy
+      asset: {fileID: 11400000, guid: 1c60b18fe3d18304da68131f2b619d72, type: 2}
+    - stableId: tag_flavor_easy
+      asset: {fileID: 11400000, guid: bed61cf70ec974a4690d0737987acba1, type: 2}
+    - stableId: tag_flavor_fancy
+      asset: {fileID: 11400000, guid: 3ce0158ee1fe49a4bb62da70c0631c97, type: 2}
+  - tableName: Tools
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: tool_hand
+      asset: {fileID: 11400000, guid: fc3a34409140def46815f6b646f8b686, type: 2}
+    - stableId: tool_knife
+      asset: {fileID: 11400000, guid: ccc3318a25133184b90ad278f1fe9f79, type: 2}
+    - stableId: tool_scissors
+      asset: {fileID: 11400000, guid: e76936264892dde4eb3543395b8d3a62, type: 2}
+    - stableId: tool_spatula
+      asset: {fileID: 11400000, guid: fa01fc414576bfe4dbf1f3dc0cbda95b, type: 2}
+    - stableId: tool_chopsticks
+      asset: {fileID: 11400000, guid: b76459bc754a1be49afcf9afb18ec427, type: 2}
+    - stableId: tool_bowl
+      asset: {fileID: 11400000, guid: 47750cf063ffde24a99e35675ce75836, type: 2}
+    - stableId: tool_board
+      asset: {fileID: 11400000, guid: cf230b5f49ec1c847b3e738403f368a0, type: 2}
+    - stableId: tool_pan
+      asset: {fileID: 11400000, guid: b3a58691ff238fe42b9d9f45faada8e1, type: 2}
+    - stableId: tool_pot
+      asset: {fileID: 11400000, guid: 940f3eadfc545f2439f68fb74dc94140, type: 2}
+    - stableId: tool_stove
+      asset: {fileID: 11400000, guid: f4656800589a1b04494a2f7e4dcc5c43, type: 2}
+    - stableId: tool_board_station
+      asset: {fileID: 11400000, guid: 029dbc26a4380b7438e8ffebf117c59d, type: 2}
+    - stableId: tool_oven
+      asset: {fileID: 11400000, guid: 970fe1e3da377ce48b0e04093f2b6a5e, type: 2}
+    - stableId: tool_salad_station
+      asset: {fileID: 11400000, guid: 230e6232a978589448a84185cd3e37b6, type: 2}
+    - stableId: tool_freezer
+      asset: {fileID: 11400000, guid: f1aa1081804164846934155694adb342, type: 2}
+  - tableName: CookingGameConfig
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: prep_zone_capacity
+      asset: {fileID: 11400000, guid: 0018bcac5487ca14d8ba6132c6016e85, type: 2}
+    - stableId: fridge_scroll_granularity
+      asset: {fileID: 11400000, guid: c30a2742bcbb3314ab9dd046e2314044, type: 2}
+    - stableId: fridge_scroll_damping
+      asset: {fileID: 11400000, guid: ee85c30b99e0d5647a07b704ebfb2063, type: 2}
+    - stableId: unknown_product_item
+      asset: {fileID: 11400000, guid: c0665eee67ca1fb40af0b5b0daa7ee59, type: 2}
+    - stableId: demo_fridge_capacity_level
+      asset: {fileID: 11400000, guid: 78f789c286f97f74796ec0b31ecd9df6, type: 2}
+  - tableName: Localization
+    aggregateAsset: {fileID: 11400000, guid: 9fdef0f87a5fdd242910d4cf9708994d, type: 2}
+    rows: []
+  - tableName: FridgeCapacityLevels
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: fcap_lv1
+      asset: {fileID: 11400000, guid: e082a38105c18ce4ba218398bf201720, type: 2}
+    - stableId: fcap_lv2
+      asset: {fileID: 11400000, guid: b8a382042b694af42949217e2f927559, type: 2}
+    - stableId: fcap_lv3
+      asset: {fileID: 11400000, guid: 12ea13862cb87e549abf714fb1e7230f, type: 2}
+    - stableId: fcap_lv4
+      asset: {fileID: 11400000, guid: af1d594869ade7441bc4ccf038ae2a8b, type: 2}
+    - stableId: fcap_lv5
+      asset: {fileID: 11400000, guid: 9bb4478dc20c12d40aed954a670d500b, type: 2}
+  - tableName: ProcessActions
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: act_cut
+      asset: {fileID: 11400000, guid: a96240328bb35ad4ba91f8abbe769f22, type: 2}
+    - stableId: act_whisk
+      asset: {fileID: 11400000, guid: 396bef2961f7b284e84a0684be1f97cf, type: 2}
+    - stableId: act_stirfry
+      asset: {fileID: 11400000, guid: 207771b4864ad484eb49d615434e3271, type: 2}
+    - stableId: act_wash
+      asset: {fileID: 11400000, guid: eac3170412e3a4042bfff2f18d0055c5, type: 2}
+    - stableId: act_boil
+      asset: {fileID: 11400000, guid: f086c477695c4f84ab30e0fc6fd3b5e5, type: 2}
+    - stableId: act_stew
+      asset: {fileID: 11400000, guid: e5538726674178f489b2e15c9878cafb, type: 2}
+    - stableId: act_no_process
+      asset: {fileID: 11400000, guid: 8fd5bdd2f4f984d4fb35172fd9e53810, type: 2}
+  - tableName: ProcessingRecords
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: proc_noodle_boiled
+      asset: {fileID: 11400000, guid: 74a9b1eaea7dcd14eb31a58d5e9d14d2, type: 2}
+    - stableId: proc_noodle_boiled_alt
+      asset: {fileID: 11400000, guid: 22e8a34e9e7a6104a9312344afd22753, type: 2}
+    - stableId: proc_qingtang_final
+      asset: {fileID: 11400000, guid: 7c332e9568ee89743bd1459273aeb4e9, type: 2}
+    - stableId: proc_egg_liquid
+      asset: {fileID: 11400000, guid: efe282ab657a81a49b5a49a8c67191b5, type: 2}
+    - stableId: proc_egg_liquid_giant
+      asset: {fileID: 11400000, guid: 05580c07095fee241b01ef8617d26af0, type: 2}
+    - stableId: proc_tomato_cut
+      asset: {fileID: 11400000, guid: ac01906c1c723ff49bb95bf247adf2cb, type: 2}
+    - stableId: proc_scrambled_egg
+      asset: {fileID: 11400000, guid: fd81ea4188cc415498ffb2bebccef819, type: 2}
+    - stableId: proc_tomato_egg_final
+      asset: {fileID: 11400000, guid: 3d9f768fbd1ca5a469d117ee5dc3622c, type: 2}
+    - stableId: proc_tomato_egg_soup
+      asset: {fileID: 11400000, guid: a0d3c165132842f4ba20ecf67d97ccd4, type: 2}
+    - stableId: proc_cabbage_washed
+      asset: {fileID: 11400000, guid: 6268c01f5b8cd054d944ab1a815f889f, type: 2}
+    - stableId: proc_clear_broth
+      asset: {fileID: 11400000, guid: c5f901be67e870046a00d8f8328db2c3, type: 2}
+    - stableId: proc_kaishui_final
+      asset: {fileID: 11400000, guid: 8b8434e3ad971524c8dfa8ff34a9b7e2, type: 2}
+  - tableName: RecipeVariants
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: var_qingtang_std
+      asset: {fileID: 11400000, guid: 9ea91814d56e4a842b0a7b3d96faf2b0, type: 2}
+    - stableId: var_tomato_egg_std
+      asset: {fileID: 11400000, guid: ca44f29dd79f3bb44afdac07447fa6ca, type: 2}
+    - stableId: var_tomato_egg_soup
+      asset: {fileID: 11400000, guid: 0f30480ac9c2c5c43a00fac896a29325, type: 2}
+    - stableId: var_kaishui_std
+      asset: {fileID: 11400000, guid: 330bb2f3b258d134ab1faa322bb9ec1f, type: 2}
+  - tableName: KitchenAreas
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: kitchen-prep-counter
+      asset: {fileID: 11400000, guid: 27fab27bb38b86744ac9d705ecc47af0, type: 2}
+    - stableId: kitchen-stove
+      asset: {fileID: 11400000, guid: 0cffdc34b982a3140abd7dbefc24074c, type: 2}
+    - stableId: kitchen-oven
+      asset: {fileID: 11400000, guid: e391a2a0e7f17fd42b2eac9d8c5803f3, type: 2}
+    - stableId: kitchen-salad
+      asset: {fileID: 11400000, guid: 66503f94354470d4e85f02f5c3d599ab, type: 2}
+    - stableId: kitchen-freezer
+      asset: {fileID: 11400000, guid: ac0da91f83e409b4a8c20133c17a8888, type: 2}

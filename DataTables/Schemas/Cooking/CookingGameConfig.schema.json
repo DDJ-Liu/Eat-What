@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "tableName": "CookingGameConfig",
+  "csvPath": "Cooking/CookingGameConfig.csv",
+  "targetType": "CK01CookingGameConfigData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/CookingGameConfig",
+  "assetNameField": "config_key",
+  "primaryKeyField": "config_key",
+  "columns": [
+    { "name": "config_key", "csvColumn": "key", "type": "enum", "enumValues": ["prep_zone_capacity", "fridge_scroll_granularity", "fridge_scroll_damping", "unknown_product_item", "demo_fridge_capacity_level"], "required": true, "writeToAsset": false },
+    { "name": "value", "csvColumn": "value", "type": "string", "required": true },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [],
+  "rules": [
+    { "kind": "cooking_config_references", "field": "value", "message": "unknown_product_item and demo_fridge_capacity_level must resolve to their typed tables" }
+  ]
+}

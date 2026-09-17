@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 2,
+  "tableName": "RecipeSlots",
+  "csvPath": "Cooking/RecipeSlots.csv",
+  "targetType": "CK01RecipeSlotData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/RecipeSlots",
+  "assetNameField": "slot_id",
+  "primaryKeyField": "slot_id",
+  "columns": [
+    { "name": "slot_id", "csvColumn": "slot_id", "type": "id", "required": true, "pattern": "^slot_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "standard_ingredient", "csvColumn": "standard_ingredient", "type": "ref", "required": true },
+    { "name": "standard_action", "csvColumn": "standard_action", "type": "ref", "required": true },
+    { "name": "required_count", "csvColumn": "required_count", "type": "int", "required": true, "minimum": "1" },
+    { "name": "sub_01", "csvColumn": "sub_01", "type": "ref", "required": false },
+    { "name": "sub_02", "csvColumn": "sub_02", "type": "ref", "required": false },
+    { "name": "sub_03", "csvColumn": "sub_03", "type": "ref", "required": false },
+    { "name": "sub_04", "csvColumn": "sub_04", "type": "ref", "required": false },
+    { "name": "sub_05", "csvColumn": "sub_05", "type": "ref", "required": false },
+    { "name": "sub_06", "csvColumn": "sub_06", "type": "ref", "required": false },
+    { "name": "sub_07", "csvColumn": "sub_07", "type": "ref", "required": false },
+    { "name": "sub_08", "csvColumn": "sub_08", "type": "ref", "required": false },
+    { "name": "sub_01_count", "csvColumn": "sub_01_count", "type": "int", "required": false, "requiredWhenField": "sub_01", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_02_count", "csvColumn": "sub_02_count", "type": "int", "required": false, "requiredWhenField": "sub_02", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_03_count", "csvColumn": "sub_03_count", "type": "int", "required": false, "requiredWhenField": "sub_03", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_04_count", "csvColumn": "sub_04_count", "type": "int", "required": false, "requiredWhenField": "sub_04", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_05_count", "csvColumn": "sub_05_count", "type": "int", "required": false, "requiredWhenField": "sub_05", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_06_count", "csvColumn": "sub_06_count", "type": "int", "required": false, "requiredWhenField": "sub_06", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_07_count", "csvColumn": "sub_07_count", "type": "int", "required": false, "requiredWhenField": "sub_07", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "sub_08_count", "csvColumn": "sub_08_count", "type": "int", "required": false, "requiredWhenField": "sub_08", "requiredWhenNonEmpty": true, "minimum": "1" },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "standard_ingredient", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "standard_action", "targetSchema": "Cooking/ProcessActions.schema.json", "targetField": "action_id" },
+    { "field": "sub_01", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_02", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_03", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_04", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_05", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_06", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_07", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "sub_08", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" }
+  ],
+  "rules": [
+    { "kind": "contiguous_numbered_fields", "field": "sub", "otherField": "sub_count", "message": "sub_01 through sub_08 must be contiguous and each populated substitute requires a count >= 1" }
+  ]
+}

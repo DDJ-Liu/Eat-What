@@ -1,0 +1,136 @@
+// AI-000065 P0 numerical layout. Scene overrides only; no production script or source-asset edits.
+var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+if(scene.path!="Assets/Scenes/Cooking/ShortCycle_P0P1.unity"||UnityEditor.EditorApplication.isPlaying||UnityEditor.EditorApplication.isCompiling)throw new System.Exception("Wrong editor state");
+string Path(UnityEngine.Transform t){var p=t.name;while(t.parent!=null){t=t.parent;p=t.name+"/"+p;}return p;}
+var roots=scene.GetRootGameObjects();var map=roots.SelectMany(r=>r.GetComponentsInChildren<UnityEngine.Transform>(true)).ToDictionary(t=>Path(t));
+var touched=new System.Collections.Generic.HashSet<UnityEngine.Object>();var added=new System.Collections.Generic.List<string>();
+UnityEngine.Transform T(string p){if(!map.ContainsKey(p))throw new System.Exception("Missing "+p);return map[p];}
+void Mark(UnityEngine.Object o){touched.Add(o);}
+UnityEngine.Transform Child(string p,bool tmp=false){if(map.ContainsKey(p))return T(p);var parent=T(p.Substring(0,p.LastIndexOf('/')));var go=tmp?new UnityEngine.GameObject(p.Substring(p.LastIndexOf('/')+1),typeof(UnityEngine.RectTransform)):new UnityEngine.GameObject(p.Substring(p.LastIndexOf('/')+1));UnityEditor.Undo.RegisterCreatedObjectUndo(go,"AI65 visual child");go.transform.SetParent(parent,false);map[p]=go.transform;added.Add(p);return go.transform;}
+UnityEngine.Vector3 Screen(float x,float y,float z=0){return new UnityEngine.Vector3(-25.6f+(x/100f-.5f)*25.6f,(.5f-y/100f)*14.4f,z);}
+void WorldScale(UnityEngine.Transform t,float v){var p=t.parent==null?UnityEngine.Vector3.one:t.parent.lossyScale;t.localScale=new UnityEngine.Vector3(v/p.x,v/p.y,1);Mark(t);}
+void Point(string p,float x,float y,float angle=0){var t=T(p);t.position=Screen(x,y,t.position.z);t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);Mark(t);}
+void Fit(string p,float x,float y,float width,float height,float angle,int order){
+ var t=T(p);var sr=t.GetComponent<UnityEngine.SpriteRenderer>();if(sr==null||sr.sprite==null)throw new System.Exception("Sprite required "+p);
+ var v=sr.sprite.vertices;float minX=v.Min(q=>q.x),maxX=v.Max(q=>q.x),minY=v.Min(q=>q.y),maxY=v.Max(q=>q.y);
+ float s=width>0?25.6f*width/100/(maxX-minX):14.4f*height/100/(maxY-minY);
+ WorldScale(t,s);t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);
+ t.position=Screen(x,y,t.position.z)-t.TransformVector(new UnityEngine.Vector3((minX+maxX)/2,(minY+maxY)/2,0));
+ sr.color=UnityEngine.Color.white;sr.sortingOrder=order;Mark(sr);Mark(t);
+ var col=t.GetComponent<UnityEngine.BoxCollider2D>();if(col!=null){col.size=new UnityEngine.Vector2(maxX-minX,maxY-minY);col.offset=new UnityEngine.Vector2((minX+maxX)/2,(minY+maxY)/2);Mark(col);}
+}
+var font=UnityEditor.AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset");
+var catalog=UnityEditor.AssetDatabase.LoadAssetAtPath<CK01GeneratedDataCatalog>("Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset");
+LocTableAsset loc;string diagnostic;if(catalog==null||!catalog.TryGetLocalization(out loc,out diagnostic))throw new System.Exception("Localization catalog missing");
+var locKeys=loc.entries.ToDictionary(e=>e.key,e=>e.zh_cn);LocService.Configure(loc);
+void TextAt(string p,string key,float x,float y,float width,float height,float size,int order,float angle=0){
+ if(!string.IsNullOrEmpty(key)&&!locKeys.ContainsKey(key))throw new System.Exception("Unknown loc key "+key);
+ var t=Child(p,true);var label=t.GetComponent<TMPro.TextMeshPro>();if(label==null)label=UnityEditor.Undo.AddComponent<TMPro.TextMeshPro>(t.gameObject);
+ var textRenderer=label.renderer; // initialize TMP renderer cache before assigning a font on an inactive new child
+ if(label.font==null||p.EndsWith("Escape_Button_TUNE/Label"))label.font=font;
+ WorldScale(t,1);t.position=Screen(x,y,t.position.z);t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);
+ label.rectTransform.sizeDelta=new UnityEngine.Vector2(width,height);label.fontSize=size;label.enableAutoSizing=false;label.enableWordWrapping=true;label.alignment=TMPro.TextAlignmentOptions.Center;label.color=new UnityEngine.Color32(25,19,14,255);label.sortingOrder=order;
+ if(!string.IsNullOrEmpty(key)){var binding=t.GetComponent<EatWhat.Tools.Localization.LocalizedText>();if(binding==null)binding=UnityEditor.Undo.AddComponent<EatWhat.Tools.Localization.LocalizedText>(t.gameObject);binding.Configure(key,"");Mark(binding);}
+ Mark(label);Mark(t);
+}
+UnityEngine.Sprite Sprite(string p){var s=UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Sprite>(p);if(s==null)throw new System.Exception("Missing Sprite "+p);return s;}
+void NewSprite(string p,UnityEngine.Sprite s){var t=Child(p);var r=t.GetComponent<UnityEngine.SpriteRenderer>();if(r==null)r=UnityEditor.Undo.AddComponent<UnityEngine.SpriteRenderer>(t.gameObject);r.sprite=s;Mark(r);}
+UnityEditor.Undo.IncrementCurrentGroup();var undo=UnityEditor.Undo.GetCurrentGroup();UnityEditor.Undo.SetCurrentGroupName("AI-000065 P1 layout");
+foreach(var r in roots.Where(r=>r.name=="Spaces"||r.name=="Shared"||r.name=="CameraAndStageMarkers"))UnityEditor.Undo.RegisterFullObjectHierarchyUndo(r,"AI65 P1");
+try{
+ string p1="Spaces/Phase1_Kitchen",rig=p1+"/FridgeCat_Group/CatRig",board="Shared/ClueBoard_Group";
+ var cat="Assets/Sprites/Cooking/Fridge/FridgeCat/BingXiangMao/chuju_bingxiangmao_";
+ // Head width 51% W, top -3% H. Other pieces stay on the same rig.
+ var head=T(rig+"/HeadAndTopTiers");var headSr=head.GetComponent<UnityEngine.SpriteRenderer>();var verts=headSr.sprite.vertices;
+ float rigScale=25.6f*.51f/(verts.Max(v=>v.x)-verts.Min(v=>v.x));WorldScale(T(rig),rigScale);
+ var hv=verts.Select(v=>head.TransformPoint(v)).ToArray();var delta=new UnityEngine.Vector3(Screen(42,0).x-(hv.Min(v=>v.x)+hv.Max(v=>v.x))/2,7.632f-hv.Max(v=>v.y),0);
+ T(rig).position+=delta;Mark(T(rig));headSr.sortingOrder=-3;Mark(headSr);
+ float headBottom=verts.Select(v=>head.TransformPoint(v).y).Min();
+ var feet=T(rig+"/Base_Feet");var feetR=T(rig+"/Base_Feet/Visual_ScaleComp").GetComponent<UnityEngine.SpriteRenderer>();var fv=feetR.sprite.vertices.Select(v=>feetR.transform.TransformPoint(v)).ToArray();
+ feet.position+=new UnityEngine.Vector3(Screen(42,0).x-(fv.Max(v=>v.x)+fv.Min(v=>v.x))/2,headBottom+.18f-fv.Max(v=>v.y),0);Mark(feet);
+ // Fixed shelf anchors carry the original slots. Anchor=label origin since Binder resets slot.localPosition to zero.
+ float[] cols={24.5f,31.5f,39.5f,45.5f,53};
+ for(int row=1;row<=3;row++){
+  var rowPath=rig+(row<=2?"/HeadAndTopTiers/ShelfRow_"+row:"/Tiers/ShelfRow_3_Storage");
+  for(int col=1;col<=5;col++){
+   var anchor=rowPath+"/ShelfAnchor_C"+col.ToString("00")+"_TUNE";float labelY=row==1?55:row==2?79:105;
+   Point(anchor,cols[col-1]+2,labelY);WorldScale(T(anchor),rigScale);
+   var slot=anchor+"/FridgeSlot_R"+row.ToString("00")+"_C"+col.ToString("00")+"_TUNE";
+   var sr=T(slot).GetComponent<UnityEngine.SpriteRenderer>();sr.sprite=Sprite(cat+"biaoqian.png");Fit(slot,cols[col-1]+2,labelY,1.34f/25.6f*100,0,0,0);
+   // Tight sprite is centered at origin, so Binder's zero local-position preserves this layout.
+   T(slot).localPosition=UnityEngine.Vector3.zero;Mark(T(slot));
+   var sg=T(slot).GetComponent<UnityEngine.Rendering.SortingGroup>();sg.sortingOrder=15;Mark(sg);
+   float iconY=row==1?41:row==2?67:93;
+   Point(slot+"/Icon",cols[col-1],iconY);WorldScale(T(slot+"/Icon"),.62f);
+   Point(slot+"/Placeholder",cols[col-1],iconY);WorldScale(T(slot+"/Placeholder"),.8f);
+   var ph=T(slot+"/Placeholder").GetComponent<UnityEngine.SpriteRenderer>();ph.sprite=Sprite(cat+"wenhao.png");Mark(ph);
+   TextAt(slot+"/NameLabel",null,cols[col-1]+2.35f,labelY,5,.0f+.0f+3.5f,2.3f,4);
+   var label=T(slot+"/NameLabel").GetComponent<TMPro.TextMeshPro>();WorldScale(label.transform,.2f);label.rectTransform.sizeDelta=new UnityEngine.Vector2(5.1f,3.2f);
+   var fitter=label.GetComponent<FridgeIngredientLabelTextFitter>();if(fitter==null)fitter=UnityEditor.Undo.AddComponent<FridgeIngredientLabelTextFitter>(label.gameObject);
+   var fs=new UnityEditor.SerializedObject(fitter);fs.FindProperty("targetText").objectReferenceValue=label;fs.FindProperty("yellowSafeArea").objectReferenceValue=label.rectTransform;fs.FindProperty("minFontSize").floatValue=1;fs.FindProperty("maxFontSize").floatValue=2.3f;fs.ApplyModifiedPropertiesWithoutUndo();Mark(fitter);Mark(label);
+   TextAt(slot+"/BadgeLabel",null,cols[col-1]+3.5f,iconY+5,1,.45f,.34f,5);
+   var collider=T(slot).GetComponent<UnityEngine.BoxCollider2D>();var a=T(slot).InverseTransformPoint(Screen(cols[col-1],iconY));var b=T(slot).InverseTransformPoint(Screen(cols[col-1]+2,labelY));var min=UnityEngine.Vector2.Min(new UnityEngine.Vector2(a.x,a.y)-UnityEngine.Vector2.one*1.4f,new UnityEngine.Vector2(b.x,b.y)-UnityEngine.Vector2.one*.6f);var max=UnityEngine.Vector2.Max(new UnityEngine.Vector2(a.x,a.y)+UnityEngine.Vector2.one*1.4f,new UnityEngine.Vector2(b.x,b.y)+UnityEngine.Vector2.one*.6f);collider.size=max-min;collider.offset=(max+min)/2;Mark(collider);
+  }
+ }
+ // Extension distance now follows the actual compensated tier visible height instead of the old 1.562-unit placeholder.
+ var tierBody=T(rig+"/Tiers/ShelfRow_3_Storage/TierBody_ScaleComp").GetComponent<UnityEngine.SpriteRenderer>();float tierH=(tierBody.sprite.vertices.Max(v=>v.y)-tierBody.sprite.vertices.Min(v=>v.y))*1.386f;
+ var rigComponent=T(rig).GetComponent<EatWhat.Cooking.ShortCycle.FridgeCatRig>();var rs=new UnityEditor.SerializedObject(rigComponent);
+ rs.FindProperty("tierSpacing_TUNE").floatValue=tierH;
+ var tiers=T(rig+"/Tiers");var target=tiers.InverseTransformPoint(new UnityEngine.Vector3(Screen(42,0).x,headBottom-tierH*rigScale/2+.18f,0));
+ rs.FindProperty("firstExtensionLocalPosition_TUNE").vector3Value=target;rs.ApplyModifiedPropertiesWithoutUndo();Mark(rigComponent);
+ // Move storage visual only, retaining five approved slot transforms. Default storage remains inactive.
+ var storage=T(rig+"/Tiers/ShelfRow_3_Storage");var anchorWorld=Enumerable.Range(1,5).Select(i=>T(Path(storage)+"/ShelfAnchor_C"+i.ToString("00")+"_TUNE")).ToDictionary(t=>t,t=>t.position);
+ storage.localPosition=target;Mark(storage);foreach(var pair in anchorWorld){pair.Key.position=pair.Value;Mark(pair.Key);}
+ Fit(rig+"/Arm_Raised/BubbleAnchor_01_TUNE/BubbleVisual",4.9f,21.3f,222f/2560*100,0,8,20);
+ Fit(rig+"/Arm_Raised/BubbleAnchor_02_TUNE/BubbleVisual_AIGC",14.4f,23.6f,260f/2560*100,0,6,20);
+ T(rig+"/Arm_Raised/BubbleAnchor_02_TUNE/BubbleVisual_AIGC").GetComponent<UnityEngine.SpriteRenderer>().color=new UnityEngine.Color(.86f,.68f,.18f,1);
+ var tray=p1+"/Tray_Group";Fit(tray+"/TrayBase",22.4f,70.9f,80,0,0,25);
+ var tr=T(tray+"/TrayBase").GetComponent<UnityEngine.SpriteRenderer>();var tv=tr.sprite.vertices.Select(v=>tr.transform.TransformPoint(v)).ToArray();
+ tr.transform.position+=new UnityEngine.Vector3(Screen(62.4f,0).x-tv.Max(v=>v.x),Screen(0,70.9f).y-tv.Max(v=>v.y),0);Mark(tr.transform);
+ Fit(tray+"/GoDog_Button_TUNE",58,85,17,0,0,50);TextAt(tray+"/GoDog_Button_TUNE/Label",null,58,91,2,.6f,.55f,51);
+ TextAt(tray+"/CapacityText_TUNE",null,47,73,2,.6f,.45f,45);
+ for(int i=1;i<=20;i++){
+  var p=tray+"/TraySlots/TraySlot_"+i.ToString("00")+"_TUNE";var t=T(p);var sr=t.GetComponent<UnityEngine.SpriteRenderer>();sr.sprite=Sprite(cat+"tuopan2.png");Mark(sr);WorldScale(t,.35f);
+  var sg=t.GetComponent<UnityEngine.Rendering.SortingGroup>();sg.sortingOrder=30;Mark(sg);WorldScale(T(p+"/Icon"),.62f);T(p+"/Icon").localPosition=new UnityEngine.Vector3(0,0,-.1f);Mark(T(p+"/Icon"));
+  var ph=T(p+"/Placeholder").GetComponent<UnityEngine.SpriteRenderer>();ph.sprite=Sprite(cat+"wenhao.png");WorldScale(ph.transform,.4f);Mark(ph);
+  var name=T(p+"/NameLabel").GetComponent<TMPro.TextMeshPro>();WorldScale(name.transform,1);name.fontSize=.28f;name.rectTransform.sizeDelta=new UnityEngine.Vector2(1.2f,.3f);name.transform.position=t.position+new UnityEngine.Vector3(0,-.6f,-.1f);Mark(name);Mark(name.transform);
+  var badge=T(p+"/BadgeLabel").GetComponent<TMPro.TextMeshPro>();WorldScale(badge.transform,1);badge.fontSize=.25f;badge.transform.position=t.position+new UnityEngine.Vector3(.4f,-.5f,-.2f);Mark(badge);Mark(badge.transform);
+ }
+ Fit(p1+"/Return_Button_TUNE",5,91,6,0,0,50);TextAt(p1+"/Return_Button_TUNE/Label","ui_p1_return.text",5,97,1.5f,.6f,.4f,51);
+ Point(p1+"/FridgeCat_Group/FilterBar_TUNE",16,94);Point(p1+"/FridgeCat_Group/TidyButton_TUNE",52,96);Point(p1+"/EquipmentEntry_Button_TUNE",63,95);
+ // The board is measured at its P1 anchor, then initialized at the P0 anchor because the host moves travelers only on cross-space transitions.
+ T(board).position=new UnityEngine.Vector3(-17.664f,-2.1168f,-.3f);T(board).rotation=UnityEngine.Quaternion.identity;Mark(T(board));
+ Fit(board+"/Board",81,64.7f,0,104,5,10);Fit(board+"/Paper",81,59.5f,0,88,5,12);
+ // Explicit top edge 15.5% H has precedence over center when the rotated vertical paper is fitted.
+ var paper=T(board+"/Paper").GetComponent<UnityEngine.SpriteRenderer>();var pv=paper.sprite.vertices.Select(v=>paper.transform.TransformPoint(v)).ToArray();paper.transform.position+=new UnityEngine.Vector3(0,Screen(0,15.5f).y-pv.Max(v=>v.y),0);Mark(paper.transform);
+ Fit(board+"/Clip",79,14.5f,18,0,5,45);Fit(board+"/DarkBoard",81,18,37.5f,0,0,1);
+ var dark=T(board+"/DarkBoard").GetComponent<UnityEngine.SpriteRenderer>();var dv=dark.sprite.vertices.Select(v=>dark.transform.TransformPoint(v)).ToArray();dark.transform.position+=new UnityEngine.Vector3(0,7.2f-dv.Max(v=>v.y),0);Mark(dark.transform);
+ for(int i=1;i<=4;i++){
+  var block=board+"/Content/SlotBlocks/SlotBlock_"+i.ToString("00");float y=i==1?42:i==2?75:i==3?105:135;
+  Point(block,80,y,0);WorldScale(T(block),1);var sg=T(block).GetComponent<UnityEngine.Rendering.SortingGroup>();sg.sortingOrder=35;Mark(sg);
+  var frame=T(block).GetComponent<UnityEngine.SpriteRenderer>();frame.sprite=Sprite(cat+"biaoqian4.png");Fit(block,80,y,8,0,-3,0);
+  // Preserve a 1:1 functional coordinate frame for the authoritative AI-000062 eight TUNE points.
+  WorldScale(T(block),1);T(block).rotation=UnityEngine.Quaternion.identity;Mark(T(block));
+  Point(block+"/Center/Icon",80,y);WorldScale(T(block+"/Center/Icon"),.60f);
+  var ph=T(block+"/Placeholder").GetComponent<UnityEngine.SpriteRenderer>();ph.sprite=Sprite(cat+"wenhao.png");WorldScale(ph.transform,.8f);Point(block+"/Placeholder",80,y);Mark(ph);
+  TextAt(block+"/Center/NameLabel",null,80,y-9,3.8f,.6f,.65f,4);
+  TextAt(block+"/BadgeLabel",null,84,y+7,2,.45f,.4f,5);
+  Point(block+"/Center/ActionIcon",92.5f,y-8);WorldScale(T(block+"/Center/ActionIcon"),.45f);
+  float[] ax={-2.7f,-.9f,.9f,2.7f,-2.7f,-.9f,.9f,2.7f},ay={1.6f,2,2,1.6f,-1.6f,-2,-2,-1.6f};
+  for(int n=1;n<=8;n++){
+   var anchor=block+"/SubSlots/SubSlot_"+n.ToString("00")+"_TUNE";T(anchor).localPosition=new UnityEngine.Vector3(ax[n-1],ay[n-1],0);Mark(T(anchor));
+   var card=anchor+"/SubCard/Card";var cr=T(card).GetComponent<UnityEngine.SpriteRenderer>();cr.sprite=Sprite(cat+"biaoqian3.png");cr.color=UnityEngine.Color.white;cr.sortingOrder=1;Mark(cr);WorldScale(T(card),1);T(card).rotation=UnityEngine.Quaternion.Euler(0,0,-3);Mark(T(card));
+   WorldScale(T(anchor+"/SubCard/Icon"),.19f);
+   var count=T(anchor+"/SubCard/Count").GetComponent<TMPro.TextMeshPro>();WorldScale(count.transform,1);count.fontSize=.28f;count.rectTransform.sizeDelta=new UnityEngine.Vector2(.9f,.35f);Mark(count);
+  }
+ }
+ TextAt(board+"/Content/TipsBubble","ui_p1_clueboard_tips.text",88.5f,55,5.376f,1.44f,.45f,48);
+ for(int i=1;i<=3;i++)Fit(board+"/Deco/Doodle_"+i.ToString("00"),i==1?69:i==2?86:95,i==1?24:i==2?56:88,6,0,i==2?-8:0,18);
+ Fit(board+"/Expand_Group/CloseClueBoard_Button_AIGC",95,9,5,0,0,50);TextAt(board+"/Expand_Group/CloseClueBoard_Button_AIGC/Label",null,95,9,1.2f,.5f,.3f,51);
+ var a0=T("CameraAndStageMarkers/ClueBoardAnchor_Phase0");a0.position=new UnityEngine.Vector3(7.936f,-2.1168f,-.3f);Mark(a0);
+ var a1=T("CameraAndStageMarkers/ClueBoardAnchor_Phase1");a1.position=new UnityEngine.Vector3(-17.664f,-2.1168f,-.3f);Mark(a1);
+ T(board).position=a0.position;Mark(T(board));
+ foreach(var o in touched){UnityEditor.EditorUtility.SetDirty(o);if(UnityEditor.PrefabUtility.IsPartOfPrefabInstance(o))UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(o);}
+ UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);UnityEditor.Undo.CollapseUndoOperations(undo);
+ return Newtonsoft.Json.JsonConvert.SerializeObject(new{success=true,saved=false,added,touched=touched.Count,rigScale,headBottom,storageInactive=!storage.gameObject.activeSelf});
+}catch{UnityEditor.Undo.RevertAllDownToGroup(undo);throw;}

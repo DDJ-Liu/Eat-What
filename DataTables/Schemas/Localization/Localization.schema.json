@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Localization",
+  "csvPath": "Localization/Localization.csv",
+  "targetType": "LocTableAsset",
+  "outputDirectory": "Assets/Generated/DataTables/Localization/Localization",
+  "assetNameField": "loc_key",
+  "primaryKeyField": "loc_key",
+  "columns": [
+    { "name": "loc_key", "csvColumn": "loc_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$", "writeToAsset": false },
+    { "name": "zh_cn", "csvColumn": "zh_cn", "type": "string", "required": true },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": []
+}

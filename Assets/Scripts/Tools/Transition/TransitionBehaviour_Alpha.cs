@@ -10,6 +10,10 @@ public class TransitionBehaviour_Alpha : TransitionBehaviour
         public string name;
         public float duration = 0.3f;
         public AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        public bool useUnscaledTime;
+        public bool useExplicitRange;
+        public float fromAlpha;
+        public float toAlpha = 1f;
     }
 
     [Tooltip("目标渲染器列表")]
@@ -47,17 +51,17 @@ public class TransitionBehaviour_Alpha : TransitionBehaviour
         return new List<SpriteRenderer>();
     }
 
-    protected override IEnumerator TransitionCoroutine(string transitionName)
+    protected override bool TryCreateTransition(string transitionName, out IEnumerator transition)
     {
         var config = transitions.Find(t => t.name == transitionName);
-
         if (config == null)
         {
-            Debug.LogWarning($"Alpha transition not found: {transitionName}");
-            yield break;
+            Debug.LogWarning("Alpha transition not found: " + transitionName);
+            transition = null;
+            return false;
         }
-
-        yield return FadeAlpha(config);
+        transition = FadeAlpha(config);
+        return true;
     }
 
     private IEnumerator FadeAlpha(AlphaTransitionEntry config)
@@ -67,7 +71,7 @@ public class TransitionBehaviour_Alpha : TransitionBehaviour
 
         if (renderers.Count == 0)
         {
-            Debug.LogWarning($"No target renderers found on {gameObject.name}");
+            Debug.LogWarning("No target renderers found on " + gameObject.name);
             yield break;
         }
 
@@ -79,9 +83,12 @@ public class TransitionBehaviour_Alpha : TransitionBehaviour
 
         while (elapsed < config.duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += GetDeltaTime(config.useUnscaledTime);
             float t = elapsed / config.duration;
-            float alpha = config.curve.Evaluate(t);
+            float curveValue = config.curve.Evaluate(t);
+            float alpha = config.useExplicitRange
+                ? Mathf.LerpUnclamped(config.fromAlpha, config.toAlpha, curveValue)
+                : curveValue;
 
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -93,7 +100,10 @@ public class TransitionBehaviour_Alpha : TransitionBehaviour
             yield return null;
         }
 
-        float finalAlpha = config.curve.Evaluate(1f);
+        float finalCurveValue = config.curve.Evaluate(1f);
+        float finalAlpha = config.useExplicitRange
+            ? Mathf.LerpUnclamped(config.fromAlpha, config.toAlpha, finalCurveValue)
+            : finalCurveValue;
         for (int i = 0; i < renderers.Count; i++)
         {
             Color color = colors[i];

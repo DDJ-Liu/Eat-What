@@ -85,6 +85,24 @@ public class MouseManager : MonoBehaviour
     [SerializeField] private float lastScrollTime;
     [SerializeField] private float scrollCooldown = 0.2f;
 
+    public float ScrollThreshold { get { return scrollThreshold; } }
+    public float AccumulatedScroll { get { return accumulatedScroll; } }
+    public float LastScrollTime { get { return lastScrollTime; } }
+    public float ScrollCooldown { get { return scrollCooldown; } }
+    public MouseScrollableObject LastScrollableCandidate { get; private set; }
+    public MousePressableObject LastScrollableBlocker { get; private set; }
+    public string LastScrollResolutionReason { get; private set; } = "not_sampled";
+    public int LastScrollResolutionFrame { get; private set; } = -1;
+    public int LastScrollDispatchFrame { get; private set; } = -1;
+    public int ScrollDispatchSequence { get; private set; }
+    public float LastRawScrollY { get; private set; }
+    public float LastDispatchedStep { get; private set; }
+    public Vector2 LastScrollPointerWorld { get; private set; }
+    public bool HasUnsafeEmptyLayerUpdatePath
+    {
+        get { return false; }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -106,6 +124,23 @@ public class MouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (mouseInteractiveLayers == null || mouseInteractiveLayers.Count == 0)
+        {
+            currentLayer = string.Empty;
+            currentScrollableObject = null;
+            LastScrollableCandidate = null;
+            LastScrollableBlocker = null;
+            LastScrollResolutionReason = "interaction_layer_stack_empty";
+            LastScrollResolutionFrame = Time.frameCount;
+            if (_prevPressableHoverTarget != null)
+            {
+                _prevPressableHoverTarget.SetHoverInternal(false);
+                _prevPressableHoverTarget.MouseOut();
+                _prevPressableHoverTarget = null;
+            }
+            currentPressableHoverTarget = null;
+            return;
+        }
         currentLayer = mouseInteractiveLayers.Peek().gameObject.name;
         #region �����ͣ���
         if (mouseInteractiveLayers.Count > 0)
@@ -139,6 +174,10 @@ public class MouseManager : MonoBehaviour
                 _prevPressableHoverTarget = null;
             }
             currentPressableHoverTarget = null;
+            LastScrollableCandidate = null;
+            LastScrollableBlocker = null;
+            LastScrollResolutionReason = "interaction_layer_missing";
+            LastScrollResolutionFrame = Time.frameCount;
             return;
         }
 
@@ -200,8 +239,22 @@ public class MouseManager : MonoBehaviour
         {
             hitScrollable = tryGetMouseObject<MouseScrollableObject>(hits);
         }
-        if (hitScrollable != null && IsBlockedByPressable(hits, hitScrollable.GetComponent<Collider2D>()))
+        LastScrollableCandidate = hitScrollable;
+        MousePressableObject passedPressable = null;
+        LastScrollableBlocker = hitScrollable == null ? null : FindBlockingPressable(
+            hits, hitScrollable.GetComponent<Collider2D>(), hitScrollable, out passedPressable);
+        if (LastScrollableBlocker != null)
+        {
+            LastScrollResolutionReason = "pressable_blocked";
             hitScrollable = null;
+        }
+        else if (passedPressable != null)
+        {
+            LastScrollableBlocker = passedPressable;
+            LastScrollResolutionReason = "pressable_pass_through";
+        }
+        else LastScrollResolutionReason = hitScrollable == null ? "no_scrollable_candidate" : "target_selected";
+        LastScrollResolutionFrame = Time.frameCount;
         currentScrollableObject = /*hit?.gameObject.GetComponent<MouseScrollableObject>();*/hitScrollable;
 
         //SetPressableHover
@@ -304,16 +357,47 @@ public class MouseManager : MonoBehaviour
 
     private bool IsBlockedByPressable(Collider2D[] hits, Collider2D targetCol)
     {
-        if (hits == null || targetCol == null) return false;
+        return FindBlockingPressable(hits, targetCol) != null;
+    }
+
+    private MousePressableObject FindBlockingPressable(Collider2D[] hits, Collider2D targetCol)
+    {
+        if (hits == null || targetCol == null) return null;
         foreach (Collider2D col in hits)
         {
             if (col == targetCol) continue;
-            if (col.GetComponent<MousePressableObject>() == null) continue;
+            MousePressableObject pressable = col.GetComponent<MousePressableObject>();
+            if (pressable == null) continue;
             Collider2D winner = SelectHighestPriority(new Collider2D[] { col, targetCol });
             if (winner == col)
-                return true;
+                return pressable;
         }
-        return false;
+        return null;
+    }
+
+    private MousePressableObject FindBlockingPressable(
+        Collider2D[] hits,
+        Collider2D targetCol,
+        MouseScrollableObject scrollable,
+        out MousePressableObject passedPressable)
+    {
+        passedPressable = null;
+        if (hits == null || targetCol == null || scrollable == null) return null;
+        foreach (Collider2D col in hits)
+        {
+            if (col == targetCol) continue;
+            MousePressableObject pressable = col.GetComponent<MousePressableObject>();
+            if (pressable == null) continue;
+            Collider2D winner = SelectHighestPriority(new Collider2D[] { col, targetCol });
+            if (winner != col) continue;
+            if (scrollable.CanScrollThroughPressable(pressable))
+            {
+                if (passedPressable == null) passedPressable = pressable;
+                continue;
+            }
+            return pressable;
+        }
+        return null;
     }
 
     [Obsolete]private MousePressableObject checkMouseHover()
@@ -352,6 +436,8 @@ public class MouseManager : MonoBehaviour
         if (currentScrollableObject == null) return;
 
         float scrollValue = Mouse.current.scroll.ReadValue().y;
+        LastRawScrollY = scrollValue;
+        LastScrollPointerWorld = Tools.getMousePos();
 
         // // 连续滚轮事件（暂时注释）
         // if (!Mathf.Approximately(scrollValue, 0f))
@@ -367,6 +453,9 @@ public class MouseManager : MonoBehaviour
         if (Mathf.Abs(accumulatedScroll) >= scrollThreshold)
         {
             float step = accumulatedScroll > 0 ? 1f : -1f;
+            LastDispatchedStep = step;
+            LastScrollDispatchFrame = Time.frameCount;
+            ScrollDispatchSequence++;
             Debug.Log($"[MouseManager] ScrollStep triggered: {step}");
             currentScrollableObject.scrollStepEvent?.Invoke(step);
             OnScrollStep?.Invoke(step);

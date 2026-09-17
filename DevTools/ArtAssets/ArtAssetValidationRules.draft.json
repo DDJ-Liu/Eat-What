@@ -1,0 +1,461 @@
+{
+  "schemaVersion": 2,
+  "ruleVersion": "0.2-draft",
+  "status": "draft_prototype_deployment_authorized",
+  "scope": {
+    "purpose": "校验从美术端导出、准备进入 Unity Assets 的最终资产。",
+    "included": [
+      "同步变更清单中的 Added 文件",
+      "同步变更清单中的 Updated 文件",
+      "部署后的 Unity TextureImporter 设置"
+    ],
+    "excluded": [
+      "PSD 等美术源文件维护",
+      "色板、基准线和完成度分级",
+      "未登记类别的自动推断"
+    ]
+  },
+  "activation": {
+    "validationEnabled": false,
+    "deploymentEnabled": false,
+    "blockReason": "正式校验与自动部署仍等待美术确认最终尺寸规范；2026-08-17 已获授权，仅允许按 provisionalPrototypeDeployment 执行一次可追溯的备菜界面视觉原型导出。",
+    "provisionalPrototypeDeployment": {
+      "enabled": true,
+      "authorizedOn": "2026-08-17",
+      "scope": [
+        "已登记的 ingredient_ui、dish_ui、fridge_cat_kitchen_equipment、recipe_book_ui 四类 PNG",
+        "CookingPrepare 的独立视觉原型层",
+        "不替换既有玩法逻辑、Prefab 引用或正式资源"
+      ],
+      "requirements": [
+        "先执行当前草案的 Error 级文件、命名、路径与尺寸预检",
+        "不覆盖 Assets 内同名不同内容的文件",
+        "生成独立导出报告，并保留所有 Warning",
+        "通过 Unity API 应用导入 preset，不手工编辑 .meta"
+      ],
+      "compositionContract": {
+        "status": "provisional_not_formal_validation",
+        "referenceResolution": [2560, 1440],
+        "pixelsPerUnit": 100,
+        "orthographicSize": 7.2,
+        "worldViewport": [25.6, 14.4],
+        "cropFrame": "Windowbox",
+        "gridSnapping": "None",
+        "nonPowerOfTwoDeliveredSpriteScale": 1,
+        "powerOfTwoIconScaleMayVary": true,
+        "outline": {
+          "enabled": true,
+          "color": "#30231F",
+          "thicknessSourcePixels": 6,
+          "allowedThicknessRange": [0, 32],
+          "controller": "SpriteOutlineGroup2D",
+          "requiresFullRectSpriteMesh": true
+        }
+      }
+    }
+  },
+  "severityPolicy": {
+    "Error": "阻止自动部署；修复后重试，或使用有效的结构化豁免。",
+    "Warning": "保留在待确认队列；人工裁决后放行或退回。",
+    "Info": "写入检查报告，不阻止。"
+  },
+  "pending_constants": {
+    "ingredient_icon_size": 512,
+    "dish_icon_size": 512
+  },
+  "pending_constant_status": {
+    "ingredient_icon_size": "observed_from_current_synced_assets_not_approved",
+    "dish_icon_size": "observed_from_current_synced_assets_not_approved"
+  },
+  "ignored_entries": {
+    "file_names": [
+      "Thumbs.db",
+      ".DS_Store",
+      "desktop.ini"
+    ],
+    "directory_names": [
+      "__MACOSX"
+    ]
+  },
+  "marker_files": {
+    "name_pattern": "^【命名示例】",
+    "expected_length_bytes": 0,
+    "include_in_delivery": false,
+    "include_in_deployment": false
+  },
+  "evaluationOrder": [
+    "按 FILE-003 排除系统垃圾文件与目录",
+    "识别命名示例文件，并确保 FILE-004 不允许其进入部署清单",
+    "执行 FILE-001、FILE-002 文件准入检查",
+    "按 PATH-001 匹配已登记分类与落盘路径",
+    "执行 NAME 规则；NAME-005 既存例外优先于 NAME-001、NAME-002 的拒绝结果",
+    "执行 SIZE 与 DUP 规则",
+    "人工裁决 Warning 和有效豁免",
+    "复制合格资产后执行 IMPORT-001"
+  ],
+  "legacy_naming": {
+    "patterns": [
+      "^ingredient_[a-z0-9]+(?:_[a-z0-9]+)*\\.png$",
+      "^recipe_image_[a-z0-9]+(?:_[a-z0-9]+)*\\.png$"
+    ],
+    "rule_id": "NAME-005",
+    "new_deliverables_should_use_legacy_naming": false
+  },
+  "semantic_uid_mapping": {
+    "enabled": false,
+    "pending_id": "NAME-PENDING-02",
+    "mappings": []
+  },
+  "rules": [
+    {
+      "id": "FILE-001",
+      "domain": "FILE",
+      "severity": "Error",
+      "check": "non_empty_png_only",
+      "description": "同步区实际交付物只接受非空 PNG；零字节文件和非 PNG 位图拒绝。"
+    },
+    {
+      "id": "FILE-002",
+      "domain": "FILE",
+      "severity": "Error",
+      "check": "reject_source_formats",
+      "forbidden_extensions": [
+        ".psd",
+        ".psb",
+        ".ai",
+        ".xcf",
+        ".kra",
+        ".clip"
+      ],
+      "description": "美术源文件不得进入工程入口；应导出 PNG 后交付。"
+    },
+    {
+      "id": "FILE-003",
+      "domain": "FILE",
+      "severity": "Info",
+      "check": "ignore_system_entries",
+      "value_ref": "ignored_entries",
+      "description": "系统垃圾文件和目录自动忽略，不计入交付物且不报错。"
+    },
+    {
+      "id": "FILE-004",
+      "domain": "FILE",
+      "severity": "Error",
+      "check": "marker_not_in_deployment_manifest",
+      "value_ref": "marker_files",
+      "description": "命名示例文件仅作目录说明；若进入部署清单则拒绝。"
+    },
+    {
+      "id": "NAME-001",
+      "domain": "NAME",
+      "severity": "Error",
+      "check": "file_name_pattern",
+      "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*\\.png$",
+      "description": "文件名采用小写拼音/英文、数字和单下划线组成的类型前缀与语义标识。"
+    },
+    {
+      "id": "NAME-002",
+      "domain": "NAME",
+      "severity": "Error",
+      "check": "forbidden_file_name_pattern",
+      "pattern": "(?:\\s|-|__|[A-Z]|[^\\x00-\\x7F])",
+      "description": "禁止中文、空格、连字符、全角标点、连续下划线和大写字母。"
+    },
+    {
+      "id": "NAME-003",
+      "domain": "NAME",
+      "severity": "Error",
+      "check": "case_insensitive_name_collision",
+      "compare_with": [
+        "current_batch",
+        "Assets"
+      ],
+      "description": "同批次内或与 Assets 既有文件仅大小写不同的文件名拒绝。"
+    },
+    {
+      "id": "NAME-004",
+      "domain": "NAME",
+      "severity": "Warning",
+      "check": "unregistered_numeric_suffix",
+      "pattern": "[a-z]\\d+\\.png$",
+      "description": "ban2、xian1 等数字后缀在语义登记前产生警告。"
+    },
+    {
+      "id": "NAME-005",
+      "domain": "NAME",
+      "severity": "Info",
+      "check": "legacy_english_name",
+      "value_ref": "legacy_naming.patterns",
+      "description": "旧英文体系命名作为既存例外放行并记录；新交付仍使用拼音体系。"
+    },
+    {
+      "id": "NAME-006",
+      "domain": "NAME",
+      "severity": "Info",
+      "check": "state_suffix_completeness",
+      "value_ref": "state_whitelist",
+      "description": "状态类资产只交付部分状态时，报告缺失状态清单。"
+    },
+    {
+      "id": "SIZE-001",
+      "domain": "SIZE",
+      "severity": "Error",
+      "check": "require_alpha_channel",
+      "value": true,
+      "description": "PNG 必须包含 Alpha 通道。"
+    },
+    {
+      "id": "SIZE-002",
+      "domain": "SIZE",
+      "severity": "Error",
+      "check": "maximum_dimension",
+      "value": 8192,
+      "description": "图片任一边不得超过 8192 像素。"
+    },
+    {
+      "id": "SIZE-003",
+      "domain": "SIZE",
+      "severity": "Warning",
+      "check": "category_max_texture_size",
+      "value_ref": "categoryRules[].importPreset",
+      "description": "任一边超过类别 maxTextureSize 时提示 Unity 会缩小，由人工决定接受缩小或提高上限。"
+    },
+    {
+      "id": "SIZE-004",
+      "domain": "SIZE",
+      "severity": "Warning",
+      "check": "minimum_visible_pixel_ratio",
+      "value": 0.005,
+      "description": "全透明或可见像素占比低于 0.5% 时提示疑似导出事故。"
+    },
+    {
+      "id": "SIZE-005",
+      "domain": "SIZE",
+      "severity": "Info",
+      "check": "png_color_depth",
+      "preferred": [
+        "PNG-24",
+        "PNG-32"
+      ],
+      "description": "索引色 PNG-8 等非 PNG-24/32 格式写入报告。"
+    },
+    {
+      "id": "SIZE-006",
+      "domain": "SIZE",
+      "severity": "Info",
+      "check": "embedded_color_profile",
+      "preferred": "sRGB",
+      "description": "内嵌非 sRGB ICC 配置时记录潜在色差。"
+    },
+    {
+      "id": "PATH-001",
+      "domain": "PATH",
+      "severity": "Error",
+      "check": "registered_category_route",
+      "value_ref": "categoryRules",
+      "description": "交付物必须匹配已登记类别并落入该类别确认路径；未登记类别拒绝。"
+    },
+    {
+      "id": "DUP-001",
+      "domain": "DUP",
+      "severity": "Error",
+      "check": "unique_relative_path",
+      "description": "同批次内相对路径不得重复。"
+    },
+    {
+      "id": "DUP-002",
+      "domain": "DUP",
+      "severity": "Warning",
+      "check": "same_batch_hash_different_name",
+      "description": "同批次内容哈希相同但文件名不同，提示重复资产。"
+    },
+    {
+      "id": "DUP-003",
+      "domain": "DUP",
+      "severity": "Warning",
+      "check": "assets_same_name_different_hash",
+      "description": "与 Assets 既有文件同名不同哈希时，标记更新意图并等待人工确认覆盖。"
+    },
+    {
+      "id": "DUP-004",
+      "domain": "DUP",
+      "severity": "Warning",
+      "check": "assets_same_hash_different_name",
+      "description": "与 Assets 既有文件同哈希不同名时，提示引用既有资产。"
+    },
+    {
+      "id": "IMPORT-001",
+      "domain": "IMPORT",
+      "severity": "Warning",
+      "check": "texture_importer_matches_preset",
+      "value_ref": "importPresets",
+      "auto_fix": false,
+      "description": "新资产导入后的 .meta 与类别 preset 不一致时列出差异，不自动修改已有 .meta。"
+    }
+  ],
+  "categoryRules": [
+    {
+      "id": "ingredient_ui",
+      "sourcePathPattern": "^UIUX[\\\\/]食材[\\\\/]",
+      "fileNamePattern": "^ui_shicai_[a-z0-9]+(?:_[a-z0-9]+)*\\.png$",
+      "dimensions": {
+        "shape": "square",
+        "width_ref": "{PENDING:ingredient_icon_size}",
+        "height_ref": "{PENDING:ingredient_icon_size}"
+      },
+      "route": "Assets/Sprites/Cooking/UI/IngredientIcons",
+      "routeStatus": "approved",
+      "spriteMode": "Single",
+      "importPreset": "cooking_single_sprite"
+    },
+    {
+      "id": "dish_ui",
+      "sourcePathPattern": "^UIUX[\\\\/]菜品[\\\\/]",
+      "fileNamePattern": "^ui_caipin_[a-z0-9]+(?:_[a-z0-9]+)*\\.png$",
+      "dimensions": {
+        "shape": "square",
+        "width_ref": "{PENDING:dish_icon_size}",
+        "height_ref": "{PENDING:dish_icon_size}"
+      },
+      "route": "Assets/Sprites/Cooking/UI/DishIcons",
+      "routeStatus": "approved",
+      "spriteMode": "Single",
+      "importPreset": "cooking_single_sprite"
+    },
+    {
+      "id": "fridge_cat_kitchen_equipment",
+      "sourcePathPattern": "^角色[\\\\/]厨具[\\\\/]冰箱猫[\\\\/]",
+      "fileNamePattern": "^chuju_bingxiangmao_[a-z0-9]+(?:_[a-z0-9]+)*\\.png$",
+      "dimensions": {
+        "shape": "variable",
+        "fixed_size": false
+      },
+      "route": "Assets/Sprites/Cooking/Fridge/FridgeCat/BingXiangMao",
+      "routeStatus": "approved_path_needs_prefab_mapping",
+      "spriteMode": "Single",
+      "importPreset": "cooking_single_sprite"
+    },
+    {
+      "id": "recipe_book_ui",
+      "sourcePathPattern": "^UIUX[\\\\/]菜谱[\\\\/]",
+      "fileNamePattern": "^ui_caipu_[a-z0-9]+(?:_[a-z0-9]+)*\\.png$",
+      "dimensions": {
+        "shape": "variable",
+        "fixed_size": false
+      },
+      "route": "Assets/Sprites/Cooking/UI/RecipeBook",
+      "routeStatus": "approved",
+      "spriteMode": "Single",
+      "importPreset": "cooking_recipebook_single_sprite"
+    }
+  ],
+  "categoryExtensionProtocol": {
+    "requiredFields": [
+      "id",
+      "sourcePathPattern",
+      "fileNamePattern",
+      "dimensions",
+      "route",
+      "spriteMode",
+      "importPreset"
+    ],
+    "unregisteredCategorySeverity": "Error",
+    "notes": "图集、序列帧、Multiple Sprite、场景、立绘和特效类必须先登记，不能混入当前 Single Sprite 类别。"
+  },
+  "importPresets": {
+    "cooking_single_sprite": {
+      "textureType": "Sprite",
+      "spriteMode": "Single",
+      "sRGB": true,
+      "alphaIsTransparency": true,
+      "mipMaps": false,
+      "readable": false,
+      "nPOTScale": "None",
+      "wrapMode": "Clamp",
+      "maxTextureSize": 2048,
+      "pixelsPerUnit": 100,
+      "filterMode": "Bilinear",
+      "meshType": "FullRect",
+      "compression": "Normal"
+    },
+    "cooking_recipebook_single_sprite": {
+      "textureType": "Sprite",
+      "spriteMode": "Single",
+      "sRGB": true,
+      "alphaIsTransparency": true,
+      "mipMaps": false,
+      "readable": false,
+      "nPOTScale": "None",
+      "wrapMode": "Clamp",
+      "maxTextureSize": 4096,
+      "maxTextureSizePolicy": "ceil_power_of_two_of_max_source_dimension_capped_at_4096",
+      "pixelsPerUnit": 100,
+      "filterMode": "Bilinear",
+      "meshType": "Tight",
+      "compression": "Normal"
+    }
+  },
+  "state_whitelist": [],
+  "exemptionSchema": {
+    "requiredFields": [
+      "rule_id",
+      "pattern",
+      "reason",
+      "approved_by",
+      "expires"
+    ],
+    "expiresFormat": "YYYY-MM-DD or permanent",
+    "permanentApprovalRequirement": "主策与程序双批准"
+  },
+  "exemptions": [],
+  "pendingItems": [
+    {
+      "id": "SPEC-001",
+      "topic": "确认 {PENDING:ingredient_icon_size}、{PENDING:dish_icon_size} 为最终规范，并确认其与 maxTextureSize 的关系。",
+      "owner": "美术 + 程序",
+      "currentHandling": "草案值已记录于 pending_constants；正式校验与自动部署保持关闭。2026-08-17 获授权仅用于可回溯的备菜界面视觉原型导出。"
+    },
+    {
+      "id": "SPEC-002",
+      "topic": "确认状态后缀白名单并写入 state_whitelist。",
+      "owner": "主美 + 主策",
+      "currentHandling": "NAME-006 Info。"
+    },
+    {
+      "id": "ROUTE-003",
+      "topic": "冰箱猫拆分件与既有 Sprite 及 Prefab 的映射。",
+      "owner": "美术 + 程序",
+      "currentHandling": "2026-08-17 已作为 CookingPrepare/FridgeManager/PrepareArtPrototype 的独立视觉原型层接入；V3 按 2560×1440、PPU 100、正交 Size 7.2 重排，使用全部 15 个冰箱猫拆分件。非 2 次幂交付素材保持 Scale 1，512×512 图标允许按可见内容缩放。FridgeManager 在原型启用时仅隐藏旧 SpriteRenderer，保留旧布局与交互计算；正式 Prefab 映射仍待确认。"
+    },
+    {
+      "id": "NAME-裁决-01",
+      "topic": "数字后缀采用结构编号或状态编号；版本号不进入文件名。",
+      "owner": "美术",
+      "currentHandling": "NAME-004 Warning。"
+    },
+    {
+      "id": "NAME-PENDING-01",
+      "topic": "旧英文命名是否迁移到拼音体系。",
+      "owner": "程序",
+      "currentHandling": "NAME-005 Info 放行。"
+    },
+    {
+      "id": "NAME-PENDING-02",
+      "topic": "建立语义标识到配表 uid 的映射后启用关联校验。",
+      "owner": "主策",
+      "currentHandling": "未启用。"
+    }
+  ],
+  "reporting": {
+    "enabledWhenValidationIsActivated": true,
+    "fileNamePattern": "ValidationReport_<date>.md",
+    "include": [
+      "文件盘点",
+      "按规则 ID 的命中清单",
+      "Warning 待裁决队列",
+      "生效豁免",
+      "豁免到期提示"
+    ],
+    "writeBatchInventoryIntoRuleDocument": false
+  }
+}

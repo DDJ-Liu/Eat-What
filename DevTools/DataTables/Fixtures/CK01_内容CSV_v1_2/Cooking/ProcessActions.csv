@@ -1,0 +1,8 @@
+act_id,name_key,process_class,process_template,comment
+act_cut,act_cut.name,regular,tpl_popup_cut,常规处理：切
+act_whisk,act_whisk.name,regular,tpl_popup_whisk,常规处理：打/拌
+act_stirfry,act_stirfry.name,regular,tpl_popup_stirfry,常规处理：炒
+act_wash,act_wash.name,regular,tpl_popup_wash,常规处理：手即可
+act_boil,act_boil.name,waiting,tpl_wait_boil,等待处理：拖入分区触发
+act_stew,act_stew.name,waiting,tpl_wait_stew,等待处理：吊汤
+act_no_process,act_no_process.name,regular,,无表现直接完成

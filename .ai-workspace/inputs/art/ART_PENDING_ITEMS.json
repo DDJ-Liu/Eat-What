@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "owner": "CONTROL_CHAT",
+  "source": ".ai-workspace/inputs/ART车道_每日资产审查日报模板_v1_0.md §4",
+  "items": [
+    {"id":"straight","name":"转正素材","expected":"ui_caipu_zhaopian_straight / tag_straight / toumingjiao_straight / kuang2_straight / kuang3_straight","patterns":["ui_caipu_zhaopian_straight.png","ui_caipu_tag_straight.png","ui_caipu_toumingjiao_straight.png","ui_caipu_kuang2_straight.png","ui_caipu_kuang3_straight.png"],"initialStatus":"缺 5/5","trigger":"C-T5b-X","card":".ai-workspace/outputs/CK01-C/C-T5b-X_BLOCKED_ON_ART.md"},
+    {"id":"split","name":"冰箱猫拆分重导（E6 尺度）","expected":"Split/冰箱猫拆分下13件 + zhutu；相对shenti2的逐件E6目标需核实","patterns":[],"initialStatus":"缺","trigger":"ScaleComp归1","requiresScaleEvidence":true,"scaleTargets":[]},
+    {"id":"tags","name":"ui_tag_* 族","expected":"ui_tag_<tag_id>.png","patterns":["ui_tag_*.png"],"initialStatus":"缺","trigger":"段4 F/E 资产前置"},
+    {"id":"tools","name":"ui_gongju_* 族","expected":"ui_gongju_<tool_id>.png（旧caidao为chuju_前缀217×257）","patterns":["ui_gongju_*.png"],"initialStatus":"缺","trigger":"段4 F/E 资产前置"},
+    {"id":"cover","name":"封面图 CoverArt","expected":"ui_caipu_fengmian.png","patterns":["ui_caipu_fengmian.png"],"initialStatus":"缺"},
+    {"id":"bubble","name":"第二只对白气泡","expected":"chuju_bingxiangmao_qipao_<x>.png，至少两个不同文件","patterns":["chuju_bingxiangmao_qipao_*.png"],"minimumCount":2,"initialStatus":"缺"},
+    {"id":"buttons","name":"四按钮","expected":"OpenClueBoard / Escape / Tidy / EquipmentEntry","patterns":["*OpenClueBoard.png","*Escape.png","*Tidy.png","*EquipmentEntry.png"],"initialStatus":"缺"},
+    {"id":"unknown","name":"UnknownCard","expected":"ui_caipu_pailide_unknown.png","patterns":["ui_caipu_pailide_unknown.png"],"initialStatus":"缺"},
+    {"id":"prd_unknown","name":"不明物体 fallback 图标","expected":"ui_caipin_unknown.png，512画布；Schema v2.4 T4 prd_unknown，当前允许_AIGC占位","patterns":["ui_caipin_unknown.png"],"initialStatus":"待产（未现场核实到货）","trigger":"P2 不明物体美术替换；不自动解锁人工段"},
+    {"id":"ingredients","name":"缺图食材","expected":"ui_shicai_fanqie / xiaocong / judan.png","patterns":["ui_shicai_fanqie.png","ui_shicai_xiaocong.png","ui_shicai_judan.png"],"initialStatus":"缺","trigger":"线索板正式内容验收资产前置"},
+    {"id":"naming","name":"命名待改源","expected":"kaishizuofan(+1)正名恢复；qipao_gan/_ganma去空格；tuya1~3与446版菜品移出UIUX/菜谱","patterns":[],"initialStatus":"未处理","requiresManualNaming":true}
+  ]
+}

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2dcdc05e09914489829b137932ffc5, type: 3}
+  m_Name: proc_qingtang_final
+  m_EditorClassIdentifier: 
+  output_item: prd_qingtang_dish
+  input_01: prd_noodle_boiled
+  input_02: ing_scallion
+  input_03: stp_salt
+  input_04: 
+  input_05: 
+  input_06: 
+  action: act_whisk
+  carrier: tool_pot
+  is_final_product: 1

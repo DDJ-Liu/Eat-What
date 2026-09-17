@@ -1,0 +1,6 @@
+key,value,comment
+prep_zone_capacity,20,托盘格数
+fridge_scroll_granularity,1.0,占位待调，人工段实调后回写
+fridge_scroll_damping,0.15,占位待调，人工段实调后回写
+unknown_product_item,prd_unknown,S-04 不明物体 fallback
+demo_fridge_capacity_level,fcap_lv2,demo 容量档；正式游戏从 fcap_lv1=20 起步并升级

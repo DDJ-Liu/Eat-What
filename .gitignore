@@ -71,7 +71,9 @@ Assets/AllIn1VfxToolkit/UrpPackage.unitypackage.meta
 Assets/Feel/NiceVibrations/OlderVersions/v1.7/NiceVibrations-v-1-7.unitypackage.meta
 Assets/Feel/NiceVibrations/OlderVersions/v2.0.1/NiceVibrations-v-2-0-1.unitypackage.meta
 Assets/Feel/NiceVibrations/OlderVersions/v3.9/NiceVibrations-v-3-9-0.unitypackage.meta
-/Packages/
+/Packages/*
+!/Packages/manifest.json
+!/Packages/packages-lock.json
 *.xlsx
 Assets/Log/mapGenerationLog.txt
 Recordings/
@@ -79,6 +81,35 @@ Assets/AddressableAssetsData/link.xml
 Assets/AddressableAssetsData/link.xml.meta
 .mcp.json
 .claude/
+# Version the workflow and verified milestone archives; keep live execution local.
+/.ai-workspace/runtime/
+/.ai-workspace/logs/
+/.ai-workspace/cache/
+/.ai-workspace/revisions/
+/.ai-workspace/inputs/*
+!/.ai-workspace/inputs/README.md
+!/.ai-workspace/inputs/ART车道_每日资产审查日报模板_v1_0.md
+!/.ai-workspace/inputs/art/
+/.ai-workspace/outputs/*
+!/.ai-workspace/outputs/README.md
+!/.ai-workspace/outputs/control/
+/.ai-workspace/outputs/control/*
+!/.ai-workspace/outputs/control/Export-UnclosedTasks.ps1
+!/.ai-workspace/outputs/control/人工处理索引.md
+!/.ai-workspace/outputs/control/未关闭任务汇总.md
+!/.ai-workspace/outputs/control/下一轮开发承接.md
+!/.ai-workspace/outputs/control/REV-014_人工验收关闭记录.md
+!/.ai-workspace/outputs/control/阶段整理_20260917/
+/.ai-workspace/outputs/control/阶段整理_20260917/git-local/
+/.ai-workspace/archive/*/unpacked/
+/Captures/*
+!/Captures/README.md
+/DevTools/Scenes/backup/
+/DevTools/Prefabs/backup/
+/DevTools/Generated/backup/
+/DevTools/ArtAssets/backup/
+/美术资产/
+/.art-asset-sync/
 docs/
 Assets/Plugins/Febucci/Text Animator/Extra/Typewriter Sound - Package.unitypackage.meta
 Assets/Plugins/Febucci/Text Animator/Integrations/PlayMaker - Integration.unitypackage.meta

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "tableName": "FridgeCapacityLevels",
+  "csvPath": "Cooking/FridgeCapacityLevels.csv",
+  "targetType": "CK01FridgeCapacityLevelData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels",
+  "assetNameField": "capacity_id",
+  "primaryKeyField": "capacity_id",
+  "columns": [
+    { "name": "capacity_id", "csvColumn": "fcap_id", "type": "id", "required": true, "pattern": "^fcap_lv[1-5]$", "writeToAsset": false },
+    { "name": "level_index", "csvColumn": "level_index", "type": "int", "required": true, "unique": true },
+    { "name": "capacity", "csvColumn": "capacity", "type": "int", "required": true, "unique": true },
+    { "name": "upgrade_condition", "csvColumn": "upgrade_condition", "type": "string", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [],
+  "rules": [
+    { "kind": "fridge_capacity_levels", "field": "level_index", "message": "must be contiguous 1..N with strictly increasing capacities; demo reads CookingGameConfig.demo_fridge_capacity_level while formal progression starts at fcap_lv1=20" }
+  ]
+}

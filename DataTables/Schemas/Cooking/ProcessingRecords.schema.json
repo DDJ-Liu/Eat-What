@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 2,
+  "tableName": "ProcessingRecords",
+  "csvPath": "Cooking/ProcessingRecords.csv",
+  "targetType": "CK01ProcessingRecordData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/ProcessingRecords",
+  "assetNameField": "proc_id",
+  "primaryKeyField": "proc_id",
+  "columns": [
+    { "name": "proc_id", "csvColumn": "proc_id", "type": "id", "required": true, "pattern": "^proc_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "output_item", "csvColumn": "output_item", "type": "ref", "required": true },
+    { "name": "input_01", "csvColumn": "input_01", "type": "ref", "required": true },
+    { "name": "input_02", "csvColumn": "input_02", "type": "ref", "required": false },
+    { "name": "input_03", "csvColumn": "input_03", "type": "ref", "required": false },
+    { "name": "input_04", "csvColumn": "input_04", "type": "ref", "required": false },
+    { "name": "input_05", "csvColumn": "input_05", "type": "ref", "required": false },
+    { "name": "input_06", "csvColumn": "input_06", "type": "ref", "required": false },
+    { "name": "action", "csvColumn": "action", "type": "ref", "required": true },
+    { "name": "carrier", "csvColumn": "carrier", "type": "ref", "required": false },
+    { "name": "is_final_product", "csvColumn": "is_final_product", "type": "bool", "required": true, "defaultValue": "false" },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "output_item", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "input_01", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "input_02", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "input_03", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "input_04", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "input_05", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "input_06", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "action", "targetSchema": "Cooking/ProcessActions.schema.json", "targetField": "action_id" },
+    { "field": "carrier", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id" }
+  ],
+  "rules": [
+    { "kind": "processing_record_inputs", "field": "input_01", "message": "input_01..input_06 must be continuous and carrier must be carrier/facility; this table is the global processing dictionary and Recipes.whitelist_proc_ids limits per-recipe matching" }
+  ]
+}

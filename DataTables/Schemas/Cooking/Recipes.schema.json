@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Recipes",
+  "csvPath": "Cooking/Recipes.csv",
+  "targetType": "CK01RecipeData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/Recipes",
+  "assetNameField": "recipe_id",
+  "primaryKeyField": "recipe_id",
+  "columns": [
+    { "name": "recipe_id", "csvColumn": "recipe_id", "type": "id", "required": true, "pattern": "^rcp_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "name_key", "csvColumn": "name_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "dish_category", "csvColumn": "dish_category", "type": "ref", "required": true },
+    { "name": "display_order_in_menu", "csvColumn": "display_order_in_menu", "type": "int", "required": true, "unique": true },
+    { "name": "is_unlocked_default", "csvColumn": "is_unlocked_default", "type": "bool", "required": true, "defaultValue": "false" },
+    { "name": "standard_variant_id", "csvColumn": "standard_variant_id", "type": "ref", "required": true },
+    { "name": "note_tags", "csvColumn": "note_tags", "type": "list<ref>", "separator": ";", "required": true, "minItems": 1, "maxItems": 5 },
+    { "name": "slots", "csvColumn": "slots", "type": "list<ref>", "separator": ";", "required": true, "minItems": 1 },
+    { "name": "whitelist_proc_ids", "csvColumn": "whitelist_proc_ids", "type": "list<ref>", "separator": ";", "required": true, "minItems": 1 },
+    { "name": "first_step_id", "csvColumn": "first_step_id", "type": "ref", "required": true },
+    { "name": "unlock_source", "csvColumn": "unlock_source", "type": "enum", "enumValues": ["order", "npc", "fame", "video", "experiment"], "required": false },
+    { "name": "unlock_condition", "csvColumn": "unlock_condition", "type": "string", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "dish_category", "targetSchema": "Cooking/Tags.schema.json", "targetField": "tag_id" },
+    { "field": "standard_variant_id", "targetSchema": "Cooking/RecipeVariants.schema.json", "targetField": "var_id" },
+    { "field": "note_tags", "targetSchema": "Cooking/Tags.schema.json", "targetField": "tag_id", "isList": true, "separator": ";" },
+    { "field": "slots", "targetSchema": "Cooking/RecipeSlots.schema.json", "targetField": "slot_id", "isList": true, "separator": ";" },
+    { "field": "whitelist_proc_ids", "targetSchema": "Cooking/ProcessingRecords.schema.json", "targetField": "proc_id", "isList": true, "separator": ";" },
+    { "field": "first_step_id", "targetSchema": "Cooking/RecipeSteps.schema.json", "targetField": "step_id" }
+  ],
+  "rules": [
+    { "kind": "recipe_first_step_ownership", "field": "first_step_id", "message": "must belong to this recipe" },
+    { "kind": "recipe_standard_variant_ownership", "field": "standard_variant_id", "message": "must belong to this recipe and use the same dish category" },
+    { "kind": "recipe_processing_whitelist", "field": "whitelist_proc_ids", "message": "must contain at least one valid ProcessingRecords ID" }
+  ]
+}

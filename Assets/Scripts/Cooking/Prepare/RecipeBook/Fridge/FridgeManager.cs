@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FridgeManager : MonoBehaviour
 {
+    private const string ArtPrototypeRootName = "PrepareArtPrototype";
+
     public PrepareIngredientManager myPrepareManager;
     public Recipe currentRecipe;
     public Transform RecipeInfoParent;
@@ -58,6 +60,10 @@ public class FridgeManager : MonoBehaviour
         SpriteRenderer bottomSR = fridgeBottomObject.GetComponent<SpriteRenderer>();
         float topHeight = topSR.bounds.size.y;
         float bottomHeight = bottomSR.bounds.size.y;
+        Transform artPrototypeRoot = transform.Find(ArtPrototypeRootName);
+        bool showLegacyVisuals = artPrototypeRoot == null || !artPrototypeRoot.gameObject.activeSelf;
+        topSR.enabled = showLegacyVisuals;
+        bottomSR.enabled = showLegacyVisuals;
 
         float xPos = fridgeTopObject.position.x;
         float zPos = fridgeTopObject.position.z;
@@ -76,6 +82,7 @@ public class FridgeManager : MonoBehaviour
             SpriteRenderer sr = mid.GetComponent<SpriteRenderer>();
             sr.sortingLayerID = topSR.sortingLayerID;
             sr.sortingOrder = topSR.sortingOrder;
+            sr.enabled = showLegacyVisuals;
 
             middleHeight = sr.bounds.size.y;
             mid.transform.position = new Vector3(xPos, cursorY - middleHeight / 2f, zPos);

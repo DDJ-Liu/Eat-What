@@ -1,0 +1,36 @@
+var s=UnityEngine.SceneManagement.SceneManager.GetActiveScene();if(UnityEditor.EditorApplication.isPlaying||UnityEditor.EditorApplication.isCompiling)throw new System.Exception("Edit required");
+string P(UnityEngine.Transform t){var p=t.name;while(t.parent!=null){t=t.parent;p=t.name+"/"+p;}return p;}
+var all=s.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<UnityEngine.Transform>(true)).ToDictionary(t=>P(t));
+UnityEngine.Transform T(string p){return all[p];}
+var changes=new System.Collections.Generic.List<string>();var board="Shared/ClueBoard_Group";
+UnityEditor.Undo.RegisterFullObjectHierarchyUndo(T(board).gameObject,"AI65 user approved three-row clue layout");
+for(int i=1;i<=4;i++){
+ var p=board+"/Content/SlotBlocks/SlotBlock_"+i.ToString("00");var t=T(p);
+ if(i==4){t.gameObject.SetActive(false);UnityEditor.EditorUtility.SetDirty(t.gameObject);UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(t.gameObject);changes.Add("Fourth empty slot retained inactive");continue;}
+ var y=new[]{30f,59f,87f}[i-1];t.position=new UnityEngine.Vector3((81f/100-.5f)*25.6f,(.5f-y/100)*14.4f,-.7f);t.localScale=new UnityEngine.Vector3(.72f,.72f,1);t.rotation=UnityEngine.Quaternion.identity;
+ foreach(var part in new[]{"Center/Icon","Placeholder"}){var c=T(p+"/"+part);float scale=part=="Center/Icon"?.6f:.8f;c.localScale=new UnityEngine.Vector3(scale/c.parent.lossyScale.x,scale/c.parent.lossyScale.y,1);c.position=t.position+new UnityEngine.Vector3(0,0,-.1f);}
+ var nm=T(p+"/Center/NameLabel").GetComponent<TMPro.TextMeshPro>();nm.transform.localScale=new UnityEngine.Vector3(1/nm.transform.parent.lossyScale.x,1/nm.transform.parent.lossyScale.y,1);nm.transform.position=t.position+new UnityEngine.Vector3(0,1.35f,-.1f);nm.rectTransform.sizeDelta=new UnityEngine.Vector2(4,.6f);nm.fontSize=.6f;
+ var badge=T(p+"/BadgeLabel").GetComponent<TMPro.TextMeshPro>();badge.transform.localScale=UnityEngine.Vector3.one/.72f;badge.transform.position=t.position+new UnityEngine.Vector3(1,-.6f,-.15f);badge.fontSize=.3f;
+ foreach(var c in t.GetComponentsInChildren<UnityEngine.Component>(true)){if(c is UnityEngine.Transform||c is TMPro.TMP_Text){UnityEditor.EditorUtility.SetDirty(c);UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(c);}}
+ changes.Add("Slot "+i+" center(81%,"+y+"%) root XY .72; authoritative eight local anchors unchanged");
+}
+var font=UnityEditor.AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset");
+foreach(var path in new[]{"Spaces/Phase0_RecipeBook/Browse_Group/LeftPage/IngredientList/Header","Spaces/Phase0_RecipeBook/CurrentRecipeTab/Label"}){
+ var tmp=T(path).GetComponent<TMPro.TextMeshPro>();var rr=tmp.renderer;tmp.font=font;UnityEditor.EditorUtility.SetDirty(tmp);changes.Add("Chinese fallback font "+path);
+}
+var sets=s.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet>(true)).ToArray();
+var registrations=new System.Collections.Generic.List<string>();
+foreach(var set in sets){
+ var so=new UnityEditor.SerializedObject(set);var a=so.FindProperty("overflowRenderers");
+ var list=new System.Collections.Generic.List<UnityEngine.Renderer>();
+ foreach(var r in set.GetComponentsInChildren<UnityEngine.SpriteRenderer>(true)){
+  // Register only deliberate structural overflow, never text or spare data cards.
+  bool structural=r.name=="HeadAndTopTiers"||P(r.transform).Contains("/Base_Feet/")||P(r.transform).Contains("/Arm_Raised/Visual_")||r.name=="TrayBase"||r.name=="Board"||r.name=="Paper";
+  if(!structural||r.sprite==null)continue;
+  var nearest=r.GetComponentInParent<EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet>(true);if(nearest!=set)continue;
+  list.Add(r);registrations.Add(P(set.transform)+" -> "+P(r.transform));
+ }
+ a.arraySize=list.Count;for(int i=0;i<list.Count;i++)a.GetArrayElementAtIndex(i).objectReferenceValue=list[i];
+ so.ApplyModifiedPropertiesWithoutUndo();UnityEditor.EditorUtility.SetDirty(set);UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(set);
+}
+UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(s);return Newtonsoft.Json.JsonConvert.SerializeObject(new{changes,registrations});

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebeb0acbb47bbd640807acfbd5ff10a3, type: 3}
+  m_Name: rcp_kaishui_cabbage
+  m_EditorClassIdentifier: 
+  name_key: rcp_kaishui_cabbage.name
+  dish_category: tag_dish_boil
+  display_order_in_menu: 30
+  is_unlocked_default: 1
+  standard_variant_id: var_kaishui_std
+  note_tags:
+  - tag_veg
+  - tag_flavor_fancy
+  slots:
+  - slot_cabbage_1
+  whitelist_proc_ids:
+  - proc_cabbage_washed
+  - proc_clear_broth
+  - proc_kaishui_final
+  first_step_id: step_kc_01
+  unlock_source: 
+  unlock_condition: 

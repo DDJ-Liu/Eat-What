@@ -1,0 +1,3 @@
+id,assetName,areaName,containerTags,core_facility,preset_tools,allowed_actions,allowed_carriers,is_unlocked_default,unlock_condition,comment
+kitchen-prep-counter,PrepCounter,"备餐, ""区域""","ChopBoard|Bowl",tool_board_station,tool_hand,act_wash,tool_board_station,true,,测试分区
+kitchen-stove,Stove,Stove,"Wok|Pan",tool_stove,tool_hand,act_wash,tool_stove,true,,测试分区

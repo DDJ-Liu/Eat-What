@@ -1,0 +1,6 @@
+area_id,display_name_参考,core_facility,preset_tools,is_unlocked_default,unlock_condition,comment
+area_stove,灶台区,tool_stove,tool_pot;tool_pan;tool_spatula;tool_chopsticks,true,,等待处理（煮/炖）主区
+area_worktop,操作台区,tool_board_station,tool_board;tool_knife;tool_scissors;tool_bowl,true,,常规处理（切/搅拌/洗）主区
+area_oven,烤箱区,tool_oven,,false,,demo 未解锁
+area_salad,沙拉台区,tool_salad_station,,false,,demo 未解锁
+area_freezer,冷柜区,tool_freezer,,false,,demo 未解锁

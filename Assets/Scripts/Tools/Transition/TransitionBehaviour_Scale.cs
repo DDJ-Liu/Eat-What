@@ -10,22 +10,27 @@ public class TransitionBehaviour_Scale : TransitionBehaviour
         public string name;
         public float duration = 0.3f;
         public AnimationCurve scaleCurve = AnimationCurve.EaseInOut(0, 1, 1, 1.2f);
+        public bool useUnscaledTime;
+        public bool useExplicitRange;
+        public Vector3 fromScale = Vector3.one;
+        public Vector3 toScale = Vector3.one;
     }
 
     public Transform targetTransform;
     public List<ScaleTransitionEntry> transitions = new List<ScaleTransitionEntry>();
 
-    protected override IEnumerator TransitionCoroutine(string transitionName)
+    protected override bool TryCreateTransition(string transitionName, out IEnumerator transition)
     {
         var config = transitions.Find(t => t.name == transitionName);
 
         if (config == null)
         {
-            Debug.LogWarning($"Scale transition not found: {transitionName}");
-            yield break;
+            Debug.LogWarning("Scale transition not found: " + transitionName);
+            transition = null;
+            return false;
         }
-
-        yield return AnimateScale(config);
+        transition = AnimateScale(config);
+        return true;
     }
 
     private IEnumerator AnimateScale(ScaleTransitionEntry config)
@@ -35,13 +40,18 @@ public class TransitionBehaviour_Scale : TransitionBehaviour
 
         while (elapsed < config.duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += GetDeltaTime(config.useUnscaledTime);
             float t = elapsed / config.duration;
             float scaleMultiplier = config.scaleCurve.Evaluate(t);
-            targetTransform.localScale = initialScale * scaleMultiplier;
+            targetTransform.localScale = config.useExplicitRange
+                ? Vector3.LerpUnclamped(config.fromScale, config.toScale, scaleMultiplier)
+                : initialScale * scaleMultiplier;
             yield return null;
         }
 
-        targetTransform.localScale = initialScale * config.scaleCurve.Evaluate(1f);
+        var finalValue = config.scaleCurve.Evaluate(1f);
+        targetTransform.localScale = config.useExplicitRange
+            ? Vector3.LerpUnclamped(config.fromScale, config.toScale, finalValue)
+            : initialScale * finalValue;
     }
 }

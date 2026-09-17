@@ -1,0 +1,92 @@
+{
+  "at": "2026-09-17T23:41:49.7387673+08:00",
+  "runtime": [
+    {
+      "path": ".ai-workspace/runtime/art-audit-state.json",
+      "unchanged": true
+    },
+    {
+      "path": ".ai-workspace/runtime/art-daily-control-state.json",
+      "unchanged": true
+    },
+    {
+      "path": ".ai-workspace/runtime/mode-state.json",
+      "unchanged": true
+    },
+    {
+      "path": ".ai-workspace/runtime/queue-state.json",
+      "unchanged": true
+    },
+    {
+      "path": ".ai-workspace/runtime/worker-state.json",
+      "unchanged": true
+    }
+  ],
+  "resources": [
+    {
+      "path": "Assets/Scenes/CookingPrepare.unity",
+      "bytes": 1776239,
+      "sha256": "FE015B915186E45F64DDD76DCF6ABB8028E3540CD6A9CCEF2A2592E4EB0DA249"
+    },
+    {
+      "path": "Assets/Scenes/CookingProcess.unity",
+      "bytes": 369447,
+      "sha256": "39A099F883A7B09E68EE4993B0EDF953022A06752C72E42920EA13B9F0060162"
+    },
+    {
+      "path": "Assets/Scenes/Cooking/ShortCycle_P0P1.unity",
+      "bytes": 1976246,
+      "sha256": "C0C3F9E22EC083F425E2BB8F8E81002FA41637B7C9A0027F337436CD8D477E9C"
+    },
+    {
+      "path": "Assets/Scenes/ToolTests/VisualEffectsLab.unity",
+      "bytes": 377085,
+      "sha256": "E2341B46D19382DA7B4E6CF6C745C8D99E86B31CD45F99B1BD93870DBC5E0157"
+    },
+    {
+      "path": "Assets/Scenes/ToolTests/FridgeScrollLab.unity",
+      "bytes": 250052,
+      "sha256": "6B26F851AAAA27121436FD3EA8C93F6AE7A41124D9BDE3E2BEB2FBBE859616D1"
+    },
+    {
+      "path": "Assets/Prefabs/Cooking/ShortCycle/FridgeCat/FridgeCat_Rig.prefab",
+      "bytes": 93520,
+      "sha256": "B06B231618930C3E74779B334836942207F8CB692BAF2128EC20290C67A64343"
+    },
+    {
+      "path": "Assets/Prefabs/Cooking/ShortCycle/GridPieces/FridgeSlot.prefab",
+      "bytes": 26730,
+      "sha256": "0B840E5942F96694B44BF27A9FC2216596495A64B788C7A6F885C296A4C60245"
+    },
+    {
+      "path": "Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset",
+      "bytes": 14731,
+      "sha256": "871EE97400C4B2DBE165C439FE1D71E782613DB77BF57AA178ADE31972904B01"
+    },
+    {
+      "path": "Assets/Resources/SpriteOutlineDefaults.asset",
+      "bytes": 747,
+      "sha256": "661A74ABC02404501D633A968ABD3EEC314C31BABF075D76B3D1E6071F13BC79"
+    },
+    {
+      "path": "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset",
+      "bytes": 8509230,
+      "sha256": "1D379A7EB64DE1871194614F83BF61AC52E0D323677048FE237E3FBD3B399CC2"
+    },
+    {
+      "path": "ProjectSettings/EditorBuildSettings.asset",
+      "bytes": 377,
+      "sha256": "79902A5DBBB014AFE6AECF4713944A4801F9565BAE10D0594392FC086853BE3C"
+    },
+    {
+      "path": "Packages/manifest.json",
+      "bytes": 1821,
+      "sha256": "AB8CFFF9D233727AB2A772916986F79A77FAA5B43280994F8214636AC8192414"
+    },
+    {
+      "path": "Packages/packages-lock.json",
+      "bytes": 14433,
+      "sha256": "AA2C61E0821A2F20CE9055DFC4B2D060C66F26E42C8E74EDC35147C508594351"
+    }
+  ]
+}

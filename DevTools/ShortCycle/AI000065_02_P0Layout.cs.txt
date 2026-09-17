@@ -1,0 +1,119 @@
+// AI-000065 P0 numerical layout. Scene overrides only; no production script or source-asset edits.
+var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+if(scene.path!="Assets/Scenes/Cooking/ShortCycle_P0P1.unity"||UnityEditor.EditorApplication.isPlaying||UnityEditor.EditorApplication.isCompiling)throw new System.Exception("Wrong editor state");
+string Path(UnityEngine.Transform t){var p=t.name;while(t.parent!=null){t=t.parent;p=t.name+"/"+p;}return p;}
+var roots=scene.GetRootGameObjects();var map=roots.SelectMany(r=>r.GetComponentsInChildren<UnityEngine.Transform>(true)).ToDictionary(t=>Path(t));
+var touched=new System.Collections.Generic.HashSet<UnityEngine.Object>();var added=new System.Collections.Generic.List<string>();
+UnityEngine.Transform T(string p){if(!map.ContainsKey(p))throw new System.Exception("Missing "+p);return map[p];}
+void Mark(UnityEngine.Object o){touched.Add(o);}
+UnityEngine.Transform Child(string p,bool tmp=false){if(map.ContainsKey(p))return T(p);var parent=T(p.Substring(0,p.LastIndexOf('/')));var go=tmp?new UnityEngine.GameObject(p.Substring(p.LastIndexOf('/')+1),typeof(UnityEngine.RectTransform)):new UnityEngine.GameObject(p.Substring(p.LastIndexOf('/')+1));UnityEditor.Undo.RegisterCreatedObjectUndo(go,"AI65 visual child");go.transform.SetParent(parent,false);map[p]=go.transform;added.Add(p);return go.transform;}
+UnityEngine.Vector3 Screen(float x,float y,float z=0){return new UnityEngine.Vector3((x/100f-.5f)*25.6f,(.5f-y/100f)*14.4f,z);}
+void WorldScale(UnityEngine.Transform t,float v){var p=t.parent==null?UnityEngine.Vector3.one:t.parent.lossyScale;t.localScale=new UnityEngine.Vector3(v/p.x,v/p.y,1);Mark(t);}
+void Point(string p,float x,float y,float angle=0){var t=T(p);t.position=Screen(x,y,t.position.z);t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);Mark(t);}
+void Fit(string p,float x,float y,float width,float height,float angle,int order){
+ var t=T(p);var sr=t.GetComponent<UnityEngine.SpriteRenderer>();if(sr==null||sr.sprite==null)throw new System.Exception("Sprite required "+p);
+ var v=sr.sprite.vertices;float minX=v.Min(q=>q.x),maxX=v.Max(q=>q.x),minY=v.Min(q=>q.y),maxY=v.Max(q=>q.y);
+ float s=width>0?25.6f*width/100/(maxX-minX):14.4f*height/100/(maxY-minY);
+ WorldScale(t,s);t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);
+ t.position=Screen(x,y,t.position.z)-t.TransformVector(new UnityEngine.Vector3((minX+maxX)/2,(minY+maxY)/2,0));
+ sr.color=UnityEngine.Color.white;sr.sortingOrder=order;Mark(sr);Mark(t);
+ var col=t.GetComponent<UnityEngine.BoxCollider2D>();if(col!=null){col.size=new UnityEngine.Vector2(maxX-minX,maxY-minY);col.offset=new UnityEngine.Vector2((minX+maxX)/2,(minY+maxY)/2);Mark(col);}
+}
+var font=UnityEditor.AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset");
+var catalog=UnityEditor.AssetDatabase.LoadAssetAtPath<CK01GeneratedDataCatalog>("Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset");
+LocTableAsset loc;string diagnostic;if(catalog==null||!catalog.TryGetLocalization(out loc,out diagnostic))throw new System.Exception("Localization catalog missing");
+var locKeys=loc.entries.ToDictionary(e=>e.key,e=>e.zh_cn);LocService.Configure(loc);
+void TextAt(string p,string key,float x,float y,float width,float height,float size,int order,float angle=0){
+ if(!string.IsNullOrEmpty(key)&&!locKeys.ContainsKey(key))throw new System.Exception("Unknown loc key "+key);
+ var t=Child(p,true);var label=t.GetComponent<TMPro.TextMeshPro>();if(label==null)label=UnityEditor.Undo.AddComponent<TMPro.TextMeshPro>(t.gameObject);
+ var textRenderer=label.renderer; // initialize TMP renderer cache before assigning a font on an inactive new child
+ if(label.font==null||p.EndsWith("Escape_Button_TUNE/Label"))label.font=font;
+ WorldScale(t,1);t.position=Screen(x,y,t.position.z);t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);
+ label.rectTransform.sizeDelta=new UnityEngine.Vector2(width,height);label.fontSize=size;label.enableAutoSizing=false;label.enableWordWrapping=true;label.alignment=TMPro.TextAlignmentOptions.Center;label.color=new UnityEngine.Color32(25,19,14,255);label.sortingOrder=order;
+ if(!string.IsNullOrEmpty(key)){var binding=t.GetComponent<EatWhat.Tools.Localization.LocalizedText>();if(binding==null)binding=UnityEditor.Undo.AddComponent<EatWhat.Tools.Localization.LocalizedText>(t.gameObject);binding.Configure(key,"");Mark(binding);}
+ Mark(label);Mark(t);
+}
+UnityEngine.Sprite Sprite(string p){var s=UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Sprite>(p);if(s==null)throw new System.Exception("Missing Sprite "+p);return s;}
+void NewSprite(string p,UnityEngine.Sprite s){var t=Child(p);var r=t.GetComponent<UnityEngine.SpriteRenderer>();if(r==null)r=UnityEditor.Undo.AddComponent<UnityEngine.SpriteRenderer>(t.gameObject);r.sprite=s;Mark(r);}
+UnityEditor.Undo.IncrementCurrentGroup();var undo=UnityEditor.Undo.GetCurrentGroup();UnityEditor.Undo.SetCurrentGroupName("AI-000065 P0 layout");
+UnityEditor.Undo.RegisterFullObjectHierarchyUndo(roots.First(r=>r.name=="Spaces"),"AI65 P0");
+UnityEditor.Undo.RegisterFullObjectHierarchyUndo(roots.First(r=>r.name=="Shared"),"AI65 P0");
+try{
+ string p0="Spaces/Phase0_RecipeBook",left=p0+"/Browse_Group/LeftPage",book="Assets/Sprites/Cooking/UI/RecipeBook/ui_caipu_",cat="Assets/Sprites/Cooking/Fridge/FridgeCat/BingXiangMao/chuju_bingxiangmao_";
+ Fit(p0+"/Book_Base",52.5f,48.5f,87,0,0,-10);Fit(p0+"/Book_Pages",53,49,84,0,0,-9);
+ Fit(left+"/TitleBackground",42.5f,12.5f,19,0,0,2);
+ TextAt(left+"/Title","rcp_tomato_egg.name",42.5f,12.5f,4.25f,1.1f,1.05f,5);
+ Fit(left+"/DishPhoto_TUNE",30.5f,34.5f,27,0,5,2);
+ var dishIcon=left+"/DishPhoto_TUNE/DishIcon_AIGC";NewSprite(dishIcon,Sprite(cat+"wenhao.png"));Fit(dishIcon,30.5f,34.5f,3.5f,0,5,3);
+ for(int i=1;i<=3;i++){var p=left+"/Tape_"+i.ToString("00");float[] xs={22,40,43.5f},ys={45,17,24},angles={-35,55,80};Fit(p,xs[i-1],ys[i-1],0,10.5f,angles[i-1],8);}
+ // One supplied StarNotes strip is reused as a decoration; four reference marks remain a manual visual comparison.
+ Fit(left+"/StarNotes_Deco",48,44,9,0,-8,7);
+ for(int i=1;i<=3;i++){var p=left+"/StickerNotes_TUNE/StickerPoint_"+i.ToString("00")+"_TUNE";var sr=T(p).GetComponent<UnityEngine.SpriteRenderer>();sr.sprite=Sprite(book+"tag.png");Mark(sr);float x=i==1?23:i==2?46:46,y=i==1?15:i==2?49:58;Fit(p,x,y,i==1?14:7,0,i==1?8:-8,4);var sg=T(p).GetComponent<UnityEngine.Rendering.SortingGroup>();sg.sortingOrder=5;Mark(sg);TextAt(p+"/NameLabel",i==1?"var_tomato_egg_std.name":i==2?"tag_flavor_yummy.name":"tag_flavor_confused.name",x,y,i==1?3.05f:1.5f,.55f,i==1?.62f:.38f,7,i==1?8:-8);WorldScale(T(p+"/BadgeLabel"),1);}
+ Fit(left+"/IngredientList/Background",24,61.5f,19,0,0,0);
+ TextAt(left+"/IngredientList/Header","ui_p0_ingredient_list_header.text",22,53.8f,3.8f,.6f,.62f,8);
+ CK01RecipeData recipe;if(!catalog.TryGetRecipe("rcp_tomato_egg",out recipe,out diagnostic))throw new System.Exception(diagnostic);
+ for(int i=1;i<=4;i++){
+  var p=left+"/IngredientList/IngredientCard_"+i.ToString("00");float x=i%2==1?17:26.5f,y=i<=2?58.5f:66;
+  Point(p,x,y);WorldScale(T(p),1);
+  var rootSr=T(p).GetComponent<UnityEngine.SpriteRenderer>();rootSr.sprite=Sprite(book+"shicai_xiaoka.png");Fit(p,x,y,8,0,0,1);
+  var sg=T(p).GetComponent<UnityEngine.Rendering.SortingGroup>();sg.sortingOrder=3;Mark(sg);
+  CK01ItemData item=null;CK01RecipeSlotData slot=null;
+  if(i<=recipe.slots.Count){if(!catalog.TryGetRecipeSlot(recipe.slots[i-1],out slot,out diagnostic))throw new System.Exception(diagnostic);
+    // Standard ingredient and count come from the resolved T1/T2 row.
+  }
+  string itemId=slot==null?null:slot.standard_ingredient;
+  string key=null;
+  if(itemId!=null&&!catalog.TryGetItem(itemId,out item,out diagnostic))throw new System.Exception(diagnostic);key=item==null?null:item.name_key;
+  var icon=T(p+"/Icon").GetComponent<UnityEngine.SpriteRenderer>();icon.sprite=item==null?null:item.icon_sprite;WorldScale(icon.transform,.27f);Point(p+"/Icon",x,y);Mark(icon);
+  var ph=T(p+"/Placeholder").GetComponent<UnityEngine.SpriteRenderer>();ph.sprite=Sprite(cat+"wenhao.png");ph.enabled=item==null||item.icon_sprite==null;WorldScale(ph.transform,.6f);Point(p+"/Placeholder",x,y);Mark(ph);
+  TextAt(p+"/NameLabel",key,x,y+4.2f,2,.48f,.45f,7);
+  if(key==null){var tmp=T(p+"/NameLabel").GetComponent<TMPro.TextMeshPro>();tmp.text="";Mark(tmp);}
+  TextAt(p+"/BadgeLabel",null,x+3,y-2,1,.4f,.32f,8);
+  var badge=T(p+"/BadgeLabel").GetComponent<TMPro.TextMeshPro>();badge.text=slot==null?"":"×"+slot.required_count;Mark(badge);
+ }
+ Fit(left+"/StartCooking_Button",43,77.5f,18,0,-3,30);
+ Fit(left+"/StartCooking_Button/LabelArt",41.5f,77.5f,8.5f,0,-3,32);
+ TextAt(left+"/StartCooking_Button/Label","ui_p0_start_cooking.text",43,90.5f,3.8f,.65f,.48f,33);
+ Fit(p0+"/CatalogTab_Button_TUNE",8,18,10,0,-4,30);
+ TextAt(p0+"/CatalogTab_Button_TUNE/Label","ui_p0_catalog_tab.text",8,18,2,.65f,.72f,31,-4);
+ Fit(p0+"/CurrentRecipeTab",9,32.5f,8,0,0,30);
+ TextAt(p0+"/CurrentRecipeTab/Label","ui_p0_current_recipe_tab.text",9,32.5f,1.8f,.55f,.65f,31);
+ Fit(left+"/Favorite_Button_AIGC",47,12,2,0,0,30);
+ TextAt(left+"/Favorite_Button_AIGC/Label","ui_p0_favorite.text",47,8,1.2f,.45f,.32f,31);
+ Fit(left+"/OpenClueBoard_Button_AIGC",20,83,7,0,0,30);
+ TextAt(left+"/OpenClueBoard_Button_AIGC/Label",null,20,83,1.65f,.55f,.42f,31);
+ Fit(left+"/StepDetail_Button",30,83,7,0,0,30);TextAt(left+"/StepDetail_Button/Label",null,30,83,1.65f,.55f,.42f,31);
+ Fit(p0+"/Escape_Button_TUNE",5,92,5,0,0,30);TextAt(p0+"/Escape_Button_TUNE/Label","ui_p0_escape.text",5,92,1.2f,.6f,.45f,31);
+ string[] recipeIds={"rcp_qingtang_noodle","rcp_tomato_egg","rcp_kaishui_cabbage"};
+ foreach(var side in new[]{"Left","Right"}){
+  var grid=T(p0+"/Catalog_Group/CatalogGrid_"+side);var layout=grid.GetComponent<GridLayout>();if(layout==null)layout=UnityEditor.Undo.AddComponent<GridLayout>(grid.gameObject);
+  var so=new UnityEditor.SerializedObject(layout);so.FindProperty("layoutOnStart").boolValue=false;so.FindProperty("columnCount").intValue=2;so.FindProperty("cellSize").vector2Value=new UnityEngine.Vector2(3.84f,4.23f);so.FindProperty("horizontalSpacing").floatValue=.512f;so.FindProperty("verticalSpacing").floatValue=1.314f;so.ApplyModifiedPropertiesWithoutUndo();
+  grid.position=Screen(side=="Left"?15:57,14.3125f);Mark(grid);layout.ArrangeChildren();Mark(layout);
+ }
+ for(int i=1;i<=8;i++){
+  var c=p0+"/Catalog_Group/CatalogGrid_"+(i<=4?"Left":"Right")+"/CatalogCard_"+i.ToString("00");float[] xs={22.5f,39.5f,22.5f,39.5f,64.5f,81.5f,64.5f,81.5f};float x=xs[i-1],y=(i==1||i==2||i==5||i==6)?29:67.5f;
+  Fit(c,x,y,15,0,0,0);var sg=T(c).GetComponent<UnityEngine.Rendering.SortingGroup>();sg.sortingOrder=5;Mark(sg);
+  CK01RecipeData r;CK01RecipeVariantData v;if(!catalog.TryGetRecipe(recipeIds[(i-1)%3],out r,out diagnostic)||!catalog.TryGetRow<CK01RecipeVariantData>("RecipeVariants",r.standard_variant_id,out v,out diagnostic))throw new System.Exception(diagnostic);
+  var card=T(c).GetComponent<EatWhat.Cooking.ShortCycle.CatalogCard>();card.ConfigureRecipe(r,v,i<=3,false);card.SetPlaceholder(i>3||v.display_sprite==null||UnityEditor.AssetDatabase.GetAssetPath(v.display_sprite).Contains("MissingSprite"));
+  Mark(T(c+"/Icon").GetComponent<UnityEngine.SpriteRenderer>());WorldScale(T(c+"/Icon"),.525f);Point(c+"/Icon",x,y-2.4f);
+  var ph=T(c+"/Placeholder").GetComponent<UnityEngine.SpriteRenderer>();ph.sprite=Sprite(cat+"wenhao.png");Fit(c+"/Placeholder",x,y-2.4f,3,0,0,2);Mark(ph);
+  Fit(c+"/NameBackground",x,y+11.5f,10.8f,0,0,3);
+  TextAt(c+"/NameLabel",r.name_key,x,y+11.5f,2.5f,.65f,.55f,7);
+  TextAt(c+"/BadgeLabel",null,x+5,y+10,1,.4f,.3f,8);
+  for(int k=1;k<=2;k++){
+   var tag=c+"/TagPoint_"+k.ToString("00");Fit(tag,x+6.6f,y+(k==1?-4:2),6,0,0,6);
+   string tagId=r.note_tags.Count>=k?r.note_tags[k-1]:null;
+   if(tagId!=null)TextAt(tag+"/Label",tagId+".name",x+6.6f,y+(k==1?-4:2),1.4f,.4f,.3f,8);
+  }
+ }
+ Fit(p0+"/Catalog_Group/CloseCatalog_Button_AIGC",94,8,5,0,0,40);TextAt(p0+"/Catalog_Group/CloseCatalog_Button_AIGC/Label",null,94,8,1.2f,.5f,.3f,41);
+ T(p0+"/Cover_Group/CoverArt_AIGC").GetComponent<UnityEngine.SpriteRenderer>().sprite=Sprite(book+"dibu.png");
+ Fit(p0+"/Cover_Group/CoverArt_AIGC",52.5f,48.5f,84,0,0,10);
+ T(p0+"/Cover_Group/CoverArt_AIGC").GetComponent<UnityEngine.SpriteRenderer>().color=new UnityEngine.Color(.66f,.48f,.32f,1);
+ Fit(p0+"/Cover_Group/OpenCover_Button_AIGC",52.5f,65,16,0,0,30);TextAt(p0+"/Cover_Group/OpenCover_Button_AIGC/Label",null,52.5f,65,3.7f,.7f,.7f,31);
+ TextAt(p0+"/Cover_Group/CoverTitle","rcp_tomato_egg.name",52.5f,35,12,2,1.6f,20);
+ Fit("Shared/HoverCard/Backdrop_AIGC",65,35,20,0,0,20);
+ foreach(var o in touched){UnityEditor.EditorUtility.SetDirty(o);if(UnityEditor.PrefabUtility.IsPartOfPrefabInstance(o))UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(o);}
+ UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);UnityEditor.Undo.CollapseUndoOperations(undo);
+ return Newtonsoft.Json.JsonConvert.SerializeObject(new{success=true,saved=false,added,touched=touched.Count});
+}catch{UnityEditor.Undo.RevertAllDownToGroup(undo);throw;}

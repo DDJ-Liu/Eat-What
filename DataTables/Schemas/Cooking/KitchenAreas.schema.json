@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "tableName": "KitchenAreas",
+  "csvPath": "Cooking/KitchenAreas.csv",
+  "targetType": "KitchenAreaData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/KitchenAreas",
+  "assetNameField": "assetName",
+  "primaryKeyField": "id",
+  "contractExemptions": {
+    "primaryKeyPattern": "kebab-case",
+    "listSeparator": "|"
+  },
+  "columns": [
+    { "name": "id", "csvColumn": "id", "type": "id", "required": true, "pattern": "^kitchen-[a-z0-9-]+$", "writeToAsset": false },
+    { "name": "assetName", "csvColumn": "assetName", "type": "string", "required": true, "unique": true, "writeToAsset": false },
+    { "name": "areaName", "csvColumn": "areaName", "type": "string", "required": true },
+    { "name": "containerTags", "csvColumn": "containerTags", "type": "list<enum>", "enumType": "ContainerTag", "separator": "|", "required": true, "minItems": 1 },
+    { "name": "core_facility", "csvColumn": "core_facility", "type": "ref", "required": true },
+    { "name": "preset_tools", "csvColumn": "preset_tools", "type": "list<ref>", "separator": "|", "required": false },
+    { "name": "allowed_actions", "csvColumn": "allowed_actions", "type": "list<ref>", "separator": "|", "required": true, "minItems": 1 },
+    { "name": "allowed_carriers", "csvColumn": "allowed_carriers", "type": "list<ref>", "separator": "|", "required": true, "minItems": 1 },
+    { "name": "is_unlocked_default", "csvColumn": "is_unlocked_default", "type": "bool", "required": true, "defaultValue": "true" },
+    { "name": "unlock_condition", "csvColumn": "unlock_condition", "type": "string", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "core_facility", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id" },
+    { "field": "preset_tools", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id", "isList": true, "separator": "|" },
+    { "field": "allowed_actions", "targetSchema": "Cooking/ProcessActions.schema.json", "targetField": "action_id", "isList": true, "separator": "|" },
+    { "field": "allowed_carriers", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id", "isList": true, "separator": "|" }
+  ],
+  "rules": [
+    { "kind": "kitchen_area_facility", "field": "core_facility", "message": "must reference a facility tool" },
+    { "kind": "kitchen_area_constraints", "field": "allowed_actions", "otherField": "allowed_carriers", "message": "must use valid actions and carrier/facility tools and include core_facility" }
+  ]
+}

@@ -1,0 +1,48 @@
+// AI-000065: authorized structural and sprite configuration on the existing functional tree.
+// User authority is transcribed by the control task in AI-000065. No source Prefab/asset/YAML write.
+var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+if (scene.path != "Assets/Scenes/Cooking/ShortCycle_P0P1.unity" || scene.isDirty || UnityEditor.EditorApplication.isPlaying || UnityEditor.EditorApplication.isCompiling) throw new System.Exception("Unexpected initial scene state");
+var roots = scene.GetRootGameObjects();
+string Path(UnityEngine.Transform t) { var n=t.name; while(t.parent!=null){t=t.parent;n=t.name+"/"+n;} return n; }
+var lookup = roots.SelectMany(r=>r.GetComponentsInChildren<UnityEngine.Transform>(true)).ToDictionary(t=>Path(t));
+var before = lookup.Values.ToDictionary(t=>t,t=>t.gameObject.activeSelf);
+var changes = new System.Collections.Generic.List<string>();
+UnityEngine.Transform Get(string p){ if(!lookup.ContainsKey(p)) throw new System.Exception("Missing expected "+p); return lookup[p]; }
+var p0="Spaces/Phase0_RecipeBook";
+var left=p0+"/Browse_Group/LeftPage";
+var rig="Spaces/Phase1_Kitchen/FridgeCat_Group/CatRig";
+var book="Assets/Sprites/Cooking/UI/RecipeBook/ui_caipu_";
+var cat="Assets/Sprites/Cooking/Fridge/FridgeCat/BingXiangMao/chuju_bingxiangmao_";
+var assignments = new System.Collections.Generic.Dictionary<string,string>{
+{p0+"/Book_Base",book+"dibu.png"},{p0+"/Book_Pages",book+"dibushangmian.png"},
+{left+"/TitleBackground",book+"kuang1.png"},{left+"/IngredientList/Background",book+"kuang2.png"},
+{left+"/DishPhoto_TUNE",book+"zhaopian.png"},{left+"/StickerNotes_TUNE/StickerPoint_01_TUNE",book+"tag.png"},
+{left+"/StartCooking_Button",book+"kaishizuofan1.png"},{left+"/StartCooking_Button/LabelArt",book+"kaishizuofan.png"},
+{p0+"/CatalogTab_Button_TUNE",book+"mulu_qian.png"},{left+"/Favorite_Button_AIGC",book+"shicai_xingxing.png"},
+{left+"/StarNotes_Deco",book+"shicai_xingxing2.png"},{p0+"/CurrentRecipeTab",book+"dibushangmian1.png"},
+{"Shared/HoverCard/Backdrop_AIGC",book+"shicai_xiaoka.png"},
+{rig+"/Arm_Raised/BubbleAnchor_01_TUNE/BubbleVisual",cat+"qipao_ganma.png"}};
+var newPaths=new System.Collections.Generic.List<string>{
+left+"/IngredientList/Background",left+"/StartCooking_Button/LabelArt",left+"/StarNotes_Deco",p0+"/CurrentRecipeTab",
+rig+"/Arm_Raised/BubbleAnchor_01_TUNE/BubbleVisual",rig+"/Arm_Raised/BubbleAnchor_02_TUNE/BubbleVisual_AIGC"};
+for(int i=1;i<=3;i++){ var p=left+"/Tape_"+i.ToString("00");newPaths.Add(p);assignments[p]=book+"toumingjiao.png";p="Shared/ClueBoard_Group/Deco/Doodle_"+i.ToString("00");newPaths.Add(p);assignments[p]="Assets/Sprites/Cooking/Fridge/FridgeCat/Doodles/chuju_bingxiangmao_tuya"+i+".png";}
+for(int i=1;i<=8;i++){var c=p0+"/Catalog_Group/CatalogGrid_"+(i<=4?"Left":"Right")+"/CatalogCard_"+i.ToString("00");assignments[c]=book+"pailide.png";foreach(var name in new[]{"NameBackground","TagPoint_01","TagPoint_02"}){var p=c+"/"+name;newPaths.Add(p);assignments[p]=book+(name=="NameBackground"?"kuang3":"caipu_xiaoqian")+".png";}}
+var sprites=assignments.Values.Distinct().ToDictionary(p=>p,p=>UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Sprite>(p));
+if(sprites.Values.Any(v=>v==null)) throw new System.Exception("Missing required source Sprite");
+foreach(var p in newPaths) Get(p.Substring(0,p.LastIndexOf('/')));
+foreach(var p in assignments.Keys.Where(p=>!newPaths.Contains(p))) if(Get(p).GetComponent<UnityEngine.SpriteRenderer>()==null)throw new System.Exception("Missing existing SpriteRenderer "+p);
+var placeholder=Get(p0+"/Cover_Group/OpenCover_Button_AIGC").GetComponent<UnityEngine.SpriteRenderer>().sprite;
+UnityEditor.Undo.IncrementCurrentGroup();var group=UnityEditor.Undo.GetCurrentGroup();UnityEditor.Undo.SetCurrentGroupName("AI-000065 approved visual carriers");
+UnityEditor.Undo.RegisterFullObjectHierarchyUndo(roots.First(r=>r.name=="Spaces"),"AI-000065 prewrite");
+UnityEditor.Undo.RegisterFullObjectHierarchyUndo(roots.First(r=>r.name=="Shared"),"AI-000065 prewrite");
+try{
+ foreach(var p in newPaths){if(!lookup.ContainsKey(p)){var go=new UnityEngine.GameObject(p.Substring(p.LastIndexOf('/')+1));UnityEditor.Undo.RegisterCreatedObjectUndo(go,"AI-000065 visual");go.transform.SetParent(Get(p.Substring(0,p.LastIndexOf('/'))),false);lookup[p]=go.transform;changes.Add("NEW "+p);}}
+ foreach(var p in newPaths.Concat(new[]{p0+"/Cover_Group/CoverArt_AIGC"})){var t=Get(p);if(t.GetComponent<UnityEngine.SpriteRenderer>()==null){UnityEditor.Undo.AddComponent<UnityEngine.SpriteRenderer>(t.gameObject);changes.Add("ADD SpriteRenderer "+p);}}
+ foreach(var pair in assignments){var sr=Get(pair.Key).GetComponent<UnityEngine.SpriteRenderer>();if(sr.sprite!=sprites[pair.Value]){sr.sprite=sprites[pair.Value];UnityEditor.EditorUtility.SetDirty(sr);UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(sr);changes.Add("SPRITE "+pair.Key+" -> "+pair.Value);}}
+ foreach(var p in new[]{p0+"/Cover_Group/CoverArt_AIGC",rig+"/Arm_Raised/BubbleAnchor_02_TUNE/BubbleVisual_AIGC"}){var sr=Get(p).GetComponent<UnityEngine.SpriteRenderer>();sr.sprite=placeholder;sr.color=new UnityEngine.Color(.78f,.72f,.62f,1);}
+ foreach(var p in newPaths){var sr=Get(p).GetComponent<UnityEngine.SpriteRenderer>();if(!p.EndsWith("_AIGC"))sr.color=UnityEngine.Color.white;sr.sortingLayerName="Default";sr.sortingOrder=p.Contains("NameBackground")?3:p.Contains("TagPoint")?6:20;UnityEditor.EditorUtility.SetDirty(sr);UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(sr);}
+ if(before.Any(k=>k.Key.gameObject.activeSelf!=k.Value))throw new System.Exception("Existing activeSelf changed");
+ UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+ UnityEditor.Undo.CollapseUndoOperations(group);
+ return Newtonsoft.Json.JsonConvert.SerializeObject(new{success=true,saved=false,dirty=scene.isDirty,changes});
+}catch{UnityEditor.Undo.RevertAllDownToGroup(group);throw;}

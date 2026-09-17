@@ -1,0 +1,533 @@
+{
+  "schemaVersion": 2,
+  "auditId": "AI-000057/art-sync-20260904-011938881.json",
+  "sourcePath": "E:\\EatWhat\\美术资产",
+  "complete": true,
+  "stablePasses": null,
+  "capturedAt": "2026-09-03T17:19:38.8678260Z",
+  "baselineProvenance": {
+    "report": ".art-asset-sync/reports/art-sync-20260904-011938881.json",
+    "state": ".art-asset-sync/state.json",
+    "reason": "同期 state 时间与报告相差 14ms；报告 MetadataOnlyFiles=86、HashCheckedFiles=172，与86条 Source/DestinationHash 清单一致。只固化既有记录，不重新扫描或臆造同期尺寸。"
+  },
+  "files": [
+    {
+      "path": "角色/厨具/冰箱猫/【命名示例】chuju_bingxiangmao_zhutu（角色_厨具_冰箱猫_结构拆分）",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "lastWriteUtc": "2026-08-14T10:01:01.4588305Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti.png",
+      "sha256": "5B84715308762E0CC179F57894D45855C5EF221283BAB719A44C163DE968BC22",
+      "bytes": 90138,
+      "lastWriteUtc": "2026-09-02T09:41:52.0044271Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti2.png",
+      "sha256": "29431A1746C2D2883CD6D79E12EFF9BD5821CA9CC74BA45C2257B8B96A73C8D3",
+      "bytes": 647065,
+      "lastWriteUtc": "2026-09-03T12:24:48.5925223Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti3.png",
+      "sha256": "D64F33C228CD46FB266BF2BEFF8FC6C596137CD023338DEDA417DED1A2B5520A",
+      "bytes": 33560,
+      "lastWriteUtc": "2026-09-02T10:58:05.6012252Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti4.png",
+      "sha256": "EE5187C9F470637F53B4E9FAF59EE3156392CC0D3667A6B2915B2D3ED002DBD6",
+      "bytes": 12007,
+      "lastWriteUtc": "2026-09-02T09:58:35.9091203Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti5.png",
+      "sha256": "5D99C4FF56133E11F6D4956704E7B882ACF8767C1F100480881C4C39A91A7F17",
+      "bytes": 12226,
+      "lastWriteUtc": "2026-09-02T09:59:32.8597722Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti6.png",
+      "sha256": "B2CAFD26DA80C886AA339654488D165A00A2186268261E7550C8347138047C19",
+      "bytes": 44502,
+      "lastWriteUtc": "2026-09-02T10:57:42.2099434Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shenti7.png",
+      "sha256": "3B46600371AD2ED63B83D75214F6134914AF1D1D9CFF7C5B2A561FB7FDCC3276",
+      "bytes": 56862,
+      "lastWriteUtc": "2026-09-02T10:57:20.7138222Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shentiyouyan.png",
+      "sha256": "97D4170403B9EEBB6E7BF07B6D682B4F620D586FF3BF2384CAEA66083B5587C9",
+      "bytes": 15908,
+      "lastWriteUtc": "2026-09-02T10:41:40.3237377Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shentiyouyanliang.png",
+      "sha256": "B33BA6D74040389CA041512AD5E1563A10AE8E726ACBA98548476FCE62A5C7A0",
+      "bytes": 947,
+      "lastWriteUtc": "2026-09-02T10:43:03.3162066Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shentiyouyantongkong.png",
+      "sha256": "22C91E061990BC49EC9D228C79C3093A3F6A8A8C74916E8732EBAC95885FD68D",
+      "bytes": 3387,
+      "lastWriteUtc": "2026-09-02T10:43:28.3862635Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shentizuoyan.png",
+      "sha256": "55B2EFBDA0DBD63546CDCC61CED5D826A27BC0FCFB93B8E4FFE677ADFD993C7D",
+      "bytes": 17364,
+      "lastWriteUtc": "2026-09-02T10:02:53.9608366Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shentizuoyanliang.png",
+      "sha256": "E6D46D199164A74C0086D2E2EF47BD9222004441194F2DE29835E82398AF8956",
+      "bytes": 1039,
+      "lastWriteUtc": "2026-09-02T10:39:56.3910155Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_shentizuoyantongkong.png",
+      "sha256": "DAFAA33DFCB2FF255D204AA4A3406F32DA6B98FB4071F6085471C998A862B53A",
+      "bytes": 3488,
+      "lastWriteUtc": "2026-09-02T10:40:22.0028686Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/冰箱猫拆分/chuju_bingxiangmao_yanguang.png",
+      "sha256": "E13C7EB128802DBDD6CC76F832D740E612B456B62484E62C66C209034298C86B",
+      "bytes": 82088,
+      "lastWriteUtc": "2026-08-18T08:01:25.1752748Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_ban.png",
+      "sha256": "37919902849D84CA2EE2246BB8352A86700716E421CDB335AD9117B926601693",
+      "bytes": 1182339,
+      "lastWriteUtc": "2026-09-03T12:36:24.7478453Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_ban1.png",
+      "sha256": "3868E440982A8D462C69B16E3A4F2985A6C9CD796D02415C7305D67B8A87E73D",
+      "bytes": 55086,
+      "lastWriteUtc": "2026-09-03T12:36:18.2989067Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_ban2.png",
+      "sha256": "BA1CAA08F2687AE5FD926EDD24EB36AFF4D9A6722648F3300D857720CA5122C2",
+      "bytes": 430239,
+      "lastWriteUtc": "2026-08-18T07:41:22.6912833Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_biaoqian.png",
+      "sha256": "670FBF6B387D071D04A7F1CDD51CB03963810C835D1C8DF0ADA4510A9D0085A8",
+      "bytes": 6607,
+      "lastWriteUtc": "2026-08-18T07:44:14.9271683Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_biaoqian3.png",
+      "sha256": "470A5021A687A8EDE36D68714CF9250BB67F8F7F07C2AABF053636590AADD9B5",
+      "bytes": 3908,
+      "lastWriteUtc": "2026-09-02T12:16:27.1610103Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_biaoqian4.png",
+      "sha256": "CB94116C15CBF45BDA8B7FFEC5D1B9E91283785A2487F477108637A054B7AAD2",
+      "bytes": 12620,
+      "lastWriteUtc": "2026-09-02T12:16:44.0481757Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_biaoyan2.png",
+      "sha256": "303A81C9B5E380F79BC00537B4FB26E6DFAC67AD1D881F9339FE49BD0A2FC1BC",
+      "bytes": 5281,
+      "lastWriteUtc": "2026-08-18T07:58:10.2713550Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_caidao.png",
+      "sha256": "7BF58187A1653E89529C2455665CC9D0B3E178862F2453B8431834E8BC71718A",
+      "bytes": 26899,
+      "lastWriteUtc": "2026-08-18T07:59:04.3002785Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_duigou.png",
+      "sha256": "EB273516DA409CC6ED4F2D4F92ECF4372606E5B146E1BC7D121B04F12987F6FE",
+      "bytes": 7311,
+      "lastWriteUtc": "2026-09-02T09:15:32.0360952Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_jiedian.png",
+      "sha256": "90ECC925BE9C2C1FB776095C29716B1868F3B2E206EFE12DBD44ECEACC6C5293",
+      "bytes": 448,
+      "lastWriteUtc": "2026-09-02T08:41:33.1213280Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_kaishigou.png",
+      "sha256": "F099352B0610E6B5C4B6B24AEF9896FDD13A25E96A8B07876F69DA4BE73695E7",
+      "bytes": 363580,
+      "lastWriteUtc": "2026-08-19T10:01:26.4595909Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_qianbi.png",
+      "sha256": "B98025D8A9369688533B77C24B077702BB9CDFEA65398618B61FF26244778BA3",
+      "bytes": 52224,
+      "lastWriteUtc": "2026-08-18T07:59:42.9500466Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_qipao_gan  _ganma.png",
+      "sha256": "DD960D67490E1A89F551B79C4E9B4CCEE74630CEF25CB5A54C2BC56E2575C42A",
+      "bytes": 10850,
+      "lastWriteUtc": "2026-09-02T12:33:46.9713421Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_toumingjiaodai.png",
+      "sha256": "856598ECAEB2BB8ACBD004A892A6499AC5AB8566780EE55464CC186176CADA25",
+      "bytes": 254882,
+      "lastWriteUtc": "2026-08-18T07:58:48.9403604Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_tuopan.png",
+      "sha256": "258D45E62EDA5090BCBBBE2D1AE1743337FCD3691625F909404ECC956CD50BDB",
+      "bytes": 1763169,
+      "lastWriteUtc": "2026-08-18T07:58:30.6874905Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_wenhao.png",
+      "sha256": "185D506349CBC58F349F88C78290D257356FC1C30085EAFE79A0204BAFE43B7F",
+      "bytes": 3423,
+      "lastWriteUtc": "2026-09-02T09:13:16.3386707Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_xian1.png",
+      "sha256": "BF1ADDAD7097ABE7AD498995F81C9BDC3C8CAEA0C28988A9029FFB6DB1F990F2",
+      "bytes": 11224,
+      "lastWriteUtc": "2026-08-18T08:00:18.9899218Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_xian2.png",
+      "sha256": "812F1BE09454570BE1924749D7B8914B8B97530ED20BBACA1720FC8A075087D8",
+      "bytes": 28011,
+      "lastWriteUtc": "2026-08-18T08:00:36.9778256Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_xian3.png",
+      "sha256": "FFAC2D932F1FB2E2EDB316F55308B21D0A994CF9DBEFE183CA9E2BE83344B29A",
+      "bytes": 23143,
+      "lastWriteUtc": "2026-08-18T08:00:57.2159769Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_xian4.png",
+      "sha256": "4EC6CFBDA9E95BBEB33D39DDC1DB9A33B1935F8E05CF02CD3828AD5B07400EF8",
+      "bytes": 20615,
+      "lastWriteUtc": "2026-08-18T08:01:10.2069593Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_xian6.png",
+      "sha256": "48D1A2AD225E3C6E8EBA32DB1C0647A1D59E5F3498A5EC2EFFDC1B8DAD51BC5B",
+      "bytes": 8906,
+      "lastWriteUtc": "2026-09-02T08:40:28.0893931Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_yanguang.png",
+      "sha256": "E13C7EB128802DBDD6CC76F832D740E612B456B62484E62C66C209034298C86B",
+      "bytes": 82088,
+      "lastWriteUtc": "2026-08-18T08:01:25.1752748Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_zhi.png",
+      "sha256": "331F1CB1382695EF4B2692463F0DE5D262F0162435DD0D92D896DEB68F8C361A",
+      "bytes": 8809,
+      "lastWriteUtc": "2026-09-03T12:36:32.6295355Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_zhifanhui.png",
+      "sha256": "999793FA54E5C891D1B1D7435B0724E504A273DCD40BDD67F91AA1EAC03B8E73",
+      "bytes": 266911,
+      "lastWriteUtc": "2026-08-18T09:48:29.5078994Z"
+    },
+    {
+      "path": "角色/厨具/冰箱猫/chuju_bingxiangmao_zhutu.png",
+      "sha256": "9703D0B5EE7BAA90EC9335EFCEB5374356BF79537346B9CF5E907176373B6E8B",
+      "bytes": 525714,
+      "lastWriteUtc": "2026-08-18T06:31:25.7126790Z"
+    },
+    {
+      "path": "视觉参考/4.png",
+      "sha256": "E11197F529B667226F7D336CB69532C9B992749FBD24381C8B7C97033995F9F8",
+      "bytes": 1485055,
+      "lastWriteUtc": "2026-08-31T07:24:06.6039980Z"
+    },
+    {
+      "path": "视觉参考/5.png",
+      "sha256": "E95631688C405C877225899A1B09723858128254FE60FA0A53CF3D9E461A25D4",
+      "bytes": 1378903,
+      "lastWriteUtc": "2026-08-31T07:24:11.9963935Z"
+    },
+    {
+      "path": "视觉参考/6.png",
+      "sha256": "5557CE0CC5D88FF6F982881CC0360BB1F3CF78B88FB1B60AE8DE8AAE717ECA66",
+      "bytes": 1150225,
+      "lastWriteUtc": "2026-08-31T07:24:18.4870792Z"
+    },
+    {
+      "path": "视觉参考/备菜界面-P1.png",
+      "sha256": "4ADB826FBE05402CE8B74CEE7F139CC24A3C1221AB17B0AA0AC3AA45A7EBFFE4",
+      "bytes": 2418087,
+      "lastWriteUtc": "2026-09-03T10:01:21.4392575Z"
+    },
+    {
+      "path": "视觉参考/选菜界面-P0前.png",
+      "sha256": "FD5CB96D06210F17808A24EDA0F3947D9F04E0E66CB05CA78083CCD81B908A0C",
+      "bytes": 509419,
+      "lastWriteUtc": "2026-08-31T07:24:24.9507098Z"
+    },
+    {
+      "path": "视觉参考/做菜界面-P2场景内.png",
+      "sha256": "EEC08F11A4E94805C2D25E50957CF91D1FB0CCC1EBA80C37DB3C416AEEC6610B",
+      "bytes": 2740719,
+      "lastWriteUtc": "2026-08-31T07:09:21.0135535Z"
+    },
+    {
+      "path": "视觉参考/P0-P1 左-食谱详细信息 右-菜单页.png",
+      "sha256": "9E8F93C72660FF45BAFCA3846BCDB6D8D5B50A6728568FF7B15614C5E641411F",
+      "bytes": 2652981,
+      "lastWriteUtc": "2026-08-31T07:23:56.3530739Z"
+    },
+    {
+      "path": "UIUX/冰箱/【命名示例】ui_bingxiang_jiegou（ui_冰箱_结构拆分）",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "lastWriteUtc": "2026-08-14T10:02:36.1972088Z"
+    },
+    {
+      "path": "UIUX/菜品/【命名示例】ui_caipin_fanqiechaodan（ui_菜品_番茄炒蛋）",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "lastWriteUtc": "2026-08-14T10:04:56.9540971Z"
+    },
+    {
+      "path": "UIUX/菜品/ui_caipin_danhuangpaitudou.png",
+      "sha256": "D2EF83BD2E9E783A6871AC93EFFFBD19D6B43FE0EC501FF32C4300566209F206",
+      "bytes": 159385,
+      "lastWriteUtc": "2026-08-17T05:51:52.0129811Z"
+    },
+    {
+      "path": "UIUX/菜谱/chuju_bingxiangmao_tuya1.png",
+      "sha256": "E3C237F0FA85261D41BE7CD90D68EB7C109DC2967AB9C56132084A7589B4856F",
+      "bytes": 20442,
+      "lastWriteUtc": "2026-09-03T08:24:34.4778891Z"
+    },
+    {
+      "path": "UIUX/菜谱/chuju_bingxiangmao_tuya2.png",
+      "sha256": "326AA56C1E189736A011E1A7535F11246FB09FE3322587C6E19C8E29C9103281",
+      "bytes": 19959,
+      "lastWriteUtc": "2026-09-03T08:25:02.4471957Z"
+    },
+    {
+      "path": "UIUX/菜谱/chuju_bingxiangmao_tuya3.png",
+      "sha256": "40339D60E26E4E07E51248BAD3D9989F269EB03CAF43DC261170DAAC6049C16E",
+      "bytes": 26637,
+      "lastWriteUtc": "2026-09-03T08:25:24.2802995Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipin_danhuangpaitudou.png",
+      "sha256": "0BB7A986C00508A171002338EBD6313E70F31DEEB9B207DA9651BEE2288127A3",
+      "bytes": 169213,
+      "lastWriteUtc": "2026-09-03T06:15:05.5828524Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_caipu_xiaoqian.png",
+      "sha256": "D10142ABE6CE90A21698972BF7A43EFD463B25B6BF23F9E3AB820B9E07CB0776",
+      "bytes": 16098,
+      "lastWriteUtc": "2026-09-03T04:45:17.1339994Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibu.png",
+      "sha256": "F52EB7AC7F686372151ADCB9D254121A49CE3FC83017A900ED9558D427A1E5F3",
+      "bytes": 2220424,
+      "lastWriteUtc": "2026-08-19T10:40:44.1482658Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibushangmian.png",
+      "sha256": "1F8834ECB5FFC1C1777DB10C3D912FD9B7FB49B3E464AC5A656805313CACFAD4",
+      "bytes": 2399947,
+      "lastWriteUtc": "2026-09-03T06:24:37.3623908Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibushangmian1.png",
+      "sha256": "688165365BF010BD57E441D556278F8579AE881E0DBC7D21A16727F3250A3A13",
+      "bytes": 10715,
+      "lastWriteUtc": "2026-09-03T04:46:20.2473984Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibushangmianyou.png",
+      "sha256": "C96DED75AF2EBCBE8E36BE3BEE9FA0477554A471E8B8F4D8212D2778962D7219",
+      "bytes": 984240,
+      "lastWriteUtc": "2026-09-03T04:40:25.3408777Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibushangmianyou1.png",
+      "sha256": "369646B262B4E6E6EF60AF610E431E703DA9789CAF5940C9D19FA20A98307C0E",
+      "bytes": 1108080,
+      "lastWriteUtc": "2026-09-03T06:05:44.7147077Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibushangmianzuo.png",
+      "sha256": "8B8A62CC97FCC1B67AD75D861FD83CDEA962670E8A6B0FD5A8DD386E37754C3A",
+      "bytes": 1076390,
+      "lastWriteUtc": "2026-09-03T04:40:05.3915729Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_dibushangmianzuo1.png",
+      "sha256": "32AB5BFE78D0C0DB2190303D88CAC229958A8EA7FBB787818AF4464A4603EA05",
+      "bytes": 1212966,
+      "lastWriteUtc": "2026-09-03T06:05:23.2836979Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_kaishizuofan + kaishizuofan1.png",
+      "sha256": "A963E2744C6E6EA779CD7CBBBD4BCE21D3D348D3BED3EC662087FC36CF0BFD61",
+      "bytes": 205372,
+      "lastWriteUtc": "2026-08-19T10:03:01.7080416Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_kaishizuofan + kaishizuofan2.png",
+      "sha256": "B79373579F6854C1C6C0C32972B5BC10E8CDB05DCAC3229F384073EA6EA3EC05",
+      "bytes": 226316,
+      "lastWriteUtc": "2026-08-17T09:43:18.4427061Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_kuang123.png",
+      "sha256": "5F93E66B6BD98BBCBC44A8FD868F384A7393CA10099EED807883AABE6CA7DCB9",
+      "bytes": 15273,
+      "lastWriteUtc": "2026-09-03T12:33:47.4500372Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_mulu_qian.png",
+      "sha256": "D1C88099CA601E2C6CA5CE63F92EBB01BF40E330B10C613F052133F398ACF291",
+      "bytes": 44185,
+      "lastWriteUtc": "2026-09-03T04:45:00.8152583Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_pailide.png",
+      "sha256": "0127A59E73F4BDA179DCA03CB37F3C3BC5E141323EB20BA05948332038218969",
+      "bytes": 15398,
+      "lastWriteUtc": "2026-09-03T12:39:35.2857213Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_shicai_xiaoka.png",
+      "sha256": "735F0CADBDE43165F0238B51BA4448D9DBC7B7A03659E4BFEFCF762EB17CA30B",
+      "bytes": 23868,
+      "lastWriteUtc": "2026-09-03T04:17:23.5028053Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_shicai_xingxing.png",
+      "sha256": "1F0FEAB0D3676F490AE69721898EF24CC183CE83B108B912669DEAED4AEAE2B4",
+      "bytes": 2346,
+      "lastWriteUtc": "2026-09-03T06:32:52.0226576Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_shicai_xingxing2.png",
+      "sha256": "B60B259CDED37D912F8A50EFFC71426D25EF25DFD74C04D2F3C6BF5BC661BFE8",
+      "bytes": 11338,
+      "lastWriteUtc": "2026-09-03T04:39:02.9155029Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_tag.png",
+      "sha256": "024B3F70B8D7DA0D25835A41DABE9887F8E9D89EF76202357C511430E28C8024",
+      "bytes": 11029,
+      "lastWriteUtc": "2026-09-03T04:12:12.3265488Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_toumingjiao.png",
+      "sha256": "F0332FC7A5F6CBAA0084AF889027E19BC8F08B954EB68FC1AA47E82239532FE1",
+      "bytes": 9835,
+      "lastWriteUtc": "2026-09-03T04:16:17.7448831Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_zhaopian.png",
+      "sha256": "78BFD36DBEF9F43436097DAA413F7F83E412A35CF044D21F84DF51E90423DDD5",
+      "bytes": 28925,
+      "lastWriteUtc": "2026-09-03T04:00:22.5749497Z"
+    },
+    {
+      "path": "UIUX/菜谱/ui_caipu_zhaopian1.png",
+      "sha256": "158F34A5860E98179FD2C240A6BBE3AB916AF9B5AF2AF854A9B849038C7D19DE",
+      "bytes": 128021,
+      "lastWriteUtc": "2026-09-03T06:14:19.1858661Z"
+    },
+    {
+      "path": "UIUX/食材/【命名示例】ui_shicai_jidan（ui_食材_鸡蛋）",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0,
+      "lastWriteUtc": "2026-08-14T10:03:20.9009663Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_gaotang.png",
+      "sha256": "E2CDE4B4BA0ADE4C797A1DA81625188A5FBD52E609D6586E1E003E44C3FD63B6",
+      "bytes": 175467,
+      "lastWriteUtc": "2026-08-17T05:50:09.0662900Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_guamian.png",
+      "sha256": "EB8CFAAA325EF2521A9124CE3192438D8EF2F2549B45A55ACEB9F69C0F45DCDF",
+      "bytes": 101286,
+      "lastWriteUtc": "2026-08-17T05:50:16.4467149Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_huotuichang.png",
+      "sha256": "F84954E3421FF99C80BD22FD1DEA461903982E3BA46EB60CF8A13E4B1DF1CB54",
+      "bytes": 53123,
+      "lastWriteUtc": "2026-08-17T05:50:29.2873669Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_jidan.png",
+      "sha256": "0F39FC9A4F553F6686655D7E0DBF5D082BEE91C4E5BC5BD8CAA859619B673264",
+      "bytes": 44157,
+      "lastWriteUtc": "2026-08-17T05:50:36.7680685Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_mixian.png",
+      "sha256": "3F44E571622BBA5CF74B5525997FD581E3E09527280CDD6C96AD123BA9F22D86",
+      "bytes": 91780,
+      "lastWriteUtc": "2026-08-17T05:50:45.0562217Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_naichafen.png",
+      "sha256": "289034F440B62028051E88116F2E727087EFA9F4A65C18CD3A3972A256E91458",
+      "bytes": 180516,
+      "lastWriteUtc": "2026-08-17T05:50:51.7510850Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_nongtangbao.png",
+      "sha256": "61E963A05EB5AD228F2522F045355D65C068038510DA4C5A364407C4D04DE6FC",
+      "bytes": 178737,
+      "lastWriteUtc": "2026-08-17T05:50:59.3147413Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_paomian.png",
+      "sha256": "466D6D1700EB6D7C8EF539BE9B17664E7C72B99CDA6D1E4CAE7AEFFFF1B4D12C",
+      "bytes": 134840,
+      "lastWriteUtc": "2026-08-17T05:51:05.8676430Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_paomiantiaoliao.png",
+      "sha256": "24A1BCEECCDF785F38BA7FD7541F11BB104F4A7229663FAC57851DBFBD365809",
+      "bytes": 149952,
+      "lastWriteUtc": "2026-08-17T05:51:12.3112901Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_pidan.png",
+      "sha256": "76531B612AA33CE590E3E23FBF0CCC27ED429EE8DF28361D50E8DFDE13BDABF3",
+      "bytes": 54172,
+      "lastWriteUtc": "2026-08-17T05:51:19.1259597Z"
+    },
+    {
+      "path": "UIUX/食材/ui_shicai_zhangyujiao.png",
+      "sha256": "922F06AF58E514022B4FBEDC2DD89AC6A9DDC488BAC4EBBD57978073687D9594",
+      "bytes": 130091,
+      "lastWriteUtc": "2026-08-17T05:51:28.8678211Z"
+    }
+  ],
+  "pendingItems": [],
+  "redFiles": []
+}

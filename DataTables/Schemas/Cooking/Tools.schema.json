@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Tools",
+  "csvPath": "Cooking/Tools.csv",
+  "targetType": "CK01ToolData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/Tools",
+  "assetNameField": "tool_id",
+  "primaryKeyField": "tool_id",
+  "columns": [
+    { "name": "tool_id", "csvColumn": "tool_id", "type": "id", "required": true, "pattern": "^tool_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "name_key", "csvColumn": "name_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "tool_kind", "csvColumn": "tool_kind", "type": "enum", "enumValues": ["handheld", "carrier", "facility", "hand"], "required": true },
+    { "name": "supported_actions", "csvColumn": "supported_actions", "type": "list<ref>", "separator": ";", "required": false, "requiredWhenField": "tool_kind", "requiredWhenValues": ["handheld", "hand"], "minItems": 1 },
+    { "name": "mapped_dish_category", "csvColumn": "mapped_dish_category", "type": "ref", "required": false },
+    { "name": "icon_sprite", "csvColumn": "icon_sprite", "type": "sprite", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "supported_actions", "targetSchema": "Cooking/ProcessActions.schema.json", "targetField": "action_id", "isList": true, "separator": ";" },
+    { "field": "mapped_dish_category", "targetSchema": "Cooking/Tags.schema.json", "targetField": "tag_id" }
+  ],
+  "rules": [
+    { "kind": "tool_actions_and_category", "field": "supported_actions", "message": "handheld/hand tools need actions and mapped categories must be dish tags" }
+  ]
+}

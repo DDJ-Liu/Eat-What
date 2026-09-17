@@ -1,0 +1,215 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 601bdef94143601498214268a68f16a7, type: 3}
+  m_Name: Localization
+  m_EditorClassIdentifier: 
+  entries:
+  - key: act_boil.name
+    zh_cn: "\u716E"
+  - key: act_cut.name
+    zh_cn: "\u5207\u5272"
+  - key: act_no_process.name
+    zh_cn: "\u76F4\u63A5\u653E\u5165"
+  - key: act_stew.name
+    zh_cn: "\u7096"
+  - key: act_stirfry.name
+    zh_cn: "\u7FFB\u7092"
+  - key: act_wash.name
+    zh_cn: "\u6458\u6D17"
+  - key: act_whisk.name
+    zh_cn: "\u6405\u62CC"
+  - key: ing_cabbage.flavor
+    zh_cn: "\u5F00\u6C34\u767D\u83DC\u7684\u6392\u9762\u62C5\u5F53"
+  - key: ing_cabbage.name
+    zh_cn: "\u767D\u83DC\u5FC3"
+  - key: ing_egg.flavor
+    zh_cn: "\u5E73\u5E73\u65E0\u5947\uFF0C\u4F46\u8C01\u4E5F\u79BB\u4E0D\u5F00\u5B83"
+  - key: ing_egg.name
+    zh_cn: "\u9E21\u86CB"
+  - key: ing_giant_egg.flavor
+    zh_cn: "\u4E00\u9897\u9876\u4E09\u9897\uFF0C\u519C\u573A\u76F4\u9001\u7684\u81EA\u4FE1"
+  - key: ing_giant_egg.name
+    zh_cn: "\u8D85\u7EA7\u6709\u673A\u519C\u573A\u5DE8\u86CB"
+  - key: ing_ham_sausage.flavor
+    zh_cn: "\u4E94\u8FDE\u88C5\uFF0C\u63B0\u4E00\u6839\u5C11\u4E00\u6839"
+  - key: ing_ham_sausage.name
+    zh_cn: "\u597D\u5403\u7684\u91D1\u9523\u738B"
+  - key: ing_milk_box.flavor
+    zh_cn: "\u5F00\u76D2\u540E\u8BF7\u5C3D\u5FEB\u559D\u5B8C"
+  - key: ing_milk_box.name
+    zh_cn: "\u725B\u5976\uFF08\u76D2\uFF09"
+  - key: ing_noodle_dried.flavor
+    zh_cn: "\u62B1\u6210\u4E00\u6346\u624D\u6709\u5B89\u5168\u611F\u7684\u9762\u6761\u4EEC"
+  - key: ing_noodle_dried.name
+    zh_cn: "\u4E00\u628A\u6302\u9762"
+  - key: ing_noodle_instant.flavor
+    zh_cn: "\u957F\u4E86\u811A\u4E5F\u9003\u4E0D\u6389\u88AB\u716E\u7684\u547D\u8FD0"
+  - key: ing_noodle_instant.name
+    zh_cn: "\u6CE1\u9762\u997C"
+  - key: ing_octopus_leg.flavor
+    zh_cn: "\u4E0D\u77E5\u9053\u672C\u4F53\u53BB\u54EA\u4E86\uFF0C\u53EA\u5269\u4E00\u6761"
+  - key: ing_octopus_leg.name
+    zh_cn: "\u7AE0\u9C7C\u811A"
+  - key: ing_scallion.flavor
+    zh_cn: "\u6492\u4E0A\u5C31\u9999\uFF0C\u4E0D\u6492\u5C31\u5DEE\u70B9\u610F\u601D"
+  - key: ing_scallion.name
+    zh_cn: "\u5C0F\u8471"
+  - key: ing_tomato.flavor
+    zh_cn: "\u5DE8\u597D\u5403\u723D\u8304\uFF0C\u672C\u8304\u8BA4\u8BC1"
+  - key: ing_tomato.name
+    zh_cn: "\u756A\u8304"
+  - key: prd_cabbage_washed.name
+    zh_cn: "\u6458\u597D\u7684\u767D\u83DC\u5FC3"
+  - key: prd_clear_broth.name
+    zh_cn: "\u6E05\u4EAE\u9AD8\u6C64"
+  - key: prd_egg_liquid.name
+    zh_cn: "\u86CB\u6DB2"
+  - key: prd_kaishui_dish.name
+    zh_cn: "\u5F00\u6C34\u767D\u83DC"
+  - key: prd_unknown.name
+    zh_cn: "\u4E0D\u660E\u7269\u4F53"
+  - key: prd_unknown.flavor
+    zh_cn: "\u2026\u2026\u8FD9\u662F\u4EC0\u4E48\uFF1F"
+  - key: prd_noodle_boiled.name
+    zh_cn: "\u716E\u597D\u7684\u9762"
+  - key: prd_qingtang_dish.name
+    zh_cn: "\u6E05\u6C64\u9762"
+  - key: prd_scrambled_egg.name
+    zh_cn: "\u7092\u597D\u7684\u86CB"
+  - key: prd_tomato_cut.name
+    zh_cn: "\u5207\u597D\u7684\u756A\u8304"
+  - key: prd_tomato_egg_dish.name
+    zh_cn: "\u756A\u8304\u7092\u86CB"
+  - key: prd_tomato_egg_soup.name
+    zh_cn: "\u756A\u8304\u86CB\u82B1\u6C64"
+  - key: rcp_kaishui_cabbage.name
+    zh_cn: "\u5F00\u6C34\u767D\u83DC"
+  - key: rcp_qingtang_noodle.name
+    zh_cn: "\u6E05\u6C64\u9762"
+  - key: rcp_tomato_egg.name
+    zh_cn: "\u756A\u8304\u7092\u86CB"
+  - key: step_kc_01.text
+    zh_cn: "\u767D\u83DC\u5FC3\u6458\u597D\u6D17\u5E72\u51C0"
+  - key: step_kc_02.text
+    zh_cn: "\u6162\u6162\u7096\u4E00\u9505\u6E05\u6C64"
+  - key: step_kc_03.text
+    zh_cn: "\u767D\u83DC\u6C46\u4E00\u4E0B\uFF0C\u6D47\u4E0A\u6C64"
+  - key: step_qt_01.text
+    zh_cn: "\u6C34\u5F00\u4E86\u5C31\u628A\u9762\u4E22\u8FDB\u53BB"
+  - key: step_qt_02.text
+    zh_cn: "\u6492\u628A\u8471\u82B1\u52A0\u70B9\u76D0\uFF0C\u51FA\u9505"
+  - key: step_te_01.text
+    zh_cn: "\u628A\u86CB\u6253\u6210\u86CB\u6DB2"
+  - key: step_te_02.text
+    zh_cn: "\u756A\u8304\u5207\u6210\u5C0F\u5757"
+  - key: step_te_03.text
+    zh_cn: "\u70ED\u6CB9\u4E0B\u9505\u5148\u7092\u86CB"
+  - key: step_te_04.text
+    zh_cn: "\u756A\u8304\u4E0B\u9505\u4E00\u8D77\u7092\uFF0C\u52A0\u76D0"
+  - key: stp_oil.flavor
+    zh_cn: "\u70ED\u9505\u51B7\u6CB9"
+  - key: stp_oil.name
+    zh_cn: "\u98DF\u7528\u6CB9"
+  - key: stp_salt.flavor
+    zh_cn: "\u54B8\u5473\u7684\u6765\u6E90"
+  - key: stp_salt.name
+    zh_cn: "\u76D0"
+  - key: stp_water.flavor
+    zh_cn: "\u65E0\u9650\u4F9B\u5E94"
+  - key: stp_water.name
+    zh_cn: "\u6E05\u6C34"
+  - key: tag_dairy.name
+    zh_cn: "\u5976\u7C7B"
+  - key: tag_dish_boil.name
+    zh_cn: "\u716E"
+  - key: tag_dish_deepfry.name
+    zh_cn: "\u70B8"
+  - key: tag_dish_stew.name
+    zh_cn: "\u7096"
+  - key: tag_dish_stirfry.name
+    zh_cn: "\u7092"
+  - key: tag_egg.name
+    zh_cn: "\u86CB\u7C7B"
+  - key: tag_flavor_confused.name
+    zh_cn: "\u5403\u4E0D\u61C2"
+  - key: tag_flavor_easy.name
+    zh_cn: "\u7B80\u5355\u597D\u505A"
+  - key: tag_flavor_fancy.name
+    zh_cn: "\u770B\u7740\u5C31\u8D35"
+  - key: tag_flavor_spicy.name
+    zh_cn: "\u8FA3\u722A"
+  - key: tag_flavor_yummy.name
+    zh_cn: "\u771F\u6EF4\u5F88\u9999"
+  - key: tag_fruit.name
+    zh_cn: "\u6C34\u679C"
+  - key: tag_meat.name
+    zh_cn: "\u8089\u7C7B"
+  - key: tag_seafood.name
+    zh_cn: "\u6D77\u9C9C"
+  - key: tag_staplefood.name
+    zh_cn: "\u4E3B\u98DF"
+  - key: tag_veg.name
+    zh_cn: "\u852C\u83DC"
+  - key: tool_board.name
+    zh_cn: "\u6848\u677F"
+  - key: tool_board_station.name
+    zh_cn: "\u7827\u677F\u53F0"
+  - key: tool_bowl.name
+    zh_cn: "\u7897"
+  - key: tool_chopsticks.name
+    zh_cn: "\u7B77\u5B50"
+  - key: tool_freezer.name
+    zh_cn: "\u5C0F\u51B0\u67DC"
+  - key: tool_hand.name
+    zh_cn: "\u624B"
+  - key: tool_knife.name
+    zh_cn: "\u83DC\u5200"
+  - key: tool_oven.name
+    zh_cn: "\u70E4\u7BB1"
+  - key: tool_pan.name
+    zh_cn: "\u7092\u9505"
+  - key: tool_pot.name
+    zh_cn: "\u6C64\u9505"
+  - key: tool_salad_station.name
+    zh_cn: "\u6C99\u62C9\u53F0"
+  - key: tool_scissors.name
+    zh_cn: "\u526A\u5200"
+  - key: tool_spatula.name
+    zh_cn: "\u9505\u94F2"
+  - key: tool_stove.name
+    zh_cn: "\u7076\u53F0"
+  - key: ui_cook_pending_feature.text
+    zh_cn: "\u8BF7\u671F\u5F85\u6B63\u5F0F\u7248"
+  - key: ui_p0_catalog_tab.text
+    zh_cn: "\u76EE\u5F55"
+  - key: ui_p0_current_recipe_tab.text
+    zh_cn: "\u5F53\u524D"
+  - key: ui_p0_escape.text
+    zh_cn: ESC
+  - key: ui_p0_favorite.text
+    zh_cn: "\u6536\u85CF"
+  - key: ui_p0_ingredient_list_header.text
+    zh_cn: "\u6240\u9700\u98DF\u6750"
+  - key: ui_p0_start_cooking.text
+    zh_cn: "\u5F00\u59CB\u505A\u996D"
+  - key: ui_p1_clueboard_tips.text
+    zh_cn: "TIPS\uFF1A\u4EBA\u88AB\u6740\u5C31\u4F1A\u6B7B\n\u4E0D\u77E5\u9053\u600E\u4E48\u529E\u7684\u8BDD\uFF1A\u4E0D\u59A8\u5C1D\u8BD5\u5148\u653E\u7A7A\u5927\u8111\u5427\u3002"
+  - key: ui_p1_return.text
+    zh_cn: "\u8FD4\u56DE"
+  - key: var_kaishui_std.name
+    zh_cn: "\u5F00\u6C34\u767D\u83DC"
+  - key: var_qingtang_std.name
+    zh_cn: "\u6E05\u6C64\u9762"
+  - key: var_tomato_egg_soup.name
+    zh_cn: "\u756A\u8304\u86CB\u82B1\u6C64"
+  - key: var_tomato_egg_std.name
+    zh_cn: "\u756A\u8304\u7092\u86CB"

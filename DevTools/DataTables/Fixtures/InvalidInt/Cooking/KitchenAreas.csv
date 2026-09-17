@@ -1,0 +1,3 @@
+id,assetName,areaName,rank,containerTags
+kitchen-prep-counter,PrepCounter,Prep Counter,not-a-number,"ChopBoard|Bowl"
+kitchen-stove,Stove,Stove,2,"Wok|Pan"

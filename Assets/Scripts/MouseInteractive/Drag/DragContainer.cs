@@ -122,6 +122,16 @@ public class DragContainer : MonoBehaviour
     }
 
     /// <summary>
+    /// 内部工作坐标 → 世界坐标（useLocalSpace 时从父物体本地坐标转换）
+    /// </summary>
+    private Vector3 InternalToWorld(Vector3 internalPos)
+    {
+        return useLocalSpace && transform.parent != null
+            ? transform.parent.TransformPoint(internalPos)
+            : internalPos;
+    }
+
+    /// <summary>
     /// 世界方向增量 → 内部方向增量（useLocalSpace 时投影到父物体本地轴）
     /// </summary>
     private Vector3 WorldDeltaToInternal(Vector3 worldDelta)
@@ -185,7 +195,20 @@ public class DragContainer : MonoBehaviour
     public Vector2 GetHalfSize()
     {
         Vector3 scale = useLocalSpace ? transform.localScale : transform.lossyScale;
+        return GetHalfSizeForScale(scale);
+    }
 
+    /// <summary>
+    /// DragLimit 的 ClampPosition 使用世界坐标，因此传入的半尺寸也必须位于世界空间。
+    /// Manual 模式继续通过 GetHalfSize 保持原有内部空间契约。
+    /// </summary>
+    private Vector2 GetWorldHalfSize()
+    {
+        return GetHalfSizeForScale(transform.lossyScale);
+    }
+
+    private Vector2 GetHalfSizeForScale(Vector3 scale)
+    {
         if (sizeSource == SizeSource.RectTransform)
         {
             RectTransform r = ActiveRect;
@@ -225,17 +248,6 @@ public class DragContainer : MonoBehaviour
     }
 
     /// <summary>
-    /// 几何中心相对 CurrentPosition（内部工作坐标）的偏移向量。
-    /// </summary>
-    private Vector3 GetGeometricCenterOffsetInternal()
-    {
-        Vector3 worldOffset = GetGeometricCenterOffsetWorld();
-        if (useLocalSpace && transform.parent != null)
-            return transform.parent.InverseTransformVector(worldOffset);
-        return worldOffset;
-    }
-
-    /// <summary>
     /// 将 RectTransform 的尺寸与 pivot 同步到 BoxCollider2D，
     /// 保证 MouseManager 的点击检测范围始终与视觉 rect 对齐。
     /// 运行时 rect 尺寸变化后可手动调用此方法刷新 collider。
@@ -261,7 +273,7 @@ public class DragContainer : MonoBehaviour
             if (dragLimit != null)
             {
                 Vector3 geoOffsetWorld = GetGeometricCenterOffsetWorld();
-                var result = dragLimit.ClampPosition(transform.position + geoOffsetWorld, GetHalfSize());
+                var result = dragLimit.ClampPosition(transform.position + geoOffsetWorld, GetWorldHalfSize());
                 // 存储的 limit 是 transform.position 能到达的范围，需要减去几何中心偏移
                 _limitMinX = result.minX - geoOffsetWorld.x;
                 _limitMaxX = result.maxX - geoOffsetWorld.x;
@@ -332,9 +344,12 @@ public class DragContainer : MonoBehaviour
         {
             if (dragLimit != null)
             {
-                Vector3 geoOffsetInternal = GetGeometricCenterOffsetInternal();
-                var result = dragLimit.ClampPosition(targetPos + geoOffsetInternal, GetHalfSize());
-                return (result.clampedPos - geoOffsetInternal, result.hitBoundary);
+                // DragContainer 的计算链以内部工作坐标运行，而 DragLimit 明确接受世界坐标。
+                // 只在该契约边界做一次往返，避免把 localPosition 与世界边界混用。
+                Vector3 targetWorld = InternalToWorld(targetPos);
+                Vector3 geoOffsetWorld = GetGeometricCenterOffsetWorld();
+                var result = dragLimit.ClampPosition(targetWorld + geoOffsetWorld, GetWorldHalfSize());
+                return (WorldToInternal(result.clampedPos - geoOffsetWorld), result.hitBoundary);
             }
             return (targetPos, false);
         }

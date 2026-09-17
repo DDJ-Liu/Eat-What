@@ -1,0 +1,13 @@
+{
+  "tableName": "Targets",
+  "csvPath": "Common/Targets.csv",
+  "targetType": "UnusedFixtureTarget",
+  "outputDirectory": "Assets/Generated/DataTables/Fixtures/Targets",
+  "assetNameField": "assetName",
+  "primaryKeyField": "id",
+  "columns": [
+    { "name": "id", "csvColumn": "id", "type": "string", "required": true, "writeToAsset": false },
+    { "name": "assetName", "csvColumn": "assetName", "type": "string", "required": true, "writeToAsset": false }
+  ],
+  "references": []
+}

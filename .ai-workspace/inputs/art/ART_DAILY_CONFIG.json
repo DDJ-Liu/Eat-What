@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "laneAlias": "ART",
+  "internalPipeline": "ART_ASSET",
+  "firstBaseline": "inputs/art/AI000057_manifest.json",
+  "pendingItems": "inputs/art/ART_PENDING_ITEMS.json",
+  "rules": "inputs/art/ART_EXPORT_RULES.md",
+  "template": "templates/ART_DAILY_TEMPLATE.md",
+  "outputRoot": "outputs/art/daily",
+  "controllerThreadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+  "controllerReceptionEnabled": false,
+  "overdueHours": 12
+}

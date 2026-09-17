@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546e9ceb18247ae48a08b049efada9da, type: 3}
+  m_Name: ing_tomato
+  m_EditorClassIdentifier: 
+  item_kind: raw
+  name_key: ing_tomato.name
+  ingredient_categories:
+  - tag_veg
+  - tag_fruit
+  stack_type: stack
+  display_order_in_fridge: 50
+  icon_sprite: {fileID: -6724980738021171820, guid: 2ccbaeb7adbdb464c9db183d47a934aa, type: 2}
+  flavor_key: ing_tomato.flavor
+  container_capacity: 0
+  container_use_step: 0
+  pack_size: 0
+  shelf_life_days: 0

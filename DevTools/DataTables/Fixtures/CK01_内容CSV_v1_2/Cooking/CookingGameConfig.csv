@@ -1,0 +1,4 @@
+key,value,comment
+prep_zone_capacity,20,托盘格数
+fridge_scroll_granularity,1.0,占位待调，人工段实调后回写
+fridge_scroll_damping,0.15,占位待调，人工段实调后回写

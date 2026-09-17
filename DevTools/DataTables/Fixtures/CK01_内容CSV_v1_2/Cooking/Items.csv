@@ -1,0 +1,24 @@
+item_id,item_kind,name_key,ingredient_categories,stack_type,display_order_in_fridge,icon_sprite,flavor_key,container_capacity,container_use_step,pack_size,shelf_life,comment
+ing_noodle_dried,raw,ing_noodle_dried.name,tag_staplefood,stack,10,ui_shicai_guamian,ing_noodle_dried.flavor,,,,,参考图1
+ing_noodle_instant,raw,ing_noodle_instant.name,tag_staplefood,stack,20,ui_shicai_paomian,ing_noodle_instant.flavor,,,,,参考图1（有脚）
+ing_egg,raw,ing_egg.name,tag_egg,stack,30,ui_shicai_jidan,ing_egg.flavor,,,,,
+ing_giant_egg,raw,ing_giant_egg.name,tag_egg,single,40,ui_shicai_judan,ing_giant_egg.flavor,,,,,参考图1；蛋类替代品
+ing_tomato,raw,ing_tomato.name,tag_veg;tag_fruit,stack,50,ui_shicai_fanqie,ing_tomato.flavor,,,,,多类目示范（蔬菜+水果）；呼应参考图1手账页
+ing_cabbage,raw,ing_cabbage.name,tag_veg,stack,60,ui_shicai_baicaixin,ing_cabbage.flavor,,,,,
+ing_scallion,raw,ing_scallion.name,tag_veg,stack,70,ui_shicai_xiaocong,ing_scallion.flavor,,,,,
+ing_octopus_leg,raw,ing_octopus_leg.name,tag_seafood,single,80,ui_shicai_zhangyujiao,ing_octopus_leg.flavor,,,,,参考图1；吊汤用
+ing_ham_sausage,raw,ing_ham_sausage.name,tag_meat,pack,90,ui_shicai_huotuichang,ing_ham_sausage.flavor,,,5,,参考图1；pack 形态示范；demo 暂无消费食谱
+ing_milk_box,raw,ing_milk_box.name,tag_dairy,container,100,ui_shicai_niunaihe,ing_milk_box.flavor,1000,200,,,测试用（container 机制验证，不入正式内容清单）
+stp_water,staple,stp_water.name,,single,,ui_shicai_qingshui,stp_water.flavor,,,,,必备品
+stp_salt,staple,stp_salt.name,,single,,ui_shicai_yan,stp_salt.flavor,,,,,必备品
+stp_oil,staple,stp_oil.name,,single,,ui_shicai_shiyongyou,stp_oil.flavor,,,,,必备品
+prd_noodle_boiled,product,prd_noodle_boiled.name,,single,,ui_shicai_zhuhaodemian,,,,,,产出物
+prd_egg_liquid,product,prd_egg_liquid.name,,single,,ui_shicai_danye,,,,,,产出物
+prd_tomato_cut,product,prd_tomato_cut.name,,single,,ui_shicai_qiehaodefanqie,,,,,,产出物
+prd_scrambled_egg,product,prd_scrambled_egg.name,,single,,ui_shicai_chaohaodedan,,,,,,产出物
+prd_cabbage_washed,product,prd_cabbage_washed.name,,single,,ui_shicai_zhaihaodebaicaixin,,,,,,产出物
+prd_clear_broth,product,prd_clear_broth.name,,single,,ui_shicai_gaotang,,,,,,产出物（等待处理产物）
+prd_qingtang_dish,product,prd_qingtang_dish.name,,single,,ui_caipin_qingtangmian,,,,,,成品
+prd_tomato_egg_dish,product,prd_tomato_egg_dish.name,,single,,ui_caipin_fanqiechaodan,,,,,,成品（标准变体）
+prd_tomato_egg_soup,product,prd_tomato_egg_soup.name,,single,,ui_caipin_fanqiedanhuatang,,,,,,成品（煮路线变体）
+prd_kaishui_dish,product,prd_kaishui_dish.name,,single,,ui_caipin_kaishuibaicai,,,,,,成品

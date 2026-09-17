@@ -18,6 +18,7 @@ public class TransitionBehaviour_SpriteSequence : TransitionBehaviour
         public string folderPath;
 
         public float frameRate = 12f;
+        public bool useUnscaledTime;
 
         /// <summary>
         /// 获取最终使用的 Sprite 数组（优先使用手动指定的 sprites，否则从 folderPath 加载）
@@ -41,21 +42,28 @@ public class TransitionBehaviour_SpriteSequence : TransitionBehaviour
     public SpriteRenderer targetRenderer;
     public List<SpriteSheetEntry> spriteSheets = new List<SpriteSheetEntry>();
 
-    protected override IEnumerator TransitionCoroutine(string transitionName)
+    protected override bool TryCreateTransition(string transitionName, out IEnumerator transition)
     {
         var sheet = spriteSheets.Find(s => s.name == transitionName);
-
         if (sheet == null)
         {
-            Debug.LogWarning($"SpriteSheet not found for transition: {transitionName}");
-            yield break;
+            Debug.LogWarning("SpriteSheet not found for transition: " + transitionName);
+            transition = null;
+            return false;
         }
+
+        transition = PlaySheet(sheet, transitionName);
+        return true;
+    }
+
+    private IEnumerator PlaySheet(SpriteSheetEntry sheet, string transitionName)
+    {
 
         Sprite[] spritesToPlay = sheet.GetSprites();
 
         if (spritesToPlay == null || spritesToPlay.Length == 0)
         {
-            Debug.LogWarning($"SpriteSheet '{transitionName}' has no sprites");
+            Debug.LogWarning("SpriteSheet '" + transitionName + "' has no sprites");
             yield break;
         }
 
@@ -63,7 +71,7 @@ public class TransitionBehaviour_SpriteSequence : TransitionBehaviour
         foreach (var sprite in spritesToPlay)
         {
             targetRenderer.sprite = sprite;
-            yield return new WaitForSeconds(frameDuration);
+            yield return WaitForDuration(frameDuration, sheet.useUnscaledTime);
         }
     }
 }

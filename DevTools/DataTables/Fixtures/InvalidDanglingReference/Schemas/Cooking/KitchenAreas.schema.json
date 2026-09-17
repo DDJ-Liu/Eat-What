@@ -1,0 +1,18 @@
+{
+  "tableName": "KitchenAreas",
+  "csvPath": "Cooking/KitchenAreas.csv",
+  "targetType": "KitchenAreaData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/KitchenAreas",
+  "assetNameField": "assetName",
+  "primaryKeyField": "id",
+  "columns": [
+    { "name": "id", "csvColumn": "id", "type": "string", "required": true, "writeToAsset": false },
+    { "name": "assetName", "csvColumn": "assetName", "type": "string", "required": true, "writeToAsset": false },
+    { "name": "areaName", "csvColumn": "areaName", "type": "string", "required": true, "writeToAsset": true },
+    { "name": "containerTags", "csvColumn": "containerTags", "type": "list<enum>", "enumType": "ContainerTag", "separator": "|", "required": true, "writeToAsset": true },
+    { "name": "targetId", "csvColumn": "targetId", "type": "string", "required": true, "writeToAsset": false }
+  ],
+  "references": [
+    { "field": "targetId", "targetSchema": "Schemas/Common/Targets.schema.json", "targetField": "id" }
+  ]
+}

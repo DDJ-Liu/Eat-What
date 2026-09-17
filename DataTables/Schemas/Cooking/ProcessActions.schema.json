@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "tableName": "ProcessActions",
+  "csvPath": "Cooking/ProcessActions.csv",
+  "targetType": "CK01ProcessActionData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/ProcessActions",
+  "assetNameField": "action_id",
+  "primaryKeyField": "action_id",
+  "columns": [
+    { "name": "action_id", "csvColumn": "act_id", "type": "id", "required": true, "pattern": "^act_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "name_key", "csvColumn": "name_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "action_kind", "csvColumn": "process_class", "type": "enum", "enumValues": ["regular", "waiting"], "required": true },
+    { "name": "process_template", "csvColumn": "process_template", "type": "string", "required": false, "requiredWhenField": "action_kind", "requiredWhenValues": ["waiting"] },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": []
+}

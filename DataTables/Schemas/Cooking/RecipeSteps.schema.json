@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "tableName": "RecipeSteps",
+  "csvPath": "Cooking/RecipeSteps.csv",
+  "targetType": "CK01RecipeStepData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/RecipeSteps",
+  "assetNameField": "step_id",
+  "primaryKeyField": "step_id",
+  "columns": [
+    { "name": "step_id", "csvColumn": "step_id", "type": "id", "required": true, "pattern": "^step_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "recipe_id", "csvColumn": "recipe_id", "type": "ref", "required": true },
+    { "name": "next_step_id", "csvColumn": "next_step_id", "type": "ref", "required": false },
+    { "name": "display_text_key", "csvColumn": "display_text_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "standard_ingredients", "csvColumn": "standard_ingredients", "type": "list<ref>", "separator": ";", "required": false },
+    { "name": "standard_tools", "csvColumn": "standard_tools", "type": "list<ref>", "separator": ";", "required": false },
+    { "name": "trigger_items", "csvColumn": "trigger_items", "type": "list<ref>", "separator": ";", "required": true, "minItems": 1 },
+    { "name": "permanent_trigger_items", "csvColumn": "permanent_trigger_items", "type": "list<ref>", "separator": ";", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "recipe_id", "targetSchema": "Cooking/Recipes.schema.json", "targetField": "recipe_id" },
+    { "field": "next_step_id", "targetSchema": "Cooking/RecipeSteps.schema.json", "targetField": "step_id" },
+    { "field": "standard_ingredients", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id", "isList": true, "separator": ";" },
+    { "field": "standard_tools", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id", "isList": true, "separator": ";" },
+    { "field": "trigger_items", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id", "isList": true, "separator": ";" },
+    { "field": "permanent_trigger_items", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id", "isList": true, "separator": ";" }
+  ],
+  "rules": [
+    { "kind": "recipe_step_chain", "field": "next_step_id", "message": "must form one linear, complete chain per recipe with at most 10 steps" }
+  ]
+}

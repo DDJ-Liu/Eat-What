@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "tableName": "RecipeVariants",
+  "csvPath": "Cooking/RecipeVariants.csv",
+  "targetType": "CK01RecipeVariantData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/RecipeVariants",
+  "assetNameField": "var_id",
+  "primaryKeyField": "var_id",
+  "columns": [
+    { "name": "var_id", "csvColumn": "var_id", "type": "id", "required": true, "pattern": "^var_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "recipe_id", "csvColumn": "recipe_id", "type": "ref", "required": true },
+    { "name": "final_item", "csvColumn": "final_item", "type": "ref", "required": true },
+    { "name": "name_key", "csvColumn": "name_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "actual_dish_category", "csvColumn": "actual_dish_category", "type": "ref", "required": true },
+    { "name": "display_sprite", "csvColumn": "display_sprite", "type": "sprite", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "recipe_id", "targetSchema": "Cooking/Recipes.schema.json", "targetField": "recipe_id" },
+    { "field": "final_item", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" },
+    { "field": "actual_dish_category", "targetSchema": "Cooking/Tags.schema.json", "targetField": "tag_id" }
+  ],
+  "rules": [
+    { "kind": "recipe_variant_product_and_category", "field": "final_item", "message": "must use a product item and dish tag" }
+  ]
+}

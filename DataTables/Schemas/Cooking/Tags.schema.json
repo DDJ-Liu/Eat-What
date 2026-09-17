@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Tags",
+  "csvPath": "Cooking/Tags.csv",
+  "targetType": "CK01TagData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/Tags",
+  "assetNameField": "tag_id",
+  "primaryKeyField": "tag_id",
+  "columns": [
+    { "name": "tag_id", "csvColumn": "tag_id", "type": "id", "required": true, "pattern": "^tag_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "tag_class", "csvColumn": "tag_class", "type": "enum", "enumValues": ["ingredient", "flavor", "dish"], "required": true },
+    { "name": "name_key", "csvColumn": "name_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "icon_sprite", "csvColumn": "icon_sprite", "type": "sprite", "required": false },
+    { "name": "sticker_sprite", "csvColumn": "sticker_sprite", "type": "sprite", "required": false },
+    { "name": "filter_order", "csvColumn": "filter_order", "type": "int", "required": false, "requiredWhenField": "tag_class", "requiredWhenValues": ["ingredient"], "unique": true },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [],
+  "rules": [
+    { "kind": "tag_filter_order", "field": "filter_order", "otherField": "tag_class", "message": "is allowed only for ingredient tags" }
+  ]
+}

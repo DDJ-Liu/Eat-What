@@ -1,0 +1,28 @@
+var s=UnityEngine.SceneManagement.SceneManager.GetActiveScene();if(s.path!="Assets/Scenes/Cooking/ShortCycle_P0P1.unity"||UnityEditor.EditorApplication.isPlaying||UnityEditor.EditorApplication.isCompiling)throw new System.Exception("Edit target required");
+string P(UnityEngine.Transform t){var p=t.name;while(t.parent!=null){t=t.parent;p=t.name+"/"+p;}return p;}
+var all=s.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<UnityEngine.Transform>(true)).ToDictionary(P);
+UnityEngine.Transform T(string p)=>all[p];
+UnityEngine.Sprite S(string p)=>UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Sprite>(p)??throw new System.Exception(p);
+void Dirty(UnityEngine.Object o){UnityEditor.EditorUtility.SetDirty(o);UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(o);}
+void WorldScale(UnityEngine.Transform t,float k){t.localScale=new UnityEngine.Vector3(k/t.parent.lossyScale.x,k/t.parent.lossyScale.y,1);Dirty(t);}
+void Fit(UnityEngine.Transform t,float x,float y,float size,bool height,float angle){var sr=t.GetComponent<UnityEngine.SpriteRenderer>();var v=sr.sprite.vertices;float xmin=v.Min(q=>q.x),xmax=v.Max(q=>q.x),ymin=v.Min(q=>q.y),ymax=v.Max(q=>q.y);WorldScale(t,size/(height?ymax-ymin:xmax-xmin));t.rotation=UnityEngine.Quaternion.Euler(0,0,angle);t.position=new UnityEngine.Vector3((x/100-.5f)*25.6f,(.5f-y/100)*14.4f,0)-t.TransformVector(new UnityEngine.Vector3((xmin+xmax)/2,(ymin+ymax)/2,0));Dirty(t);}
+UnityEngine.Transform NewVisual(UnityEngine.Transform parent,string name,UnityEngine.Sprite sprite,int order){var t=parent.Find(name);if(t==null){var go=new UnityEngine.GameObject(name);UnityEditor.Undo.RegisterCreatedObjectUndo(go,"AI65 same-role visual completion");go.transform.SetParent(parent,false);t=go.transform;}var sr=t.GetComponent<UnityEngine.SpriteRenderer>();if(sr==null)sr=UnityEditor.Undo.AddComponent<UnityEngine.SpriteRenderer>(t.gameObject);sr.sprite=sprite;sr.sortingOrder=order;Dirty(sr);return t;}
+var changed=new System.Collections.Generic.List<string>();
+foreach(var t in all.Values.Where(t=>P(t).StartsWith("Shared/ClueBoard_Group/Content/SlotBlocks/")&&t.name.StartsWith("SubSlot_"))){
+ WorldScale(t.Find("SubCard/Icon"),.19f);
+ var node=t.Find("Node");var nr=node.GetComponent<UnityEngine.SpriteRenderer>();if(nr==null)nr=UnityEditor.Undo.AddComponent<UnityEngine.SpriteRenderer>(node.gameObject);nr.sprite=S("Assets/Sprites/Cooking/Fridge/FridgeCat/BingXiangMao/chuju_bingxiangmao_jiedian.png");nr.sortingOrder=10;WorldScale(node,.4875f);Dirty(nr);
+ var link=t.Find("Link").GetComponent<UnityEngine.SpriteRenderer>();link.sprite=S("Assets/Sprites/Cooking/Fridge/FridgeCat/BingXiangMao/chuju_bingxiangmao_xian1.png");link.sortingOrder=8;WorldScale(link.transform,.4125f);Dirty(link);
+ var icon=t.Find("SubCard/Icon").GetComponent<UnityEngine.SpriteRenderer>();icon.sortingOrder=12;Dirty(icon);
+ var count=t.Find("SubCard/Count").GetComponent<TMPro.TextMeshPro>();count.renderer.sortingOrder=14;Dirty(count.renderer);
+ changed.Add(P(t));
+}
+var tape=S("Assets/Sprites/Cooking/UI/RecipeBook/ui_caipu_toumingjiao.png");
+for(int i=1;i<=8;i++){var p="Spaces/Phase0_RecipeBook/Catalog_Group/"+(i<=4?"CatalogGrid_Left":"CatalogGrid_Right")+"/CatalogCard_"+i.ToString("00");var col=(i-1)%4;float x=new[]{22.5f,39.5f,64.5f,81.5f}[col];/* actual left cards 01/02 top,03/04 bottom; right05/06 top,07/08 bottom */x=new[]{22.5f,39.5f,22.5f,39.5f,64.5f,81.5f,64.5f,81.5f}[i-1];float y=((i-1)%4)<2?29f:67.5f;
+ Fit(NewVisual(T(p),"Tape_01",tape,9),x-5.5f,y-12.5f,1.512f,true,60);
+ Fit(NewVisual(T(p),"Tape_02",tape,9),x+5f,y+13,1.512f,true,-50);
+ changed.Add(p+" tapes");
+}
+var left=T("Spaces/Phase0_RecipeBook/Browse_Group/LeftPage");var star=S("Assets/Sprites/Cooking/UI/RecipeBook/ui_caipu_shicai_xingxing2.png");
+for(int i=0;i<4;i++){var t=i==0?T(P(left)+"/StarNotes_Deco"):NewVisual(left,"StarNotes_Deco_"+(i+1).ToString("00"),star,7);Fit(t,new[]{48f,49.5f,48f,44.5f}[i],new[]{35f,44f,53f,58f}[i],.9f,false,-8);}
+foreach(var group in s.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<SpriteOutlineGroup2D>(true)))group.OutlineColor=group.OutlineColor;
+UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(s);return new{changed=changed.Count,nodes32=true,tapes16=true,stars4=true};

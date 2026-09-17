@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Items",
+  "csvPath": "Cooking/Items.csv",
+  "targetType": "CK01ItemData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/Items",
+  "assetNameField": "item_id",
+  "primaryKeyField": "item_id",
+  "columns": [
+    { "name": "item_id", "csvColumn": "item_id", "type": "id", "required": true, "pattern": "^(ing|prd|stp)_[a-z0-9_]+$", "writeToAsset": false },
+    { "name": "item_kind", "csvColumn": "item_kind", "type": "enum", "enumValues": ["raw", "product", "staple"], "required": true },
+    { "name": "name_key", "csvColumn": "name_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "ingredient_categories", "csvColumn": "ingredient_categories", "type": "list<ref>", "separator": ";", "required": false },
+    { "name": "stack_type", "csvColumn": "stack_type", "type": "enum", "enumValues": ["single", "stack", "container", "pack"], "required": true },
+    { "name": "display_order_in_fridge", "csvColumn": "display_order_in_fridge", "type": "int", "required": false },
+    { "name": "icon_sprite", "csvColumn": "icon_sprite", "type": "sprite", "required": false },
+    { "name": "flavor_key", "csvColumn": "flavor_key", "type": "loc_key", "required": false, "pattern": "^[a-z][a-z0-9_.]+$" },
+    { "name": "container_capacity", "csvColumn": "container_capacity", "type": "float", "required": false, "requiredWhenField": "stack_type", "requiredWhenValues": ["container"] },
+    { "name": "container_use_step", "csvColumn": "container_use_step", "type": "float", "required": false, "requiredWhenField": "stack_type", "requiredWhenValues": ["container"] },
+    { "name": "pack_size", "csvColumn": "pack_size", "type": "int", "required": false, "requiredWhenField": "stack_type", "requiredWhenValues": ["pack"] },
+    { "name": "shelf_life_days", "csvColumn": "shelf_life", "type": "int", "required": false },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "ingredient_categories", "targetSchema": "Cooking/Tags.schema.json", "targetField": "tag_id", "isList": true, "separator": ";" }
+  ],
+  "rules": [
+    { "kind": "item_kind_prefix", "field": "item_id", "otherField": "item_kind", "message": "must use ing_/prd_/stp_ for raw/product/staple" },
+    { "kind": "raw_item_categories", "field": "ingredient_categories", "message": "raw items need ingredient tags and fridge order" },
+    { "kind": "item_stack_properties", "field": "stack_type", "message": "container and pack properties are conditional" }
+  ]
+}

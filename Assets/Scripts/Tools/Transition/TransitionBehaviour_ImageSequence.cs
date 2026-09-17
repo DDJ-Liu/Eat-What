@@ -19,6 +19,7 @@ public class TransitionBehaviour_ImageSequence : TransitionBehaviour
         public string folderPath;
 
         public float frameRate = 12f;
+        public bool useUnscaledTime;
 
         /// <summary>
         /// 获取最终使用的 Sprite 数组（优先使用手动指定的 sprites，否则从 folderPath 加载）
@@ -65,7 +66,7 @@ public class TransitionBehaviour_ImageSequence : TransitionBehaviour
             {
                 targetImages.Add(img);
             }
-            Debug.Log($"[TransitionBehaviour_ImageSequence] Auto-collected {targetImages.Count} Images from {targetParent.name}");
+            Debug.Log("[TransitionBehaviour_ImageSequence] Auto-collected " + targetImages.Count + " Images from " + targetParent.name);
         }
 
         if (targetImages.Count == 0)
@@ -74,33 +75,40 @@ public class TransitionBehaviour_ImageSequence : TransitionBehaviour
             if (img != null)
             {
                 targetImages.Add(img);
-                Debug.Log($"[TransitionBehaviour_ImageSequence] Auto-added self Image component");
+                Debug.Log("[TransitionBehaviour_ImageSequence] Auto-added self Image component");
             }
         }
     }
 
-    protected override IEnumerator TransitionCoroutine(string transitionName)
+    protected override bool TryCreateTransition(string transitionName, out IEnumerator transition)
     {
         var sheet = imageSheets.Find(s => s.name == transitionName);
-
         if (sheet == null)
         {
-            Debug.LogWarning($"[TransitionBehaviour_ImageSequence] ImageSheet not found: {transitionName}");
-            yield break;
+            Debug.LogWarning("[TransitionBehaviour_ImageSequence] ImageSheet not found: " + transitionName);
+            transition = null;
+            return false;
         }
+
+        transition = PlaySheet(sheet, transitionName);
+        return true;
+    }
+
+    private IEnumerator PlaySheet(ImageSheetEntry sheet, string transitionName)
+    {
 
         Sprite[] spritesToPlay = sheet.GetSprites();
 
         if (spritesToPlay == null || spritesToPlay.Length == 0)
         {
-            Debug.LogWarning($"[TransitionBehaviour_ImageSequence] ImageSheet '{transitionName}' has no sprites");
+            Debug.LogWarning("[TransitionBehaviour_ImageSequence] ImageSheet '" + transitionName + "' has no sprites");
             yield break;
         }
 
         var activeImages = GetActiveImages();
         if (activeImages.Count == 0)
         {
-            Debug.LogWarning($"[TransitionBehaviour_ImageSequence] No target Images found on {gameObject.name}");
+            Debug.LogWarning("[TransitionBehaviour_ImageSequence] No target Images found on " + gameObject.name);
             yield break;
         }
 
@@ -116,7 +124,7 @@ public class TransitionBehaviour_ImageSequence : TransitionBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(frameDuration);
+            yield return WaitForDuration(frameDuration, sheet.useUnscaledTime);
         }
     }
 

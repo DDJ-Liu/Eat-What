@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "tableName": "InitialInventory",
+  "csvPath": "Cooking/InitialInventory.csv",
+  "targetType": "CK01InitialInventoryData",
+  "outputDirectory": "Assets/Generated/DataTables/Cooking/InitialInventory",
+  "assetNameField": "item_id",
+  "primaryKeyField": "item_id",
+  "columns": [
+    { "name": "item_id", "csvColumn": "item_id", "type": "ref", "required": true, "unique": true, "writeToAsset": false },
+    { "name": "quantity", "csvColumn": "quantity", "type": "int", "required": true, "minimum": "1" },
+    { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
+  ],
+  "references": [
+    { "field": "item_id", "targetSchema": "Cooking/Items.schema.json", "targetField": "item_id" }
+  ],
+  "rules": [
+    { "kind": "initial_inventory_raw_item", "field": "item_id", "message": "must reference an item_kind raw" }
+  ]
+}
