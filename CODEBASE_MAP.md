@@ -2,7 +2,7 @@
 
 最后结构一致性复核：2026-09-17。范围：源码入口、Build Settings、Packages、关键 Scene/Prefab/生成数据、Resources 路径和 Git 差异；Unity 只读确认正式 P0 编辑态、场景 clean、Console Error=0。本次运行既有离线回归，不重做全项目 Play Mode；本轮视觉与交互沿用已落账的用户验收。
 
-最后专项核验：2026-09-20（引擎迁移评估）。核对当前版本/Packages、渲染后端、输入/镜头/导表入口、Spine/TMP/Febucci/DLL 依赖及 Unity 只读现场；未执行 Unity 6 导入、编译或回归。当天活动场景为 CookingPrepare、Edit/clean，Console Error=0，另有3条字体下划线字符缺失警告；不覆盖上述完整复核结论。
+最后专项核验：2026-09-21（MIG63 启动准备）。补查15个场景的递归资源依赖、Spine移动预研及MCP装配关系；核对Git、Editor和本地恢复边界。原工作区仍为2022.3.62f2；迁移目标固定6000.3.24f1，尚未首次导入或在Unity 6回归。完整复核日期仍为2026-09-17，阶段状态见[MIG63执行台账](.ai-workspace/MIG63/执行台账.md)。
 
 本文件记录当前结构。整理前逐次变更与失败/恢复记录完整保存在 [.ai-workspace/archive/2026-09-17](.ai-workspace/archive/2026-09-17/README.md)，不再将历史状态堆在页首。完成度和下一轮边界见[项目基线](项目整体阅读理解与推进基线_2026-08-14.md)。
 
@@ -14,7 +14,7 @@
 | --- | --- |
 | 引擎与渲染 | Unity 2022.3.62f2、URP 14.0.12 |
 | 输入 | Input System 1.14.2 |
-| 当前 Build 列表 | Assets/Scenes/CookingPrepare.unity、Assets/Scenes/CookingProcess.unity；前者已由用户确认为弃用旧场景，列表尚未调整 |
+| 当前 Build 列表 | Assets/Scenes/CookingPrepare.unity、Assets/Scenes/CookingProcess.unity；MIG63已批准在迁移侧用ShortCycle替换弃用Prepare作为启动入口，实际列表尚未调整 |
 | 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；尚未加入 Build 列表 |
 | 视觉统一试验 | Assets/Scenes/ToolTests/VisualEffectsLab.unity |
 | 滚轮独立试验 | Assets/Scenes/ToolTests/FridgeScrollLab.unity |
@@ -25,7 +25,9 @@
 
 Packages 清单与锁文件进入版本管理；Unity MCP 当前仍依赖 manifest 指定的本机外部路径，换机器须先准备对应插件。不要把本机依赖路径当作可在任意机器直接还原的保证。
 
-引擎迁移还须检查 Assets 内依赖，不能只读 manifest：Spine 3.8（2021-11-10）、Text Animator 2.3.1、NuGet/EPPlus 以及另一套 MCP 相关 DLL。旧链 `CookingPhaseState.cs`、`CameraFollower.cs` 使用 Cinemachine 2 API；自制视效通过相机回调及离屏 RT 调度，当前 Renderer2D 的 Renderer Features 为空。Unity 6000.6.2f1 的候选适配点、官方资料及验证路线见[迁移专项评估](.ai-workspace/outputs/research/Unity6000.6.2_迁移评估_20260920/评估报告.md)。评估未改变本项目当前版本、架构或验证入口。
+引擎迁移须同时检查Assets内依赖：Spine 3.8（2021-11-10）、Text Animator 2.3.1、NuGet/EPPlus及MCP相关DLL。旧链CookingPhaseState.cs、CameraFollower.cs使用Cinemachine 2 API；自制视效通过相机回调及离屏RT调度，Renderer2D的Renderer Features为空。当前执行依据为[MIG63迁移基线](.ai-workspace/MIG63/迁移基线.md)，不沿用历史6.6候选评估作为目标。
+
+Spine保护范围：Assets/Scenes/Spine Sample.unity与Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity；相关业务代码为Assets/Scripts/Spine_Package/Scripts/CharacterEquipment.cs、CharacterTestController.cs，以及Assets/Scripts/Controller/HorizontalPlayerController.cs、SpineRuntimeMeshRendererBootstrap.cs。后一个场景当前使用Sample.prefab的SkeletonMecanim + Animator驱动idle/walk，spineAnimation字段为空；MeshRenderer延迟启用处理必须保留。ShortCycle及VisualEffectsLab/FridgeScrollLab的本次静态资源依赖未发现Spine；这不表示可以删除Spine运行库。M0实际Play发现Sample/output4的3.8.75数据被SkeletonBinary.cs/SkeletonJson.cs显式拒绝，属于原2022环境已有故障；用户确认后续数据统一3.8.99并可重导出，尚未实际替换。修复与验收见MIG-P01。
 
 ## 2. ShortCycle 当前主链
 
