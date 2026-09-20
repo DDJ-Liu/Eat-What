@@ -2,7 +2,11 @@
 
 最后结构一致性复核：2026-09-17。范围：源码入口、Build Settings、Packages、关键 Scene/Prefab/生成数据、Resources 路径和 Git 差异；Unity 只读确认正式 P0 编辑态、场景 clean、Console Error=0。本次运行既有离线回归，不重做全项目 Play Mode；本轮视觉与交互沿用已落账的用户验收。
 
+最后专项核验：2026-09-20（引擎迁移评估）。核对当前版本/Packages、渲染后端、输入/镜头/导表入口、Spine/TMP/Febucci/DLL 依赖及 Unity 只读现场；未执行 Unity 6 导入、编译或回归。当天活动场景为 CookingPrepare、Edit/clean，Console Error=0，另有3条字体下划线字符缺失警告；不覆盖上述完整复核结论。
+
 本文件记录当前结构。整理前逐次变更与失败/恢复记录完整保存在 [.ai-workspace/archive/2026-09-17](.ai-workspace/archive/2026-09-17/README.md)，不再将历史状态堆在页首。完成度和下一轮边界见[项目基线](项目整体阅读理解与推进基线_2026-08-14.md)。
+
+2026-09-20 资产清理专项核验：用户确认 CookingPrepare 已弃用，现有 Build 列表仍保留该场景，本次未调整发行入口。已从 Resources/Customer、Resources/DialogSystem/TestDialog、Sprites/Cooking/Customer 删除 14 张已确认的第三方游戏角色图及 meta；TitlePage、DialogManager、DropDown 三个 Prefab 的对应图片引用/对象名已清理。StreamingAssets/Dialog.dat 保留 TestDialog 表名，内容改为单行中性测试（Uid=1、DefaultNextUid=-1、无角色图片/选项）；两组 TestCustomerPlaceOrder 表不变。旧 E 盘 Dialog.xlsx 不属于本次工程清理范围，再导入前须同步去除旧测试内容；可审阅的当前数据见[Dialog.cleaned.json](.ai-workspace/outputs/control/资产转让审查_20260920/后续清理/Dialog.cleaned.json)。当前 ShortCycle P0/P1 入口与运行架构未改；核验范围和残留扫描见[处理记录](.ai-workspace/outputs/control/资产转让审查_20260920/后续清理/处理记录.md)。
 
 ## 1. 工程入口
 
@@ -10,7 +14,7 @@
 | --- | --- |
 | 引擎与渲染 | Unity 2022.3.62f2、URP 14.0.12 |
 | 输入 | Input System 1.14.2 |
-| 正式 Build 列表 | Assets/Scenes/CookingPrepare.unity、Assets/Scenes/CookingProcess.unity |
+| 当前 Build 列表 | Assets/Scenes/CookingPrepare.unity、Assets/Scenes/CookingProcess.unity；前者已由用户确认为弃用旧场景，列表尚未调整 |
 | 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；尚未加入 Build 列表 |
 | 视觉统一试验 | Assets/Scenes/ToolTests/VisualEffectsLab.unity |
 | 滚轮独立试验 | Assets/Scenes/ToolTests/FridgeScrollLab.unity |
@@ -20,6 +24,8 @@
 | 验证 | DevTools 离线编译/契约测试、Unity 场景探针和人工验收；Assets/Tests 当前为视效夹具，不等于已有 NUnit 测试程序集 |
 
 Packages 清单与锁文件进入版本管理；Unity MCP 当前仍依赖 manifest 指定的本机外部路径，换机器须先准备对应插件。不要把本机依赖路径当作可在任意机器直接还原的保证。
+
+引擎迁移还须检查 Assets 内依赖，不能只读 manifest：Spine 3.8（2021-11-10）、Text Animator 2.3.1、NuGet/EPPlus 以及另一套 MCP 相关 DLL。旧链 `CookingPhaseState.cs`、`CameraFollower.cs` 使用 Cinemachine 2 API；自制视效通过相机回调及离屏 RT 调度，当前 Renderer2D 的 Renderer Features 为空。Unity 6000.6.2f1 的候选适配点、官方资料及验证路线见[迁移专项评估](.ai-workspace/outputs/research/Unity6000.6.2_迁移评估_20260920/评估报告.md)。评估未改变本项目当前版本、架构或验证入口。
 
 ## 2. ShortCycle 当前主链
 

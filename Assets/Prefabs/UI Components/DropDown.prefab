@@ -177,7 +177,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   weakCondition: 0
-  conditonLogicEvent:
+  conditonResultEvent:
     m_PersistentCalls:
       m_Calls: []
   preventHighlightOnFalseCondition: 0
@@ -363,6 +363,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2327338414615540917}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleScale: 1
   highlightScale: 1.05
@@ -466,6 +467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2327338414615540917}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleRotation: 0
   highlightRotation: 2
@@ -539,6 +541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2327338414615540917}
   isPressing: 0
+  isHoverMode: 0
   targetSprite: {fileID: 0}
   idleColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   highLightColor: {r: 0.3726415, g: 0.9181005, b: 1, a: 1}
@@ -889,7 +892,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   weakCondition: 0
-  conditonLogicEvent:
+  conditonResultEvent:
     m_PersistentCalls:
       m_Calls: []
   preventHighlightOnFalseCondition: 0
@@ -1087,6 +1090,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2325242292102638100}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleScale: 1
   highlightScale: 1.05
@@ -1190,6 +1194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2325242292102638100}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleRotation: 0
   highlightRotation: 2
@@ -1263,6 +1268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2325242292102638100}
   isPressing: 0
+  isHoverMode: 0
   targetSprite: {fileID: 0}
   idleColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   highLightColor: {r: 0.3726415, g: 0.9181005, b: 1, a: 1}
@@ -1621,7 +1627,7 @@ GameObject:
   - component: {fileID: 6258055181693467740}
   - component: {fileID: 5796054233527890540}
   m_Layer: 4
-  m_Name: SURTR IS DA BEST
+  m_Name: OptionTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1718,7 +1724,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   weakCondition: 0
-  conditonLogicEvent:
+  conditonResultEvent:
     m_PersistentCalls:
       m_Calls: []
   preventHighlightOnFalseCondition: 0
@@ -1904,6 +1910,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2190923801348996686}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleScale: 1
   highlightScale: 1.05
@@ -2007,6 +2014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2190923801348996686}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleRotation: 0
   highlightRotation: 2
@@ -2080,6 +2088,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2190923801348996686}
   isPressing: 0
+  isHoverMode: 0
   targetSprite: {fileID: 0}
   idleColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   highLightColor: {r: 0.3726415, g: 0.9181005, b: 1, a: 1}
@@ -2615,7 +2624,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   weakCondition: 0
-  conditonLogicEvent:
+  conditonResultEvent:
     m_PersistentCalls:
       m_Calls: []
   preventHighlightOnFalseCondition: 0
@@ -2777,6 +2786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2585557583021436320}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleScale: 1
   highlightScale: 1.2
@@ -2880,6 +2890,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2585557583021436320}
   isPressing: 0
+  isHoverMode: 0
   targetTransform: {fileID: 0}
   idleRotation: 0
   highlightRotation: 15
@@ -2953,11 +2964,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 2585557583021436320}
   isPressing: 0
+  isHoverMode: 0
   targetSprite: {fileID: 3302441712799784659}
   idleSprite: {fileID: 21300000, guid: 96289351a8fe1ef49861ba13c615feb8, type: 3}
   highLightSprite: {fileID: 21300000, guid: 69e838629815ed24aa2d0fa735dc2e2c, type: 3}
   NotAllowSprite: {fileID: 21300000, guid: b4884c94abe13ad41b5b018e1b340548, type: 3}
   pressedSprite: {fileID: 21300000, guid: 06b1fdb34bbfa614394bf4129edf40ae, type: 3}
+  startupDelay: 0.1
 --- !u!1 &9031221018915374344
 GameObject:
   m_ObjectHideFlags: 0
