@@ -21,6 +21,17 @@
 
 Unity 版本：2022.3.62f2
 
+### 活动迁移批次 MIG63（2026-09-21 启动）
+
+用户已确认并启动迁移至 Unity 6000.3.24f1。执行细则见 `.ai-workspace/MIG63/迁移基线.md`，当前状态及人工节点见 `.ai-workspace/MIG63/执行台账.md`；临时限制按 `.ai-workspace/MIG63/临时项登记.md` 登记和解除。
+
+- 原工作区 `D:/GameProject/Eat-What` 使用 `content/p0p1-layout` 和 2022.3.62f2，接棒前冻结业务代码及迁移侧独占文件；已获批内容调整仍按现有规则执行。
+- 独立迁移工作区 `D:/GameProject/Eat-What-U6` 使用 `migration/unity-6.3`；首次 Unity 6 打开由用户执行，不能自动使用其它版本替代。实际导入状态以该副本 ProjectVersion 和台账为准。
+- main 仅接收经过验收的集成，不直接开发；`backup/pre-unity6-20260920` 固定保留启动基线。迁移成果在 E1 前不得进入原 2022 工作区。
+- 采用手动 MIG- 台账，不启动或复制原自动队列。Spine Sample 与 HorizontalPlayerControllerTest 预研必须保留；不能通过删除或排除其编译完成迁移。
+- 迁移侧默认不挂 MCP，序列化修改由人工 Editor 或审定的 Editor API 完成；不通过手改 YAML 绕过资源安全规则。
+- 原工作区接棒验证 H 通过后解除代码冻结；首个 Unity 6 功能批次 F 验收后执行 E2 归档与清理。分支管理独立于工作区清理，不自动删除三条新增分支。
+
 ## Unity 工作规则
 
 When working with Unity:
