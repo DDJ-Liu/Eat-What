@@ -19,3 +19,6 @@ Assets/Font/**/*.asset filter=lfs diff=lfs merge=lfs -text
 
 Assets/TextMesh[[:space:]]Pro/Fonts/*.ttf filter=lfs diff=lfs merge=lfs -text
 Assets/TextMesh[[:space:]]Pro/Resources/Fonts[[:space:]]&[[:space:]]Materials/*.asset filter=lfs diff=lfs merge=lfs -text
+# Portable MIG63 hook sources (do not normalize unrelated files).
+DevTools/GitHooks/*.sh text eol=lf
+.ai-workspace/MIG63/pre-commit.sh text eol=lf
