@@ -2,7 +2,7 @@
 
 最后结构一致性复核：2026-09-17。范围：源码入口、Build Settings、Packages、关键 Scene/Prefab/生成数据、Resources 路径和 Git 差异；Unity 只读确认正式 P0 编辑态、场景 clean、Console Error=0。本次运行既有离线回归，不重做全项目 Play Mode；本轮视觉与交互沿用已落账的用户验收。
 
-最后专项核验：2026-09-21（MIG63 E1/H）。用户确认37bb854人工终验通过，六场景/meta及字体SHA与最终快照一致；main和unity6.3-baseline已指向该候选，backup保持起点。原工作区content已吸收同一版本，TMP84/LFS与九组离线回归通过；Unity 6接棒导入等待Spine Examples单文件API更新确认，H尚未通过、冻结尚未解除。定向重序列化安排在H后、首次内容修改前单独提交。详情见[E1/H报告](.ai-workspace/MIG63/E1H_接棒与后续项.md)。完整结构复核日期仍2026-09-17，不将本轮专项核验标成全项目重新验收。
+最后专项核验：2026-09-22（MIG63 E1/H及MIG-F06）。用户确认37bb854人工终验通过，main与unity6.3-baseline已集成同一候选，backup保持起点。原工作区content已在6000.3.24f1完成H接棒，TMP84/LFS、9组离线、5组Play及4项长期探针通过，业务冻结解除。其后独立定向重序列化处理3场景/11Prefab，仅3场景有磁盘变化；7934项对象/设置记录一致，meta/GUID、旧参考场景和字体未变，格式更新后的5组Play与Windows构建通过。后续格式提交留在content，未移动E1标签。详情见[E1/H报告](.ai-workspace/MIG63/E1H_接棒与后续项.md)。完整结构复核日期仍2026-09-17，未新增全项目人工视觉验收。
 
 本文件记录当前结构。整理前逐次变更与失败/恢复记录完整保存在 [.ai-workspace/archive/2026-09-17](.ai-workspace/archive/2026-09-17/README.md)，不再将历史状态堆在页首。完成度和下一轮边界见[项目基线](项目整体阅读理解与推进基线_2026-08-14.md)。
 
@@ -12,10 +12,10 @@
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 引擎与渲染 | Unity 6000.3.24f1、URP 17.3.0；原工作区已切换同一基线，H导入中 |
+| 引擎与渲染 | Unity 6000.3.24f1、URP 17.3.0；原工作区H接棒通过 |
 | 输入 | 本迁移分支Input System 1.20.0、Uniform；Windows滚轮已签收，Mac适配见MIG-F01 |
 | 当前 Build 列表 | ShortCycle_P0P1 index0、CookingProcess index1，Profile不覆盖，Prepare文件保留；原目录已同步 |
-| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；两目录均已加入Build，H完成前保持业务冻结 |
+| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；两目录均已加入Build；原目录H通过、冻结解除，后续开发在content分支 |
 | 视觉统一试验 | Assets/Scenes/ToolTests/VisualEffectsLab.unity |
 | 滚轮独立试验 | Assets/Scenes/ToolTests/FridgeScrollLab.unity |
 | 盘点 | Assets/Scripts 249 个 C#；Assets/Editor 63 个 C#（含4个保留迁移验证文件）；Assets/Scenes 15 个场景；Prefabs/Resources 共 71 个 Prefab |
@@ -23,9 +23,9 @@
 | 程序集 | 项目主要使用默认 Assembly-CSharp / Assembly-CSharp-Editor；第三方程序集另计 |
 | 验证 | DevTools 离线编译/契约测试、Unity 场景探针和人工验收；Assets/Tests 当前为视效夹具，不等于已有 NUnit 测试程序集 |
 
-Packages清单/锁文件及LocalPackages/com.coplaydev.unity-mcp固定Editor包进入版本管理。DevTools/MCP记录服务端10.1.2、源码提交和uv锁文件；Editor为同提交10.1.3-beta.4，迁移目录6.3连接与实例路由已实测。自动客户端改写已用10文件本地补丁关闭；主动Configure仍可用，未提供完整服务端离线镜像。详见DevTools/MCP/README.md。原目录H接棒已恢复相同本地包及独立venv，待导入结束后验证新实例路由。
+Packages清单/锁文件及LocalPackages/com.coplaydev.unity-mcp固定Editor包进入版本管理。DevTools/MCP记录服务端10.1.2、源码提交和uv锁文件；Editor为同提交10.1.3-beta.4，迁移目录6.3连接与实例路由已实测。自动客户端改写已用10文件本地补丁关闭；主动Configure仍可用，未提供完整服务端离线镜像。详见DevTools/MCP/README.md。原目录H接棒已恢复相同本地包及独立venv，新实例Eat-What@d5759c75ae7cb5de连接/路由通过；本轮验证服务收尾停止，未来使用重新发现实例。
 
-以上版本表指已验收E1基线及正在H接棒的原工作区。独立Eat-What-U6副本已导入6000.3.24f1：URP17.3.0、Input System1.20.0、UGUI2.0.0、Cinemachine2.10.7；Coplay已收敛为工程内固定包；仅顺序连接MIG实例，原队列未接入。API Updater把HorizontalPlayerController.cs与QuickAddForce.cs的Rigidbody2D.velocity改为linearVelocity。M2已保存Compatibility=false、无兼容宏，Windows构建通过；TMP目录已升级为84文件，M3R按N1取消忽略并随Git/LFS跟踪，保留原GUID和快照。精确变化和人工复核见[M2/M3执行结果](.ai-workspace/MIG63/M2M3_执行结果与人工验收.md)，原目录已接入相同资产，H运行回归完成前仍不宣称接棒通过。
+以上版本表指已验收E1基线及正在H接棒的原工作区。独立Eat-What-U6副本已导入6000.3.24f1：URP17.3.0、Input System1.20.0、UGUI2.0.0、Cinemachine2.10.7；Coplay已收敛为工程内固定包；M4连接MIG、H重新发现并验证原目录实例，原队列未接入。API Updater把HorizontalPlayerController.cs与QuickAddForce.cs的Rigidbody2D.velocity改为linearVelocity。M2已保存Compatibility=false、无兼容宏，Windows构建通过；TMP目录已升级为84文件，M3R按N1取消忽略并随Git/LFS跟踪，保留原GUID和快照。精确变化和人工复核见[M2/M3执行结果](.ai-workspace/MIG63/M2M3_执行结果与人工验收.md)，原目录H运行回归已通过，后续格式更新独立留在content，main/tag保持用户验收的37bb854。
 
 迁移侧验证工具变化：DevTools/Rendering/Test-OutlineMerge.ps1、Test-EtherBubbleDistortion.ps1、DevTools/ShortCycle/Test-CK01CShortCycle.ps1及CoordinateSpaceRegression/Invoke-CoordinateCompilation.ps1按项目版本定位Hub/旧Editor；泡泡测试引用URP17的2D.Runtime程序集。H磁盘接棒已同步这些工具，九组离线回归通过。原临时验证链已移除；本轮按用户决定长期保留迁移侧Assets/Editor/MIG63Validation/MIG63WheelProbe.cs、MIG63TomatoProbe.cs、MIG63SpineSceneProbe.cs和MIG63ValidationSession.cs，菜单Tools/MIG63/Validation，说明DevTools/MIG63/README.md。两侧新增DevTools/GitHooks字体工作树/index保护，最终机器结果不覆盖硬件鼠标和同分辨率全视觉对照。
 
@@ -33,7 +33,7 @@ Packages清单/锁文件及LocalPackages/com.coplaydev.unity-mcp固定Editor包�
 
 Spine保护范围：Assets/Scenes/Spine Sample.unity和Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity。M4在这两处保留原Prefab/对象身份，使用场景override绑定现有Tomato 3.8.99；动画控制器为Avatars/Tomato/Tomato_MIG63.controller（idle/walk/kick，Idle/Walk/Kick触发器）。三个SkeletonMecanim的MeshRenderer磁盘均为禁用，由已有SpineRuntimeMeshRendererBootstrap在Start启用，避免场景恢复旧网格产生Invalid worldAABB。CharacterEquipment采用Tomato_Non和7部位；Sample的Bottom槽保持Test_EquipBottom按钮契约。HorizontalPlayerController保留Rigidbody2D移动和Animator路径，spineAnimation仍为空；另一SkeletonAnimation用法由长期Tomato双路径探针覆盖。旧Sample/output4 3.8.75及Prefab/runtime/Shader未覆盖或删除，直接读取旧骨骼仍是已登记历史缺陷。ShortCycle/两个Lab不依赖Spine。保存场景与双路径GPU通过并不表示全部皮肤、混合模式或重打包均验收。
 
-迁移侧滚轮专项：Assets/Scripts/MouseInteractive/MouseManager.cs 保留序列化字段，补Unity 6 Windows Uniform输入到旧阈值单位的120换算、冷却期最多一步积累、目标/层/失焦清理，冷却改用unscaled time。原工作区已同步该实现，H通过前继续冻结业务开发。配置人员入口见[区域滚动说明](组件说明文档/区域滚动_配置与复用说明.md)；用户已明确复验完成，MIG-P04关闭为批准的交互调整（一次派发一页，短促连拨可能含一次延后派发）。MIG-F01承接统一单位/手感小项，Mac阈值尚不适配，Mac使用前单独验证；旧2022回退基线没有上述新语义，不再用于打开已接棒目录。Windows API保持D3D11优先/D3D12第二，Auto=false。
+迁移侧滚轮专项：Assets/Scripts/MouseInteractive/MouseManager.cs 保留序列化字段，补Unity 6 Windows Uniform输入到旧阈值单位的120换算、冷却期最多一步积累、目标/层/失焦清理，冷却改用unscaled time。原工作区已同步该实现并通过H验证，后续手感调整按MIG-F01另行实施。配置人员入口见[区域滚动说明](组件说明文档/区域滚动_配置与复用说明.md)；用户已明确复验完成，MIG-P04关闭为批准的交互调整（一次派发一页，短促连拨可能含一次延后派发）。MIG-F01承接统一单位/手感小项，Mac阈值尚不适配，Mac使用前单独验证；旧2022回退基线没有上述新语义，不再用于打开已接棒目录。Windows API保持D3D11优先/D3D12第二，Auto=false。
 
 ## 2. ShortCycle 当前主链
 
@@ -153,3 +153,5 @@ ShortCycleDataHandoff 已携带 RecipeId 和 PrepZoneContents；当前 Phase2Tra
 - 离线测试不替代 Unity GPU、实际事件、生命周期与用户手感验收。源码修改后仍须 Compile/Console，序列化改动须先读现场、优先 MCP、复核差异和清理本任务临时变化。
 - 历史未保存恢复点仅从归档提取到独立缓存；不覆盖当前生产资产。
 - 新开发同步维护本文件、项目基线和适用组件说明；日常不再追加长篇过程日志到页首，过程证据写到任务输出并在阶段末归档。
+
+H后待办归属：客户端配置MIG-F03、无鼠标设备容错MIG-F04、E2功能命名MIG-F05、官方AI接口评估MIG-F07均见E1/H报告；F尚未指定，2026-09-29为人工检查点，不创建自动提醒、不自动展开业务或清理副本。
