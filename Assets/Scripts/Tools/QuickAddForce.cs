@@ -31,7 +31,7 @@ public class QuickAddForce : MonoBehaviour
             //rb2D.gravityScale = 6f;
             started = true;
             Vector2 force = direction.normalized * speed;
-            rb2D.velocity = force;
+            rb2D.linearVelocity = force;
         }
     }
 }

@@ -441,8 +441,8 @@ public sealed class HorizontalPlayerController : MonoBehaviour
         if (targetRigidbody == null)
             return;
 
-        Vector2 velocity = targetRigidbody.velocity;
+        Vector2 velocity = targetRigidbody.linearVelocity;
         velocity.x = 0f;
-        targetRigidbody.velocity = velocity;
+        targetRigidbody.linearVelocity = velocity;
     }
 }
