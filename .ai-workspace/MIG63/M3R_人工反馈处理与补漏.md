@@ -13,7 +13,7 @@
 | `74a922c5030ce476929ca7919c0d716e9e90a92f` | **MIG63 N1：纳入 TMP 导入资源与 GUID 版本管理**：84 文件与 M2 快照 SHA-256 全同，取消目录忽略；字体/SDF 资产用 LFS，meta/GUID 保留。 |
 | `3120997` | **MIG63：修复 Unity 6 小幅滚轮输入并记录人工反馈回归**：MouseManager最小修复及迁移侧增量说明；不包含临时工具、字体副作用或场景修改。 |
 
-M1 标题按用户指定。“无人工修改”指未混入 M2 人工修复，不证明首次构建操作之前的一切设置都由自动导入产生。首次导入快照在首次构建尝试之后拍摄；Windows Graphics API 显式列表的来源仍待用户回忆确认，不擅自归因。
+M1 标题按用户指定。“无人工修改”指未混入 M2 人工修复，不证明首次构建操作之前的一切设置都由自动导入产生。首次导入快照在首次构建尝试之后拍摄；Windows Graphics API 显式列表的历史来源不再等待回忆；本轮按用户采纳建议登记有意保留实际D3D11优先/D3D12第二、Auto=false，关闭归因项。
 
 提交前当前 151 文件与 M2 收尾快照全部相符。M1 的 4 个仅 status 标记文件经 Git 规范化后与 HEAD 同 blob，未人为制造提交。两 clone `core.autocrlf=true`，没有单独指定 eol/safecrlf；原 `.gitattributes` 仅磁盘 LF/CRLF 不同，规范化文本完全相同。没有全仓行尾重写。N1 后新增的字体 LFS 规则是有意差异。
 
@@ -68,7 +68,7 @@ M0 已在 2022 复现旧 3.8.75 被 runtime 拒绝及 CharacterEquipment 空引�
 | --- | --- |
 | Shader 警告旧版对照 | 已用 2022.3.62f2/D3D11 对同一未修改 SpriteOutline2D Shader 的各 pass 编译，确有第133/156行 FindNeighbourAlpha、SampleShadowAlpha 同名警告，与 M2 构建一致。MIG-P03 转为原有问题登记；用户 VFXLab 通过，不为消警盲改 Shader。 |
 | CookingProcess index 1 | 本批要求为可加载、不产生运行错误。本轮6000.3 Editor已通过；实际路径为Assets/Scenes/CookingProcess.unity。最终Player跨场景加载仍列M4清单，不扩大为旧完整业务链验收。 |
-| MCP 可恢复依赖 | 采纳 b：仓库内固定版本包 + 相对 manifest 路径。M4 前同时核对 Python 服务端、uv/锁文件/启动路径、许可证和版本来源；仅复制 Editor 包不等于服务端离线可恢复。6.3 实测连接和实例路由后才能通过，不改原共享 EditorPrefs、不复制自动队列。当前仍隔离，尚未宣称连接通过。 |
+| MCP 可恢复依赖 | 采纳 b：仓库内固定版本包 + 相对 manifest 路径。M4 前记录 Python 服务端版本、uv锁文件/启动方式、许可证和来源（不搭完整离线镜像）；仅复制 Editor 包不等于服务端离线可恢复。6.3 实测连接和实例路由后才能通过，不改原共享 EditorPrefs、不复制自动队列。当前仍隔离，尚未宣称连接通过。 |
 | 自动新增默认包 | M4 收尾逐项决定保留/移除，manifest 每项均有依据；当前不夹带与滚轮无关的依赖升级。 |
 | CompanyName/ProductName | 不混入 MIG63；记为 E1 后、存档与 PlayerPrefs 正式落地前处理的明确待办。改名时核对 persistentDataPath/PlayerPrefs 迁移策略。 |
 | TMP 本地快照 | N1 已入库仍保留 M0/M1/M2 原始快照至 H/E2；接棒不再只靠手工复制未跟踪字体。 |
@@ -94,6 +94,28 @@ M0 已在 2022 复现旧 3.8.75 被 runtime 拒绝及 CharacterEquipment 空引�
 
 用户已配合一次刷新后继续执行。临时工具调试经历方法名误用、退出Play/恢复场景时序竞争、未激活探针父级、CookingProcess路径拼写问题；各次错误/截图保留，均为诊断工具问题，不归因于生产引擎回归。最终有效证据按完成时间和链路日志区分，不能直接把累计日志中的历史错误当成本轮有效用例错误，也不清空Console掩盖它们。
 
-最终人工节点仍包括修复后真实滚轮手感、同分辨率最终对照与 E1 SHA；尚未进入 main 集成。
+本轮用户已签收修复后滚轮；仍保留C/M4同分辨率最终对照与 E1 SHA；尚未进入 main 集成。
 
-下一次人工复验使用上述 **Windows-x64-feedback** 新目录，并在Editor的ShortCycle/FridgeScrollLab检查慢速逐格、小幅滚动、快速后停手、反向、移出区域/切窗及正式弹层阻断。字体/画面确认无新异常后记录本次修复签收。随后核定C冻结SHA，执行M4的仓库内AI依赖与连接、Tomato正式参考绑定、导表/字体/包清单及最终回归；E1仍由用户按最终SHA批准。
+用户已反馈修复后滚轮功能完成，采纳新引擎方向并将手感优化列为后续小项，不再重复要求本轮签收。后续M4/H回归仍使用上述 **Windows-x64-feedback** 或相应最终构建，保留慢速、小幅、连拨停手、反向、焦点/区域及正式弹层检查。接着核定C冻结SHA，执行M4的仓库内AI依赖与连接、Tomato正式参考绑定、导表/字体/包清单及最终回归；E1仍由用户按最终SHA批准。
+
+## 7. 用户最终反馈及保护补齐（2026-09-21）
+
+**MIG-P04已关闭，功能完成。** 用户本人复验后明确保留现有修复，优先采用新版引擎方式。对应管理端方案B：冷却积累、反向/目标/层/失焦清理和unscaled time均保留为经批准的交互调整；不再宣称与2022每个输入序列等价。一次派发仍按页；同一次快速连拨可能立即走一页、停手后补一页。用户给出整体通过结论，没有逐项/逐设备回执，不补写不存在的人工记录。
+
+官方Input System另有[KeepPlatformSpecificInputRange](https://docs.unity3d.com/Packages/com.unity.inputsystem%401.9/api/UnityEngine.InputSystem.InputSettings.ScrollDeltaBehavior.html)，它可在Windows恢复原始范围，但会改变全局输入约定；按用户偏好不切换。保持UniformAcrossAllPlatforms，当前Windows乘120仅为现有Threshold=5的兼容桥接，不能宣称已改成全面统一单位设计。
+
+**MIG-F01（后续小项）**：H后在FridgeScrollLab调统一单位阈值、细小输入和连拨停手手感，并在正式场景复验。现有换算只在Windows生效，Mac统一刻度与阈值5不匹配仍是已知限制；须在Mac实际接棒/使用前适配并做硬件验证。此项不回退Windows已验收功能，也不虚构Mac已测。
+
+**Graphics API**：通过Editor API核实Auto=false，顺序为Direct3D11、Direct3D12，当前运行GPU=Direct3D11。有意保留现有列表，关闭来源归因；不是DX11-only，也没有验证DX12路径。未修改ProjectSettings。不引用未经核实的Unity默认DX12起始版本。
+
+**字体保护**：两个clone均安装DevTools/GitHooks/check-mig63-font.sh，检查工作树和index内容（LFS读取oid），基线完整SHA仍为1D379A7EB64DE1871194614F83BF61AC52E0D323677048FE237E3FBD3B399CC2。15项隔离仓库测试通过，涵盖磁盘/暂存区漂移、原始blob/LFS、缺失文件、精确哈希例外及原有分支冻结。未设置真实例外；放行须明确批准的SHA和原因。旧hook先备份，LFS pre-push未动，E2仅解除临时范围冻结，保留字体检查。本地hook并非不可绕过的服务端策略。
+
+**长期验证工具**：迁移侧Assets/Editor/MIG63Validation保存MIG63WheelProbe、MIG63TomatoProbe及共用MIG63ValidationSession；使用见DevTools/MIG63/README.md。仅手动菜单启动，不导入即自动跑、不自动串联或构建、不保存生产场景/资产。每次唯一输出目录，保存字体恢复点，退出Play后恢复原保存场景并核对磁盘哈希；字体漂移只留证并报错，不自动覆盖未知内容。两项本轮重跑分别14/16断言通过，无当次Error/Exception/Assert，恢复FridgeScrollLab Edit/clean、字体及meta不变；Tomato换装图再次可见且无粉材质。测试仍不覆盖OS鼠标输入、真实弹层阻断、所有皮肤/混合模式或旧场景Renderer延迟启动接线。
+
+MCP仅推进Editor包入库、服务端版本/uv锁文件/来源许可记录和6000.3连接实测；官方CLI/MCP后续另批，不为可能替换的Coplay建立完整离线镜像。本轮没有接回MCP或推进C/M4集成。
+
+文档影响：已同步AGENTS、CODEBASE_MAP、项目基线、迁移执行/临时项及区域滚动、冰箱猫说明和视觉目录；两份配置说明明确仅对应迁移分支，原2022实现仍冻结。本轮不改生产滚轮、Shader、场景、Prefab、字体或全局Graphics设置。证据在原工作区M3R-close，保留旧M3R错误史。
+
+本轮工具与保护已形成迁移提交`0698ca2d955179a36a2af243a4dc64b1dcde9d5f`。Git差异复查未发现生产资源变化；仅新建目录的Unity自动meta有三个空值尾空格，按实际生成内容保留，未为消除空格手改YAML。其余新增/修改文件diff检查通过。
+
+迁移提交0698ca2已推送。本轮另存E:/MIG63-Backups/20260921/MIG63-M3R-close.zip，57条目逐SHA验证通过；ZIP SHA-256为BE001750B70A8FB5826AA4F6CAA2D21CF1BA7E92FBBEA65AB3ACEAF928B700B1。包内文档是打包时点快照，最终验收记录随CONTENT入库；不替代E2归档。

@@ -1,4 +1,6 @@
 #!/bin/sh
+root=$(git rev-parse --show-toplevel) || exit 1
+sh "$root/DevTools/GitHooks/check-mig63-font.sh" || exit 1
 # MIG63 temporary commit guard. Removal/phase changes require lifecycle ledger entry.
 branch=$(git symbolic-ref --quiet --short HEAD) || exit 1
 case "$branch" in
