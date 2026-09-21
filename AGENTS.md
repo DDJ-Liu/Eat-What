@@ -19,15 +19,15 @@
 
 ## Unity
 
-Unity 版本：6000.3.24f1（本迁移分支；原工作区在H接棒前仍为2022.3.62f2）。
+Unity 版本：6000.3.24f1（E1已验收；原工作区H导入中，禁止再用2022打开此目录）。
 
 ### 活动迁移批次 MIG63（2026-09-21 启动）
 
 用户已确认并启动迁移至 Unity 6000.3.24f1。执行细则见 `.ai-workspace/MIG63/迁移基线.md`，当前状态及人工节点见 `.ai-workspace/MIG63/执行台账.md`；临时限制按 `.ai-workspace/MIG63/临时项登记.md` 登记和解除。
 
-- 原工作区 `D:/GameProject/Eat-What` 使用 `content/p0p1-layout` 和 2022.3.62f2，接棒前冻结业务代码及迁移侧独占文件；已获批内容调整仍按现有规则执行。
+- 原工作区 `D:/GameProject/Eat-What` 使用 `content/p0p1-layout`，已吸收E1候选37bb854，正以6000.3.24f1导入；H通过前继续冻结业务开发。H后第一项为独立定向重序列化，完成前不混入布局修改。
 - 独立迁移工作区 `D:/GameProject/Eat-What-U6` 使用 `migration/unity-6.3`；首次 Unity 6 打开由用户执行，不能自动使用其它版本替代。实际导入状态以该副本 ProjectVersion 和台账为准。
-- 用户已冻结C=65604ab，M4汇合和机器回归完成；最终候选待E1人工SHA/视觉批准，未合main或执行H。最新入口为 `.ai-workspace/MIG63/M4_汇合与最终候选.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 `Assets/Editor/MIG63Validation`，不能作为临时垃圾清理。
+- 用户已冻结C=65604ab并确认37bb854人工终验通过；main与unity6.3-baseline已指向该候选。H导入/运行验证尚未闭合，最新入口为 `.ai-workspace/MIG63/E1H_接棒与后续项.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 `Assets/Editor/MIG63Validation`，不能作为临时垃圾清理。
 - main 仅接收经过验收的集成，不直接开发；`backup/pre-unity6-20260920` 固定保留启动基线。迁移成果在 E1 前不得进入原 2022 工作区。
 - 采用手动 MIG- 台账，不启动或复制原自动队列。Spine Sample 与 HorizontalPlayerControllerTest 预研必须保留；不能通过删除或排除其编译完成迁移。
 - M4已将MCP收敛为仓库内固定Editor包；服务端来源/锁文件及恢复方式见 `DevTools/MCP/README.md`。使用前每次发现/选择实例并核对Application.dataPath与版本；共享EditorPrefs和外部客户端配置不得盲目改写，不接原自动队列。序列化操作优先MCP/审定Editor API，不手改YAML。
