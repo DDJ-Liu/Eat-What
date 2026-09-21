@@ -19,7 +19,7 @@
 
 ## Unity
 
-Unity 版本：2022.3.62f2
+Unity 版本：6000.3.24f1（本迁移分支；原工作区在H接棒前仍为2022.3.62f2）。
 
 ### 活动迁移批次 MIG63（2026-09-21 启动）
 
@@ -27,11 +27,11 @@ Unity 版本：2022.3.62f2
 
 - 原工作区 `D:/GameProject/Eat-What` 使用 `content/p0p1-layout` 和 2022.3.62f2，接棒前冻结业务代码及迁移侧独占文件；已获批内容调整仍按现有规则执行。
 - 独立迁移工作区 `D:/GameProject/Eat-What-U6` 使用 `migration/unity-6.3`；首次 Unity 6 打开由用户执行，不能自动使用其它版本替代。实际导入状态以该副本 ProjectVersion 和台账为准。
-- 当前已导入6000.3.24f1；M2/M3机器检查和用户初验完成，滚轮MIG-P04已人工签收，Tomato双路径已验证；C/M4/E1尚未完成。最新入口为 `.ai-workspace/MIG63/M3R_人工反馈处理与补漏.md`。迁移侧长期工具在 `Assets/Editor/MIG63Validation`，操作见 `DevTools/MIG63/README.md`，不能按旧临时工具清理。
+- 用户已冻结C=65604ab，M4汇合和机器回归完成；最终候选待E1人工SHA/视觉批准，未合main或执行H。最新入口为 `.ai-workspace/MIG63/M4_汇合与最终候选.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 `Assets/Editor/MIG63Validation`，不能作为临时垃圾清理。
 - main 仅接收经过验收的集成，不直接开发；`backup/pre-unity6-20260920` 固定保留启动基线。迁移成果在 E1 前不得进入原 2022 工作区。
 - 采用手动 MIG- 台账，不启动或复制原自动队列。Spine Sample 与 HorizontalPlayerControllerTest 预研必须保留；不能通过删除或排除其编译完成迁移。
-- 迁移侧默认不挂 MCP，序列化修改由人工 Editor 或审定的 Editor API 完成；不通过手改 YAML 绕过资源安全规则。
-- 用户于2026-09-21人工反馈后批准M1/M2拆分提交和推送，采纳N1在迁移侧跟踪TMP资源；旧Sample/output4难以溯源，Spine测试及后续参考改用已有Tomato 3.8.99，旧数据/场景仍保留。旧数据故障登记为2022已有问题，不再等待重导出阻断E1；Tomato功能回归仍为必要条件。MCP正式依赖采纳仓库内固定包/相对路径方案，M4前记录服务端版本、uv锁文件/来源许可并做6.3连接验证，不搭完整离线服务端镜像；完成前保持隔离。
+- M4已将MCP收敛为仓库内固定Editor包；服务端来源/锁文件及恢复方式见 `DevTools/MCP/README.md`。使用前每次发现/选择实例并核对Application.dataPath与版本；共享EditorPrefs和外部客户端配置不得盲目改写，不接原自动队列。序列化操作优先MCP/审定Editor API，不手改YAML。
+- 用户于2026-09-21人工反馈后批准M1/M2拆分提交和推送，采纳N1在迁移侧跟踪TMP资源；旧Sample/output4难以溯源，Spine测试及后续参考改用已有Tomato 3.8.99，旧数据/场景仍保留。旧数据故障登记为2022已有问题，不再等待重导出阻断E1；Tomato功能回归仍为必要条件。MCP正式依赖采纳仓库内固定包/相对路径方案，M4前记录服务端版本、uv锁文件/来源许可并做6.3连接验证，不搭完整离线服务端镜像。M4已完成最小依赖收敛和连接实测，测试服务在本轮收尾停止；H重新发现目标实例。
 - 用户最新决定保留Uniform输入和已验收滚轮修复，明确属于获批交互调整；后续MIG-F01优化统一单位/手感，Mac平台阈值适配必须在Mac使用前验证，不撤销Windows签收。Windows API有意保留D3D11第一、D3D12第二、Auto=false，不误记为DX11-only。
 - 两侧字体pre-commit检查保护工作树和index/LFS内容SHA；规则见 `DevTools/GitHooks/README.md`。字体漂移先保全、核对并按Editor恢复流程处理；不得跳过检查误提交，精确哈希放行须有用户批准。该检查与两项手动探针在E2后保留。
 - 原工作区接棒验证 H 通过后解除代码冻结；首个 Unity 6 功能批次 F 验收后执行 E2 归档与清理。分支管理独立于工作区清理，不自动删除三条新增分支。

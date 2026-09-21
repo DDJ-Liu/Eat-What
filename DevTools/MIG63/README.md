@@ -21,3 +21,15 @@
 - 滚轮用真实`Mouse.current.scroll`数据缓冲及生产`MouseManager.OnScroll`，覆盖接受的Windows Uniform行为。Layer切换检查不等于物理弹层遮挡测试；OS硬件、焦点与主观手感仍在正式场景人工验收。Mac当前会被明确拒绝运行该Windows夹具，待MIG-F01适配后扩充；不声称已跨平台验证。
 - Tomato只使用现有素材，换装的白发来自Hair_B/Hair_C素材。未覆盖全部皮肤/混合模式、autoOptimize重打包或旧场景Renderer延迟启用接线；不修复旧3.8.75数据，也不保存新的正式参考绑定。
 - M4/H重跑这两项，E2归档结果但保留源码、meta和Lab；不得恢复临时版本中的自动验证链或构建入口。
+
+## M4 保存场景的 Tomato 参考
+
+新增长期菜单 `Tools/MIG63/Validation/Spine Sample Saved Scene` 和 `Horizontal Saved Scene`，源码 `MIG63SpineSceneProbe.cs`。使用同一会话保护、120秒超时、字体SHA检查和回原场景流程，每次手动运行一次；H应连续各运行两次。输出kind为spine-scene，environment记录恢复场景，checks记录对应场景角色/移动检查。
+
+两处场景以Prefab实例override接现有Tomato 3.8.99；不覆盖旧骨骼或共享Prefab。新控制器 `Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller` 使用idle/walk/kick实际时长，支持Idle/Walk/Kick触发器；重复动作允许重新进入、消耗触发器，kick完成回idle。三个Renderer磁盘禁用，原有SpineRuntimeMeshRendererBootstrap在Start启用；在Edit看不到角色不等于素材丢失，进入Play核验。
+
+Spine Sample保留两组示例和原按钮。头发A/B、下装、素体分别走CharacterEquipment；Sample的Bottom槽是原按钮Test_EquipBottom契约，不能随意改成BottomCloth。其它角色的BottomCloth槽保持其自身配置。右侧CharacterTestController可同步装备、触发动作。Horizontal保留A/D和左右键、速度4及原边界，Animator驱动idle/walk，SkeletonAnimation另一用法由旧Tomato双路径菜单独立覆盖。
+
+保存场景探针验证初始化、材质、重复进退、实际动画按钮TriggerSelect及延迟事件，换装按保存的select/delayed事件检查绑定，后者不测试按钮时序/真实鼠标命中。自动化输入期间临时关闭移动键盘fallback；退出后恢复磁盘场景。捕捉相机/RT仅本次运行创建并释放；源码不写场景。人工仍需看角色/换装观感、按键及鼠标命中。仅测试指定皮肤，不覆盖autoOptimize与所有混合模式。
+
+M4发现并保留失败史：Sample生成网格恢复时Invalid worldAABB，沿用已有Renderer启动组件修好；探针误触发/遗漏延迟事件修正后重新验收；字体漂移会拦截启动。不要删除失败目录或拿旧completed标记充当新运行结果。

@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -386,7 +383,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -394,6 +390,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -523,14 +520,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ComponentVersion: 1
+  m_ComponentVersion: 3
   m_LightType: 4
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_LightVolumeIntensity: 1
-  m_LightVolumeIntensityEnabled: 0
+  m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
@@ -540,8 +537,10 @@ MonoBehaviour:
   m_NormalMapDistance: 3
   m_NormalMapQuality: 2
   m_UseNormalMap: 0
-  m_ShadowIntensityEnabled: 0
+  m_ShadowsEnabled: 0
   m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0
+  m_ShadowSoftnessFalloffIntensity: 0.5
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
@@ -1322,65 +1321,201 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1275801895}
     m_Modifications:
+    - target: {fileID: 56708116129810753, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 1de86d2f3fac9a1488fc080a1ca92cdd, type: 2}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: baseSkin
+      value: Tomato_Non
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: applyDefaultEquipmentOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[0].skinName
+      value: Tomato_Hair_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[0].slotName
+      value: Hair
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[1].skinName
+      value: Tomato_Eyes_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[1].slotName
+      value: Eyes
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[2].skinName
+      value: Tomato_Ear_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[2].slotName
+      value: Ear
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[3].skinName
+      value: Tomato_Mouth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[3].slotName
+      value: Mouth
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[4].skinName
+      value: Tomato_TopCloth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[4].slotName
+      value: TopCloth
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[5].skinName
+      value: Tomato_BottomCloth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[5].slotName
+      value: BottomCloth
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[6].skinName
+      value: Tomato_Shoes_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 821439975461221505, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipmentSlots.Array.data[6].slotName
+      value: Shoes
+      objectReference: {fileID: 0}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[7]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[8]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[9]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f0fc8da2f6e2e5c4da2ebf71c11e9d83, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[10]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f1939e726103d0f408be591b0e0fa563, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[11]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[12]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 861771229518927155, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: 'm_Materials.Array.data[13]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: equipments.Array.size
-      value: 9
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: equipments.Array.data[0].skinName
-      value: TopCloth_A
+      value: Hair_B
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: equipments.Array.data[0].slotName
-      value: TopCloth
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[1].skinName
-      value: Hair_D
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[1].slotName
       value: Hair
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[2].skinName
-      value: BottomCloth_A
+      propertyPath: equipments.Array.data[1].skinName
+      value: Tomato_Eyes_A
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[2].slotName
-      value: BottomCloth
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[3].skinName
-      value: Ear_A
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[3].slotName
-      value: Ear
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[4].skinName
-      value: Eyes_A
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[4].slotName
+      propertyPath: equipments.Array.data[1].slotName
       value: Eyes
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[5].skinName
-      value: Mouth_A
+      propertyPath: equipments.Array.data[2].skinName
+      value: Tomato_Ear_A
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
-      propertyPath: equipments.Array.data[5].slotName
+      propertyPath: equipments.Array.data[2].slotName
+      value: Ear
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipments.Array.data[3].skinName
+      value: Tomato_Mouth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipments.Array.data[3].slotName
       value: Mouth
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipments.Array.data[4].skinName
+      value: Tomato_TopCloth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipments.Array.data[4].slotName
+      value: TopCloth
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipments.Array.data[5].skinName
+      value: Tomato_BottomCloth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: equipments.Array.data[5].slotName
+      value: BottomCloth
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: equipments.Array.data[6].skinName
-      value: Non
+      value: Tomato_Shoes_A
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: equipments.Array.data[6].slotName
-      value: RightArm
+      value: Shoes
       objectReference: {fileID: 0}
     - target: {fileID: 1536025042820595673, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: equipments.Array.data[7].skinName
@@ -1406,6 +1541,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: O4_Character
       objectReference: {fileID: 0}
+    - target: {fileID: 8535201956283324344, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: initialSkinName
+      value: Tomato_Non
+      objectReference: {fileID: 0}
+    - target: {fileID: 8535201956283324344, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      propertyPath: skeletonDataAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: a0ad9fa13b9233145a7a05513a0d6113, type: 2}
     - target: {fileID: 9218959701253769239, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.39
@@ -1449,13 +1592,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3841793051877281437, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1246044332}
   m_SourcePrefab: {fileID: 100100000, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
 --- !u!4 &1246044330 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9218959701253769239, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
   m_PrefabInstance: {fileID: 1246044329}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1246044331 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3841793051877281437, guid: 0c67b43e66451994f822a63e08642fff, type: 3}
+  m_PrefabInstance: {fileID: 1246044329}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1246044332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1246044331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157e21c04cb036d41a4122d0f9efb8ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpineRuntimeMeshRendererBootstrap
 --- !u!1 &1275801894
 GameObject:
   m_ObjectHideFlags: 0
@@ -2193,6 +2356,142 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1456534939}
     m_Modifications:
+    - target: {fileID: 510581508262971731, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 1de86d2f3fac9a1488fc080a1ca92cdd, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[7]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[8]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[9]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f0fc8da2f6e2e5c4da2ebf71c11e9d83, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[10]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f1939e726103d0f408be591b0e0fa563, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[11]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[12]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f88114a200bf82c4aae761bc37e378b1, type: 2}
+    - target: {fileID: 876272044248519969, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[13]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9958bf284a0d96344aff25b5acaeb20b, type: 2}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: baseSkin
+      value: Tomato_Non
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: applyDefaultEquipmentOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[0].skinName
+      value: Tomato_Hair_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[0].slotName
+      value: Hair
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[1].skinName
+      value: Tomato_Eyes_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[1].slotName
+      value: Eyes
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[2].skinName
+      value: Tomato_Ear_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[2].slotName
+      value: Ear
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[3].skinName
+      value: Tomato_Mouth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[3].slotName
+      value: Mouth
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[4].skinName
+      value: Tomato_TopCloth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[4].slotName
+      value: TopCloth
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[5].skinName
+      value: Tomato_BottomCloth_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[5].slotName
+      value: Bottom
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[6].skinName
+      value: Tomato_Shoes_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 917278399536477331, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: equipmentSlots.Array.data[6].slotName
+      value: Shoes
+      objectReference: {fileID: 0}
     - target: {fileID: 2834623606565945845, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -2205,6 +2504,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8191946993045985194, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: initialSkinName
+      value: Tomato_Non
+      objectReference: {fileID: 0}
+    - target: {fileID: 8191946993045985194, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      propertyPath: skeletonDataAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: a0ad9fa13b9233145a7a05513a0d6113, type: 2}
     - target: {fileID: 8659533227451877381, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2248,8 +2555,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3642373038925467279, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2837991356928355429}
   m_SourcePrefab: {fileID: 100100000, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+--- !u!1 &2837991356928355428 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3642373038925467279, guid: e6efc08e6142dd943b17f8cebb8508bc, type: 3}
+  m_PrefabInstance: {fileID: 2837991356928355427}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2837991356928355429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2837991356928355428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157e21c04cb036d41a4122d0f9efb8ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpineRuntimeMeshRendererBootstrap
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -105,6 +105,7 @@ internal static class MIG63ValidationSession
         SessionState.SetBool(Key + "finishing", true);
         SessionState.SetBool(Key + "complete", false);
         MIG63TomatoProbe.Cleanup();
+        MIG63SpineSceneProbe.Cleanup();
         if (EditorApplication.isPlayingOrWillChangePlaymode) EditorApplication.isPlaying = false;
         else EditorApplication.delayCall += Restore;
     }
@@ -121,6 +122,7 @@ internal static class MIG63ValidationSession
             SessionState.SetBool(Key + "ready", false);
             SessionState.SetBool(Key + "finishing", true);
             MIG63TomatoProbe.Cleanup();
+            MIG63SpineSceneProbe.Cleanup();
         }
         if (state == PlayModeStateChange.EnteredEditMode) EditorApplication.delayCall += Restore;
     }
@@ -162,6 +164,7 @@ internal static class MIG63ValidationSession
                 throw new TimeoutException("MIG63 validation exceeded 120 seconds.");
             if (!EditorApplication.isPlaying || EditorApplication.isPaused || !SessionState.GetBool(Key + "ready", false) || EditorApplication.timeSinceStartup < Next) return;
             if (SessionState.GetString(Key + "kind", "") == "wheel") MIG63WheelProbe.Tick();
+            else if (SessionState.GetString(Key + "kind", "") == "spine-scene") MIG63SpineSceneProbe.Tick();
             else MIG63TomatoProbe.Tick();
         }
         catch (Exception error) { Fail(error); }
