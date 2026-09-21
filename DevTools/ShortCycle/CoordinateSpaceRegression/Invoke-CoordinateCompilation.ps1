@@ -11,7 +11,11 @@ $repoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $testRoot
 $projectVersion = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $repoRoot 'ProjectSettings\ProjectVersion.txt')
 $versionMatch = [regex]::Match($projectVersion, 'm_EditorVersion:\s*([^\r\n]+)')
 if (-not $versionMatch.Success) { throw 'Could not resolve Unity editor version.' }
-$unityData = "C:\Program Files\Unity $($versionMatch.Groups[1].Value.Trim())\Editor\Data"
+$unityVersion = $versionMatch.Groups[1].Value.Trim()
+$unityEditorPath = @("C:/Program Files/Unity/Hub/Editor/$unityVersion/Editor/Unity.exe", "C:/Program Files/Unity $unityVersion/Editor/Unity.exe") | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+if (-not $unityEditorPath) { throw "Project Editor $unityVersion is not installed in either supported location." }
+if (-not (Get-Item -LiteralPath $unityEditorPath).VersionInfo.ProductVersion.StartsWith($unityVersion, [StringComparison]::Ordinal)) { throw 'Editor version does not match ProjectVersion.txt.' }
+$unityData = Join-Path (Split-Path -Parent $unityEditorPath) 'Data'
 $dotnet = Join-Path $unityData 'NetCoreRuntime\dotnet.exe'
 $csc = Join-Path $unityData 'DotNetSdkRoslyn\csc.dll'
 $framework = Join-Path $unityData 'MonoBleedingEdge\lib\mono\4.7.1-api'

@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$UnityEditorPath)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -627,7 +627,15 @@ Assert-SourceContains $cameraFrameMenuSource 'LookAt\s*\(\s*marker\.position\s*,
 Assert-SourceNotContains $cameraFrameMenuSource 'LookAtDirect\s*\(' `
     'Camera framing must not regress to the unavailable LookAtDirect API.'
 
-$unityRoot = 'C:\Program Files\Unity 2022.3.62f2'
+$projectVersion = Get-Content -Raw -LiteralPath (Join-Path $repoRoot 'ProjectSettings/ProjectVersion.txt')
+$unityVersion = [regex]::Match($projectVersion, 'm_EditorVersion:\s*([^\r\n]+)').Groups[1].Value.Trim()
+if ([string]::IsNullOrWhiteSpace($unityVersion)) { throw 'Could not resolve project Unity version.' }
+if ([string]::IsNullOrWhiteSpace($UnityEditorPath)) {
+    $UnityEditorPath = @("C:/Program Files/Unity/Hub/Editor/$unityVersion/Editor/Unity.exe", "C:/Program Files/Unity $unityVersion/Editor/Unity.exe") | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+}
+if (-not $UnityEditorPath -or -not (Test-Path -LiteralPath $UnityEditorPath -PathType Leaf)) { throw 'Pass -UnityEditorPath for the project Editor.' }
+if (-not (Get-Item -LiteralPath $UnityEditorPath).VersionInfo.ProductVersion.StartsWith($unityVersion, [StringComparison]::Ordinal)) { throw 'Editor version does not match ProjectVersion.txt.' }
+$unityRoot = Split-Path -Parent (Split-Path -Parent $UnityEditorPath)
 $unityEngineFacadePath = Join-Path $unityRoot 'Editor\Data\Managed\UnityEngine\UnityEngine.dll'
 $unityCoreModulePath = Join-Path $unityRoot 'Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll'
 $unityImguiModulePath = Join-Path $unityRoot 'Editor\Data\Managed\UnityEngine\UnityEngine.IMGUIModule.dll'
@@ -642,7 +650,7 @@ foreach ($requiredUnityPath in @($unityEngineFacadePath, $unityCoreModulePath, $
         $unityEditorAssemblyPath, $unityMonoPath, $unityCscPath, $unityMscorlibPath,
         $unityNetStandardPath)) {
     if (-not (Test-Path -LiteralPath $requiredUnityPath -PathType Leaf)) {
-        throw "Required Unity 2022.3.62f2 verification dependency is missing: $requiredUnityPath"
+        throw "Required Unity $unityVersion verification dependency is missing: $requiredUnityPath"
     }
 }
 $cameraFrameCompileRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('EatWhat-CameraFrameGizmo-' + [guid]::NewGuid().ToString('N'))

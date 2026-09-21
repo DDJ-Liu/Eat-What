@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$UnityEditorPath)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -140,7 +140,12 @@ $projectVersion = Get-Content -Raw -LiteralPath (Join-Path $repoRoot 'ProjectSet
 $versionMatch = [regex]::Match($projectVersion, 'm_EditorVersion:\s*([^\r\n]+)')
 if (-not $versionMatch.Success) { throw 'Could not resolve Unity editor version.' }
 $unityVersion = $versionMatch.Groups[1].Value.Trim()
-$unityData = "C:\Program Files\Unity $unityVersion\Editor\Data"
+if ([string]::IsNullOrWhiteSpace($UnityEditorPath)) {
+    $UnityEditorPath = @("C:/Program Files/Unity/Hub/Editor/$unityVersion/Editor/Unity.exe", "C:/Program Files/Unity $unityVersion/Editor/Unity.exe") | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+}
+if (-not $UnityEditorPath -or -not (Test-Path -LiteralPath $UnityEditorPath -PathType Leaf)) { throw 'Pass -UnityEditorPath for the project Editor.' }
+if (-not (Get-Item -LiteralPath $UnityEditorPath).VersionInfo.ProductVersion.StartsWith($unityVersion, [StringComparison]::Ordinal)) { throw 'Editor version does not match ProjectVersion.txt.' }
+$unityData = Join-Path (Split-Path -Parent $UnityEditorPath) 'Data'
 $dotnet = Join-Path $unityData 'NetCoreRuntime\dotnet.exe'
 $csc = Join-Path $unityData 'DotNetSdkRoslyn\csc.dll'
 $framework = Join-Path $unityData 'MonoBleedingEdge\lib\mono\4.7.1-api'

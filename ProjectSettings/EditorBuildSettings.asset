@@ -6,9 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/CookingPrepare.unity
-    guid: dfb07ebbb4e78264db4844cd5af42aa2
+    path: Assets/Scenes/Cooking/ShortCycle_P0P1.unity
+    guid: 7a0c3d3c3003f5449819f0e57a50a528
   - enabled: 1
     path: Assets/Scenes/CookingProcess.unity
     guid: adcee9c3f6697f24ab1bba84a023cc0a
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

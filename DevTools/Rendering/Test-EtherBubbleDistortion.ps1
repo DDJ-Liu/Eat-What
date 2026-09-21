@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$UnityEditorPath)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -104,7 +104,12 @@ $projectVersion = Get-Content -Raw -LiteralPath (Join-Path $repoRoot 'ProjectSet
 $versionMatch = [regex]::Match($projectVersion, 'm_EditorVersion:\s*([^\r\n]+)')
 if (-not $versionMatch.Success) { throw 'Could not resolve Unity editor version.' }
 $unityVersion = $versionMatch.Groups[1].Value.Trim()
-$unityData = "C:\Program Files\Unity $unityVersion\Editor\Data"
+if ([string]::IsNullOrWhiteSpace($UnityEditorPath)) {
+    $UnityEditorPath = @("C:/Program Files/Unity/Hub/Editor/$unityVersion/Editor/Unity.exe", "C:/Program Files/Unity $unityVersion/Editor/Unity.exe") | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+}
+if (-not $UnityEditorPath -or -not (Test-Path -LiteralPath $UnityEditorPath -PathType Leaf)) { throw 'Pass -UnityEditorPath for the project Editor.' }
+if (-not (Get-Item -LiteralPath $UnityEditorPath).VersionInfo.ProductVersion.StartsWith($unityVersion, [StringComparison]::Ordinal)) { throw 'Editor version does not match ProjectVersion.txt.' }
+$unityData = Join-Path (Split-Path -Parent $UnityEditorPath) 'Data'
 $dotnet = Join-Path $unityData 'NetCoreRuntime\dotnet.exe'
 $csc = Join-Path $unityData 'DotNetSdkRoslyn\csc.dll'
 $unityManaged = Join-Path $unityData 'Managed\UnityEngine'
@@ -183,9 +188,15 @@ try {
         (Join-Path $unityManaged 'UnityEditor.CoreModule.dll'),
         (Join-Path $unityManaged 'UnityEditor.SceneViewModule.dll'),
         (Join-Path $repoRoot 'Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll'),
-        (Join-Path $repoRoot 'Library\ScriptAssemblies\Unity.RenderPipelines.Universal.2D.Internal.dll'),
+
         $runtimeDll
     )
+    # URP 17 supplies Light2D through 2D.Runtime; older packages use 2D.Internal.
+    # Keep the legacy reference for projects whose imported package still provides it.
+    $current2DAssembly = Join-Path $repoRoot 'Library/ScriptAssemblies/Unity.RenderPipelines.Universal.2D.Runtime.dll'
+    if (Test-Path -LiteralPath $current2DAssembly) { $editorReferences += $current2DAssembly }
+    $legacy2DAssembly = Join-Path $repoRoot 'Library/ScriptAssemblies/Unity.RenderPipelines.Universal.2D.Internal.dll'
+    if (Test-Path -LiteralPath $legacy2DAssembly) { $editorReferences += $legacy2DAssembly }
     $editorArguments = @($csc, '/nologo', '/target:library', '/langversion:latest', '/nostdlib+', ('/out:' + $editorDll))
     $editorArguments += $editorReferences | Select-Object -Unique | ForEach-Object { '/reference:' + $_ }
     $editorArguments += $editorPaths
