@@ -2,7 +2,7 @@
 
 最后结构一致性复核：2026-09-17。范围：源码入口、Build Settings、Packages、关键 Scene/Prefab/生成数据、Resources 路径和 Git 差异；Unity 只读确认正式 P0 编辑态、场景 clean、Console Error=0。本次运行既有离线回归，不重做全项目 Play Mode；本轮视觉与交互沿用已落账的用户验收。
 
-最后专项核验：2026-09-21（MIG63 启动准备）。补查15个场景的递归资源依赖、Spine移动预研及MCP装配关系；核对Git、Editor和本地恢复边界。原工作区仍为2022.3.62f2；迁移目标固定6000.3.24f1，尚未首次导入或在Unity 6回归。完整复核日期仍为2026-09-17，阶段状态见[MIG63执行台账](.ai-workspace/MIG63/执行台账.md)。
+最后专项核验：2026-09-21（MIG63人工反馈处理）。已完成M1/M2拆分提交推送、N1 TMP跟踪、两clone行尾语义核对、2022描边Shader警告对照和滚轮输入适配回归。用户初验/VFXLab/Windows跑测除滚轮外通过；Spine改用已有Tomato 3.8.99，实际覆盖和剩余条件见[M3R报告](.ai-workspace/MIG63/M3R_人工反馈处理与补漏.md)。原2022工作区未接棒，完整结构复核日期仍2026-09-17。
 
 本文件记录当前结构。整理前逐次变更与失败/恢复记录完整保存在 [.ai-workspace/archive/2026-09-17](.ai-workspace/archive/2026-09-17/README.md)，不再将历史状态堆在页首。完成度和下一轮边界见[项目基线](项目整体阅读理解与推进基线_2026-08-14.md)。
 
@@ -14,8 +14,8 @@
 | --- | --- |
 | 引擎与渲染 | Unity 2022.3.62f2、URP 14.0.12 |
 | 输入 | Input System 1.14.2 |
-| 当前 Build 列表 | Assets/Scenes/CookingPrepare.unity、Assets/Scenes/CookingProcess.unity；MIG63已批准在迁移侧用ShortCycle替换弃用Prepare作为启动入口，实际列表尚未调整 |
-| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；尚未加入 Build 列表 |
+| 当前 Build 列表 | 原2022工作区仍CookingPrepare、CookingProcess；MIG已改为ShortCycle_P0P1 index0、CookingProcess index1，Profile不覆盖，Prepare文件保留 |
+| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；已加入迁移侧Build，原工作区尚未接棒 |
 | 视觉统一试验 | Assets/Scenes/ToolTests/VisualEffectsLab.unity |
 | 滚轮独立试验 | Assets/Scenes/ToolTests/FridgeScrollLab.unity |
 | 盘点 | Assets/Scripts 249 个 C#；Assets/Editor 59 个 C#；Assets/Scenes 15 个场景；Prefabs/Resources 共 71 个 Prefab |
@@ -23,11 +23,17 @@
 | 程序集 | 项目主要使用默认 Assembly-CSharp / Assembly-CSharp-Editor；第三方程序集另计 |
 | 验证 | DevTools 离线编译/契约测试、Unity 场景探针和人工验收；Assets/Tests 当前为视效夹具，不等于已有 NUnit 测试程序集 |
 
-Packages 清单与锁文件进入版本管理；Unity MCP 当前仍依赖 manifest 指定的本机外部路径，换机器须先准备对应插件。不要把本机依赖路径当作可在任意机器直接还原的保证。
+Packages 清单与锁文件进入版本管理。原2022的Unity MCP仍依赖外部本机路径；MIG当前隔离。用户已选仓库内固定包/相对manifest方案，M4前核对服务端恢复、版本来源和6.3连接；完成前不宣称可离线恢复。
+
+以上版本表指原2022工作区。独立Eat-What-U6副本已导入6000.3.24f1：URP17.3.0、Input System1.20.0、UGUI2.0.0、Cinemachine2.10.7；Coplay仍隔离。API Updater把HorizontalPlayerController.cs与QuickAddForce.cs的Rigidbody2D.velocity改为linearVelocity。M2已保存Compatibility=false、无兼容宏，Windows构建通过；TMP目录已升级为84文件，M3R按N1取消忽略并随Git/LFS跟踪，保留原GUID和快照。精确变化和人工复核见[M2/M3执行结果](.ai-workspace/MIG63/M2M3_执行结果与人工验收.md)，不把副本结果视为原工程已经接棒。
+
+迁移侧验证工具变化：DevTools/Rendering/Test-OutlineMerge.ps1、Test-EtherBubbleDistortion.ps1、DevTools/ShortCycle/Test-CK01CShortCycle.ps1及CoordinateSpaceRegression/Invoke-CoordinateCompilation.ps1按项目版本定位Hub/旧Editor；泡泡测试引用URP17的2D.Runtime程序集。原工作区工具尚未接收这些改动。临时MIG63 Editor验证入口已经移除，后续按现有Lab/探针及报告步骤操作；最终机器结果不覆盖硬件鼠标和同分辨率全视觉对照。
 
 引擎迁移须同时检查Assets内依赖：Spine 3.8（2021-11-10）、Text Animator 2.3.1、NuGet/EPPlus及MCP相关DLL。旧链CookingPhaseState.cs、CameraFollower.cs使用Cinemachine 2 API；自制视效通过相机回调及离屏RT调度，Renderer2D的Renderer Features为空。当前执行依据为[MIG63迁移基线](.ai-workspace/MIG63/迁移基线.md)，不沿用历史6.6候选评估作为目标。
 
-Spine保护范围：Assets/Scenes/Spine Sample.unity与Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity；相关业务代码为Assets/Scripts/Spine_Package/Scripts/CharacterEquipment.cs、CharacterTestController.cs，以及Assets/Scripts/Controller/HorizontalPlayerController.cs、SpineRuntimeMeshRendererBootstrap.cs。后一个场景当前使用Sample.prefab的SkeletonMecanim + Animator驱动idle/walk，spineAnimation字段为空；MeshRenderer延迟启用处理必须保留。ShortCycle及VisualEffectsLab/FridgeScrollLab的本次静态资源依赖未发现Spine；这不表示可以删除Spine运行库。M0实际Play发现Sample/output4的3.8.75数据被SkeletonBinary.cs/SkeletonJson.cs显式拒绝，属于原2022环境已有故障；用户确认后续数据统一3.8.99并可重导出，尚未实际替换。修复与验收见MIG-P01。
+Spine保护范围：Assets/Scenes/Spine Sample.unity与Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity；相关业务代码为Assets/Scripts/Spine_Package/Scripts/CharacterEquipment.cs、CharacterTestController.cs，以及Assets/Scripts/Controller/HorizontalPlayerController.cs、SpineRuntimeMeshRendererBootstrap.cs。后一个场景当前使用Sample.prefab的SkeletonMecanim + Animator驱动idle/walk，spineAnimation字段为空；MeshRenderer延迟启用处理必须保留。ShortCycle及VisualEffectsLab/FridgeScrollLab的本次静态资源依赖未发现Spine；这不表示可以删除Spine运行库。M0实际Play发现Sample/output4的3.8.75数据被SkeletonBinary.cs/SkeletonJson.cs显式拒绝，属于原2022环境已有故障；用户最新决定旧素材难以溯源，改以已有Avatars/Tomato 3.8.99验证及作为后续参考；旧数据/场景保留为历史缺陷，不等同已修复。E1解除等待旧素材重导出条件，Tomato的实际渲染/动画/换装/移动回归仍必要，见MIG-P01及M3R。
+
+迁移侧滚轮专项：Assets/Scripts/MouseInteractive/MouseManager.cs 保留序列化字段，补Unity 6 Windows Uniform输入到旧阈值单位的120换算、冷却期最多一步积累、目标/层/失焦清理，冷却改用unscaled time。原2022源码保持冻结。配置人员入口见[区域滚动说明](组件说明文档/区域滚动_配置与复用说明.md)；机器输入注入不代表新硬件手感已验收。
 
 ## 2. ShortCycle 当前主链
 
