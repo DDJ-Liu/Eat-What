@@ -1,0 +1,64 @@
+{
+  "source_repository": "https://github.com/CoplayDev/unity-mcp.git",
+  "source_commit": "c21bf496bca87d54e75bad048563c3adb1782081",
+  "editor_version": "10.1.3-beta.4",
+  "server_version": "10.1.2",
+  "server_subdirectory": "Server",
+  "server_lock_sha256": "a3232860240ee72e41870bc3556b3af6d13aac093a1f03c8b74a56c609ac7906",
+  "license": "MIT",
+  "editor_files": 716,
+  "editor_modifications": [
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CherryStudioConfigurator.cs",
+      "upstream_sha256": "d36d593223ddf781b390d5580e8675ec272dbc7d9f06d3aba6b0c59dc37e2a52",
+      "patched_sha256": "40e277790538af448fcb27ab9f096165aea53c17027c88ae27dc40ea721904b8"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/OpenClawConfigurator.cs",
+      "upstream_sha256": "e67ba66148391463ba73deebd6e1181f517e7c37c9eedde3a8d674bf1e94b86c",
+      "patched_sha256": "8cc7943f7216b9fbf1bd81e73753c3a6665f40c67dfe59d3da26cf6186505413"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/OpenCodeConfigurator.cs",
+      "upstream_sha256": "d0bc174f437008c62b74669e75f6d98a7931acb95d945202f1f3c80fbb8dc78b",
+      "patched_sha256": "63157e6f3ab645e10807a2f91f3c4471d6ec9cb608641f4235cba46efcefb57d"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/IMcpClientConfigurator.cs",
+      "upstream_sha256": "cfe92e01e33762ec2f9786c40a44536f90bceff20c7207fd60e45254219a4708",
+      "patched_sha256": "5db83aecad2e9137bb4369b1e09929103722ccc8faa919f6e95614e3698500ed"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/McpClientConfiguratorBase.cs",
+      "upstream_sha256": "3df15544e1c0c5db0d54b39886e3e1c617f43082d3ee9dc281e1b7383d6604dd",
+      "patched_sha256": "fa28a18b417ae9ff81cd26b3a6036c310dfc6a5b2edbdd94f35c956c3ff71d1b"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations/LegacyServerSrcMigration.cs",
+      "upstream_sha256": "c7b06bb4ccc42687b6ed9af0ec47bf15b42de7f56b886599814a7a1d1e2d35f9",
+      "patched_sha256": "f17dea210f6c97ad48a581ce70c4fc4d41a89cd09f888c299a14b08cb00e6e02"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations/StdIoVersionMigration.cs",
+      "upstream_sha256": "870a086ed3c9becae979605635d8582ea9751c60ea09904461a352fb1148d8d6",
+      "patched_sha256": "ee339241a54535f14909d86bd35a199bb327f9ad594da73115231be4e4bbbe76"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ClientConfigurationService.cs",
+      "upstream_sha256": "0dbcc0a001466578e77a1c0df7de2539d8ba3cc5b7ea192bd087cdec5b093076",
+      "patched_sha256": "ed4f775794f1c3532aad60e6c28d231c4e67e90d35b2da42865ce5ff24cfd1de"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IClientConfigurationService.cs",
+      "upstream_sha256": "8a25ef238e668d2a9d66c259dcfa4f91b283cf755ae5e7e5460b4c27dbcfece9",
+      "patched_sha256": "b1681fbc58b9aebda8b1c38e26a998839d8234f4a0960d117b7af0e23f3f9f7d"
+    },
+    {
+      "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/StartupConfigRewrite.cs",
+      "upstream_sha256": "2f56e1fa7b4061b583074ad9d5b662b49e401e4f60e5c76f47a9c7e6d033130c",
+      "patched_sha256": "6f9d9515012d5f759d2c4310d7cacc0d0ec5ad1d9f23773ce5f36afcbac9679a"
+    }
+  ],
+  "server_restore_scope": "Record source commit, version, pyproject and uv.lock. Server dependencies/source are restored separately; no offline server image is included.",
+  "local_policy": "Read-only status checks by default; no startup client config rewrite, automatic stdio version migration or legacy ServerSrc migration. Explicit Configure remains available."
+}

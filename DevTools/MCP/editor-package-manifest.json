@@ -1,0 +1,3582 @@
+[
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor.meta",
+    "sha256": "3481114aac479fdf4b42e3a258f492b570cf00331bdbfee0cd40afef2ad449a4",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/AssemblyInfo.cs",
+    "sha256": "cc91f6d3f00fddb0c22629ca568f28368ea11592d0bd6b16fdd3938c4f4210a9",
+    "bytes": 103
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/AssemblyInfo.cs.meta",
+    "sha256": "9f8431c51309d5fc9543de989c8dbfa22cdaee881e939575071100b52edd0b81",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients.meta",
+    "sha256": "cdec316c2a34415105dcb297536b3229fad04ccefddc5b4b74fe6ff957f4501b",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators.meta",
+    "sha256": "3bf967e772c52193dd3ce48c911fb2c42d1bbb3d0fd793fb89d2d170fe760048",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/AntigravityConfigurator.cs",
+    "sha256": "d5b7fe4d6ad13e54e498b7631b2d6109a8c7ddee9164c552fc3c013572142922",
+    "bytes": 3183
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/AntigravityConfigurator.cs.meta",
+    "sha256": "8aabbfe26f15d3991e768e42fbe5876d49c9347032fee5868e306212102647f0",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/AntigravityIdeConfigurator.cs",
+    "sha256": "c28965450ffadcaf108ea24a5bdfe5e6118d4ae5bfe43a8eabab9ac87008baa0",
+    "bytes": 2554
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/AntigravityIdeConfigurator.cs.meta",
+    "sha256": "7e40d6ebf90d7c8ff6243070f93217699d2f1bd2c6a4c793181c8d245112c7e1",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CherryStudioConfigurator.cs",
+    "sha256": "d36d593223ddf781b390d5580e8675ec272dbc7d9f06d3aba6b0c59dc37e2a52",
+    "bytes": 4258
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CherryStudioConfigurator.cs.meta",
+    "sha256": "9a49c5dcb6375c520ea7eb423439530f7db328547608b750e9981c1a96ef863a",
+    "bytes": 252
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/ClaudeCodeConfigurator.cs",
+    "sha256": "6c8d8e975ed833bc4c517d381395122b2634f60f7c14402cb4f054952dea2237",
+    "bytes": 1316
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/ClaudeCodeConfigurator.cs.meta",
+    "sha256": "c395649fc4601608a2c1e99371522d324e78fc5f86e14b2207ba0d59e0ef1753",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/ClaudeDesktopConfigurator.cs",
+    "sha256": "1e4de2662ba7a11b60f3707259da216bb191272e185cca4d6b51b6e9863b0704",
+    "bytes": 1874
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/ClaudeDesktopConfigurator.cs.meta",
+    "sha256": "f9f5375d22ca3a1acdbe75597afc484e521057ee29daec5c49e7e64cc0f0d957",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/ClineConfigurator.cs",
+    "sha256": "33ecc5ab73251788e3f2d7323994875b84f687381a4a791baa4b5d587ae33a84",
+    "bytes": 1611
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/ClineConfigurator.cs.meta",
+    "sha256": "d1cffea1e1c254a3f8090f4761da717af2f4482745cc538c71ff0f8a82945b91",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CodeBuddyCliConfigurator.cs",
+    "sha256": "289a9fa24d36636c5f909b57bb92ba8a548e998b1602f9ef90f8bf80639bb0be",
+    "bytes": 1208
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CodeBuddyCliConfigurator.cs.meta",
+    "sha256": "e621e48094f7a9e274931380af8e185fbaf38d85f82956471e883ec9f16bcf02",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CodexConfigurator.cs",
+    "sha256": "3e458fb477aaa7050174825f06baa244790ceeb2a99b783ff2fa49040740f331",
+    "bytes": 1362
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CodexConfigurator.cs.meta",
+    "sha256": "88a041770420283d893e08387aa24abce751087efc7f215a7e14e7e98b865f99",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CopilotCliConfigurator.cs",
+    "sha256": "7a62cdccbeda78f3eb93fa75da880bb93070924ea4c5db33367672a282b611ef",
+    "bytes": 1216
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CopilotCliConfigurator.cs.meta",
+    "sha256": "b24ffe56d46f4dc75ca150730a252c72398fe29f07c185ef02a624edcbf67b05",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CursorConfigurator.cs",
+    "sha256": "34fbbb4c500167b6fb58b357a5cf87909b81e82586d44a0c1e80243811751154",
+    "bytes": 1119
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/CursorConfigurator.cs.meta",
+    "sha256": "5d49351ace81d48e7b1f6fce2f6ee58c7bded3e14e7a354489b251ab7cfdc2c2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/GeminiCliConfigurator.cs",
+    "sha256": "701730e355a8b4b14ba3126d8ce269a012857d6bfacd64022562d0df69ff6bda",
+    "bytes": 1307
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/GeminiCliConfigurator.cs.meta",
+    "sha256": "59ea0630e9ec234e79a6a3f5aab9944145c516b9871620a46ef1fe7f310fcec5",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/KiloCodeConfigurator.cs",
+    "sha256": "5d1313b2bac477c9c76ccc7ff9a1b3be99489acf6f24b5f6ced64a2e61c44660",
+    "bytes": 1952
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/KiloCodeConfigurator.cs.meta",
+    "sha256": "56223e40a62782ff60145741edb7f5d5891fc0ee66ae00be4253ed25c414a02c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/KimiCodeConfigurator.cs",
+    "sha256": "6e8b4c02d2622f451c549182a40fbfaad139557df8b6d9cc9a4916642a075d11",
+    "bytes": 1907
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/KimiCodeConfigurator.cs.meta",
+    "sha256": "bc43955e2303616da19047e3480fc0d43ac2b29fe0136b499ff84eb500ce5ae2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/KiroConfigurator.cs",
+    "sha256": "cb7aa862a129c71076b48039c9a83d1cd3be70ce0fda3bbbf91791c1d4ec3116",
+    "bytes": 1242
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/KiroConfigurator.cs.meta",
+    "sha256": "34892065a61ed093904a5817eeaa389617c86326d4400bc8312e8035af044907",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/OpenClawConfigurator.cs",
+    "sha256": "e67ba66148391463ba73deebd6e1181f517e7c37c9eedde3a8d674bf1e94b86c",
+    "bytes": 14802
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/OpenClawConfigurator.cs.meta",
+    "sha256": "d5c1cc3fb266a06e091b50f71f288ea58a44dffd0863a7fd5404a56c5df68256",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/OpenCodeConfigurator.cs",
+    "sha256": "d0bc174f437008c62b74669e75f6d98a7931acb95d945202f1f3c80fbb8dc78b",
+    "bytes": 8415
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/OpenCodeConfigurator.cs.meta",
+    "sha256": "aea616b08d30ddc9e98cd747b223a203c7e81a37be5efc6b82d3d294b52cf15a",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/QwenCodeConfigurator.cs",
+    "sha256": "b5d911eb8d2053ff22d3bd044960647da4602c12dd35b6ebe43897ae38bde0ec",
+    "bytes": 2135
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/QwenCodeConfigurator.cs.meta",
+    "sha256": "a82094c95627a5617d3a911cf5bdd8c6e7e8235ab7fe19ec83f50caf5e6e83e7",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/RiderConfigurator.cs",
+    "sha256": "6f82f67d0eb0062c4eb8c1308a2428777ac3a022f4c79ec0985f165c06d5aafc",
+    "bytes": 1231
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/RiderConfigurator.cs.meta",
+    "sha256": "cf9e0662f8194cdff8b550db58a7f45bac15c39feb6ed1664e8e0ac09b52d7cb",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/TraeConfigurator.cs",
+    "sha256": "936c51afb33378ab76cd9f3072d88b9f4396924a771857ab7b3163c75137352d",
+    "bytes": 1291
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/TraeConfigurator.cs.meta",
+    "sha256": "715c5a351a0812a96042114e1ae989271842524c76796adaa4a7882e9ac78606",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/VSCodeConfigurator.cs",
+    "sha256": "e2a6e65f3a66c415d190895fda7374bc5252cfe410b174aca76e4af75e8643a0",
+    "bytes": 1177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/VSCodeConfigurator.cs.meta",
+    "sha256": "c0ac9dad636094922fa1a8e5894b8cdac23f10f058b7023b7757a13a42460a1b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/VSCodeInsidersConfigurator.cs",
+    "sha256": "ee11c3c0ba72c80d35c5b540d6acc73350eed50b62aec9708ee6c3384a174840",
+    "bytes": 1265
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/VSCodeInsidersConfigurator.cs.meta",
+    "sha256": "5fa8f706e4df340edc7c666e61c3bda621c910e0559db630034f1b414fb1a994",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/WindsurfConfigurator.cs",
+    "sha256": "4caf16e11869ab00464dfcea61e51d27c330c55fb6341b3b109418d7943fe948",
+    "bytes": 1345
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/Configurators/WindsurfConfigurator.cs.meta",
+    "sha256": "cbbce2e8c82c25c46ecebec124e95f848e2da095222a84b5c6735314c3cb1917",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/IMcpClientConfigurator.cs",
+    "sha256": "cfe92e01e33762ec2f9786c40a44536f90bceff20c7207fd60e45254219a4708",
+    "bytes": 3573
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/IMcpClientConfigurator.cs.meta",
+    "sha256": "df7131e1bde1bef78181195386ec032190e2d9160c7d095ae075368a2f60f093",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/McpClientConfiguratorBase.cs",
+    "sha256": "3df15544e1c0c5db0d54b39886e3e1c617f43082d3ee9dc281e1b7383d6604dd",
+    "bytes": 67662
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/McpClientConfiguratorBase.cs.meta",
+    "sha256": "4fa64c76b2477bbba15658697d4f6f6b4f18003a910af8318664b5f77b7b3266",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/McpClientRegistry.cs",
+    "sha256": "40611076592fd3182b8573cf705180ba08b56b5341448ef0a68f6ff2d8307bdc",
+    "bytes": 1906
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Clients/McpClientRegistry.cs.meta",
+    "sha256": "2f483f277d63d1877332ad127fe522b80dfa1e00803a6ea2fa79ce343d17ac7e",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants.meta",
+    "sha256": "7d66d7fd1b5ff2e4222a60e03f315b770bc0bed78263ae4d36e090741e3bcaf5",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/AuthConstants.cs",
+    "sha256": "8562651e1437a0195593f05dbbfe9c1214f63b3ab4eed5000c3c5710652ca8f7",
+    "bytes": 261
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/AuthConstants.cs.meta",
+    "sha256": "b357363808b91a3c0968daa6ef43678a99c54e57236b6b367032ee3729a39b08",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/EditorPrefKeys.cs",
+    "sha256": "e02039e1ce7ad040a60ac2eefd91f6a1cfcdde0ed7555aa947e55af13ffd9a69",
+    "bytes": 6498
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/EditorPrefKeys.cs.meta",
+    "sha256": "8a313d68fd850ea4edda4e7eb9ebfd029174a7aaeeb290ab0468a0f746af7d5c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/HealthStatus.cs",
+    "sha256": "91f41d43ba9f5a21579811006fa6ffe3c2c881ec5061cc25e0f95904cb1b4b29",
+    "bytes": 485
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/HealthStatus.cs.meta",
+    "sha256": "425a77caf94a326b4c80c5c2f2cbc3c05ef3f7947a4f4d5091b4d59645e23571",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/ProductInfo.cs",
+    "sha256": "fe08c6cb303db69fa717cff9fba5cd10168dd1a26d5601edbdd8ce492043ab28",
+    "bytes": 297
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Constants/ProductInfo.cs.meta",
+    "sha256": "de765b19df888e3f85c230adcc316a5e485788ba675cdaf820dfbcff393acb97",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies.meta",
+    "sha256": "c5b10fc4b1b65b88a301e562a9a46cd9ed9f6ad20fe6dc488dcdc7a3dcd4711c",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/DependencyManager.cs",
+    "sha256": "0a49d0407ccde4c9846266d12a8c8664c28138ec130515b61f29c5ee5bd3cc2a",
+    "bytes": 5191
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/DependencyManager.cs.meta",
+    "sha256": "901914311aac0d13acd306095b640749ded39079e6e4727f18f561f0cb3efb81",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/Models.meta",
+    "sha256": "7470c412422e2168907b54a6cd2f893c4881ebe3527b69de313351c09d046420",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/Models/DependencyCheckResult.cs",
+    "sha256": "a614d8f5125e0702ec665e02bd23b16dddb404bbbf9be55d10d0009d6163443d",
+    "bytes": 3222
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/Models/DependencyCheckResult.cs.meta",
+    "sha256": "5e7bf867d96a6000de5d7277a651513b36a6f0fae400729ddebc65cdb97cdf39",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/Models/DependencyStatus.cs",
+    "sha256": "8ac1ee0cd9b1778cdd7239a79376da70498b0459be83d12dc1f81cf8d2e15d5a",
+    "bytes": 1897
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/Models/DependencyStatus.cs.meta",
+    "sha256": "f2ac9f3e947f64095181dbc0fea0d59118f651e7bfc0ef6a9023b9f7e1eba1ee",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors.meta",
+    "sha256": "4ee029201ed4c5f0752948230873f4e3f673dfc3308ca6be627c1d9172739ad3",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/IPlatformDetector.cs",
+    "sha256": "7f9b429bdac913b9aab5f058f295cc5935619b1f3dee4c79f33bf3479a9d9122",
+    "bytes": 1294
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/IPlatformDetector.cs.meta",
+    "sha256": "b53186b54a9f5e7410dbb857077ad0c9d2d39fd59357b7b41844b3e101cf10bc",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/LinuxPlatformDetector.cs",
+    "sha256": "8c266d2237d13b0bfdd971a07b655a4d6d7caa664f160d3171f35705b9897450",
+    "bytes": 7648
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/LinuxPlatformDetector.cs.meta",
+    "sha256": "772a460f3b0fb62a43de1b2a0701c136086cc3b37754faf8af758810276d2a17",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/MacOSPlatformDetector.cs",
+    "sha256": "7cff9d3efadf69b8b4bb6d3ae98f737e88b8a761e088a03713905849bf0ed4f9",
+    "bytes": 7743
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/MacOSPlatformDetector.cs.meta",
+    "sha256": "60de89595ac85f3f55ca7a6466989cbec3f1ae5e2b07a338618786f3e8aa886b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/PlatformDetectorBase.cs",
+    "sha256": "e5b28f92fca249e59a043838fc93d7a7cc58912b96c825ef6b94dff2a5524110",
+    "bytes": 5087
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/PlatformDetectorBase.cs.meta",
+    "sha256": "1d0aa6c762c7cd6b425e040e63f22d0d644dcf952d8fbdbd71d1880b5f597f2d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/WindowsPlatformDetector.cs",
+    "sha256": "acef926701b1487a041b09f6982c64e2c49333a2bfc7b8bf7467d73df13ca5ca",
+    "bytes": 11647
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/PlatformDetectors/WindowsPlatformDetector.cs.meta",
+    "sha256": "a98209c4199ddadb2a6d2edc9191887b849af7e40eb46ec5c5f19e26b45fee47",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/UvInstaller.cs",
+    "sha256": "bb54c33576ca2cfe61a6095075d69f29373d180c54fb5c31425fffcc60205509",
+    "bytes": 3741
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Dependencies/UvInstaller.cs.meta",
+    "sha256": "6aadaf3e8dda91041e4caf9a6905788115ab31fd130d534b238fbcc941e9e6db",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/External.meta",
+    "sha256": "d7f8deb42c53e0f5157379cc8fcd0e7bd8d8e6050e1667776d66b2bc1f50d824",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/External/Tommy.cs",
+    "sha256": "7b7847cc75c7b6d71979725e85fa72054345a3ecfbd7d29e2a5b78b4c818a731",
+    "bytes": 79234
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/External/Tommy.cs.meta",
+    "sha256": "826d236cf6fa2db54e9aabcf4d4f2ce9e233d127acf6fed0c24be311aaf86b80",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers.meta",
+    "sha256": "73126d64b787a5d89b3917950d082752ba2d8e7bb75811707f7a7b99167e8cb6",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/AssetGenPaths.cs",
+    "sha256": "eb1de7b02d281f0445e6ae1ed9a744db457b91c3f04297be26264a5d6f98c9a5",
+    "bytes": 4289
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/AssetGenPaths.cs.meta",
+    "sha256": "91b33eb575f4727c71a374a5f80646266cfd9d7df33981e72bf0022706a8218f",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/AssetGenPrefs.cs",
+    "sha256": "6f18a54063cc11942409293021dbfb4eceabd069b46d0f28e1ccf3e56ebfd275",
+    "bytes": 4687
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/AssetGenPrefs.cs.meta",
+    "sha256": "a59357c4ef08af20436070f32f33f0239c6c165dac1e2a7d21fd37d4c7b927c6",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/AssetPathUtility.cs",
+    "sha256": "fbe31b8c3cd1714dee4dc0d7f23fe0378ced0096d6215655b9ebffbe50085f03",
+    "bytes": 28750
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/AssetPathUtility.cs.meta",
+    "sha256": "c0d5ad8027e7b3b6c5f5696fe800c069b432576c3524243ee40dd6ea8408da23",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/BlenderDetection.cs",
+    "sha256": "08a2180ae129a677ad3270b7843b9b89d6833f63b6392115328c3e5457f6c4b9",
+    "bytes": 3846
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/BlenderDetection.cs.meta",
+    "sha256": "b58cd5e51dbe9a4f4c7bd3d226f3ec674e997d6114bcaf62ddfb5c8995815711",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/CodexConfigHelper.cs",
+    "sha256": "3f8fdab799fa820091f062aec9c9c68af1bc56791bd1a1b685b2e4beb9fc9646",
+    "bytes": 11481
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/CodexConfigHelper.cs.meta",
+    "sha256": "ffccc770f04aa119995ed3eab93c28c6b26a158ef54411127f0566604e09b69c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ComponentOps.cs",
+    "sha256": "2a346cd60200285e7b030f695d72ee7ebe5b742b8b0eab8cee5fd0d7839e85e8",
+    "bytes": 42633
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ComponentOps.cs.meta",
+    "sha256": "fe7834f59a7516b6cf611931e685990f4f2024cc7bf89c9963f6fc0c4baf12b5",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ConfigJsonBuilder.cs",
+    "sha256": "c6c5db0b2b793461b642e964802f76bdf2da504a2e999e267516a40c69d2a322",
+    "bytes": 7978
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ConfigJsonBuilder.cs.meta",
+    "sha256": "1ec0e1a201d7d8871900630e2f1af94599db8eeb9e46e85628f643599923b35d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/EditorWindowScreenshotUtility.cs",
+    "sha256": "54cbe462b562ffbe4e78aeff1cd29ce1c4c2d30b89cd1da294f1b1b87b2b2336",
+    "bytes": 18044
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/EditorWindowScreenshotUtility.cs.meta",
+    "sha256": "a8f19fa7ee931e248c5df5d71ae633a0707758324e73f9675b520a163a16bbe0",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ExecPath.cs",
+    "sha256": "ca5cd65a0f5afaadf83ae80004a8e3840d68a72029af4f404e2f8f87ef621be1",
+    "bytes": 14106
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ExecPath.cs.meta",
+    "sha256": "9aa20f4d2593c4fcbc8003395fcffc47a598aff28dffec8288a3f414e4d2d0f4",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/GameObjectLookup.cs",
+    "sha256": "7072ab19e973e284f975c8cf9b28d697ff46990556568aaf08643002bfa6a338",
+    "bytes": 13875
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/GameObjectLookup.cs.meta",
+    "sha256": "42e191953a4865b811b83571c98046aefe98cd7f33089a996095e3c3ee2767df",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/GameObjectSerializer.cs",
+    "sha256": "b5e41a2b2c18c869e7ef7bd6581f8528900ce424edf1ed61f3635690f82a4ed5",
+    "bytes": 36645
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/GameObjectSerializer.cs.meta",
+    "sha256": "0e2dad29fb2f1dfbbe7b4abc9684d0aadcd1c7f0f98ded72f8281379b1d113d8",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/HttpEndpointUtility.cs",
+    "sha256": "39fc970a260c04c322d16875442e006ccdfc2c3acefe32a229e0313f40fa930d",
+    "bytes": 13463
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/HttpEndpointUtility.cs.meta",
+    "sha256": "41171c1c96f812ce2eb233d36e8b7b8f28245429b615e285235d6836f8fcf18c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/MaterialOps.cs",
+    "sha256": "6165a75d0f09e26693595a80e6f5d91ebc6ecd5d01f9ba5153deefb26045ad44",
+    "bytes": 16876
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/MaterialOps.cs.meta",
+    "sha256": "a70ddcb44334b1b1836573888d592e874a39eccad84907b7383e049cf934ed62",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpConfigurationHelper.cs",
+    "sha256": "62701d6c96bf4923f79bf720032955f25aed9e187497730bd8be145802cee892",
+    "bytes": 10277
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpConfigurationHelper.cs.meta",
+    "sha256": "0d136dd0e97db8a4e416fab983024b5c7d46e79de6f693c4795b6aee7e3b8eee",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpJobStateStore.cs",
+    "sha256": "8d0374ace6c238ed7d90141164fc45204857c60eb592531ecd0dfa0d25b5fab2",
+    "bytes": 1929
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpJobStateStore.cs.meta",
+    "sha256": "5e72064dfd838e279468c4b89f104dce300b1693ea5d3c7728ef0619a4a055f3",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpLog.cs",
+    "sha256": "3634e1b61e4746e4516b980bb140c013b387cdf0797e983bf2b8b62ce957d5a7",
+    "bytes": 1782
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpLog.cs.meta",
+    "sha256": "2fe3fdb98a4abe275e0f0feb5b4c3429fbcee760cca628d47559e7a93a973236",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpLogRecord.cs",
+    "sha256": "3302ba2eb3c7229b5ecfdfa07e7a9b9eeb9fbc231507165141df47771e1d57c5",
+    "bytes": 3993
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/McpLogRecord.cs.meta",
+    "sha256": "1e4e45c72846c658cbc41f192831726f76ccdd283df940d914c605a5e1f0fc6e",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ObjectResolver.cs",
+    "sha256": "8673d017aac5e48b64027deb012fb15c22d351b235c941c8fb403ca0f3742bc6",
+    "bytes": 8309
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ObjectResolver.cs.meta",
+    "sha256": "a83f31fe7e8264d7484661c8b8c43c963f5275ffdace10af4b2a861c913adad1",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/Pagination.cs",
+    "sha256": "e322575369db3cd45fa05d8963109bf7b4f11b1786e3769d49e4a4b5d6a8ca83",
+    "bytes": 5279
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/Pagination.cs.meta",
+    "sha256": "031f936a82a58f25020f2806b0d98cd59bade0f7098321f910ca4f483a5adb5a",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ParamCoercion.cs",
+    "sha256": "8df97ae1e7ac14479b7d8799fd124c034ef341934bf88f54e5aa4b1016bfba63",
+    "bytes": 14570
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ParamCoercion.cs.meta",
+    "sha256": "a37893716a1bd99925c15630cd5cfb3fc89a9e07fb0b89f74d75d6e6b5a55552",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/PortManager.cs",
+    "sha256": "fbc99113a8f732c54276ebe364beea10e87778f76ce1f8961a2710ddefade30a",
+    "bytes": 13043
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/PortManager.cs.meta",
+    "sha256": "fa385c710388693495d92cff83f42f22bbf299202fb596def411b49b3abff6cd",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/PrefabUtilityHelper.cs",
+    "sha256": "54cad45253ded4cc3b8fe47519326c9405b4f409685ab6fc44225e3ae62bba8b",
+    "bytes": 8289
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/PrefabUtilityHelper.cs.meta",
+    "sha256": "74452719adfde10d5090b64499f026b2c88204bcf002acfad272c4f207f53816",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ProjectIdentityUtility.cs",
+    "sha256": "4619c41271a9f4bf847f1a05e9cc58335b4d815aebda3342ef2e200d06b522ee",
+    "bytes": 8880
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ProjectIdentityUtility.cs.meta",
+    "sha256": "9697a471d1e34e2576c06e616fc06c999811b9607ec8ac438d0c26f8d365a51e",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/PropertyConversion.cs",
+    "sha256": "9c9f45b3312b376e6c0b7fdb59c6fac8864803a25c3b36e8c46e552db7b40284",
+    "bytes": 3458
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/PropertyConversion.cs.meta",
+    "sha256": "eb38442f29a8d25dbb19e357252bd1a7f2837c7d464bcd991a54a87793ce2893",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/RenderPipelineUtility.cs",
+    "sha256": "24830f2dfcc14d09595be38d7254738ee009d0548c11f9d78181f93b1a3afb89",
+    "bytes": 18055
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/RenderPipelineUtility.cs.meta",
+    "sha256": "6a6ead2093c62d4ff4461480aa3ff34c940e4659a4ce66213b8e49d2144a7efc",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/RendererHelpers.cs",
+    "sha256": "2be5c0b377ee5f7af985f5a80e73f8bfa90c97819577f9dfe2839f36e3bb2b39",
+    "bytes": 17105
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/RendererHelpers.cs.meta",
+    "sha256": "81ff63d9c25c935eb29e50a1bcc0431c977f4936a93a7161c5271d2e94671888",
+    "bytes": 256
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/Response.cs",
+    "sha256": "af60a332f1b7d1f469e871aeaf2fd062021eca8028e111f26393e156fc9763bf",
+    "bytes": 3072
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/Response.cs.meta",
+    "sha256": "a9d50fc189a2369560ca9b4a4bd8aa4a6ea5e483b7091246ab29d5b021e9a844",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ScreenshotPreferences.cs",
+    "sha256": "2e00726239ead460bfd2231cea9e7850ebc7922ce36008d296e469c4786bb270",
+    "bytes": 1886
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ScreenshotPreferences.cs.meta",
+    "sha256": "d0ef981bd95b92ca17b16b18439675fb2d08c1102e8e6e400c698931a5ffbfed",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/StringCaseUtility.cs",
+    "sha256": "08a57bfd6fca7cb3f6b8c9f8d92dd82ad1b8bafae23120145125d79389a626fa",
+    "bytes": 2866
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/StringCaseUtility.cs.meta",
+    "sha256": "8c4b77d0756da09d7d952f3a83932094702723aa12a5a848cd40a8c669f1e322",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/TelemetryHelper.cs",
+    "sha256": "17a2e2048f8ebb1eb7bfc9b898e425cd938117cf0f207f20155592a7e3a6e5cb",
+    "bytes": 7905
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/TelemetryHelper.cs.meta",
+    "sha256": "4fdfc1feefa3c488ada0fafab98270aa6e63381650478fb65a218a5f70f6d304",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/TextureOps.cs",
+    "sha256": "0d911bccaea8001ef71f85c6c90ff4df062058cdf9bddc408c7c80d23aac1e22",
+    "bytes": 6437
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/TextureOps.cs.meta",
+    "sha256": "452a830c08f084bc9649034f767bd0484aedc67b89c0eb15dd6b09bd8d449c16",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ToolParams.cs",
+    "sha256": "1d9486aef1e9ec7d0f7935894113bf28daef91a3b072bdd5464005c3926ffb02",
+    "bytes": 9129
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/ToolParams.cs.meta",
+    "sha256": "7f41f8f0d3fcbad2c5ce011afbd975e26aeef7d674b1b8656469cf724fb09bbf",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/UnityJsonSerializer.cs",
+    "sha256": "c3ebb2ed075bbc4cd3bbeee3cd6975132761d071487953d67fe50f7793b48354",
+    "bytes": 1118
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/UnityJsonSerializer.cs.meta",
+    "sha256": "e92c3452b47d146aae0efeeb8b4f06263f0789d1a140cbdd12461f2dfa7bc6a7",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/UnityTypeResolver.cs",
+    "sha256": "24be95326690ebb86e3856fc4a51fb09e58fed39af2cb9c898dec8591966c209",
+    "bytes": 11125
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/UnityTypeResolver.cs.meta",
+    "sha256": "bf5a6f4f7ef0472219c5d0c314f91fa2dcd7b2ea4beff326abdae4cfdeb7f045",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/VectorParsing.cs",
+    "sha256": "f723916f1ccf8395a050f41abbc6e59d5939e642dbd3b3525280ec33cbb3273e",
+    "bytes": 31133
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Helpers/VectorParsing.cs.meta",
+    "sha256": "bc7debbdc4a61257f6c370171feefdffcbb91de09de408017786fe1880609963",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/MCPForUnity.Editor.asmdef",
+    "sha256": "4fc0152a79fb4f7af8ad67964ca477242f627ece6cef0700bed8f096d93b160e",
+    "bytes": 605
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/MCPForUnity.Editor.asmdef.meta",
+    "sha256": "dbbeb47b81434bf673a85febabea28b86d0d030dbf0f2932fa5f1db23a4e9c24",
+    "bytes": 173
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/McpCiBoot.cs",
+    "sha256": "cca0bf2b85693ce7380baeb36cfb230233d5d682ff80c2e9079b146b9d8fb0aa",
+    "bytes": 499
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/McpCiBoot.cs.meta",
+    "sha256": "e7b8c9d4fd6dec4758edf016fcfc56bcd2a0a65ebbdb38987dfe6da867549bff",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/MenuItems.meta",
+    "sha256": "bba21c317c08189665df78982641f2a8a6bb43a08daf911bbde543ff49d01b37",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/MenuItems/MCPForUnityMenu.cs",
+    "sha256": "6b898ce8496788493ec91d694b06bc3d155992552e7136c795195df4d5f34b5e",
+    "bytes": 852
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/MenuItems/MCPForUnityMenu.cs.meta",
+    "sha256": "2c6567dbd9c8a82033dca1f36303bf38c937434931c3964d9314643504dc4c1f",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations.meta",
+    "sha256": "b1fecbf8efccb366d342c36026ae9a595125c05f7f502d6cc804ac05501c7a51",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations/LegacyServerSrcMigration.cs",
+    "sha256": "c7b06bb4ccc42687b6ed9af0ec47bf15b42de7f56b886599814a7a1d1e2d35f9",
+    "bytes": 2839
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations/LegacyServerSrcMigration.cs.meta",
+    "sha256": "f6dcd6eb1651f37aee0e49f483f4625ef62e05d40ff604bff6e251f602f35cf7",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations/StdIoVersionMigration.cs",
+    "sha256": "870a086ed3c9becae979605635d8582ea9751c60ea09904461a352fb1148d8d6",
+    "bytes": 5528
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Migrations/StdIoVersionMigration.cs.meta",
+    "sha256": "02d82abb8e2be886a0ee79b00bc29e4c137e1b001e38a99c0f2b084582400f9e",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models.meta",
+    "sha256": "8f0651a7c51a8e74ede9a021b489b946438e2a9f6600e663e7d2d5a74ed9d2da",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/Command.cs",
+    "sha256": "4aca7c98c1fbdbb57899bb691c6de0d50d6d1825d5c056cf8d5f20b0236d6676",
+    "bytes": 486
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/Command.cs.meta",
+    "sha256": "51cf743cf3b03193f838c89604bd57956b3edb7ebf0a34311ddf2a28fed8d8da",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/MCPConfigServer.cs",
+    "sha256": "f02ea48d6552b89a9a40cb684fb5352c2f3771307632511d3051b4ffae525b28",
+    "bytes": 618
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/MCPConfigServer.cs.meta",
+    "sha256": "2cf5e72c16708e254d2d144c534c7f1c6c1cfa69256032eed8230eeeedfba1c3",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/MCPConfigServers.cs",
+    "sha256": "5ab1bd21f9199a3c10fc5e5c49d10bbf66f09e69f713a2149c2e75c589e8532e",
+    "bytes": 231
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/MCPConfigServers.cs.meta",
+    "sha256": "9ca3226753d21cc2e7f4548f9fefb87ad05d363011ee8237a9d519944f085678",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/McpClient.cs",
+    "sha256": "714aa40d210225e89e38fba94ec92d3dd7e93a02756b026064c911bde1809773",
+    "bytes": 3105
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/McpClient.cs.meta",
+    "sha256": "23ed13690c0bba831e7aceb8f0a3b2e2993023f01146dd72b79585a0c97f31f4",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/McpConfig.cs",
+    "sha256": "719e25375f049e08a637562694034476dd8174898dab8f8018ed7e6a1bf3440e",
+    "bytes": 229
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/McpConfig.cs.meta",
+    "sha256": "6901a6462feefe92533e9b19333088a8069c19a48322587f5231c1f319f5f0dd",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/McpStatus.cs",
+    "sha256": "73e7e8074d90d9e4688093bfc5626736a82c1694faf1bcd5ffb8e86946451b36",
+    "bytes": 1261
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Models/McpStatus.cs.meta",
+    "sha256": "dd95bceb6428f0361469442f1dcf632305c829c83e5e444e979300adae7716a6",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources.meta",
+    "sha256": "8037e78b4a23e1550ef0a1c2f03b5fc2899b88fadce46242ad9cf3e40b2d0dc7",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor.meta",
+    "sha256": "2d2ee208188fd7276381a0467da5b865d65f25b44c9b20a15c2e0465216223a5",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/ActiveTool.cs",
+    "sha256": "83cc29a6c5d80aa692d8b8e5f477a3ddb0be3e52760f9462e7943285d8d3730b",
+    "bytes": 2338
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/ActiveTool.cs.meta",
+    "sha256": "709af1363362ec8e2a151906c53d9eb16993f6d5295571e5c8c933bb07a475f7",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/EditorState.cs",
+    "sha256": "712d494c6c4352c0bb52913edc12c4efaeac392043d9a476140231a37ec9fe5f",
+    "bytes": 809
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/EditorState.cs.meta",
+    "sha256": "5e143fc186ff77786395e07cc7970a9befe72e255bc7724fa9152d0faf4089f9",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/GetPrefabStage.cs",
+    "sha256": "09911ac9489553186ada4c60fc2442e83fd3c53f9e34cdb6edc25600439b25dc",
+    "bytes": 1635
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/GetPrefabStage.cs.meta",
+    "sha256": "d3a1edf464c8b061d3f4bf5124acdb994c984ef0c955d342c95ba56639b15ee5",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/Selection.cs",
+    "sha256": "d625a8b7903e78aac9a5c5c88df8f5130a7898ce5383d6817d5396676468fc1c",
+    "bytes": 2043
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/Selection.cs.meta",
+    "sha256": "71319b4bfb91e760cf7fec152669374c896b1b5741132d0ce87eaeae7b1708ae",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/ToolStates.cs",
+    "sha256": "551c6c8d86a0ebf621722c89ce801efaaa94592bf0ae41af4707c88aca296878",
+    "bytes": 3173
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/ToolStates.cs.meta",
+    "sha256": "99a1a3feada5a49256a25007bd4109a3340dd1ea8a8b8f418a8c0c6509176dac",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/Windows.cs",
+    "sha256": "0ca936851c5f52fab734b2a5bca563976bf71413d35a9c82a33cfc3bc2940e07",
+    "bytes": 2145
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Editor/Windows.cs.meta",
+    "sha256": "a24d9bd497e4953b14a3f3d9b3c9abb88fa46c5db05d2af787b75e047b3d6b04",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/McpForUnityResourceAttribute.cs",
+    "sha256": "05701ad14217834a0ea878f7b23c9ee399f40e5ad3ee2fa165ec32f294dd57d7",
+    "bytes": 1567
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/McpForUnityResourceAttribute.cs.meta",
+    "sha256": "c102e795393abc80574a7307ab9b371dd8a72224fe842d5d64b4c17a11cddebf",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/MenuItems.meta",
+    "sha256": "5612d0829caff03181d7afbfe2750bda32bfc2543dd12d0cf2a8d73c30e96bbd",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/MenuItems/GetMenuItems.cs",
+    "sha256": "c3f1e8080bf5e885dd126230e320fc092711ddd41650ba2e3af2bfdfc1593699",
+    "bytes": 2336
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/MenuItems/GetMenuItems.cs.meta",
+    "sha256": "d40b26ff78a5257e1800cdd76ab79782e68b155bfb8b5b0351792ee726ed473b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project.meta",
+    "sha256": "89befaeab349b6c6005503a99bcdab6026d252ee5da86265eb7def97ff8a3762",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project/Layers.cs",
+    "sha256": "c127e7782332fa0898f207f4a83a9eaf3de2a270ddf0bdbc90f45b4d05b78a4c",
+    "bytes": 1178
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project/Layers.cs.meta",
+    "sha256": "51b3addac5716afbe854f2afcb3a51368da68d39a51b9cfafbd12f77c851fa7e",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project/ProjectInfo.cs",
+    "sha256": "7774e415eb903df770693acf9fb4790677f4c49347560fa3a19da0805f41b1b7",
+    "bytes": 3324
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project/ProjectInfo.cs.meta",
+    "sha256": "c93c5167c3e25a546f45818dffa0f2c797565e4a5c5249aca81fcad23da3f67f",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project/Tags.cs",
+    "sha256": "31b40feccc42b051b41bf93eb81dbc85f46828477069d44f4369cc4af6a1d34d",
+    "bytes": 752
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Project/Tags.cs.meta",
+    "sha256": "2182303a375727b02cdb4f3e48a2e8f7ed795860620eb9f7f4a175b104426138",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene.meta",
+    "sha256": "109e1a4f2e3fcbaa50f42df21b470f26759622ff32c9310cd338813cd92168aa",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/CamerasResource.cs",
+    "sha256": "67a4fa50bf92eb950358672112420aea7969249d28841560d3c09ea30b508223",
+    "bytes": 778
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/CamerasResource.cs.meta",
+    "sha256": "2ee303d4bd61f45d64532536074e652c383ed0d83e60cb425ce065565005f698",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/GameObjectResource.cs",
+    "sha256": "69692f7875f34565e5d440c2761d59994bd09035f3c7b05b2709a1e50afcee68",
+    "bytes": 10975
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/GameObjectResource.cs.meta",
+    "sha256": "2e39f498597d037f6ccdb16942185da962c500ea740732b35289478c22b1102c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/RendererFeaturesResource.cs",
+    "sha256": "cee359531db503e4a76dbabbfce27d6d1f3e9e7272b94482818b6427583fdf40",
+    "bytes": 732
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/RendererFeaturesResource.cs.meta",
+    "sha256": "9372a868a4b53d5494e9228a73c56b0cc328a2cd2f4b7be6fd54ddbe6c92f1c1",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/RenderingStatsResource.cs",
+    "sha256": "c04a24de2fcfeb8291b70f21148318bdc1d5197ab3e4f73273a004362ed250bc",
+    "bytes": 719
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/RenderingStatsResource.cs.meta",
+    "sha256": "a6a23ac561495f3ef882675775d94031ffe0db79a412da8d2902c390fbd5ac1e",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/VolumesResource.cs",
+    "sha256": "c8b2988aacbf3204ce5892bff6ca5b91ffa49536bf3421859c8c8ed5d0cbb316",
+    "bytes": 700
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Scene/VolumesResource.cs.meta",
+    "sha256": "159dd1177dbdcfac1d1af3f8c2e5aed686be58d391a4e0db3a7761395be20228",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Tests.meta",
+    "sha256": "0359af47c2d30276b9e4798913343754378fe0f395067f2fac383393fc77fe00",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Tests/GetTests.cs",
+    "sha256": "db4212323648b7c4abf2b46e5a9a2a2a14a0d9c4777b525627253bad6bd7cac0",
+    "bytes": 9192
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Resources/Tests/GetTests.cs.meta",
+    "sha256": "d14318a933b735065a2a605ff5bb5c321eebe03b11ad6086ee987d9ab83b2436",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security.meta",
+    "sha256": "e191b7bcc2f227cfaa6b21b0f135b8548a68753102425e42b10acf5941ec87fd",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore.meta",
+    "sha256": "bf003a5b9c5d3d5a5fb7b7b708ae3e4429897f809a92197ad5fe017c2712697a",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/EncryptedFileKeyStore.cs",
+    "sha256": "f71db5baef4d8769e4c27e806077f6f66c8c418b6fadcca267a23f4ae9cd2dbc",
+    "bytes": 8606
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/EncryptedFileKeyStore.cs.meta",
+    "sha256": "2193db9859617e33837a2793570495b17947e25eacff0477596a754dd6f7a264",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/EnvKeyOverride.cs",
+    "sha256": "847437a87d896c966f69e9373d61985b2922bc8e65e2e3802c671ee64a6d902e",
+    "bytes": 1028
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/EnvKeyOverride.cs.meta",
+    "sha256": "f71878280cef24f5d9ea71de48f27bc9ce5014e878c29d519f70c1e37dde8e5c",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/ISecureKeyStore.cs",
+    "sha256": "b8cac8044e5169c62d39c2bbd43e309a8042bf8bcb1d3b9582763106af0ef1b4",
+    "bytes": 1177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/ISecureKeyStore.cs.meta",
+    "sha256": "5dbff629ead8b0b1b16f91689e2a7da454497122ff71415dace12cdeb068e6a4",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/LinuxSecretToolKeyStore.cs",
+    "sha256": "3b0b458a0bce3b2d263e8597d651ec7a4385cb559ac095370c81cea8b97b7387",
+    "bytes": 3835
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/LinuxSecretToolKeyStore.cs.meta",
+    "sha256": "4215d923c86e86fca093b00836a7220769efd783a56eebf48f6545c2f0cff868",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/MacKeychainKeyStore.cs",
+    "sha256": "298fb668d2cbc8298c7414c9917196c7558a6cc1d0830ce510bc546d7e2dac5a",
+    "bytes": 2566
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/MacKeychainKeyStore.cs.meta",
+    "sha256": "335529998bd458930118fc26602fc7222b4b7e675e2811c9644ceed2a1b66599",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/SecretRedactor.cs",
+    "sha256": "cc7fa28c0a78bdad31a52e994970ead295bf1e867c28a0c924904b15ae74c51e",
+    "bytes": 1394
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/SecretRedactor.cs.meta",
+    "sha256": "f0176b32b730fdcedadd9335fb9a26c5b16ff8dad7c5536fe11e8e5aa766c660",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/SecureKeyStore.cs",
+    "sha256": "a00990c616aedbbac947b0b46d3dd18f7145c88dd760091256d4bd0378068d6f",
+    "bytes": 2638
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/SecureKeyStore.cs.meta",
+    "sha256": "40ffb6e427bb797ca7f0dc97ed884fc2242d339b9bee9efbea6ad0a6cb81eda4",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/SecureKeyStoreConstants.cs",
+    "sha256": "9d9dff7139fcc59455aa58d4d27aa7f09918cfc509c40b0b3a95a8a267b01e35",
+    "bytes": 565
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/SecureKeyStoreConstants.cs.meta",
+    "sha256": "9f1431576bd27fd0d5179d6053679b2174b51fceaa595d698ccef8181ecc0572",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/WindowsCredentialKeyStore.cs",
+    "sha256": "f3d0dbd121f1d05408e7b22d8ad94c47abf9d6e4c57f0a4ca6fb7b0aa6874883",
+    "bytes": 4354
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Security/SecureKeyStore/WindowsCredentialKeyStore.cs.meta",
+    "sha256": "f1ce2996a312c821e88b40f510225c182961233b6ba48ac52ddff0f6d63f8002",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services.meta",
+    "sha256": "406649669ae97c52cfdc57d1421a698f9977949d1e60c479dcff976248850496",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen.meta",
+    "sha256": "d27b5aae4d6d265511614b5328da4a373cb74c2242b1a54ea5c92448ac3a2dfd",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/AssetGenJobManager.cs",
+    "sha256": "ad1d2e02fa32a8e99c2702986e811183229e7951362fddb882695d5bef8c61f0",
+    "bytes": 28044
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/AssetGenJobManager.cs.meta",
+    "sha256": "17999c28648874daa612ec629e0bce84a711ff7e3f2eb53c207316104eb4f896",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/AssetGenModelCatalog.cs",
+    "sha256": "925050bec5d20a3f48b7c0757d860b8b299d74f43c2844b13c5bc5cca78ea603",
+    "bytes": 7423
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/AssetGenModelCatalog.cs.meta",
+    "sha256": "f25e18386a97123909d0c87a980a2dd312ad5a7272bf0c19b98db3d440c5864f",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http.meta",
+    "sha256": "1d6dcfa13b29b2250f8f105fb2269d73202ac24f2b03c8a46dd5fba64d69619e",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/FakeHttpTransport.cs",
+    "sha256": "9cc59579f54901a3bf11768373677259ccbace09f3d0caf3c8ac636967cb07f0",
+    "bytes": 2129
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/FakeHttpTransport.cs.meta",
+    "sha256": "a38b65406d982ed457ddce69c3891aec9e9a9eac133f9285494b6ab22cc4ec7a",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/HttpRequestSpec.cs",
+    "sha256": "503c3fa6d0ed39cc16cf1998108d20e4218d0739b12fa8bb671dc886fe447291",
+    "bytes": 685
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/HttpRequestSpec.cs.meta",
+    "sha256": "b355ee524f6a3b5b918f822d407047ed5d2da4d97674ed4a86d8fdfa92eae36b",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/HttpResult.cs",
+    "sha256": "09c9a7acecb4d49809ae2d33a234333c3b9ce68fad872cbb55d0e612862f80f4",
+    "bytes": 758
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/HttpResult.cs.meta",
+    "sha256": "df5c2a2e1685949abfa14a089fab163e82c165f59e91a617784cccf6acd0ea6e",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/IHttpTransport.cs",
+    "sha256": "8c4c38b2de0b7b27eaada6aec352f01ad96c17d888b476d2ae70c105e2eb709f",
+    "bytes": 546
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/IHttpTransport.cs.meta",
+    "sha256": "946a3321713d77991cc59c0359687f7025c0629d8ccbc6ec5c38a24de38f30cf",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/UnityWebRequestTransport.cs",
+    "sha256": "6f6234db72199e9092ebc26e21635b73a5a2f121eb8812b423ceea88c4e151ad",
+    "bytes": 3594
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Http/UnityWebRequestTransport.cs.meta",
+    "sha256": "c882a1eb92d30d106aa57be049b412451f26b36962a2a8b8e255c5caacad5fec",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import.meta",
+    "sha256": "deadb7bf1d65f0094fb1b528e1133a5271b252dac2bdc051e469673d43b5646f",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/AudioImportPipeline.cs",
+    "sha256": "a710aafa0caeca9709ae27ed57cd85d321cd7cd74c272e3e0343bc04c9cc0cbf",
+    "bytes": 3221
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/AudioImportPipeline.cs.meta",
+    "sha256": "715aa23efc33843e6eee0c14a7656c69437e60f39d3f968abfd90394f90d1f90",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/ImageImportPipeline.cs",
+    "sha256": "86c85b5509716fd11e732ab9fbf3a249370d446eabec7ec7ef26243d4f958566",
+    "bytes": 2833
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/ImageImportPipeline.cs.meta",
+    "sha256": "632b2970f709f18b9b2e30ddb4a2e66170d43f1604e8c9da3d130511f1128379",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/ModelImportPipeline.cs",
+    "sha256": "cba2cf4c9ffcfaa8440c5218dbd46ff9634fa8aeb2feacd62fe0208ba63b408e",
+    "bytes": 10956
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/ModelImportPipeline.cs.meta",
+    "sha256": "a809734da6e08a0e5154c121816b6d57828350c06f9b14ab62dd8c5933550ba3",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/SafeZipExtractor.cs",
+    "sha256": "4335f8ada9353ae8ba4377b8ef4b17b1fb3db1e92c295917428740d1775ee13b",
+    "bytes": 3591
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Import/SafeZipExtractor.cs.meta",
+    "sha256": "9ea2e744120fab5a9f3c49d35e17b1fcd4dcd9a0fd28edfafb376b6456521e63",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers.meta",
+    "sha256": "3b4df6faa543bb201830d8e702a30385ef82f45bb5008523d82451dcc9fa69e8",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/AssetGenProviders.cs",
+    "sha256": "618d709b689286695895ea6544522b388babdc54754503e324c349d972ab3e92",
+    "bytes": 4174
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/AssetGenProviders.cs.meta",
+    "sha256": "94db6770b38d751c619d6df9a8ded3746a4c2b11cd8d54d74a71f531aa1738b0",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/FalAdapter.cs",
+    "sha256": "2a7d8cda19a6b17cd79b90549a98a8d4588c77d6295f692aebd0e86c8a3d097e",
+    "bytes": 8724
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/FalAdapter.cs.meta",
+    "sha256": "9d306a6403a5ba57199fb1d93e4b741f8f266ab6156c0bf80bf78324afdf506b",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/FalAudioAdapter.cs",
+    "sha256": "d0310a1acc2e61e37568e7b7423b98d1a8cec59c4dedccfc969d313274a80988",
+    "bytes": 8946
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/FalAudioAdapter.cs.meta",
+    "sha256": "5ed96cd64a298ec3d3073f8a963266d27d126a570cd20dadf3aa8becd592e591",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/IProviderAdapters.cs",
+    "sha256": "4d8291ade85b61092533328d4660f567a389110dcf817a121c7a65622541df21",
+    "bytes": 2440
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/IProviderAdapters.cs.meta",
+    "sha256": "1b1056f266a578e807082d8244291088c7c83ad6df8563650caf0b73a17b3af6",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/LocalImage.cs",
+    "sha256": "be75800f6c33c3155798fa48308957980caf5cc84275e491ebe65d50335d469c",
+    "bytes": 3570
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/LocalImage.cs.meta",
+    "sha256": "742d856c78038e573b9b93321dc7b5213cc29ba8f028324bb1b3922a7f8f316d",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/MeshyAdapter.cs",
+    "sha256": "a7680fa39ab01e279414e53ee1b74af68f4388e252b8247251782df687d24dbb",
+    "bytes": 9741
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/MeshyAdapter.cs.meta",
+    "sha256": "26e0b42707d15c222081f8bef3b24a0b35d9589f8720c1c00cde5dfcdf1ac672",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/OpenRouterAdapter.cs",
+    "sha256": "8247a85b3087c60631a3df86fcfbd1c9912e7a3f07b168164bde61e63159c161",
+    "bytes": 6810
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/OpenRouterAdapter.cs.meta",
+    "sha256": "d1746b0dbef7ad1897330fc54ff85c086acdfb7ca872f263b6f5926fb9a0cecf",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/ProviderHttp.cs",
+    "sha256": "2473161717a19ef72cd53b768f6c7a345effeacbd13a251a5aa73e82d3526073",
+    "bytes": 2192
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/ProviderHttp.cs.meta",
+    "sha256": "8ed65c32011b7aaf6ff69876c82ef3439b4ca57e13577e373bec079fd7d9271d",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/ProviderModels.cs",
+    "sha256": "6d17f6a8db19445da7af49bbd169b8c76c43ffb771e37605e1497fa718eda2d7",
+    "bytes": 3664
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/ProviderModels.cs.meta",
+    "sha256": "18748d333052b87c3b62237c2b750ef7a972e646e4743918e5b81569611179e1",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/SketchfabAdapter.cs",
+    "sha256": "1650a92f5f9c2a2b6cc32fdc300879cb0467941f6cc954a422de26dd2a68525c",
+    "bytes": 4786
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/SketchfabAdapter.cs.meta",
+    "sha256": "aff0de492b244cc689e8d80c3d1ba49b41fb77279d1a07e9985d8037c5431708",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/TripoAdapter.cs",
+    "sha256": "36d958d0654dacb32dd504503d3a5df4f13a814bf7cf0f360e7e55b2d79cc1d6",
+    "bytes": 9400
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/AssetGen/Providers/TripoAdapter.cs.meta",
+    "sha256": "ef92d468f4bd6c3cb750eee69ccff601f992dbbc7d7ef5ef862b8eb4a9b0c5f2",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/BridgeControlService.cs",
+    "sha256": "7b85919e86ce7763334c9bddb99532b260891b4c5d165708853477d16f639207",
+    "bytes": 6078
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/BridgeControlService.cs.meta",
+    "sha256": "90e74c01fc8bf1987c4e3819eb31f278e2c1753bce66c6f40cd29588bf601394",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ClientConfigurationService.cs",
+    "sha256": "0dbcc0a001466578e77a1c0df7de2539d8ba3cc5b7ea192bd087cdec5b093076",
+    "bytes": 5905
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ClientConfigurationService.cs.meta",
+    "sha256": "19e172cfffb8deb37a4286026dc26885e6c8122cc53df53991a12128c20902b6",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/EditorConfigurationCache.cs",
+    "sha256": "16db68864c70b25caf0f7230385d2bfaed03759ba8e89df734f7a623daff2927",
+    "bytes": 12664
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/EditorConfigurationCache.cs.meta",
+    "sha256": "0f3675e37151aa91fd0092589069cdfd9f0b1c079299eb841171e661768e6f26",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/EditorPrefsWindowService.cs",
+    "sha256": "ac84f636948516a0830e4d8acdfa1d007c83278c6fabec13339b9912e708af71",
+    "bytes": 1407
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/EditorPrefsWindowService.cs.meta",
+    "sha256": "90fc8633e79fab5ba1b2af67bd1af7b211d64abc8e516eea20b09df80ec4d5c8",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/EditorStateCache.cs",
+    "sha256": "ab531dfd97b6a897f9f99af03ddf3d595c3826b377a0168d6c6e5521dd67cceb",
+    "bytes": 22291
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/EditorStateCache.cs.meta",
+    "sha256": "753c5362262520fb3735b987e61d0d2222892d2dcf04769741914c92ee0be10d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/HttpAutoStartHandler.cs",
+    "sha256": "218a32d1e7020a18ac235a298a8b36f8bc8e6d40adb73dc4f6293772eb1b598c",
+    "bytes": 15196
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/HttpAutoStartHandler.cs.meta",
+    "sha256": "61b1247f4da31dad890c18aeedcdd43ecdc0492d701dd201921d082ac387c129",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/HttpBridgeReloadHandler.cs",
+    "sha256": "43f8a8d99c10ab6ce3048d3aa92abcd30db657c882072d966d7883519845f076",
+    "bytes": 10232
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/HttpBridgeReloadHandler.cs.meta",
+    "sha256": "17d7eb5410dc5f9c0c286550117af5217867e84978aa20faf9e3b6a60c5f554b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IBridgeControlService.cs",
+    "sha256": "b2c9423ca8c5fb4e5db8e9d83c0e353590ee17acad9f93f289c6be8797bc4e07",
+    "bytes": 2597
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IBridgeControlService.cs.meta",
+    "sha256": "a925e28828130f6ccc4bb34e78cd32cf7389e598473f6c2f8a59b976e1079da2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IClientConfigurationService.cs",
+    "sha256": "8a25ef238e668d2a9d66c259dcfa4f91b283cf755ae5e7e5460b4c27dbcfece9",
+    "bytes": 2492
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IClientConfigurationService.cs.meta",
+    "sha256": "3c2ecb0a06161bf596551ac882c43ebb70a4811cf919ecc33e7553442399dc07",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPackageDeploymentService.cs",
+    "sha256": "3298300894741f878a780198f68598372093cc7ff36f8a0036975a210659f6c1",
+    "bytes": 796
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPackageDeploymentService.cs.meta",
+    "sha256": "4349a683366091ab84096ea8595ea3df38151eff948e9b6011bc8b9aa09df3de",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPackageUpdateService.cs",
+    "sha256": "a39c28e0db61131c98585ee678240978bc8e6d9e5d84996fb7727e814e902f1c",
+    "bytes": 3584
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPackageUpdateService.cs.meta",
+    "sha256": "46ae7042697474f45280a22fc6860d2f8a5f65dbb1128b06a4c92c4e14606b5b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPathResolverService.cs",
+    "sha256": "5258e84bf67b228922b23280a8e5bf5ab2c05b7812142addb44064b023e83a5f",
+    "bytes": 2759
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPathResolverService.cs.meta",
+    "sha256": "bd15c95a88b1446bb749fa5bbc9221d9a41f218561f16e9c2a75d0921dd3a8aa",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPlatformService.cs",
+    "sha256": "ddb6d719fb5efd141b69d437fb6f4fed2b4a5dd41f026afca7fce9edd13451e0",
+    "bytes": 635
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IPlatformService.cs.meta",
+    "sha256": "e439581c297a2a22d02cc1c2a18441b316b54f0196be54895ddbd97fff12761d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IResourceDiscoveryService.cs",
+    "sha256": "fcdd9f23a003221c93099033a6d18ee033435986a5033faf39d3a2d6048ba690",
+    "bytes": 1634
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IResourceDiscoveryService.cs.meta",
+    "sha256": "6365d4cf0e73fad274b72ab240d824c279665a158562af771b660dd90ecb3f28",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IServerManagementService.cs",
+    "sha256": "63cca713354f412bb0b7d2e9659bc76cf084f7bf753765d20d6a80aec146fa05",
+    "bytes": 4030
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IServerManagementService.cs.meta",
+    "sha256": "5c88a35f91e2cdd1a61383146ca74667080c6db09e3123fecc04e2df69aba0aa",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ITestRunnerService.cs",
+    "sha256": "ef008d774827470019f98228720b82e10d845dfab7235348f53a6cbf94b48024",
+    "bytes": 1948
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ITestRunnerService.cs.meta",
+    "sha256": "c6285321b5c699e4cf9d0fc5f3783197a9b477128d6a6165c1cdea87f26eebc8",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IToolDiscoveryService.cs",
+    "sha256": "60878b6f8f9aeee0cc2c763d82d456e47ee1a6fe442ba6b56880ffe229b89df8",
+    "bytes": 2380
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/IToolDiscoveryService.cs.meta",
+    "sha256": "4015681845e4bfc8ce38f767159972387e08f49ac6dbb06ae6790b040fb31968",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/MCPServiceLocator.cs",
+    "sha256": "76abb59d693e6f0dd70b206ef1361f9d9c3d1e692294c438486d90b620be8777",
+    "bytes": 5224
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/MCPServiceLocator.cs.meta",
+    "sha256": "826c4fd25c30a2f5b9dafba280001e4a968c7765868ba9de64c3ea808bd1155f",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/McpEditorShutdownCleanup.cs",
+    "sha256": "192efe1f62da0423518116aa6f93c722ff67780bed917fd53c3eaab88fb9a0fb",
+    "bytes": 3183
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/McpEditorShutdownCleanup.cs.meta",
+    "sha256": "a387a26936d13c2bc5c35b91bbcd1bd958a0bcc279e3918d2067ac83d46f6c59",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PackageDeploymentService.cs",
+    "sha256": "5168d3b7f4b9952000a6468f308cb47047041003cdcf851590fb9f9f978bd3cd",
+    "bytes": 11067
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PackageDeploymentService.cs.meta",
+    "sha256": "aa28ca354e7ad4a8938e58a1af343de03ce5e3e00d442b8389b7a86c84c26bc9",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PackageJobManager.cs",
+    "sha256": "6eae06374dafd5c250233e2ec331504fb2d5e2c50679ae0587f7353a0f9526c1",
+    "bytes": 13744
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PackageJobManager.cs.meta",
+    "sha256": "c62bc2056b6a3d421e3b3d9980836e032b859ccbc9768cee26b1613bce1cf736",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PackageUpdateService.cs",
+    "sha256": "98feca1ef18c461b4b5ee7ed24e47dc78f315a343656f588db5e3d59b3dcac75",
+    "bytes": 18190
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PackageUpdateService.cs.meta",
+    "sha256": "cd672b04ed62272a814100126cba8f7bd9f46384528a4b2dc4761dfdb5c29a52",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PathResolverService.cs",
+    "sha256": "0438d3ed4a790ac18820eae2c69d5fa93e08d00ff87fdc2fd37cf48d01700300",
+    "bytes": 12326
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PathResolverService.cs.meta",
+    "sha256": "94be153e4ce2611f470eb62f7079c32c688957db88589c66f05fc04bf92f4cc7",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PlatformService.cs",
+    "sha256": "e0f7d7975a91d5879f16bbfde4b8a8efaa1b16da6bb3e677a0b39a63e683f6c4",
+    "bytes": 967
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/PlatformService.cs.meta",
+    "sha256": "c9b65a3068b567f586405d5a1051a2e4756c2c823b5919b7e56e2ec4fc27924f",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ResourceDiscoveryService.cs",
+    "sha256": "ebddd07db4f726af990ec4abdfc02cba66ba48638ad3e9acac7ea2215de2e726",
+    "bytes": 5527
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ResourceDiscoveryService.cs.meta",
+    "sha256": "bb02906894901810b90d424e1b527cbed271d94c556b6fc9ecf4bec4d7f154cd",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server.meta",
+    "sha256": "a0fbbb4830f9468e48c2f55d49009ed1de6cba6032d65669e96d5bc99c347dda",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IPidFileManager.cs",
+    "sha256": "ef1ef27c6e33bb4eca7d957a078df56b321637e22799f10b2d3b74b81cd80784",
+    "bytes": 4123
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IPidFileManager.cs.meta",
+    "sha256": "76f9e0b8784b59a9576a944a81efdab789f0df753101e32b1bb1d32bc8e9e7df",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IProcessDetector.cs",
+    "sha256": "84bc91ed1c8f44907df1283c22f409c423b8dd4551934c87ce14edf69c21e226",
+    "bytes": 2416
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IProcessDetector.cs.meta",
+    "sha256": "31a87b5e4929a76a860d5929089dede6d171beeae4ae6bfb3bb43c2f7d5f39f8",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IProcessTerminator.cs",
+    "sha256": "255cf90bfd5bfb4167d472e6351bfae5e2f4c66a66a0daade502800de1deb322",
+    "bytes": 715
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IProcessTerminator.cs.meta",
+    "sha256": "736d14b85ea8486f3502909ba35b3e04aca194087ee961d93ea166d0dc398690",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IServerCommandBuilder.cs",
+    "sha256": "3d25dfbedffc005a864192d2b2e2bba0d2db418797a3f97f489b845d600059c1",
+    "bytes": 1824
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/IServerCommandBuilder.cs.meta",
+    "sha256": "90fb319b35596b8c79d5b5880aea518a40f741173feda324f98629661582a469",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ITerminalLauncher.cs",
+    "sha256": "a2e805a6d8fbc59042c7a26c9dbfbc263a002ff17672947403d463ba67df1c31",
+    "bytes": 1587
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ITerminalLauncher.cs.meta",
+    "sha256": "41c5db23ddce3c24c5546c41c398e23abee08fa187e934ad623fc3dafa7077f2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/PidFileManager.cs",
+    "sha256": "6bd69c42d0d02878059651bb2c87b36a8afd56014c5fa01353d7f4a72f870d34",
+    "bytes": 9446
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/PidFileManager.cs.meta",
+    "sha256": "ee83db0f5c43002044de2b161837c6baef7152538266f66b86f9a0aa83206120",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ProcessDetector.cs",
+    "sha256": "195e9a196a9a183df1bc84a5c7206b922026c6a3a1f63482a214413d4754d98e",
+    "bytes": 13726
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ProcessDetector.cs.meta",
+    "sha256": "a591e6382b7e1f1063545b46e1a6709031747ec69c78b866e5d06cc33a29c36c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ProcessTerminator.cs",
+    "sha256": "e71977da0bfc6f831d4b035b4eb7860326501967492c5ee50404131aeb44f977",
+    "bytes": 3648
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ProcessTerminator.cs.meta",
+    "sha256": "24afcf4702754124fd89d1d87017eed6ec53ab7d09fbbf0dd7f2e34bffe66855",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ServerCommandBuilder.cs",
+    "sha256": "16d6a6ce58d70e8c6f058a3161a03882343f275f535d6288a4641fb308552108",
+    "bytes": 5076
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/ServerCommandBuilder.cs.meta",
+    "sha256": "c6c251dc269918d6167339ee6a3bca4d63e2b08bf7addd9c621b6c520842df03",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/TerminalLauncher.cs",
+    "sha256": "cc51f11e4b1480c7e8fb854d62bb075e53e0d1dc5cc21b2bf5f0ada52a095244",
+    "bytes": 8175
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Server/TerminalLauncher.cs.meta",
+    "sha256": "0eba65d8480298d64a63a2a32f827c90000f9b5e558823ed3651330b45c2f1b1",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ServerManagementService.cs",
+    "sha256": "d610bf01084e952880965d53e1e6e1c9a3df35215d9e61edfc2f16db08a59ba9",
+    "bytes": 45707
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ServerManagementService.cs.meta",
+    "sha256": "234732bd7cc9b592fedc4a926e1be5983a551d23f36da6b800883e7fcb567c7c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/StartupConfigRewrite.cs",
+    "sha256": "2f56e1fa7b4061b583074ad9d5b662b49e401e4f60e5c76f47a9c7e6d033130c",
+    "bytes": 3986
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/StartupConfigRewrite.cs.meta",
+    "sha256": "1821d223c17f8285eec84de0f36dc7e305d01b51debc3d0411614bf1ebc2838b",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/StdioBridgeReloadHandler.cs",
+    "sha256": "57b318f7581c39063ac3171cc07d07edba7ff14753d4e96a79c6331440e861e4",
+    "bytes": 8267
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/StdioBridgeReloadHandler.cs.meta",
+    "sha256": "525a254bbd96de02dc3672f204db916bfc94266fe0e4cfa2253ca708338f689b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestJobManager.cs",
+    "sha256": "fa45c03e53b302a3cff0c8b3c36879b62ec2084a287a0e1cb8f309e66269b471",
+    "bytes": 28039
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestJobManager.cs.meta",
+    "sha256": "7a47db55707a4153e236c5273e594c2bfb30160175c725f6d74ade320d7bf2e2",
+    "bytes": 258
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestRunStatus.cs",
+    "sha256": "88c2d07a5d07d14664698cd7611b35a6b9eac7a92aaf6d7e57fde4f57d3fed9a",
+    "bytes": 1694
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestRunStatus.cs.meta",
+    "sha256": "6ade002da8e738961d6071a2689439037559704ce7f7f2418212b4d4953c10bb",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestRunnerNoThrottle.cs",
+    "sha256": "3e2cd965ebeee08e97a05d79f12219e42390380ece33b4d7b3e86a0dea50ba7c",
+    "bytes": 6311
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestRunnerNoThrottle.cs.meta",
+    "sha256": "ba1ed236eed53b669d2e3f0a6611e987feff1524b90a915382f0df5b4024388e",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestRunnerService.cs",
+    "sha256": "d666c08db2266c6fc482706d07eba1363a680225e4457100583d5d764e77d674",
+    "bytes": 28609
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/TestRunnerService.cs.meta",
+    "sha256": "66a22e9b8af942a32c313e83baae29c0e1da3767fd3b70f97440446498c94ea6",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ToolDiscoveryService.cs",
+    "sha256": "c7d2426084844220a353ef7552fff0d5517a61e596346573267f9dc8faf82173",
+    "bytes": 9172
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/ToolDiscoveryService.cs.meta",
+    "sha256": "b90275295dbc9d43c2ee85593973a3bda62227d844e41dc62e044ba89af49918",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport.meta",
+    "sha256": "8dd12a193204acfd1aa29d61db124de2f29895a55daaaa25b756fcec4498fb9b",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/IMcpTransportClient.cs",
+    "sha256": "14428cd97f2630261dbb42d26bc3c6aa6a4bfa8d184374e2757e63bf975b4330",
+    "bytes": 517
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/IMcpTransportClient.cs.meta",
+    "sha256": "084bd73311619f7865368ed3984d0fd4546c2c4bff222e6ea69383681adf215d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/TransportCommandDispatcher.cs",
+    "sha256": "7439184e0ad0b446e3c8b9666a9322938de5209c6b02918abf1fcbb5c3a39587",
+    "bytes": 17814
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/TransportCommandDispatcher.cs.meta",
+    "sha256": "089715298e7e3fa3a8dce82d6c174113edc795c8d7eb2ae6e5b79b3506d835ac",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/TransportManager.cs",
+    "sha256": "3479da4cb0576e4cea7c94d5a86cee78bed96bbf8f9b9d5cbc4e4c7997cba6a1",
+    "bytes": 8020
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/TransportManager.cs.meta",
+    "sha256": "7e415789f7529cb9574449d5735c31cc3d0d3ec8ced6bea76f6a6e2fa8f5f942",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/TransportState.cs",
+    "sha256": "230890ac6fa842324615661621cbe797f7ff0a0554906e432a72b44b0f5546d8",
+    "bytes": 1661
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/TransportState.cs.meta",
+    "sha256": "9fb07215ec33db4780532ad01f34e7cd40205c503d309cfabc35efe73cb8cf65",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports.meta",
+    "sha256": "c69b76d843d24e177c4025e35db9af538c97609a84e23cec1cb5015d4c663368",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports/StdioBridgeHost.cs",
+    "sha256": "2555c46edc44cc7451961a75d4a39b1351827ec6c09f8508e2da4395476de904",
+    "bytes": 47794
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports/StdioBridgeHost.cs.meta",
+    "sha256": "14694469d55e156ab44e70479f41ea6ab9683b2b81a15dc6363771114775e7b2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports/StdioTransportClient.cs",
+    "sha256": "95a12525bd61d5e2d1024efbd508e5b50af4d26baf3073f2ebf4c6703395dfaf",
+    "bytes": 3853
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports/StdioTransportClient.cs.meta",
+    "sha256": "d8754196ad65879d09625aef474c747dceafba5d24b8b859a9ecf711efd85573",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports/WebSocketTransportClient.cs",
+    "sha256": "8b8729f2b84cee6b72a662ff7d72d270418616b970cbae2fbcb88534bf0ee114",
+    "bytes": 34421
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Services/Transport/Transports/WebSocketTransportClient.cs.meta",
+    "sha256": "a0de997337530aa8e7f40c5b2e5bbf7c1955f50605ac1623c662b6066f1e5523",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup.meta",
+    "sha256": "4ee62cefbc9212cafd7fdebd27f8d1eb8b74afef32fc9a484568576ae86c88bd",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/McpForUnitySkillInstaller.cs",
+    "sha256": "324301e69ba682f399d7a286877f66169db762991d6c6adfbc9d0a93387090e6",
+    "bytes": 9557
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/McpForUnitySkillInstaller.cs.meta",
+    "sha256": "0e8894435caa5850cabd92e07f729ad70eb7344bfabfed60081e40a7787081eb",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/RoslynInstaller.cs",
+    "sha256": "e1ac9c3ae1cba15aff678d438d4cad8060172f32307e47990f42ed52786462b7",
+    "bytes": 7972
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/RoslynInstaller.cs.meta",
+    "sha256": "3e9dd1e62f7a84bef692dbb801115edd87673d995ba7d72ccff972ed5d5ed553",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/SetupWindowService.cs",
+    "sha256": "6389123f4bcf632dd72852052cd3e7ae0b036c670665bee3054ef63f188c49a8",
+    "bytes": 4084
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/SetupWindowService.cs.meta",
+    "sha256": "fd24205791a3ecf73f63587efe4a879f4735ea450a56dfaf9556b365b141cab1",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/SkillSyncService.cs",
+    "sha256": "9e9cd8250f40714736ba0581d96da258e4b933ee09d71725d500c0c417354fed",
+    "bytes": 31506
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Setup/SkillSyncService.cs.meta",
+    "sha256": "f2c7d62866d3dd960be1caf28df377706c856a1071e8ed9242e3063728bc6e7a",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools.meta",
+    "sha256": "370b0fba8cc5fd2c6d9baa1af91edee5b5c416ace48380a2de51ec5c3430d478",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation.meta",
+    "sha256": "f1edaa6ced943c182aa11ec329a61823171deb0bcd5d13bbfef8ec96477cb487",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/AnimatorControl.cs",
+    "sha256": "f3beaab5f7610d9de26b79a1f9ecd638bfd8a8c03fb33afa9bcc56537d70568b",
+    "bytes": 10344
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/AnimatorControl.cs.meta",
+    "sha256": "57fc15aaa994b9392a83557351a427fbbf3b9240358dff3557a254722961ab83",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/AnimatorRead.cs",
+    "sha256": "90c0520b1b6214622d848b1deb4724a503a1e43a03738d46308df4b32000d3d4",
+    "bytes": 5773
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/AnimatorRead.cs.meta",
+    "sha256": "6024bc9bf38c4ed4796889cc839c01e0f622a9b42427e45bd86e6df607651e1a",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ClipCreate.cs",
+    "sha256": "5802e82694f8745b7708efa7fab88b4fb3d9dfb50c09bf18e9e738f6e79e6895",
+    "bytes": 27620
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ClipCreate.cs.meta",
+    "sha256": "ba0a4e4140741094f9692aeff584b2a84f704fd3ab84daa33099fcc61544a5df",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ClipPresets.cs",
+    "sha256": "10e5ebc77ee94baad16ada99e4300b47d6da818cca4a801476bc667391ecfff8",
+    "bytes": 17717
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ClipPresets.cs.meta",
+    "sha256": "c676755159a4ca19ba1869256d0e2771c26f8e9c05bb588956bd0c8fe693d6cf",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ControllerBlendTrees.cs",
+    "sha256": "c6c49761b8c618ebe2f561552964dc5ba2bcd61b1d4c9c3a072b5ab007363d62",
+    "bytes": 10973
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ControllerBlendTrees.cs.meta",
+    "sha256": "6be44d693b7a70fbcddbc51f23adccb1518d118cb840cc5b67592af7bdaf5cec",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ControllerCreate.cs",
+    "sha256": "a5e926656f4187078979ab233a15b7749f5d166ddcd846e86b813a786848fb3d",
+    "bytes": 18803
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ControllerCreate.cs.meta",
+    "sha256": "4a7c9bf2c673fafa90a406f184c7491a79a3c2cddbb20e49753110d9e903fa39",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ControllerLayers.cs",
+    "sha256": "92580ff8b9146984735758cdc0a0cfd7c0d8522b800d8c3944d191a1adc9b3b0",
+    "bytes": 8116
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ControllerLayers.cs.meta",
+    "sha256": "27582fba3f477ad0d91c48a3f4c85deabd3bd55bc0116e20cd7cd181ff030527",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ManageAnimation.cs",
+    "sha256": "8d804dc1dec4fb2eb1661aa8736116eb917f5eb1df8fe66894b76eddb874bdf4",
+    "bytes": 10205
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Animation/ManageAnimation.cs.meta",
+    "sha256": "8828ee9745d7b1c09053049fa8cc4596c6f4ff29b36387b7968f79323613cb58",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen.meta",
+    "sha256": "51fb574a8a190aabfdf98ea5b009bb18430a53c7f77b35395856d920204f9a25",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/AssetGenToolHelpers.cs",
+    "sha256": "517c4e5a8b91fad99d386f2ab5316fef270d72f754b5067426a2d0db7e86d124",
+    "bytes": 3431
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/AssetGenToolHelpers.cs.meta",
+    "sha256": "f79d646dc3bc7a06e32c0b7493d9a00450f0b2cd40a8feef094d25ddd7f5338d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/GenerateAudio.cs",
+    "sha256": "887fc64c7543ba9d90fbdd73ce23170142bb60fd29027c58e58abe0d80ef11f1",
+    "bytes": 4251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/GenerateAudio.cs.meta",
+    "sha256": "30f4ea2942384e147115e45ef27d6b490e3a93b09eb3e0d91114cfa22dbc7484",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/GenerateImage.cs",
+    "sha256": "ef6c9053e67ef0670ca782e2e59b9a13c8c58585b66d943a676e59ff95901b72",
+    "bytes": 5014
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/GenerateImage.cs.meta",
+    "sha256": "3e6e3538dfbf46fb2ea444adfb74cf54a024775d955e7937f860c3d54c29ab3c",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/GenerateModel.cs",
+    "sha256": "442d90a20fb51c3694fcd8d2d4a5d7d0a349642a356e8673c2a8acdb88e8b6b1",
+    "bytes": 5085
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/GenerateModel.cs.meta",
+    "sha256": "5ff9c861022234c27bfe82a02d25be8f28f07ca070db306cd7393c12558c4e09",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/ImportModel.cs",
+    "sha256": "7e17057a17e1246abfe8289d79e97b9b5840198a3897cb5094c649af3edf19e7",
+    "bytes": 8616
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/ImportModel.cs.meta",
+    "sha256": "a19ec5795d9aeac799b9e720baedd66c6e233c49c8f39fa003f5c5ed374c49e8",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/ImportModelFile.cs",
+    "sha256": "4eeaa33b1d822ac6e4537f383f0bf1177de1b1e472a3c6dbdff8b8df7adef20e",
+    "bytes": 4746
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/AssetGen/ImportModelFile.cs.meta",
+    "sha256": "b42c4b2d554bfbb2cf73c77f19664a91f98a54ab99df0d6f04e7bb50b9eadf34",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/BatchExecute.cs",
+    "sha256": "032de3cae5c6617b859a95ec5a4cb21c5180bd981d6c3bf578ae54fc9cfcef74",
+    "bytes": 8683
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/BatchExecute.cs.meta",
+    "sha256": "ea1340e14ed7db8e634ada1049c95a008c50cbac3b96f4059662c799a1d31237",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build.meta",
+    "sha256": "0f5a835f2f3ed665bb2e33329a240530f4045b79a43901af6199234389320c61",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildJob.cs",
+    "sha256": "c9cc02109839429d0187d693cc823193c5999750db3b65f5c08f8db8411aadcb",
+    "bytes": 6782
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildJob.cs.meta",
+    "sha256": "fee9003c9a86a3ff9aaa2b0c2bd406f6a69a96e4a35296f5aff28d4e4cbbbcf8",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildRunner.cs",
+    "sha256": "7fb1c33001b9626522f6216e0f0108a18a7378c4bc282ea36cd9520649d85475",
+    "bytes": 9446
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildRunner.cs.meta",
+    "sha256": "f96b9f3d600a6571cc3dd4d730a11e446575b952e760f7cdeba0559fcaba9503",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildSettingsHelper.cs",
+    "sha256": "8a708d3fc3830e24e1cc128120ad97db5bc169bec1cf7a52340921509dd0081f",
+    "bytes": 4436
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildSettingsHelper.cs.meta",
+    "sha256": "efa9b236c75b7826d5e7282e5734416f50f298f9dc4a8ccca3a052c07443ad36",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildTargetMapping.cs",
+    "sha256": "f5ac01409b8a956a394efc99a24503238195cae8917bf6df3a80032974aa3360",
+    "bytes": 6752
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Build/BuildTargetMapping.cs.meta",
+    "sha256": "c9635be4bcef5e629009a13b0794c8a8edfb29f7dd77c64c677dd78854a4c54b",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras.meta",
+    "sha256": "42374ed64a4d99a2ea2562bd6575678fcb6c1ae478047e9101c3a98e8b677e27",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraConfigure.cs",
+    "sha256": "8cc9df498610cc6b62214db656761d11d486ed81ea9a31392ca528a6ce87ae6b",
+    "bytes": 18071
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraConfigure.cs.meta",
+    "sha256": "61fed13dcf031e7e3f972af1fa3bf0a825f5723ca5c62b5b664e1d3d9e7bcc88",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraControl.cs",
+    "sha256": "a68a8d516b33aa86125821be28259cfb3cc5fa017d7400c091654f0d10402891",
+    "bytes": 13307
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraControl.cs.meta",
+    "sha256": "2d723cecc556354277fda53ed860f02412a530e5b1aad0907beb12f4ed109fd9",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraCreate.cs",
+    "sha256": "6b2f5690dbf3fb0909885c55ae5296d5c207b07fb03579cb5d9270b1343db5cb",
+    "bytes": 10713
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraCreate.cs.meta",
+    "sha256": "b247bae00e17d7f2cf4a32f79f8bf98349cd37edb97df91f19284ba71ad98ee3",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraHelpers.cs",
+    "sha256": "916566c8cae5cee0ef73ecc92a84de1361f7869f497d0f0389b45d6a6724bc01",
+    "bytes": 10110
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/CameraHelpers.cs.meta",
+    "sha256": "fc48f04e9af705bf0bd7ca6064357957162d8d17fdc91c1501a71bf828475955",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/ManageCamera.cs",
+    "sha256": "e297617c7fce6bc8023390e9ffb9d0730ae09a31c3beded0307b89963402a454",
+    "bytes": 5671
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Cameras/ManageCamera.cs.meta",
+    "sha256": "e9554761ecf181c1d7a56874bd3cf2cc7ff92ae44342d481c4be51c53e56a4ea",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/CommandRegistry.cs",
+    "sha256": "8c07b85414079244a0d12043c01837378e71dc2c0e4235e0c2d7ebc7a3f29a9f",
+    "bytes": 18551
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/CommandRegistry.cs.meta",
+    "sha256": "1771289d79a6f70bcc339e7a53517cccbf316a73fb2f0e0f37ec1bcaa49d5e8c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ExecuteCode.cs",
+    "sha256": "96c1a71f03b0a5b4c52d6a07ed8a52cb5ab5966be946f52b4d031a59f3538d91",
+    "bytes": 37465
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ExecuteCode.cs.meta",
+    "sha256": "c9ea81607cb3b92fd2138501476e2ccfd314dcab369513154bbb27fcef7b2508",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ExecuteMenuItem.cs",
+    "sha256": "debca0393bd4c397f1d781510c8d74a3b1e321133cc6c05796efc26e8dc9de93",
+    "bytes": 2235
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ExecuteMenuItem.cs.meta",
+    "sha256": "f703781a669d4aee4cefc447ad77dc33f540931393c503e5e279bc5d6b878739",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/FindGameObjects.cs",
+    "sha256": "ef30423f4b2d7249257e4f2f504bcf08f5549831d975e18c5e1241f694660b46",
+    "bytes": 3214
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/FindGameObjects.cs.meta",
+    "sha256": "1ed3204c3631fdee967eb76a8e34e7cd6bb5b10b61d449529da5c28843bf7072",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects.meta",
+    "sha256": "4404b58d0c586f6a28c1b2672d9a8ce8035eb9a411dd164f8964f07c7a596bc7",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/ComponentResolver.cs",
+    "sha256": "d7b9603e29739be0dffd10ccd53c6385ceeebf33d16629d7c9d5a22d52b1c606",
+    "bytes": 6122
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/ComponentResolver.cs.meta",
+    "sha256": "86fbe4d23458af8ce36504a6fb4228f68ae76c96668c14111462a0d61a7da9e2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectComponentHelpers.cs",
+    "sha256": "f967a88fcc3c0064961591708a7bfdd2e060bdec82ff10030813f9627496d4b3",
+    "bytes": 21860
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectComponentHelpers.cs.meta",
+    "sha256": "f38c3eb8d933022b8d04928cd1ee4fd3274d5e539daefe7d5a54341145952d57",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectCreate.cs",
+    "sha256": "f5b060c4b729e00b56b9564e591313d3d44bfbf966117aad06f3b4a5caacc44c",
+    "bytes": 16568
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectCreate.cs.meta",
+    "sha256": "14de6eb1a490fdbaec3ab8401e0a2c705d6b3f30023bcaea73ecfae853edf6b8",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectDelete.cs",
+    "sha256": "8d8d94ac8cca2a0f3853e56a433b47b0ad1b100768a928168df35132be52555b",
+    "bytes": 1985
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectDelete.cs.meta",
+    "sha256": "4c81ce170355f0732f0bc04979e0f43cf7cd2f4893aa096146791582ecc7d173",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectDuplicate.cs",
+    "sha256": "15fbc78f8f14bb43e24c008981195c56764c721d640916d122c552cd65c51bef",
+    "bytes": 3384
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectDuplicate.cs.meta",
+    "sha256": "b37d84e94405b977c40d5c626a530354bce5610b6a8336183ebfb26e722e2973",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectHandlers.cs",
+    "sha256": "31bd8347670acb6cb29e98e96ee345bbe6d4d6d99071258c3d67c38ba6843f77",
+    "bytes": 953
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectHandlers.cs.meta",
+    "sha256": "055050ea2742768e322008641166a5d9f52caad05eeed76a0a8b1ca6129e4841",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectLookAt.cs",
+    "sha256": "f2c0c1f45678ac404ad83a5671bced8e245bf486670b6c704d56247db87f2e2d",
+    "bytes": 3019
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectLookAt.cs.meta",
+    "sha256": "cdec3db8c11b50dc43f3f428cca955a35257c1e55f93c5e2050fe03db0fcf5ee",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectModify.cs",
+    "sha256": "38d7d506d0665d5e16d16003cbb134f8615802dffef870393e5e33286a088d9c",
+    "bytes": 11452
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectModify.cs.meta",
+    "sha256": "728be5928c26b01eb67936875a145dcf8ca90430937b2a0fd89f7a6673040258",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectMoveRelative.cs",
+    "sha256": "76b8719471b947dbf803041173db92f07a09ffd221f1509af9be92457887c905",
+    "bytes": 5058
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/GameObjectMoveRelative.cs.meta",
+    "sha256": "68e5690af8705cbec10700077fbf677cf843c63af4c5df2f8a6b8cbc8f04f527",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/ManageGameObject.cs",
+    "sha256": "6c8a4fb200e6c5bde346a02c55afc90f7487a7ff547b66aca69eba785900b8de",
+    "bytes": 5302
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/ManageGameObject.cs.meta",
+    "sha256": "d998b50c4c9bb6b7f765db5c0b08684a70430fb532d040b7b9ccb282a3f96c51",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/ManageGameObjectCommon.cs",
+    "sha256": "7417f7c864133ba49caf039afcbfe330db60b540b396dbe5668b84b92c09992b",
+    "bytes": 9764
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GameObjects/ManageGameObjectCommon.cs.meta",
+    "sha256": "399ffcd349b4b3223bd21c32fb867c7992ff86414a920ac80ba082775142ee45",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GetTestJob.cs",
+    "sha256": "cb7481e0fa556a715a1bc9b1e79a670ff1c5206d0ae6825f7a6f6b8f3ff7c51c",
+    "bytes": 1271
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/GetTestJob.cs.meta",
+    "sha256": "55a5e9069d0edcad20ac7606c9e4d0cbee0facf7cfb5a94b758d9439223b2e9b",
+    "bytes": 258
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics.meta",
+    "sha256": "c67e1a33b23af3cc43b868529c86a593700d0c1eaadcd5255f8a4bf09f55c13d",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/GraphicsHelpers.cs",
+    "sha256": "55a534b5b63066b88e6f61dcdfc226c4ce1bc9bd17bbdfccb4fa1081c3ab2e42",
+    "bytes": 11606
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/GraphicsHelpers.cs.meta",
+    "sha256": "752c99d31c26faef367f4088abf354b1ab16dbd9fe409259f5d356a51bb527f8",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/LightBakingOps.cs",
+    "sha256": "8d92bcee09d0db94a35a23525087befd5c49dd4b0012ebce9792d738d47041d8",
+    "bytes": 23395
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/LightBakingOps.cs.meta",
+    "sha256": "f4035dfc6266201111d9880dac19f15d4d57f7228373acada985eed1f96bae75",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/ManageGraphics.cs",
+    "sha256": "a802e188ecf5dbe473d355ac59185a851b10bf67c21e8dffd502976bc9651d26",
+    "bytes": 9481
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/ManageGraphics.cs.meta",
+    "sha256": "fc2ccc95788895538541730919462c4c503ccfb6d7a22ec2599dcb03c95f30ad",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/RenderPipelineOps.cs",
+    "sha256": "8eaafe9ba098ed0f3dc9a1a67245f5d6bbce8016e4d07b0940ff11ce2d44bcc8",
+    "bytes": 12054
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/RenderPipelineOps.cs.meta",
+    "sha256": "f2125381688d2d2b4bbc200b09c6d21fb1a9410e1f2f60141e50f043c7a275ff",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/RendererFeatureOps.cs",
+    "sha256": "04c1fe92897f16116e488762442a908fb91ff7265c8a90fd5ea2e04c3d2e61e9",
+    "bytes": 25619
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/RendererFeatureOps.cs.meta",
+    "sha256": "be27333132384a84812263ab1ee4a1e383e820d923b0ad9012bdcdd0b95ea289",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/RenderingStatsOps.cs",
+    "sha256": "aa5c81c97e9443406bb3d488498e44c4a0c22cd8b00a86dffc82e1fa38edf773",
+    "bytes": 7330
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/RenderingStatsOps.cs.meta",
+    "sha256": "2c497b2bdce6e0399091703e5b17d20dfb2964fafb52dfb0e2653b73e9964655",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/SkyboxOps.cs",
+    "sha256": "53c50a2a2bbaf02c8a597bd6d2dbedc9319049a1f33cc9ff250459c8266a91a6",
+    "bytes": 20813
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/SkyboxOps.cs.meta",
+    "sha256": "cd94087f3c09f4fb60e9ad06fb28f1e8814176d85085101345da8b874d852834",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/VolumeOps.cs",
+    "sha256": "9914f6688c40eb825d815916d91f25b11617d38ef0e36e61060d9e8c921d59c4",
+    "bytes": 30265
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Graphics/VolumeOps.cs.meta",
+    "sha256": "7bb1606e3b770808887478d92653948bd06a544cd364353048f0a5f0bcb07011",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/JsonUtil.cs",
+    "sha256": "edb026c3e311803edd1aa49c4c5574e19af53c3ea2ea854c320dcc4005c0cc84",
+    "bytes": 1094
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/JsonUtil.cs.meta",
+    "sha256": "e4f8994a43760ce73fd6e8f420c1509f55306de24d90c71e804eaa284f527864",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageAsset.cs",
+    "sha256": "6d1ed3e2d728bd1041444f290275a8aa4d4b7a7e7e4dbf8209ed1492ef45680b",
+    "bytes": 52214
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageAsset.cs.meta",
+    "sha256": "cc2eccd12eba5d2082a3fb4c1c2d08c697c4fd98a1f534d670ad8deceea6dd5f",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageBuild.cs",
+    "sha256": "124b3a056c36df42494d7d09cae8976233e68ba31ed95c519daf6bf5ca626b7e",
+    "bytes": 27931
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageBuild.cs.meta",
+    "sha256": "f3cf981f895af9e07eddd73961a27587fca0569a4b0727f7e38e298ff09140ec",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageComponents.cs",
+    "sha256": "d6b577cfe59c57ce88a6a74f111394e8482b2f1202a4bf5717f3d364038e2efd",
+    "bytes": 17712
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageComponents.cs.meta",
+    "sha256": "e93bc076712fe7e922f86381d6e12b50633b694b3873871ab67e32397fecdf69",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageEditor.cs",
+    "sha256": "65e40ff26e360100e90fe2909f267e0dc69d281a3bcd49c41c87e00a722f077b",
+    "bytes": 20294
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageEditor.cs.meta",
+    "sha256": "647c19ad17359bdac0730dc8aafe4210e7556060381f45aad7cf48aceb66ddbf",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageMaterial.cs",
+    "sha256": "441c1e568e2990b0719577625fee70878658421e02a6d573d78e70e0a4fa2073",
+    "bytes": 29134
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageMaterial.cs.meta",
+    "sha256": "05358f4a6e9b8df8ea026527e86b970b81749b5b95e6980e04247fcfaa8eaf1c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManagePackages.cs",
+    "sha256": "70facc7abf567c02e09ddf879bd634fff061270daa30fe1da4fa732a40f8b370",
+    "bytes": 29493
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManagePackages.cs.meta",
+    "sha256": "197b491ff6b81d0a1c865c455808566490c741fe085132e967d6b33b1b04bb39",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageScene.cs",
+    "sha256": "c0927655dd63a8d5bcb9fa4fd721f893c021da40efde51e1bc056d0f319adab3",
+    "bytes": 99540
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageScene.cs.meta",
+    "sha256": "18a53dcc9144bedc5e8a96da68d6e9783fbb0ff21bfb693d73de3d0ff931c570",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageScript.cs",
+    "sha256": "a75a5550ee3e7569b8f5d32eb1295062471e29e5d7d56fe386de345595bb60ed",
+    "bytes": 146670
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageScript.cs.meta",
+    "sha256": "39713ffd0b35d72aa3002a15afbe56b6e1e2c0551f32086d77aa2b5256248329",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageScriptableObject.cs",
+    "sha256": "1f839fb8b3ca874b6ed14098eca2a43d05081d16032695a3f5daee74289f3111",
+    "bytes": 67989
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageScriptableObject.cs.meta",
+    "sha256": "fe64d60cf88368dce0f2cfaca07f5c102278bd2a13e332cfe207ff01d2af7462",
+    "bytes": 260
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageShader.cs",
+    "sha256": "326c204622264979201b1dcc1c964a0a910dd919452d8c07b00848ff0636cfcb",
+    "bytes": 13114
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageShader.cs.meta",
+    "sha256": "ed88f899b2553d48e9b18dcdabd96f58073f2c7e61e53dd9782bdab4ab99ca1d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageTexture.cs",
+    "sha256": "8ac977a1a6896b3f0246f4eabd270a7f76bbb9ffc5a0d940a26e80be688c21dd",
+    "bytes": 44605
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageTexture.cs.meta",
+    "sha256": "309e4d17b67e01a772bbf51523148e18d27a56dc0fb16230139474d1db5537f3",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageUI.cs",
+    "sha256": "44ad1718df43eeb0953143ee1d232326c3c5ca5229eeced44cf179e85037880f",
+    "bytes": 80954
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ManageUI.cs.meta",
+    "sha256": "516943b2c8a3754e988e5024395640b8642fb9458d5a091c30444d4c514289d6",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/McpForUnityToolAttribute.cs",
+    "sha256": "4fdbdc7e6398f3df1bae7a0751829183e15cf62b2a93965942276426b21aadb9",
+    "bytes": 4344
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/McpForUnityToolAttribute.cs.meta",
+    "sha256": "d1eae5fc32966bea12c3f75d2628dec9950c5a59aaf455b2b0d527bd1bc21dcb",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics.meta",
+    "sha256": "4fa3b4c5f2a07819e2a416d75e226972a5d29130357c723fedaa0bea5fa1e630",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/CollisionMatrixOps.cs",
+    "sha256": "b0ec3a5411e1c036ac11803188c973aa15a0df1292f3f907fb2f0e901e1db3a0",
+    "bytes": 4934
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/CollisionMatrixOps.cs.meta",
+    "sha256": "447a402c47a4588154744e92febff9ef02667a3c97917e5cfb37788fba447c97",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/JointOps.cs",
+    "sha256": "740f73b1ad0bc93129903b2205cf5c4357349d202bd1cc7744529f0bf22a9b2e",
+    "bytes": 22405
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/JointOps.cs.meta",
+    "sha256": "ea224d428a66dea36612c0303b2672d1609142259859b46911d99230ef5dc540",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/ManagePhysics.cs",
+    "sha256": "e37a7270aba2ff5185a9646b6d7dc7ce234b54dcb6568dfe56ddd0b48da30270",
+    "bytes": 4722
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/ManagePhysics.cs.meta",
+    "sha256": "73e9dbc849967c2a7a00c621d082c269cfa6d97495025d7d169f2604383c8628",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsForceOps.cs",
+    "sha256": "fdb580a7da11e24f6aea75035a86d0739a64e687f77accf8c22cc9d5f791d04e",
+    "bytes": 11566
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsForceOps.cs.meta",
+    "sha256": "cf5cd33f5dc33c7c92eec063bea7668fd5ff2340b99c3b248079e548443196a7",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsMaterialOps.cs",
+    "sha256": "033285fd3f8ae8553b7436feab07118013a64cb0e0ed7a5541c442685a78c865",
+    "bytes": 22547
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsMaterialOps.cs.meta",
+    "sha256": "6a930639a5598b2070e8dcc6b8d29cc01f1b73eb322257f43f2fc1b3b97a4b7c",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsQueryOps.cs",
+    "sha256": "3b542a810c40057682c2c1c758e307c0e8488620ba70b8389d01739bac2232bd",
+    "bytes": 34794
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsQueryOps.cs.meta",
+    "sha256": "91903ae81f98f395f4c1702be509c2b7e4d38364f5c1afef7008569284d2e829",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsRigidbodyOps.cs",
+    "sha256": "f400549a9b8ab383de1b0d01ecc1f79efdb8c7371e8b258826858d20a3d78274",
+    "bytes": 18212
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsRigidbodyOps.cs.meta",
+    "sha256": "c22f953231aad7534074e99b78549c6cde089c7c900d69ebcf0dd19f797e3e81",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsSettingsOps.cs",
+    "sha256": "9bcb3d7bd380387c727c851ed4fc9e3ab8de12c5223054b358189d8fa3be8a37",
+    "bytes": 13898
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsSettingsOps.cs.meta",
+    "sha256": "7e3dccb080fcdd083234cb9005727a000bc1fbda509d27a035c9677d102f9607",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsSimulationOps.cs",
+    "sha256": "fbb5b1b2a872d389a955f62e0c7ffa5674f49946de28dd92a16ce8fbf90a6220",
+    "bytes": 7022
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsSimulationOps.cs.meta",
+    "sha256": "e1ac6af984b4452a43068b98ce860053f2481d6f86442e2967bd1707384311e3",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsValidationOps.cs",
+    "sha256": "3943c5e39c1acdba97f3a04b2fa6565066fd921adb212d55fd6af2b6e8ea8cca",
+    "bytes": 13077
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Physics/PhysicsValidationOps.cs.meta",
+    "sha256": "5a9d8e4f547a7faa1cecd0360ecac544e95d63b4dc9cde9a379beb07ea48172f",
+    "bytes": 228
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Prefabs.meta",
+    "sha256": "676bb98c0782543978583790b57ed21edfeee871a6e5411c34288145921f563a",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Prefabs/ManagePrefabs.cs",
+    "sha256": "fd447ca029f88b5fc44d396b9bcbea93e42d6938e33cc0f851942cb4fa9ef6ca",
+    "bytes": 62134
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Prefabs/ManagePrefabs.cs.meta",
+    "sha256": "16c45dfd12f47159f02bd885972fdae3451e0f9417356795a224bcb02b8a2259",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder.meta",
+    "sha256": "6b01228c366498b5a7e53dece88bc45781d3cc6cb75ca42901687907cb83b2bd",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder/ManageProBuilder.cs",
+    "sha256": "e5c2dfc800d05051e9e955684c700ffd64dac0b56ff1f665b8b5a19247c627e1",
+    "bytes": 115161
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder/ManageProBuilder.cs.meta",
+    "sha256": "b1ca761b47e0df2bfa6aa874db9a2163031dd63a746a1ddedc227596233873c4",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder/ProBuilderMeshUtils.cs",
+    "sha256": "d15d72db8203c9c699dd6124ca420f3580a56a3fce0509292a9b94cd79e9a8b1",
+    "bytes": 11873
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder/ProBuilderMeshUtils.cs.meta",
+    "sha256": "c671b57c965f09f6cb3c22db0892d1be934fc0194013328eaa7ece74084534d9",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder/ProBuilderSmoothing.cs",
+    "sha256": "fa8b8e973d5e0008b95749bc64f05566112e1b28e4a60391b1b199f3fce7a080",
+    "bytes": 3785
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ProBuilder/ProBuilderSmoothing.cs.meta",
+    "sha256": "3faa1b7b1828389d67db12eae878d12dcbc34a280285249ec0d94ad2c6313ff6",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler.meta",
+    "sha256": "6bcba113c5d16b303929d56e37aa128e1fe2e8665b6504e3dc98382926e22932",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/ManageProfiler.cs",
+    "sha256": "e16b88b505433f8f99d4aa6018987086ef390ebc894c4ede7268b99a112f2d8d",
+    "bytes": 3693
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/ManageProfiler.cs.meta",
+    "sha256": "dcfecca257d3cc446cef5e4f4abb3f8e5ada67f2215507be6f6ca49706afecc3",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations.meta",
+    "sha256": "9dd4f10719b3f2564bdf00cb95273c495cfafb153770e86a38673c415b601243",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/CounterOps.cs",
+    "sha256": "605801d2d71c79ac0d3e83c0a776868b48594ac18aa7aff218e700369326ce5f",
+    "bytes": 6483
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/CounterOps.cs.meta",
+    "sha256": "797db445ea0b306b90c10ea758fbfa1024dfa69a53a4b7edaf4adc98240a59a8",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/FrameDebuggerOps.cs",
+    "sha256": "a16f7e60166a8749190390dcb07d7659942237fb7bc1135c089a5bc2a8b39df2",
+    "bytes": 11331
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/FrameDebuggerOps.cs.meta",
+    "sha256": "7c6c1718f36325665a8e1e18c38faad91af2bf9fdab45068746e6ac90ed3cde0",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/FrameTimingOps.cs",
+    "sha256": "68d764db810745f1bde5ad07b7616f47003a00facf2f899470cb59d76ca10add",
+    "bytes": 2103
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/FrameTimingOps.cs.meta",
+    "sha256": "e65c139208516ed7d08d9ea812e069c5aa813d15d83efe32524f85b13910cfd1",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/MemorySnapshotOps.cs",
+    "sha256": "0953a45828adbfea4347013c7cf160e81d10582c819cf7b0e2d20ddf0d178d22",
+    "bytes": 9991
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/MemorySnapshotOps.cs.meta",
+    "sha256": "295c7cf1df28710871a592e4fe39b7988a6cbd2bacf5d97da26ee5ea53c33e80",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/ObjectMemoryOps.cs",
+    "sha256": "a02582f65158185f10e29786f3416a746374ef69e107bba5f47f9f1db9b3bb47",
+    "bytes": 2116
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/ObjectMemoryOps.cs.meta",
+    "sha256": "f0e72da6c57a85ba75f4dfa12a4f1301453f84730499d47d2ad7b428f00dfe15",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/SessionOps.cs",
+    "sha256": "67e1365fb8d2866b7fa5ce517181521f8600a688ee8817607f3bb8cfab36adf3",
+    "bytes": 3940
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Profiler/Operations/SessionOps.cs.meta",
+    "sha256": "fc936a2a0e4f37ff6695a295779dd153d3510ad495f7bcab6fb2ac2dc58d02af",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ReadConsole.cs",
+    "sha256": "f17feba467a3dab7a3d5584aa0b0d298513b6e56f95a344c18bc362d91f044af",
+    "bytes": 26292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/ReadConsole.cs.meta",
+    "sha256": "eda82f4724214fc7deb242c6d08985431b29580adef02cbd22d740918b891fd3",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/RefreshUnity.cs",
+    "sha256": "c631bc0b6bca88caac2b8e1db16bc24b78e7ba679fc77bcbe9771202567fff7d",
+    "bytes": 7178
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/RefreshUnity.cs.meta",
+    "sha256": "ccc89e156506727681bc9738775db943acd7a9da8dde01755e2f777a06ac71ee",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/RunTests.cs",
+    "sha256": "b8ffde38c9e42adc967641f7c2045994e3f7a5b79901e65329266cb6260fb15c",
+    "bytes": 3941
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/RunTests.cs.meta",
+    "sha256": "34e809f66a7fa387096e2c65b607dea40dd474fa7b9f55c085d76eea1307f715",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/UnityReflect.cs",
+    "sha256": "475be94dc80a8848c851f383657029ade2020c7450c8f183ca85c8c1d0c9edee",
+    "bytes": 32587
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/UnityReflect.cs.meta",
+    "sha256": "4ec9ab4b15bceb19a62e21a96a0e2159e79127ed92ab2c7b71e581c5046c9046",
+    "bytes": 62
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx.meta",
+    "sha256": "b7d10fdc6b4b3a69ff7c981f2662219945b97bf583bb3cc46f080f28ec907225",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/LineCreate.cs",
+    "sha256": "574a4d1c21cb8eef38a58e55c04d8af5aa268419e42fc5d922f6e9ad2ab25be1",
+    "bytes": 9752
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/LineCreate.cs.meta",
+    "sha256": "d81e16a5e904b648f9a7f75a43dab53e10e7098aff747d406eeccde3c2d75d4a",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/LineRead.cs",
+    "sha256": "f2998d4ecec405b3cb5a1ab71a19f2b7818029641504fcaa1af8b5eadf54d20e",
+    "bytes": 2173
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/LineRead.cs.meta",
+    "sha256": "a81ff5c2ad67ebeb0ff2263d55d703df6ec7e5247d0edad4333a7a183f754bcc",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/LineWrite.cs",
+    "sha256": "94e10b1ead1cdd2619b85c516f141e7e219d46dcb6a54f4d448ca54de9f8e894",
+    "bytes": 7657
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/LineWrite.cs.meta",
+    "sha256": "7ea0f1861dec0409634abb141b35940a271cdb53aa4057485fcfa25536e90509",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ManageVFX.cs",
+    "sha256": "926407fd059b7a057791c7d2e2b2de655d76c9083cf9a24165ecccc3903e928e",
+    "bytes": 20827
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ManageVFX.cs.meta",
+    "sha256": "8a9bb71e135ebc50115fe20c32eca7f98c71f4674125447ee2dc91f82aad0f09",
+    "bytes": 258
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ManageVfxCommon.cs",
+    "sha256": "fb95964503f5ab6159991710eef38ce88d405925539e02370b14712b0a70e08b",
+    "bytes": 2394
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ManageVfxCommon.cs.meta",
+    "sha256": "27dd0493b259d2de6a2aec0e492a433015e8d464c1d832dfe2df2d5b53dd8752",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleCommon.cs",
+    "sha256": "5553feec4820657138eb2e30cd00ea44199f573e65c09db887d21eb00970ab34",
+    "bytes": 3638
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleCommon.cs.meta",
+    "sha256": "98e84742b160ce8e5a05c73e33fe684ea27f7e3dd200f27220e971901054e1b0",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleControl.cs",
+    "sha256": "731a71fd5a87f8401aaa80e0413a2ead2117cc95894cb8df10ff15d69c5d49a6",
+    "bytes": 9946
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleControl.cs.meta",
+    "sha256": "9afbacdbaf990e8bc98a617b2e027689d4afe1b80a6db03a7019351f8443ae03",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleRead.cs",
+    "sha256": "7dde0f006269f1362288c7c0e73e95c16c9f5b702dcc4b4dc244a9699486c7a4",
+    "bytes": 6033
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleRead.cs.meta",
+    "sha256": "c332c699b98482fc15e2d33d41e104576bc72b8a31a5cdeb1a6492a7c949b696",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleWrite.cs",
+    "sha256": "63036d0379d26f36badbe95423ee257e74cbebc76d28954c3796f6f2931013a7",
+    "bytes": 18104
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/ParticleWrite.cs.meta",
+    "sha256": "6fc200bf3620762c39c536e52d5c8d04d2fb1c8766eab0aaf4f75cfad1d8293d",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/TrailControl.cs",
+    "sha256": "2ab595b19a23aa503ece20fb653bbd6fecce38fcac27e687eeb6d405bdf560ba",
+    "bytes": 1136
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/TrailControl.cs.meta",
+    "sha256": "97fc5a9b4221eaac9ba0cdeff6e1478b35066b0a73149671169ea2f4700da133",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/TrailRead.cs",
+    "sha256": "ad61366877f1509816c5bc96eeb190031c3690f752c6f422fb91c27d5715f2a8",
+    "bytes": 2064
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/TrailRead.cs.meta",
+    "sha256": "20e8b3921b524c8e783c49b1fbd1842c3baf6a8cb106be7a1fb15b3ca5729277",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/TrailWrite.cs",
+    "sha256": "c5ec8d5b8128b5e90128a42fc809a172f8f7783d71738e387b86acdab683288d",
+    "bytes": 5601
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/TrailWrite.cs.meta",
+    "sha256": "ef8a85f43d114afe3aeb447ae0e71cbe9c68ffa05e8ccfa988a7e1e60d49c7b4",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphAssets.cs",
+    "sha256": "fb84ab251e25c78c1463ef0da6625719b027662ebcf56fbd495e4501bb34eea6",
+    "bytes": 21821
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphAssets.cs.meta",
+    "sha256": "33dab963d6982ae0ded7a4c91447c0e4f072b83c8be11063df53143967ee32a9",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphCommon.cs",
+    "sha256": "c4e201eddd41c0fc03775ee26ba928982c1f0c57f46987b10261e864fb9b36f2",
+    "bytes": 733
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphCommon.cs.meta",
+    "sha256": "95389015b3d5109199b71b2eb2a81003cecf12b6400ae7bea5d2c0f4f64cc8b3",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphControl.cs",
+    "sha256": "dbe460de1fd78d9248d07be53739363375b1f356a0f7cbc7195fceb856ad9463",
+    "bytes": 3172
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphControl.cs.meta",
+    "sha256": "df50f7765c1f9b28c0f83e56cf986ebb1bf1152d42a687e854d0a46ac79b2497",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphRead.cs",
+    "sha256": "f6cce468243e3d44c4571656c38bcd9bd948f4da4590e7df0998c9bb9c249070",
+    "bytes": 1446
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphRead.cs.meta",
+    "sha256": "3242708d4909b6427e2289af6f1d1375674b8227ca728fb040b2eb4239fe6973",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphWrite.cs",
+    "sha256": "472d49ccdbc23dfe396fb8402e648e11b7800b546dd666d806bfb4358700eef2",
+    "bytes": 11760
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Tools/Vfx/VfxGraphWrite.cs.meta",
+    "sha256": "217d39a755adf4f5be3713c0610295b95a3598b472510b8e74fa2781f7c97c72",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows.meta",
+    "sha256": "07e47fee3333fc56b90461675ddf0b1ae4d370baefe2e3171b71a5778bef2ea0",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components.meta",
+    "sha256": "93b1348d39bf1e1f9257a0418f34298dd2c2d8daab097b7969d849a97690a592",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Advanced.meta",
+    "sha256": "1c8748d1e287aee2677e199c2cfc08e68001da00582d2aba2369b34bb0b2a0b0",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Advanced/McpAdvancedSection.cs",
+    "sha256": "80943734ca050f378c87c83e5f7b77a4d795a4a67ce4cc11d2ea9df4d28241db",
+    "bytes": 30533
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Advanced/McpAdvancedSection.cs.meta",
+    "sha256": "684dff8073d55ff6bacfcafea4f6cb875458ad0270445a76a635f847feb89e1f",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Advanced/McpAdvancedSection.uxml",
+    "sha256": "bffeea145be675f6e872ca9a8070aec24b4a4dcdfdfad270e18b1a37f6466d56",
+    "bytes": 5439
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Advanced/McpAdvancedSection.uxml.meta",
+    "sha256": "ed19e3e393d6c617a5301843d7e3468c638758168591b57b2bd7bbef6008b81e",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/AssetGen.meta",
+    "sha256": "b67ab25266c1be86376b747b1db9ea5ff01b3d383dca7801392fa8713f698809",
+    "bytes": 177
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/AssetGen/McpAssetGenSection.cs",
+    "sha256": "6941e3aa228ff04decdde9b571706f3921e015cfb7a24209d18a2cf126ee40a5",
+    "bytes": 24400
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/AssetGen/McpAssetGenSection.cs.meta",
+    "sha256": "3cdc43a7265f0a33254c7dd1ae4777a3fc04167fd12f557e3a66daa2f50c3945",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/AssetGen/McpAssetGenSection.uxml",
+    "sha256": "d7c581efb269187e7eeae63f979517c988d8c107786ad98fb143e954e4c4242b",
+    "bytes": 2299
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/AssetGen/McpAssetGenSection.uxml.meta",
+    "sha256": "cd90ded0e05d480e4d857f233f9bf535775ff7165c08ab9e41a0776de2882287",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Branding.meta",
+    "sha256": "acc5a6356977d647a8115149ce6408c69a6c0b169a1c923e83bfe57faa67ee7a",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Branding/OceanMark.cs",
+    "sha256": "6bf1d3979467d35e32b2651fef02c301726659f4b317b2cc590d0934c004862d",
+    "bytes": 7109
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Branding/OceanMark.cs.meta",
+    "sha256": "a2560e0790b2e6220d98c1f37ca463832a01c34f413477750d555447d1cf6313",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/ClientConfig.meta",
+    "sha256": "5d75edeee0b352b3c23e4fce4e9d83b6998962dfeaf2db894b92ffad09bb18e5",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/ClientConfig/McpClientConfigSection.cs",
+    "sha256": "83247985afb784c36c4f8262755cf678c41a7a1a7e8e9522a19eba37a0429c52",
+    "bytes": 37455
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/ClientConfig/McpClientConfigSection.cs.meta",
+    "sha256": "b4d0008000feb4936a9ad1845e62d9dc6a0d10f705319516d6993f184ffc846c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/ClientConfig/McpClientConfigSection.uxml",
+    "sha256": "6cdd126bd28f8e90068e61bbbf663670a475a7cc5683ccebca26f326a38df0d7",
+    "bytes": 3889
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/ClientConfig/McpClientConfigSection.uxml.meta",
+    "sha256": "7edd6cccd7706c490854f4ef0749eca786b5fde978e567dd846d3cd8274ea0d8",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Common.uss",
+    "sha256": "cb0d018a5d20041cfea04abad4ba5a8280966dbf1bb38c33153297031f769a04",
+    "bytes": 14974
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Common.uss.meta",
+    "sha256": "a4bc8ddf2d24823b3c0decc2c796e46b5a823dd8af8c359c7c02a6ae33e2de61",
+    "bytes": 316
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Connection.meta",
+    "sha256": "1520c4d2ef1efa7742639dba28eb5ae2b083c5d8e1732273c8723d4fbd6e6b7a",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Connection/McpConnectionSection.cs",
+    "sha256": "035e3baa79a12fd7a3e48f3b695aa8e356e6e259082d0ade2b3bd879c87ae6d9",
+    "bytes": 56797
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Connection/McpConnectionSection.cs.meta",
+    "sha256": "c1e0107648511cafd5aa5748f9d96ad70090d0d72a19972d057b70888582d912",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Connection/McpConnectionSection.uxml",
+    "sha256": "56970b9a8af2e3f89aadff3787c4a837e12643e59b6a48f5fe70322e2a0e0b85",
+    "bytes": 3867
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Connection/McpConnectionSection.uxml.meta",
+    "sha256": "a91329a8715876e2d79f0e942053348a87dea215e7fdddbf8c21b1f0cc171518",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Resources.meta",
+    "sha256": "df67aa92bda5a24a4f9343826be737d7bf54d2dc9bf445fc8327970250b00e76",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Resources/McpResourcesSection.cs",
+    "sha256": "7f52f53844f3bf252a4676e3fd8b5d09d9ffa906b63f1ee62306388c4fee9ae1",
+    "bytes": 8746
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Resources/McpResourcesSection.cs.meta",
+    "sha256": "5d48af722a5b1f8c8d4d630b6529c667a3421dcec3568c5dd731f509ed8dd251",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Resources/McpResourcesSection.uxml",
+    "sha256": "43aeb45f43b2a34ec2429e5bc60ab2660f5df15ba15db44f4ae4efa4c10fb09e",
+    "bytes": 1242
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Resources/McpResourcesSection.uxml.meta",
+    "sha256": "077b774d83e546327e67b90aa1d3edd3876f0f8005d6b54a98dc9cc02061eac0",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Tools.meta",
+    "sha256": "305ccb66005d7c7afaa91ba540562a470a0fbb6f55d02b5fd7b691db107e6506",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Tools/McpToolsSection.cs",
+    "sha256": "e7438007c76635743dab7aa9347f00875717b56419f35f2829a3e0ba627e3cb8",
+    "bytes": 32562
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Tools/McpToolsSection.cs.meta",
+    "sha256": "a469472beadfb170cfdcf645fe1d561bcdfaf62865cf70612bdda78637a8cb8b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Tools/McpToolsSection.uxml",
+    "sha256": "98a5b5ed9b6cd12623d85c457073808e5387c2cecaa0b69a3a32015df753e530",
+    "bytes": 1661
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Tools/McpToolsSection.uxml.meta",
+    "sha256": "d6a42f00a1c0cf9ec20f86331b33c295e747e9e595c5bf84378e636bfa513e9a",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Validation.meta",
+    "sha256": "bf73ed21e50b48b2647bffcd5ef8582113181bae28a4563e8b820c8e286381b9",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Validation/McpValidationSection.cs",
+    "sha256": "5a571812bae45f1084ef6e30ac58aa74da48b9536e89ef8a32ff47b740d30612",
+    "bytes": 2817
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Validation/McpValidationSection.cs.meta",
+    "sha256": "02449fd7453080f3e2c5e923996f9a438511d8d7e45933785e2f4e15a98dd51c",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Validation/McpValidationSection.uxml",
+    "sha256": "75c880f06c117cf92d642a963102b2e93cd8bde154d92d7fbbaaab80e3fe27c7",
+    "bytes": 737
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/Components/Validation/McpValidationSection.uxml.meta",
+    "sha256": "0e77ed8fd055a3d407b094262c17bff89e6fa3acdfb0d8c37794d5e83dfc3dc3",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs.meta",
+    "sha256": "723e86e698c58f3ad323d232fc3b6356b059350ec8211b5ab56ed833e5b04782",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefItem.uxml",
+    "sha256": "c133c6f9ed20cf71682310df9a1f7639fba45b643c956ca19e0199b2d8cea5b1",
+    "bytes": 987
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefItem.uxml.meta",
+    "sha256": "6466536a62dc3732a4500360944bcaa4236803cd9c2b258ba251e978ddc73c6b",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefsWindow.cs",
+    "sha256": "965bf7c76ebbed6f05e0fd2efd7def864b94506592291d36bf24e81308b1e46b",
+    "bytes": 16682
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefsWindow.cs.meta",
+    "sha256": "23c96b0596f26980d5bdf4a6f0b0266949effe6d6e84004c8f61a0693371af64",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefsWindow.uss",
+    "sha256": "ba2fb538ee1fbfb476df3baa6ab8026c8ed703abdc75378e876be58b33ae8f46",
+    "bytes": 4221
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefsWindow.uss.meta",
+    "sha256": "76e23e5f80a9790b8b8dcae8ae0941c62e2c0362be1804a6eb736c862033cab6",
+    "bytes": 316
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefsWindow.uxml",
+    "sha256": "be8b0b742a48e39b08695258b61b7636ea640b7c61988a46717fcc64b65e1da0",
+    "bytes": 1646
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/EditorPrefs/EditorPrefsWindow.uxml.meta",
+    "sha256": "4f944300db43f7ada91bc30a7735d2a0b11256611d32b409bf9bb0813567435f",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPForUnityEditorWindow.cs",
+    "sha256": "7d7b2f17c95e7188fb28e2cc8c0c2aec240d9c0583299f33a2664f5ce042cd2d",
+    "bytes": 45765
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPForUnityEditorWindow.cs.meta",
+    "sha256": "6cefc6ab09cc0f6fafb9fe9e9021e7abb89c2aa8e7a415a675d1ce07814b5b9b",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPForUnityEditorWindow.uss",
+    "sha256": "4810a0b2506d2c94733f1ba48b87c6b6e63c2eab5a3f8fc9a637a7277cde616d",
+    "bytes": 3438
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPForUnityEditorWindow.uss.meta",
+    "sha256": "5bf2bac937c87fbcffbbb160bad9d0e70c192e069ae8517fb7c04bbe35409c3d",
+    "bytes": 316
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPForUnityEditorWindow.uxml",
+    "sha256": "2b607085aaa413f1ae7aa414c81e3a06fe9849e4a2cc1690313522ce8d6f839b",
+    "bytes": 2586
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPForUnityEditorWindow.uxml.meta",
+    "sha256": "9fb8b657ca4e6127569b9a9f9ee108dbad8faedf141629dbbe7de08d5af30a98",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPSetupWindow.cs",
+    "sha256": "d3db7b5939fa06c364ae82828a9364b51b0892a22db5a95337ad6b44b211676d",
+    "bytes": 15494
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPSetupWindow.cs.meta",
+    "sha256": "380104fc7a6b1f620ebad70e0ff63685e5257f3d5128b2b55d0a0db3e6663ecf",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPSetupWindow.uss",
+    "sha256": "721708654d9128c8ea77ada300866c9510e8f47e4f5ac40ab07bd9f8380490ec",
+    "bytes": 2990
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPSetupWindow.uss.meta",
+    "sha256": "9dc92c395fdbea2298443568646d6ad14858dd4624db4d67a03393f16041bfff",
+    "bytes": 316
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPSetupWindow.uxml",
+    "sha256": "0653a3fb9a273571adb88a29e18b57b8d707ad62626b9137f98533527a676eff",
+    "bytes": 5006
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Editor/Windows/MCPSetupWindow.uxml.meta",
+    "sha256": "16a8bdbf369f631ea51c5e6f5fbd97709178e7a8978a4a0b5600ebe6d22d3e24",
+    "bytes": 292
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/README.md",
+    "sha256": "acf53054bbd1f53514033f3373ea61b7225fd529f7b05afeda9eaca54e8bebd7",
+    "bytes": 4448
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/README.md.meta",
+    "sha256": "38090097a63cbd2e809d30b347b19e6a266de33ac9452e052ddb288c2bd8ec88",
+    "bytes": 165
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime.meta",
+    "sha256": "aa15e46c808192014ec67449efafa49dd12001bbc641398983ae3afc7a43d091",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/AssemblyInfo.cs",
+    "sha256": "d15483ee7960986b6e4ef39f5407353f782413769974a55b741ab25f895eb843",
+    "bytes": 218
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/AssemblyInfo.cs.meta",
+    "sha256": "6eba14d20316039367e477435f9be2ee50fb0f8f69b53c424cb7a7da63a5000a",
+    "bytes": 251
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers.meta",
+    "sha256": "1dc201bffdf80ab2fae14d33ea81c97dad59a3c7da39cbb2bf077e89e345bb0e",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/ScreenshotUtility.cs",
+    "sha256": "e24df705efa80c5f67ab2bf927adfefe9470eb17687fa5fe68020b2634aba328",
+    "bytes": 35268
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/ScreenshotUtility.cs.meta",
+    "sha256": "e19efe41bed5c25be058900d68ff15f7d210b3277aa9b1448002399a8f9792d2",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityAssembliesCompat.cs",
+    "sha256": "3084f524cf39bb9ece874c244c1cd05c9730e13bad5aecb6c18dcfdcfd9d7878",
+    "bytes": 4852
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityAssembliesCompat.cs.meta",
+    "sha256": "d688248a22ff938cfb2922e6f4ccab95338521da2ae33a2222dbfc636f457c09",
+    "bytes": 62
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityCompatShims.cs",
+    "sha256": "b1f6b717aaaea4ce3cd095530224b7b0225cc4fd5795077644b69b70c02e9cfc",
+    "bytes": 2485
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityCompatShims.cs.meta",
+    "sha256": "519df0d111ec95d5d7c809c8373df869ca1784ee60e2b33af6104d74c560cac9",
+    "bytes": 62
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityFindObjectsCompat.cs",
+    "sha256": "48ab1f35aee2e22cee8d748cf5debc87a83e06479864ce4cae85fe63ebe346d6",
+    "bytes": 6353
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityFindObjectsCompat.cs.meta",
+    "sha256": "90b60e7251469b1ba5f5adc5022798d6a2b413033bca1604c93150050de5d361",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityObjectIdCompat.cs",
+    "sha256": "a33d0762a3755bc88cbd37f409808c4b4d06e3cc62d155df92914da99cebbe7f",
+    "bytes": 2927
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityObjectIdCompat.cs.meta",
+    "sha256": "a8b8bfc7a4e5caea185d5d8b91d0b1f2dcb18355dac22874eb5d75c710e815c0",
+    "bytes": 62
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityPhysicsCompat.cs",
+    "sha256": "e1eed2ae734b305538605185d9cff4ea60f8fdcc0c9b1650d95f97ff2c6553c8",
+    "bytes": 9866
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Helpers/UnityPhysicsCompat.cs.meta",
+    "sha256": "24e2a4209faf6d624a201cecadddecacd76331c8d36dd7031cdbec29813ce73a",
+    "bytes": 62
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/MCPForUnity.Runtime.asmdef",
+    "sha256": "c70996ca0713fe428ecaed4b6e6c14fe5f5afa3ba941406ee1e1a2cb5804252a",
+    "bytes": 385
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/MCPForUnity.Runtime.asmdef.meta",
+    "sha256": "6cdaf8d35a97222c508140246958203bcc48c77ee90b043dc0a2e80e35a3dddb",
+    "bytes": 173
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Serialization.meta",
+    "sha256": "812cb468aa133d8b6d6a701a0396a7c4ea529e087b75ef77d1c1e1b845d9c3b2",
+    "bytes": 180
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Serialization/UnityTypeConverters.cs",
+    "sha256": "a9ec3ba6d8081f53017c47e95ba18ec64dd7c7f7a5679ff2d296a91c81931394",
+    "bytes": 24744
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/Runtime/Serialization/UnityTypeConverters.cs.meta",
+    "sha256": "e227f67eddf437c98b9c4105dccd8165f957487dfab1679d9fae8e7e828b4c28",
+    "bytes": 254
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/package-icon.png",
+    "sha256": "e64c9aa25e409eddac69b28d99876cae1c6d30e128cd63ec1e4158567f80215d",
+    "bytes": 3988
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/package-icon.png.meta",
+    "sha256": "a30f93828c515e2de209de476c899158c08c263b957d828efe3f9e3deb99eb6a",
+    "bytes": 2262
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/package.json",
+    "sha256": "4e0defeb0b810cc761f879fee66e901a4606acff7656639bf6bcaad38a8c9570",
+    "bytes": 1380
+  },
+  {
+    "path": "LocalPackages/com.coplaydev.unity-mcp/package.json.meta",
+    "sha256": "62208f6c9217500013d0ab847f30082219fce9fe43a282fec64601a92e68317c",
+    "bytes": 170
+  }
+]

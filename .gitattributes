@@ -22,3 +22,8 @@ Assets/TextMesh[[:space:]]Pro/Resources/Fonts[[:space:]]&[[:space:]]Materials/*.
 # Portable MIG63 hook sources (do not normalize unrelated files).
 DevTools/GitHooks/*.sh text eol=lf
 .ai-workspace/MIG63/pre-commit.sh text eol=lf
+
+# Preserve audited upstream package/server baseline bytes across clones.
+LocalPackages/com.coplaydev.unity-mcp/** -text
+DevTools/MCP/ServerBaseline/** -text
+DevTools/MCP/Coplay.LICENSE -text
