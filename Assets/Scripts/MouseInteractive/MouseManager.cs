@@ -84,6 +84,8 @@ public class MouseManager : MonoBehaviour
     [SerializeField] private float accumulatedScroll = 0f;
     [SerializeField] private float lastScrollTime;
     [SerializeField] private float scrollCooldown = 0.2f;
+    private MouseScrollableObject scrollInputTarget;
+    private MouseInteractionLayer scrollInputLayer;
 
     public float ScrollThreshold { get { return scrollThreshold; } }
     public float AccumulatedScroll { get { return accumulatedScroll; } }
@@ -110,6 +112,7 @@ public class MouseManager : MonoBehaviour
     }
     private void OnEnable()
     {
+        ResetScrollInput();
         dragStartAction.Enable();
         // ���� Hold ������ Started �׶�
         dragStartAction.started += OnDragStart;
@@ -117,6 +120,7 @@ public class MouseManager : MonoBehaviour
 
     private void OnDisable()
     {
+        ResetScrollInput();
         dragStartAction.Disable();
         // ȡ������
         dragStartAction.started -= OnDragStart;
@@ -126,6 +130,7 @@ public class MouseManager : MonoBehaviour
     {
         if (mouseInteractiveLayers == null || mouseInteractiveLayers.Count == 0)
         {
+            ResetScrollInput();
             currentLayer = string.Empty;
             currentScrollableObject = null;
             LastScrollableCandidate = null;
@@ -433,36 +438,65 @@ public class MouseManager : MonoBehaviour
 
     void OnScroll()
     {
-        if (currentScrollableObject == null) return;
-
-        float scrollValue = Mouse.current.scroll.ReadValue().y;
-        LastRawScrollY = scrollValue;
-        LastScrollPointerWorld = Tools.getMousePos();
-
-        // // 连续滚轮事件（暂时注释）
-        // if (!Mathf.Approximately(scrollValue, 0f))
-        // {
-        //     currentScrollableObject.scrollEvent?.Invoke(scrollValue);
-        // }
-
-        // 离散滚轮事件
-        if (Time.time - lastScrollTime < scrollCooldown) return;
-
-        accumulatedScroll += scrollValue;
-
-        if (Mathf.Abs(accumulatedScroll) >= scrollThreshold)
+        float rawScroll = Mouse.current == null ? 0f : Mouse.current.scroll.ReadValue().y;
+        LastRawScrollY = rawScroll;
+        var layer = currentMouseLayer;
+        if (Mouse.current == null || currentScrollableObject == null || layer == null)
         {
-            float step = accumulatedScroll > 0 ? 1f : -1f;
-            LastDispatchedStep = step;
-            LastScrollDispatchFrame = Time.frameCount;
-            ScrollDispatchSequence++;
-            Debug.Log($"[MouseManager] ScrollStep triggered: {step}");
-            currentScrollableObject.scrollStepEvent?.Invoke(step);
-            OnScrollStep?.Invoke(step);
-
-            accumulatedScroll = 0f;
-            lastScrollTime = Time.time;
+            ResetScrollInput();
+            return;
         }
+        LastScrollPointerWorld = Tools.getMousePos();
+        if (scrollInputTarget != currentScrollableObject || scrollInputLayer != layer)
+        {
+            ResetScrollInput();
+            scrollInputTarget = currentScrollableObject;
+            scrollInputLayer = layer;
+        }
+
+        float scrollValue = rawScroll;
+#if UNITY_6000_0_OR_NEWER && (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
+        // Existing serialized thresholds use Windows wheel units (120 per detent).
+        // Unity 6000.0.9+ normalizes these to 1 by default; preserve the threshold contract.
+        if (InputSystem.settings.scrollDeltaBehavior == InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms)
+            scrollValue *= 120f;
+#endif
+        float threshold = Mathf.Max(0.0001f, scrollThreshold);
+        if (!float.IsNaN(scrollValue) && !float.IsInfinity(scrollValue) && scrollValue != 0f)
+        {
+            // Reversal starts a fresh gesture instead of cancelling against stale input.
+            if (accumulatedScroll != 0f && Mathf.Sign(accumulatedScroll) != Mathf.Sign(scrollValue))
+                accumulatedScroll = 0f;
+            // Keep one pending step during cooldown, never a long catch-up queue.
+            accumulatedScroll = Mathf.Clamp(accumulatedScroll + scrollValue, -threshold, threshold);
+        }
+
+        float now = Time.unscaledTime;
+        if (now - lastScrollTime < Mathf.Max(0f, scrollCooldown) || Mathf.Abs(accumulatedScroll) < threshold)
+            return;
+
+        float step = accumulatedScroll > 0f ? 1f : -1f;
+        accumulatedScroll = 0f;
+        lastScrollTime = now;
+        LastDispatchedStep = step;
+        LastScrollDispatchFrame = Time.frameCount;
+        ScrollDispatchSequence++;
+        Debug.Log($"[MouseManager] ScrollStep triggered: {step}");
+        currentScrollableObject.scrollStepEvent?.Invoke(step);
+        OnScrollStep?.Invoke(step);
+    }
+
+    private void ResetScrollInput()
+    {
+        accumulatedScroll = 0f;
+        lastScrollTime = float.NegativeInfinity;
+        scrollInputTarget = null;
+        scrollInputLayer = null;
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus) ResetScrollInput();
     }
 
 
