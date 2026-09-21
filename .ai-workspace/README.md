@@ -1,5 +1,7 @@
 # Eat-What AI 工作区
 
+> **H后现行规则：** 2026-09-22 用户更新分支规则：当前成果（含H后格式提交）集成main，旧content/p0p1-layout关闭并删除；从新main建立codex/unity6-followup并跟踪同名origin，后续F和E2由“AI工作流-控制台（接管）”管理，E2完整关闭时再集成main。F待用户指定，MANUAL和历史队列保持，不自动派发。E1标签仍固定37bb854，backup保持ec3aa7c；迁移分支/副本暂留。固定引擎6000.3.24f1；双工作区冻结/路由已解除，生产实例仍需路径核对。[交接与待办](MIG63/H后分支切换与控制台移交.md)为本轮入口；[设计总档v1.5](design/AI开发工作流总档_设计端_v1_5.md)供设计端同步。
+
 当前阶段：**2026-09-17 已验收并关闭，MANUAL 手动待命**。145 项任务全部关闭（137 VERIFIED、8 行政关闭）；历史错误、修订和验收结论保留，编号继续从 146 递增。
 
 ## 日常入口
@@ -9,7 +11,7 @@
 | 项目现状与下一轮边界 | 根目录 `项目整体阅读理解与推进基线_2026-08-14.md` |
 | 代码、数据、场景定位 | 根目录 `CODEBASE_MAP.md` |
 | 控制台操作 | `CONTROL_CHAT.md` |
-| 当前待验与承接 | `outputs/control/人工处理索引.md`、`下一轮开发承接.md` |
+| 当前待验与承接 | `outputs/control/人工处理索引.md`、`outputs/control/下一轮开发承接.md`、`MIG63/H后分支切换与控制台移交.md` |
 | 可复用工具与坑记录 | `TOOLKIT_REGISTRY.md`、`KNOWN_PITFALLS.md` |
 | 历史任务、input/output、图证、修复备份 | [阶段归档](archive/2026-09-17/README.md) |
 

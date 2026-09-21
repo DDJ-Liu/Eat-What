@@ -2,7 +2,7 @@
 
 最后结构一致性复核：2026-09-17。范围：源码入口、Build Settings、Packages、关键 Scene/Prefab/生成数据、Resources 路径和 Git 差异；Unity 只读确认正式 P0 编辑态、场景 clean、Console Error=0。本次运行既有离线回归，不重做全项目 Play Mode；本轮视觉与交互沿用已落账的用户验收。
 
-最后专项核验：2026-09-22（MIG63 E1/H及MIG-F06）。用户确认37bb854人工终验通过，main与unity6.3-baseline已集成同一候选，backup保持起点。原工作区content已在6000.3.24f1完成H接棒，TMP84/LFS、9组离线、5组Play及4项长期探针通过，业务冻结解除。其后独立定向重序列化处理3场景/11Prefab，仅3场景有磁盘变化；7934项对象/设置记录一致，meta/GUID、旧参考场景和字体未变，格式更新后的5组Play与Windows构建通过。后续格式提交留在content，未移动E1标签。详情见[E1/H报告](.ai-workspace/MIG63/E1H_接棒与后续项.md)。完整结构复核日期仍2026-09-17，未新增全项目人工视觉验收。
+最后专项核验：2026-09-22（MIG63 E1/H及MIG-F06）。用户确认37bb854人工终验通过，main与unity6.3-baseline已集成同一候选，backup保持起点。原工作区content已在6000.3.24f1完成H接棒，TMP84/LFS、9组离线、5组Play及4项长期探针通过，业务冻结解除。其后独立定向重序列化处理3场景/11Prefab，仅3场景有磁盘变化；7934项对象/设置记录一致，meta/GUID、旧参考场景和字体未变，格式更新后的5组Play与Windows构建通过。用户本轮批准将H后格式提交及记录集成main，关闭旧content并从新main建立codex/unity6-followup；主控制台承接F/E2，E1标签不动。详情见[E1/H报告](.ai-workspace/MIG63/E1H_接棒与后续项.md)。完整结构复核日期仍2026-09-17，未新增全项目人工视觉验收。
 
 本文件记录当前结构。整理前逐次变更与失败/恢复记录完整保存在 [.ai-workspace/archive/2026-09-17](.ai-workspace/archive/2026-09-17/README.md)，不再将历史状态堆在页首。完成度和下一轮边界见[项目基线](项目整体阅读理解与推进基线_2026-08-14.md)。
 
@@ -15,7 +15,7 @@
 | 引擎与渲染 | Unity 6000.3.24f1、URP 17.3.0；原工作区H接棒通过 |
 | 输入 | 本迁移分支Input System 1.20.0、Uniform；Windows滚轮已签收，Mac适配见MIG-F01 |
 | 当前 Build 列表 | ShortCycle_P0P1 index0、CookingProcess index1，Profile不覆盖，Prepare文件保留；原目录已同步 |
-| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；两目录均已加入Build；原目录H通过、冻结解除，后续开发在content分支 |
+| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；两目录均已加入Build；原目录H通过、冻结解除，后续开发在codex/unity6-followup分支 |
 | 视觉统一试验 | Assets/Scenes/ToolTests/VisualEffectsLab.unity |
 | 滚轮独立试验 | Assets/Scenes/ToolTests/FridgeScrollLab.unity |
 | 盘点 | Assets/Scripts 249 个 C#；Assets/Editor 63 个 C#（含4个保留迁移验证文件）；Assets/Scenes 15 个场景；Prefabs/Resources 共 71 个 Prefab |
@@ -25,7 +25,7 @@
 
 Packages清单/锁文件及LocalPackages/com.coplaydev.unity-mcp固定Editor包进入版本管理。DevTools/MCP记录服务端10.1.2、源码提交和uv锁文件；Editor为同提交10.1.3-beta.4，迁移目录6.3连接与实例路由已实测。自动客户端改写已用10文件本地补丁关闭；主动Configure仍可用，未提供完整服务端离线镜像。详见DevTools/MCP/README.md。原目录H接棒已恢复相同本地包及独立venv，新实例Eat-What@d5759c75ae7cb5de连接/路由通过；本轮验证服务收尾停止，未来使用重新发现实例。
 
-以上版本表指已验收E1基线及正在H接棒的原工作区。独立Eat-What-U6副本已导入6000.3.24f1：URP17.3.0、Input System1.20.0、UGUI2.0.0、Cinemachine2.10.7；Coplay已收敛为工程内固定包；M4连接MIG、H重新发现并验证原目录实例，原队列未接入。API Updater把HorizontalPlayerController.cs与QuickAddForce.cs的Rigidbody2D.velocity改为linearVelocity。M2已保存Compatibility=false、无兼容宏，Windows构建通过；TMP目录已升级为84文件，M3R按N1取消忽略并随Git/LFS跟踪，保留原GUID和快照。精确变化和人工复核见[M2/M3执行结果](.ai-workspace/MIG63/M2M3_执行结果与人工验收.md)，原目录H运行回归已通过，后续格式更新独立留在content，main/tag保持用户验收的37bb854。
+以上版本表指已验收E1基线及已经完成H接棒的原工作区。独立Eat-What-U6副本已导入6000.3.24f1：URP17.3.0、Input System1.20.0、UGUI2.0.0、Cinemachine2.10.7；Coplay已收敛为工程内固定包；M4连接MIG、H重新发现并验证原目录实例，原队列未接入。API Updater把HorizontalPlayerController.cs与QuickAddForce.cs的Rigidbody2D.velocity改为linearVelocity。M2已保存Compatibility=false、无兼容宏，Windows构建通过；TMP目录已升级为84文件，M3R按N1取消忽略并随Git/LFS跟踪，保留原GUID和快照。精确变化和人工复核见[M2/M3执行结果](.ai-workspace/MIG63/M2M3_执行结果与人工验收.md)，原目录H运行回归已通过，H后格式更新已按用户最新决定随本次集成进入main；unity6.3-baseline标签保持37bb854，新业务使用codex/unity6-followup。
 
 迁移侧验证工具变化：DevTools/Rendering/Test-OutlineMerge.ps1、Test-EtherBubbleDistortion.ps1、DevTools/ShortCycle/Test-CK01CShortCycle.ps1及CoordinateSpaceRegression/Invoke-CoordinateCompilation.ps1按项目版本定位Hub/旧Editor；泡泡测试引用URP17的2D.Runtime程序集。H磁盘接棒已同步这些工具，九组离线回归通过。原临时验证链已移除；本轮按用户决定长期保留迁移侧Assets/Editor/MIG63Validation/MIG63WheelProbe.cs、MIG63TomatoProbe.cs、MIG63SpineSceneProbe.cs和MIG63ValidationSession.cs，菜单Tools/MIG63/Validation，说明DevTools/MIG63/README.md。两侧新增DevTools/GitHooks字体工作树/index保护，最终机器结果不覆盖硬件鼠标和同分辨率全视觉对照。
 

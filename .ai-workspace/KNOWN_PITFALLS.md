@@ -1,5 +1,7 @@
 # AI 工作流工程坑账本
 
+> 2026-09-22 Unity 6专项复核：现行目标为ProjectSettings/ProjectVersion.txt中的6000.3.24f1。P-001/P-036/P-038已对照本机UnityEditor.xml、现有源码和H编译证据；旧2022故障记录继续作为历史，不代表需切回旧Editor。新任务按新开发分支和当前API核对；没有重跑全部历史案例。
+
 本账本记录可跨任务复用的技术教训。执行器领取任务后、开始业务操作前，必须通读与本流水线匹配的条目；控制任务在 Fail 根因确认或指令修订暴露可复用教训时维护本文件。同一根因合并更新，不重复开条。
 
 ## P-043 | [ENGINE_MCP/控制端] 临时dirty的归属与验证收尾必须随任务建立
@@ -18,7 +20,7 @@
 - 缺物理设备输入不代表不能完成明确标识SIMULATED的机器机制对照；用户已授权监管后可保护clean现场再进入/恢复场景验证，不能把场景保护解释成一律禁止Play。
 - 来源：AI108回报及控制台AI113/114修订；这是证据与兼容性约束，不声称生产问题已修复。
 
-## P-001 | [ENGINE_MCP] Unity 2022.3 的 Sprite Mesh Type 必须通过 TextureImporterSettings 设置
+## P-001 | [ENGINE_MCP] Sprite Mesh Type 通过 TextureImporterSettings 设置（2022根因，6000.3.24f1复核适用）
 - 症状：`TextureImporter.spriteMeshType` 或 `UnityEditor.SpriteMeshType` 编译失败。
 - 根因：Unity 2022.3 不公开这两个调用入口，Mesh Type 位于 `TextureImporterSettings.spriteMeshType`。
 - 正确做法：`ReadTextureSettings` → 修改 `spriteMeshType` → `SetTextureSettings` → `SaveAndReimport`。
@@ -274,7 +276,7 @@
 ## P-036 | [CODE/ENGINE_MCP] stub runner 通过不等于 Unity Editor API 编译通过
 - 症状：FIX-T2 通过编辑器外 runner，但 FIX-T3 Refresh 后 CameraFrameGizmoMenu.cs 报 CS1501，四参 SceneView.LookAtDirect 不存在。
 - 根因：runner/stub 没有覆盖或准确约束目标 Unity Editor API，误把纯逻辑验证当作全部 API 兼容性验证。
-- 正确做法：Editor 脚本的每个实际 API 对照项目 Unity 2022.3 官方签名/本机程序集。LookAtDirect 使用二/三参；正交+瞬切可用经核实的五参 LookAt。报告区分 runner 与 Unity 实际编译，不放宽 stub 掩盖错误；CODE 修复完成后由引擎线真实 Refresh/Compile。
+- 正确做法：Editor 脚本的每个实际 API 对照ProjectVersion指定版本的官方签名/本机程序集（当前6000.3.24f1），不沿用历史2022版本假设。LookAtDirect 使用二/三参；正交+瞬切可用经核实的五参 LookAt。报告区分 runner 与 Unity 实际编译，不放宽 stub 掩盖错误；CODE 修复完成后由引擎线真实 Refresh/Compile。
 - 来源任务：AI-000067 / AI-000069 / AI-000073（FIX-T2c）。
 - 记录日期：2026-09-08
 
@@ -342,3 +344,10 @@
 - 单测里的Phase1→RightReserved替换不能替代已移动后回到CurrentSlot的回归；必须包含严格中间位置、旧协程停机、最终正确Marker、完成回调次数与输入锁释放。
 - 修复应区分活动请求、实际位置与最后完成槽位；不要只停旧协程后伪同步成功。原同机位静止快速路径、有效曲线、unscaled和事件合同保持。
 - 当前安排：AI143/CAM-T2b已完成先取消活动Pan、再以实际Marker距离判定即时完成的最小补修；旧实现负向对照失败，双向中间帧/重复目标/禁用off-marker/回调与锁的CODE回归通过。原AI137于2026-09-17第2次真实Unity复验通过：双向中间帧返向、重复目标、同Marker即时完成、禁用off-marker恢复、旧回调0/新回调1及锁释放均成立。首次失败/恢复史与已保存曲线及后续Cover/轮向成果保留；机器缺陷闭环，主观手感仍人工后置，AI133继续最后整体验证。
+
+## MIG63 接棒后的保护边界（后续编号由主控制台统一分配）
+
+- 同一提交的文本资产可能因clone行尾转换产生不同工作树SHA；跨机器等价核对拟改Git规范化blob，原始SHA继续用于精确备份。真实字段差异和未暂存变更仍须拦截，不能仅比较HEAD。MIG-F08登记待实现，不宣称保护工具已经升级。
+- Assets/Font/**/*.asset已走LFS与-text；字体保护检查的是真实内容SHA/指针OID，不能仅改为LFS指针blob。TMP动态图集在Play/重载/构建均可能写回，先保全、核实归属，再按Editor恢复完整资产，不能自动覆盖未知人工修改。
+- 静态主字体+动态回退为MIG-F09待用户决定；当前包确有Clear Dynamic Data On Build，但这不能消除日常Play漂移，也不授权删除回退资产或源字体。216字形基线和提交检查继续。
+- API Updater选项表示允许范围，实际影响仍以转换前后源码/资源对照为准；H实测只有忽略示例RaggedySpineboy.cs两处velocity→linearVelocity，31个示例资源普通导入更新。未入库示例的E2去留为MIG-F10，不因有快照自动删除。
