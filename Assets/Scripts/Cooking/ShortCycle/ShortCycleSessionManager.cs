@@ -66,11 +66,44 @@ namespace EatWhat.Cooking.ShortCycle
 
         private void Start()
         {
+            var scrollDiagnostic = ConfigureFridgeScrollInput(dataCatalog, MouseManager.Instance);
+            if (!string.IsNullOrEmpty(scrollDiagnostic))
+                Debug.LogWarning("[CK01-C-SESSION] " + scrollDiagnostic, this);
+
             var result = BeginSession(
                 useDefaultRecipeForDebug ? defaultRecipeId : null,
                 defaultTriggerContext);
             if (!result.Succeeded)
                 Debug.LogError("CK01-K session startup failed: " + result.Error, this);
+        }
+
+        internal static string ConfigureFridgeScrollInput(
+            CK01GeneratedDataCatalog catalog,
+            MouseManager mouseManager)
+        {
+            string diagnostic;
+            CK01FridgeScrollSettings settings;
+            if (catalog == null)
+            {
+                settings = new CK01FridgeScrollSettings(
+                    CK01CookingGameConfigData.DefaultFridgeScrollThreshold,
+                    CK01CookingGameConfigData.DefaultFridgeScrollCooldown);
+                diagnostic = "CookingGameConfig catalog is not connected; using fridge scroll defaults " +
+                    "threshold=1 and cooldown=0.2.";
+            }
+            else
+            {
+                settings = catalog.ResolveFridgeScrollSettings(out diagnostic);
+            }
+
+            if (mouseManager == null)
+            {
+                var missingManager = "MouseManager is unavailable; fridge scroll settings were not applied.";
+                return string.IsNullOrEmpty(diagnostic) ? missingManager : diagnostic + " " + missingManager;
+            }
+
+            mouseManager.ConfigureScrollInput(settings.Threshold, settings.Cooldown);
+            return diagnostic;
         }
 
         private void Update() { if (stateMachine != null) stateMachine.UpdateState(); }

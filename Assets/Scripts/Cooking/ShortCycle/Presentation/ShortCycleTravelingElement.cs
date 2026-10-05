@@ -23,6 +23,12 @@ namespace EatWhat.Cooking.ShortCycle
             var anchor = ResolveAnchor(space);
             if (movingTransform == null || positionTransition == null || anchor == null) return false;
             var destinationSnapshot = anchor.position;
+            if (Vector3.Distance(movingTransform.position, destinationSnapshot) <= 0.0001f)
+            {
+                Cancel();
+                if (onComplete != null) onComplete();
+                return true;
+            }
             return positionTransition.PlayTo(destinationSnapshot, duration, true, onComplete, null) != null;
         }
 
@@ -32,7 +38,8 @@ namespace EatWhat.Cooking.ShortCycle
             var anchor = ResolveAnchor(space);
             if (movingTransform == null || anchor == null) return false;
             Cancel();
-            movingTransform.position = anchor.position;
+            if (Vector3.Distance(movingTransform.position, anchor.position) > 0.0001f)
+                movingTransform.position = anchor.position;
             return true;
         }
 

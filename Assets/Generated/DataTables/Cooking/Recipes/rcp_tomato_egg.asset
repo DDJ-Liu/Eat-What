@@ -25,14 +25,15 @@ MonoBehaviour:
   slots:
   - slot_tomato_2
   - slot_egg_3
-  - slot_scallion_1
   whitelist_proc_ids:
   - proc_egg_liquid
-  - proc_egg_liquid_giant
+  - proc_danhuangpai_sui
   - proc_tomato_cut
+  - proc_ofanqie_sui
   - proc_scrambled_egg
-  - proc_tomato_egg_final
+  - proc_tomato_egg_dish
   - proc_tomato_egg_soup
+  - proc_ofanqie_danhuangpai
   first_step_id: step_te_01
   unlock_source: 
   unlock_condition: 

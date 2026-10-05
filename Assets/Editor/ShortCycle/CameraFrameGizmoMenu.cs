@@ -21,10 +21,12 @@ namespace EatWhat.EditorTools
 
         [MenuItem("Tools/CK01/Camera Frames/Align P1")]
         private static void AlignP1() { Align(0); }
-        [MenuItem("Tools/CK01/Camera Frames/Align P0")]
-        private static void AlignP0() { Align(1); }
+        [MenuItem("Tools/CK01/Camera Frames/Align P0-Left")]
+        private static void AlignP0Left() { Align(1); }
+        [MenuItem("Tools/CK01/Camera Frames/Align P0-Center")]
+        private static void AlignP0Center() { Align(2); }
         [MenuItem("Tools/CK01/Camera Frames/Align Right")]
-        private static void AlignRight() { Align(2); }
+        private static void AlignRight() { Align(3); }
 
         private static void Align(int index)
         {

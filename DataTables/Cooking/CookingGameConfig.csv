@@ -1,6 +1,6 @@
 key,value,comment
 prep_zone_capacity,20,托盘格数
-fridge_scroll_granularity,1.0,占位待调，人工段实调后回写
-fridge_scroll_damping,0.15,占位待调，人工段实调后回写
+fridge_scroll_threshold,1.0,Input System统一滚轮单位累计阈值；必须大于0
+fridge_scroll_cooldown,0.2,滚轮步进冷却秒数；必须大于等于0
 unknown_product_item,prd_unknown,S-04 不明物体 fallback
 demo_fridge_capacity_level,fcap_lv2,demo 容量档；正式游戏从 fcap_lv1=20 起步并升级

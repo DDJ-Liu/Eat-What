@@ -162,6 +162,7 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
     public const string FridgeCapacityLevelsTable = "FridgeCapacityLevels";
     public const string ProcessingRecordsTable = "ProcessingRecords";
     public const string KitchenAreasTable = "KitchenAreas";
+    public const string ToolsTable = "Tools";
 
     [SerializeField] private List<CK01GeneratedDataTable> tables =
         new List<CK01GeneratedDataTable>();
@@ -291,12 +292,52 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
         return TryGetRow(CookingGameConfigTable, configKey, out config, out diagnostic);
     }
 
+    public CK01FridgeScrollSettings ResolveFridgeScrollSettings(out string diagnostic)
+    {
+        var diagnostics = new List<string>();
+        var threshold = ResolveFridgeScrollValue(
+            CK01CookingGameConfigData.FridgeScrollThresholdKey,
+            CK01CookingGameConfigData.DefaultFridgeScrollThreshold,
+            false,
+            diagnostics);
+        var cooldown = ResolveFridgeScrollValue(
+            CK01CookingGameConfigData.FridgeScrollCooldownKey,
+            CK01CookingGameConfigData.DefaultFridgeScrollCooldown,
+            true,
+            diagnostics);
+        diagnostic = diagnostics.Count == 0 ? null : string.Join(" ", diagnostics.ToArray());
+        return new CK01FridgeScrollSettings(threshold, cooldown);
+    }
+
     public bool TryGetFridgeCapacityLevel(
         string capacityId,
         out CK01FridgeCapacityLevelData capacity,
         out string diagnostic)
     {
         return TryGetRow(FridgeCapacityLevelsTable, capacityId, out capacity, out diagnostic);
+    }
+
+    private float ResolveFridgeScrollValue(
+        string key,
+        float defaultValue,
+        bool allowZero,
+        List<string> diagnostics)
+    {
+        CK01CookingGameConfigData config;
+        string rowDiagnostic;
+        if (!TryGetCookingGameConfig(key, out config, out rowDiagnostic))
+        {
+            diagnostics.Add("CookingGameConfig key '" + key + "' is unavailable (" +
+                rowDiagnostic + "); using default " +
+                defaultValue.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + ".");
+            return defaultValue;
+        }
+
+        string parseDiagnostic;
+        var resolved = CK01CookingGameConfigData.ParseFridgeScrollValue(
+            key, config.value, defaultValue, allowZero, out parseDiagnostic);
+        if (!string.IsNullOrEmpty(parseDiagnostic)) diagnostics.Add(parseDiagnostic);
+        return resolved;
     }
 
     public bool TryGetProcessingRecord(
@@ -310,6 +351,11 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
     public bool TryGetKitchenArea(string areaId, out KitchenAreaData area, out string diagnostic)
     {
         return TryGetRow(KitchenAreasTable, areaId, out area, out diagnostic);
+    }
+
+    public bool TryGetTool(string toolId, out CK01ToolData tool, out string diagnostic)
+    {
+        return TryGetRow(ToolsTable, toolId, out tool, out diagnostic);
     }
 
     public bool TryGetRecipeWhitelist(

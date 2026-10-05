@@ -21,4 +21,8 @@ MonoBehaviour:
   - tool_pot
   trigger_items:
   - prd_noodle_boiled
-  permanent_trigger_items: []
+  - prd_instant_noodle_boiled
+  - prd_rice_noodle_boiled
+  permanent_trigger_items:
+  - prd_qingtang_dish
+  - prd_qingtang_dish

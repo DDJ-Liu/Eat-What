@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bf1b2b3855e6c346a8aee82a3375511, type: 3}
   m_Name: ing_ham_sausage
   m_EditorClassIdentifier: 
-  quantity: 1
+  quantity: 2

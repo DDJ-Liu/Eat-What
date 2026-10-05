@@ -8,8 +8,11 @@ namespace EatWhat.EditorTools
     {
         public Camera referenceCamera;
         public Transform phase1Marker;
+        public Transform p0LeftMarker;
         public Transform phase0Marker;
         public Transform rightMarker;
+
+        public const int MarkerCount = 4;
 
         public static Vector2 FrameSize(Camera camera)
         {
@@ -20,8 +23,9 @@ namespace EatWhat.EditorTools
         public Transform GetMarker(int index)
         {
             if (index == 0) return phase1Marker;
-            if (index == 1) return phase0Marker;
-            return index == 2 ? rightMarker : null;
+            if (index == 1) return p0LeftMarker;
+            if (index == 2) return phase0Marker;
+            return index == 3 ? rightMarker : null;
         }
     }
 }

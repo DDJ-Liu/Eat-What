@@ -28,6 +28,8 @@ namespace EatWhat.Cooking.ShortCycle
 
         private int generation;
         private ShortCycleSpaceId? pendingDeparture;
+        private ShortCycleSpace pendingViewArrival;
+        private bool missingCameraWarningIssued;
         private readonly Dictionary<ShortCyclePresentationSet, bool> activationRequests = new Dictionary<ShortCyclePresentationSet, bool>();
         private readonly HashSet<ShortCyclePresentationSet> focusRequests = new HashSet<ShortCyclePresentationSet>();
 
@@ -39,6 +41,7 @@ namespace EatWhat.Cooking.ShortCycle
             generation++;
             pendingDeparture = space;
             var source = ResolveSpace(space);
+            if (pendingViewArrival == source) pendingViewArrival = null;
             if (source != null)
             {
                 if (interactionLayerStack != null) interactionLayerStack.Pop(source.SpaceLayer);
@@ -79,25 +82,40 @@ namespace EatWhat.Cooking.ShortCycle
             foreach (var traveler in travelingElements ?? new ShortCycleTravelingElement[0])
                 if (traveler != null) traveler.MoveTo(space);
 
-            if (cameraPanController == null ||
-                !cameraPanController.PanTo(target.CameraSlot, () => CompleteArrival(requestGeneration, target)))
+            // Phase0 view rows own the actual destination slot. Waiting for ShowView avoids
+            // a redundant P0Center pan immediately followed by P0Left for Browse/ClueBoard.
+            if (target.HasViewCameraRouting)
+            {
+                pendingViewArrival = target;
+                MergeVisibility();
+                return;
+            }
+
+            if (!RequestPan(target.CameraSlot, () => CompleteArrival(requestGeneration, target)))
                 CompleteArrival(requestGeneration, target);
         }
 
         public void ShowView(ShortCycleSpaceId space, ShortCyclePhase0View view)
         {
             OwnVisibility();
+            var requestGeneration = ++generation;
             var target = ResolveSpace(space);
-            if (space == ShortCycleSpaceId.Phase0 && view == ShortCyclePhase0View.ClueBoardShell)
-                foreach (var traveler in travelingElements ?? new ShortCycleTravelingElement[0])
-                    if (traveler != null) traveler.SnapTo(space);
-            if (target != null) target.ShowView(view);
-            MergeVisibility();
+            if (target == null)
+            {
+                MergeVisibility();
+                return;
+            }
+
+            ShortCycleCameraSlot slot;
+            target.TryResolveCameraSlot(view, out slot);
+            if (!RequestPan(slot, () => CompleteViewArrival(requestGeneration, target, view)))
+                CompleteViewArrival(requestGeneration, target, view);
         }
 
         public void HideView(ShortCycleSpaceId space, ShortCyclePhase0View view)
         {
             OwnVisibility();
+            generation++;
             var target = ResolveSpace(space);
             if (target != null) target.HideView(view);
             MergeVisibility();
@@ -128,6 +146,8 @@ namespace EatWhat.Cooking.ShortCycle
         {
             generation++;
             pendingDeparture = null;
+            pendingViewArrival = null;
+            missingCameraWarningIssued = false;
             foreach (var traveler in travelingElements ?? new ShortCycleTravelingElement[0])
                 if (traveler != null) traveler.Cancel();
             foreach (var space in spaces ?? new ShortCycleSpace[0])
@@ -148,8 +168,37 @@ namespace EatWhat.Cooking.ShortCycle
         private void CompleteArrival(int requestGeneration, ShortCycleSpace target)
         {
             if (requestGeneration != generation || target == null) return;
+            if (pendingViewArrival == target) pendingViewArrival = null;
             target.ArriveFocus();
             MergeVisibility();
+        }
+
+        private void CompleteViewArrival(int requestGeneration, ShortCycleSpace target, ShortCyclePhase0View view)
+        {
+            if (requestGeneration != generation || target == null) return;
+            target.ShowView(view);
+            if (pendingViewArrival == target)
+            {
+                pendingViewArrival = null;
+                target.ArriveFocus();
+            }
+            MergeVisibility();
+        }
+
+        private bool RequestPan(ShortCycleCameraSlot slot, Action onComplete)
+        {
+            if (cameraPanController != null && cameraPanController.PanTo(slot, onComplete))
+            {
+                missingCameraWarningIssued = false;
+                return true;
+            }
+
+            if (!missingCameraWarningIssued)
+            {
+                Debug.LogWarning("ShortCycle camera/marker is unavailable; applying logical presentation state without a pan.", this);
+                missingCameraWarningIssued = true;
+            }
+            return false;
         }
 
         private void OnDisable() { ClearSessionPresentation(); }
@@ -168,8 +217,22 @@ namespace EatWhat.Cooking.ShortCycle
             focusRequests.Clear();
             foreach (var candidate in spaces ?? new ShortCycleSpace[0]) CollectRequests(candidate);
             CollectRequests(sharedSpace);
+
+            Rect cameraRect;
+            var hasCameraRect = ShortCycleSpace.TryGetCameraWorldRect(
+                cameraPanController == null ? null : cameraPanController.ControlledCamera, out cameraRect);
+            if (!hasCameraRect && !missingCameraWarningIssued)
+            {
+                Debug.LogWarning("ShortCycle camera bounds are unavailable; preserving logical Set visibility.", this);
+                missingCameraWarningIssued = true;
+            }
             foreach (var request in activationRequests)
-                request.Key.ApplyVisibility(request.Value, focusRequests.Contains(request.Key));
+            {
+                var persistentVisual = request.Key.KeepVisualActiveAcrossSpaces;
+                var visible = (request.Value || persistentVisual) &&
+                    (persistentVisual || !hasCameraRect || request.Key.IsInView(cameraRect));
+                request.Key.ApplyVisibility(visible, visible && focusRequests.Contains(request.Key));
+            }
         }
 
         private void CollectRequests(ShortCycleSpace space)

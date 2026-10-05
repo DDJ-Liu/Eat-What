@@ -16,6 +16,19 @@
 10. 只有代码产物成立才调用 `Complete`；完成回执必须统一说明非阻碍问题、测试待人工事项与残余风险。
 11. `AUTOMATIC` 下必须读取 `Complete` 的 `autoHandoff`：即使 `verificationStatus=PENDING_USER` 也必须接力。目标 `threadId` 不同则发送完整消息；目标就是当前 CODE 线程时禁止向自身发送，直接在当前轮按下一 `TaskId` 再 `Poll -Pipeline CODE -TriggerSource AUTOMATIC` 并继续。只有调用 `Fail` 后才禁止下一项。
 
+## 统一验证入口与复核预算
+
+PRE-5b 起 Complete 还需 -AcceptancePath，对应 .ai-workspace/inputs/acceptance/<TaskId>.json 预声明合同及任务输出目录中的数值/布尔证据。紧凑回执的 receiptPath 是完整落盘结果；跨线程 messagePath 必须读取全文原样送达，不把路径文本当消息。
+
+1. CODE 任务默认通过 `DevTools/Verify-All.ps1 -TaskId <ID> -Profile <受影响域> -Mode Final` 聚合现有 runner 与其静态哨兵；`Auto` 只按 Git 受影响路径选择 profile，禁止为了方便重复扫描全仓。任务卡需要明确 profile，跨域时由同一次调用去重各 runner。
+2. 任务中途只做 `-Mode Incremental` 的受影响 PowerShell 解析或对应项目的增量编译；最终收口才执行完整 runner。静态哨兵继续由既有 runner 维护，不另建重复全仓扫描。
+3. 同一 TaskId 默认最多执行两次 `Final`。第三次及以后必须传 `-RepeatReason`，在独立运行历史中记录新原因；不得通过删除历史或更换 TaskId 绕过。
+4. 聚合器必须传播 runner 的异常/非零退出码。测试工具自身无法稳定触发时仍按 `TEST_TRIGGER/TEST_OBSERVATION` 处理，但不能把产品编译或必需静态契约失败降级。
+5. 可观测工具调用需要时用 `DevTools/Workflow/Invoke-TaskTool.ps1` 包装；它只记录实际捕获的调用数和 UTF-8 返回字节。provider token/model 未暴露时保持 null 并写原因。
+6. `Verify-All.ps1` 与 `Invoke-TaskTool.ps1` 执行 PowerShell runner 时必须显式解析并校验 PowerShell 7 Core（`pwsh.exe`）；禁止默默回落到 Windows PowerShell 5.1。确需遗留 5.1 runner 时另建具名隔离入口并在任务中说明，不得用于 queue/票据状态写入。
+
+DATA 长期分工中，CODE 只维护队列路由、导表工具、schema 和业务源码；不得代 DATA 消费用户轮次、运行导表或发布生成物。正式 DATA 线程绑定和应用可达核验属于控制台动作。
+
 如果实现后仍需要 Unity 接线或 Play Mode 验证，那部分必须由控制任务预先拆成依赖本任务的 `ENGINE_MCP` 任务；你不得越界代做。
 
 ## 用户直接消息与验收回复

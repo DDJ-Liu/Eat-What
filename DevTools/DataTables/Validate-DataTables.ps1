@@ -2,6 +2,9 @@
 param(
     [string]$DataTablesRoot,
     [string]$ReportDirectory,
+    [string]$SceneInventoryPath,
+    [switch]$RequireSceneInventory,
+    [switch]$Quick,
     [switch]$Quiet,
     [switch]$NoExit
 )
@@ -13,10 +16,15 @@ if ([string]::IsNullOrWhiteSpace($DataTablesRoot)) {
 }
 
 $DataTablesRoot = [System.IO.Path]::GetFullPath($DataTablesRoot)
+if ($Quick -and [string]::IsNullOrWhiteSpace($ReportDirectory)) {
+    $ReportDirectory = Join-Path ([System.IO.Path]::GetTempPath()) 'EatWhat-DataTables-Quick'
+}
 $corePath = Join-Path $repositoryRoot 'Assets/Editor/DataTables/DataTableValidationCore.cs'
 if (-not ('EatWhat.DataTables.DataTableSchema' -as [type])) {
     Add-Type -Path $corePath
 }
+$sceneCorePath = Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/SceneToolInventory.cs'
+if (-not ('SceneToolInventory' -as [type])) { Add-Type -Path $sceneCorePath }
 
 function Get-RelativeDataTablesPath {
     param([Parameter(Mandatory)][string]$FullPath)
@@ -593,16 +601,16 @@ function Invoke-CK01SchemaRules {
                 final_proc_ids = @($finalProcIds)
             })
 
-            if ($null -ne $areas -and $null -ne $tools) {
+            if ($sceneInventoryUsable -and $null -ne $areas -and $null -ne $tools) {
                 foreach ($areaRow in $areas.Parse.Table.Rows) {
                     $areaId = Get-ColumnValue $areas $areaRow 'id'
+                    if (-not $seenAreaIds.Contains($areaId)) { continue }
                     $allowedActions = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
                     foreach ($actionId in @(Get-ColumnValues $areas $areaRow 'allowed_actions')) { [void]$allowedActions.Add($actionId) }
                     $allowedCarriers = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
                     foreach ($carrierId in @(Get-ColumnValues $areas $areaRow 'allowed_carriers')) { [void]$allowedCarriers.Add($carrierId) }
-                    $configuredTools = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-                    [void]$configuredTools.Add((Get-ColumnValue $areas $areaRow 'core_facility'))
-                    foreach ($toolId in @(Get-ColumnValues $areas $areaRow 'preset_tools')) { [void]$configuredTools.Add($toolId) }
+                    $configuredTools = $sceneToolsByArea[$areaId]
+                    if ($null -eq $configuredTools) { continue }
 
                     $candidatesByInput = @{}
                     foreach ($recordRow in $recordsTable.Parse.Table.Rows) {
@@ -724,12 +732,17 @@ function Invoke-CK01SchemaRules {
 
     if ($null -ne $areas -and $null -ne $tools) {
         foreach ($areaRow in $areas.Parse.Table.Rows) {
+            $areaId = Get-ColumnValue $areas $areaRow 'id'
             $allowedActions = @(Get-ColumnValues $areas $areaRow 'allowed_actions')
             $allowedCarriers = @(Get-ColumnValues $areas $areaRow 'allowed_carriers')
             $coreFacility = Get-ColumnValue $areas $areaRow 'core_facility'
             if ($allowedActions.Count -lt 1) { Add-RuleError $areas $areaRow 'allowed_actions' '[V-08] must contain at least one action.' }
             if ($allowedCarriers.Count -lt 1) { Add-RuleError $areas $areaRow 'allowed_carriers' '[V-08] must contain at least one carrier/facility.' }
             if ($coreFacility -notin $allowedCarriers) { Add-RuleError $areas $areaRow 'allowed_carriers' "[V-08] must include core_facility '$coreFacility'." }
+            if ($sceneInventoryUsable -and $seenAreaIds.Contains($areaId) -and
+                (-not $sceneToolsByArea.ContainsKey($areaId) -or -not $sceneToolsByArea[$areaId].Contains($coreFacility))) {
+                Add-RuleError $areas $areaRow 'core_facility' "[V-08] core_facility '$coreFacility' is not an active tool instance in scene area '$areaId'."
+            }
             foreach ($carrierId in $allowedCarriers) {
                 $toolRow = Get-RowById $tools 'tool_id' $carrierId
                 if ($null -eq $toolRow) {
@@ -750,12 +763,17 @@ function Invoke-CK01SchemaRules {
             foreach ($areaRow in $areas.Parse.Table.Rows) {
                 $actions = @(Get-ColumnValues $areas $areaRow 'allowed_actions')
                 $carriers = @(Get-ColumnValues $areas $areaRow 'allowed_carriers')
-                if ($actionId -in $actions -and ([string]::IsNullOrWhiteSpace($carrierId) -or $carrierId -in $carriers)) {
+                $areaId = Get-ColumnValue $areas $areaRow 'id'
+                if ($sceneInventoryUsable -and -not $seenAreaIds.Contains($areaId)) { continue }
+                if ($actionId -in $actions -and ([string]::IsNullOrWhiteSpace($carrierId) -or
+                    ($carrierId -in $carriers -and (-not $sceneInventoryUsable -or
+                    ($sceneToolsByArea.ContainsKey($areaId) -and $sceneToolsByArea[$areaId].Contains($carrierId)))))) {
                     [void]$supportedAreaIds.Add((Get-ColumnValue $areas $areaRow 'id'))
                 }
             }
             if ($supportedAreaIds.Count -eq 0) {
-                Add-RuleWarning $recordsTable $recordRow 'action' "[V-09] record '$(Get-ColumnValue $recordsTable $recordRow 'proc_id')' is not supported by any KitchenAreas constraint."
+                $supportBasis = if ($sceneInventoryUsable) { 'present scene area with active matching carrier' } else { 'KitchenAreas constraint (scene inventory unverified)' }
+                Add-RuleWarning $recordsTable $recordRow 'action' "[V-09] record '$(Get-ColumnValue $recordsTable $recordRow 'proc_id')' is not supported by any $supportBasis."
             }
         }
     }
@@ -920,6 +938,105 @@ foreach ($record in $records) {
     $record.Result = [EatWhat.DataTables.DataTableValidator]::Validate($record.Schema, $record.Parse, $context)
 }
 
+$sceneInventoryVerified = $false
+$sceneInventoryUsable = $false
+$sceneInventoryStatus = 'UNVERIFIED'
+$sceneInventoryIssues = [System.Collections.Generic.List[string]]::new()
+$sceneInventoryMissingAreaIds = [System.Collections.Generic.List[string]]::new()
+$sceneToolsByArea = [System.Collections.Generic.Dictionary[string,System.Collections.Generic.HashSet[string]]]::new([System.StringComparer]::Ordinal)
+if ([string]::IsNullOrWhiteSpace($SceneInventoryPath)) {
+    [void]$sceneInventoryIssues.Add('No saved-scene tool manifest supplied; scene-dependent V-04/V-08/V-09 checks are unverified.')
+}
+else {
+    try {
+        $manifestPath = [System.IO.Path]::GetFullPath($SceneInventoryPath)
+        $manifest = Get-Content -Raw -LiteralPath $manifestPath -Encoding UTF8 | ConvertFrom-Json
+        if ([int]$manifest.formatVersion -ne 1) { throw 'Unsupported scene tool manifest formatVersion.' }
+        $projectSettings = Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'ProjectSettings/ProjectSettings.asset')
+        $projectGuidMatch = [regex]::Match($projectSettings, '(?m)^\s*productGUID:\s*([0-9a-fA-F]{32})\s*$')
+        if (-not $projectGuidMatch.Success -or $manifest.projectGuid -cne $projectGuidMatch.Groups[1].Value.ToLowerInvariant()) {
+            throw 'Scene tool manifest project GUID does not match this project.'
+        }
+        $scenePath = [string]$manifest.scenePath
+        if (-not $scenePath.StartsWith('Assets/', [System.StringComparison]::Ordinal) -or
+            -not $scenePath.EndsWith('.unity', [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Scene tool manifest scenePath is not a project scene.'
+        }
+        $sceneFile = Resolve-ContainedPath -Root $repositoryRoot -RelativePath $scenePath
+        if ($null -eq $sceneFile -or -not (Test-Path -LiteralPath $sceneFile -PathType Leaf)) {
+            throw 'Scene tool manifest source scene is missing or outside the project.'
+        }
+        $sceneGuidMatch = [regex]::Match(
+            (Get-Content -Raw -LiteralPath ($sceneFile + '.meta')), '(?m)^guid:\s*([0-9a-fA-F]{32})\s*$')
+        if (-not $sceneGuidMatch.Success -or $manifest.sceneGuid -cne $sceneGuidMatch.Groups[1].Value.ToLowerInvariant()) {
+            throw 'Scene tool manifest scene GUID does not match the source scene.'
+        }
+        $sceneHash = (Get-FileHash -LiteralPath $sceneFile -Algorithm SHA256).Hash.ToLowerInvariant()
+        if ($manifest.sceneSha256 -cne $sceneHash) { throw 'Scene tool manifest source SHA-256 is stale.' }
+        foreach ($issue in @($manifest.issues)) {
+            if (-not [string]::IsNullOrWhiteSpace([string]$issue)) { [void]$sceneInventoryIssues.Add([string]$issue) }
+        }
+        $bindings = [System.Collections.Generic.List[SceneToolBinding]]::new()
+        foreach ($rawTool in @($manifest.tools)) {
+            if ($null -eq $rawTool) { [void]$sceneInventoryIssues.Add('Null scene tool entry.'); continue }
+            $binding = [SceneToolBinding]::new()
+            foreach ($field in @('objectKey','ownerObjectKey','hierarchyOwnerObjectKey','areaId','hierarchyAreaId','toolId','toolKind','mappingSource')) {
+                $binding.$field = [string]$rawTool.$field
+            }
+            $binding.active = [bool]$rawTool.active
+            $binding.sceneInstance = [bool]$rawTool.sceneInstance
+            [void]$bindings.Add($binding)
+        }
+        $resolved = [SceneToolInventory]::Resolve($bindings)
+        foreach ($issue in $resolved.issues) { [void]$sceneInventoryIssues.Add($issue) }
+        $areasRecord = @($records | Where-Object { $null -ne $_.Schema -and $_.Schema.tableName -eq 'KitchenAreas' }) | Select-Object -First 1
+        $toolsRecord = @($records | Where-Object { $null -ne $_.Schema -and $_.Schema.tableName -eq 'Tools' }) | Select-Object -First 1
+        $seenAreaIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+        $areaObjectKeys = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+        foreach ($sceneArea in @($manifest.areas)) {
+            $areaId = [string]$sceneArea.areaId
+            if ([string]::IsNullOrWhiteSpace($areaId) -or -not $seenAreaIds.Add($areaId) -or
+                [string]::IsNullOrWhiteSpace([string]$sceneArea.objectKey) -or
+                -not $areaObjectKeys.Add([string]$sceneArea.objectKey)) {
+                [void]$sceneInventoryIssues.Add("Missing/duplicate area ID or object key: '$areaId'.")
+            }
+            elseif ($null -eq $areasRecord -or $null -eq (Get-RowById $areasRecord 'id' $areaId)) {
+                [void]$sceneInventoryIssues.Add("Scene area '$areaId' has no KitchenAreas row.")
+            }
+        }
+        if ($null -ne $areasRecord) {
+            foreach ($areaRow in $areasRecord.Parse.Table.Rows) {
+                $areaId = Get-ColumnValue $areasRecord $areaRow 'id'
+                if (-not $seenAreaIds.Contains($areaId)) { [void]$sceneInventoryMissingAreaIds.Add($areaId) }
+            }
+        }
+        foreach ($binding in $bindings) {
+            if (-not $binding.sceneInstance) { continue }
+            if (-not $areaObjectKeys.Contains($binding.ownerObjectKey)) {
+                [void]$sceneInventoryIssues.Add("Tool '$($binding.objectKey)' points to an unknown area object.")
+            }
+            $toolRow = if ($null -ne $toolsRecord) { Get-RowById $toolsRecord 'tool_id' $binding.toolId } else { $null }
+            if ($null -eq $toolRow -or (Get-ColumnValue $toolsRecord $toolRow 'tool_kind') -cne $binding.toolKind) {
+                [void]$sceneInventoryIssues.Add("Tool '$($binding.objectKey)' ID/type does not match Tools table.")
+            }
+        }
+        if ($seenAreaIds.Count -eq 0) { [void]$sceneInventoryIssues.Add('Manifest has no scene area instances.') }
+        if ($sceneInventoryIssues.Count -eq 0) {
+            $sceneToolsByArea = $resolved.toolsByArea
+            $sceneInventoryUsable = $true
+            $sceneInventoryVerified = $sceneInventoryMissingAreaIds.Count -eq 0
+            $sceneInventoryStatus = if ($sceneInventoryVerified) { 'VERIFIED' } else { 'PARTIAL' }
+        }
+        else {
+            $sceneInventoryStatus = 'UNVERIFIED'
+        }
+    }
+    catch {
+        [void]$sceneInventoryIssues.Add($_.Exception.Message)
+        $sceneInventoryStatus = 'STALE_OR_INVALID'
+    }
+}
+
 $audits = Invoke-CK01SchemaRules -Records @($records)
 foreach ($record in $records) {
     foreach ($validationError in $record.Result.Errors) {
@@ -937,6 +1054,10 @@ foreach ($record in $records) {
         warnings = @($record.Result.Warnings)
     })
 }
+if (($RequireSceneInventory -or (-not [string]::IsNullOrWhiteSpace($SceneInventoryPath))) -and
+    -not $sceneInventoryUsable) {
+    foreach ($issue in $sceneInventoryIssues) { [void]$allErrors.Add("[SCENE_INVENTORY_UNVERIFIED] $issue") }
+}
 
 $v24RuleCounts = [ordered]@{}
 foreach ($ruleNumber in 1..12) {
@@ -949,6 +1070,13 @@ foreach ($ruleNumber in 1..12) {
 
 $report = [pscustomobject]@{
     isValid = ($allErrors.Count -eq 0)
+    isFullyVerified = (($allErrors.Count -eq 0) -and $sceneInventoryVerified)
+    sceneInventory = [pscustomobject]@{
+        status = $sceneInventoryStatus
+        path = $SceneInventoryPath
+        issues = @($sceneInventoryIssues)
+        missingAreaIds = @($sceneInventoryMissingAreaIds)
+    }
     dataTablesRoot = $DataTablesRoot
     schemaCount = $records.Count
     errors = @($allErrors)
@@ -978,7 +1106,31 @@ if (-not [string]::IsNullOrWhiteSpace($ReportDirectory)) {
 }
 
 if (-not $Quiet) {
-    $report | ConvertTo-Json -Depth 8
+    if ($Quick) {
+        $quickReportPaths = [ordered]@{}
+        if (-not [string]::IsNullOrWhiteSpace($ReportDirectory)) {
+            $quickReportPaths.slotReferences = Join-Path $fullReportDirectory 'CK01-B_slot-reference-report.json'
+            $quickReportPaths.orphanLocalizationKeys = Join-Path $fullReportDirectory 'CK01-B_orphan-localization-warning-report.json'
+            $quickReportPaths.recipeStepChains = Join-Path $fullReportDirectory 'CK01-B_recipe-step-chain-report.json'
+            $quickReportPaths.whitelistCoverage = Join-Path $fullReportDirectory 'CK01-B_recipe-whitelist-coverage-report.json'
+        }
+
+        [pscustomobject]@{
+            isValid = $report.isValid
+            isFullyVerified = $report.isFullyVerified
+            sceneInventory = $report.sceneInventory
+            dataTablesRoot = $report.dataTablesRoot
+            schemaCount = $report.schemaCount
+            errorCount = @($report.errors).Count
+            warningCount = @($report.warnings).Count
+            errors = @($report.errors)
+            warnings = @($report.warnings)
+            reportPaths = [pscustomobject]$quickReportPaths
+        } | ConvertTo-Json -Depth 8
+    }
+    else {
+        $report | ConvertTo-Json -Depth 8
+    }
 }
 
 if (-not $NoExit -and -not $report.isValid) {

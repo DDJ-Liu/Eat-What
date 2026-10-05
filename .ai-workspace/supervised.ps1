@@ -18,9 +18,29 @@ function Get-SupervisionPolicy {
     if ($null -ne $policy) { return $policy }
     # Conservative defaults: source edits can trigger a Unity import/domain reload.
     return [pscustomobject]@{
-        resourceKeys = @(if ($Task.pipeline -in @('ART_AIGC','ART_ASSET')) { 'art-source' } else { 'unity-project' })
+        resourceKeys = @(
+            if ($Task.pipeline -eq 'DATA') { 'data-batch'; 'generated-assets'; 'font-assets' }
+            elseif ($Task.pipeline -in @('ART_AIGC','ART_ASSET')) { 'art-source' }
+            else { 'unity-project' }
+        )
         reviewDependsOn = @(); humanGateAfter = $false; gateApproved = $false
     }
+}
+
+function Get-SupervisionLevel {
+    param($Task)
+    $policy = Get-SupervisionPolicy $Task
+    $configured = [string](Get-ObjectPropertyValue $policy 'supervisionLevel')
+    if ($configured) {
+        Assert-Value ($configured -cin @('light','full')) "Invalid supervision level on task $($Task.id)."
+        return $configured
+    }
+    $keys = @($policy.resourceKeys | ForEach-Object { [string]$_ })
+    if ($Task.pipeline -eq 'CODE' -and $keys.Count -gt 0 -and
+        @($keys | Where-Object { $_ -notin @('workflow-devtools','documentation','read-only') }).Count -eq 0) {
+        return 'light'
+    }
+    return 'full'
 }
 
 function Get-SupervisionResources {
@@ -41,6 +61,19 @@ function Get-SupervisionFingerprint {
         return [BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(($definition | ConvertTo-Json -Depth 15 -Compress))))
     }
     finally { $sha.Dispose() }
+}
+
+function Test-SupervisionReservationRoute {
+    param($Reservation, $Task)
+    $executionTarget = Get-PipelineExecutionTarget ([string]$Task.pipeline)
+    $currentRouteKey = Get-PipelineRouteKey $executionTarget
+    $reservedRouteKey = [string](Get-ObjectPropertyValue $Reservation 'routeKey')
+    if ([string]::IsNullOrWhiteSpace($reservedRouteKey)) {
+        # Backward compatibility for pre-route tickets is limited to static lanes and
+        # the explicit legacy DATA subagent state. A bound DATA thread never accepts it.
+        return ($Task.pipeline -ne 'DATA' -or [int]$executionTarget.routeRevision -eq 0)
+    }
+    return $reservedRouteKey -eq $currentRouteKey
 }
 
 function Test-SupervisionGate {
@@ -113,6 +146,7 @@ function Get-SupervisionSnapshot {
             humanGate = ($task.status -eq 'SUCCEEDED' -and (Test-SupervisionGate $task))
             humanReviewDeferred = ((Test-SupervisionReviewsDeferred $ModeState) -and (Test-SupervisionGate $task))
             resources = @(Get-SupervisionResources $task)
+            supervisionLevel = Get-SupervisionLevel $task
             recoveryCount = @(Get-SupervisionRepairs $task).Count
             verificationStatus = Get-TaskVerificationStatus $task
         }
@@ -228,6 +262,10 @@ function Close-SupervisedRun {
 
 function Invoke-SupervisionAction {
     $m = Read-ModeState; $q = Read-JsonFile $queuePath; $w = Read-JsonFile $workerPath
+    if ($TaskId -and $null -ne (Get-Command Set-WorkflowUsageContext -ErrorAction SilentlyContinue)) {
+        $usagePhase = if ($Action -eq 'Poll') { 'claim' } elseif ($Action -eq 'YieldSupervisionTask') { 'report' } else { 'execute' }
+        Set-WorkflowUsageContext -ContextTaskId $TaskId -ContextLane $Pipeline -ContextPhase $usagePhase
+    }
     if ($Action -eq 'ConfigureSupervisionTask') {
         $t = Get-Task $q $TaskId
         Assert-Value ($null -ne $t -and $t.status -ne 'RUNNING') 'Configure only an existing non-running task.'
@@ -240,10 +278,13 @@ function Invoke-SupervisionAction {
         $oldPolicy = Get-SupervisionPolicy $t
         Assert-Value (-not $oldPolicy.humanGateAfter -or $HumanGateAfter) 'An explicit human gate cannot be removed by delegated authority.'
         Assert-Value (@($oldPolicy.reviewDependsOn | Where-Object { $ReviewDependsOn -notcontains $_ }).Count -eq 0) 'Existing review edges cannot be removed by delegated authority.'
+        $level = if ($SupervisionLevel) { $SupervisionLevel } elseif ($t.pipeline -eq 'CODE' -and
+            @($ResourceKeys | Where-Object { $_ -notin @('workflow-devtools','documentation','read-only') }).Count -eq 0) { 'light' } else { 'full' }
         Set-SupervisedProperty $t 'supervisionPolicy' ([pscustomobject]@{
             resourceKeys = @($ResourceKeys | ForEach-Object { $_.Trim().ToLowerInvariant() } | Select-Object -Unique)
             reviewDependsOn = @($ReviewDependsOn); humanGateAfter = $HumanGateAfter
             gateApproved = [bool]$oldPolicy.gateApproved; reason = $Reason; updatedAt = Get-NowIso
+            supervisionLevel = $level
         })
         Save-JsonFile $queuePath $q
         if ($null -ne $m.PSObject.Properties['supervised']) {
@@ -387,10 +428,46 @@ function Invoke-SupervisionAction {
             $key = [string]$t.errorHistory[-1].kind
         }
         $repairs = @(Get-SupervisionRepairs $t)
-        Assert-Value (@($repairs | Where-Object {$_.problemKey -eq $key}).Count -lt 3 -and $repairs.Count -lt 6) 'Repair budget exhausted; do not reset counters.'
+        $root = Get-RepairRootTask $q $t
+        $budget = Get-RepairBudgetState $q $root
+        $pairedCard = $null
+        if ($PairedRepairTaskId) {
+            $pairedCard = Get-Task $q $PairedRepairTaskId
+            $context = if ($null -ne $pairedCard) { Get-ObjectPropertyValue $pairedCard 'repairContext' } else { $null }
+            Assert-Value ($null -ne $context -and $context.nature -eq 'REPAIR' -and
+                $context.rootTaskId -eq $root.id -and $pairedCard.status -eq 'SUCCEEDED') 'Paired repair must be a succeeded REPAIR card for this root.'
+            Assert-Value (@($t.dependsOn) -contains $PairedRepairTaskId) 'Recovered task must depend on the paired repair card.'
+            Assert-Value (-not $context.pairedRecoveryId) 'Repair card was already paired to a recovery.'
+            Assert-Value (-not [string]::IsNullOrWhiteSpace([string]$pairedCard.completedAt)) 'Paired repair has no completion time.'
+            $latestFailure = @($q.tasks | Where-Object {
+                $_.id -eq $root.id -or $_.repairContext.rootTaskId -eq $root.id
+            } | ForEach-Object { @($_.errorHistory | Where-Object { $_.at }) } |
+                Sort-Object { [DateTimeOffset]::Parse([string]$_.at) } -Descending | Select-Object -First 1)[0]
+            if ($latestFailure) {
+                Assert-Value ([DateTimeOffset]::Parse([string]$pairedCard.completedAt) -gt
+                    [DateTimeOffset]::Parse([string]$latestFailure.at)) 'Paired repair predates the latest failure.'
+            }
+            if ([int]$context.budgetUsedAtEnqueue -ge $budget.limit) {
+                Assert-Value ($context.diagnosisTaskId -and $context.userDecision) 'Post-budget repair card lacks diagnosis and user decision.'
+            }
+        }
+        if ($budget.used -ge $budget.limit -and $null -eq $pairedCard) {
+            Assert-RepairDecision $q $root $DiagnosisTaskId $UserDecision $TaskId
+            Use-RepairDecision $root $DiagnosisTaskId $UserDecision $TaskId
+        }
+        if ($budget.used -lt $budget.limit) {
+            Assert-Value (@($repairs | Where-Object {$_.problemKey -eq $key}).Count -lt 3 -and $repairs.Count -lt 6) 'Repair budget exhausted; do not reset counters.'
+        }
         Assert-Value (@($repairs | Where-Object {$_.problemKey -eq $key -and $_.plan -eq $RepairPlan.Trim()}).Count -eq 0) 'Unchanged repair plan is a blind retry.'
-        $record = [pscustomobject]@{at=Get-NowIso; problemKey=$key; plan=$RepairPlan.Trim(); evidence=$Verification.Trim(); sessionId=$s.sessionId}
+        $record = [pscustomobject]@{repairId=[guid]::NewGuid().ToString('N');at=Get-NowIso; problemKey=$key; plan=$RepairPlan.Trim(); evidence=$Verification.Trim(); sessionId=$s.sessionId;repairTaskId=$PairedRepairTaskId}
+        if ($null -ne $pairedCard) {
+            Set-SupervisedProperty $pairedCard.repairContext 'pairedRecoveryId' $record.repairId
+        }
         Set-SupervisedProperty $t 'supervisionRepairs' @($repairs + $record)
+        if ($null -ne $pairedCard) {
+            $pairedBudget = Get-RepairBudgetState $q $root
+            Assert-Value ($pairedBudget.used -eq $budget.used) 'Pairing a repair and recovery changed the root budget.'
+        }
         $t.status='QUEUED'; $t.claimedAt=$null
         if ($worker.activeTaskId -eq $TaskId) { Clear-SupervisionWorker $worker }
         Save-JsonFile $queuePath $q; Save-JsonFile $workerPath $w
@@ -429,7 +506,8 @@ function Invoke-SupervisionAction {
     $s.reservations = @($s.reservations | Where-Object {
         $reservedTask = Get-Task $q $_.taskId
         $null -ne $reservedTask -and $reservedTask.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and
-        $_.fingerprint -eq (Get-SupervisionFingerprint $reservedTask)
+        $_.fingerprint -eq (Get-SupervisionFingerprint $reservedTask) -and
+        (Test-SupervisionReservationRoute $_ $reservedTask)
     })
     $held = @($q.tasks | Where-Object {$_.status -eq 'RUNNING'} | ForEach-Object { Get-SupervisionResources $_ }) + @(Get-ArtAuditHeldResources)
     if ($Action -eq 'Poll') {
@@ -437,6 +515,7 @@ function Invoke-SupervisionAction {
         Assert-Value ($null -ne $reservation -and -not [string]::IsNullOrWhiteSpace($DispatchToken)) 'Missing, expired, consumed, or revoked dispatch token.'
         Assert-Value ([DateTimeOffset]::Parse($reservation.expiresAt) -gt [DateTimeOffset]::Now) 'Expired dispatch token.'
         $t=Get-Task $q $TaskId; $worker=Get-Worker $w $Pipeline
+        Assert-Value (Test-SupervisionReservationRoute $reservation $t) 'Dispatch token belongs to a previous execution route and is revoked.'
         foreach ($otherReservation in @($s.reservations | Where-Object {$_.taskId -ne $TaskId})) {
             $held += @(Get-SupervisionResources (Get-Task $q $otherReservation.taskId))
         }
@@ -464,14 +543,16 @@ function Invoke-SupervisionAction {
         $resources=@(Get-SupervisionResources $t)
         if (@($resources | Where-Object {$held -contains $_}).Count -gt 0) {continue}
         $token=[Guid]::NewGuid().ToString('N')
-        $s.reservations += [pscustomobject]@{taskId=$t.id; token=$token; fingerprint=(Get-SupervisionFingerprint $t); expiresAt=[DateTimeOffset]::Now.AddMinutes(10).ToString('o')}
+        $executionTarget = Get-PipelineExecutionTarget ([string]$t.pipeline)
+        $routeKey = Get-PipelineRouteKey $executionTarget
+        $s.reservations += [pscustomobject]@{taskId=$t.id; token=$token; fingerprint=(Get-SupervisionFingerprint $t); routeKey=$routeKey; expiresAt=[DateTimeOffset]::Now.AddMinutes(10).ToString('o')}
         $held += $resources
         $message = @"
 监管模式派发 $($t.id)。先读取 .ai-workspace/WORKFLOW.md、.ai-workspace/SUPERVISED.md、对应 .ai-workspace/workers/$($t.pipeline).md 与项目入口。
 仅运行：& .ai-workspace/queue.ps1 -Action Poll -Pipeline $($t.pipeline) -TaskId $($t.id) -TriggerSource SUPERVISED -DispatchToken $token
 只有 CLAIMED 才执行。每批生产写入前 SupervisionCheckpoint；暂停则安全留痕 YieldSupervisionTask。阻断先留证 Fail，ProblemKey 用稳定根因标识；Complete/Fail/Yield 后发送返回的 supervisorHandoff 到控制台并结束，禁止自己派发后继或 AUTOMATIC 接力。控制台已获本任务范围内执行与必要修复授权，人工验收/设计决策及平台安全审批不能代过。
 "@.Trim()
-        $dispatches += [pscustomobject]@{taskId=$t.id; pipeline=$t.pipeline; threadId=$pipelineThreads[[string]$t.pipeline]; token=$token; message=$message}
+        $dispatches += [pscustomobject]@{taskId=$t.id; pipeline=$t.pipeline; executorKind=$executionTarget.executorKind; threadId=$executionTarget.threadId; routeRevision=$executionTarget.routeRevision; token=$token; message=$message}
     }
     $s.lastSweepAt=Get-NowIso; Save-JsonFile $modePath $m
     Write-Result @{action='SUPERVISION_DISPATCH'; dispatches=$dispatches; snapshot=(Get-SupervisionSnapshot $m $q $w)}

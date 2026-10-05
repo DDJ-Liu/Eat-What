@@ -16,11 +16,14 @@ MonoBehaviour:
   next_step_id: step_te_04
   display_text_key: step_te_03.text
   standard_ingredients:
-  - ing_egg
+  - prd_egg_liquid
   standard_tools:
   - tool_pan
   - tool_spatula
   trigger_items:
   - prd_scrambled_egg
+  - prd_danhuangpai_sui
   permanent_trigger_items:
+  - prd_tomato_egg_dish
   - prd_tomato_egg_soup
+  - prd_ofanqie_danhuangpai

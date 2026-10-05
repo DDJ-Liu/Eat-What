@@ -1,10 +1,10 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
+    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
     [string]$Action,
 
-    [ValidateSet('ENGINE_MCP', 'CODE', 'ART_AIGC', 'ART_ASSET', 'ART')]
+    [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET', 'ART')]
     [string]$Pipeline,
 
     [string]$Title,
@@ -15,6 +15,7 @@ param(
     [string]$Summary,
     [string[]]$Artifacts = @(),
     [string]$Verification,
+    [string]$AcceptancePath,
     [string]$Reason,
     [ValidateSet('SUPERSEDED', 'TECHNICAL_REVIEW_WAIVED')]
     [string]$ClosureReason,
@@ -43,13 +44,23 @@ param(
     [string]$ArtTriggerKey,
     [string]$SnapshotPath,
     [string]$ReportPath,
+    [string]$RoundId,
+    [string]$RoundManifestPath,
     [string]$DispatchToken,
-    [ValidateSet('ENGINE_MCP', 'CODE', 'ART_AIGC', 'ART_ASSET')]
+    [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET')]
     [string[]]$IdlePipelines = @(),
     [string[]]$ResourceKeys = @(),
+    [ValidateSet('light', 'full')]
+    [string]$SupervisionLevel,
     [string[]]$ReviewDependsOn = @(),
     [bool]$HumanGateAfter = $false,
     [string]$ProblemKey,
+    [ValidateSet('FEATURE', 'REPAIR', 'READONLY_DIAGNOSIS')]
+    [string]$WorkKind = 'FEATURE',
+    [string]$ParentTaskId,
+    [string]$DiagnosisTaskId,
+    [string]$PairedRecoveryId,
+    [string]$PairedRepairTaskId,
     [string]$RepairPlan,
     [string]$UserDecision,
     [ValidateSet('TASK', 'HUMAN', 'GLOBAL')]
@@ -76,23 +87,104 @@ param(
 $ErrorActionPreference = 'Stop'
 if($Pipeline -eq 'ART'){$Pipeline='ART_ASSET'}
 $workspaceRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $workspaceRoot
 $queuePath = Join-Path $workspaceRoot 'runtime\queue-state.json'
 $workerPath = Join-Path $workspaceRoot 'runtime\worker-state.json'
 $modePath = Join-Path $workspaceRoot 'runtime\mode-state.json'
 $ledgerPath = Join-Path $workspaceRoot 'INSTRUCTIONS.md'
 $pendingReviewPath = Join-Path $workspaceRoot 'PENDING_REVIEW.md'
+. (Join-Path $workspaceRoot 'repair-budget.ps1')
+$usageLibrary = Join-Path $projectRoot 'DevTools\Workflow\UsageMetrics.ps1'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$script:workflowUsageContext = $null
+if (Test-Path -LiteralPath $usageLibrary) { . $usageLibrary }
 $pipelineThreads = [ordered]@{
     CODE = '01a01316-9760-7911-a5d6-ac155907dddb'
     ENGINE_MCP = '01a01316-2d47-7861-9012-5ab5d3fd8458'
     ART_AIGC = '01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8'
     ART_ASSET = '01a07f70-c76d-72c3-8ad4-08dc6ec14538'
+    DATA = $null
 }
+$controllerThreads = @(
+    '01a08798-8b2a-7d41-9aa8-ab44affd520a',
+    '01a01321-2354-7b01-b5d1-f971a30d44b0'
+)
 $pipelineAutomations = @('ai-10', 'ai-mcp-10', 'ai-aigc-10', 'ai-10-2')
 
 function Assert-Value {
     param([bool]$Condition, [string]$Message)
     if (-not $Condition) { throw $Message }
+}
+
+function Get-PipelineExecutionTarget {
+    param([string]$Lane)
+    if ($Lane -eq 'DATA') {
+        $workerState = Read-JsonFile $workerPath
+        $dataProperty = $workerState.workers.PSObject.Properties['DATA']
+        if ($null -eq $dataProperty) {
+            return [pscustomobject][ordered]@{ executorKind='CONTROL_SUBAGENT'; threadId=$null; routeRevision=0; routeState='LEGACY_UNREGISTERED' }
+        }
+
+        $dataWorker = $dataProperty.Value
+        $executorKind = [string](Get-ObjectPropertyValue $dataWorker 'executorKind')
+        $threadId = [string](Get-ObjectPropertyValue $dataWorker 'threadId')
+        $revisionValue = Get-ObjectPropertyValue $dataWorker 'routeRevision'
+        $routeHistory = @((Get-ObjectPropertyValue $dataWorker 'routeHistory') | Where-Object { $null -ne $_ })
+        $routeBoundAt = [string](Get-ObjectPropertyValue $dataWorker 'routeBoundAt')
+        if (($executorKind -eq 'CONTROL_SUBAGENT' -or [string]::IsNullOrWhiteSpace($executorKind)) -and
+            [string]::IsNullOrWhiteSpace($threadId) -and $null -eq $revisionValue -and
+            $routeHistory.Count -eq 0 -and [string]::IsNullOrWhiteSpace($routeBoundAt)) {
+            return [pscustomobject][ordered]@{ executorKind='CONTROL_SUBAGENT'; threadId=$null; routeRevision=0; routeState='LEGACY_REGISTERED' }
+        }
+
+        Assert-Value ($executorKind -eq 'THREAD') 'DATA route is bound but executorKind is missing or invalid. Refusing legacy fallback.'
+        Assert-Value (Test-CodexThreadId $threadId) 'DATA route is bound but threadId is missing or invalid. Refusing legacy fallback.'
+        Assert-Value ($null -ne $revisionValue -and [int]$revisionValue -ge 1) 'DATA route is bound but routeRevision is missing or invalid. Refusing legacy fallback.'
+        return [pscustomobject][ordered]@{ executorKind='THREAD'; threadId=$threadId; routeRevision=[int]$revisionValue; routeState='BOUND' }
+    }
+    if ($Lane -in @('CODE','ENGINE_MCP')) {
+        $routeWorkers = Read-JsonFile $workerPath
+        $routeWorker = Get-Worker $routeWorkers $Lane
+        $boundThread = [string](Get-ObjectPropertyValue $routeWorker 'threadId')
+        $boundRevision = Get-ObjectPropertyValue $routeWorker 'routeRevision'
+        if ($boundThread -or $null -ne $boundRevision) {
+            Assert-Value ((Get-ObjectPropertyValue $routeWorker 'executorKind') -eq 'THREAD' -and (Test-CodexThreadId $boundThread) -and $null -ne $boundRevision -and [int]$boundRevision -ge 1) 'Bound execution route is incomplete; refusing static fallback.'
+            return [pscustomobject]@{executorKind='THREAD';threadId=$boundThread;routeRevision=[int]$boundRevision;routeState='BOUND'}
+        }
+    }
+    return [pscustomobject][ordered]@{ executorKind='THREAD'; threadId=[string]$pipelineThreads[$Lane]; routeRevision=0; routeState='STATIC' }
+}
+
+function Test-CodexThreadId {
+    param([string]$Value)
+    if ([string]::IsNullOrWhiteSpace($Value)) { return $false }
+    $parsed = [Guid]::Empty
+    return [Guid]::TryParse($Value, [ref]$parsed)
+}
+
+function Get-PipelineRouteKey {
+    param([object]$ExecutionTarget)
+    $threadValue = if ($null -eq $ExecutionTarget.threadId) { '' } else { [string]$ExecutionTarget.threadId }
+    return '{0}|{1}|{2}' -f ([string]$ExecutionTarget.executorKind), $threadValue, ([int]$ExecutionTarget.routeRevision)
+}
+
+function Set-ObjectPropertyValue {
+    param([object]$Object, [string]$Name, [object]$Value)
+    $property = $Object.PSObject.Properties[$Name]
+    if ($null -eq $property) { $Object | Add-Member -NotePropertyName $Name -NotePropertyValue $Value }
+    else { $property.Value = $Value }
+}
+
+function Get-DataTablesCsvSummaryHash {
+    param([string]$Root)
+    Assert-Value (Test-Path -LiteralPath $Root -PathType Container) "Missing DataTables root: $Root"
+    $rows = @(Get-ChildItem -LiteralPath $Root -Recurse -File -Filter '*.csv' | ForEach-Object {
+        $relative = [IO.Path]::GetRelativePath($Root, $_.FullName).Replace('\','/')
+        "$relative|$((Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash)"
+    } | Sort-Object)
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try { return [Convert]::ToHexString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(($rows -join "`n")))) }
+    finally { $sha.Dispose() }
 }
 
 function Read-JsonFile {
@@ -114,9 +206,112 @@ function Save-JsonFile {
     Save-TextFile $Path ($json + [Environment]::NewLine)
 }
 
+function Set-WorkflowUsageContext {
+    param(
+        [string]$ContextTaskId,
+        [string]$ContextLane,
+        [ValidateSet('claim', 'execute', 'verify', 'report')][string]$ContextPhase
+    )
+    $script:workflowUsageContext = [pscustomobject]@{
+        taskId = $ContextTaskId
+        lane = $ContextLane
+        phase = $ContextPhase
+    }
+}
+
+function Get-WorkflowUsagePhase {
+    param([string]$ActionName)
+    if ($ActionName -in @('Enqueue', 'ConsumeDataRound', 'Poll', 'BeginArtAudit')) { return 'claim' }
+    if ($ActionName -in @('ResolveVerification', 'RecordHistoricalVerification', 'RejectVerification', 'CloseWithoutAcceptance', 'PendingReview')) { return 'verify' }
+    if ($ActionName -in @('Complete', 'Fail', 'YieldSupervisionTask', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit')) { return 'report' }
+    return 'execute'
+}
+
 function Write-Result {
     param([object]$Value)
-    $Value | ConvertTo-Json -Depth 30
+    $json = $Value | ConvertTo-Json -Depth 30
+    if ($Action -in @('Poll', 'Complete', 'SupervisionCheckpoint')) {
+        $receiptTask = Get-ObjectPropertyValue $Value 'task'
+        $receiptTaskId = if ($null -ne $receiptTask) { [string]$receiptTask.id } else { [string]$TaskId }
+        if ([string]::IsNullOrWhiteSpace($receiptTaskId)) { $receiptTaskId = 'NO_TASK' }
+        $receiptRoot = Join-Path $workspaceRoot ("outputs/task-receipts/{0}" -f $receiptTaskId)
+        [void][IO.Directory]::CreateDirectory($receiptRoot)
+        $receiptName = '{0}-{1}-{2}.json' -f ([DateTimeOffset]::Now.ToString('yyyyMMddTHHmmssfff')), $Action, [guid]::NewGuid().ToString('N')
+        $receiptPath = Join-Path $receiptRoot $receiptName
+        Save-TextFile $receiptPath ($json + [Environment]::NewLine)
+        $compact = [ordered]@{
+            action = [string](Get-ObjectPropertyValue $Value 'action')
+            taskId = $receiptTaskId
+            pipeline = $(if ($null -ne $receiptTask) { [string]$receiptTask.pipeline } else { [string]$Pipeline })
+            task = $(if ($null -ne $receiptTask) { [ordered]@{ id=[string]$receiptTask.id; pipeline=[string]$receiptTask.pipeline; status=[string]$receiptTask.status; attempts=[int]$receiptTask.attempts } } else { $null })
+            leaseUntil = Get-ObjectPropertyValue $Value 'leaseUntil'
+            receiptPath = $receiptPath
+        }
+        foreach ($name in @('autoHandoff', 'supervisorHandoff')) {
+            $handoff = Get-ObjectPropertyValue $Value $name
+            if ($null -eq $handoff) { $compact[$name] = $null; continue }
+            $handoffPath = Join-Path $receiptRoot ($receiptName.Replace('.json', "-$name.txt"))
+            if (-not [string]::IsNullOrWhiteSpace([string]$handoff.message)) {
+                Save-TextFile $handoffPath ([string]$handoff.message)
+            }
+            $compact[$name] = [ordered]@{
+                action = [string]$handoff.action
+                taskId = Get-ObjectPropertyValue $handoff 'taskId'
+                pipeline = Get-ObjectPropertyValue $handoff 'pipeline'
+                threadId = Get-ObjectPropertyValue $handoff 'threadId'
+                messagePath = $(if (Test-Path -LiteralPath $handoffPath) { $handoffPath } else { $null })
+            }
+        }
+        $json = $compact | ConvertTo-Json -Depth 8 -Compress
+        Assert-Value ([Text.Encoding]::UTF8.GetByteCount($json) -le 2048) 'Queue compact receipt exceeds 2KB.'
+    }
+
+    # Queue actions can observe their own invocation and UTF-8 response bytes,
+    # but not provider token accounting or tools executed outside this process.
+    # Logging is best-effort so a telemetry I/O failure never makes a completed
+    # state mutation look as though it should be replayed.
+    if ($null -ne (Get-Command Write-TaskUsageRecord -ErrorAction SilentlyContinue)) {
+        try {
+            $taskObject = Get-ObjectPropertyValue $Value 'task'
+            $recordTaskId = if ($script:workflowUsageContext -and $script:workflowUsageContext.taskId) {
+                [string]$script:workflowUsageContext.taskId
+            }
+            elseif ($null -ne $taskObject) { [string](Get-ObjectPropertyValue $taskObject 'id') }
+            elseif (Get-ObjectPropertyValue $Value 'taskId') { [string](Get-ObjectPropertyValue $Value 'taskId') }
+            else { [string]$TaskId }
+
+            if (-not [string]::IsNullOrWhiteSpace($recordTaskId)) {
+                $recordLane = if ($script:workflowUsageContext -and $script:workflowUsageContext.lane) {
+                    [string]$script:workflowUsageContext.lane
+                }
+                elseif ($null -ne $taskObject) { [string](Get-ObjectPropertyValue $taskObject 'pipeline') }
+                else { [string]$Pipeline }
+                if ([string]::IsNullOrWhiteSpace($recordLane)) { $recordLane = 'CONTROL' }
+                $recordPhase = if ($script:workflowUsageContext -and $script:workflowUsageContext.phase) {
+                    [string]$script:workflowUsageContext.phase
+                }
+                else { Get-WorkflowUsagePhase $Action }
+                $model = if (-not [string]::IsNullOrWhiteSpace($env:CODEX_MODEL)) { $env:CODEX_MODEL } elseif (-not [string]::IsNullOrWhiteSpace($env:OPENAI_MODEL)) { $env:OPENAI_MODEL } else { $null }
+                $responseBytes = [System.Text.Encoding]::UTF8.GetByteCount($json)
+                Write-TaskUsageRecord -TaskId $recordTaskId -Lane $recordLane -Phase $recordPhase `
+                    -Event ("queue:{0}" -f $Action) -Model $model -InputTokens $null -OutputTokens $null `
+                    -ToolCallCount 1 -ToolResultBytes $responseBytes -Source '.ai-workspace/queue.ps1:Write-Result' `
+                    -Coverage 'One queue lifecycle invocation and its JSON response only; provider tokens and non-queue tools are outside this process.' `
+                    -UnavailableReason @{
+                        model = 'Neither CODEX_MODEL nor OPENAI_MODEL was exposed to this process.'
+                        inputTokens = 'Provider input-token usage was not exposed to queue.ps1.'
+                        outputTokens = 'Provider output-token usage was not exposed to queue.ps1.'
+                    } `
+                    -Metadata @{ action=$Action; resultAction=[string](Get-ObjectPropertyValue $Value 'action'); triggerSource=$TriggerSource; hostVersion=$PSVersionTable.PSVersion.ToString() } `
+                    -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Out-Null
+            }
+        }
+        catch {
+            # Deliberately do not emit a warning on stdout: queue callers require
+            # one parseable JSON document and must not replay a completed write.
+        }
+    }
+    $json
 }
 
 function Get-Worker {
@@ -124,6 +319,48 @@ function Get-Worker {
     $property = $WorkerState.workers.PSObject.Properties[$WorkerPipeline]
     Assert-Value ($null -ne $property) "Unknown worker pipeline: $WorkerPipeline"
     return $property.Value
+}
+
+function Get-DataLaneStatusSnapshot {
+    $workers = Read-JsonFile $workerPath
+    $queue = Read-JsonFile $queuePath
+    $modeState = Read-ModeState
+    $dataProperty = $workers.workers.PSObject.Properties['DATA']
+    $dataWorker = if ($null -eq $dataProperty) { $null } else { $dataProperty.Value }
+    $executionTarget = Get-PipelineExecutionTarget 'DATA'
+    $runningTasks = @($queue.tasks | Where-Object { $_.pipeline -eq 'DATA' -and $_.status -eq 'RUNNING' })
+    $reservations = @()
+    $supervised = Get-ObjectPropertyValue $modeState 'supervised'
+    if ($null -ne $supervised) {
+        foreach ($reservation in @((Get-ObjectPropertyValue $supervised 'reservations'))) {
+            $reservedTask = Get-Task $queue ([string](Get-ObjectPropertyValue $reservation 'taskId'))
+            if ($null -ne $reservedTask -and $reservedTask.pipeline -eq 'DATA') { $reservations += $reservation }
+        }
+    }
+    $automaticTask = $null
+    $automatic = Get-ObjectPropertyValue $modeState 'automatic'
+    if ($modeState.mode -eq 'AUTOMATIC' -and $null -ne $automatic -and
+        [string](Get-ObjectPropertyValue $automatic 'status') -in @('READY','RUNNING')) {
+        $automaticTask = Get-Task $queue ([string](Get-ObjectPropertyValue $automatic 'currentTaskId'))
+        if ($null -ne $automaticTask -and $automaticTask.pipeline -ne 'DATA') { $automaticTask = $null }
+    }
+    $workerIdle = $null -ne $dataWorker -and $dataWorker.status -eq 'IDLE' -and
+        [string]::IsNullOrWhiteSpace([string]$dataWorker.activeTaskId) -and
+        [string]::IsNullOrWhiteSpace([string]$dataWorker.leaseUntil)
+    return [pscustomobject][ordered]@{
+        action = 'DATA_LANE_STATUS'
+        pipeline = 'DATA'
+        registered = ($null -ne $dataWorker)
+        bound = ($executionTarget.routeState -eq 'BOUND')
+        executionTarget = $executionTarget
+        worker = $dataWorker
+        runningTaskIds = @($runningTasks | ForEach-Object { $_.id })
+        reservations = @($reservations)
+        pendingAutomaticTaskId = if ($null -eq $automaticTask) { $null } else { [string]$automaticTask.id }
+        safeToBind = ($workerIdle -and $runningTasks.Count -eq 0 -and $reservations.Count -eq 0 -and $null -eq $automaticTask)
+        externalReachabilityVerified = $false
+        externalReachabilityNote = 'Thread format is validated locally. Reachability and real idle state require controller/app evidence supplied through -Verification.'
+    }
 }
 
 function Get-Task {
@@ -169,9 +406,52 @@ function Get-TaskIssues {
 function Get-ObjectPropertyValue {
     param([object]$Object, [string]$Name)
     if ($null -eq $Object) { return $null }
+    if ($Object -is [System.Collections.IDictionary]) {
+        if ($Object.Contains($Name)) { return $Object[$Name] }
+        return $null
+    }
     $property = $Object.PSObject.Properties[$Name]
     if ($null -eq $property) { return $null }
     return $property.Value
+}
+
+function Get-RepairRootTask {
+    param($QueueState, $Candidate)
+    $context = Get-ObjectPropertyValue $Candidate 'repairContext'
+    $rootId = if ($null -ne $context) { [string]$context.rootTaskId } else { [string]$Candidate.id }
+    $rootTask = Get-Task $QueueState $rootId
+    Assert-Value ($null -ne $rootTask) "Repair root is missing: $rootId"
+    return $rootTask
+}
+
+function Assert-RepairDecision {
+    param($QueueState, $RootTask, [string]$DiagnosisId, [string]$Decision, [string]$TargetId)
+    Assert-Value (-not [string]::IsNullOrWhiteSpace($DiagnosisId) -and -not [string]::IsNullOrWhiteSpace($Decision)) 'Repair budget exhausted: READONLY_DIAGNOSIS and explicit user decision are required.'
+    $diagnosis = Get-Task $QueueState $DiagnosisId
+    $context = Get-ObjectPropertyValue $diagnosis 'repairContext'
+    Assert-Value ($null -ne $diagnosis -and $diagnosis.status -eq 'SUCCEEDED' -and
+        $null -ne $context -and $context.nature -eq 'READONLY_DIAGNOSIS' -and
+        $context.rootTaskId -eq $RootTask.id) 'Diagnosis must be a completed read-only task for the same repair root.'
+    $latestFailure = @($QueueState.tasks | Where-Object {
+        $_.id -eq $RootTask.id -or $_.repairContext.rootTaskId -eq $RootTask.id
+    } | ForEach-Object { @($_.errorHistory | Where-Object { $_.at }) } |
+        Sort-Object { [DateTimeOffset]::Parse([string]$_.at) } -Descending | Select-Object -First 1)[0]
+    if ($latestFailure) {
+        Assert-Value ([DateTimeOffset]::Parse([string]$diagnosis.completedAt) -gt
+            [DateTimeOffset]::Parse([string]$latestFailure.at)) 'Diagnosis predates the latest failure; a fresh read-only diagnosis is required.'
+    }
+    $uses = @((Get-ObjectPropertyValue $RootTask 'repairApprovals') | Where-Object {
+        $_.diagnosisTaskId -eq $DiagnosisId
+    })
+    Assert-Value (@($uses | Where-Object { $_.targetTaskId -ne $TargetId -or $_.decision -cne $Decision }).Count -eq 0) 'Diagnosis decision already consumed by another repair.'
+}
+
+function Use-RepairDecision {
+    param($RootTask, [string]$DiagnosisId, [string]$Decision, [string]$TargetId)
+    $uses = @((Get-ObjectPropertyValue $RootTask 'repairApprovals') | Where-Object { $null -ne $_ })
+    if (@($uses | Where-Object { $_.diagnosisTaskId -eq $DiagnosisId }).Count -gt 0) { return }
+    $record = [pscustomobject]@{ diagnosisTaskId=$DiagnosisId;decision=$Decision;targetTaskId=$TargetId;consumedAt=Get-NowIso }
+    $RootTask | Add-Member -NotePropertyName repairApprovals -NotePropertyValue @($uses + $record) -Force
 }
 
 function Get-NormalizedModuleId {
@@ -214,7 +494,7 @@ function Get-TaskStatusAggregate {
     foreach ($task in @($Tasks)) {
         if ($null -ne $task) { [void]$materializedTasks.Add($task) }
     }
-    $taskStatusNames = @('QUEUED', 'BLOCKED_DEPENDENCY', 'RUNNING', 'PAUSED_CIRCUIT', 'NEEDS_USER', 'SUCCEEDED', 'CANCELLED')
+    $taskStatusNames = @('QUEUED', 'BLOCKED_DEPENDENCY', 'RUNNING', 'PAUSED_CIRCUIT', 'NEEDS_USER', 'SUCCEEDED', 'CANCELLED', 'CLOSED_SUPERSEDED')
     $verificationStatusNames = @('PENDING_USER', 'REJECTED', 'VERIFIED', 'CLOSED_WITHOUT_ACCEPTANCE', 'NONE')
     $taskStatuses = [ordered]@{}
     $verificationStatuses = [ordered]@{}
@@ -267,6 +547,7 @@ function Get-PendingReviewItem {
         $manualSteps = @('请审阅完成摘要、验证证据和产物路径，并在对应流水线线程按固定格式回复。')
     }
 
+    $executionTarget = Get-PipelineExecutionTarget ([string]$Task.pipeline)
     return [pscustomobject][ordered]@{
         taskId = [string]$Task.id
         moduleId = Get-TaskModuleId $Task
@@ -278,7 +559,9 @@ function Get-PendingReviewItem {
         artifacts = @((Get-ObjectPropertyValue $result 'artifacts') | Where-Object { $null -ne $_ })
         verification = [string](Get-ObjectPropertyValue $result 'verification')
         manualReviewSteps = @($manualSteps)
-        targetThreadId = [string]$pipelineThreads[[string]$Task.pipeline]
+        executorKind = $executionTarget.executorKind
+        targetThreadId = $executionTarget.threadId
+        routeRevision = $executionTarget.routeRevision
         approveReply = "验收通过 $($Task.id)：<备注>"
         rejectReply = "验收不通过 $($Task.id)：<原因>"
     }
@@ -294,11 +577,13 @@ function Get-PendingReviewSnapshot {
     } | Sort-Object pipeline, sequence | ForEach-Object { Get-PendingReviewItem $_ })
 
     $groups = @()
-    foreach ($reviewPipeline in @('CODE', 'ENGINE_MCP', 'ART_AIGC', 'ART_ASSET')) {
+    foreach ($reviewPipeline in @('CODE', 'ENGINE_MCP', 'DATA', 'ART_AIGC', 'ART_ASSET')) {
         $pipelineItems = @($items | Where-Object { $_.pipeline -eq $reviewPipeline })
         $groups += [pscustomobject][ordered]@{
             pipeline = $reviewPipeline
-            threadId = [string]$pipelineThreads[$reviewPipeline]
+            executorKind = (Get-PipelineExecutionTarget $reviewPipeline).executorKind
+            threadId = (Get-PipelineExecutionTarget $reviewPipeline).threadId
+            routeRevision = (Get-PipelineExecutionTarget $reviewPipeline).routeRevision
             pendingUser = @($pipelineItems | Where-Object { $_.verificationStatus -eq 'PENDING_USER' })
             rejected = @($pipelineItems | Where-Object { $_.verificationStatus -eq 'REJECTED' })
         }
@@ -422,7 +707,7 @@ function Get-AutomaticTaskOrder {
     $selected = @{}
     $requested = @($RequestedTaskIds | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)
     if ($requested.Count -eq 0) {
-        foreach ($candidate in @($QueueState.tasks | Where-Object { $_.status -notin @('SUCCEEDED', 'CANCELLED') })) {
+        foreach ($candidate in @($QueueState.tasks | Where-Object { $_.status -notin @('SUCCEEDED', 'CANCELLED', 'CLOSED_SUPERSEDED') })) {
             $selected[[string]$candidate.id] = $true
         }
     }
@@ -439,12 +724,12 @@ function Get-AutomaticTaskOrder {
             if ($selected.ContainsKey($currentId)) { continue }
 
             $currentTask = Get-Task $QueueState $currentId
-            if ($currentTask.status -in @('SUCCEEDED', 'CANCELLED')) { continue }
+            if ($currentTask.status -in @('SUCCEEDED', 'CANCELLED', 'CLOSED_SUPERSEDED')) { continue }
             $selected[$currentId] = $true
             foreach ($dependencyId in @($currentTask.dependsOn)) {
                 $dependencyTask = Get-Task $QueueState $dependencyId
                 Assert-Value ($null -ne $dependencyTask) "Dependency does not exist: $dependencyId"
-                if ($dependencyTask.status -notin @('SUCCEEDED', 'CANCELLED')) {
+                if ($dependencyTask.status -notin @('SUCCEEDED', 'CANCELLED', 'CLOSED_SUPERSEDED')) {
                     [void]$toVisit.Add([string]$dependencyId)
                 }
             }
@@ -495,12 +780,12 @@ function Get-AutomaticHandoff {
     Assert-Value ($null -ne $currentTask) "Automatic chain task not found: $($ModeState.automatic.currentTaskId)"
     $artBlocks=@(Get-ArtDailyBlockers $currentTask)
     if($artBlocks.Count){return [pscustomobject]@{action='WAITING_USER';taskId=$currentTask.id;blockers=$artBlocks;reason='ART_DEPLOYMENT_BLOCKED'}}
-    $threadId = [string]$pipelineThreads[[string]$currentTask.pipeline]
+    $executionTarget = Get-PipelineExecutionTarget ([string]$currentTask.pipeline)
     $message = @"
 自动模式任务接力：从 $($currentTask.id)（$($currentTask.pipeline)）开始；首次只领取该任务。后续仅按 Complete 返回的 autoHandoff 接力。
 
 在 D:\GameProject\Eat-What 阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md 和对应 workers 文档，然后运行：
-powershell -NoProfile -ExecutionPolicy Bypass -File .ai-workspace/queue.ps1 -Action Poll -Pipeline $($currentTask.pipeline) -TaskId $($currentTask.id) -TriggerSource AUTOMATIC -LeaseMinutes 30
+使用当前宿主的 PowerShell 7（pwsh.exe），在项目根执行：& './.ai-workspace/queue.ps1' -Action Poll -Pipeline $($currentTask.pipeline) -TaskId $($currentTask.id) -TriggerSource AUTOMATIC -LeaseMinutes 30
 
 只有返回 CLAIMED/CLAIMED_RETRY 才执行。领取后把队列 activeTaskId 视为跨上下文压缩的权威身份：若发生 compaction，先由 Status 恢复该任务并重读其队列指令，不再次 Poll，不得让更早用户消息覆盖它；RUNNING 且租约未到期时禁止误报 ORPHANED_RUN。成功时照常调用 Complete。Complete 返回 autoHandoff.action=TRIGGER_TASK 时：若 autoHandoff.threadId 就是当前任务线程（即下一项仍属同一流水线），禁止在活动轮次中向自身调用 send_message_to_thread；应直接在当前轮按 autoHandoff.taskId、pipeline 和 AUTOMATIC 来源再 Poll 一次，领取后继续执行。若目标是其它流水线线程，才把完整 autoHandoff.message 发送到指定 threadId。返回 CHAIN_COMPLETE 时结束。遇到问题先自行诊断并尝试安全修复；修复失败后再按 WORKFLOW.md 分级。测试表现异常或测试触发失败使用 TEST_OBSERVATION/TEST_TRIGGER 记录并交给用户人工验证，不调用 Fail，也不阻止后续接力。其它非阻碍问题 RecordIssue 后继续；只有阻断问题才 Fail，Fail 后不得触发后续任务并等待用户介入。
 "@.Trim()
@@ -510,7 +795,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .ai-workspace/queue.ps1 -Act
         chainId = $ModeState.automatic.chainId
         taskId = $currentTask.id
         pipeline = $currentTask.pipeline
-        threadId = $threadId
+        executorKind = $executionTarget.executorKind
+        threadId = $executionTarget.threadId
+        routeRevision = $executionTarget.routeRevision
         message = $message
     }
 }
@@ -726,6 +1013,137 @@ try {
         if ($Action -match 'ArtAudit|^RegisterArtAssetLane$') { Invoke-ArtAuditAction; return }
     }
 
+    if ($Action -in @('BindExecutionPipeline','SupersedeTask')) {
+        . (Join-Path $workspaceRoot 'control-administration.ps1')
+        Invoke-ControlAdministration
+        return
+    }
+    if ($Action -eq 'DataLaneStatus') {
+        Write-Result (Get-DataLaneStatusSnapshot)
+        return
+    }
+
+    if ($Action -eq 'BindDataPipeline') {
+        Assert-Value (Test-CodexThreadId $PipelineThreadId) 'PipelineThreadId must be a non-empty valid thread UUID.'
+        $modeState = Read-ModeState
+        $forbiddenThreadIds = @($pipelineThreads.Values | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }) + @($controllerThreads)
+        $supervised = Get-ObjectPropertyValue $modeState 'supervised'
+        if ($null -ne $supervised) {
+            $controllerThreadId = [string](Get-ObjectPropertyValue $supervised 'controllerThreadId')
+            if (-not [string]::IsNullOrWhiteSpace($controllerThreadId)) { $forbiddenThreadIds += $controllerThreadId }
+        }
+        Assert-Value ($forbiddenThreadIds -notcontains $PipelineThreadId) 'PipelineThreadId must not reuse CODE, ENGINE_MCP, ART, or controller routing.'
+
+        $workers = Read-JsonFile $workerPath
+        $queue = Read-JsonFile $queuePath
+        $dataWorker = Get-Worker $workers 'DATA'
+        $beforeTarget = Get-PipelineExecutionTarget 'DATA'
+        if ($beforeTarget.routeState -eq 'BOUND' -and $beforeTarget.threadId -eq $PipelineThreadId) {
+            Write-Result ([ordered]@{
+                action='DATA_PIPELINE_ALREADY_BOUND'; pipeline='DATA'; changed=$false
+                executionTarget=$beforeTarget; status=(Get-DataLaneStatusSnapshot)
+            })
+            return
+        }
+
+        Assert-Value (-not [string]::IsNullOrWhiteSpace($UserDecision)) 'UserDecision is required for a new or replacement DATA binding.'
+        Assert-Value (-not [string]::IsNullOrWhiteSpace($Verification)) 'Verification is required and must describe controller/app reachability and idle evidence.'
+        Assert-Value ($dataWorker.status -eq 'IDLE') 'DATA worker must be IDLE before binding.'
+        Assert-Value ([string]::IsNullOrWhiteSpace([string]$dataWorker.activeTaskId)) 'DATA worker activeTaskId must be empty before binding.'
+        Assert-Value ([string]::IsNullOrWhiteSpace([string]$dataWorker.leaseUntil)) 'DATA worker leaseUntil must be empty before binding.'
+        Assert-Value (@($queue.tasks | Where-Object { $_.pipeline -eq 'DATA' -and $_.status -eq 'RUNNING' }).Count -eq 0) 'A RUNNING DATA task prevents binding.'
+
+        $reservations = @()
+        if ($null -ne $supervised) {
+            foreach ($reservation in @((Get-ObjectPropertyValue $supervised 'reservations'))) {
+                $reservedTask = Get-Task $queue ([string](Get-ObjectPropertyValue $reservation 'taskId'))
+                if ($null -ne $reservedTask -and $reservedTask.pipeline -eq 'DATA') { $reservations += $reservation }
+            }
+        }
+        Assert-Value ($reservations.Count -eq 0) 'An unconsumed DATA supervision reservation prevents binding; revoke or reconcile the old ticket first.'
+        $automatic = Get-ObjectPropertyValue $modeState 'automatic'
+        if ($modeState.mode -eq 'AUTOMATIC' -and $null -ne $automatic -and
+            [string](Get-ObjectPropertyValue $automatic 'status') -in @('READY','RUNNING')) {
+            $automaticTask = Get-Task $queue ([string](Get-ObjectPropertyValue $automatic 'currentTaskId'))
+            Assert-Value ($null -eq $automaticTask -or $automaticTask.pipeline -ne 'DATA') 'A pending or running automatic DATA handoff prevents binding; finish or explicitly rebuild the chain first.'
+        }
+
+        $boundAt = Get-NowIso
+        $nextRevision = if ($beforeTarget.routeState -eq 'BOUND') { [int]$beforeTarget.routeRevision + 1 } else { 1 }
+        $afterTarget = [pscustomobject][ordered]@{executorKind='THREAD';threadId=$PipelineThreadId;routeRevision=$nextRevision;routeState='BOUND'}
+        $history = @((Get-ObjectPropertyValue $dataWorker 'routeHistory') | Where-Object { $null -ne $_ })
+        $history += [pscustomobject][ordered]@{
+            at=$boundAt
+            before=[pscustomobject][ordered]@{executorKind=$beforeTarget.executorKind;threadId=$beforeTarget.threadId;routeRevision=$beforeTarget.routeRevision;routeState=$beforeTarget.routeState}
+            after=[pscustomobject][ordered]@{executorKind=$afterTarget.executorKind;threadId=$afterTarget.threadId;routeRevision=$afterTarget.routeRevision;routeState=$afterTarget.routeState}
+            userDecision=$UserDecision.Trim()
+            verification=$Verification.Trim()
+        }
+        Set-ObjectPropertyValue $dataWorker 'executorKind' 'THREAD'
+        Set-ObjectPropertyValue $dataWorker 'threadId' $PipelineThreadId
+        Set-ObjectPropertyValue $dataWorker 'routeRevision' $nextRevision
+        Set-ObjectPropertyValue $dataWorker 'routeBoundAt' $boundAt
+        Set-ObjectPropertyValue $dataWorker 'routeHistory' @($history)
+        Save-JsonFile $workerPath $workers
+        Write-Result ([ordered]@{
+            action='DATA_PIPELINE_BOUND'; pipeline='DATA'; changed=$true
+            before=$beforeTarget; after=$afterTarget; boundAt=$boundAt
+            userDecision=$UserDecision.Trim(); verification=$Verification.Trim()
+        })
+        return
+    }
+
+    if ($Action -eq 'RegisterDataLane') {
+        $workers = Read-JsonFile $workerPath
+        $existing = $workers.workers.PSObject.Properties['DATA']
+        if ($null -ne $existing) {
+            $executionTarget = Get-PipelineExecutionTarget 'DATA'
+            Write-Result ([ordered]@{action='DATA_LANE_ALREADY_REGISTERED';pipeline='DATA';executorKind=$executionTarget.executorKind;threadId=$executionTarget.threadId;routeRevision=$executionTarget.routeRevision;worker=$existing.Value})
+            return
+        }
+        $worker = [pscustomobject][ordered]@{
+            status='IDLE'; activeTaskId=$null; lastPollAt=$null; leaseUntil=$null; executorKind='CONTROL_SUBAGENT'
+            circuit=[pscustomobject][ordered]@{state='CLOSED';openUntil=$null;reason=$null}
+        }
+        $workers.workers | Add-Member -NotePropertyName DATA -NotePropertyValue $worker
+        Save-JsonFile $workerPath $workers
+        [IO.File]::AppendAllText($ledgerPath, "`r`n`r`n> DATA lane registered at $(Get-NowIso): executorKind=CONTROL_SUBAGENT; no user-visible thread assigned.", $utf8NoBom)
+        Write-Result ([ordered]@{action='DATA_LANE_REGISTERED';pipeline='DATA';executorKind='CONTROL_SUBAGENT';threadId=$null;routeRevision=0;worker=$worker})
+        return
+    }
+
+    if ($Action -eq 'ConsumeDataRound') {
+        Assert-Value (-not [string]::IsNullOrWhiteSpace($RoundId)) 'RoundId is required for ConsumeDataRound.'
+        $workers = Read-JsonFile $workerPath
+        [void](Get-Worker $workers 'DATA')
+        $executionTarget = Get-PipelineExecutionTarget 'DATA'
+        $roundRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'runtime/data-rounds'))
+        $manifestPath = if ([string]::IsNullOrWhiteSpace($RoundManifestPath)) { Join-Path $roundRoot ("$RoundId.json") } else { [IO.Path]::GetFullPath($RoundManifestPath) }
+        Assert-Value ($manifestPath.StartsWith($roundRoot + [IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) 'Round manifest must stay under .ai-workspace/runtime/data-rounds.'
+        $round = Read-JsonFile $manifestPath
+        Assert-Value ([string]$round.roundId -eq $RoundId) 'RoundId does not match the manifest.'
+        Assert-Value ([string]$round.status -eq 'DONE' -and -not [string]::IsNullOrWhiteSpace([string]$round.userDecision)) 'USER-U1 round is not explicitly DONE.'
+        Assert-Value ([string]$round.csvSummarySha256 -match '^[0-9A-Fa-f]{64}$') 'Round CSV summary hash is invalid.'
+        Assert-Value ((Get-DataTablesCsvSummaryHash (Join-Path $projectRoot 'DataTables')) -eq ([string]$round.csvSummarySha256).ToUpperInvariant()) 'DataTables CSV hash drifted after the DONE gate.'
+        $queue = Read-JsonFile $queuePath
+        $existing = @($queue.tasks | Where-Object { [string](Get-ObjectPropertyValue $_ 'dataRoundId') -eq $RoundId }) | Select-Object -First 1
+        if ($null -ne $existing) { Write-Result ([ordered]@{action='DATA_ROUND_ALREADY_CONSUMED';roundId=$RoundId;task=$existing;executorKind=$executionTarget.executorKind;threadId=$executionTarget.threadId;routeRevision=$executionTarget.routeRevision}); return }
+        $module = [string]$round.dataTaskModuleId
+        Assert-Value ($module -match '^DATA-R[0-9]+$') 'dataTaskModuleId must match DATA-Rn.'
+        $sequence=[int]$queue.nextSequence; $taskId='AI-{0:D6}' -f $sequence; $createdAt=Get-NowIso
+        $task=[pscustomobject][ordered]@{
+            id=$taskId;sequence=$sequence;pipeline='DATA';moduleId=$module;title="[$module] USER-U1 round pipeline"
+            instruction="Run DevTools/DataTables/Run-DataPipeline.ps1 for round $RoundId using manifest $([IO.Path]::GetRelativePath($projectRoot,$manifestPath).Replace('\','/')). Do not publish outside the approved generated/font paths."
+            dependsOn=@();allowBypass=$true;status='QUEUED';attempts=0;maxAttempts=$MaxAttempts;createdAt=$createdAt;claimedAt=$null;completedAt=$null;result=$null;errorHistory=@();issueHistory=@()
+            dataRoundId=$RoundId;dataRoundManifestSha256=(Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash;userRoundDependency=[string]$round.userDependency
+            supervisionPolicy=[pscustomobject]@{resourceKeys=@('data-batch','generated-assets','font-assets');reviewDependsOn=@();humanGateAfter=$false;gateApproved=$false;reason='Generated from an explicit USER-U1 DONE round.';updatedAt=$createdAt}
+        }
+        $queue.tasks=@($queue.tasks)+$task;$queue.nextSequence=$sequence+1;Save-JsonFile $queuePath $queue
+        [IO.File]::AppendAllText($ledgerPath,"`r`n`r`n## $taskId | [DATA] $($task.title)`r`n`r`n- 用户轮次：$RoundId / $($round.userDependency)`r`n- CSV摘要：$($round.csvSummarySha256)`r`n- 初始状态：QUEUED`r`n",$utf8NoBom)
+        Write-Result ([ordered]@{action='DATA_ROUND_ENQUEUED';roundId=$RoundId;task=$task;executorKind=$executionTarget.executorKind;threadId=$executionTarget.threadId;routeRevision=$executionTarget.routeRevision})
+        return
+    }
+
     if ($Action -match 'Supervision' -or ($Action -eq 'Poll' -and $TriggerSource -eq 'SUPERVISED')) {
         Assert-Value (Test-Path -LiteralPath $supervisedLibrary) 'Missing .ai-workspace/supervised.ps1'
         Invoke-SupervisionAction
@@ -907,6 +1325,9 @@ try {
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Title)) 'Title is required for Enqueue.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Instruction)) 'Instruction is required for Enqueue.'
 
+        $workers = Read-JsonFile $workerPath
+        [void](Get-Worker $workers $Pipeline)
+        $executionTarget = Get-PipelineExecutionTarget $Pipeline
         $queue = Read-JsonFile $queuePath
         $knownIds = @($queue.tasks | ForEach-Object { $_.id })
         if($ArtTriggerKey){
@@ -922,6 +1343,46 @@ try {
         }
         foreach ($dependency in @($DependsOn)) {
             Assert-Value ($knownIds -contains $dependency) "Dependency does not exist: $dependency. Enqueue prerequisite tasks first."
+        }
+        $repairContext = $null
+        $requiresRepairApproval = $false
+        if ($WorkKind -ne 'FEATURE') {
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($ParentTaskId)) "$WorkKind requires ParentTaskId."
+            $parent = Get-Task $queue $ParentTaskId
+            Assert-Value ($null -ne $parent) "Repair parent does not exist: $ParentTaskId"
+            $root = Get-RepairRootTask $queue $parent
+            $stableKey = [string](Get-ObjectPropertyValue $root 'supervisionProblemKey')
+            if (-not $stableKey -and @($root.errorHistory).Count -gt 0) { $stableKey = [string]$root.errorHistory[-1].kind }
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($stableKey)) 'Repair parent has no recorded failure key.'
+            Assert-Value ([string]::IsNullOrWhiteSpace($ProblemKey) -or $ProblemKey.Trim().ToLowerInvariant() -eq $stableKey.ToLowerInvariant()) 'A new problem key cannot reset the repair budget.'
+            $budget = Get-RepairBudgetState $queue $root
+            if ($PairedRecoveryId) {
+                Assert-Value ($WorkKind -eq 'REPAIR') 'PairedRecoveryId applies only to a repair card.'
+                $family = @($queue.tasks | Where-Object { $_.id -eq $root.id -or $_.repairContext.rootTaskId -eq $root.id })
+                $matching = @($family | ForEach-Object { @($_.supervisionRepairs) } | Where-Object { $_.repairId -eq $PairedRecoveryId })
+                Assert-Value ($matching.Count -eq 1) 'PairedRecoveryId must identify exactly one recovery in the same root.'
+                Assert-Value (@($family | Where-Object { $_.repairContext.pairedRecoveryId -eq $PairedRecoveryId }).Count -eq 0) 'Recovery is already paired to a repair card.'
+            }
+            if ($WorkKind -eq 'REPAIR' -and $budget.used -ge $budget.limit -and -not $PairedRecoveryId) {
+                $proposedId = 'AI-{0:D6}' -f [int]$queue.nextSequence
+                Assert-RepairDecision $queue $root $DiagnosisTaskId $UserDecision $proposedId
+                $requiresRepairApproval = $true
+            }
+            $repairContext = [pscustomobject]@{
+                rootTaskId=$root.id; parentTaskId=$ParentTaskId; nature=$WorkKind
+                problemKey=$stableKey; budgetUsedAtEnqueue=$budget.used
+                diagnosisTaskId=$(if ($DiagnosisTaskId) { $DiagnosisTaskId } else { $null })
+                userDecision=$(if ($UserDecision) { $UserDecision } else { $null })
+                pairedRecoveryId=$(if ($PairedRecoveryId) { $PairedRecoveryId } else { $null })
+            }
+        }
+        else {
+            Assert-Value ([string]::IsNullOrWhiteSpace($ParentTaskId) -and [string]::IsNullOrWhiteSpace($DiagnosisTaskId) -and [string]::IsNullOrWhiteSpace($PairedRecoveryId)) 'Repair provenance requires a declared repair/diagnosis nature.'
+            if ($AllowBypass -and @($DependsOn | Where-Object {
+                (Get-Task $queue $_).status -in @('NEEDS_USER','PAUSED_CIRCUIT')
+            }).Count -gt 0) {
+                throw 'A bypassing task cannot depend on a failed task without repair/diagnosis provenance.'
+            }
         }
 
         $sequence = [int]$queue.nextSequence
@@ -947,8 +1408,11 @@ try {
             result = $null
             errorHistory = @()
             issueHistory = @()
+            workKind = $WorkKind
+            repairContext = $repairContext
         }
         $queue.tasks = @($queue.tasks) + $task
+        if ($requiresRepairApproval) { Use-RepairDecision $root $DiagnosisTaskId $UserDecision $newTaskId }
         if($ArtDailyIds.Count){$task | Add-Member -NotePropertyName artDailyIds -NotePropertyValue @($ArtDailyIds)}
         if($ArtSourcePaths.Count){$task | Add-Member -NotePropertyName artSourcePaths -NotePropertyValue @($ArtSourcePaths)}
         if($ArtTriggerKey){$task | Add-Member -NotePropertyName artTriggerKey -NotePropertyValue $ArtTriggerKey}
@@ -975,7 +1439,12 @@ $($Instruction.Trim())
 "@
         if($ArtDailyIds.Count){$ledgerEntry+="`r`n`r`n触发来源：$($ArtDailyIds -join ', ')；消费源路径：$($ArtSourcePaths -join ', ')；去重键：$ArtTriggerKey"}
         [System.IO.File]::AppendAllText($ledgerPath, $ledgerEntry, $utf8NoBom)
-        Write-Result ([ordered]@{ action = 'ENQUEUED'; task = $task })
+        Write-Result ([ordered]@{
+            action = 'ENQUEUED'; task = $task
+            executorKind = $executionTarget.executorKind
+            threadId = $executionTarget.threadId
+            routeRevision = $executionTarget.routeRevision
+        })
         return
     }
 
@@ -1014,6 +1483,17 @@ $($Instruction.Trim())
         $task = Get-Task $queue $TaskId
         Assert-Value ($null -ne $task) "Task not found: $TaskId"
         Assert-Value ($task.status -in @('QUEUED', 'BLOCKED_DEPENDENCY', 'PAUSED_CIRCUIT', 'NEEDS_USER')) 'A running or succeeded task cannot be revised.'
+        $revisionRoot = Get-RepairRootTask $queue $task
+        $revisionBudget = Get-RepairBudgetState $queue $revisionRoot
+        if ($revisionBudget.used -ge $revisionBudget.limit -and
+            ($task.status -in @('PAUSED_CIRCUIT','NEEDS_USER') -or
+             [string](Get-ObjectPropertyValue $task 'workKind') -eq 'REPAIR')) {
+            Assert-RepairDecision $queue $revisionRoot $DiagnosisTaskId $UserDecision $TaskId
+            Use-RepairDecision $revisionRoot $DiagnosisTaskId $UserDecision $TaskId
+        }
+        if ([string](Get-ObjectPropertyValue $task 'workKind') -eq 'READONLY_DIAGNOSIS') {
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($UserDecision)) 'A read-only diagnosis cannot be silently revised into repair work.'
+        }
 
         $task.instruction = $Instruction.Trim()
         Save-JsonFile $queuePath $queue
@@ -1032,6 +1512,9 @@ $($Instruction.Trim())
     if ($Action -eq 'ReclassifyTask') {
         Assert-Value (-not [string]::IsNullOrWhiteSpace($TaskId)) 'TaskId is required for ReclassifyTask.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Pipeline)) 'Pipeline is required for ReclassifyTask.'
+        $workers = Read-JsonFile $workerPath
+        [void](Get-Worker $workers $Pipeline)
+        $executionTarget = Get-PipelineExecutionTarget $Pipeline
         $queue = Read-JsonFile $queuePath
         $task = Get-Task $queue $TaskId
         Assert-Value ($null -ne $task) "Task not found: $TaskId"
@@ -1042,6 +1525,11 @@ $($Instruction.Trim())
         $task.pipeline = $Pipeline
         if ($task.status -eq 'BLOCKED_DEPENDENCY') { $task.status = 'QUEUED' }
         Save-JsonFile $queuePath $queue
+        $modeState = Read-ModeState
+        if ($modeState.mode -eq 'SUPERVISED' -and $null -ne $modeState.PSObject.Properties['supervised']) {
+            $modeState.supervised.reservations = @($modeState.supervised.reservations | Where-Object { $_.taskId -ne $TaskId })
+            Save-JsonFile $modePath $modeState
+        }
 
         $reclassificationEntry = "`r`n`r`n> Pipeline reclassification for $TaskId at $(Get-NowIso): $previousPipeline -> $Pipeline"
         [System.IO.File]::AppendAllText($ledgerPath, $reclassificationEntry, $utf8NoBom)
@@ -1049,6 +1537,9 @@ $($Instruction.Trim())
             action = 'TASK_RECLASSIFIED'
             previousPipeline = $previousPipeline
             task = $task
+            executorKind = $executionTarget.executorKind
+            threadId = $executionTarget.threadId
+            routeRevision = $executionTarget.routeRevision
         })
         return
     }
@@ -1222,6 +1713,12 @@ $($Instruction.Trim())
         $task = Get-Task $queue $TaskId
         Assert-Value ($null -ne $task) "Task not found: $TaskId"
         Assert-Value ($task.status -ne 'SUCCEEDED') 'A succeeded task cannot be reset. Create an explicit follow-up task instead.'
+        $resetRoot = Get-RepairRootTask $queue $task
+        $resetBudget = Get-RepairBudgetState $queue $resetRoot
+        if ($resetBudget.used -ge $resetBudget.limit) {
+            Assert-RepairDecision $queue $resetRoot $DiagnosisTaskId $UserDecision $TaskId
+            Use-RepairDecision $resetRoot $DiagnosisTaskId $UserDecision $TaskId
+        }
 
         $worker = Get-Worker $workers $task.pipeline
         $task.status = 'QUEUED'
@@ -1259,6 +1756,7 @@ $($Instruction.Trim())
     $worker = Get-Worker $workers $Pipeline
 
     if ($Action -eq 'Poll') {
+        if ($Pipeline -eq 'DATA') { [void](Get-PipelineExecutionTarget 'DATA') }
         $modeState = Read-ModeState
         if ($TriggerSource -ne $modeState.mode) {
             Write-Result ([ordered]@{
@@ -1509,6 +2007,22 @@ $($Instruction.Trim())
         Assert-Value ($task.status -eq 'RUNNING') 'Only a running task can be completed.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Summary)) 'Summary is required for Complete.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Verification)) 'Verification evidence is required for Complete.'
+        $acceptanceResult = $null
+        # Historical SUCCEEDED records remain untouched; every new Complete,
+        # including a future claim of an older task number, uses the new gate.
+        if (-not [string]::IsNullOrWhiteSpace($TaskId)) {
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($AcceptancePath)) 'Complete requires task acceptance.json.'
+            $fullAcceptance = [IO.Path]::GetFullPath($AcceptancePath)
+            $outputRoot = [IO.Path]::GetFullPath((Join-Path $workspaceRoot 'outputs')).TrimEnd('\','/')
+            Assert-Value ($fullAcceptance.StartsWith($outputRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -and
+                $fullAcceptance.Contains(([IO.Path]::DirectorySeparatorChar + $TaskId + [IO.Path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase)) 'Acceptance path must be inside this task output directory.'
+            $comparator = Join-Path $projectRoot 'DevTools/Workflow/Compare-Acceptance.ps1'
+            Assert-Value (Test-Path -LiteralPath $comparator -PathType Leaf) 'Acceptance comparator is unavailable.'
+            $contractPath = Join-Path $workspaceRoot ("inputs/acceptance/{0}.json" -f $TaskId)
+            Assert-Value (Test-Path -LiteralPath $contractPath -PathType Leaf) "Predefined acceptance contract is missing: $contractPath"
+            $acceptanceResult = (& $comparator -TaskId $TaskId -ContractPath $contractPath -AcceptancePath $fullAcceptance -EvidenceRoot (Split-Path -Parent $fullAcceptance) | ConvertFrom-Json)
+            Assert-Value ($acceptanceResult.action -eq 'ACCEPTANCE_MATCHED') ("Acceptance comparison failed: " + ($acceptanceResult.mismatches | ConvertTo-Json -Depth 8 -Compress))
+        }
 
         $verificationDisposition = Get-VerificationDisposition $task
         $task.status = 'SUCCEEDED'
@@ -1521,6 +2035,7 @@ $($Instruction.Trim())
             verificationStatus = $verificationDisposition.status
             manualVerificationRequired = $verificationDisposition.manualVerificationRequired
             manualVerificationIssues = @($verificationDisposition.manualVerificationIssues)
+            acceptance = $acceptanceResult
         }
         $worker.status = 'IDLE'
         $worker.activeTaskId = $null

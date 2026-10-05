@@ -15,7 +15,7 @@ MonoBehaviour:
   standard_ingredient: ing_cabbage
   standard_action: act_wash
   required_count: 1
-  sub_01: 
+  sub_01: ing_octopus_leg
   sub_02: 
   sub_03: 
   sub_04: 
@@ -23,7 +23,7 @@ MonoBehaviour:
   sub_06: 
   sub_07: 
   sub_08: 
-  sub_01_count: 0
+  sub_01_count: 3
   sub_02_count: 0
   sub_03_count: 0
   sub_04_count: 0

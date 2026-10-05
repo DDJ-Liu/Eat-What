@@ -12,7 +12,7 @@ namespace EatWhat.Cooking.ShortCycle
     public sealed class ShortCycleOverflowVisibilityGate : MonoBehaviour
     {
         [SerializeField] private ShortCycleCameraPanController cameraPanController = null;
-        [SerializeField] private ShortCycleCameraSlot homeSlot = ShortCycleCameraSlot.Phase0;
+        [SerializeField] private ShortCycleCameraSlot homeSlot = ShortCycleCameraSlot.P0Center;
         [SerializeField] private Renderer[] gatedRenderers = new Renderer[0];
         [SerializeField] private bool hideOnPanStart = true;
         [SerializeField] private bool showOnPanCompleted = true;

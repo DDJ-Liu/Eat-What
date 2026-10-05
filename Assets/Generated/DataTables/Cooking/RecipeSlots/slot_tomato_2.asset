@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standard_ingredient: ing_tomato
   standard_action: act_cut
-  required_count: 2
-  sub_01: 
+  required_count: 1
+  sub_01: ing_ofanqie
   sub_02: 
   sub_03: 
   sub_04: 
@@ -23,7 +23,7 @@ MonoBehaviour:
   sub_06: 
   sub_07: 
   sub_08: 
-  sub_01_count: 0
+  sub_01_count: 1
   sub_02_count: 0
   sub_03_count: 0
   sub_04_count: 0

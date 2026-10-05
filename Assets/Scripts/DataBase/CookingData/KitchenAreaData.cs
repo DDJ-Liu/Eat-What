@@ -11,6 +11,7 @@ public class KitchenAreaData : ScriptableObject
     // areaName/containerTags values; the new IDs are resolved by the runtime
     // data registry after the generic table importer has generated them.
     public string core_facility;
+    // Legacy serialized authoring values retained for compatibility; scene inventory is authoritative.
     public List<string> preset_tools = new List<string>();
     public List<string> allowed_actions = new List<string>();
     public List<string> allowed_carriers = new List<string>();

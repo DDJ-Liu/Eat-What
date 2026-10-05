@@ -4,11 +4,11 @@ $ErrorActionPreference='Stop'
 $source=Split-Path -Parent $PSScriptRoot
 $fixture=Join-Path ([IO.Path]::GetTempPath()) ('EatWhatArtDailyV2-'+[guid]::NewGuid().ToString('N'))
 foreach($dir in @('runtime','inputs/art','source','templates')){$null=New-Item -ItemType Directory -Path (Join-Path $fixture $dir) -Force}
-foreach($name in @('queue.ps1','supervised.ps1','art-audit.ps1','art-audit-scan.ps1','art-daily-report.ps1','art-daily-png.cs','art-daily-control.ps1','Invoke-ArtAudit.ps1')){Copy-Item -LiteralPath (Join-Path $source $name) -Destination (Join-Path $fixture $name)}
+foreach($name in @('queue.ps1','supervised.ps1','repair-budget.ps1','art-audit.ps1','art-audit-scan.ps1','art-daily-report.ps1','art-daily-png.cs','art-daily-control.ps1','Invoke-ArtAudit.ps1')){Copy-Item -LiteralPath (Join-Path $source $name) -Destination (Join-Path $fixture $name)}
 foreach($name in @('ART_DAILY_CONFIG.json','ART_PENDING_ITEMS.json')){Copy-Item -LiteralPath (Join-Path $source ('inputs/art/'+$name)) -Destination (Join-Path $fixture ('inputs/art/'+$name))}
 $utf8=New-Object Text.UTF8Encoding($false)
 function Json($Path,$Data){[IO.File]::WriteAllText((Join-Path $fixture $Path),(ConvertTo-Json -InputObject $Data -Depth 30),$utf8)}
-function Q([hashtable]$Arguments){& (Join-Path $fixture 'queue.ps1') @Arguments | Out-String | ConvertFrom-Json}
+function Q([hashtable]$Arguments){$result=& (Join-Path $fixture 'queue.ps1') @Arguments | Out-String | ConvertFrom-Json;if($result.receiptPath){return Get-Content -LiteralPath $result.receiptPath -Raw | ConvertFrom-Json};return $result}
 $script:n=0
 function Check($Actual,$Expected,$Name){if($Actual -ne $Expected){throw "$Name expected=$Expected actual=$Actual"};$script:n++}
 function Throws([scriptblock]$Body,$Name){$thrown=$false;try{& $Body | Out-Null}catch{$thrown=$true};Check $thrown $true $Name}

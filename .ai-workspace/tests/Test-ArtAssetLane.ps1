@@ -2,13 +2,15 @@
 param()
 $ErrorActionPreference='Stop'
 $source=Split-Path -Parent $PSScriptRoot
-$fixture=Join-Path ([IO.Path]::GetTempPath()) ('EatWhatArtAudit-'+[guid]::NewGuid().ToString('N'))
+$fixtureProject=Join-Path ([IO.Path]::GetTempPath()) ('EatWhatArtAudit-'+[guid]::NewGuid().ToString('N'))
+$fixture=Join-Path $fixtureProject '.ai-workspace'
+. (Join-Path $PSScriptRoot 'AcceptanceFixture.ps1')
 $null=New-Item -ItemType Directory -Path (Join-Path $fixture 'runtime') -Force
 $art=Join-Path $fixture 'art-source';$null=New-Item -ItemType Directory -Path $art
 $utf8=New-Object Text.UTF8Encoding($false)
-foreach ($name in @('queue.ps1','supervised.ps1','art-audit.ps1','art-audit-scan.ps1','Invoke-ArtAudit.ps1')) {Copy-Item -LiteralPath (Join-Path $source $name) -Destination (Join-Path $fixture $name)}
+foreach ($name in @('queue.ps1','supervised.ps1','repair-budget.ps1','art-audit.ps1','art-audit-scan.ps1','Invoke-ArtAudit.ps1')) {Copy-Item -LiteralPath (Join-Path $source $name) -Destination (Join-Path $fixture $name)}
 function Save($Name,$Data) {[IO.File]::WriteAllText((Join-Path $fixture ('runtime/'+$Name+'-state.json')),($Data | ConvertTo-Json -Depth 30),$utf8)}
-function Q([hashtable]$ArgsTable) { & (Join-Path $fixture 'queue.ps1') @ArgsTable | Out-String | ConvertFrom-Json }
+function Q([hashtable]$ArgsTable) { if($ArgsTable.Action -eq 'Complete' -and -not $ArgsTable.AcceptancePath){$ArgsTable.AcceptancePath=Initialize-AcceptanceFixture $fixture $ArgsTable.TaskId $source}; $result = & (Join-Path $fixture 'queue.ps1') @ArgsTable | Out-String | ConvertFrom-Json; if ($result.receiptPath) { return Get-Content -LiteralPath $result.receiptPath -Raw | ConvertFrom-Json }; return $result }
 $script:count=0
 function Check($Actual,$Expected,$Name) {if ($Actual -ne $Expected){throw "$Name expected=$Expected actual=$Actual"};$script:count++}
 function Throws([scriptblock]$Code,$Name) {$ok=$false;try {& $Code | Out-Null}catch{$ok=$true};Check $ok $true $Name}

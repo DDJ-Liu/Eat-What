@@ -15,6 +15,9 @@ MonoBehaviour:
   name_key: tool_hand.name
   tool_kind: hand
   supported_actions:
-  - act_wash
+  - act_smash
+  - act_whisk
+  - act_stirfry
+  - act_mix
   mapped_dish_category: 
   icon_sprite: {fileID: -6724980738021171820, guid: 2ccbaeb7adbdb464c9db183d47a934aa, type: 2}

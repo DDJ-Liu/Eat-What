@@ -17,7 +17,7 @@ namespace EatWhat.EditorTools
             if (size.x <= 0f || size.y <= 0f) return;
             var nearest = -1;
             var distance = float.PositiveInfinity;
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < CameraFrameGizmo.MarkerCount; i++)
             {
                 var marker = gizmo.GetMarker(i);
                 if (marker == null) continue;
@@ -28,14 +28,15 @@ namespace EatWhat.EditorTools
             var oldColor = Handles.color;
             try
             {
-                for (var i = 0; i < 3; i++)
+                for (var i = 0; i < CameraFrameGizmo.MarkerCount; i++)
                 {
                     var marker = gizmo.GetMarker(i);
                     if (marker == null) continue;
                     var color = i == 0 ? new Color(1f, 0.65f, 0.15f, 1f)
-                        : i == 1 ? new Color(0.15f, 0.8f, 1f, 1f) : new Color(0.3f, 1f, 0.4f, 1f);
+                        : i == 1 ? new Color(0.8f, 0.3f, 1f, 1f)
+                        : i == 2 ? new Color(0.15f, 0.8f, 1f, 1f) : new Color(0.3f, 1f, 0.4f, 1f);
                     DrawFrame(marker.position, size, color, i == nearest ? 4f : 1.5f,
-                        i == 0 ? "P1" : i == 1 ? "P0" : "Right");
+                        i == 0 ? "P1" : i == 1 ? "P0-Left" : i == 2 ? "P0-Center" : "Right");
                 }
             }
             finally { Handles.color = oldColor; }

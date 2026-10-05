@@ -17,18 +17,25 @@ $cameraPanPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCyc
 $overflowGatePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleOverflowVisibilityGate.cs'
 $manualDriverPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleManualVerificationDriver.cs'
 $localizedTextPath = Join-Path $repoRoot 'Assets\Scripts\Tools\Localization\LocalizedText.cs'
+$toolsPath = Join-Path $repoRoot 'Assets\Scripts\Tools\Tools.cs'
 $sessionManagerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleSessionManager.cs'
 $directorPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Runtime\ShortCyclePresentationDirector.cs'
 $travelerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\ShortCycleTravelingElement.cs'
+$spacePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\ShortCycleSpace.cs'
 $trayControllerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleTrayStateController.cs'
 $fridgeBinderPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Content\ShortCycleFridgeBinder.cs'
 $fridgeScrollAdapterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Interaction\ShortCycleScrollAdapter.cs'
 $fridgeScrollTraceProbePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Debug\ShortCycleFridgeScrollTraceProbe.cs'
 $mouseScrollableObjectPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\Scroll\MouseScrollableObject.cs'
 $fridgeScrollLabDriverPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Debug\FridgeScrollLabDriver.cs'
+$modalScrollVerificationControlPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Debug\ShortCycleModalScrollVerificationControl.cs'
 $fridgeScrollLabBuilderPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\FridgeScrollLabBuilder.cs'
 $fridgeScrollLabAuditPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\FridgeScrollLabAudit.cs'
 $mouseManagerPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\MouseManager.cs'
+$configDataPath = Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01CookingGameConfigData.cs'
+$cookingConfigCsvPath = Join-Path $repoRoot 'DataTables\Cooking\CookingGameConfig.csv'
+$cookingConfigSchemaPath = Join-Path $repoRoot 'DataTables\Schemas\Cooking\CookingGameConfig.schema.json'
+$wheelProbePath = Join-Path $repoRoot 'Assets\Editor\MIG63Validation\MIG63WheelProbe.cs'
 $clueBinderPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Content\ShortCycleClueBoardBinder.cs'
 $stateGatePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Interaction\ShortCycleStateGatedInteraction.cs'
 $gridPieceBasePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleGridPieceBase.cs'
@@ -53,6 +60,7 @@ $fridgeCatRigPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Prese
 $fridgeCatTierPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatTier.cs'
 $fridgeCatEyePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatEye.cs'
 $presentationSetPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\ShortCyclePresentationSet.cs'
+$cameraViewportAnchorPath = Join-Path $repoRoot 'Assets\Scripts\Tools\Layout\CameraViewportAnchor.cs'
 $scrollAreaPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\ScrollArea\ScrollArea_Controller.cs'
 $unityStubsPath = Join-Path $PSScriptRoot 'UnityStubs.cs'
 $outlinePath = Join-Path $repoRoot 'Assets\Scripts\Rendering\SpriteOutline2D.cs'
@@ -93,18 +101,25 @@ $cameraPanSource = Get-Content -Raw -LiteralPath $cameraPanPath
 $overflowGateSource = Get-Content -Raw -LiteralPath $overflowGatePath
 $manualDriverSource = Get-Content -Raw -LiteralPath $manualDriverPath
 $localizedTextSource = Get-Content -Raw -LiteralPath $localizedTextPath
+$toolsSource = Get-Content -Raw -LiteralPath $toolsPath
 $sessionManagerSource = Get-Content -Raw -LiteralPath $sessionManagerPath
 $directorSource = Get-Content -Raw -LiteralPath $directorPath
 $travelerSource = Get-Content -Raw -LiteralPath $travelerPath
+$spaceSource = Get-Content -Raw -LiteralPath $spacePath
 $trayControllerSource = Get-Content -Raw -LiteralPath $trayControllerPath
 $fridgeBinderSource = Get-Content -Raw -LiteralPath $fridgeBinderPath
 $fridgeScrollAdapterSource = Get-Content -Raw -LiteralPath $fridgeScrollAdapterPath
 $fridgeScrollTraceProbeSource = Get-Content -Raw -LiteralPath $fridgeScrollTraceProbePath
 $mouseScrollableObjectSource = Get-Content -Raw -LiteralPath $mouseScrollableObjectPath
 $fridgeScrollLabDriverSource = Get-Content -Raw -LiteralPath $fridgeScrollLabDriverPath
+$modalScrollVerificationControlSource = Get-Content -Raw -LiteralPath $modalScrollVerificationControlPath
 $fridgeScrollLabBuilderSource = Get-Content -Raw -LiteralPath $fridgeScrollLabBuilderPath
 $fridgeScrollLabAuditSource = Get-Content -Raw -LiteralPath $fridgeScrollLabAuditPath
 $mouseManagerSource = Get-Content -Raw -LiteralPath $mouseManagerPath
+$configDataSource = Get-Content -Raw -LiteralPath $configDataPath
+$cookingConfigCsvSource = Get-Content -Raw -LiteralPath $cookingConfigCsvPath
+$cookingConfigSchemaSource = Get-Content -Raw -LiteralPath $cookingConfigSchemaPath
+$wheelProbeSource = Get-Content -Raw -LiteralPath $wheelProbePath
 $clueBinderSource = Get-Content -Raw -LiteralPath $clueBinderPath
 $stateGateSource = Get-Content -Raw -LiteralPath $stateGatePath
 $gridPieceSource = ((@($gridPieceBasePath) + $gridPiecePaths) | ForEach-Object { Get-Content -Raw -LiteralPath $_ }) -join "`n"
@@ -120,6 +135,7 @@ $fridgeCatRigSource = Get-Content -Raw -LiteralPath $fridgeCatRigPath
 $fridgeCatTierSource = Get-Content -Raw -LiteralPath $fridgeCatTierPath
 $fridgeCatEyeSource = Get-Content -Raw -LiteralPath $fridgeCatEyePath
 $presentationSetSource = Get-Content -Raw -LiteralPath $presentationSetPath
+$cameraViewportAnchorSource = Get-Content -Raw -LiteralPath $cameraViewportAnchorPath
 $scrollAreaSource = Get-Content -Raw -LiteralPath $scrollAreaPath
 $unityStubsSource = Get-Content -Raw -LiteralPath $unityStubsPath
 $outlineSource = Get-Content -Raw -Encoding UTF8 -LiteralPath $outlinePath
@@ -138,10 +154,28 @@ $inputActionsMetaSource = Get-Content -Raw -LiteralPath $inputActionsMetaPath
 $shortCycleRoot = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle'
 $shortCycleCompilePaths = @(Get-ChildItem -LiteralPath $shortCycleRoot -Filter '*.cs' -File -Recurse | Select-Object -ExpandProperty FullName)
 $transitionCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Assets\Scripts\Tools\Transition') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
+$layoutCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Assets\Scripts\Tools\Layout') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
 $shortCycleProductionSource = ($shortCycleCompilePaths |
     ForEach-Object { Get-Content -Raw -LiteralPath $_ }) -join "`n"
 $shortCycleCoreSource = @(Get-ChildItem -LiteralPath (Join-Path $shortCycleRoot 'Core') -Filter '*.cs' -File -Recurse |
     ForEach-Object { Get-Content -Raw -LiteralPath $_.FullName }) -join "`n"
+
+Assert-SourceContains $cameraViewportAnchorSource 'DefaultExecutionOrder\(10000\)' `
+    'Viewport anchors must update after camera-pan coroutines in LateUpdate.'
+Assert-SourceContains $cameraViewportAnchorSource '(?s)targetCamera.*anchoredRoot.*viewportAnchor.*inwardViewportInset.*preserveInitialWorldZ.*worldPlaneZ' `
+    'Viewport anchors must expose explicit camera, root, viewport, inset and plane configuration.'
+Assert-SourceContains $cameraViewportAnchorSource 'private\s+void\s+LateUpdate\s*\(\)\s*\{\s*ApplyNow\(\)' `
+    'Viewport anchors must apply after camera motion every rendered frame.'
+Assert-SourceNotContains $cameraViewportAnchorSource '(?i)Camera\.main|GameObject\.Find|FindObjectOfType|FindFirstObjectByType|FindAnyObjectByType' `
+    'Viewport anchors must never perform per-frame camera or scene searches.'
+Assert-SourceContains $presentationSetSource 'keepVisualActiveAcrossSpaces' `
+    'Presentation Sets must opt into persistent physical visuals explicitly.'
+Assert-SourceContains $presentationSetSource 'CameraViewportAnchor\.IsAnchoredTransform' `
+    'World-content bounds must exclude camera-relative controls.'
+Assert-SourceContains $spaceSource '(?s)WantsActive.*?KeepVisualActiveAcrossSpaces.*?WantsLogicalActive.*?WantsFocus.*?WantsLogicalActive' `
+    'Persistent visual activation must not grant focus outside the original logical view/space state.'
+Assert-SourceContains $directorSource '(?s)persistentVisual.*request\.Key\.IsInView' `
+    'Persistent physical visuals must bypass camera-culling deactivation without changing default Sets.'
 
 Assert-SourceContains $fridgeScrollTraceProbeSource '\[CK01-F-SCROLL-TRACE\]' `
     'The real-wheel diagnostic must use the single CK01-F trace prefix.'
@@ -180,6 +214,20 @@ Assert-SourceContains $fridgeScrollLabDriverSource '(?s)private\s+IEnumerator\s+
     'Start may initialize Phase1 and real-input tracing, but never the simulated adapter route.'
 Assert-SourceContains $fridgeScrollLabDriverSource '(?s)TryShowRecipeCatalog\s*\(\s*\).*?TrySelectRecipe\s*\(\s*recipeId\s*,\s*false\s*\).*?TryStartCooking\s*\(\s*\)' `
     'The lab must enter Phase1 through the public Cover-to-Catalog selection sequence.'
+Assert-SourceContains $modalScrollVerificationControlSource '(?s)\[SerializeField\].*?ShortCycleSessionManager\s+sessionManager\s*=\s*null.*?\[SerializeField\].*?ShortCycleInteractionLayerStack\s+layerStack\s*=\s*null.*?\[SerializeField\].*?MouseInteractionLayer\s+verificationLayer\s*=\s*null' `
+    'The temporary verification control must use explicit serialized references for session, stack, and its dedicated layer.'
+Assert-SourceNotContains $modalScrollVerificationControlSource '(?i)GameObject\.Find|Transform\.Find|FindObjectOfType|FindFirstObjectByType|FindAnyObjectByType' `
+    'The temporary verification control must not search the scene.'
+Assert-SourceContains $modalScrollVerificationControlSource '(?s)OnGUI\s*\(.*?IsPhase1.*?GUI\.Button.*?打开 Modal 滚轮验收.*?GUI\.Box.*?关闭 Modal 滚轮验收' `
+    'Only Phase1 may render the visible open/overlay/close verification controls.'
+Assert-SourceContains $modalScrollVerificationControlSource '(?s)public\s+bool\s+OpenForVerification.*?layerStack\.Push\s*\(\s*verificationLayer\s*\).*?isOpen\s*=\s*true' `
+    'OpenForVerification must push the dedicated layer before publishing open state.'
+Assert-SourceContains $modalScrollVerificationControlSource '(?s)public\s+bool\s+CloseForVerification.*?CloseInternal.*?layerStack\.Remove\s*\(\s*verificationLayer\s*\)' `
+    'CloseForVerification must remove only its dedicated transient layer.'
+Assert-SourceContains $modalScrollVerificationControlSource '(?s)HandleStateChanged.*?phase\s*!=\s*ShortCyclePhase\.Phase1.*?CloseInternal.*?OnDisable.*?CloseInternal.*?OnDestroy.*?CloseInternal' `
+    'Phase exit, disable, and destroy must all converge on the idempotent cleanup path.'
+Assert-SourceContains $modalScrollVerificationControlSource '\[VERIFY-TEMP\]\[ModalScroll\]' `
+    'Temporary verification open/close successes and failures must use one recognizable log prefix.'
 Assert-SourceContains $fridgeScrollLabBuilderSource 'Assets/Scenes/ToolTests/FridgeScrollLab\.unity' `
     'The builder must target only the isolated FridgeScrollLab scene.'
 Assert-SourceContains $fridgeScrollLabBuilderSource 'Assets/Prefabs/Cooking/ShortCycle/FridgeCat/FridgeCat_Rig\.prefab' `
@@ -222,6 +270,68 @@ Assert-SourceContains $mouseManagerSource '(?s)mouseInteractiveLayers\s*==\s*nul
     'MouseManager must guard the empty interaction-layer stack before Peek.'
 Assert-SourceContains $mouseManagerSource 'HasUnsafeEmptyLayerUpdatePath(?s).*?get\s*\{\s*return\s+false\s*;' `
     'MouseManager diagnostics must report that the pre-Count Peek path has been removed.'
+Assert-SourceContains $toolsSource 'public\s+static\s+bool\s+HasPointer' `
+    'Tools must expose one authoritative pointer-availability contract.'
+Assert-SourceContains $toolsSource '(?s)cachedMainCameraFrame.*?Time\.frameCount.*?Camera\.main' `
+    'Tools must invalidate its main-camera cache on frame changes.'
+Assert-SourceContains $toolsSource '(?s)missingMainCameraWarningIssued.*?Debug\.LogWarning.*?missingMainCameraWarningIssued\s*=\s*true' `
+    'Tools must throttle the missing-main-camera warning to one per missing episode.'
+Assert-SourceContains $mouseManagerSource '(?s)void\s+Update\s*\([^)]*\).*?Vector3\s+mouseWorldPosition\s*;.*?TryGetMousePos\s*\(\s*out\s+mouseWorldPosition\s*\).*?return\s*;.*?setMouseHover\s*\(\s*mouseWorldPosition\s*\).*?Vector3\.Distance\s*\(\s*dragStartPos\s*,\s*mouseWorldPosition\s*\).*?OnScroll\s*\(\s*mouseWorldPosition\s*\)' `
+    'MouseManager Update must stop before hover, drag, and scroll sampling when no real pointer is available.'
+Assert-SourceContains $mouseManagerSource '(?s)OnMouseConfirmPress\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?RaycastPressable\s*\(\s*mouseWorldPosition\s*\).*?HasAnyInteractiveObject\s*\(\s*mouseWorldPosition\s*\)' `
+    'Mouse confirm must not raycast or synthesize an origin click without a real pointer.'
+Assert-SourceContains $mouseManagerSource '(?s)OnDragStart\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?dragStarted\s*=\s*true.*?dragStartPos\s*=\s*mouseWorldPosition' `
+    'Drag start must preserve prior state and skip the event when no real pointer is available.'
+Assert-SourceContains $mouseManagerSource '(?s)OnMouseLeftButtonRelease\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?OnMouseRelease.*?CheckDropZone\s*\([^,]+,\s*mouseWorldPosition\s*\).*?OverlapPoint\s*\(\s*mouseWorldPosition\s*\)' `
+    'Release/drop/hold hit testing must stop before state mutation when no real pointer is available.'
+Assert-SourceNotContains $mouseManagerSource 'Tools\.getMousePos\s*\(' `
+    'MouseManager must never consume the compatibility fallback as a real pointer sample.'
+Assert-SourceNotContains $mouseManagerSource 'scrollDeltaBehavior|scrollValue\s*\*=\s*120' `
+    'MouseManager must consume Input System uniform wheel units without a Windows-only 120 bridge.'
+Assert-SourceContains $mouseManagerSource 'float\s+scrollValue\s*=\s*rawScroll\s*;' `
+    'MouseManager must accumulate the Input System value in its native uniform unit.'
+Assert-SourceContains $mouseManagerSource '(?s)Mathf\.Sign\s*\(\s*accumulatedScroll\s*\)\s*!=\s*Mathf\.Sign\s*\(\s*scrollValue\s*\).*?accumulatedScroll\s*=\s*0f' `
+    'A physical direction reversal must clear the prior fractional remainder.'
+Assert-SourceContains $mouseManagerSource 'Mathf\.Clamp\s*\(\s*accumulatedScroll\s*\+\s*scrollValue\s*,\s*-threshold\s*,\s*threshold\s*\)' `
+    'Cooldown accumulation must retain at most one pending step.'
+Assert-SourceContains $mouseManagerSource '(?s)now\s*-\s*lastScrollTime\s*<\s*Mathf\.Max\s*\(\s*0f\s*,\s*scrollCooldown\s*\).*?Mathf\.Abs\s*\(\s*accumulatedScroll\s*\)\s*<\s*threshold' `
+    'Dispatch must require both elapsed cooldown and a complete accumulated threshold.'
+Assert-SourceContains $mouseManagerSource '(?s)scrollInputTarget\s*!=\s*currentScrollableObject\s*\|\|\s*scrollInputLayer\s*!=\s*layer.*?ResetScrollInput\s*\(\s*\)' `
+    'Target or interaction-layer changes must discard pending wheel input.'
+Assert-SourceContains $mouseManagerSource '(?s)OnApplicationFocus\s*\(\s*bool\s+hasFocus\s*\).*?!hasFocus\s*\)\s*ResetScrollInput\s*\(\s*\)' `
+    'Focus loss must discard pending wheel input.'
+Assert-SourceContains $mouseManagerSource '(?s)ResetScrollInput\s*\(\s*\).*?accumulatedScroll\s*=\s*0f.*?lastScrollTime\s*=\s*float\.NegativeInfinity.*?scrollInputTarget\s*=\s*null.*?scrollInputLayer\s*=\s*null' `
+    'Wheel reset must clear the remainder, cooldown, target, and layer state together.'
+Assert-SourceContains $mouseManagerSource 'public\s+void\s+ConfigureScrollInput\s*\(\s*float\s+threshold\s*,\s*float\s+cooldown\s*\)' `
+    'MouseManager must expose one testable entry for the two T8 scroll values.'
+Assert-SourceContains $sessionManagerSource '(?s)void\s+Start\s*\(\s*\).*?ConfigureFridgeScrollInput\s*\(\s*dataCatalog\s*,\s*MouseManager\.Instance\s*\)' `
+    'ShortCycle startup and FridgeScrollLab must share the SessionManager T8 configuration path.'
+Assert-SourceContains $configDataSource 'FridgeScrollThresholdKey\s*=\s*"fridge_scroll_threshold"' `
+    'The T8 threshold key must have one source constant.'
+Assert-SourceContains $configDataSource 'FridgeScrollCooldownKey\s*=\s*"fridge_scroll_cooldown"' `
+    'The T8 cooldown key must have one source constant.'
+Assert-SourceContains $configDataSource 'float\.TryParse\s*\([^,]+,\s*NumberStyles\.Float\s*,\s*CultureInfo\.InvariantCulture' `
+    'T8 float parsing must be explicitly invariant-culture.'
+Assert-SourceContains $cookingConfigCsvSource '(?m)^fridge_scroll_threshold,1(?:\.0)?,' `
+    'CookingGameConfig.csv must define the reviewed threshold default.'
+Assert-SourceContains $cookingConfigCsvSource '(?m)^fridge_scroll_cooldown,0\.2,' `
+    'CookingGameConfig.csv must define the reviewed cooldown default.'
+Assert-SourceNotContains ($cookingConfigCsvSource + $cookingConfigSchemaSource) 'fridge_scroll_(?:granularity|damping)' `
+    'The T8 source contract must not retain granularity/damping keys.'
+Assert-SourceContains $cookingConfigSchemaSource 'fridge_scroll_threshold' `
+    'CookingGameConfig schema must enumerate fridge_scroll_threshold.'
+Assert-SourceContains $cookingConfigSchemaSource 'fridge_scroll_cooldown' `
+    'CookingGameConfig schema must enumerate fridge_scroll_cooldown.'
+Assert-SourceNotContains $wheelProbeSource 'RuntimePlatform\.WindowsEditor|scrollDeltaBehavior' `
+    'The synthetic wheel probe must validate uniform units without a Windows-only guard.'
+Assert-SourceContains $wheelProbeSource '(?s)PushModalComparison.*?Pulse\s*\(\s*manager\s*,\s*1f\s*\).*?Pulse\s*\(\s*manager\s*,\s*-1f\s*\)' `
+    'The long-lived probe must inject nonzero wheel input while the modal remains open.'
+Assert-SourceContains $wheelProbeSource '(?s)modalSequence.*?ScrollDispatchSequence\s*==\s*modalSequence.*?ReceivedStepCount\s*==\s*modalReceived.*?DispatchCount\s*==\s*modalDispatches.*?CurrentTier\s*==\s*modalTier' `
+    'The modal probe must independently freeze manager dispatch, adapter receive/dispatch, and tier state.'
+Assert-SourceContains $wheelProbeSource '(?s)PopModalComparison.*?currentScrollableObject\s*==\s*target.*?ScrollDispatchSequence\s*==\s*modalSequence\+1.*?CurrentTier\s*==\s*modalTier-1' `
+    'The long-lived probe must prove that target resolution and tier movement recover after modal close.'
+Assert-SourceContains $fridgeScrollAdapterSource '(?s)MapPhysicalStep.*?invertPhysicalScrollDirection\s*\?\s*-normalized\s*:\s*normalized' `
+    'T8 must preserve the reviewed single-point physical direction mapping.'
 Assert-SourceContains $fridgeScrollTraceProbeSource '(?s)resolveFrame.*?candidate.*?currentScrollable.*?blocker.*?reason' `
     'The trace must correlate the authoritative target and blocker decision in one snapshot.'
 Assert-SourceContains $fridgeScrollTraceProbeSource '(?s)dispatchSequence.*?dispatchFrame.*?managerRaw.*?managerStep.*?managerWorld' `
@@ -234,12 +344,26 @@ Assert-SourceContains $scrollAreaSource '(?s)NormalizedContentPosition.*?LastTar
 if ([regex]::Matches($travelerSource, '\[SerializeField').Count -ne 4) {
     throw 'SnapTo must not add, remove, or rename the Traveler serialized field contract.'
 }
-Assert-SourceContains $travelerSource '(?s)public\s+bool\s+SnapTo\s*\(\s*ShortCycleSpaceId\s+space\s*\).*?ResolveAnchor\s*\(\s*space\s*\).*?Cancel\s*\(\s*\).*?movingTransform\.position\s*=\s*anchor\.position' `
-    'Traveler SnapTo must reuse its existing anchor, cancel active movement, and set the existing moving Transform.'
+Assert-SourceContains $travelerSource '(?s)public\s+bool\s+SnapTo\s*\(\s*ShortCycleSpaceId\s+space\s*\).*?ResolveAnchor\s*\(\s*space\s*\).*?Cancel\s*\(\s*\).*?Vector3\.Distance.*?>\s*0\.0001f.*?movingTransform\.position\s*=\s*anchor\.position' `
+    'Traveler SnapTo must reuse its anchor, cancel active movement, and avoid an identical-position write.'
+Assert-SourceContains $travelerSource '(?s)public\s+bool\s+MoveTo.*?Vector3\.Distance.*?<=\s*0\.0001f.*?onComplete.*?return\s+true.*?PlayTo' `
+    'Traveler MoveTo must synchronously complete an identical destination without starting a transition.'
 Assert-SourceContains $directorSource '(?s)!hadDeparture.*?traveler\.SnapTo\s*\(\s*space\s*\)' `
     'Initial entry without a departure must snap each Traveler.'
-Assert-SourceContains $directorSource '(?s)space\s*==\s*ShortCycleSpaceId\.Phase0.*?view\s*==\s*ShortCyclePhase0View\.ClueBoardShell.*?traveler\.SnapTo\s*\(\s*space\s*\)' `
-    'Opening the Phase0 clue board must correct Traveler placement through SnapTo.'
+Assert-SourceContains $directorSource '(?s)ShowView.*?TryResolveCameraSlot\s*\(\s*view\s*,\s*out\s+slot\s*\).*?RequestPan\s*\(\s*slot' `
+    'Every Phase0 subview must resolve its explicit camera slot through the shared pan protocol.'
+Assert-SourceNotContains $directorSource '(?s)ShowView.*?traveler\.SnapTo\s*\(' `
+    'Subview changes must not transport a fixed-world Traveler.'
+Assert-SourceContains $spaceSource 'ShortCycleCameraSlot\s+cameraSlot\s*=\s*ShortCycleCameraSlot\.P0Center' `
+    'Every view-table row must carry an explicit serialized camera slot.'
+Assert-SourceContains ($spaceSource + "`n" + $presentationSetSource) '(?s)ComputeSetBounds.*?Renderer.*?bounds.*?Encapsulate.*?IsInView.*?cameraRect' `
+    'Set visibility must use the union of explicit Renderer world bounds against the camera world rectangle.'
+Assert-SourceContains $presentationSetSource '(?s)if\s*\(\s*boundsDirty\s*\).*?GetComponentsInChildren<Renderer>.*?RendererBoundsChanged\s*\(\s*\).*?boundsRenderers\[index\]\.bounds' `
+    'Stable Set visibility checks must reuse cached Renderer references and allocate only when the hierarchy is dirty.'
+Assert-SourceContains $presentationSetSource '(?s)requestedFocus\.HasValue\s*&&\s*requestedFocus\.Value\s*==\s*focused\s*\)\s*return' `
+    'Repeated merged visibility must not rewrite unchanged Renderer/gate focus state.'
+Assert-SourceNotContains ($directorSource + "`n" + $spaceSource + "`n" + $presentationSetSource + "`n" + $travelerSource) '\.Find\s*\(' `
+    'FIX-T5a runtime routing must not introduce scene-name lookup fallbacks.'
 
 Assert-SourceNotContains $builderSource 'UnityEngine\.UI\.Button|typeof\s*\(\s*Button\s*\)|\.onClick\b' `
     'ShortCycle builder must not carry an interactive UnityEngine.UI.Button path.'
@@ -609,6 +733,14 @@ foreach ($fieldContract in @('Camera\s+referenceCamera','Transform\s+phase1Marke
     Assert-SourceContains $cameraFrameRuntimeSource ("public\s+{0}\s*;" -f $fieldContract) `
         "CameraFrameGizmo must preserve public field contract $fieldContract."
 }
+Assert-SourceContains $cameraFrameRuntimeSource 'public\s+Transform\s+p0LeftMarker\s*;' `
+    'CameraFrameGizmo must expose the fourth P0-Left marker.'
+Assert-SourceContains $cameraFrameRuntimeSource 'const\s+int\s+MarkerCount\s*=\s*4' `
+    'CameraFrameGizmo must enumerate exactly four canonical frame markers.'
+foreach ($menuPath in @('Align P1','Align P0-Left','Align P0-Center','Align Right')) {
+    Assert-SourceContains $cameraFrameMenuSource ([regex]::Escape($menuPath)) `
+        "Camera-frame menu must expose $menuPath."
+}
 Assert-SourceContains $cameraFrameRuntimeSource 'static\s+Vector2\s+FrameSize\s*\(' `
     'CameraFrameGizmo must preserve FrameSize.'
 Assert-SourceContains $cameraFrameRuntimeSource 'Transform\s+GetMarker\s*\(' `
@@ -713,7 +845,7 @@ $sourcePaths = @(
     $cameraFrameDrawerPath,
     $cameraFrameMenuPath,
     (Join-Path $PSScriptRoot 'ShortCycleCoreTests.cs')
-) + $shortCycleCompilePaths + $transitionCompilePaths
+) + $shortCycleCompilePaths + $transitionCompilePaths + $layoutCompilePaths
 
 Add-Type -Path $sourcePaths
 $result = [EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
@@ -721,5 +853,5 @@ $result = [EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
     success = $true
     result = $result
     compiledSourceCount = $sourcePaths.Count
-    staticBindingAssertions = 216
+    staticBindingAssertions = 275
 } | ConvertTo-Json -Depth 3

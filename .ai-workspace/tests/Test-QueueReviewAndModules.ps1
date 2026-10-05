@@ -3,7 +3,9 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $sourceRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$testRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("EatWhatQueueReviewModules-{0}" -f [Guid]::NewGuid().ToString('N'))
+$fixtureProject = Join-Path ([System.IO.Path]::GetTempPath()) ("EatWhatQueueReviewModules-{0}" -f [Guid]::NewGuid().ToString('N'))
+$testRoot = Join-Path $fixtureProject '.ai-workspace'
+. (Join-Path $PSScriptRoot 'AcceptanceFixture.ps1')
 $runtimeRoot = Join-Path $testRoot 'runtime'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $productionPaths = @(
@@ -59,7 +61,12 @@ function Invoke-QueueRaw {
 
 function Invoke-Queue {
     param([hashtable]$Parameters)
-    return (Invoke-QueueRaw $Parameters) | ConvertFrom-Json
+    if ($Parameters.Action -eq 'Complete' -and -not $Parameters.AcceptancePath) {
+        $Parameters.AcceptancePath=Initialize-AcceptanceFixture $testRoot $Parameters.TaskId $sourceRoot
+    }
+    $result = (Invoke-QueueRaw $Parameters) | ConvertFrom-Json
+    if ($result.receiptPath) { return Get-Content -LiteralPath $result.receiptPath -Raw | ConvertFrom-Json }
+    return $result
 }
 
 function Assert-QueueFailureWithoutMutation {
@@ -92,6 +99,7 @@ foreach ($path in $productionPaths) { $productionHashesBefore[$path] = Get-Sha25
 try {
     [void](New-Item -ItemType Directory -Path $runtimeRoot -Force)
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'queue.ps1') -Destination (Join-Path $testRoot 'queue.ps1')
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'repair-budget.ps1') -Destination (Join-Path $testRoot 'repair-budget.ps1')
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'supervised.ps1') -Destination (Join-Path $testRoot 'supervised.ps1')
     foreach ($stateName in @('queue-state.json', 'worker-state.json', 'mode-state.json')) {
         Copy-Item -LiteralPath (Join-Path $sourceRoot (Join-Path 'runtime' $stateName)) -Destination (Join-Path $runtimeRoot $stateName)
@@ -327,9 +335,9 @@ finally {
     foreach ($path in $productionPaths) {
         Assert-Equal (Get-Sha256 $path) $productionHashesBefore[$path] "Test must not modify production $(Split-Path -Leaf $path)."
     }
-    if (Test-Path -LiteralPath $testRoot) {
+    if (Test-Path -LiteralPath $fixtureProject) {
         $resolvedTempRoot = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
-        $resolvedTestRoot = [System.IO.Path]::GetFullPath($testRoot)
+        $resolvedTestRoot = [System.IO.Path]::GetFullPath($fixtureProject)
         if ($resolvedTestRoot.StartsWith($resolvedTempRoot, [System.StringComparison]::OrdinalIgnoreCase) -and
             (Split-Path -Leaf $resolvedTestRoot).StartsWith('EatWhatQueueReviewModules-', [System.StringComparison]::Ordinal)) {
             Remove-Item -LiteralPath $resolvedTestRoot -Recurse -Force

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
+using System.Threading;
 using EatWhat.Cooking.ShortCycle;
+using EatWhat.Tools.Layout;
 using EatWhat.Tools.Rendering;
 using UnityEngine;
 
@@ -24,6 +27,8 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             VerifyNamedActionContractAndTransitionTable();
             VerifyCommandBridge();
             VerifyCameraSlotVisibilityContract();
+            VerifyCameraViewportAnchorContract();
+            VerifySubviewCameraRoutingAndWorldVisibility();
             VerifyCameraPanCurveAndLifecycleContract();
             VerifyManualDriverKeyMap();
             VerifyGridPieceContracts();
@@ -40,11 +45,13 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             VerifyFridgeScrollTraceClassifierAndLifecycle();
             VerifyFridgeScrollLabTraceSessionsAndSimulationBoundary();
             VerifyMouseInteractionLayerStackBridge();
+            VerifyModalScrollVerificationControl();
             VerifyDirectorLayerOwnership();
             VerifyGeneratedDataCatalogAndInventory();
             VerifyTrayControllerRequiresHost();
             return "PASS: CK01-C pure logic tests (FSM/session/presentation/actions/grid/data + v2.2 contracts + fridge-cat rig/blink/discrete scroll/real-wheel trace).";
         }
+
 
         private static void VerifyBeginSessionSequence()
         {
@@ -205,6 +212,97 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             Assert(normalRoot.SetActiveCallCount == destroySetActiveCalls,
                 "OnDestroy must not reactivate or deactivate the presentation container.");
             normalRoot.ThrowOnSetActive = false;
+
+            var persistentRoot = new UnityEngine.GameObject();
+            persistentRoot.SetActive(true);
+            var persistentRenderer = persistentRoot.AddComponent<UnityEngine.Renderer>();
+            var persistentBehaviour = new UnityEngine.Behaviour();
+            var persistentGate = new ShortCycleStateGatedInteraction();
+            SetPrivateField(persistentGate, "gatedBehaviours", new[] { persistentBehaviour });
+            InvokePrivateMethod(persistentGate, "OnEnable");
+            var persistent = new ShortCyclePresentationSet();
+            SetPrivateField(persistent, "containerRoot", persistentRoot);
+            SetPrivateField(persistent, "gatedInteractions", new UnityEngine.MonoBehaviour[] { persistentGate });
+            SetPrivateField(persistent, "keepVisualActiveAcrossSpaces", true);
+            var persistentP0 = new ShortCycleSpace();
+            var persistentP1 = new ShortCycleSpace();
+            SetPrivateField(persistentP1, "spaceId", ShortCycleSpaceId.Phase1);
+            SetPrivateField(persistentP0, "viewTable", new[]
+            {
+                new ShortCycleViewSetEntry
+                {
+                    view = ShortCyclePhase0View.ClueBoardShell,
+                    sets = new[] { persistent }
+                }
+            });
+            SetPrivateField(persistentP1, "structureSets", new[] { persistent });
+            var persistentDirector = new ShortCyclePresentationDirector();
+            SetPrivateField(persistentDirector, "spaces", new[] { persistentP0, persistentP1 });
+            persistentDirector.EnterSpace(ShortCycleSpaceId.Phase0);
+            Assert(persistentRoot.activeSelf && persistentRenderer.enabled && !persistent.IsFocused &&
+                !persistentGate.InteractionAllowed,
+                "A persistent physical visual must not focus or enable a view that is not logically open.");
+            persistentDirector.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.ClueBoardShell);
+            Assert(persistent.IsFocused && persistentGate.InteractionAllowed,
+                "A persistent physical visual may be focused only while its owning view is logically open.");
+            var persistentActivationWrites = persistentRoot.SetActiveCallCount;
+            persistentDirector.LeaveSpace(ShortCycleSpaceId.Phase0);
+            Assert(persistentRoot.activeSelf && persistentRenderer.enabled && !persistent.IsFocused &&
+                !persistentGate.InteractionAllowed &&
+                persistentRoot.SetActiveCallCount == persistentActivationWrites,
+                "A persistent visual must stay active through departure without leaving background interaction enabled.");
+            persistentDirector.EnterSpace(ShortCycleSpaceId.Phase1);
+            persistentDirector.LeaveSpace(ShortCycleSpaceId.Phase1);
+            persistentDirector.EnterSpace(ShortCycleSpaceId.Phase0);
+            Assert(persistentRoot.activeSelf && persistentRenderer.enabled &&
+                persistentRoot.SetActiveCallCount == persistentActivationWrites,
+                "Repeated and reversed P0/P1 transitions must not deactivate/reactivate the persistent visual.");
+            persistentDirector.ClearSessionPresentation();
+            InvokePrivateMethod(persistentGate, "OnDestroy");
+        }
+
+        private static void VerifyCameraViewportAnchorContract()
+        {
+            var camera = new Camera { orthographicSize = 5f, aspect = 2f };
+            camera.transform.position = new Vector3(10f, 20f, -10f);
+            var parent = new GameObject();
+            parent.transform.position = new Vector3(100f, -50f, 8f);
+            var anchoredObject = new GameObject();
+            anchoredObject.transform.SetParent(parent.transform, false);
+            anchoredObject.transform.position = new Vector3(-3f, 4f, 3f);
+            anchoredObject.transform.localScale = new Vector3(2f, 3f, 1f);
+            var originalScale = anchoredObject.transform.localScale;
+            var anchor = anchoredObject.AddComponent<CameraViewportAnchor>();
+            anchor.Configure(camera, anchoredObject.transform, Vector2.zero,
+                new Vector2(0.1f, 0.2f), true, 0f);
+            Assert(Vector3.Distance(anchoredObject.transform.position, new Vector3(2f, 17f, 3f)) <= 0.0001f &&
+                Vector3.Distance(anchoredObject.transform.localScale, originalScale) <= 0.0001f,
+                "Viewport anchoring must honor inward inset under a non-origin parent without changing Z or scale.");
+
+            camera.transform.position = new Vector3(20f, 25f, -10f);
+            InvokePrivateMethod(anchor, "LateUpdate");
+            Assert(Vector3.Distance(anchoredObject.transform.position, new Vector3(12f, 22f, 3f)) <= 0.0001f,
+                "LateUpdate must follow a camera pan on the same rendered frame.");
+
+            camera.orthographicSize = 4f;
+            camera.aspect = 1f;
+            InvokePrivateMethod(anchor, "LateUpdate");
+            Assert(Vector3.Distance(anchoredObject.transform.position, new Vector3(16.8f, 22.6f, 3f)) <= 0.0001f,
+                "Viewport anchoring must recompute from current zoom and aspect.");
+
+            anchoredObject.transform.position = new Vector3(0f, 0f, 99f);
+            InvokePrivateMethod(anchor, "OnEnable");
+            InvokePrivateMethod(anchor, "OnEnable");
+            Assert(Math.Abs(anchoredObject.transform.position.z - 3f) <= 0.0001f &&
+                Vector3.Distance(anchoredObject.transform.localScale, originalScale) <= 0.0001f,
+                "Repeated enable must reuse the original world plane and remain idempotent.");
+
+            var fixedPlaneObject = new GameObject();
+            var fixedPlaneAnchor = fixedPlaneObject.AddComponent<CameraViewportAnchor>();
+            fixedPlaneAnchor.Configure(camera, fixedPlaneObject.transform, new Vector2(1f, 1f),
+                new Vector2(0.1f, 0.1f), false, 7f);
+            Assert(Math.Abs(fixedPlaneObject.transform.position.z - 7f) <= 0.0001f,
+                "An explicit world plane must be available when initial-Z preservation is disabled.");
         }
 
         private static void VerifyCameraFrameAndStatusBoard()
@@ -219,24 +317,28 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             size = EatWhat.EditorTools.CameraFrameGizmo.FrameSize(camera);
             Assert(size.x == 5f && size.y == 10f, "Portrait aspect must not use a hardcoded stage width.");
             var phase1Marker = new UnityEngine.Transform();
+            var p0LeftMarker = new UnityEngine.Transform();
             var phase0Marker = new UnityEngine.Transform();
             var rightMarker = new UnityEngine.Transform();
             var gizmo = new EatWhat.EditorTools.CameraFrameGizmo
             {
                 referenceCamera = camera,
                 phase1Marker = phase1Marker,
+                p0LeftMarker = p0LeftMarker,
                 phase0Marker = phase0Marker,
                 rightMarker = rightMarker
             };
             Assert(object.ReferenceEquals(gizmo.GetMarker(0), phase1Marker), "Marker index 0 must remain Phase1.");
-            Assert(object.ReferenceEquals(gizmo.GetMarker(1), phase0Marker), "Marker index 1 must remain Phase0.");
-            Assert(object.ReferenceEquals(gizmo.GetMarker(2), rightMarker), "Marker index 2 must remain Right.");
-            Assert(gizmo.GetMarker(-1) == null && gizmo.GetMarker(3) == null,
+            Assert(object.ReferenceEquals(gizmo.GetMarker(1), p0LeftMarker), "Marker index 1 must be P0-Left.");
+            Assert(object.ReferenceEquals(gizmo.GetMarker(2), phase0Marker), "Marker index 2 must remain P0-Center.");
+            Assert(object.ReferenceEquals(gizmo.GetMarker(3), rightMarker), "Marker index 3 must remain Right.");
+            Assert(gizmo.GetMarker(-1) == null && gizmo.GetMarker(4) == null &&
+                EatWhat.EditorTools.CameraFrameGizmo.MarkerCount == 4,
                 "Out-of-range marker indices must remain null.");
             var gizmoType = typeof(EatWhat.EditorTools.CameraFrameGizmo);
             Assert(gizmoType.GetField("referenceCamera").FieldType == typeof(UnityEngine.Camera),
                 "CameraFrameGizmo.referenceCamera must remain a public Camera field.");
-            foreach (var fieldName in new[] { "phase1Marker", "phase0Marker", "rightMarker" })
+            foreach (var fieldName in new[] { "phase1Marker", "p0LeftMarker", "phase0Marker", "rightMarker" })
             {
                 Assert(gizmoType.GetField(fieldName).FieldType == typeof(UnityEngine.Transform),
                     "CameraFrameGizmo." + fieldName + " must remain a public Transform field.");
@@ -296,8 +398,9 @@ namespace EatWhat.Cooking.ShortCycle.Tests
 
             moving.position = new UnityEngine.Vector3(-10f, -10f, 0f);
             director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.ClueBoardShell);
-            Assert(UnityEngine.Vector3.Distance(moving.position, phase0Anchor.position) < .0001f && transition.StartedCoroutineCount == 0,
-                "Opening the P0 clue board must correct an off-anchor Traveler instantly.");
+            Assert(UnityEngine.Vector3.Distance(moving.position, new UnityEngine.Vector3(-10f, -10f, 0f)) < .0001f &&
+                transition.StartedCoroutineCount == 0,
+                "Switching a P0 subview must not transport the fixed-world clue board Traveler.");
 
             director.LeaveSpace(ShortCycleSpaceId.Phase0);
             director.EnterSpace(ShortCycleSpaceId.Phase1);
@@ -310,6 +413,13 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             director.EnterSpace(ShortCycleSpaceId.Phase0);
             Assert(transition.StartedCoroutineCount == 2,
                 "P1-to-P0 travel must also keep the animated MoveTo path.");
+
+            traveler.SnapTo(ShortCycleSpaceId.Phase0);
+            var sameDestinationCallbackCount = 0;
+            var startsBeforeSameDestination = transition.StartedCoroutineCount;
+            Assert(traveler.MoveTo(ShortCycleSpaceId.Phase0, () => sameDestinationCallbackCount++) &&
+                transition.StartedCoroutineCount == startsBeforeSameDestination && sameDestinationCallbackCount == 1,
+                "MoveTo at an identical authored destination must complete synchronously without a transition.");
 
             var incomplete = new ShortCycleTravelingElement();
             Assert(!incomplete.SnapTo(ShortCycleSpaceId.Phase0),
@@ -688,6 +798,18 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                     ShortCyclePhase0View.ClueBoardShell,
                     out ignored),
                 "Catalog opening must reject while the clue board is expanded.");
+            foreach (var forbiddenSource in new[]
+            {
+                ShortCyclePhase0View.Cover,
+                ShortCyclePhase0View.RecipeCatalog,
+                ShortCyclePhase0View.StepDetail,
+                ShortCyclePhase0View.ClueBoardShell
+            })
+            {
+                Assert(!ShortCycleActionTransitionTable.TryGetTarget(
+                        ShortCycleActionNames.OpenClueBoard, forbiddenSource, out ignored),
+                    "open_clue_board must be accepted only from RecipeBrowse, not " + forbiddenSource + ".");
+            }
         }
 
         private static void AssertPhase0ActionTransition(
@@ -721,27 +843,27 @@ namespace EatWhat.Cooking.ShortCycle.Tests
         private static void VerifyCameraSlotVisibilityContract()
         {
             Assert(ShortCycleOverflowVisibilityGate.ShouldBeVisibleAtRest(
-                    ShortCycleCameraSlot.Phase0,
-                    ShortCycleCameraSlot.Phase0),
+                    ShortCycleCameraSlot.P0Center,
+                    ShortCycleCameraSlot.P0Center),
                 "A gate must initialize visible at its home camera slot.");
             Assert(!ShortCycleOverflowVisibilityGate.ShouldBeVisibleAtRest(
-                    ShortCycleCameraSlot.Phase0,
-                    ShortCycleCameraSlot.Phase1),
+                    ShortCycleCameraSlot.P0Center,
+                    ShortCycleCameraSlot.P1),
                 "A gate must initialize hidden away from its home camera slot.");
             Assert(ShortCycleOverflowVisibilityGate.ShouldHideOnPanStart(
-                    ShortCycleCameraSlot.Phase0,
-                    ShortCycleCameraSlot.Phase0,
-                    ShortCycleCameraSlot.Phase1),
+                    ShortCycleCameraSlot.P0Center,
+                    ShortCycleCameraSlot.P0Center,
+                    ShortCycleCameraSlot.P1),
                 "Leaving home must hide overflow renderers when the pan starts.");
             Assert(ShortCycleOverflowVisibilityGate.ShouldHideOnPanStart(
-                    ShortCycleCameraSlot.Phase0,
-                    ShortCycleCameraSlot.Phase1,
-                    ShortCycleCameraSlot.Phase0),
+                    ShortCycleCameraSlot.P0Center,
+                    ShortCycleCameraSlot.P1,
+                    ShortCycleCameraSlot.P0Center),
                 "Returning home must remain hidden until PanCompleted.");
             Assert(!ShortCycleOverflowVisibilityGate.ShouldHideOnPanStart(
-                    ShortCycleCameraSlot.Phase0,
-                    ShortCycleCameraSlot.Phase1,
-                    ShortCycleCameraSlot.RightReserved),
+                    ShortCycleCameraSlot.P0Center,
+                    ShortCycleCameraSlot.P1,
+                    ShortCycleCameraSlot.Right),
                 "A pan entirely outside home must not alter an already hidden gate.");
 
             var startedEvent = typeof(ShortCycleCameraPanController).GetEvent("PanStarted");
@@ -768,14 +890,14 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var callbackCount = 0;
             pan.PanStarted += (from, to) => panStartedCount++;
             pan.PanCompleted += slot => panCompletedCount++;
-            Assert(pan.PanTo(ShortCycleCameraSlot.Phase0, () => callbackCount++),
+            Assert(pan.PanTo(ShortCycleCameraSlot.P0Center, () => callbackCount++),
                 "A same-slot camera request must be accepted.");
             Assert(callbackCount == 1 && panStartedCount == 0 && panCompletedCount == 0 && !inputLock.Gate.IsLocked,
                 "A same-slot camera request must callback synchronously without events or input lock.");
 
             var space = new ShortCycleSpace();
             SetPrivateField(space, "spaceId", ShortCycleSpaceId.Phase0);
-            SetPrivateField(space, "cameraSlot", ShortCycleCameraSlot.Phase0);
+            SetPrivateField(space, "cameraSlot", ShortCycleCameraSlot.P0Center);
             var director = new ShortCyclePresentationDirector();
             SetPrivateField(director, "spaces", new[] { space });
             SetPrivateField(director, "cameraPanController", pan);
@@ -784,6 +906,129 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.Cover);
             Assert(panStartedCount == 0,
                 "Same-space Enter/Show/Hide presentation calls must not raise PanStarted.");
+        }
+
+        private static void VerifySubviewCameraRoutingAndWorldVisibility()
+        {
+            var previousDelta = Time.unscaledDeltaTime;
+            Time.unscaledDeltaTime = 0.25f;
+            Assert((int)ShortCycleCameraSlot.P0Center == 0 && (int)ShortCycleCameraSlot.P1 == 1 &&
+                (int)ShortCycleCameraSlot.Right == 2 && (int)ShortCycleCameraSlot.P0Left == 3,
+                "The four-slot enum must retain the serialized values of the original three slots.");
+
+            var camera = new Camera { orthographicSize = 7.2f, aspect = 16f / 9f };
+            var p1Marker = new Transform { position = new Vector3(-25.6f, 0f, 0f) };
+            var p0LeftMarker = new Transform { position = new Vector3(-12.8f, 0f, 0f) };
+            var p0CenterMarker = new Transform { position = Vector3.zero };
+            var rightMarker = new Transform { position = new Vector3(25.6f, 0f, 0f) };
+            camera.transform.position = p0CenterMarker.position;
+            var inputLock = new ShortCycleInputLockController();
+            var pan = CreateCameraPan(camera, p0CenterMarker, p1Marker, inputLock);
+            SetPrivateField(pan, "p0LeftMarker", p0LeftMarker);
+            SetPrivateField(pan, "rightReservedMarker", rightMarker);
+
+            var catalogSet = new ShortCyclePresentationSet();
+            var browseSet = new ShortCyclePresentationSet();
+            var clueSet = new ShortCyclePresentationSet();
+            var space = new ShortCycleSpace();
+            SetPrivateField(space, "spaceId", ShortCycleSpaceId.Phase0);
+            SetPrivateField(space, "cameraSlot", ShortCycleCameraSlot.P0Center);
+            SetPrivateField(space, "viewTable", new[]
+            {
+                new ShortCycleViewSetEntry
+                {
+                    view = ShortCyclePhase0View.RecipeCatalog,
+                    cameraSlot = ShortCycleCameraSlot.P0Center,
+                    sets = new[] { catalogSet }
+                },
+                new ShortCycleViewSetEntry
+                {
+                    view = ShortCyclePhase0View.RecipeBrowse,
+                    cameraSlot = ShortCycleCameraSlot.P0Left,
+                    sets = new[] { browseSet }
+                },
+                new ShortCycleViewSetEntry
+                {
+                    view = ShortCyclePhase0View.ClueBoardShell,
+                    cameraSlot = ShortCycleCameraSlot.P0Left,
+                    sets = new[] { clueSet }
+                }
+            });
+            var director = new ShortCyclePresentationDirector();
+            SetPrivateField(director, "spaces", new[] { space });
+            SetPrivateField(director, "cameraPanController", pan);
+            var panStartedCount = 0;
+            pan.PanStarted += (from, to) => panStartedCount++;
+
+            director.EnterSpace(ShortCycleSpaceId.Phase0);
+            director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeCatalog);
+            Assert(panStartedCount == 0 && space.WantsActive(catalogSet),
+                "Catalog (state ③) must activate at P0-Center without a redundant pan.");
+            director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeCatalog);
+            director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
+            Assert(panStartedCount == 1 && !space.WantsActive(browseSet),
+                "③→① must defer Browse activation while the P0-Center→P0-Left pan is pending.");
+            Assert(pan.AdvanceCoroutinesOnce() && inputLock.Gate.IsLocked,
+                "③→① must own the input lock while the camera is moving.");
+            AdvanceCoroutinesToCompletion(pan);
+            Assert(space.WantsActive(browseSet) && !inputLock.Gate.IsLocked &&
+                pan.CurrentSlot == ShortCycleCameraSlot.P0Left,
+                "③→① must activate Browse only after P0-Left arrival and release the lock.");
+
+            director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
+            director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.ClueBoardShell);
+            Assert(panStartedCount == 1 && space.WantsActive(clueSet),
+                "①→④ must remain on P0-Left and must not raise PanStarted.");
+            director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.ClueBoardShell);
+            director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
+            Assert(panStartedCount == 1 && space.WantsActive(browseSet),
+                "④→① must remain on P0-Left and must not raise PanStarted.");
+
+            var clueBoundsSet = CreateBoundsSet(new Bounds(new Vector3(-19.2f, 0f, 0f), new Vector3(10f, 4f, 1f)));
+            var rightPageSet = CreateBoundsSet(new Bounds(new Vector3(6.4f, 0f, 0f), new Vector3(10f, 4f, 1f)));
+            var p0LeftRect = new Rect(-25.6f, -7.2f, 25.6f, 14.4f);
+            var p1Rect = new Rect(-38.4f, -7.2f, 25.6f, 14.4f);
+            var p0CenterRect = new Rect(-12.8f, -7.2f, 25.6f, 14.4f);
+            Assert(clueBoundsSet.IsInView(p0LeftRect) && clueBoundsSet.IsInView(p1Rect) &&
+                !clueBoundsSet.IsInView(p0CenterRect),
+                "The fixed clue board bounds must intersect P0-Left/P1 but not P0-Center.");
+            Assert(rightPageSet.IsInView(p0CenterRect) && !rightPageSet.IsInView(p0LeftRect),
+                "The real right-page bounds must intersect P0-Center but not P0-Left.");
+            var cachedRendererArray = GetPrivateField(rightPageSet, "boundsRenderers");
+            Assert(rightPageSet.IsInView(p0CenterRect) &&
+                ReferenceEquals(cachedRendererArray, GetPrivateField(rightPageSet, "boundsRenderers")),
+                "Stable bounds reads must reuse the cached Renderer array without repeated allocation.");
+
+            var mixedBoundsSet = new ShortCyclePresentationSet();
+            var worldRendererObject = new GameObject();
+            worldRendererObject.transform.SetParent(mixedBoundsSet.transform, false);
+            worldRendererObject.AddComponent<Renderer>().bounds =
+                new Bounds(new Vector3(6.4f, 0f, 0f), new Vector3(10f, 4f, 1f));
+            var anchoredRendererObject = new GameObject();
+            anchoredRendererObject.transform.SetParent(mixedBoundsSet.transform, false);
+            anchoredRendererObject.AddComponent<CameraViewportAnchor>();
+            anchoredRendererObject.AddComponent<Renderer>().bounds =
+                new Bounds(new Vector3(-25.6f, 0f, 0f), new Vector3(10f, 4f, 1f));
+            mixedBoundsSet.MarkBoundsDirty();
+            Assert(mixedBoundsSet.IsInView(p0CenterRect) && !mixedBoundsSet.IsInView(p1Rect),
+                "Camera-anchored control renderers must not expand world-content Set bounds.");
+
+            var rendererless = new ShortCyclePresentationSet();
+            var warningCount = Debug.WarningMessages.Count;
+            Assert(rendererless.IsInView(p0CenterRect) && rendererless.IsInView(p0CenterRect) &&
+                Debug.WarningMessages.Count == warningCount + 1,
+                "A renderer-less Set must fail safe to logical visibility and throttle its diagnostic.");
+            Time.unscaledDeltaTime = previousDelta;
+        }
+
+        private static ShortCyclePresentationSet CreateBoundsSet(Bounds bounds)
+        {
+            var set = new ShortCyclePresentationSet();
+            var rendererObject = new GameObject();
+            rendererObject.transform.SetParent(set.transform, false);
+            rendererObject.AddComponent<Renderer>().bounds = bounds;
+            set.MarkBoundsDirty();
+            return set;
         }
 
         private static void VerifyCameraPanCurveAndLifecycleContract()
@@ -843,7 +1088,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var callbackCount = 0;
             pan.PanCompleted += slot => completionCount++;
             var routine = (System.Collections.IEnumerator)InvokePrivateMethodWithResult(
-                pan, "PanRoutine", ShortCycleCameraSlot.Phase1, destination, new Action(() => callbackCount++));
+                pan, "PanRoutine", ShortCycleCameraSlot.P1, destination, new Action(() => callbackCount++));
             Assert(routine.MoveNext(), "A positive-duration camera pan must yield an intermediate frame.");
             Assert(camera.transform.position.x < 0f && camera.transform.position.x > destination.x,
                 "An empty-curve camera pan must move to a strict intermediate position before completion.");
@@ -852,7 +1097,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 "The reviewed one-second camera pan must produce all quarter-step samples.");
             Assert(!routine.MoveNext(), "The camera pan must terminate after reaching the destination.");
             Assert(Vector3.Distance(camera.transform.position, destination) < 0.0001f &&
-                pan.CurrentSlot == ShortCycleCameraSlot.Phase1,
+                pan.CurrentSlot == ShortCycleCameraSlot.P1,
                 "The camera pan must land exactly on the requested marker and update CurrentSlot only at completion.");
             Assert(completionCount == 1 && callbackCount == 1 && !inputLock.Gate.IsLocked,
                 "A completed camera pan must release its lock and invoke each completion path exactly once.");
@@ -868,7 +1113,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var invalidCallbackCount = 0;
             invalidPan.PanCompleted += slot => invalidCompletionCount++;
             var invalidRoutine = (System.Collections.IEnumerator)InvokePrivateMethodWithResult(
-                invalidPan, "PanRoutine", ShortCycleCameraSlot.Phase1, destination,
+                invalidPan, "PanRoutine", ShortCycleCameraSlot.P1, destination,
                 new Action(() => invalidCallbackCount++));
             Assert(!invalidRoutine.MoveNext() && Vector3.Distance(invalidCamera.transform.position, destination) < 0.0001f,
                 "An invalid duration must finish immediately instead of hanging or waiting to jump later.");
@@ -887,14 +1132,14 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             SetPrivateField(cancelPan, "phase1Marker", phase1Marker);
             SetPrivateField(cancelPan, "rightReservedMarker", rightMarker);
             InvokePrivateMethod(cancelPan, "Awake");
-            Assert(cancelPan.PanTo(ShortCycleCameraSlot.Phase1),
+            Assert(cancelPan.PanTo(ShortCycleCameraSlot.P1),
                 "The first cross-space pan request must start.");
             var interruptedLock = new TraceDisposable();
             SetPrivateField(cancelPan, "activeInputLock", interruptedLock);
-            Assert(cancelPan.PanTo(ShortCycleCameraSlot.RightReserved),
+            Assert(cancelPan.PanTo(ShortCycleCameraSlot.Right),
                 "A rapid reverse request must replace the active pan.");
             Assert(cancelPan.StartedCoroutineCount == 2 && cancelPan.StoppedCoroutineCount == 1 &&
-                interruptedLock.DisposeCount == 1 && cancelPan.CurrentSlot == ShortCycleCameraSlot.Phase0,
+                interruptedLock.DisposeCount == 1 && cancelPan.CurrentSlot == ShortCycleCameraSlot.P0Center,
                 "Replacing a pan must stop the old coroutine, release its lock once, and not land the old request.");
             var disableLock = new TraceDisposable();
             SetPrivateField(cancelPan, "activeInputLock", disableLock);
@@ -926,15 +1171,15 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             pan.PanStarted += (from, to) => startedCount++;
             pan.PanCompleted += slot => completedCount++;
 
-            Assert(pan.PanTo(ShortCycleCameraSlot.Phase1, () => outboundCallbackCount++),
+            Assert(pan.PanTo(ShortCycleCameraSlot.P1, () => outboundCallbackCount++),
                 "The public API must accept the outbound P0-to-P1 request.");
             Assert(pan.AdvanceCoroutinesOnce() && camera.transform.position.x < 0f && camera.transform.position.x > -8f,
                 "The public API regression must advance the outbound pan to a real intermediate position.");
             var interruptedPosition = camera.transform.position;
-            Assert(inputLock.Gate.IsLocked && pan.CurrentSlot == ShortCycleCameraSlot.Phase0,
+            Assert(inputLock.Gate.IsLocked && pan.CurrentSlot == ShortCycleCameraSlot.P0Center,
                 "The outbound pan must retain the P0 completion slot and its input lock while in flight.");
 
-            Assert(pan.PanTo(ShortCycleCameraSlot.Phase0, () => returnCallbackCount++),
+            Assert(pan.PanTo(ShortCycleCameraSlot.P0Center, () => returnCallbackCount++),
                 "The public API must accept a mid-flight request back to the recorded slot.");
             Assert(pan.StoppedCoroutineCount == 1 && pan.StartedCoroutineCount == 2 &&
                 outboundCallbackCount == 0 && returnCallbackCount == 0 && pan.ActiveCoroutineCount == 1,
@@ -944,14 +1189,14 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 "The replacement must reverse from the interrupted position and hold the new input lock.");
             AdvanceCoroutinesToCompletion(pan);
             Assert(Vector3.Distance(camera.transform.position, phase0Marker.position) < 0.0001f &&
-                pan.CurrentSlot == ShortCycleCameraSlot.Phase0,
+                pan.CurrentSlot == ShortCycleCameraSlot.P0Center,
                 "The replacement must complete at P0 instead of allowing the cancelled P1 request to arrive late.");
             Assert(startedCount == 2 && completedCount == 1 && outboundCallbackCount == 0 &&
                 returnCallbackCount == 1 && !inputLock.Gate.IsLocked && pan.ActiveCoroutineCount == 0,
                 "Only the replacement may complete once; the cancelled request must have no callback, event, or lock leak.");
 
             var sameSlotCallbackCount = 0;
-            Assert(pan.PanTo(ShortCycleCameraSlot.Phase0, () => sameSlotCallbackCount++) &&
+            Assert(pan.PanTo(ShortCycleCameraSlot.P0Center, () => sameSlotCallbackCount++) &&
                 sameSlotCallbackCount == 1 && pan.StartedCoroutineCount == 2 && pan.ActiveCoroutineCount == 0,
                 "A completed camera already at the requested marker must retain synchronous same-slot completion.");
         }
@@ -969,16 +1214,16 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var reversePan = CreateCameraPan(reverseCamera, phase0Marker, phase1Marker, reverseLock);
             var abandonedCallbackCount = 0;
             var replacementCallbackCount = 0;
-            Assert(reversePan.PanTo(ShortCycleCameraSlot.Phase0, () => abandonedCallbackCount++) &&
+            Assert(reversePan.PanTo(ShortCycleCameraSlot.P0Center, () => abandonedCallbackCount++) &&
                 reversePan.AdvanceCoroutinesOnce(),
                 "The symmetric P1-to-P0 request must reach an intermediate frame.");
             var interruptedPosition = reverseCamera.transform.position;
-            Assert(reversePan.PanTo(ShortCycleCameraSlot.Phase1, () => replacementCallbackCount++) &&
+            Assert(reversePan.PanTo(ShortCycleCameraSlot.P1, () => replacementCallbackCount++) &&
                 reversePan.AdvanceCoroutinesOnce() && reverseCamera.transform.position.x < interruptedPosition.x,
                 "The symmetric replacement must reverse from its current position toward P1.");
             AdvanceCoroutinesToCompletion(reversePan);
             Assert(Vector3.Distance(reverseCamera.transform.position, phase1Marker.position) < 0.0001f &&
-                reversePan.CurrentSlot == ShortCycleCameraSlot.Phase1 && abandonedCallbackCount == 0 &&
+                reversePan.CurrentSlot == ShortCycleCameraSlot.P1 && abandonedCallbackCount == 0 &&
                 replacementCallbackCount == 1 && !reverseLock.Gate.IsLocked,
                 "The symmetric replacement must suppress the old completion and finish exactly once at P1.");
 
@@ -990,15 +1235,15 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var latestCallbackCount = 0;
             var completedCount = 0;
             repeatedPan.PanCompleted += slot => completedCount++;
-            Assert(repeatedPan.PanTo(ShortCycleCameraSlot.Phase1, () => firstCallbackCount++) &&
+            Assert(repeatedPan.PanTo(ShortCycleCameraSlot.P1, () => firstCallbackCount++) &&
                 repeatedPan.AdvanceCoroutinesOnce(),
                 "The repeated-request regression must first reach an intermediate position.");
-            Assert(repeatedPan.PanTo(ShortCycleCameraSlot.Phase1, () => latestCallbackCount++) &&
+            Assert(repeatedPan.PanTo(ShortCycleCameraSlot.P1, () => latestCallbackCount++) &&
                 repeatedPan.StoppedCoroutineCount == 1 && repeatedPan.ActiveCoroutineCount == 1,
                 "Repeating the active target must replace the old request instead of running two pans.");
             AdvanceCoroutinesToCompletion(repeatedPan);
             Assert(firstCallbackCount == 0 && latestCallbackCount == 1 && completedCount == 1 &&
-                repeatedPan.CurrentSlot == ShortCycleCameraSlot.Phase1 && !repeatedLock.Gate.IsLocked,
+                repeatedPan.CurrentSlot == ShortCycleCameraSlot.P1 && !repeatedLock.Gate.IsLocked,
                 "Only the latest repeated request may complete, and it must release the lock once finished.");
         }
 
@@ -1014,25 +1259,25 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var inputLock = new ShortCycleInputLockController();
             var pan = CreateCameraPan(camera, phase0Marker, phase1Marker, inputLock);
             var abandonedCallbackCount = 0;
-            Assert(pan.PanTo(ShortCycleCameraSlot.Phase1, () => abandonedCallbackCount++) &&
+            Assert(pan.PanTo(ShortCycleCameraSlot.P1, () => abandonedCallbackCount++) &&
                 pan.AdvanceCoroutinesOnce(),
                 "The disable regression must first reach an intermediate position.");
             var disabledPosition = camera.transform.position;
             InvokePrivateMethod(pan, "OnDisable");
             Assert(pan.ActiveCoroutineCount == 0 && pan.StoppedCoroutineCount == 1 &&
-                pan.CurrentSlot == ShortCycleCameraSlot.Phase0 && abandonedCallbackCount == 0 &&
+                pan.CurrentSlot == ShortCycleCameraSlot.P0Center && abandonedCallbackCount == 0 &&
                 !inputLock.Gate.IsLocked,
                 "Disabling mid-flight must cancel without a late completion and release the old lock.");
             Assert(!pan.AdvanceCoroutinesOnce() && Vector3.Distance(camera.transform.position, disabledPosition) < 0.0001f,
                 "A disabled old coroutine must not resume or write a late position.");
 
             var recoveryCallbackCount = 0;
-            Assert(pan.PanTo(ShortCycleCameraSlot.Phase0, () => recoveryCallbackCount++) &&
+            Assert(pan.PanTo(ShortCycleCameraSlot.P0Center, () => recoveryCallbackCount++) &&
                 recoveryCallbackCount == 0 && pan.ActiveCoroutineCount == 1,
                 "An off-marker camera must not synchronously complete only because CurrentSlot still names that slot.");
             AdvanceCoroutinesToCompletion(pan);
             Assert(Vector3.Distance(camera.transform.position, phase0Marker.position) < 0.0001f &&
-                recoveryCallbackCount == 1 && pan.CurrentSlot == ShortCycleCameraSlot.Phase0 &&
+                recoveryCallbackCount == 1 && pan.CurrentSlot == ShortCycleCameraSlot.P0Center &&
                 !inputLock.Gate.IsLocked,
                 "An off-marker same-slot recovery must actually reach the marker, callback once, and release its lock.");
         }
@@ -2207,6 +2452,8 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var processingRecord = new CK01ProcessingRecordData { name = "proc_test", output_item = "prd_unknown" };
             var configUnknown = new CK01CookingGameConfigData { name = CK01CookingGameConfigData.UnknownProductItemKey, value = "prd_unknown" };
             var configCapacity = new CK01CookingGameConfigData { name = CK01CookingGameConfigData.DemoFridgeCapacityLevelKey, value = "fcap_lv2" };
+            var configScrollThreshold = new CK01CookingGameConfigData { name = CK01CookingGameConfigData.FridgeScrollThresholdKey, value = "1.5" };
+            var configScrollCooldown = new CK01CookingGameConfigData { name = CK01CookingGameConfigData.FridgeScrollCooldownKey, value = "0.25" };
             var capacityLevel = new CK01FridgeCapacityLevelData { name = "fcap_lv2", level_index = 2, capacity = 30 };
             var kitchenArea = new KitchenAreaData
             {
@@ -2250,7 +2497,9 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 new CK01GeneratedDataTable("CookingGameConfig", null, new[]
                 {
                     new CK01GeneratedDataRowReference(CK01CookingGameConfigData.UnknownProductItemKey, configUnknown),
-                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.DemoFridgeCapacityLevelKey, configCapacity)
+                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.DemoFridgeCapacityLevelKey, configCapacity),
+                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.FridgeScrollThresholdKey, configScrollThreshold),
+                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.FridgeScrollCooldownKey, configScrollCooldown)
                 }),
                 new CK01GeneratedDataTable("FridgeCapacityLevels", null, new[]
                 {
@@ -2321,6 +2570,52 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 "Demo fridge capacity must resolve through config key to fcap_lv2=30.");
             Assert(catalog.DemoFridgeCapacityLevel == 30,
                 "DemoFridgeCapacityLevel must expose the configured capacity value rather than a record count.");
+
+            var originalCulture = Thread.CurrentThread.CurrentCulture;
+            CK01FridgeScrollSettings scrollSettings;
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
+                scrollSettings = catalog.ResolveFridgeScrollSettings(out diagnostic);
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentCulture = originalCulture;
+            }
+            Assert(Math.Abs(scrollSettings.Threshold - 1.5f) < .0001f &&
+                Math.Abs(scrollSettings.Cooldown - .25f) < .0001f && diagnostic == null,
+                "T8 scroll settings must parse dot-decimal values with invariant culture.");
+            var configuredMouseManager = new global::MouseManager();
+            var applyDiagnostic = ShortCycleSessionManager.ConfigureFridgeScrollInput(catalog, configuredMouseManager);
+            Assert(Math.Abs(configuredMouseManager.ScrollThreshold - 1.5f) < .0001f &&
+                Math.Abs(configuredMouseManager.ScrollCooldown - .25f) < .0001f && applyDiagnostic == null,
+                "Session startup must apply both T8 values through MouseManager's single configuration entry.");
+
+            var missingScrollCatalog = new CK01GeneratedDataCatalog();
+            missingScrollCatalog.ReplaceTables(new CK01GeneratedDataTable[0]);
+            scrollSettings = missingScrollCatalog.ResolveFridgeScrollSettings(out diagnostic);
+            Assert(Math.Abs(scrollSettings.Threshold - CK01CookingGameConfigData.DefaultFridgeScrollThreshold) < .0001f &&
+                Math.Abs(scrollSettings.Cooldown - CK01CookingGameConfigData.DefaultFridgeScrollCooldown) < .0001f &&
+                diagnostic.Contains(CK01CookingGameConfigData.FridgeScrollThresholdKey) &&
+                diagnostic.Contains(CK01CookingGameConfigData.FridgeScrollCooldownKey),
+                "Missing T8 keys must use both documented defaults and retain a clear diagnostic.");
+
+            var invalidThreshold = new CK01CookingGameConfigData { value = "1,5" };
+            var invalidCooldown = new CK01CookingGameConfigData { value = "-0.1" };
+            var invalidScrollCatalog = new CK01GeneratedDataCatalog();
+            invalidScrollCatalog.ReplaceTables(new[]
+            {
+                new CK01GeneratedDataTable(CK01GeneratedDataCatalog.CookingGameConfigTable, null, new[]
+                {
+                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.FridgeScrollThresholdKey, invalidThreshold),
+                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.FridgeScrollCooldownKey, invalidCooldown)
+                })
+            });
+            scrollSettings = invalidScrollCatalog.ResolveFridgeScrollSettings(out diagnostic);
+            Assert(Math.Abs(scrollSettings.Threshold - CK01CookingGameConfigData.DefaultFridgeScrollThreshold) < .0001f &&
+                Math.Abs(scrollSettings.Cooldown - CK01CookingGameConfigData.DefaultFridgeScrollCooldown) < .0001f &&
+                diagnostic.Contains("invariant-culture") && diagnostic.Contains(">= 0"),
+                "Invalid T8 values must fall back independently and explain their accepted format/range.");
 
             var missingConfigCatalog = new CK01GeneratedDataCatalog();
             missingConfigCatalog.ReplaceTables(new CK01GeneratedDataTable[0]);
@@ -2508,9 +2803,15 @@ namespace EatWhat.Cooking.ShortCycle.Tests
         {
             var baseLayer = new MouseInteractionLayer();
             var modalLayer = new MouseInteractionLayer();
+            var overlayLayer = new MouseInteractionLayer();
             var stack = new ShortCycleInteractionLayerStack();
             SetPrivateField(stack, "baseLayer", baseLayer);
-            SetPrivateField(stack, "configuredLayers", new List<MouseInteractionLayer> { baseLayer, modalLayer });
+            SetPrivateField(stack, "configuredLayers", new List<MouseInteractionLayer>
+            {
+                baseLayer,
+                modalLayer,
+                overlayLayer
+            });
 
             InvokePrivateMethod(stack, "Awake");
             InvokePrivateMethod(stack, "Start");
@@ -2520,10 +2821,84 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             Assert(!stack.Push(modalLayer), "The same modal layer must not push twice.");
             Assert(modalLayer.manualStackLayer && modalLayer.PushCount == 1 && stack.Top == modalLayer, "Modal layer must use the project layer API and become top.");
             Assert(!stack.Pop(baseLayer), "A non-top layer must not pop.");
-            Assert(stack.Pop(modalLayer) && modalLayer.RemoveCount == 1, "Modal layer must remove through MouseInteractionLayer.OnRemoveLayer exactly once.");
+            Assert(stack.Contains(modalLayer), "The layer bridge must expose configured active-layer membership.");
+            Assert(stack.Push(overlayLayer) && stack.Remove(modalLayer) && stack.Top == overlayLayer &&
+                modalLayer.RemoveCount == 1,
+                "Removing one transient layer must preserve a later top layer and use the project removal API.");
+            Assert(stack.Pop(overlayLayer) && overlayLayer.RemoveCount == 1,
+                "The remaining top layer must still pop normally after an inner transient is removed.");
 
             InvokePrivateMethod(stack, "OnDestroy");
             Assert(baseLayer.RemoveCount == 1 && stack.Count == 0, "Destroy must remove the remaining base layer through the project API.");
+        }
+
+        private static void VerifyModalScrollVerificationControl()
+        {
+            var trace = new List<string>();
+            var context = new ShortCycleContext();
+            context.Enter("rcp_test", ShortCycleTriggerContext.FreeTry);
+            Assert(context.SelectRecipe("rcp_test", false) && context.EnterPhase1(),
+                "The verification fixture must begin in Phase1.");
+            var saveBoundary = new TraceSaveBoundary(trace);
+            var processor = new ShortCycleDataProcessor(
+                new TraceInventory(trace), saveBoundary, new TraceHandoff(trace));
+            var stateMachine = new ShortCycleStateMachine(
+                context, saveBoundary, processor, new TraceExit());
+            var session = new ShortCycleSessionManager();
+            SetPrivateField(session, "stateMachine", stateMachine);
+
+            var baseLayer = new MouseInteractionLayer();
+            var verificationLayer = new MouseInteractionLayer();
+            var stack = new ShortCycleInteractionLayerStack();
+            SetPrivateField(stack, "baseLayer", baseLayer);
+            SetPrivateField(stack, "configuredLayers", new List<MouseInteractionLayer>
+            {
+                baseLayer,
+                verificationLayer
+            });
+            InvokePrivateMethod(stack, "Awake");
+            InvokePrivateMethod(stack, "Start");
+
+            var control = new ShortCycleModalScrollVerificationControl();
+            SetPrivateField(control, "sessionManager", session);
+            SetPrivateField(control, "layerStack", stack);
+            SetPrivateField(control, "verificationLayer", verificationLayer);
+            UnityEngine.Debug.Messages.Clear();
+            UnityEngine.Debug.WarningMessages.Clear();
+            InvokePrivateMethod(control, "OnEnable");
+
+            Assert(control.OpenForVerification() && control.IsOpen && stack.Top == verificationLayer,
+                "The Phase1 verification control must push its dedicated layer and report open state.");
+            Assert(!control.OpenForVerification() && UnityEngine.Debug.WarningMessages.Count == 1,
+                "Repeated open requests must fail visibly without double-pushing the layer.");
+            UnityEngine.GUI.DrawnLabels.Clear();
+            InvokePrivateMethod(control, "OnGUI");
+            Assert(UnityEngine.GUI.DrawnLabels.Count == 2 &&
+                UnityEngine.GUI.DrawnLabels[0].Contains("Modal 滚轮阻断验收已开启") &&
+                UnityEngine.GUI.DrawnLabels[1].Contains("关闭 Modal 滚轮验收"),
+                "An open Phase1 control must draw a clear modal notice and close button.");
+
+            Assert(context.ReturnToPhase0(), "The verification fixture must leave Phase1.");
+            InvokePrivateMethodWithResult(
+                session, "HandleStateChanged", ShortCyclePhase.Phase0, ShortCyclePhase0View.RecipeBrowse);
+            Assert(!control.IsOpen && stack.Top == baseLayer && verificationLayer.RemoveCount == 1,
+                "Leaving Phase1 must remove the dedicated verification layer without residue.");
+            UnityEngine.GUI.DrawnLabels.Clear();
+            InvokePrivateMethod(control, "OnGUI");
+            Assert(UnityEngine.GUI.DrawnLabels.Count == 0,
+                "The temporary screen control must remain invisible outside Phase1.");
+            Assert(!control.OpenForVerification(), "Opening outside Phase1 must be rejected.");
+
+            Assert(context.EnterPhase1(), "The verification fixture must be able to re-enter Phase1.");
+            InvokePrivateMethodWithResult(
+                session, "HandleStateChanged", ShortCyclePhase.Phase1, ShortCyclePhase0View.RecipeBrowse);
+            Assert(control.OpenForVerification(), "The verification layer must open again after returning to Phase1.");
+            InvokePrivateMethod(control, "OnDisable");
+            Assert(!control.IsOpen && stack.Top == baseLayer && verificationLayer.RemoveCount == 2,
+                "Disabling the control must remove an open verification layer exactly once.");
+            InvokePrivateMethod(control, "OnDestroy");
+            Assert(verificationLayer.RemoveCount == 2,
+                "Destroy after disable must remain idempotent and never pop the layer twice.");
         }
 
         private static void VerifyDirectorLayerOwnership()
@@ -2570,6 +2945,8 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             director.PushModal(ShortCycleModalId.StepDetail);
             Assert(stack.Top == modalLayer && modalLayer.PushCount == 1,
                 "Director PushModal must push the explicit Layer_Modal reference.");
+            Assert(stack.Top != phase1Layer,
+                "A modal layer must remain above persistent background controls and prevent click-through.");
             director.PopModal(ShortCycleModalId.StepDetail);
             Assert(stack.Top == phase1Layer && modalLayer.RemoveCount == 1,
                 "Director PopModal must pop Layer_Modal before deactivating its visuals.");

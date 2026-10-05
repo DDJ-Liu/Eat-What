@@ -22,4 +22,5 @@ MonoBehaviour:
   trigger_items:
   - prd_tomato_egg_dish
   - prd_tomato_egg_soup
+  - prd_ofanqie_danhuangpai
   permanent_trigger_items: []

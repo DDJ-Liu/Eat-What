@@ -18,9 +18,15 @@
 - `MIG63ValidationSession`统一保存原场景路径、测试状态和独立日志，在退出Play并恢复场景之后才释放会话。临时RT/Animator在正常完成或异常退出时清理。
 - 不调用SaveScene/SaveAssets，不写生产配置。开始时保存字体完整asset/meta恢复点，结束核对磁盘SHA和原场景；发生字体磁盘漂移时保全after副本并报错，按已验证的Editor整份恢复流程处理，不自动覆盖人工成果。
 - 工作树/index字体SHA检查防止落盘误提交，但不检测尚未写盘的动态图集；不要在检查后另行保存不明字体变化。
-- 滚轮用真实`Mouse.current.scroll`数据缓冲及生产`MouseManager.OnScroll`，覆盖接受的Windows Uniform行为。Layer切换检查不等于物理弹层遮挡测试；OS硬件、焦点与主观手感仍在正式场景人工验收。Mac当前会被明确拒绝运行该Windows夹具，待MIG-F01适配后扩充；不声称已跨平台验证。
+- 滚轮用`Mouse.current.scroll`数据缓冲及生产`MouseManager.OnScroll`，按MIG-F01后的Input System统一单位验证阈值1、冷却0.2、分数累计、反向清余量，以及目标/Layer清理；不再含Windows专用`×120`或平台拒绝分支。Modal 段会在专用零命中层保持开启时继续注入正负非零滚轮，并分别断言 `MouseManager` 不派发、`ShortCycleScrollAdapter` 不接收/不路由、Fridge Tier 不变化；关闭后必须恢复目标解析和 Tier 移动。数据注入可跨平台运行，但仍不等于OS硬件、焦点或主观手感；这些需在正式场景按平台人工验收。
 - Tomato只使用现有素材，换装的白发来自Hair_B/Hair_C素材。未覆盖全部皮肤/混合模式、autoOptimize重打包或旧场景Renderer延迟启用接线；不修复旧3.8.75数据，也不保存新的正式参考绑定。
 - M4/H重跑这两项，E2归档结果但保留源码、meta和Lab；不得恢复临时版本中的自动验证链或构建入口。
+
+## Phase1 Modal 滚轮人工验收入口（VERIFY-TEMP）
+
+`ShortCycleModalScrollVerificationControl` 是 AI-000153 增加的临时可见入口。仅在 Phase1 绘制“打开 Modal 滚轮验收”按钮；打开后压入场景专用的零命中 `MouseInteractionLayer`，显示全屏提示与关闭按钮。关闭、离开 Phase1、组件禁用或销毁都会只清理自己的专用层，不改正式业务 Modal 或 FSM。
+
+AI-000154 负责在 `FridgeScrollLab` 与 `ShortCycle_P0P1` 中接入各自专用层和组件，并执行 Play Mode 机器/人工路径。接线必须显式指定 `ShortCycleSessionManager`、`ShortCycleInteractionLayerStack` 与专用验收层；不得复用或改写正式 `Layer_Modal`。正式 Modal 功能提供同等可触发入口后，删除该组件及两个场景中的专用层/接线。
 
 ## M4 保存场景的 Tomato 参考
 

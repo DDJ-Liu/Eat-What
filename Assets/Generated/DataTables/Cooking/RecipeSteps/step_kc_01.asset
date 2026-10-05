@@ -20,5 +20,5 @@ MonoBehaviour:
   standard_tools:
   - tool_hand
   trigger_items:
-  - prd_cabbage_washed
+  - ing_cabbage
   permanent_trigger_items: []

@@ -80,6 +80,10 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 failures.Add("default phase is not Phase0");
             }
+            if (!Near(controlledCamera, phase0CameraMarker))
+            {
+                failures.Add("camera did not start at the P0-Center marker");
+            }
 
             var catalog = Dispatch(ShortCycleActionNames.OpenCover);
             if (!catalog.Succeeded || coordinator == null || coordinator.Context == null ||
@@ -128,7 +132,7 @@ namespace EatWhat.Cooking.ShortCycle
             if (!lockedDuringStartPan) failures.Add("input gate was not locked during Phase0->Phase1 pan");
             if (blockedReturn.Succeeded) failures.Add("return action was not blocked during camera pan");
 
-            yield return WaitForPanCompleted(ShortCycleCameraSlot.Phase1, presentationDuration + 1f);
+            yield return WaitForPanCompleted(ShortCycleCameraSlot.P1, presentationDuration + 1f);
             yield return WaitForTransformNear(clueBoardShell, clueBoardPhase1Anchor, presentationDuration + 1f);
             if (coordinator == null || coordinator.Context == null ||
                 coordinator.Context.current_phase != ShortCyclePhase.Phase1)
@@ -143,13 +147,17 @@ namespace EatWhat.Cooking.ShortCycle
             if (!back.Succeeded) failures.Add("return named action failed: " + back.Error);
             if (!lockedDuringReturnPan) failures.Add("input gate was not locked during Phase1->Phase0 pan");
 
-            yield return WaitForPanCompleted(ShortCycleCameraSlot.Phase0, presentationDuration + 1f);
+            yield return WaitForPanCompleted(ShortCycleCameraSlot.P0Left, presentationDuration + 1f);
             yield return WaitForTransformNear(clueBoardShell, clueBoardPhase0Anchor, presentationDuration + 1f);
             if (coordinator == null || coordinator.Context == null ||
                 coordinator.Context.current_phase != ShortCyclePhase.Phase0)
                 failures.Add("context did not return to Phase0");
-            if (!Near(controlledCamera, phase0CameraMarker))
-                failures.Add("camera did not return to the Phase0 marker");
+            Vector3 phase0LeftPosition;
+            if (cameraPanController == null ||
+                !cameraPanController.TryGetMarkerPosition(ShortCycleCameraSlot.P0Left, out phase0LeftPosition) ||
+                controlledCamera == null ||
+                Vector3.Distance(controlledCamera.transform.position, phase0LeftPosition) >= 0.02f)
+                failures.Add("camera did not return to the P0-Left marker");
             if (!Near(clueBoardShell, clueBoardPhase0Anchor))
                 failures.Add("clue-board shell did not return to the Phase0 anchor");
             if (coordinator != null && coordinator.Context != null &&

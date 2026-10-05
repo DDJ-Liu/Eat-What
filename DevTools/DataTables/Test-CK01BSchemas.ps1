@@ -22,6 +22,51 @@ function New-StagedDataTables {
     return $staged
 }
 
+function New-SyntheticSceneToolManifest {
+    # Fixture only: never use this file as a real Editor scene attestation.
+    $scenePath = 'Assets/Scenes/Cooking/ShortCycle_P0P1.unity'
+    $sceneFile = Join-Path $repositoryRoot $scenePath
+    $projectSettings = Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'ProjectSettings/ProjectSettings.asset')
+    $manifest = [ordered]@{
+        formatVersion = 1
+        projectGuid = [regex]::Match($projectSettings, '(?m)^\s*productGUID:\s*([0-9a-fA-F]{32})\s*$').Groups[1].Value
+        sceneGuid = [regex]::Match((Get-Content -Raw -LiteralPath ($sceneFile + '.meta')), '(?m)^guid:\s*([0-9a-fA-F]{32})\s*$').Groups[1].Value
+        scenePath = $scenePath
+        sceneSha256 = (Get-FileHash -LiteralPath $sceneFile -Algorithm SHA256).Hash.ToLowerInvariant()
+        generatedUtc = 'fixture-only'
+        areas = @()
+        tools = @()
+        issues = @()
+    }
+    $toolKinds = @{}
+    foreach ($row in @(Import-Csv -LiteralPath (Join-Path $dataTablesRoot 'Cooking/Tools.csv'))) {
+        $toolKinds[$row.tool_id] = $row.tool_kind
+    }
+    foreach ($area in @(Import-Csv -LiteralPath (Join-Path $dataTablesRoot 'Cooking/KitchenAreas.csv'))) {
+        $objectKey = 'fixture-area-' + $area.id
+        $manifest.areas += @{ areaId = $area.id; objectKey = $objectKey; active = $true }
+        $ids = @($area.core_facility)
+        if ($area.id -eq 'kitchen-stove') { $ids += 'tool_pot' }
+        foreach ($id in $ids) {
+            $manifest.tools += @{
+                objectKey = 'fixture-tool-' + $area.id + '-' + $id
+                ownerObjectKey = $objectKey
+                hierarchyOwnerObjectKey = $objectKey
+                areaId = $area.id
+                hierarchyAreaId = $area.id
+                toolId = $id
+                toolKind = $toolKinds[$id]
+                active = $true
+                sceneInstance = $true
+                mappingSource = 'SceneToolIdentity.toolId -> CK01 Tools.tool_id'
+            }
+        }
+    }
+    $path = Join-Path $temporaryRoot 'synthetic-scene-tool-manifest.json'
+    [System.IO.File]::WriteAllText($path, ($manifest | ConvertTo-Json -Depth 8))
+    return $path
+}
+
 function Set-CsvField {
     param(
         [Parameter(Mandatory)][string]$StagedRoot,
@@ -59,15 +104,29 @@ function Assert-WarningCase {
     param(
         [Parameter(Mandatory)][string]$Name,
         [Parameter(Mandatory)][scriptblock]$Mutate,
-        [Parameter(Mandatory)][string]$ExpectedEvidence
+        [Parameter(Mandatory)][string]$ExpectedEvidence,
+        [switch]$WithSceneInventory
     )
 
     $staged = New-StagedDataTables
     & $Mutate $staged
-    $report = & $validator -DataTablesRoot $staged -NoExit -Quiet
+    $sceneManifest = if ($WithSceneInventory) { New-SyntheticSceneToolManifest } else { $null }
+    $report = & $validator -DataTablesRoot $staged -SceneInventoryPath $sceneManifest -NoExit -Quiet
     Assert-True $report.isValid "Warning case '$Name' must remain non-blocking."
     $warningsText = [string]($report.warnings -join "`n")
     Assert-True ($warningsText.IndexOf($ExpectedEvidence, [System.StringComparison]::Ordinal) -ge 0) "Warning case '$Name' did not report '$ExpectedEvidence'. Actual: $warningsText"
+}
+
+function Assert-ValidIngredientCase {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][string]$Value
+    )
+
+    $staged = New-StagedDataTables
+    Set-CsvField $staged 'Cooking/RecipeSteps.csv' 'step_id' 'step_qt_01' 'standard_ingredients' $Value
+    $report = & $validator -DataTablesRoot $staged -NoExit -Quiet
+    Assert-True $report.isValid "Valid standard_ingredients case '$Name' failed: $($report.errors -join '; ')"
 }
 
 try {
@@ -136,6 +195,27 @@ try {
     Assert-True (@($green.audits.whitelistCoverage).Count -eq 3) 'Whitelist coverage report must contain all three recipes.'
     Assert-True (@($green.audits.forwardReachability).Count -gt 0) 'Forward reachability report must not be empty.'
     Assert-True (@($green.audits.reverseReachability).Count -gt 0) 'Reverse reachability report must not be empty.'
+    $ingredientSchema = Get-Content -Raw -LiteralPath (Join-Path $dataTablesRoot 'Schemas/Cooking/RecipeSteps.schema.json') | ConvertFrom-Json
+    $ingredientColumn = @($ingredientSchema.columns | Where-Object name -eq 'standard_ingredients')
+    $ingredientReference = @($ingredientSchema.references | Where-Object field -eq 'standard_ingredients')
+    Assert-True ($ingredientColumn.Count -eq 1 -and $ingredientColumn[0].type -eq 'list<ref>' -and $ingredientColumn[0].separator -eq ';') 'standard_ingredients must remain a semicolon-separated reference list.'
+    Assert-True ($ingredientReference.Count -eq 1 -and $ingredientReference[0].targetSchema -eq 'Cooking/Items.schema.json' -and $ingredientReference[0].targetField -eq 'item_id' -and $ingredientReference[0].isList -and $ingredientReference[0].separator -eq ';') 'standard_ingredients must resolve against all Items IDs.'
+    Assert-ValidIngredientCase -Name 'single_raw' -Value 'ing_egg'
+    Assert-ValidIngredientCase -Name 'single_product' -Value 'prd_noodle_boiled'
+    Assert-ValidIngredientCase -Name 'mixed_order_and_duplicate' -Value 'prd_noodle_boiled; ing_egg;prd_noodle_boiled'
+    Assert-ValidIngredientCase -Name 'staple_not_narrowed' -Value 'stp_water'
+    Assert-InvalidCase -Name 'IngredientMissingId' -ExpectedEvidence "field 'standard_ingredients' reference 'prd_missing' does not exist" -Mutate {
+        param($root)
+        Set-CsvField $root 'Cooking/RecipeSteps.csv' 'step_id' 'step_qt_01' 'standard_ingredients' 'ing_egg;prd_missing'
+    }
+    Assert-InvalidCase -Name 'IngredientEmptyElement' -ExpectedEvidence "field 'standard_ingredients' contains an empty list item" -Mutate {
+        param($root)
+        Set-CsvField $root 'Cooking/RecipeSteps.csv' 'step_id' 'step_qt_01' 'standard_ingredients' 'ing_egg;;prd_noodle_boiled'
+    }
+    Assert-InvalidCase -Name 'IngredientWrongDelimiter' -ExpectedEvidence "field 'standard_ingredients' reference 'ing_egg|prd_noodle_boiled' does not exist" -Mutate {
+        param($root)
+        Set-CsvField $root 'Cooking/RecipeSteps.csv' 'step_id' 'step_qt_01' 'standard_ingredients' 'ing_egg|prd_noodle_boiled'
+    }
     Assert-True ($green.v24RuleCounts.'V-02'.warnings -eq 0) 'Current v2.4 source must have zero V-02 warnings.'
     Assert-True ($green.v24RuleCounts.'V-03'.warnings -eq 0) 'Current v2.4 source must have zero V-03 warnings.'
     $reportDirectory = Join-Path $temporaryRoot 'reports'
@@ -231,7 +311,7 @@ try {
         param($root)
         Set-CsvField $root 'Cooking/ProcessingRecords.csv' 'proc_id' 'proc_qingtang_final' 'is_final_product' 'false'
     }
-    Assert-WarningCase -Name 'V04MultipleCarrierCandidates' -ExpectedEvidence '[V-04]' -Mutate {
+    Assert-WarningCase -Name 'V04MultipleCarrierCandidates' -ExpectedEvidence '[V-04]' -WithSceneInventory -Mutate {
         param($root)
         Set-CsvField $root 'Cooking/ProcessingRecords.csv' 'proc_id' 'proc_noodle_boiled_alt' 'input_01' 'ing_noodle_dried'
         Set-CsvField $root 'Cooking/ProcessingRecords.csv' 'proc_id' 'proc_noodle_boiled_alt' 'carrier' 'tool_stove'
@@ -274,11 +354,14 @@ try {
         productionSource = 'PASS'
         schemaCount = 14
         recipes = @($recipeIds)
+        ingredientReferenceCases = 7
         isolatedNegativeCases = @('disconnect', 'cycle', 'prefix', 'dangling_reference', 'class_error', 'input_gap', 'slot_gap', 'slot_missing_count', 'slot_count_minimum', 'slot_orphan_count', 't14_id_exemption', 't14_separator_exemption', 't15_non_raw', 't15_quantity', 't15_duplicate', 'V-01', 'V-02', 'V-03', 'V-04', 'V-05', 'V-06', 'V-07', 'V-08', 'V-09', 'V-10', 'V-11', 'V-12')
     } | ConvertTo-Json -Depth 4
 }
 finally {
-    if (Test-Path -LiteralPath $temporaryRoot) {
+    $tempPrefix = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
+    if ((Test-Path -LiteralPath $temporaryRoot) -and
+        [System.IO.Path]::GetFullPath($temporaryRoot).StartsWith($tempPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
         Remove-Item -LiteralPath $temporaryRoot -Recurse -Force
     }
 }

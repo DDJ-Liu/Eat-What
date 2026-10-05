@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "taskId": "AI-000159",
+  "createdAt": "2026-09-23T03:15:00+08:00",
+  "purpose": "PRE-3 root-document slimming provenance",
+  "rootDocumentMetric": {
+    "baselinePath": ".ai-workspace/outputs/U1-PRE/AI-000159/root-doc-baseline.json",
+    "beforeBytes": 261635,
+    "afterBytes": 123895,
+    "reductionPercent": 52.65,
+    "coreBytes": 4732
+  },
+  "activeLedger": {
+    "path": ".ai-workspace/INSTRUCTIONS.md",
+    "beforeSha256": "4F87AA5F0CF0BC49F01F0336D3B60F0CB4A0058A245D454D3FAC3C964486E531",
+    "afterSha256": "4F87AA5F0CF0BC49F01F0336D3B60F0CB4A0058A245D454D3FAC3C964486E531",
+    "disposition": "retained-in-place"
+  },
+  "movedSources": [
+    { "originalPath": ".ai-workspace/README.md", "destination": ".ai-workspace/archive/2026-09-23/PRE-3/legacy-root/README.md", "bytes": 3783, "sha256": "D6EE4CFE6047070363F6766B7416589C698681148E89E8F943FD437B953528F7", "disposition": "archived" },
+    { "originalPath": ".ai-workspace/WORKFLOW.md", "destination": ".ai-workspace/protocol/WORKFLOW_FULL.md", "bytes": 24101, "sha256": "2C5C0EDA85507FAA1C6E5D1A249D149A14332BEBED973F8EB4FF591195D7384C", "disposition": "active-detail" },
+    { "originalPath": ".ai-workspace/SUPERVISED.md", "destination": ".ai-workspace/protocol/SUPERVISED_FULL.md", "bytes": 22509, "sha256": "FFBD4DC0B2B69C0B33BD2FAE6CCB32C4FB35B493A401C8EFC6AE0260AE6A9401", "disposition": "active-detail" },
+    { "originalPath": ".ai-workspace/CONTROL_CHAT.md", "destination": ".ai-workspace/protocol/CONTROL_CHAT_FULL.md", "bytes": 24851, "sha256": "3BDE127A9CC302223E5867DD1693260EF89CE65926C1DF3B3C8EB87BC4BB1A17", "disposition": "active-detail" },
+    { "originalPath": ".ai-workspace/KNOWN_PITFALLS.md", "destination": ".ai-workspace/archive/2026-09-23/PRE-3/legacy-root/KNOWN_PITFALLS.md", "bytes": 43419, "sha256": "D4C6E7B3C6AC100ABEB2C8803E40105E8D9E6B2982E4F396303CC1BC61F1F3F4", "disposition": "archived-and-split" },
+    { "originalPath": ".ai-workspace/TOOLKIT_REGISTRY.md", "destination": ".ai-workspace/archive/2026-09-23/PRE-3/legacy-root/TOOLKIT_REGISTRY.md", "bytes": 33925, "sha256": "C3B8BC4A17A81EDDEE140319DD490F1635C1BC5A29BCD7B2722890FBAAF85257", "disposition": "archived-and-split" }
+  ],
+  "runtimeArchived": false,
+  "queueStateModifiedByArchive": false
+}

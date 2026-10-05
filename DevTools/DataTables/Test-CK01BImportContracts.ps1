@@ -75,6 +75,33 @@ try {
     $areaType = 'KitchenAreaData' -as [type]
     Assert-True ($null -ne $recipeType.GetField('whitelist_proc_ids')) 'Generic importer cannot reflect Recipes.whitelist_proc_ids.'
     Assert-True ($null -ne $areaType.GetField('allowed_actions') -and $null -ne $areaType.GetField('allowed_carriers')) 'Generic importer cannot reflect KitchenAreas v2.4 constraints.'
+    $recipeStepType = 'CK01RecipeStepData' -as [type]
+    $ingredientField = $recipeStepType.GetField('standard_ingredients')
+    Assert-True ($null -ne $ingredientField -and $ingredientField.FieldType -eq [System.Collections.Generic.List[string]]) 'Recipe step ingredient output must remain List<string>.'
+    $ingredientSchema = Get-Content -Raw -LiteralPath (Join-Path $schemasRoot 'Cooking/RecipeSteps.schema.json') | ConvertFrom-Json
+    $rawIngredientColumn = @($ingredientSchema.columns | Where-Object name -eq 'standard_ingredients')
+    Assert-True ($rawIngredientColumn.Count -eq 1 -and $rawIngredientColumn[0].type -eq 'list<ref>' -and $rawIngredientColumn[0].separator -eq ';') 'Recipe step importer must receive the schema semicolon separator.'
+    $ingredientColumn = [EatWhat.DataTables.DataTableColumnSchema]::new()
+    $ingredientColumn.name = 'standard_ingredients'
+    $ingredientColumn.type = [string]$rawIngredientColumn[0].type
+    $ingredientColumn.separator = [string]$rawIngredientColumn[0].separator
+    $convertValue = [EatWhat.DataTables.DataTableImportService].GetMethod('TryConvertValue', [System.Reflection.BindingFlags]'Static, NonPublic')
+    Assert-True ($null -ne $convertValue) 'Generic importer list conversion contract is missing.'
+    foreach ($ingredientCase in @(
+        @{ Raw='ing_egg'; Expected=@('ing_egg') },
+        @{ Raw='prd_noodle_boiled'; Expected=@('prd_noodle_boiled') },
+        @{ Raw='prd_noodle_boiled; ing_egg;prd_noodle_boiled'; Expected=@('prd_noodle_boiled','ing_egg','prd_noodle_boiled') },
+        @{ Raw='stp_water'; Expected=@('stp_water') }
+    )) {
+        $arguments = [object[]]@($ingredientField.FieldType, $ingredientColumn, [string]$ingredientCase.Raw, $null, $null)
+        $converted = [bool]$convertValue.Invoke($null, $arguments)
+        Assert-True ($converted -and $null -eq $arguments[4]) "Importer rejected ingredient list '$($ingredientCase.Raw)'."
+        $actual = [System.Collections.Generic.List[string]]$arguments[3]
+        Assert-True ($actual.Count -eq $ingredientCase.Expected.Count) "Importer changed ingredient count for '$($ingredientCase.Raw)'."
+        for ($index = 0; $index -lt $actual.Count; $index++) {
+            Assert-True ($actual[$index] -ceq $ingredientCase.Expected[$index]) "Importer changed ingredient order or duplicate at index $index for '$($ingredientCase.Raw)'."
+        }
+    }
     Assert-True ($targetSource.Contains('class CK01InitialInventoryData') -and $targetSource.Contains('public int quantity;')) 'InitialInventory target contract is missing.'
     $recipeSlotType = 'CK01RecipeSlotData' -as [type]
     Assert-True ($null -ne $recipeSlotType) 'RecipeSlots target type did not compile.'
@@ -232,6 +259,10 @@ try {
     Assert-True ($importerText.Contains('TryBuildDataCatalogTables')) 'Importer must build the generated-data catalog from all registered tables.'
     Assert-True ($importerText.Contains('dataCatalog.ReplaceTables(catalogTables)')) 'Importer must update the catalog idempotently instead of recreating it.'
     Assert-True (-not $importerText.Contains('DeleteAsset(CK01ImportRegistry.DataCatalogAssetPath')) 'Importer must never delete the stable catalog asset.'
+    Assert-True ($null -ne [EatWhat.DataTables.DataTableImportService].GetMethod('ImportAllBatch', [System.Reflection.BindingFlags]'Public, Static')) 'Headless ImportAllBatch entry point must compile and remain public.'
+    Assert-True ($importerText.Contains('[DATA] BATCH_IMPORT_FAILED')) 'Batch failures must retain the [DATA] diagnostic prefix.'
+    Assert-True ($importerText.Contains('EditorApplication.Exit(1)')) 'Batch failures must request a nonzero Unity process exit.'
+    Assert-True ($importerText.Contains('ShortCycleFontAtlasBuilder') -and $importerText.Contains('BuildAll')) 'Batch import must connect to the reviewed PRE-1 font builder entry.'
     $catalogText = Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/CK01GeneratedDataCatalog.cs')
     foreach ($accessor in @('TryGetRecipeWhitelist', 'TryGetAreaConstraint', 'TryGetUnknownProductResolver', 'TryGetDemoFridgeCapacity')) {
         Assert-True ($catalogText.Contains("public bool $accessor")) "Generated catalog v2.4 accessor is missing: $accessor"
@@ -264,6 +295,7 @@ try {
         generatedDataCatalog = 'PASS'
         v24ReadOnlyAccessors = 6
         compiledSourceCount = $compileSources.Count
+        ingredientImportCases = 4
     } | ConvertTo-Json
 }
 catch {

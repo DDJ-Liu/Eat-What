@@ -1,0 +1,34 @@
+# 工具库 · WF
+
+> 从 [INDEX.md](INDEX.md) 定位；状态与公开面沿用原登记。
+
+<a id="tk-wf-01"></a>
+<a id="tk-wf-02"></a>
+<a id="tk-wf-03"></a>
+<a id="tk-wf-04"></a>
+
+## 10. WF · 工作区与留档
+
+| ID | 名称/路径 | 能力 | 状态 | 使用边界 |
+| --- | --- | --- | --- | --- |
+| TK-WF-01 | DevTools/Workflow/Archive-Stage.ps1 | 已闭合阶段的计划、打包、逐文件哈希验证、精确清理和历史提取；`PermanentInputPatterns` 保留跨阶段常驻 inputs，`SelfTest` 回归默认与自定义白名单 | 沿用 | PowerShell7；仅MANUAL闭合队列；Prune只删除已验证清单中的未变化文件且不清理常驻输入，Extract只写归档缓存；不恢复生产资产或更改任务状态 |
+| TK-WF-02 | `.ai-workspace/queue.ps1` DATA API；`DevTools/DataTables/DataRound.Common.ps1`、`DataPipeline.Common.ps1`、`Run-DataPipeline.ps1` | DATA 注册、可见线程状态/原子绑定、route-key 票据防串线、U1 DONE 轮次幂等消费、共享锁、隔离 batch、明确GUI进程等待与当前run完成凭据、源/目标/完整复制范围快照冲突门和保全式回滚发布 | 沿用 | AI-000160/163/164/166/174；注册/绑定/重分类/消费仅控制端；绑定前需应用可达/闲置证据，绑定后无效路由拒绝回退；当前CSV验证模式强制不发布且不伪造DONE；隔离 batch 接 PRE-1 字体构建但字体不进入生成物事务；AI164正常宿主两真实用例0/1差异及独立nonce已通过；DATA/ENGINE 共享全程锁；不提交 |
+| TK-WF-03 | `DevTools/Workflow/UsageMetrics.ps1`、`Initialize-TaskUsage.ps1`、`Invoke-TaskTool.ps1`、`Get-UsageReport.ps1`、`Invoke-UsageReporting.ps1`；`DevTools/Verify-All.ps1` | 任务生命周期真实/缺失用量 JSONL、可选工具包装、日/周聚合与按 profile 的统一验证入口 | 沿用 | AI-000157/173；不建第二队列，不估算 token/容量；`runtime/usage-YYYYMM.jsonl` 只追加；离线测试必须传临时 RuntimeRoot/StateRoot；Final 默认两次，超限留原因；子runner固定正常PS7 `-NoProfile -File`，不传ExecutionPolicy绕过参数 |
+
+2026-09-17：增加阶段归档工具；配表v1.2兼容夹具固定到DevTools/DataTables/Fixtures，AI65历史审计改为按需提取图证。完整旧登记表在阶段ZIP中，所有原有TK编号及当前能力表保留。
+
+TK-WF-04（PRE-5b）：DevTools/Workflow/watch.ps1、Manage-WatchHost.ps1、Compare-Acceptance.ps1、Import-ProviderUsage.ps1、Import-CoplayUsage.ps1、Summarize-CoplayLog.ps1 与队列修复预算门。WATCH 只观察、不领取；单轮或5分钟宿主定时，持久增量 inbox 与单批次适配器回执；桌面事件唤醒尚无正式接口，部署由控制台负责。Complete 强制预声明机器验收，根修复跨模式最多2轮；provider仅精确关联真实事件，Coplay无日志为null。隔离夹具见 Test-Watch/Test-Acceptance/Test-RepairBudget/Test-CoplayUsage。
+
+2026-09-22：TK-WF-01 增加可配置常驻输入白名单与 `SelfTest`，避免排布指导书、Schema、需求基准、模块/路径主本和 USER 人工状态在阶段归档时被移动。
+
+2026-09-23：AI-000157 新增 TK-WF-03，用现有 queue/supervised 生命周期挂钩记录实际可见数据；provider 未暴露项保持 null+原因，并由统一验证入口复用既有 runner。
+
+2026-09-23：AI-000160 新增 TK-WF-02；沿用同一队列与监管生命周期，不建立第二队列。AI-000174 在同一 worker 状态中增加可查询、幂等、带前后值/UserDecision/Verification 审计的固定 DATA 线程绑定；预约保存 route key，换绑/旧票据/忙碌状态均安全拒绝。
+
+2026-09-23：AI-000163 加固 TK-WF-02：事务按“未动live/已移动/已提升/回退失败”显式保全，增加目标与输入快照漂移门、固定Unity版本/隔离目录和不带USER轮次的只验证入口；真实Unity结果不由离线回归代签。
+
+2026-09-23：AI-000166 再加固 TK-WF-02：Windows GUI batch 使用本次 Process 句柄等待/取码，锁保持到退出与凭据核验；报告拆分真实可空进程码和Runner码，完整输入快照对齐五个复制根，真实GUI延迟夹具覆盖非零/成功/缺旧凭据与锁生命周期。未启动Unity，AI164仍需DATA恢复复验。
+
+2026-09-23：AI164已在两个精确命令各经正式审批的正常宿主通过Unity6000.3.24f1真实baseline/overlay，退出0/0、不同nonce、0/1生成差异、主Editor共存和生产不变。受限宿主LocalLow/许可失败的旧记录保留；零diff时空JSON缺失记录WARNING，独立清单补证，不新增工具或擅改运行器。详见 `outputs/U1-PRE/AI-000164/host-context-recovery-20260923/`。
+
+2026-10-04：TK-WF-03增加 `DevTools/Workflow/Invoke-UsageReporting.ps1`、`USAGE_REPORTING.md`、`Test-UsageReporting.ps1`，原ai固定前置调用；北京时间周三上一整周、漏报补齐、真实补发标记、源快照和幂等原子发布。Get-UsageReport支持同一Records快照并将单次/合计排名分开。只写outputs，暂停后不自行Resume；保持原计量null口径。

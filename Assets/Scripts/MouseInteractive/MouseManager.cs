@@ -80,7 +80,7 @@ public class MouseManager : MonoBehaviour
     }
 
     [Header("MouseWheelScroll")]
-    [SerializeField] private float scrollThreshold = 5.0f;
+    [SerializeField] private float scrollThreshold = 1.0f;
     [SerializeField] private float accumulatedScroll = 0f;
     [SerializeField] private float lastScrollTime;
     [SerializeField] private float scrollCooldown = 0.2f;
@@ -103,6 +103,18 @@ public class MouseManager : MonoBehaviour
     public bool HasUnsafeEmptyLayerUpdatePath
     {
         get { return false; }
+    }
+
+    public void ConfigureScrollInput(float threshold, float cooldown)
+    {
+        if (float.IsNaN(threshold) || float.IsInfinity(threshold) || threshold <= 0f)
+            throw new ArgumentOutOfRangeException(nameof(threshold), "Scroll threshold must be finite and greater than zero.");
+        if (float.IsNaN(cooldown) || float.IsInfinity(cooldown) || cooldown < 0f)
+            throw new ArgumentOutOfRangeException(nameof(cooldown), "Scroll cooldown must be finite and non-negative.");
+
+        scrollThreshold = threshold;
+        scrollCooldown = cooldown;
+        ResetScrollInput();
     }
 
     // Start is called before the first frame update
@@ -147,14 +159,17 @@ public class MouseManager : MonoBehaviour
             return;
         }
         currentLayer = mouseInteractiveLayers.Peek().gameObject.name;
+        Vector3 mouseWorldPosition;
+        if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
+
         #region �����ͣ���
         if (mouseInteractiveLayers.Count > 0)
         {
-            setMouseHover();
+            setMouseHover(mouseWorldPosition);
 
             if (dragStarted)
             {
-                if (Vector3.Distance(dragStartPos, Tools.getMousePos()) > dragMoveThreshold)
+                if (Vector3.Distance(dragStartPos, mouseWorldPosition) > dragMoveThreshold)
                 {
                     dragStarted = false;
                     dragPerforming = true;
@@ -162,12 +177,12 @@ public class MouseManager : MonoBehaviour
                 }
             }
 
-            OnScroll();
+            OnScroll(mouseWorldPosition);
         }
         #endregion
     }
 
-    private void setMouseHover()
+    private void setMouseHover(Vector2 mousePos)
     {
         // layer 失效保护：切层瞬间清掉上一帧 Pressable 的 hover 状态
         if (currentMouseLayer == null)
@@ -188,8 +203,6 @@ public class MouseManager : MonoBehaviour
 
         //Collider2D hit = null;
         Collider2D[] hits = null;
-        Vector2 mousePos = Tools.getMousePos();
-
         // 按 alloweInteractionLayers 列表顺序遍历，先命中的 LayerMask 优先级更高
         for (int i = 0; i < currentMouseLayer.alloweInteractionLayers.Count; i++)
         {
@@ -407,10 +420,13 @@ public class MouseManager : MonoBehaviour
 
     [Obsolete]private MousePressableObject checkMouseHover()
     {
+        Vector3 mouseWorldPosition;
+        if (!Tools.TryGetMousePos(out mouseWorldPosition)) return null;
+
         Collider2D hit = null;
         if (!(currentMouseLayer.alloweInteractionLayers.Count > 1))
         {
-            hit = Physics2D.OverlapPoint(Tools.getMousePos(), currentMouseLayer.alloweInteractionLayers[0]);
+            hit = Physics2D.OverlapPoint(mouseWorldPosition, currentMouseLayer.alloweInteractionLayers[0]);
         }
         else
         {
@@ -421,7 +437,7 @@ public class MouseManager : MonoBehaviour
                 {
                     break;
                 }
-                hit = Physics2D.OverlapPoint(Tools.getMousePos(), currentMouseLayer.alloweInteractionLayers[i]);
+                hit = Physics2D.OverlapPoint(mouseWorldPosition, currentMouseLayer.alloweInteractionLayers[i]);
                 i++;
             } while (hit == null || i >= currentMouseLayer.alloweInteractionLayers.Count);
         }
@@ -436,17 +452,20 @@ public class MouseManager : MonoBehaviour
         }
     }
 
-    void OnScroll()
+    void OnScroll(Vector2 mousePos)
     {
-        float rawScroll = Mouse.current == null ? 0f : Mouse.current.scroll.ReadValue().y;
+        Mouse mouse = Mouse.current;
+        if (mouse == null) return;
+
+        float rawScroll = mouse.scroll.ReadValue().y;
         LastRawScrollY = rawScroll;
         var layer = currentMouseLayer;
-        if (Mouse.current == null || currentScrollableObject == null || layer == null)
+        if (currentScrollableObject == null || layer == null)
         {
             ResetScrollInput();
             return;
         }
-        LastScrollPointerWorld = Tools.getMousePos();
+        LastScrollPointerWorld = mousePos;
         if (scrollInputTarget != currentScrollableObject || scrollInputLayer != layer)
         {
             ResetScrollInput();
@@ -455,12 +474,6 @@ public class MouseManager : MonoBehaviour
         }
 
         float scrollValue = rawScroll;
-#if UNITY_6000_0_OR_NEWER && (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
-        // Existing serialized thresholds use Windows wheel units (120 per detent).
-        // Unity 6000.0.9+ normalizes these to 1 by default; preserve the threshold contract.
-        if (InputSystem.settings.scrollDeltaBehavior == InputSettings.ScrollDeltaBehavior.UniformAcrossAllPlatforms)
-            scrollValue *= 120f;
-#endif
         float threshold = Mathf.Max(0.0001f, scrollThreshold);
         if (!float.IsNaN(scrollValue) && !float.IsInfinity(scrollValue) && scrollValue != 0f)
         {
@@ -502,9 +515,12 @@ public class MouseManager : MonoBehaviour
 
     public void OnMouseConfirmPress()
     {
+        Vector3 mouseWorldPosition;
+        if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
+
         OnMouseConfirm?.Invoke();
         // 一次性 raycast 查找点击目标
-        MousePressableObject target = RaycastPressable();
+        MousePressableObject target = RaycastPressable(mouseWorldPosition);
         if (target != null)
         {
             target.MouseSelect();
@@ -512,7 +528,7 @@ public class MouseManager : MonoBehaviour
         else if (currentMouseLayer != null && currentMouseLayer.clickNullEqualsCancel)
         {
             // 仅在没有任何交互对象（Pressable / Draggable / Hold / Scrollable）位于鼠标下时，才视为点击空白
-            if (!HasAnyInteractiveObject())
+            if (!HasAnyInteractiveObject(mouseWorldPosition))
             {
                 currentMouseLayer.onClickNullCancel?.Invoke();
             }
@@ -529,10 +545,9 @@ public class MouseManager : MonoBehaviour
     /// <summary>
     /// 点击时一次性 raycast，查找鼠标下最高优先级的 MousePressableObject
     /// </summary>
-    private MousePressableObject RaycastPressable()
+    private MousePressableObject RaycastPressable(Vector2 mousePos)
     {
         if (currentMouseLayer == null) return null;
-        Vector2 mousePos = Tools.getMousePos();
         for (int i = 0; i < currentMouseLayer.alloweInteractionLayers.Count; i++)
         {
             var hits = Physics2D.OverlapPointAll(mousePos, currentMouseLayer.alloweInteractionLayers[i]);
@@ -547,10 +562,9 @@ public class MouseManager : MonoBehaviour
     /// 用于"点击空白"判定：四类交互物均不存在时才视为空白。
     /// 与 RaycastPressable / setMouseHover 一致，按 alloweInteractionLayers 顺序，首个非空层即停止扫描。
     /// </summary>
-    private bool HasAnyInteractiveObject()
+    private bool HasAnyInteractiveObject(Vector2 mousePos)
     {
         if (currentMouseLayer == null) return false;
-        Vector2 mousePos = Tools.getMousePos();
 
         for (int i = 0; i < currentMouseLayer.alloweInteractionLayers.Count; i++)
         {
@@ -603,9 +617,12 @@ public class MouseManager : MonoBehaviour
 
     public void OnDragStart(InputAction.CallbackContext context)
     {
+        Vector3 mouseWorldPosition;
+        if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
+
         dragStarted = true;
         dragPerforming = false;
-        dragStartPos = Tools.getMousePos();
+        dragStartPos = mouseWorldPosition;
         OnDragStarted?.Invoke(dragStartPos);
     }
 
@@ -623,14 +640,13 @@ public class MouseManager : MonoBehaviour
 
     }
 
-    private void CheckDropZone(MouseDraggableObject draggable)
+    private void CheckDropZone(MouseDraggableObject draggable, Vector2 mouseWorldPosition)
     {
         if (currentMouseLayer == null) return;
         Debug.Log("CheckDropZone");
-        Vector2 mousePos = Tools.getMousePos();
         for (int i = 0; i < currentMouseLayer.alloweInteractionLayers.Count; i++)
         {
-            Collider2D[] hits = Physics2D.OverlapPointAll(mousePos, currentMouseLayer.alloweInteractionLayers[i]);
+            Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPosition, currentMouseLayer.alloweInteractionLayers[i]);
             if (hits.Length == 0) continue;
             DropZone zone = tryGetMouseObject<DropZone>(hits);
             if (zone != null)
@@ -645,6 +661,9 @@ public class MouseManager : MonoBehaviour
 
     public void OnMouseLeftButtonRelease()
     {
+        Vector3 mouseWorldPosition;
+        if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
+
         OnMouseRelease?.Invoke();
         //Debug.Log("release");
         //Drag
@@ -653,7 +672,7 @@ public class MouseManager : MonoBehaviour
             dragPerforming = false;
             if(currentDraggableObject != null)
             {
-                CheckDropZone(currentDraggableObject);
+                CheckDropZone(currentDraggableObject, mouseWorldPosition);
                 currentDraggableObject.exitDrag();
                 currentDraggableObject = null;
             }
@@ -667,7 +686,7 @@ public class MouseManager : MonoBehaviour
         if (holdPerforming && currentHoldObject != null)
         {
             Collider2D holdCollider = currentHoldObject.GetComponent<Collider2D>();
-            bool mouseIsOver = holdCollider != null && holdCollider.OverlapPoint(Tools.getMousePos());
+            bool mouseIsOver = holdCollider != null && holdCollider.OverlapPoint(mouseWorldPosition);
             currentHoldObject.ReleaseHold(mouseIsOver);
             holdPerforming = false;
             currentHoldObject = null;

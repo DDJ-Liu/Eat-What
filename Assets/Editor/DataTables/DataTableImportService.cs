@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -57,6 +58,74 @@ namespace EatWhat.DataTables
             public List<string> unchangedAssets = new List<string>();
         }
 
+        [Serializable]
+        public sealed class DataBatchCompletionCredential
+        {
+            public int schemaVersion = 1;
+            public bool success;
+            public string runId;
+            public string nonce;
+            public string completedAtUtc;
+            public bool importCompleted;
+            public bool fontBuildCompleted;
+            public int createdCount;
+            public int updatedCount;
+            public int unchangedCount;
+            public string[] localizationGlyphs;
+            public int localizationCharacterCount;
+            public int fontLocalizationCharacterCount;
+            public int requiredCharacterCount;
+            public int staticCharacterCount;
+            public int dynamicCharacterCount;
+            public string staticAssetSha256;
+            public string dynamicAssetSha256;
+            public bool staticAtlasRewritten;
+            public DataBatchDependencyProof dependencyProof;
+        }
+
+        [Serializable]
+        public sealed class DataBatchAssetEvidence
+        {
+            public string path;
+            public string guid;
+            public string typeName;
+            public long localFileId;
+            public DataBatchSubAssetEvidence[] subAssets;
+        }
+
+        [Serializable]
+        public sealed class DataBatchSubAssetEvidence
+        {
+            public string name;
+            public string guid;
+            public string typeName;
+            public long localFileId;
+            public string textureGuid;
+            public long textureLocalFileId;
+        }
+
+        [Serializable]
+        public sealed class DataBatchFileEvidence
+        {
+            public string path;
+            public long length;
+            public string sha256;
+        }
+
+        [Serializable]
+        public sealed class DataBatchDependencyProof
+        {
+            public int schemaVersion = 2;
+            public string runId;
+            public string nonce;
+            public string sourceTreeSha256;
+            public string inputSnapshotSha256;
+            public string generatedRoot = "Assets/Generated/DataTables";
+            public DataBatchAssetEvidence[] roots;
+            public DataBatchAssetEvidence[] dependencies;
+            public DataBatchFileEvidence[] candidateFiles;
+        }
+
         private static string ProjectRoot
         {
             get { return Directory.GetParent(Application.dataPath).FullName; }
@@ -86,6 +155,393 @@ namespace EatWhat.DataTables
             {
                 Debug.LogError("DataTables import stopped before writing assets:\n" + string.Join("\n", report.errors.ToArray()));
             }
+        }
+
+        /// <summary>
+        /// Headless Unity entry point used by the isolated DATA pipeline.
+        /// It intentionally reuses the production importer and the reviewed PRE-1
+        /// font builder instead of maintaining batch-only import logic.
+        /// </summary>
+        public static void ImportAllBatch()
+        {
+            try
+            {
+                var report = ImportAll();
+                if (!report.success)
+                {
+                    throw new InvalidOperationException(
+                        "DataTables validation/import failed:\n" +
+                        string.Join("\n", report.errors.ToArray()));
+                }
+
+                var fontManifest = RebuildShortCycleFonts();
+                var localizationGlyphs = ReadLocalizationGlyphs();
+                var fontLocalizationCharacterCount = ReadRequiredIntField(
+                    fontManifest,
+                    "localizationCharacterCount");
+                if (localizationGlyphs.Length != fontLocalizationCharacterCount)
+                {
+                    throw new InvalidOperationException(
+                        "Localization glyph count disagrees with the font build manifest. parser=" +
+                        localizationGlyphs.Length + " fontManifest=" + fontLocalizationCharacterCount);
+                }
+
+                var runId = ReadRequiredBatchEnvironment("EATWHAT_DATA_RUN_ID");
+                var nonce = ReadRequiredBatchEnvironment("EATWHAT_DATA_COMPLETION_NONCE");
+                var completionPath = ResolveCompletionCredentialPath(
+                    ReadRequiredBatchEnvironment("EATWHAT_DATA_COMPLETION_PATH"));
+                var credential = new DataBatchCompletionCredential
+                {
+                    success = true,
+                    runId = runId,
+                    nonce = nonce,
+                    completedAtUtc = DateTimeOffset.Now.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture),
+                    importCompleted = true,
+                    fontBuildCompleted = true,
+                    createdCount = report.createdAssets.Count,
+                    updatedCount = report.updatedAssets.Count,
+                    unchangedCount = report.unchangedAssets.Count,
+                    localizationGlyphs = localizationGlyphs,
+                    localizationCharacterCount = localizationGlyphs.Length,
+                    fontLocalizationCharacterCount = fontLocalizationCharacterCount,
+                    requiredCharacterCount = ReadRequiredIntField(fontManifest, "requiredCharacterCount"),
+                    staticCharacterCount = ReadRequiredIntField(fontManifest, "staticCharacterCount"),
+                    dynamicCharacterCount = ReadRequiredIntField(fontManifest, "dynamicCharacterCount"),
+                    staticAssetSha256 = ReadRequiredStringField(fontManifest, "staticAssetSha256"),
+                    dynamicAssetSha256 = ReadRequiredStringField(fontManifest, "dynamicEmptyAssetSha256"),
+                    staticAtlasRewritten = ReadRequiredBoolField(fontManifest, "staticAtlasRewritten"),
+                    dependencyProof = BuildBatchDependencyProof(runId, nonce)
+                };
+                WriteCompletionCredential(completionPath, credential);
+
+                Debug.Log("[DATA] BATCH_IMPORT_OK runId=" + runId +
+                          " nonce=" + nonce +
+                          " credential=" + completionPath +
+                          " created=" + report.createdAssets.Count +
+                          " updated=" + report.updatedAssets.Count +
+                          " unchanged=" + report.unchangedAssets.Count +
+                          " fontEntry=EatWhat.EditorTools.Fonts.ShortCycleFontAtlasBuilder.BuildAll");
+            }
+            catch (Exception exception)
+            {
+                var diagnostic = exception is TargetInvocationException invocation &&
+                                 invocation.InnerException != null
+                    ? invocation.InnerException
+                    : exception;
+                Debug.LogError("[DATA] BATCH_IMPORT_FAILED\n" + diagnostic);
+                if (Application.isBatchMode)
+                {
+                    EditorApplication.Exit(1);
+                }
+                throw;
+            }
+        }
+
+        private static DataBatchDependencyProof BuildBatchDependencyProof(string runId, string nonce)
+        {
+            const string generatedRoot = "Assets/Generated/DataTables";
+            var fullRoot = Path.Combine(ProjectRoot, generatedRoot.Replace('/', Path.DirectorySeparatorChar));
+            if (!Directory.Exists(fullRoot))
+                throw new InvalidOperationException("Generated DATA root is missing: " + generatedRoot);
+
+            var roots = new List<string>();
+            var files = new List<DataBatchFileEvidence>();
+            foreach (var file in Directory.GetFiles(fullRoot, "*", SearchOption.AllDirectories))
+            {
+                var relative = file.Substring(fullRoot.Length + 1).Replace('\\', '/');
+                var assetPath = generatedRoot + "/" + relative;
+                using (var sha = SHA256.Create())
+                using (var stream = File.OpenRead(file))
+                {
+                    files.Add(new DataBatchFileEvidence {
+                        path = relative, length = stream.Length,
+                        sha256 = BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "")
+                    });
+                }
+                if (relative.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
+                    roots.Add(assetPath);
+            }
+            roots.Sort(StringComparer.Ordinal);
+            files.Sort((a, b) => StringComparer.Ordinal.Compare(a.path, b.path));
+            if (roots.Count == 0 || !roots.Contains(CK01ImportRegistry.DataCatalogAssetPath))
+                throw new InvalidOperationException("Generated DATA roots do not include the catalog.");
+
+            var rootEvidence = new List<DataBatchAssetEvidence>();
+            foreach (var root in roots) rootEvidence.Add(RequireBatchAssetEvidence(root, true));
+            var dependencies = AssetDatabase.GetDependencies(roots.ToArray(), true);
+            if (dependencies == null || dependencies.Length == 0)
+                throw new InvalidOperationException("Unity returned an empty generated DATA dependency closure.");
+            var dependencyEvidence = new List<DataBatchAssetEvidence>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var dependency in dependencies)
+            {
+                if (string.IsNullOrEmpty(dependency) || !seen.Add(dependency)) continue;
+                dependencyEvidence.Add(RequireBatchAssetEvidence(dependency, false));
+            }
+            foreach (var root in roots)
+                if (!seen.Contains(root))
+                    throw new InvalidOperationException("Dependency closure omits generated root: " + root);
+            dependencyEvidence.Sort((a, b) => StringComparer.Ordinal.Compare(a.path, b.path));
+
+            return new DataBatchDependencyProof {
+                runId = runId, nonce = nonce,
+                sourceTreeSha256 = ReadRequiredBatchEnvironment("EATWHAT_DATA_SOURCE_TREE_SHA256"),
+                inputSnapshotSha256 = ReadRequiredBatchEnvironment("EATWHAT_DATA_INPUT_SNAPSHOT_SHA256"),
+                roots = rootEvidence.ToArray(), dependencies = dependencyEvidence.ToArray(),
+                candidateFiles = files.ToArray()
+            };
+        }
+
+        private static DataBatchAssetEvidence RequireBatchAssetEvidence(string path, bool isRoot)
+        {
+            if (path.StartsWith("Assets/Scripts/Spine_Package/Avatars/output4/", StringComparison.Ordinal) ||
+                path.StartsWith("Assets/Scripts/Spine_Package/Avatars/Sample/", StringComparison.Ordinal))
+                throw new InvalidOperationException("Generated DATA dependency reaches a legacy Spine avatar: " + path);
+            var type = AssetDatabase.GetMainAssetTypeAtPath(path);
+            if (type == null || typeof(Spine.Unity.AnimationReferenceAsset).IsAssignableFrom(type))
+                throw new InvalidOperationException("Generated DATA dependency is unresolved or an animation reference: " + path);
+            var guid = AssetDatabase.AssetPathToGUID(path);
+            if (string.IsNullOrEmpty(guid) || !string.Equals(AssetDatabase.GUIDToAssetPath(guid), path, StringComparison.Ordinal))
+                throw new InvalidOperationException("Generated DATA dependency has no stable GUID: " + path);
+            if (path.StartsWith("Assets/", StringComparison.Ordinal) &&
+                (!File.Exists(Path.Combine(ProjectRoot, path.Replace('/', Path.DirectorySeparatorChar))) ||
+                 !File.Exists(Path.Combine(ProjectRoot, path.Replace('/', Path.DirectorySeparatorChar) + ".meta"))))
+                throw new InvalidOperationException("Generated DATA dependency file or meta is missing: " + path);
+
+            var evidence = new DataBatchAssetEvidence { path = path, guid = guid, typeName = type.FullName };
+            if (!isRoot) return evidence;
+
+            var main = AssetDatabase.LoadMainAssetAtPath(path);
+            var all = AssetDatabase.LoadAllAssetsAtPath(path);
+            if (main == null || main.GetType() != type || all == null || all.Length == 0)
+                throw new InvalidOperationException("Generated DATA root has no unambiguous main asset: " + path);
+            var mainCount = 0;
+            foreach (var asset in all) if (asset == main) mainCount++;
+            if (mainCount != 1)
+                throw new InvalidOperationException("Generated DATA root does not list its main object exactly once: " + path);
+            string mainGuid;
+            long mainFileId;
+            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(main, out mainGuid, out mainFileId) ||
+                !string.Equals(mainGuid, guid, StringComparison.Ordinal) || mainFileId == 0)
+                throw new InvalidOperationException("Generated DATA root main object has no stable identity: " + path);
+            evidence.localFileId = mainFileId;
+
+            if (string.Equals(path, CK01ImportRegistry.MissingSpriteTextureAssetPath, StringComparison.Ordinal))
+            {
+                var texture = main as Texture2D;
+                if (texture == null || all.Length != 2 ||
+                    !string.Equals(type.FullName, typeof(Texture2D).FullName, StringComparison.Ordinal) ||
+                    !string.Equals(main.name, "CK01-MissingSpriteTexture", StringComparison.Ordinal))
+                    throw new InvalidOperationException("Generated DATA shared texture has an unexpected main asset or subasset count: " + path);
+                var sprite = (all[0] == main ? all[1] : all[0]) as Sprite;
+                if (sprite == null || sprite.texture != texture ||
+                    !string.Equals(sprite.name, "CK01-MissingSprite", StringComparison.Ordinal))
+                    throw new InvalidOperationException("Generated DATA shared Sprite is missing or belongs to another texture: " + path);
+                string spriteGuid;
+                long spriteFileId;
+                if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(sprite, out spriteGuid, out spriteFileId) ||
+                    !string.Equals(spriteGuid, guid, StringComparison.Ordinal) ||
+                    spriteFileId == 0 || spriteFileId == mainFileId)
+                    throw new InvalidOperationException("Generated DATA shared Sprite has no stable subasset identity: " + path);
+                evidence.subAssets = new[] { new DataBatchSubAssetEvidence {
+                    name = sprite.name, guid = spriteGuid, typeName = sprite.GetType().FullName,
+                    localFileId = spriteFileId, textureGuid = mainGuid, textureLocalFileId = mainFileId
+                } };
+            }
+            else
+            {
+                if (!typeof(ScriptableObject).IsAssignableFrom(type) || all.Length != 1)
+                    throw new InvalidOperationException("Generated DATA root is not a single ScriptableObject: " + path);
+                evidence.subAssets = new DataBatchSubAssetEvidence[0];
+            }
+
+            // GetDependencies omits broken serialized references. Inspect both the main
+            // object and every permitted subasset; never deserialize old Spine data.
+            foreach (var asset in all)
+            {
+                if (asset == null || typeof(Spine.Unity.AnimationReferenceAsset).IsAssignableFrom(asset.GetType()) ||
+                    typeof(Spine.Unity.SkeletonDataAsset).IsAssignableFrom(asset.GetType()))
+                    throw new InvalidOperationException("Generated DATA root contains an unresolved or Spine object: " + path);
+                var property = new SerializedObject(asset).GetIterator();
+                while (property.Next(true))
+                {
+                    if (property.propertyType == SerializedPropertyType.ObjectReference &&
+                        property.objectReferenceValue == null && property.objectReferenceInstanceIDValue != 0)
+                        throw new InvalidOperationException("Generated root has an unresolved reference: " + path + " " + property.propertyPath);
+                }
+            }
+            return evidence;
+        }
+
+        private static object RebuildShortCycleFonts()
+        {
+            const string builderTypeName =
+                "EatWhat.EditorTools.Fonts.ShortCycleFontAtlasBuilder";
+            Type builderType = null;
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                builderType = assembly.GetType(builderTypeName, false);
+                if (builderType != null) break;
+            }
+
+            if (builderType == null)
+            {
+                throw new InvalidOperationException(
+                    "PRE-1 font builder type is unavailable: " + builderTypeName);
+            }
+
+            var buildMethod = builderType.GetMethod(
+                "BuildAll",
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                Type.EmptyTypes,
+                null);
+            if (buildMethod == null)
+            {
+                throw new MissingMethodException(builderTypeName, "BuildAll");
+            }
+            var manifest = buildMethod.Invoke(null, null);
+            if (manifest == null)
+            {
+                throw new InvalidOperationException(
+                    "PRE-1 font builder returned no build manifest: " + builderTypeName);
+            }
+            return manifest;
+        }
+
+        private static string[] ReadLocalizationGlyphs()
+        {
+            var csvPath = Path.Combine(
+                DataTablesRoot,
+                "Localization",
+                "Localization.csv");
+            if (!File.Exists(csvPath))
+            {
+                throw new FileNotFoundException("Localization CSV is missing.", csvPath);
+            }
+
+            var parsed = DataTableCsvParser.Parse(ReadStrictUtf8Csv(csvPath));
+            if (!parsed.IsValid)
+            {
+                throw new InvalidOperationException(
+                    "Localization CSV parse failed: " + string.Join(" | ", parsed.Errors.ToArray()));
+            }
+
+            var valueIndex = parsed.Table.GetHeaderIndex("zh_cn");
+            if (valueIndex < 0)
+            {
+                throw new InvalidOperationException("Localization CSV has no zh_cn column.");
+            }
+
+            var scalars = new HashSet<uint>();
+            foreach (var row in parsed.Table.Rows)
+            {
+                if (row.Values.Count <= valueIndex) continue;
+                AddUnicodeScalars(row.Values[valueIndex], scalars);
+            }
+
+            var ordered = new List<uint>(scalars);
+            ordered.Sort();
+            var glyphs = new string[ordered.Count];
+            for (var index = 0; index < ordered.Count; index++)
+            {
+                glyphs[index] = "U+" + ordered[index].ToString("X4", CultureInfo.InvariantCulture);
+            }
+            return glyphs;
+        }
+
+        private static void AddUnicodeScalars(string value, ISet<uint> destination)
+        {
+            if (string.IsNullOrEmpty(value)) return;
+            for (var index = 0; index < value.Length; index++)
+            {
+                var character = value[index];
+                if (char.IsHighSurrogate(character) && index + 1 < value.Length &&
+                    char.IsLowSurrogate(value[index + 1]))
+                {
+                    destination.Add((uint)char.ConvertToUtf32(character, value[++index]));
+                }
+                else if (!char.IsSurrogate(character))
+                {
+                    destination.Add(character);
+                }
+            }
+        }
+
+        private static string ReadRequiredBatchEnvironment(string name)
+        {
+            var value = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException("Required DATA batch environment value is missing: " + name);
+            }
+            return value.Trim();
+        }
+
+        private static string ResolveCompletionCredentialPath(string path)
+        {
+            var projectRoot = Path.GetFullPath(ProjectRoot).TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar);
+            var fullPath = Path.GetFullPath(path);
+            var prefix = projectRoot + Path.DirectorySeparatorChar;
+            if (!fullPath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    "DATA completion credential path must be inside the isolated project. path=" +
+                    fullPath + " project=" + projectRoot);
+            }
+            return fullPath;
+        }
+
+        private static void WriteCompletionCredential(
+            string path,
+            DataBatchCompletionCredential credential)
+        {
+            var directory = Path.GetDirectoryName(path);
+            if (string.IsNullOrEmpty(directory))
+            {
+                throw new InvalidOperationException("DATA completion credential has no parent directory: " + path);
+            }
+            Directory.CreateDirectory(directory);
+            var json = JsonUtility.ToJson(credential, true) + Environment.NewLine;
+            var bytes = new UTF8Encoding(false).GetBytes(json);
+            using (var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Flush(true);
+            }
+        }
+
+        private static FieldInfo ReadRequiredField(object target, string name)
+        {
+            var field = target.GetType().GetField(name, BindingFlags.Public | BindingFlags.Instance);
+            if (field == null)
+            {
+                throw new MissingFieldException(target.GetType().FullName, name);
+            }
+            return field;
+        }
+
+        private static int ReadRequiredIntField(object target, string name)
+        {
+            return (int)ReadRequiredField(target, name).GetValue(target);
+        }
+
+        private static bool ReadRequiredBoolField(object target, string name)
+        {
+            return (bool)ReadRequiredField(target, name).GetValue(target);
+        }
+
+        private static string ReadRequiredStringField(object target, string name)
+        {
+            var value = ReadRequiredField(target, name).GetValue(target) as string;
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException(
+                    "Font build manifest field is empty: " + name);
+            }
+            return value;
         }
 
         /// <summary>Runs all CSV/schema and target-type checks without changing assets.</summary>

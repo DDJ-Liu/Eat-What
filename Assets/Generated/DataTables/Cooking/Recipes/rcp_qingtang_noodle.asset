@@ -23,11 +23,18 @@ MonoBehaviour:
   - tag_flavor_yummy
   slots:
   - slot_noodle_1
-  - slot_scallion_1
+  - slot_broth_1
+  - slot_jiaotou_1
   whitelist_proc_ids:
   - proc_noodle_boiled
-  - proc_noodle_boiled_alt
-  - proc_qingtang_final
+  - proc_instant_noodle_boiled
+  - proc_rice_noodle_boiled
+  - proc_fried_egg
+  - proc_nongtangbao_soup
+  - proc_milktea_liquid
+  - proc_paomian_soup
+  - proc_qingtang_dish
+  - proc_pidan_milktea_noodle
   first_step_id: step_qt_01
   unlock_source: 
   unlock_condition: 

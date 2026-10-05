@@ -83,7 +83,14 @@ namespace Spine.Unity.Editor {
 		public static void GenerateMecanimAnimationClips (SkeletonDataAsset skeletonDataAsset) {
 			var data = skeletonDataAsset.GetSkeletonData(true);
 			if (data == null) {
-				Debug.LogError("SkeletonData loading failed!", skeletonDataAsset);
+				// Attribute the error at its source. The DATA runner validates these identities
+				// against its approved file fingerprints; nearby import log lines are not evidence.
+				string assetPath = AssetDatabase.GetAssetPath(skeletonDataAsset);
+				string skeletonPath = skeletonDataAsset.skeletonJSON == null ? "" : AssetDatabase.GetAssetPath(skeletonDataAsset.skeletonJSON);
+				Debug.LogError("SkeletonData loading failed! [DATA_SPINE_LOAD_FAILURE sdaPath=" + assetPath +
+					" sdaGuid=" + AssetDatabase.AssetPathToGUID(assetPath) +
+					" skeletonPath=" + skeletonPath +
+					" skeletonGuid=" + AssetDatabase.AssetPathToGUID(skeletonPath) + "]", skeletonDataAsset);
 				return;
 			}
 

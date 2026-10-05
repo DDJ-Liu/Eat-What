@@ -1,0 +1,3 @@
+node_modules/
+*.inspect.ndjson
+!DataTables_Authoring.xlsx

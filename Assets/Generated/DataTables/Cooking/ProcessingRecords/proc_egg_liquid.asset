@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   output_item: prd_egg_liquid
   input_01: ing_egg
-  input_02: ing_egg
-  input_03: ing_egg
+  input_02: 
+  input_03: 
   input_04: 
   input_05: 
   input_06: 

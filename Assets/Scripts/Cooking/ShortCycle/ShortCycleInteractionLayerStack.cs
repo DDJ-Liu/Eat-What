@@ -121,6 +121,28 @@ namespace EatWhat.Cooking.ShortCycle
             return true;
         }
 
+        /// <summary>
+        /// Removes one configured transient layer without disturbing layers above it.
+        /// The base layer remains owned by the stack lifecycle and cannot be removed here.
+        /// </summary>
+        public bool Remove(MouseInteractionLayer layer)
+        {
+            var index = activeLayers.IndexOf(layer);
+            if (layer == null || index <= 0)
+            {
+                return false;
+            }
+
+            layer.OnRemoveLayer();
+            activeLayers.RemoveAt(index);
+            return true;
+        }
+
+        public bool Contains(MouseInteractionLayer layer)
+        {
+            return layer != null && activeLayers.Contains(layer);
+        }
+
         public bool IsTop(MouseInteractionLayer layer)
         {
             return Top == layer;

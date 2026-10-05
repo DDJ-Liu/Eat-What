@@ -9,16 +9,77 @@ using UnityEngine.Localization.Settings;*/
 
 public static class Tools
 {
+    private static Vector3 lastValidMouseWorldPosition;
+    private static bool hasValidMouseWorldPosition;
+    private static Camera cachedMainCamera;
+    private static int cachedMainCameraFrame = -1;
+    private static bool missingMainCameraWarningIssued;
+
+    public static bool HasPointer
+    {
+        get
+        {
+            if (Mouse.current == null) return false;
+            return GetMainCamera() != null;
+        }
+    }
+
     public static Vector3 getMousePos()
     {
+        Vector3 mouseWorldPosition;
+        TryGetMousePos(out mouseWorldPosition);
+        return mouseWorldPosition;
+    }
+
+    public static bool TryGetMousePos(out Vector3 mouseWorldPosition)
+    {
+        mouseWorldPosition = hasValidMouseWorldPosition
+            ? lastValidMouseWorldPosition
+            : Vector3.zero;
+
+        Mouse mouse = Mouse.current;
+        if (mouse == null)
+        {
+            return false;
+        }
+
+        Camera mainCamera = GetMainCamera();
+        if (mainCamera == null) return false;
+
         //�������Ļλ��
-        Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
+        Vector2 mouseScreenPosition = mouse.position.ReadValue();
         //ת���������λ��
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPosition.x, mouseScreenPosition.y, Camera.main.nearClipPlane));
+        mouseWorldPosition = mainCamera.ScreenToWorldPoint(
+            new Vector3(mouseScreenPosition.x, mouseScreenPosition.y, mainCamera.nearClipPlane));
         //2D��
         mouseWorldPosition.z = 0;
 
-        return mouseWorldPosition;
+        lastValidMouseWorldPosition = mouseWorldPosition;
+        hasValidMouseWorldPosition = true;
+        return true;
+    }
+
+    private static Camera GetMainCamera()
+    {
+        int frame = Time.frameCount;
+        if (cachedMainCameraFrame != frame)
+        {
+            cachedMainCamera = Camera.main;
+            cachedMainCameraFrame = frame;
+        }
+
+        if (cachedMainCamera == null)
+        {
+            if (!missingMainCameraWarningIssued)
+            {
+                Debug.LogWarning("[Tools] Mouse world position is unavailable because no active MainCamera was found.");
+                missingMainCameraWarningIssued = true;
+            }
+            return null;
+        }
+
+        missingMainCameraWarningIssued = false;
+        return cachedMainCamera;
     }
 
     // ��̬�������������ֽ�Ϊ List<int>

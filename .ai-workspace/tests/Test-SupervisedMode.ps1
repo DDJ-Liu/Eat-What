@@ -1,10 +1,14 @@
 [CmdletBinding()]
-param()
+param([string]$CompactEvidenceRoot)
 $ErrorActionPreference = 'Stop'
 $sourceRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$testRoot = Join-Path ([IO.Path]::GetTempPath()) ('EatWhatSupervised-' + [Guid]::NewGuid().ToString('N'))
+$fixtureProject = Join-Path ([IO.Path]::GetTempPath()) ('EatWhatSupervised-' + [Guid]::NewGuid().ToString('N'))
+$testRoot = Join-Path $fixtureProject '.ai-workspace'
+. (Join-Path $PSScriptRoot 'AcceptanceFixture.ps1')
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $checks = New-Object System.Collections.ArrayList
+$script:compactResponseBytes = [Collections.Generic.List[int]]::new()
+$script:compactResponses = [Collections.Generic.List[object]]::new()
 function Check($Actual, $Expected, [string]$Name) {
     if ($Actual -ne $Expected) { throw "$Name expected=[$Expected] actual=[$Actual]" }
     [void]$checks.Add($Name)
@@ -17,7 +21,29 @@ function SaveFixture([string]$Name, $Data) {
     [IO.File]::WriteAllText((Join-Path $testRoot "runtime/$Name-state.json"), ($Data | ConvertTo-Json -Depth 30), $utf8)
 }
 function Q([hashtable]$ArgsTable) {
-    (& (Join-Path $testRoot 'queue.ps1') @ArgsTable | Out-String) | ConvertFrom-Json
+    if ($ArgsTable.Action -eq 'Complete' -and -not $ArgsTable.AcceptancePath) {
+        $ArgsTable.AcceptancePath=Initialize-AcceptanceFixture $testRoot $ArgsTable.TaskId $sourceRoot
+    }
+    $raw = & (Join-Path $testRoot 'queue.ps1') @ArgsTable | Out-String
+    $compactRaw = $raw.Trim()
+    if($ArgsTable.Action -in @('Poll','Complete','SupervisionCheckpoint')){
+        $bytes=[Text.Encoding]::UTF8.GetByteCount($compactRaw)
+        if($bytes -gt 2048){throw "$($ArgsTable.Action) response exceeded 2KB: $bytes"}
+        $script:compactResponseBytes.Add($bytes)
+    }
+    $result = $raw | ConvertFrom-Json
+    if ($CompactEvidenceRoot -and $ArgsTable.Action -in @('Poll','Complete','SupervisionCheckpoint')) {
+        $receiptText = if ($result.receiptPath -and (Test-Path -LiteralPath $result.receiptPath -PathType Leaf)) {
+            [IO.File]::ReadAllText($result.receiptPath)
+        } else { $null }
+        $script:compactResponses.Add([pscustomobject]@{
+            index=$script:compactResponses.Count; action=[string]$ArgsTable.Action;
+            taskId=[string]$ArgsTable.TaskId; bytes=$bytes; response=$compactRaw;
+            originalReceiptPath=[string]$result.receiptPath; receipt=$receiptText
+        })
+    }
+    if ($result.receiptPath) { return Get-Content -LiteralPath $result.receiptPath -Raw | ConvertFrom-Json }
+    return $result
 }
 function Init {
     $workers = [ordered]@{}
@@ -37,7 +63,7 @@ function Claim($DispatchItem) { Q @{Action='Poll';Pipeline=$DispatchItem.pipelin
 function Done([string]$Id,[string]$Lane) { Q @{Action='Complete';Pipeline=$Lane;TaskId=$Id;Summary='done';Verification='fixture verified'} }
 try {
     [void](New-Item -ItemType Directory -Path (Join-Path $testRoot 'runtime'))
-    foreach ($file in @('queue.ps1','supervised.ps1')) { Copy-Item -LiteralPath (Join-Path $sourceRoot $file) -Destination (Join-Path $testRoot $file) }
+    foreach ($file in @('queue.ps1','supervised.ps1','repair-budget.ps1')) { Copy-Item -LiteralPath (Join-Path $sourceRoot $file) -Destination (Join-Path $testRoot $file) }
     [IO.File]::WriteAllText((Join-Path $testRoot 'INSTRUCTIONS.md'), '# isolated test', $utf8)
 
     Init
@@ -231,20 +257,20 @@ try {
     $a=AddTask CODE; $b=AddTask CODE @($a); $c=AddTask CODE
     StartSession @($a,$b,$c) | Out-Null
     $d=Dispatch; Claim $d.dispatches[0] | Out-Null
-    for ($round=0;$round -le 3;$round++) {
+    for ($round=0;$round -le 2;$round++) {
         $f=Q @{Action='Fail';Pipeline='CODE';TaskId=$a;ErrorKind='EXECUTION';ProblemKey='stable-api-root';ErrorMessage="same cause attempt $round"}
         Check $f.supervisorHandoff.action 'NOTIFY_CONTROLLER' "failure $round notifies control"
-        if ($round -lt 3) {
+        if ($round -lt 2) {
             Check $f.task.status 'PAUSED_CIRCUIT' "failure $round still recoverable"
             MustThrow {Q @{Action='ResetTask';TaskId=$a}} 'supervised reset forbidden'
             Q @{Action='RecoverSupervisionTask';TaskId=$a;IdlePipelines=@('CODE');RepairPlan="distinct repair $round";Verification='actual evidence'} | Out-Null
             $d=Dispatch; Claim $d.dispatches[0] | Out-Null
         }
     }
-    Check $f.task.status 'NEEDS_USER' 'third controller recovery failure opens task circuit'
-    Check $f.task.attempts 4 'attempt count never reset by recovery'
-    Check @($f.task.supervisionRepairs).Count 3 'exact three persistent recovery rounds'
-    MustThrow {Q @{Action='RecoverSupervisionTask';TaskId=$a;IdlePipelines=@('CODE');RepairPlan='fourth';Verification='evidence'}} 'fourth automatic recovery refused'
+    Check $f.task.status 'PAUSED_CIRCUIT' 'second controller recovery failure remains visible'
+    Check $f.task.attempts 3 'attempt count never reset by recovery'
+    Check @($f.task.supervisionRepairs).Count 2 'exact two persistent recovery rounds'
+    MustThrow {Q @{Action='RecoverSupervisionTask';TaskId=$a;IdlePipelines=@('CODE');RepairPlan='third';Verification='evidence'}} 'third automatic recovery refused'
     $d=Dispatch; Check $d.dispatches[0].taskId $c 'same-lane independent task bypasses failed branch'
     Claim $d.dispatches[0] | Out-Null
     $global=Q @{Action='Fail';Pipeline='CODE';TaskId=$c;ErrorMessage='uncertain production write';FailureScope='GLOBAL'}
@@ -296,13 +322,14 @@ try {
 
     Init
     $a=AddTask CODE; StartSession @($a) | Out-Null
-    for ($round=0;$round -le 6;$round++) {
+    for ($round=0;$round -le 2;$round++) {
         $d=Dispatch; Claim $d.dispatches[0] | Out-Null
         $f=Q @{Action='Fail';Pipeline='CODE';TaskId=$a;ProblemKey="root-$round";ErrorMessage='failed'}
-        if ($round -lt 6) {Q @{Action='RecoverSupervisionTask';TaskId=$a;IdlePipelines=@('CODE');RepairPlan="fix-$round";Verification='verified evidence'} | Out-Null}
+        if ($round -lt 2) {Q @{Action='RecoverSupervisionTask';TaskId=$a;IdlePipelines=@('CODE');RepairPlan="fix-$round";Verification='verified evidence'} | Out-Null}
     }
-    Check $f.task.status 'NEEDS_USER' 'six cross-root recoveries cap prevents infinite repair loop'
-    Check @($f.task.supervisionRepairs).Count 6 'total recovery cap persists'
+    Check $f.task.status 'PAUSED_CIRCUIT' 'two cross-key recoveries cap prevents infinite repair loop'
+    Check @($f.task.supervisionRepairs).Count 2 'total recovery cap persists'
+    MustThrow {Q @{Action='RecoverSupervisionTask';TaskId=$a;IdlePipelines=@('CODE');RepairPlan='fix-2';Verification='evidence'}} 'cross-key third recovery refused'
 
     Init
     $a=AddTask CODE; $b=AddTask ENGINE_MCP @($a)
@@ -378,10 +405,45 @@ try {
         foreach ($job in $jobs) { if ($job.State -eq 'Running') {Stop-Job -Job $job}; Remove-Job -Job $job }
     }
 
-    [pscustomobject]@{result='PASS';checks=$checks.Count;tested=@($checks);fixtureOnly=$true} | ConvertTo-Json -Depth 5
+    if ($CompactEvidenceRoot) {
+        $evidenceDir=[IO.Path]::GetFullPath($CompactEvidenceRoot)
+        [void][IO.Directory]::CreateDirectory($evidenceDir)
+        $topFive=@($script:compactResponses | Sort-Object -Property @{Expression='bytes';Descending=$true},@{Expression='index';Descending=$false} | Select-Object -First 5)
+        $maxima=@(foreach($kind in @('Complete','Poll','SupervisionCheckpoint')) {
+            $script:compactResponses | Where-Object action -EQ $kind |
+                Sort-Object -Property @{Expression='bytes';Descending=$true},@{Expression='index';Descending=$false} |
+                Select-Object -First 1
+        })
+        $selected=@($topFive + $maxima | Where-Object { $null -ne $_ -and $_.receipt } | Sort-Object index -Unique)
+        $records=@(foreach($entry in $selected) {
+            $stem=('{0:D3}-{1}-{2}' -f ([int]$entry.index),$entry.action,$entry.bytes)
+            $responsePath=Join-Path $evidenceDir "$stem-response.json"
+            $receiptPath=Join-Path $evidenceDir "$stem-full.json"
+            [IO.File]::WriteAllText($responsePath,$entry.response,$utf8)
+            [IO.File]::WriteAllText($receiptPath,$entry.receipt,$utf8)
+            [pscustomobject]@{
+                index=$entry.index;action=$entry.action;taskId=$entry.taskId;utf8Bytes=$entry.bytes;
+                responsePath=$responsePath;responseSha256=(Get-FileHash -LiteralPath $responsePath -Algorithm SHA256).Hash;
+                fullReceiptPath=$receiptPath;fullReceiptSha256=(Get-FileHash -LiteralPath $receiptPath -Algorithm SHA256).Hash;
+                originalFixtureReceiptPath=$entry.originalReceiptPath
+            }
+        })
+        $byIndex=@{};foreach($record in $records){$byIndex[[int]$record.index]=$record}
+        $manifest=[pscustomobject]@{
+            schemaVersion=1; source='Test-SupervisedMode.ps1 isolated queue fixture';
+            capturedCount=$script:compactResponses.Count;
+            topFive=@($topFive|ForEach-Object{$byIndex[[int]$_.index]});
+            actionMaxima=@($maxima|ForEach-Object{$byIndex[[int]$_.index]});
+            topFiveUtf8Total=(($topFive|Measure-Object bytes -Sum).Sum);
+            topFiveUtf8Max=(($topFive|Measure-Object bytes -Maximum).Maximum)
+        }
+        [IO.File]::WriteAllText((Join-Path $evidenceDir 'manifest.json'),($manifest|ConvertTo-Json -Depth 8),$utf8)
+    }
+    [pscustomobject]@{result='PASS';checks=$checks.Count;tested=@($checks);fixtureOnly=$true;
+        topFiveCompactBytes=@($script:compactResponseBytes|Sort-Object -Descending|Select-Object -First 5)} | ConvertTo-Json -Depth 5
 }
 finally {
-    $resolvedTestRoot=[IO.Path]::GetFullPath($testRoot)
+    $resolvedTestRoot=[IO.Path]::GetFullPath($fixtureProject)
     $resolvedTempRoot=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar
     if ($resolvedTestRoot.StartsWith($resolvedTempRoot,[StringComparison]::OrdinalIgnoreCase) -and (Split-Path -Leaf $resolvedTestRoot).StartsWith('EatWhatSupervised-') -and (Test-Path -LiteralPath $resolvedTestRoot)) {
         Remove-Item -LiteralPath $resolvedTestRoot -Recurse -Force

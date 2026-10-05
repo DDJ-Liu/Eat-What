@@ -1,0 +1,115 @@
+{
+  "tasks": 38,
+  "first": "AI-000146",
+  "last": "AI-000183",
+  "files": 1200,
+  "sourceBytes": 67192625,
+  "missingOriginalArtifactPaths": [],
+  "largest": [
+    {
+      "path": ".ai-workspace/outputs/MIG63/Validation/20260922-144430-093-wheel/font-before.asset",
+      "size": 8509230,
+      "reasons": [
+        "任务结算直接列出的输出目录",
+        "具名任务报告精确点名的证据目录"
+      ]
+    },
+    {
+      "path": ".ai-workspace/outputs/MIG63/Validation/20260922-224031-056-wheel/font-before.asset",
+      "size": 8509230,
+      "reasons": [
+        "任务结算直接列出的输出目录",
+        "具名任务报告精确点名的证据目录"
+      ]
+    },
+    {
+      "path": ".ai-workspace/outputs/control/U1-PRE-R1-20260923/ai170-attempt7-failure-snapshot/Assets/Scenes/Cooking/ShortCycle_P0P1.unity",
+      "size": 2105789,
+      "reasons": [
+        "AI146及之后编号匹配",
+        "完整控制台中间与接力记录"
+      ]
+    },
+    {
+      "path": ".ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-7-saved-state-r1/sample-backup-snapshot/Assets/Scenes/Cooking/ShortCycle_P0P1.unity",
+      "size": 2059419,
+      "reasons": [
+        "AI146及之后编号匹配",
+        "完整任务输出目录"
+      ]
+    },
+    {
+      "path": ".ai-workspace/outputs/U1-PRE/AI-000164/host-context-recovery-20260923/overlay-unity-batch.log",
+      "size": 1851501,
+      "reasons": [
+        "AI146及之后编号匹配",
+        "完整任务输出目录"
+      ]
+    },
+    {
+      "path": ".ai-workspace/outputs/U1-PRE/AI-000164/host-context-recovery-20260923/baseline-unity-batch.log",
+      "size": 1851414,
+      "reasons": [
+        "AI146及之后编号匹配",
+        "完整任务输出目录"
+      ]
+    },
+    {
+      "path": ".ai-workspace/runtime/queue-state.json",
+      "size": 1847270,
+      "reasons": [
+        "原文档精确点名附件",
+        "完整原始状态快照（不裁剪历史）"
+      ]
+    },
+    {
+      "path": ".ai-workspace/outputs/control/U1-PRE-R1-20260923/ai182-readonly-editor/fingerprint-diagnostic.json",
+      "size": 1459895,
+      "reasons": [
+        "AI146及之后编号匹配",
+        "原文档本地链接附件",
+        "完整控制台中间与接力记录"
+      ]
+    }
+  ],
+  "namedMarkdownCounts": {
+    "AI-000146": 1,
+    "AI-000147": 1,
+    "AI-000148": 1,
+    "AI-000149": 1,
+    "AI-000150": 1,
+    "AI-000151": 1,
+    "AI-000152": 1,
+    "AI-000153": 1,
+    "AI-000154": 1,
+    "AI-000155": 1,
+    "AI-000156": 1,
+    "AI-000157": 2,
+    "AI-000158": 1,
+    "AI-000159": 1,
+    "AI-000160": 1,
+    "AI-000161": 1,
+    "AI-000162": 1,
+    "AI-000163": 1,
+    "AI-000164": 5,
+    "AI-000165": 1,
+    "AI-000166": 1,
+    "AI-000167": 1,
+    "AI-000168": 2,
+    "AI-000169": 2,
+    "AI-000170": 5,
+    "AI-000171": 0,
+    "AI-000172": 0,
+    "AI-000173": 1,
+    "AI-000174": 1,
+    "AI-000175": 1,
+    "AI-000176": 1,
+    "AI-000177": 1,
+    "AI-000178": 2,
+    "AI-000179": 2,
+    "AI-000180": 2,
+    "AI-000181": 2,
+    "AI-000182": 1,
+    "AI-000183": 1
+  }
+}

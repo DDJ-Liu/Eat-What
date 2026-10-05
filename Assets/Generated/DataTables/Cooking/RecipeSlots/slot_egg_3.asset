@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standard_ingredient: ing_egg
   standard_action: act_whisk
-  required_count: 3
-  sub_01: ing_giant_egg
-  sub_02: 
+  required_count: 1
+  sub_01: ing_danhuangpai
+  sub_02: ing_pidan
   sub_03: 
   sub_04: 
   sub_05: 
@@ -24,7 +24,7 @@ MonoBehaviour:
   sub_07: 
   sub_08: 
   sub_01_count: 1
-  sub_02_count: 0
+  sub_02_count: 1
   sub_03_count: 0
   sub_04_count: 0
   sub_05_count: 0

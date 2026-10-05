@@ -22,4 +22,8 @@ MonoBehaviour:
   - tool_knife
   trigger_items:
   - prd_tomato_cut
-  permanent_trigger_items: []
+  - prd_ofanqie_sui
+  permanent_trigger_items:
+  - prd_tomato_egg_dish
+  - prd_tomato_egg_soup
+  - prd_ofanqie_danhuangpai

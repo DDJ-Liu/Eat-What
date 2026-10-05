@@ -54,8 +54,14 @@ namespace Spine.Unity {
 		}
 
 		public void Initialize () {
+			this.animation = null;
 			if (skeletonDataAsset == null) return;
-			this.animation = skeletonDataAsset.GetSkeletonData(AnimationReferenceAsset.QuietSkeletonData).FindAnimation(animationName);
+			var data = skeletonDataAsset.GetSkeletonData(AnimationReferenceAsset.QuietSkeletonData);
+			if (data == null) {
+				Debug.LogWarningFormat(skeletonDataAsset, "Animation '{0}' unavailable: SkeletonData failed to load from {1}.", animationName, skeletonDataAsset.name);
+				return;
+			}
+			this.animation = data.FindAnimation(animationName);
 			if (this.animation == null) Debug.LogWarningFormat("Animation '{0}' not found in SkeletonData : {1}.", animationName, skeletonDataAsset.name);
 		}
 

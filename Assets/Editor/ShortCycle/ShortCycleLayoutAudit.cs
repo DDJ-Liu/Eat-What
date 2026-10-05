@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
+using EatWhat.Tools.Layout;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,6 +16,9 @@ using UnityEngine.UI;
 /// </summary>
 public static class ShortCycleLayoutAudit
 {
+    private const string ShortCycleStaticFontPath =
+        "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset";
+
     private static readonly string[] ExpectedRoots =
     {
         "CameraAndStageMarkers",
@@ -79,6 +83,19 @@ public static class ShortCycleLayoutAudit
         var enabledTmp = spacesObjects
             .SelectMany(go => go.GetComponents<TMP_Text>())
             .Count(label => label != null && label.enabled && label.gameObject.activeInHierarchy);
+        var spacesTmp = spacesObjects
+            .SelectMany(go => go.GetComponents<TMP_Text>())
+            .Where(label => label != null)
+            .Distinct()
+            .ToArray();
+        var spacesStaticFontMismatchPaths = spacesTmp
+            .Where(label => AssetDatabase.GetAssetPath(label.font) != ShortCycleStaticFontPath)
+            .Select(label => GetPath(label.gameObject))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        var spacesStaticFontValid = spacesTmp.Length > 0 &&
+            AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(ShortCycleStaticFontPath) != null &&
+            spacesStaticFontMismatchPaths.Length == 0;
         var heavyTmp = tmpScopeObjects
             .SelectMany(go => go.GetComponents<TextMeshPro>())
             .Where(label => label != null && label.font != null &&
@@ -130,6 +147,48 @@ public static class ShortCycleLayoutAudit
         var clueBoard = all.SingleOrDefault(go => go.name == "ClueBoard_Group");
         var clueParentValid = clueBoard != null && clueBoard.transform.parent != null &&
             clueBoard.transform.parent.name == "Shared";
+        var phase1Marker = all.SingleOrDefault(go => GetPath(go) ==
+            "CameraAndStageMarkers/CamMarker_Phase1_Left_TUNE");
+        var phase0LeftMarker = all.SingleOrDefault(go => GetPath(go) ==
+            "CameraAndStageMarkers/CamMarker_Phase0_Left_TUNE");
+        var phase0CenterMarker = all.SingleOrDefault(go => GetPath(go) ==
+            "CameraAndStageMarkers/CamMarker_Phase0_Center_TUNE");
+        var rightMarker = all.SingleOrDefault(go => GetPath(go) ==
+            "CameraAndStageMarkers/CamMarker_RightReserved_TUNE");
+        var fourMarkerPositionsValid =
+            HasWorldX(phase1Marker, -25.6f) &&
+            HasWorldX(phase0LeftMarker, -12.8f) &&
+            HasWorldX(phase0CenterMarker, 0f) &&
+            HasWorldX(rightMarker, 25.6f);
+        var clueAnchorPhase0 = all.SingleOrDefault(go => GetPath(go) ==
+            "CameraAndStageMarkers/ClueBoardAnchor_Phase0_TUNE");
+        var clueAnchorPhase1 = all.SingleOrDefault(go => GetPath(go) ==
+            "CameraAndStageMarkers/ClueBoardAnchor_Phase1");
+        var clueAnchorsValid = HasWorldX(clueAnchorPhase0, -19.2f) &&
+            HasWorldX(clueAnchorPhase1, -19.2f) &&
+            Vector3.Distance(clueAnchorPhase0.transform.position,
+                clueAnchorPhase1.transform.position) <= 0.0001f;
+        var clueHitArea = all.SingleOrDefault(go => GetPath(go) ==
+            "Shared/ClueBoard_Group/ClueBoard_HitArea");
+        var clueHitBinding = clueHitArea == null
+            ? null
+            : clueHitArea.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleMouseActionBinding>();
+        var clueHitGate = clueHitArea == null
+            ? null
+            : clueHitArea.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleStateGatedInteraction>();
+        var clueHitAreaValid = clueHitArea != null &&
+            clueHitArea.GetComponent<BoxCollider2D>() != null &&
+            clueHitArea.GetComponent<Button_MouseInteract>() != null &&
+            clueHitBinding != null &&
+            clueHitBinding.ActionName == EatWhat.Cooking.ShortCycle.ShortCycleActionNames.OpenClueBoard &&
+            clueHitGate != null &&
+            clueHitArea.GetComponentsInChildren<Renderer>(true).Length == 0 &&
+            clueHitArea.GetComponentsInChildren<Graphic>(true).Length == 0;
+        var legacyOpenButton = all.SingleOrDefault(go => GetPath(go) ==
+            "Spaces/Phase0_RecipeBook/Browse_Group/LeftPage/OpenClueBoard_Button_AIGC_Unused");
+        var legacyOpenButtonRetired = legacyOpenButton != null &&
+            legacyOpenButton.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleMouseActionBinding>() == null &&
+            legacyOpenButton.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleStateGatedInteraction>() == null;
         var legacyGateCount = all.Sum(go =>
             go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleActionButtonStateGate>().Length +
             go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleOverflowVisibilityGate>().Length +
@@ -156,6 +215,25 @@ public static class ShortCycleLayoutAudit
             presentationSetCount >= targetSetNames.Length &&
             duplicatePresentationSetPaths.Length == 0 &&
             presentationSetContainerMissingPaths.Length == 0;
+        var persistentPresentationSetPaths = presentationSets
+            .Where(component => GetBool(component, "keepVisualActiveAcrossSpaces"))
+            .Select(component => GetPath(component.gameObject))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        var clueBoardPersistentVisual = clueBoard != null &&
+            clueBoard.GetComponents<EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet>()
+                .Any(component => GetBool(component, "keepVisualActiveAcrossSpaces"));
+        var viewportAnchors = all
+            .SelectMany(go => go.GetComponents<CameraViewportAnchor>())
+            .Where(component => component != null)
+            .Distinct()
+            .ToArray();
+        var invalidViewportAnchorPaths = viewportAnchors
+            .Where(anchor => !IsConnected(anchor, "targetCamera") ||
+                !IsConnected(anchor, "anchoredRoot") || !HasValidViewportCoordinates(anchor))
+            .Select(anchor => GetPath(anchor.gameObject))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
         var tmpOverflowRendererPaths = all
             .SelectMany(go => go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet>())
             .SelectMany(GetTmpOverflowRendererPaths)
@@ -204,7 +282,9 @@ public static class ShortCycleLayoutAudit
             legacyGateCount == 0 && stateGateCount == 13 && presentationSetsValid &&
             spaceCount == 4 && localizedTextCount >= 19 && hostCount == 1 &&
             directorWiringValid && sessionWiringValid && layerTakeoverValid &&
-            heavyTmpRendererEnabledValid && tmpOverflowValid && fridgeCapacityValid;
+            heavyTmpRendererEnabledValid && tmpOverflowValid && fridgeCapacityValid &&
+            fourMarkerPositionsValid && clueAnchorsValid && clueHitAreaValid &&
+            legacyOpenButtonRetired;
 
         return "CK01-C-LAYOUT-AUDIT" +
             " scene=" + scene.path +
@@ -216,6 +296,11 @@ public static class ShortCycleLayoutAudit
             " missingScripts=" + missingScripts +
             " enabledRenderers=" + enabledRenderers +
             " enabledTMP=" + enabledTmp +
+            " spacesTMP=" + spacesTmp.Length +
+            " spacesStaticFont=" + ShortCycleStaticFontPath +
+            " spacesStaticFontMismatches=" + spacesStaticFontMismatchPaths.Length +
+            " spacesStaticFontMismatchPaths=" + string.Join("|", spacesStaticFontMismatchPaths) +
+            " spacesStaticFontValid=" + spacesStaticFontValid +
             " heavyTMP=" + heavyTmp.Length +
             " heavyTMPRenderersEnabled=" + heavyTmpRendererEnabled +
             " heavyTMPRendererMissing=" + heavyTmpRendererMissing +
@@ -237,6 +322,12 @@ public static class ShortCycleLayoutAudit
             " kSetContainerMissing=" + presentationSetContainerMissingPaths.Length +
             " kSetContainerMissingPaths=" + string.Join("|", presentationSetContainerMissingPaths) +
             " kSetsValid=" + presentationSetsValid +
+            " fixT5PersistentSets=" + persistentPresentationSetPaths.Length +
+            " fixT5PersistentSetPaths=" + string.Join("|", persistentPresentationSetPaths) +
+            " fixT5CluePersistentVisual=" + clueBoardPersistentVisual +
+            " fixT5ViewportAnchors=" + viewportAnchors.Length +
+            " fixT5ViewportAnchorInvalid=" + invalidViewportAnchorPaths.Length +
+            " fixT5ViewportAnchorInvalidPaths=" + string.Join("|", invalidViewportAnchorPaths) +
             " kTargetSets=" + string.Join("|", targetSetCounts) +
             " kStateGates=" + stateGateCount +
             " kLegacyG26=" + legacyGateCount +
@@ -248,6 +339,13 @@ public static class ShortCycleLayoutAudit
             " kFridgeSlotsUnique=" + fridgeSlotUniqueCount +
             " kFridgeCapacityValid=" + fridgeCapacityValid +
             " kClueParentShared=" + clueParentValid +
+            " fixT5FourMarkers=" + fourMarkerPositionsValid +
+            " fixT5MarkerX=" + MarkerX(phase1Marker) + "," + MarkerX(phase0LeftMarker) +
+                "," + MarkerX(phase0CenterMarker) + "," + MarkerX(rightMarker) +
+            " fixT5ClueAnchors=" + clueAnchorsValid +
+            " fixT5ClueAnchorX=" + MarkerX(clueAnchorPhase0) + "," + MarkerX(clueAnchorPhase1) +
+            " fixT5ClueHitArea=" + clueHitAreaValid +
+            " fixT5LegacyOpenButtonRetired=" + legacyOpenButtonRetired +
             " sceneDirty=" + scene.isDirty;
     }
 
@@ -310,6 +408,39 @@ public static class ShortCycleLayoutAudit
         var property = new SerializedObject(target).FindProperty(propertyName);
         return property != null && property.propertyType == SerializedPropertyType.ObjectReference &&
             property.objectReferenceValue != null;
+    }
+
+    private static bool GetBool(UnityEngine.Object target, string propertyName)
+    {
+        if (target == null) return false;
+        var property = new SerializedObject(target).FindProperty(propertyName);
+        return property != null && property.propertyType == SerializedPropertyType.Boolean &&
+            property.boolValue;
+    }
+
+    private static bool HasValidViewportCoordinates(CameraViewportAnchor anchor)
+    {
+        if (anchor == null) return false;
+        var serialized = new SerializedObject(anchor);
+        var viewport = serialized.FindProperty("viewportAnchor");
+        var inset = serialized.FindProperty("inwardViewportInset");
+        if (viewport == null || inset == null) return false;
+        var viewportValue = viewport.vector2Value;
+        var insetValue = inset.vector2Value;
+        return viewportValue.x >= 0f && viewportValue.x <= 1f &&
+            viewportValue.y >= 0f && viewportValue.y <= 1f &&
+            insetValue.x >= 0f && insetValue.x <= 1f &&
+            insetValue.y >= 0f && insetValue.y <= 1f;
+    }
+
+    private static bool HasWorldX(GameObject target, float expected)
+    {
+        return target != null && Mathf.Abs(target.transform.position.x - expected) <= 0.0001f;
+    }
+
+    private static string MarkerX(GameObject target)
+    {
+        return target == null ? "missing" : target.transform.position.x.ToString("F4");
     }
 
     private static string GetPath(GameObject gameObject)

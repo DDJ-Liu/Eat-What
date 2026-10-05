@@ -6,3 +6,6 @@ act_wash,act_wash.name,regular,tpl_popup_wash,常规处理：手即可
 act_boil,act_boil.name,waiting,tpl_wait_boil,等待处理：拖入分区触发
 act_stew,act_stew.name,waiting,tpl_wait_stew,等待处理：吊汤
 act_no_process,act_no_process.name,regular,,无表现直接完成
+act_smash,act_smash.name,regular,tpl_popup_smash,碾碎处理
+act_mix,act_mix.name,regular,tpl_popup_mix,混合，沙拉等处理
+act_fry,act_fry.name,regular,tpl_popup_fry,煎物

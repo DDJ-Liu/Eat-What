@@ -3,9 +3,12 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $sourceRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$testRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("EatWhatWorkflowModes-{0}" -f [Guid]::NewGuid().ToString('N'))
+$fixtureProject = Join-Path ([System.IO.Path]::GetTempPath()) ("EatWhatWorkflowModes-{0}" -f [Guid]::NewGuid().ToString('N'))
+$testRoot = Join-Path $fixtureProject '.ai-workspace'
+. (Join-Path $PSScriptRoot 'AcceptanceFixture.ps1')
 $runtimeRoot = Join-Path $testRoot 'runtime'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$script:compactResponseBytes = [Collections.Generic.List[int]]::new()
 
 function Assert-Equal {
     param([object]$Actual, [object]$Expected, [string]$Message)
@@ -30,13 +33,28 @@ function Save-FixtureJson {
 
 function Invoke-Queue {
     param([hashtable]$Arguments)
+    if ($Arguments.Action -eq 'Complete' -and -not $Arguments.AcceptancePath) {
+        $Arguments.AcceptancePath=Initialize-AcceptanceFixture $testRoot $Arguments.TaskId $sourceRoot
+    }
     $raw = & (Join-Path $testRoot 'queue.ps1') @Arguments | Out-String
-    return $raw | ConvertFrom-Json
+    if ($Arguments.Action -in @('Poll','Complete','SupervisionCheckpoint')) {
+        $bytes=[Text.Encoding]::UTF8.GetByteCount($raw.Trim())
+        if ($bytes -gt 2048) { throw "Compact $($Arguments.Action) response exceeded 2KB: $bytes" }
+        $script:compactResponseBytes.Add($bytes)
+    }
+    $result = $raw | ConvertFrom-Json
+    if ($result.receiptPath) {
+        if (-not (Test-Path -LiteralPath $result.receiptPath -PathType Leaf)) { throw 'Full receipt missing.' }
+        if ($result.autoHandoff.messagePath -and -not (Test-Path -LiteralPath $result.autoHandoff.messagePath -PathType Leaf)) { throw 'Handoff message missing.' }
+        return Get-Content -LiteralPath $result.receiptPath -Raw | ConvertFrom-Json
+    }
+    return $result
 }
 
 try {
     [void](New-Item -ItemType Directory -Path $runtimeRoot -Force)
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'queue.ps1') -Destination (Join-Path $testRoot 'queue.ps1')
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'repair-budget.ps1') -Destination (Join-Path $testRoot 'repair-budget.ps1')
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'supervised.ps1') -Destination (Join-Path $testRoot 'supervised.ps1')
     [System.IO.File]::WriteAllText((Join-Path $testRoot 'INSTRUCTIONS.md'), '# Test ledger', $utf8NoBom)
 
@@ -132,13 +150,14 @@ try {
 
     [pscustomobject][ordered]@{
         result = 'PASS'
-        tested = @('MANUAL source gate', 'non-blocking issue persistence', 'test issue PENDING_USER disposition', 'verification resolution audit', 'test issue successor handoff', 'AUTOMATIC topology and handoff', 'forward dependency with cycle rejection', 'failure stop', 'human reset', 'chain completion', 'SCHEDULED maintenance')
+        tested = @('MANUAL source gate', 'non-blocking issue persistence', 'test issue PENDING_USER disposition', 'verification resolution audit', 'test issue successor handoff', 'AUTOMATIC topology and handoff', 'forward dependency with cycle rejection', 'failure stop', 'human reset', 'chain completion', 'SCHEDULED maintenance','compact response and full/handoff receipts')
+        topFiveCompactBytes = @($script:compactResponseBytes | Sort-Object -Descending | Select-Object -First 5)
     } | ConvertTo-Json -Depth 5
 }
 finally {
-    if (Test-Path -LiteralPath $testRoot) {
+    if (Test-Path -LiteralPath $fixtureProject) {
         $resolvedTempRoot = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
-        $resolvedTestRoot = [System.IO.Path]::GetFullPath($testRoot)
+        $resolvedTestRoot = [System.IO.Path]::GetFullPath($fixtureProject)
         if ($resolvedTestRoot.StartsWith($resolvedTempRoot, [System.StringComparison]::OrdinalIgnoreCase) -and
             (Split-Path -Leaf $resolvedTestRoot).StartsWith('EatWhatWorkflowModes-', [System.StringComparison]::Ordinal)) {
             Remove-Item -LiteralPath $resolvedTestRoot -Recurse -Force

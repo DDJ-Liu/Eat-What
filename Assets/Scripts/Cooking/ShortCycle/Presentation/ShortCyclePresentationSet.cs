@@ -1,3 +1,4 @@
+using EatWhat.Tools.Layout;
 using UnityEngine;
 
 namespace EatWhat.Cooking.ShortCycle
@@ -16,6 +17,7 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private string enterTransition = "Show";
         [SerializeField] private string exitTransition = "Hide";
         [SerializeField] private DeactivateMode deactivateMode = DeactivateMode.ContainerInactive;
+        [SerializeField] private bool keepVisualActiveAcrossSpaces = false;
 
         private bool[] originalRendererEnabled = new bool[0];
         private Renderer[] hiddenRenderers = new Renderer[0];
@@ -27,14 +29,61 @@ namespace EatWhat.Cooking.ShortCycle
         private bool hidden;
         private int transitionGeneration;
         private bool? requestedActive;
+        private bool? requestedFocus;
+        private Renderer[] boundsRenderers = new Renderer[0];
+        private Bounds[] rendererBoundsSnapshot = new Bounds[0];
+        private Bounds cachedWorldBounds;
+        private bool hasCachedWorldBounds;
+        private bool boundsDirty = true;
+        private bool missingBoundsWarningIssued;
 
         public bool IsFocused { get; private set; }
         public Transform ContainerTransform { get { return containerRoot == null ? transform : containerRoot.transform; } }
         public MouseInteractionLayer InteractionLayer { get { return interactionLayer; } }
+        public bool KeepVisualActiveAcrossSpaces { get { return keepVisualActiveAcrossSpaces; } }
 
-        private void OnEnable() { CaptureTransientState(); }
+        private void OnEnable() { CaptureTransientState(); MarkBoundsDirty(); }
         private void OnDisable() { if (!internalLifecycleChange) RestoreTransientState(false); }
         private void OnDestroy() { RestoreTransientState(false); }
+        private void OnTransformChildrenChanged() { MarkBoundsDirty(); }
+        private void OnDidApplyAnimationProperties() { MarkBoundsDirty(); }
+        private void OnValidate() { MarkBoundsDirty(); }
+
+        public void MarkBoundsDirty()
+        {
+            boundsDirty = true;
+        }
+
+        public bool TryGetWorldBounds(out Bounds bounds)
+        {
+            RefreshBoundsIfNeeded();
+            bounds = cachedWorldBounds;
+            return hasCachedWorldBounds;
+        }
+
+        /// <summary>
+        /// Returns true when this Set intersects an explicit orthographic camera rectangle.
+        /// Renderer-less Sets stay visible by logical state and issue a throttled diagnostic.
+        /// </summary>
+        public bool IsInView(Rect cameraRect)
+        {
+            Bounds worldBounds;
+            if (!TryGetWorldBounds(out worldBounds))
+            {
+                if (!missingBoundsWarningIssued)
+                {
+                    Debug.LogWarning("ShortCycle Set has no Renderer bounds; preserving logical visibility: " + name, this);
+                    missingBoundsWarningIssued = true;
+                }
+                return true;
+            }
+
+            missingBoundsWarningIssued = false;
+            var min = worldBounds.min;
+            var max = worldBounds.max;
+            return max.x >= cameraRect.x && min.x <= cameraRect.x + cameraRect.width &&
+                max.y >= cameraRect.y && min.y <= cameraRect.y + cameraRect.height;
+        }
 
         internal void ApplyVisibility(bool active, bool focused)
         {
@@ -84,6 +133,8 @@ namespace EatWhat.Cooking.ShortCycle
         public void SetFocus(bool focused)
         {
             CaptureTransientState();
+            if (requestedFocus.HasValue && requestedFocus.Value == focused) return;
+            requestedFocus = focused;
             IsFocused = focused;
             var renderers = overflowRenderers ?? new Renderer[0];
             for (var index = 0; index < renderers.Length; index++)
@@ -132,6 +183,7 @@ namespace EatWhat.Cooking.ShortCycle
             }
             captured = false;
             requestedActive = null;
+            requestedFocus = null;
             IsFocused = false;
         }
 
@@ -153,6 +205,54 @@ namespace EatWhat.Cooking.ShortCycle
             for (var index = 0; index < renderers.Length; index++)
                 originalRendererEnabled[index] = renderers[index] != null && renderers[index].enabled;
             captured = true;
+        }
+
+        private void RefreshBoundsIfNeeded()
+        {
+            if (!boundsDirty && !RendererBoundsChanged()) return;
+
+            if (boundsDirty)
+            {
+                var candidates = ContainerTransform.GetComponentsInChildren<Renderer>(true) ?? new Renderer[0];
+                var worldRendererCount = 0;
+                for (var index = 0; index < candidates.Length; index++)
+                    if (candidates[index] != null &&
+                        !CameraViewportAnchor.IsAnchoredTransform(candidates[index].transform))
+                        worldRendererCount++;
+
+                boundsRenderers = new Renderer[worldRendererCount];
+                var destination = 0;
+                for (var index = 0; index < candidates.Length; index++)
+                    if (candidates[index] != null &&
+                        !CameraViewportAnchor.IsAnchoredTransform(candidates[index].transform))
+                        boundsRenderers[destination++] = candidates[index];
+                rendererBoundsSnapshot = new Bounds[boundsRenderers.Length];
+            }
+
+            hasCachedWorldBounds = ShortCycleSpace.ComputeSetBounds(
+                boundsRenderers, rendererBoundsSnapshot, out cachedWorldBounds);
+            boundsDirty = false;
+        }
+
+        private bool RendererBoundsChanged()
+        {
+            if (rendererBoundsSnapshot.Length != boundsRenderers.Length)
+            {
+                boundsDirty = true;
+                return true;
+            }
+            for (var index = 0; index < boundsRenderers.Length; index++)
+            {
+                if (boundsRenderers[index] == null)
+                {
+                    boundsDirty = true;
+                    return true;
+                }
+                var current = boundsRenderers[index].bounds;
+                if (Vector3.Distance(current.center, rendererBoundsSnapshot[index].center) > 0.0001f ||
+                    Vector3.Distance(current.size, rendererBoundsSnapshot[index].size) > 0.0001f) return true;
+            }
+            return false;
         }
 
         private void DeactivateContainer()

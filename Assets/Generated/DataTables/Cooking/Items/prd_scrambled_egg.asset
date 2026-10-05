@@ -18,7 +18,7 @@ MonoBehaviour:
   stack_type: single
   display_order_in_fridge: 0
   icon_sprite: {fileID: -6724980738021171820, guid: 2ccbaeb7adbdb464c9db183d47a934aa, type: 2}
-  flavor_key: 
+  flavor_key: prd_scrambled_egg.flavor
   container_capacity: 0
   container_use_step: 0
   pack_size: 0

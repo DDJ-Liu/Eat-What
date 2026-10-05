@@ -13,12 +13,18 @@ MonoBehaviour:
   m_Name: step_qt_02
   m_EditorClassIdentifier: 
   recipe_id: rcp_qingtang_noodle
-  next_step_id: 
+  next_step_id: step_qt_03
   display_text_key: step_qt_02.text
   standard_ingredients:
-  - ing_scallion
+  - ing_clear_broth
   standard_tools:
   - tool_pot
   trigger_items:
+  - ing_clear_broth
+  - prd_clear_broth
+  - prd_nongtangbao_soup
+  - prd_milktea_liquid
+  - prd_paomian_soup
+  permanent_trigger_items:
   - prd_qingtang_dish
-  permanent_trigger_items: []
+  - prd_qingtang_dish

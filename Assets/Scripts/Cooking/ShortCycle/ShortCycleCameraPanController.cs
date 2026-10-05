@@ -6,9 +6,11 @@ namespace EatWhat.Cooking.ShortCycle
 {
     public enum ShortCycleCameraSlot
     {
-        Phase0,
-        Phase1,
-        RightReserved
+        // Explicit values preserve the serialized meaning of the original three slots.
+        P0Center = 0,
+        P1 = 1,
+        Right = 2,
+        P0Left = 3
     }
 
     /// <summary>
@@ -21,10 +23,11 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private Transform phase0Marker = null;
         [SerializeField] private Transform phase1Marker = null;
         [SerializeField] private Transform rightReservedMarker = null;
+        [SerializeField] private Transform p0LeftMarker = null;
         [SerializeField] private ShortCycleInputLockController inputLockController = null;
         [SerializeField] private AnimationCurve panCurve = null;
         [SerializeField] private float panDuration = 0.45f;
-        [SerializeField] private ShortCycleCameraSlot initialSlot = ShortCycleCameraSlot.Phase0;
+        [SerializeField] private ShortCycleCameraSlot initialSlot = ShortCycleCameraSlot.P0Center;
 
         private readonly ShortCycleInputGate fallbackInputGate = new ShortCycleInputGate();
         private Coroutine activePan;
@@ -34,6 +37,7 @@ namespace EatWhat.Cooking.ShortCycle
         public event Action<ShortCycleCameraSlot> PanCompleted;
 
         public ShortCycleCameraSlot CurrentSlot { get; private set; }
+        public Camera ControlledCamera { get { return controlledCamera; } }
         public float CameraX
         {
             get { return controlledCamera == null ? 0f : controlledCamera.transform.position.x; }
@@ -57,14 +61,17 @@ namespace EatWhat.Cooking.ShortCycle
 
             switch (slot)
             {
-                case ShortCycleCameraSlot.Phase0:
+                case ShortCycleCameraSlot.P0Center:
                     phase0Marker = marker;
                     return true;
-                case ShortCycleCameraSlot.Phase1:
+                case ShortCycleCameraSlot.P1:
                     phase1Marker = marker;
                     return true;
-                case ShortCycleCameraSlot.RightReserved:
+                case ShortCycleCameraSlot.Right:
                     rightReservedMarker = marker;
+                    return true;
+                case ShortCycleCameraSlot.P0Left:
+                    p0LeftMarker = marker;
                     return true;
                 default:
                     return false;
@@ -204,12 +211,14 @@ namespace EatWhat.Cooking.ShortCycle
         {
             switch (slot)
             {
-                case ShortCycleCameraSlot.Phase0:
+                case ShortCycleCameraSlot.P0Center:
                     return phase0Marker;
-                case ShortCycleCameraSlot.Phase1:
+                case ShortCycleCameraSlot.P1:
                     return phase1Marker;
-                case ShortCycleCameraSlot.RightReserved:
+                case ShortCycleCameraSlot.Right:
                     return rightReservedMarker;
+                case ShortCycleCameraSlot.P0Left:
+                    return p0LeftMarker;
                 default:
                     return null;
             }
@@ -225,9 +234,10 @@ namespace EatWhat.Cooking.ShortCycle
             var cameraPosition = controlledCamera.transform.position;
             var bestSlot = fallback;
             var bestDistance = float.MaxValue;
-            EvaluateMarkerDistance(ShortCycleCameraSlot.Phase0, phase0Marker, cameraPosition, ref bestSlot, ref bestDistance);
-            EvaluateMarkerDistance(ShortCycleCameraSlot.Phase1, phase1Marker, cameraPosition, ref bestSlot, ref bestDistance);
-            EvaluateMarkerDistance(ShortCycleCameraSlot.RightReserved, rightReservedMarker, cameraPosition, ref bestSlot, ref bestDistance);
+            EvaluateMarkerDistance(ShortCycleCameraSlot.P1, phase1Marker, cameraPosition, ref bestSlot, ref bestDistance);
+            EvaluateMarkerDistance(ShortCycleCameraSlot.P0Left, p0LeftMarker, cameraPosition, ref bestSlot, ref bestDistance);
+            EvaluateMarkerDistance(ShortCycleCameraSlot.P0Center, phase0Marker, cameraPosition, ref bestSlot, ref bestDistance);
+            EvaluateMarkerDistance(ShortCycleCameraSlot.Right, rightReservedMarker, cameraPosition, ref bestSlot, ref bestDistance);
             return bestSlot;
         }
 

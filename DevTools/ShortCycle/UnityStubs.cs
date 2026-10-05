@@ -10,6 +10,11 @@ namespace UnityEngine
     {
         public string name;
 
+        public static T Instantiate<T>(T original) where T : Object, new()
+        {
+            return Instantiate(original, null);
+        }
+
         public static T Instantiate<T>(T original, Transform parent) where T : Object, new()
         {
             if (original == null) return null;
@@ -136,6 +141,57 @@ namespace UnityEngine
         }
     }
     public class Sprite : Object { }
+    public class AnimationClip : Object { }
+    public class RuntimeAnimatorController : Object
+    {
+        public AnimationClip[] animationClips = new AnimationClip[0];
+    }
+    public class AnimatorControllerParameter
+    {
+        public string name;
+    }
+    public class Animator : Behaviour
+    {
+        public AnimatorControllerParameter[] parameters = new AnimatorControllerParameter[0];
+        public RuntimeAnimatorController runtimeAnimatorController;
+        public int layerCount;
+        public bool HasState(int layerIndex, int stateHash) { return false; }
+        public static int StringToHash(string value) { return value == null ? 0 : value.GetHashCode(); }
+    }
+    public class Canvas : Behaviour { }
+    public struct Rect
+    {
+        public float x;
+        public float y;
+        public float width;
+        public float height;
+        public Rect(float x, float y, float width, float height)
+        {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+    }
+    public static class Screen
+    {
+        public static int width = 1920;
+        public static int height = 1080;
+    }
+    public static class GUI
+    {
+        public static int depth;
+        public static bool NextButtonResult;
+        public static readonly List<string> DrawnLabels = new List<string>();
+        public static bool Button(Rect position, string text)
+        {
+            DrawnLabels.Add(text);
+            var result = NextButtonResult;
+            NextButtonResult = false;
+            return result;
+        }
+        public static void Box(Rect position, string text) { DrawnLabels.Add(text); }
+    }
     public class Material : Object { }
     public class BoxCollider2D : Behaviour
     {
@@ -152,7 +208,10 @@ namespace UnityEngine
         public void SetFloat(int propertyId, float value) { }
         public void SetVector(int propertyId, Vector4 value) { }
     }
-    public class Renderer : Behaviour { }
+    public class Renderer : Behaviour
+    {
+        public Bounds bounds;
+    }
     public class SpriteRenderer : Renderer
     {
         public Sprite sprite;
@@ -241,6 +300,7 @@ namespace UnityEngine
     public class Camera : MonoBehaviour
     {
         public static Camera main;
+        public int ScreenToWorldPointCallCount;
         public bool orthographic = true;
         public float orthographicSize = 7.2f;
         public float aspect = 16f / 9f;
@@ -250,7 +310,11 @@ namespace UnityEngine
             return new Vector3(transform.position.x + (point.x - 0.5f) * orthographicSize * 2f * aspect,
                 transform.position.y + (point.y - 0.5f) * orthographicSize * 2f, transform.position.z + point.z);
         }
-        public Vector3 ScreenToWorldPoint(Vector3 point) { return point; }
+        public Vector3 ScreenToWorldPoint(Vector3 point)
+        {
+            ScreenToWorldPointCallCount++;
+            return point;
+        }
     }
     public struct Quaternion { public static Quaternion identity { get { return new Quaternion(); } } }
     public class Transform : Component
@@ -334,6 +398,39 @@ namespace UnityEngine
             var y = left.y - right.y;
             var z = left.z - right.z;
             return (float)Math.Sqrt((x * x) + (y * y) + (z * z));
+        }
+    }
+    public struct Bounds
+    {
+        public Vector3 center;
+        public Vector3 size;
+
+        public Bounds(Vector3 center, Vector3 size)
+        {
+            this.center = center;
+            this.size = size;
+        }
+
+        public Vector3 min
+        {
+            get { return new Vector3(center.x - size.x * 0.5f, center.y - size.y * 0.5f, center.z - size.z * 0.5f); }
+        }
+
+        public Vector3 max
+        {
+            get { return new Vector3(center.x + size.x * 0.5f, center.y + size.y * 0.5f, center.z + size.z * 0.5f); }
+        }
+
+        public void Encapsulate(Bounds other)
+        {
+            var left = min;
+            var right = max;
+            var otherLeft = other.min;
+            var otherRight = other.max;
+            var nextMin = new Vector3(Math.Min(left.x, otherLeft.x), Math.Min(left.y, otherLeft.y), Math.Min(left.z, otherLeft.z));
+            var nextMax = new Vector3(Math.Max(right.x, otherRight.x), Math.Max(right.y, otherRight.y), Math.Max(right.z, otherRight.z));
+            center = new Vector3((nextMin.x + nextMax.x) * 0.5f, (nextMin.y + nextMax.y) * 0.5f, (nextMin.z + nextMax.z) * 0.5f);
+            size = new Vector3(nextMax.x - nextMin.x, nextMax.y - nextMin.y, nextMax.z - nextMin.z);
         }
     }
     public struct Vector2
@@ -501,6 +598,7 @@ namespace UnityEngine
             Object value;
             return Values.TryGetValue(path, out value) ? value as T : null;
         }
+        public static T[] LoadAll<T>(string path) where T : Object { return new T[0]; }
         public static void Register(string path, Object value) { Values[path] = value; }
         public static void Clear() { Values.Clear(); }
     }
@@ -515,10 +613,11 @@ namespace UnityEngine
     public static class Debug
     {
         public static readonly List<string> Messages = new List<string>();
+        public static readonly List<string> WarningMessages = new List<string>();
         public static void Log(string message) { Messages.Add(message); }
         public static void Log(string message, Object context) { Messages.Add(message); }
-        public static void LogWarning(string message) { }
-        public static void LogWarning(string message, Object context) { }
+        public static void LogWarning(string message) { WarningMessages.Add(message); }
+        public static void LogWarning(string message, Object context) { WarningMessages.Add(message); }
         public static void LogError(string message) { }
         public static void LogError(string message, Object context) { }
     }
@@ -546,6 +645,10 @@ namespace UnityEngine
         public MinAttribute(float minimum) { }
     }
     [AttributeUsage(AttributeTargets.Class)] public sealed class DisallowMultipleComponent : Attribute { }
+    [AttributeUsage(AttributeTargets.Class)] public sealed class DefaultExecutionOrder : Attribute
+    {
+        public DefaultExecutionOrder(int order) { }
+    }
     [AttributeUsage(AttributeTargets.Class)] public sealed class ExecuteAlways : Attribute { }
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)] public sealed class RequireComponent : Attribute
     {
@@ -777,6 +880,7 @@ public static class SortingLayer
 }
 public class MouseManager : UnityEngine.MonoBehaviour
 {
+    public static MouseManager Instance;
     public static event Action<float> OnScrollStep;
     public Stack<MouseInteractionLayer> mouseInteractiveLayers = new Stack<MouseInteractionLayer>();
     public MouseScrollableObject currentScrollableObject;
@@ -798,6 +902,12 @@ public class MouseManager : UnityEngine.MonoBehaviour
     public float LastRawScrollY { get; set; }
     public float LastDispatchedStep { get; set; }
     public UnityEngine.Vector2 LastScrollPointerWorld { get; set; }
+    public void ConfigureScrollInput(float threshold, float cooldown)
+    {
+        ScrollThreshold = threshold;
+        ScrollCooldown = cooldown;
+        AccumulatedScroll = 0f;
+    }
     public static void RaiseScrollStep(float delta) { var callback = OnScrollStep; if (callback != null) callback(delta); }
 }
 public class DropZone : UnityEngine.MonoBehaviour { }
@@ -927,7 +1037,9 @@ public class InputManager : UnityEngine.MonoBehaviour
     public static Func<UnityEngine.InputSystem.Key, bool> OnKeyReleased;
 }
 
+#if !EATWHAT_COMPILE_REAL_TOOLS
 public static class Tools
 {
     public static UnityEngine.Sprite[] LoadSpritesFromFolder(string path) { return new UnityEngine.Sprite[0]; }
 }
+#endif

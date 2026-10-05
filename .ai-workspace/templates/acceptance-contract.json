@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "taskId": "AI-000000",
+  "checks": [
+    {
+      "id": "example_machine_check",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.example_machine_check"
+    }
+  ]
+}

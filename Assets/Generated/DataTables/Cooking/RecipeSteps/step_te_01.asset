@@ -22,4 +22,8 @@ MonoBehaviour:
   - tool_chopsticks
   trigger_items:
   - prd_egg_liquid
-  permanent_trigger_items: []
+  - prd_danhuangpai_sui
+  permanent_trigger_items:
+  - prd_tomato_egg_dish
+  - prd_tomato_egg_soup
+  - prd_ofanqie_danhuangpai

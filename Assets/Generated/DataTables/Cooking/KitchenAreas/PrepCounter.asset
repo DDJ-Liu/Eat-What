@@ -20,6 +20,8 @@ MonoBehaviour:
   - tool_knife
   - tool_scissors
   - tool_bowl
+  - tool_chopsticks
+  - tool_saladbowl
   allowed_actions:
   - act_whisk
   - act_cut

@@ -1,8 +1,20 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Plan','Create','Verify','Prune','Extract')][string]$Action = 'Plan',
+    [ValidateSet('Plan','Create','Verify','Prune','Extract','SelfTest')][string]$Action = 'Plan',
     [ValidatePattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')][string]$Stage = '2026-09-17',
-    [string]$OriginalPath
+    [string]$OriginalPath,
+    [string[]]$PermanentInputPatterns = @(
+        '排布指导书_*',
+        'CK01-B_配表Schema_*',
+        'CK01_P0P1_需求对照基准_*',
+        'CK01_P0P1_需求对照基准.md',
+        'P0-P1_模块拆分追踪表_*',
+        'P0-P1_开发路径规划_*',
+        'AI开发工作流总档_*',
+        'U1-PRE_*',
+        '控制台输入_U1前置任务包PRE-1~5派发_*',
+        'USER_WORK_STATUS.md'
+    )
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -19,6 +31,16 @@ function Get-Hash([IO.Stream]$Stream) {
     $sha = [Security.Cryptography.SHA256]::Create()
     try { return [Convert]::ToHexString($sha.ComputeHash($Stream)) } finally { $sha.Dispose() }
 }
+function Test-PermanentInputPath([string]$RelativePath, [string[]]$Patterns) {
+    $prefix = '.ai-workspace/inputs/'
+    if (-not $RelativePath.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { return $false }
+    $inputRelativePath = $RelativePath.Substring($prefix.Length)
+    foreach ($pattern in $Patterns) {
+        if ([string]::IsNullOrWhiteSpace($pattern)) { continue }
+        if ($inputRelativePath -like $pattern.Trim()) { return $true }
+    }
+    return $false
+}
 function Read-Manifest {
     return Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
 }
@@ -34,6 +56,32 @@ function Assert-Archive($Manifest) {
             try { if ((Get-Hash $stream) -ne $file.sha256) { throw "Archive content mismatch: $($file.originalPath)" } } finally { $stream.Dispose() }
         }
     } finally { $zip.Dispose() }
+}
+if ($Action -eq 'SelfTest') {
+    $cases = @(
+        @('.ai-workspace/inputs/排布指导书_ShortCycle_P0P1_v0_2.md', $true),
+        @('.ai-workspace/inputs/CK01-B_配表Schema_v2_4.md', $true),
+        @('.ai-workspace/inputs/CK01_P0P1_需求对照基准_v1_7.md', $true),
+        @('.ai-workspace/inputs/CK01_P0P1_需求对照基准.md', $true),
+        @('.ai-workspace/inputs/P0-P1_模块拆分追踪表_v1_2_2_20260922.md', $true),
+        @('.ai-workspace/inputs/P0-P1_开发路径规划_v2_1_1_20260922.md', $true),
+        @('.ai-workspace/inputs/AI开发工作流总档_设计端_v1_5_2.md', $true),
+        @('.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md', $true),
+        @('.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md', $true),
+        @('.ai-workspace/inputs/USER_WORK_STATUS.md', $true),
+        @('.ai-workspace/inputs/AI-000146_临时任务.md', $false),
+        @('.ai-workspace/inputs/CK01_内容CSV_v1_2/Cooking/Recipes.csv', $false),
+        @('DataTables/Cooking/Recipes.csv', $false)
+    )
+    foreach ($case in $cases) {
+        $actual = Test-PermanentInputPath $case[0] $PermanentInputPatterns
+        if ($actual -ne $case[1]) { throw "Permanent input classification mismatch: $($case[0])" }
+    }
+    if (-not (Test-PermanentInputPath '.ai-workspace/inputs/CustomKeep_01.md' @('CustomKeep_*'))) {
+        throw 'Custom PermanentInputPatterns value was not applied'
+    }
+    [pscustomobject]@{passed=$true;assertions=($cases.Count + 1);patterns=@($PermanentInputPatterns)} | ConvertTo-Json -Depth 4
+    return
 }
 if ($Action -in @('Plan','Create')) {
     $queue = Get-Content -LiteralPath (Join-Path $projectRoot '.ai-workspace/runtime/queue-state.json') -Raw | ConvertFrom-Json
@@ -54,7 +102,11 @@ if ($Action -in @('Plan','Create')) {
             if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Refuse reparse point: $rel" }
             $prune = $rel.StartsWith('Captures/') -or $rel -match '^DevTools/(Scenes|Prefabs|Generated|ArtAssets)/backup/' -or $rel.StartsWith('.ai-workspace/revisions/')
             if ($rel.StartsWith('.ai-workspace/inputs/')) {
-                $prune = -not ($rel.StartsWith('.ai-workspace/inputs/art/') -or $rel -eq '.ai-workspace/inputs/ART车道_每日资产审查日报模板_v1_0.md')
+                $prune = -not (
+                    $rel.StartsWith('.ai-workspace/inputs/art/') -or
+                    $rel -eq '.ai-workspace/inputs/ART车道_每日资产审查日报模板_v1_0.md' -or
+                    (Test-PermanentInputPath $rel $PermanentInputPatterns)
+                )
             }
             if ($rel.StartsWith('.ai-workspace/outputs/')) {
                 $prune = -not ($rel.StartsWith('.ai-workspace/outputs/art/daily/') -or $rel.StartsWith('.ai-workspace/outputs/art-audit/') -or $rel -in $keepOutputs)

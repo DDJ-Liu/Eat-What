@@ -10,6 +10,7 @@ tag_dish_boil,dish,tag_dish_boil.name,ui_tag_zhu,,,菜品分类彩签
 tag_dish_stirfry,dish,tag_dish_stirfry.name,ui_tag_chao,,,菜品分类彩签
 tag_dish_deepfry,dish,tag_dish_deepfry.name,ui_tag_zha,,,菜品分类彩签（demo 无菜使用，先立行）
 tag_dish_stew,dish,tag_dish_stew.name,ui_tag_dun,,,菜品分类彩签（demo 无菜使用，先立行）
+tag_dish_salad,dish,tag_dish_salad.name,ui_tag_shala,,,菜品分类彩签
 tag_flavor_yummy,flavor,tag_flavor_yummy.name,,ui_tiezhi_zhendihenxiang,,风味签（参考图2）
 tag_flavor_confused,flavor,tag_flavor_confused.name,,ui_tiezhi_chibudong,,风味签（参考图2）
 tag_flavor_spicy,flavor,tag_flavor_spicy.name,,,,风味签（参考图2；无专属贴纸走通用模板）

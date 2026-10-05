@@ -5,10 +5,49 @@ using UnityEngine;
 public class CookingRoomManager : MonoBehaviour
 {
     public KitchenAreaData roomData;
+    [Tooltip("KitchenAreas 表的 id；与旧 roomData 资产名无隐式名称映射。")]
+    public string sceneAreaId = string.Empty;
     public List<Container> containers = new List<Container>();
     //public List<CookingDropZone> dropZones = new List<CookingDropZone>();
     public Transform CamPos;
     public Transform InteractionParent;
+
+    /// <summary>Re-scan on every call so reparenting, activation and destruction take effect immediately.</summary>
+    public SceneToolInventoryResult GetSceneToolInventory(CK01GeneratedDataCatalog catalog)
+    {
+        var bindings = new List<SceneToolBinding>();
+        foreach (var tool in GetComponentsInChildren<SceneToolIdentity>(true))
+        {
+            if (tool == null) continue;
+            var ancestor = tool.transform;
+            CookingRoomManager hierarchyOwner = null;
+            while (ancestor != null && hierarchyOwner == null)
+            {
+                hierarchyOwner = ancestor.GetComponent<CookingRoomManager>();
+                ancestor = ancestor.parent;
+            }
+            if (hierarchyOwner != this) continue; // Nested rooms own their own descendants.
+            CK01ToolData mapped = null;
+            string diagnostic = null;
+            if (catalog != null && !string.IsNullOrEmpty(tool.toolId))
+            {
+                catalog.TryGetTool(tool.toolId, out mapped, out diagnostic);
+            }
+            bindings.Add(new SceneToolBinding {
+                objectKey = tool.GetInstanceID().ToString(),
+                ownerObjectKey = tool.areaOwner == null ? string.Empty : tool.areaOwner.GetInstanceID().ToString(),
+                hierarchyOwnerObjectKey = hierarchyOwner.GetInstanceID().ToString(),
+                areaId = tool.areaOwner == null ? string.Empty : tool.areaOwner.sceneAreaId,
+                hierarchyAreaId = hierarchyOwner == null ? string.Empty : hierarchyOwner.sceneAreaId,
+                toolId = tool.toolId,
+                toolKind = mapped == null ? string.Empty : mapped.tool_kind,
+                active = tool.isActiveAndEnabled,
+                sceneInstance = tool.gameObject.scene.IsValid(),
+                mappingSource = SceneToolInventory.ExplicitMapping
+            });
+        }
+        return SceneToolInventory.Resolve(bindings);
+    }
 
     private void Start()
     {

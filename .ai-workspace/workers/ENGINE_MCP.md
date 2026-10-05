@@ -16,6 +16,17 @@
 10. 完成回执必须统一说明非阻碍问题、测试待人工事项与残余风险。
 11. `AUTOMATIC` 下必须读取 `Complete` 的 `autoHandoff`：即使 `verificationStatus=PENDING_USER` 也必须接力。目标 `threadId` 不同则发送完整消息；目标就是当前 ENGINE_MCP 线程时禁止向自身发送，直接在当前轮按下一 `TaskId` 再 `Poll -Pipeline ENGINE_MCP -TriggerSource AUTOMATIC` 并继续。只有调用 `Fail` 后才禁止下一项。
 
+DATA 长期分工中，ENGINE_MCP 只承担任务卡明确拆出的 Unity 接线、导入器/生成资产状态及 Play/Build 验证；不得代 DATA 编辑轮次内容、伪造 DONE 或无票据运行导表。DATA 与本线共享的发布资源和物理锁继续互斥。
+
+## MCP 返回体与往返预算
+
+1. 审计、Hierarchy 遍历和日志正文写入当前任务输出目录；对话返回只给总数、文件路径和最多 20 条异常，不内联完整清单。
+2. Hierarchy / GameObject / Component 查询必须限定目标路径、合理 `max_depth` 与 `max_nodes`；已有完整嵌套结果时不逐父节点重复查询。
+3. 截图一律落任务输出目录，只返回路径、SHA-256、尺寸和采样时间；MCP 使用 `include_image=false`，需要人工查看时再打开本地文件，禁止 Base64 内联回传。
+4. Console 先使用任务/功能 tag、时间窗和级别过滤，再把完整筛选结果落文件；对话只返回计数、路径和最多 20 条 Error/Exception/Assert 摘要。
+5. 能由一个审定 Editor 脚本完成的批量平移、接线、采样或导出，不得拆成多次 MCP 往返。脚本仍须遵守备份、Undo/恢复点、授权字段范围和清理证据。
+6. Play 稳定性轮询间隔不得小于 2 秒；默认上限 30 轮（60 秒），任务卡有更窄上限时从其规定。到限后输出可重复的状态/帧/时间证据，不进行无条件紧密轮询。
+
 ## Unity 层级读取与快照恢复
 
 ### 验证操作的自动清理（2026-09-15用户决定）

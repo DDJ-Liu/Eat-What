@@ -18,7 +18,7 @@ MonoBehaviour:
   stack_type: single
   display_order_in_fridge: 0
   icon_sprite: {fileID: 21300000, guid: 64487d8a9c535734485f55a5da4981a1, type: 3}
-  flavor_key: 
+  flavor_key: prd_clear_broth.flavor
   container_capacity: 0
   container_use_step: 0
   pack_size: 0
