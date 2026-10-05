@@ -5,10 +5,10 @@
 ## 汇总
 
 - 待验（PENDING_USER）：10
-- 已驳回（REJECTED）：1
-- 合计：11
+- 已驳回（REJECTED）：2
+- 合计：12
 
-## CODE | 目标线程 01a01316-9760-7911-a5d6-ac155907dddb
+## CODE | 目标线程 01a10b39-5faf-7a11-8a93-65396938a23e
 
 ### 待验（PENDING_USER）
 
@@ -108,9 +108,22 @@
 
 ### ⚠ 已驳回（REJECTED）
 
-_无_
+#### AI-000201 | [PRE5C-FONTR] PRE-5c
+- ModuleId：PRE5C-FONTR
+- 验收状态：REJECTED
+- 完成摘要：PRE-5c workflow implementation verified; host deployment and FONT-R runtime/visual gates remain controller-owned.
+- 验证证据：Workflow Final 14/14 twice; PRE-5c fixtures 51; Top5 max747 UTF8 with CRLF; Compare-Acceptance 5/5; unowned asset drift preserved.
+- 产物路径：
+  - D:\GameProject\Eat-What\.ai-workspace\outputs\FONT-R-PRE5c\AI-000201\AI-000201_完成报告.md
+  - D:\GameProject\Eat-What\.ai-workspace\outputs\FONT-R-PRE5c\AI-000201\evidence.json
+  - D:\GameProject\Eat-What\.ai-workspace\outputs\FONT-R-PRE5c\AI-000201\top5-comparison.json
+  - D:\GameProject\Eat-What\.ai-workspace\outputs\FONT-R-PRE5c\AI-000201\unowned-assets-observation.json
+- 人工复核步骤：
+  1. 请审阅完成摘要、验证证据和产物路径，并在对应流水线线程按固定格式回复。
+- 通过回复：验收通过 AI-000201：<备注>
+- 不通过回复：验收不通过 AI-000201：<原因>
 
-## ENGINE_MCP | 目标线程 01a01316-2d47-7861-9012-5ab5d3fd8458
+## ENGINE_MCP | 目标线程 01a10b39-6ec4-7141-92b1-04df442dffbd
 
 ### 待验（PENDING_USER）
 

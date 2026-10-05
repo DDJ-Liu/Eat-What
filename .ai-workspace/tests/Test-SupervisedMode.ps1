@@ -28,7 +28,7 @@ function Q([hashtable]$ArgsTable) {
     $compactRaw = $raw.Trim()
     if($ArgsTable.Action -in @('Poll','Complete','SupervisionCheckpoint')){
         $bytes=[Text.Encoding]::UTF8.GetByteCount($compactRaw)
-        if($bytes -gt 2048){throw "$($ArgsTable.Action) response exceeded 2KB: $bytes"}
+        if($bytes -gt 757){throw "$($ArgsTable.Action) response exceeded 759B including CRLF: $bytes"}
         $script:compactResponseBytes.Add($bytes)
     }
     $result = $raw | ConvertFrom-Json

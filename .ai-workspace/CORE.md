@@ -53,3 +53,6 @@
 
 PRE-5b 工作流工具索引：WATCH 无模型增量观察与宿主适配、机器验收、跨模式根修复预算、provider/Coplay 精确计量见 [TK-WF-04](toolkit/WF.md#tk-wf-04) 和 [完整协议](protocol/WORKFLOW_FULL.md)。旧监管 ai 暂停、旧任务历史及人工结论不因工具交付更改；真实桌面唤醒未经部署/回执，不视为已上线。
 
+
+PRE-5c 最新用户口径（2026-10-05）：控制台验收失败只阻断该任务/依赖链，独立链继续；ENGINE/DATA生产写失败一次停并只读诊断，CODE交付前同一稳定错误重试≤2。真实app turn跨线程/attempt累计：120为TURN_SOFT_LIMIT，先留交接检查点再继续；仅软限后30分钟无实际进度或240临时硬停。正式硬限数值待瘦身落地实测满两周后再定。AI201原交付控制拒验已登记REJECTED，最小PowerShell/协议修复及独立复核尚待完成；不得将新口径写成已测试的脚本能力。WATCH宿主部署仍待后验。
+FONT-R最新：取消AI203/204，用户确认当前布局/字体并授权正常hook提交新基线，AI205→206→207从R2继续；只保护Static，三材质保留并在R3重调UpdateShaderRatios。当前卡与授权见inputs/FONT-R-PRE5c-20261005/COMMON.md；最终视觉待用户。

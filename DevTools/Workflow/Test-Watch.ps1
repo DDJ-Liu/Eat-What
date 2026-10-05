@@ -24,7 +24,7 @@ try {
     $queue=[pscustomobject]@{tasks=@($taskA,$taskB,$taskC,$taskD)}
     $workers=[pscustomobject]@{workers=[pscustomobject]@{
         CODE=[pscustomobject]@{leaseUntil=$at.AddMinutes(40).ToString('o')}
-        ENGINE_MCP=[pscustomobject]@{leaseUntil=$at.AddMinutes(40).ToString('o')}
+        ENGINE_MCP=[pscustomobject]@{leaseUntil=$at.AddMinutes(40).ToString('o');activeTaskId='AI-000902';lastProgressAt=$at.ToString('o')}
     }}
     $mode=[pscustomobject]@{mode='SUPERVISED';supervised=[pscustomobject]@{sessionId='fixture-session';stopRequested=$false;exitRequested=$false;taskIds=@($queue.tasks.id)};automatic=[pscustomobject]@{chainId=$null;taskIds=@()}}
     $user=Join-Path $root 'user.md'

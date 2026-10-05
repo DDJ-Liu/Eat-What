@@ -2,6 +2,15 @@
 
 > 从 [INDEX.md](INDEX.md) 按 P 编号定位。跨车道/全流水线条目会在相关车道重复，正文语义保持一致。
 
+<a id="p-049-code-utc-json"></a>
+
+## P-049 | [CODE] PowerShell ConvertFrom-Json 自动日期转换丢失 UTC
+
+- 现象：原生 app turn 的 `observedAt=2026-10-05T09:19:53.545Z` 被默认反序列化为无时区 DateTime，再与带 `+08:00` 的领取时间比较，误报回合不在执行区间。
+- 根因：JSON 读入时丢失原始时区，后续转字符串无法恢复；不能通过放宽窗口、重领或改写旧失败史规避。
+- 正确做法：PowerShell 7 `ConvertFrom-Json -DateKind String` 保留源文本，以 DateTimeOffset 的 UTC 瞬时值比较；源时间必须带 `Z` 或显式偏移。回归原生 app turn、跨时区与跨日。CODE 自验证按稳定 key 记首次与最多两次重试，控制台验收仍首败停。
+- 来源：AI-000201，2026-10-05；旧失败及用户误停审定保留。
+
 <a id="p-048-prefab-scope"></a>
 
 ## P-048 Prefab批准范围与继承传播

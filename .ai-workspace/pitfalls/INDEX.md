@@ -4,6 +4,7 @@
 
 | 编号 | 一句话 | 车道 | 正文 |
 | --- | --- | --- | --- |
+| P-049 | PowerShell JSON 日期自动转换丢 UTC，须保留显式时区 | [CODE] | [CODE](CODE.md#p-049-code-utc-json) |
 | P-048 | Prefab源批准不自动覆盖映射外继承传播，字体与atlas材质须配对核对 | [CODE/ENGINE_MCP/控制端] | [CODE](CODE.md#p-048-prefab-scope) |
 | P-043 | 临时dirty的归属与验证收尾必须随任务建立 | [ENGINE_MCP/控制端] | [ENGINE_MCP](ENGINE.md#p-043-engine-mcp-控制端) / [设计端与控制端](DESIGN.md#p-043-engine-mcp-控制端) |
 | P-042 | 单向边界机制不能代替双向输入故障的因果证据 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-042-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-042-code-engine-mcp) |

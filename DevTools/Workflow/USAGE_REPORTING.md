@@ -54,3 +54,7 @@ DevTools/Verify-All.ps1的Workflow profile已登记Test-UsageReporting.ps1。仅
 4. 10-03恢复记录表明原ai此前处于PAUSED；09-26至10-02无用量记录且未找到09-30周报。无法仅凭无记录证明每一缺口均由额度造成；额度/暂停是运行可用性限制，缺乏补报则是已确认的工作流缺陷。
 
 首份已明确以补报交付；历史记录和既有日报不重写。
+
+## PRE-5c
+
+任务 Codex app turn 与 provider 响应分别计数；120 回合上限跨 attempt 保留。Get-UsageReport 的 cache 比率只在已观测 inputTokens 分母上计算，缺分母为 null+原因。WATCH 可选真实 worker 进度和 Unity MCP 心跳；绑定控制台以 `Read-WatchInbox.ps1` 读/ack，空箱立即结束。宿主部署未核，不把夹具唤醒计作实机。

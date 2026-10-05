@@ -74,9 +74,10 @@ manifest_value() {
   printf '%s' "$values"
 }
 
-check_legacy_asset
-
 if [ ! -f "$static_asset" ]; then
+  # A committed static font cannot silently downgrade to legacy protection.
+  git cat-file -e "HEAD:$static_asset" 2>/dev/null && fail "committed static font is missing"
+  check_legacy_asset
   # Before PRE-1 assets exist, retain the reviewed legacy guard exactly.
   git cat-file -e ":$static_asset" 2>/dev/null &&
     fail "static font is staged but absent from the working tree: $static_asset"
@@ -89,7 +90,6 @@ if [ ! -f "$static_asset" ]; then
   exit 0
 fi
 
-[ -f "$dynamic_asset" ] || fail "dynamic fallback is missing: $dynamic_asset"
 [ -f "$manifest" ] || fail "approved build manifest is missing: $manifest"
 manifest_blob=$(git rev-parse --verify ":$manifest") || fail "index manifest is missing/unmerged: $manifest"
 manifest_work_hash=$(hash_stream < "$manifest")
@@ -101,6 +101,16 @@ manifest_index_hash=$(git cat-file blob "$manifest_blob" | hash_stream)
   fail 'build manifest is not approved (approvalStatus must be APPROVED)'
 [ -n "$(manifest_value approvedBy)" ] || fail 'approved manifest has no approvedBy value'
 [ -n "$(manifest_value approvedAtUtc)" ] || fail 'approved manifest has no approvedAtUtc value'
+# Explicit user-approved FONT-R policy: only Static is byte-protected.
+# Older manifests keep their reviewed dual-font/legacy checks below.
+if LC_ALL=C grep -q '"protectionMode"' "$manifest"; then
+  [ "$(manifest_value protectionMode)" = 'STATIC_ONLY' ] || fail 'unknown protectionMode'
+  [ "$(manifest_value staticAssetPath)" = "$static_asset" ] || fail 'manifest staticAssetPath is not the reviewed path'
+  check_manifest_asset 'static font' "$static_asset" "$(manifest_value staticAssetSha256)"
+  exit 0
+fi
+check_legacy_asset
+[ -f "$dynamic_asset" ] || fail "dynamic fallback is missing: $dynamic_asset"
 [ "$(manifest_value legacyAssetPath)" = "$legacy" ] || fail 'manifest legacyAssetPath is not the reviewed path'
 [ "$(manifest_value staticAssetPath)" = "$static_asset" ] || fail 'manifest staticAssetPath is not the reviewed path'
 [ "$(manifest_value dynamicAssetPath)" = "$dynamic_asset" ] || fail 'manifest dynamicAssetPath is not the reviewed path'

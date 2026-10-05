@@ -5,6 +5,40 @@ function Invoke-ControlAdministration {
     $w = Read-JsonFile $workerPath
     Assert-Value (-not [string]::IsNullOrWhiteSpace($UserDecision)) 'Explicit user decision required.'
     Assert-Value (-not [string]::IsNullOrWhiteSpace($Verification)) 'Verified evidence required.'
+    if ($Action -eq 'ResumeCodeValidationStop') {
+        Assert-Value ($m.mode -eq 'SUPERVISED' -and $m.supervised.status -eq 'PAUSED' -and $m.supervised.stopRequested) 'Pause supervision before adjudicating a stop.'
+        $t = Get-Task $q $TaskId
+        Assert-Value ($null -ne $t -and $t.pipeline -eq 'CODE' -and $m.supervised.taskIds -contains $TaskId) 'Only an in-scope CODE task can use this decision.'
+        Assert-Value ($IdlePipelines -contains 'CODE') 'Fresh CODE idle evidence required.'
+        $worker = Get-Worker $w 'CODE'
+        Assert-Value ($worker.status -eq 'IDLE' -and -not $worker.activeTaskId -and -not $worker.leaseUntil -and $worker.circuit.state -eq 'CLOSED') 'CODE worker must already be idle and released.'
+        Assert-Value (@($q.tasks | Where-Object { $_.pipeline -eq 'CODE' -and $_.status -eq 'RUNNING' }).Count -eq 0) 'Running CODE prevents resumption.'
+        Assert-Value ($OwnerThreadId -and (Get-PipelineExecutionTarget 'CODE').threadId -eq $OwnerThreadId) 'Bound visible thread must match.'
+        Assert-Value ($EvidencePath -and (Test-Path -LiteralPath $EvidencePath -PathType Leaf)) 'Saved user decision evidence required.'
+        $proof = Read-JsonFile $EvidencePath
+        $failures = @($t.errorHistory | Where-Object { $null -ne $_ })
+        Assert-Value ($failures.Count -gt 0) 'No stop history to adjudicate.'
+        $index = $failures.Count - 1
+        $last = $failures[$index]
+        Assert-Value ($proof.taskId -ceq $TaskId -and $proof.phase -ceq 'CODE_PREDELIVERY_SELF_VALIDATION' -and
+            $proof.decision -ceq 'STOP_MISCLASSIFIED_RESUME' -and $proof.userDecision -ceq $UserDecision -and
+            $proof.errorIndex -eq $index -and $proof.errorKind -ceq $last.kind -and $proof.errorMessage -ceq $last.message -and
+            $ProblemKey -and $proof.problemKey -ceq $ProblemKey -and $t.supervisionProblemKey -ceq $ProblemKey) 'Exact user adjudication and latest failure binding required.'
+        $history = @(Get-ObjectPropertyValue $t 'failureAdjudications' | Where-Object { $null -ne $_ })
+        if ($t.status -eq 'QUEUED' -and @($history | Where-Object { $_.errorIndex -eq $index -and $_.decision -eq 'CODE_SELF_VALIDATION_CONTINUE' -and $_.userDecision -ceq $UserDecision }).Count -eq 1) {
+            Write-Result @{action='CODE_VALIDATION_STOP_ALREADY_RESUMED';taskId=$TaskId}; return
+        }
+        Assert-Value ($t.status -eq 'NEEDS_USER' -and $null -eq $t.result) 'Only an uncompleted NEEDS_USER stop can be adjudicated.'
+        Assert-Value (@($m.supervised.reservations | Where-Object { $_.taskId -eq $TaskId }).Count -eq 0) 'Reservation prevents adjudication.'
+        $record = [pscustomobject]@{at=Get-NowIso;decision='CODE_SELF_VALIDATION_CONTINUE';errorIndex=$index;errorKind=$last.kind;errorMessage=$last.message;problemKey=$ProblemKey;userDecision=$UserDecision;verification=$Verification;evidencePath=[IO.Path]::GetFullPath($EvidencePath);previousStatus=$t.status;previousExecution=(Get-ObjectPropertyValue $t 'execution')}
+        Set-ObjectPropertyValue $t 'failureAdjudications' @($history + $record)
+        $t.status='QUEUED'; $t.claimedAt=$null
+        Save-JsonFile $queuePath $q
+        [void](Write-PendingReviewFile $q)
+        [IO.File]::AppendAllText($ledgerPath, ([Environment]::NewLine + [Environment]::NewLine + "> User-adjudicated CODE stop $TaskId : " + ($record | ConvertTo-Json -Depth 15 -Compress)), $utf8NoBom)
+        Write-Result @{action='CODE_VALIDATION_STOP_RESUMED';taskId=$TaskId;status=$t.status;attempts=$t.attempts;rawFailureCount=$failures.Count;evidencePath=$record.evidencePath}
+        return
+    }
     if ($Action -eq 'BindExecutionPipeline') {
         Assert-Value ($Pipeline -in @('CODE','ENGINE_MCP')) 'Only CODE/ENGINE_MCP; DATA keeps its existing binding API.'
         Assert-Value (Test-CodexThreadId $PipelineThreadId) 'Valid visible thread UUID required.'

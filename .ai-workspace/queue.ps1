@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
+    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'RecordTaskProgress', 'RecordTaskTurn', 'RecordCodeValidation', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'ResumeCodeValidationStop', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
     [string]$Action,
 
     [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET', 'ART')]
@@ -47,6 +47,13 @@ param(
     [string]$RoundId,
     [string]$RoundManifestPath,
     [string]$DispatchToken,
+    [string]$OwnerThreadId,
+    [string]$ExecutionId,
+    [string]$ProgressId,
+    [string]$EvidencePath,
+    [ValidateSet('FAILED','RESOLVED')][string]$ValidationResult,
+    [ValidateRange(5,1440)][Nullable[int]]$HeartbeatMinutes,
+    [ValidateRange(1,20)][Nullable[int]]$FailureStopLimit,
     [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET')]
     [string[]]$IdlePipelines = @(),
     [string[]]$ResourceKeys = @(),
@@ -116,6 +123,76 @@ function Assert-Value {
     if (-not $Condition) { throw $Message }
 }
 
+function Initialize-TaskExecution($Task,$Worker) {
+    $prior=Get-ObjectPropertyValue $Task 'execution'
+    $target=Get-PipelineExecutionTarget ([string]$Task.pipeline)
+    if($prior -and [int]$prior.appTurnCount -ge 120){
+        Assert-Value ($prior.ownerThreadId -cne $target.threadId) 'Turn limit requires a new visible execution thread.'
+    }
+    if($prior){Set-ObjectPropertyValue $Task 'executionHistory' @(@((Get-ObjectPropertyValue $Task 'executionHistory') | Where-Object {$null -ne $_})+$prior)}
+    $carriedTurns=@()
+    if($prior){$carriedTurns=@($prior.appTurns | Where-Object {$null -ne $_})}
+    $carriedCount=if($prior -and $null -ne $prior.appTurnCount){[int]$prior.appTurnCount}else{$null}
+    Set-ObjectPropertyValue $Task 'maxTurns' 120
+    Set-ObjectPropertyValue $Task 'failureStopLimit' (Get-TaskFailureStopLimit $Task)
+    Set-ObjectPropertyValue $Task 'execution' ([pscustomobject]@{
+        executionId=[guid]::NewGuid().ToString('N');ownerThreadId=$target.threadId;attempt=[int]$Task.attempts
+        maxTurns=120;appTurnCount=$carriedCount;appTurns=$carriedTurns;toolProgressIds=@();claimedAt=$Task.claimedAt
+        countUnavailableReason=$(if($null -eq $carriedCount){'Exact app turn source unavailable; provider responses are not app turns.'}else{$null})
+        limitReached=$false;checkpointPath=$null
+    })
+    Set-ObjectPropertyValue $Worker 'activeExecutionId' $Task.execution.executionId
+    Set-ObjectPropertyValue $Worker 'lastProgressAt' $Task.claimedAt
+    Set-ObjectPropertyValue $Worker 'lastProgressSource' 'queue-claim'
+}
+function Invoke-TaskObservation {
+    $q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath
+    $t=Get-Task $q $TaskId;$worker=Get-Worker $w $Pipeline
+    Assert-Value ($t -and $t.pipeline -eq $Pipeline -and $t.status -eq 'RUNNING' -and $worker.status -eq 'BUSY' -and $worker.activeTaskId -eq $TaskId) 'Observation requires active task ownership.'
+    $target=Get-PipelineExecutionTarget $Pipeline
+    Assert-Value ($OwnerThreadId -and $OwnerThreadId -ceq $target.threadId) 'Observation owner does not match visible route.'
+    if(-not (Get-ObjectPropertyValue $t 'execution')){Initialize-TaskExecution $t $worker}
+    $run=$t.execution
+    Assert-Value ($run.ownerThreadId -ceq $OwnerThreadId) 'Execution owner changed.'
+    if($ExecutionId){Assert-Value ($run.executionId -ceq $ExecutionId) 'Stale execution.'}
+    else{Assert-Value ($Action -eq 'RecordTaskProgress' -and $ProgressId -eq 'adopt-existing-claim') 'ExecutionId is required.'}
+    if($Action -eq 'RecordTaskProgress'){
+        Assert-Value ($ProgressId -and -not $run.limitReached) 'ProgressId required; no tools after turn limit.'
+        $duplicate=@($run.toolProgressIds) -ccontains $ProgressId
+        if(-not $duplicate){
+            $run.toolProgressIds=@($run.toolProgressIds)+$ProgressId
+            Set-ObjectPropertyValue $worker 'lastProgressAt' (Get-NowIso)
+            Set-ObjectPropertyValue $worker 'lastProgressSource' 'Invoke-TaskTool'
+        }
+    }else{
+        Assert-Value (Test-Path -LiteralPath $EvidencePath -PathType Leaf) 'App turn evidence required.'
+        $proof=Read-JsonFile $EvidencePath
+        Assert-Value ($proof.source -ceq 'codex-app-turn' -and $proof.taskId -ceq $TaskId -and $proof.threadId -ceq $OwnerThreadId -and $proof.executionId -ceq $run.executionId -and $proof.appTurnId -and $proof.observedAt -and $proof.sourceEventPath) 'Exact app turn binding required.'
+        $source=Read-JsonFile $proof.sourceEventPath
+        $nativeTurn=@($source.turns|Where-Object {$_.id -ceq $proof.appTurnId})[0]
+        $nativeMatch=$source.sourceTool -ceq 'codex_app.read_thread' -and $source.thread.id -ceq $OwnerThreadId -and $nativeTurn -and $nativeTurn.startedAt -and $source.observedAt -ceq $proof.observedAt
+        $fixtureMatch=$source.type -ceq 'app_turn' -and $source.threadId -ceq $OwnerThreadId -and $source.turnId -ceq $proof.appTurnId -and $source.observedAt -ceq $proof.observedAt
+        Assert-Value ($nativeMatch -or $fixtureMatch) 'Raw app turn mismatch; provider responses are not app turns.'
+        if($nativeMatch){
+            Assert-Value ([DateTimeOffset]::FromUnixTimeSeconds([long]$nativeTurn.startedAt) -le [DateTimeOffset]::Parse([string]$proof.observedAt) -and
+                (-not $nativeTurn.completedAt -or [DateTimeOffset]::FromUnixTimeSeconds([long]$nativeTurn.completedAt) -ge [DateTimeOffset]::Parse([string]$run.claimedAt))) 'Native app turn does not overlap this execution.'
+        }
+        $at=[DateTimeOffset]::Parse([string]$proof.observedAt)
+        Assert-Value ($at -ge [DateTimeOffset]::Parse([string]$run.claimedAt) -and $at -le [DateTimeOffset]::Now) 'Turn outside execution interval.'
+        $existingTurns=@($run.appTurns | Where-Object {$null -ne $_})
+        $duplicate=@($existingTurns | ForEach-Object appTurnId) -ccontains [string]$proof.appTurnId
+        if(-not $duplicate){
+            $run.appTurns=$existingTurns+[pscustomobject]@{appTurnId=$proof.appTurnId;at=$proof.observedAt;evidencePath=[IO.Path]::GetFullPath($EvidencePath);sha256=(Get-FileHash -LiteralPath $EvidencePath -Algorithm SHA256).Hash}
+            $run.appTurnCount=@($run.appTurns | Where-Object {$null -ne $_}).Count;$run.countUnavailableReason=$null;$run.limitReached=($run.appTurnCount -ge 120)
+            if(Get-Command Write-TaskUsageRecord -ErrorAction SilentlyContinue){
+                Write-TaskUsageRecord -TaskId $TaskId -Lane $Pipeline -Phase execute -Event 'app_turn' -Source 'codex-app-turn' -Coverage 'exact_owned_app_turn_observed_not_provider_response' -Metadata @{threadId=$OwnerThreadId;turnId=$proof.appTurnId;executionId=$run.executionId;evidencePath=[IO.Path]::GetFullPath($EvidencePath)} -RuntimeRoot (Split-Path -Parent $queuePath) -RecordedAt $at | Out-Null
+            }
+        }
+    }
+    Save-JsonFile $queuePath $q;Save-JsonFile $workerPath $w
+    Write-Result @{action=$(if($run.limitReached){'STOP_AT_TURN_LIMIT'}else{'OBSERVATION_RECORDED'});taskId=$TaskId;executionId=$run.executionId;duplicate=$duplicate;lastProgressAt=$worker.lastProgressAt;appTurnCount=$run.appTurnCount;maxTurns=120;next=$(if($run.limitReached){'CHECKPOINT_AND_NEW_VISIBLE_THREAD'}else{$null})}
+}
+
 function Get-PipelineExecutionTarget {
     param([string]$Lane)
     if ($Lane -eq 'DATA') {
@@ -147,7 +224,7 @@ function Get-PipelineExecutionTarget {
         $routeWorker = Get-Worker $routeWorkers $Lane
         $boundThread = [string](Get-ObjectPropertyValue $routeWorker 'threadId')
         $boundRevision = Get-ObjectPropertyValue $routeWorker 'routeRevision'
-        if ($boundThread -or $null -ne $boundRevision) {
+        if ($boundThread -or $null -ne $boundRevision -or (Get-ObjectPropertyValue $routeWorker 'routeBoundAt') -or @((Get-ObjectPropertyValue $routeWorker 'routeHistory') | Where-Object {$null -ne $_}).Count -gt 0) {
             Assert-Value ((Get-ObjectPropertyValue $routeWorker 'executorKind') -eq 'THREAD' -and (Test-CodexThreadId $boundThread) -and $null -ne $boundRevision -and [int]$boundRevision -ge 1) 'Bound execution route is incomplete; refusing static fallback.'
             return [pscustomobject]@{executorKind='THREAD';threadId=$boundThread;routeRevision=[int]$boundRevision;routeState='BOUND'}
         }
@@ -190,7 +267,7 @@ function Get-DataTablesCsvSummaryHash {
 function Read-JsonFile {
     param([string]$Path)
     Assert-Value (Test-Path -LiteralPath $Path) "Missing state file: $Path"
-    return Get-Content -Raw -Encoding UTF8 -LiteralPath $Path | ConvertFrom-Json
+    return Get-Content -Raw -Encoding UTF8 -LiteralPath $Path | ConvertFrom-Json -DateKind String
 }
 
 function Save-TextFile {
@@ -236,7 +313,7 @@ function Write-Result {
         if ([string]::IsNullOrWhiteSpace($receiptTaskId)) { $receiptTaskId = 'NO_TASK' }
         $receiptRoot = Join-Path $workspaceRoot ("outputs/task-receipts/{0}" -f $receiptTaskId)
         [void][IO.Directory]::CreateDirectory($receiptRoot)
-        $receiptName = '{0}-{1}-{2}.json' -f ([DateTimeOffset]::Now.ToString('yyyyMMddTHHmmssfff')), $Action, [guid]::NewGuid().ToString('N')
+        $receiptName = '{0}-{1}.json' -f $Action, [guid]::NewGuid().ToString('N').Substring(0,12)
         $receiptPath = Join-Path $receiptRoot $receiptName
         Save-TextFile $receiptPath ($json + [Environment]::NewLine)
         $compact = [ordered]@{
@@ -262,8 +339,23 @@ function Write-Result {
                 messagePath = $(if (Test-Path -LiteralPath $handoffPath) { $handoffPath } else { $null })
             }
         }
+        if($receiptTask -and (Get-ObjectPropertyValue $receiptTask 'execution')){
+            $compact['executionId']=$receiptTask.execution.executionId;$compact['maxTurns']=120
+        }
         $json = $compact | ConvertTo-Json -Depth 8 -Compress
-        Assert-Value ([Text.Encoding]::UTF8.GetByteCount($json) -le 2048) 'Queue compact receipt exceeds 2KB.'
+        if([Text.Encoding]::UTF8.GetByteCount($json) -gt 757){
+            $compact.Remove('task');$compact.Remove('leaseUntil')
+            foreach($key in @('autoHandoff','supervisorHandoff')){
+                if($null -eq $compact[$key]){$compact.Remove($key)}
+                else{$compact[$key].Remove('taskId');$compact[$key].Remove('pipeline')}
+            }
+            $json=$compact|ConvertTo-Json -Depth 8 -Compress
+        }
+        if([Text.Encoding]::UTF8.GetByteCount($json) -gt 757){
+            # Full routing and messages remain in the bound receipt. Never fail a completed mutation for verbose metadata.
+            $json=[ordered]@{action=$compact.action;taskId=$receiptTaskId;pipeline=$compact.pipeline;receiptPath=$receiptPath}|ConvertTo-Json -Compress
+        }
+        Assert-Value ([Text.Encoding]::UTF8.GetByteCount($json) -le 757) 'Queue compact receipt exceeds 759 UTF8 bytes including CRLF.'
     }
 
     # Queue actions can observe their own invocation and UTF-8 response bytes,
@@ -1013,7 +1105,8 @@ try {
         if ($Action -match 'ArtAudit|^RegisterArtAssetLane$') { Invoke-ArtAuditAction; return }
     }
 
-    if ($Action -in @('BindExecutionPipeline','SupersedeTask')) {
+    if ($Action -in @('RecordTaskProgress','RecordTaskTurn')) { Invoke-TaskObservation; return }
+    if ($Action -in @('BindExecutionPipeline','SupersedeTask','ResumeCodeValidationStop')) {
         . (Join-Path $workspaceRoot 'control-administration.ps1')
         Invoke-ControlAdministration
         return
@@ -1363,7 +1456,7 @@ try {
                 Assert-Value ($matching.Count -eq 1) 'PairedRecoveryId must identify exactly one recovery in the same root.'
                 Assert-Value (@($family | Where-Object { $_.repairContext.pairedRecoveryId -eq $PairedRecoveryId }).Count -eq 0) 'Recovery is already paired to a repair card.'
             }
-            if ($WorkKind -eq 'REPAIR' -and $budget.used -ge $budget.limit -and -not $PairedRecoveryId) {
+            if ($WorkKind -eq 'REPAIR' -and ((Test-TaskFailureStopped $root) -or ($budget.used -ge $budget.limit -and -not $PairedRecoveryId))) {
                 $proposedId = 'AI-{0:D6}' -f [int]$queue.nextSequence
                 Assert-RepairDecision $queue $root $DiagnosisTaskId $UserDecision $proposedId
                 $requiresRepairApproval = $true
@@ -1402,6 +1495,7 @@ try {
             status = 'QUEUED'
             attempts = 0
             maxAttempts = $MaxAttempts
+            failureStopLimit = $(if($null -ne $FailureStopLimit){[int]$FailureStopLimit}elseif($MaxAttempts -eq 1){1}else{$null})
             createdAt = $createdAt
             claimedAt = $null
             completedAt = $null
@@ -1485,7 +1579,7 @@ $($Instruction.Trim())
         Assert-Value ($task.status -in @('QUEUED', 'BLOCKED_DEPENDENCY', 'PAUSED_CIRCUIT', 'NEEDS_USER')) 'A running or succeeded task cannot be revised.'
         $revisionRoot = Get-RepairRootTask $queue $task
         $revisionBudget = Get-RepairBudgetState $queue $revisionRoot
-        if ($revisionBudget.used -ge $revisionBudget.limit -and
+        if (((Test-TaskFailureStopped $revisionRoot) -or $revisionBudget.used -ge $revisionBudget.limit) -and
             ($task.status -in @('PAUSED_CIRCUIT','NEEDS_USER') -or
              [string](Get-ObjectPropertyValue $task 'workKind') -eq 'REPAIR')) {
             Assert-RepairDecision $queue $revisionRoot $DiagnosisTaskId $UserDecision $TaskId
@@ -1673,7 +1767,14 @@ $($Instruction.Trim())
         Assert-Value ($null -ne $task) "Task not found: $TaskId"
         Assert-Value ($task.status -eq 'SUCCEEDED') 'Only a succeeded task can be rejected for verification.'
         Assert-Value ($null -ne $task.result) 'The succeeded task has no result to update.'
-        Assert-Value ((Get-TaskVerificationStatus $task) -eq 'PENDING_USER') 'Only a PENDING_USER verification can be rejected.'
+        $previousVerification = Get-TaskVerificationStatus $task
+        Assert-Value ($previousVerification -in @('PENDING_USER','VERIFIED')) 'Only a pending or completed verification can be reviewed.'
+        $controlEvidence = $null
+        if ($previousVerification -eq 'VERIFIED') {
+            Assert-Value ($ProblemKey -and $UserDecision -and $EvidencePath -and (Test-Path -LiteralPath $EvidencePath -PathType Leaf)) 'Completed control review requires a stable key, user decision and evidence.'
+            $controlEvidence = Read-JsonFile $EvidencePath
+            Assert-Value ($controlEvidence.taskId -ceq $TaskId -and $controlEvidence.stage -ceq 'CONTROL_ACCEPTANCE' -and $controlEvidence.decision -ceq 'FAILED' -and $controlEvidence.problemKey -ceq $ProblemKey) 'Control review evidence does not match this task and failure.'
+        }
 
         if ($null -eq $task.result.PSObject.Properties['verificationResolutionHistory']) {
             $task.result | Add-Member -NotePropertyName verificationResolutionHistory -NotePropertyValue @()
@@ -1683,6 +1784,15 @@ $($Instruction.Trim())
             decision = 'REJECTED'
             reason = $Reason.Trim()
             pendingIssues = @(Get-ManualVerificationIssues $task)
+        }
+        if ($null -ne $controlEvidence) {
+            $rejection | Add-Member -NotePropertyName stage -NotePropertyValue 'CONTROL_ACCEPTANCE'
+            $rejection | Add-Member -NotePropertyName previousVerificationStatus -NotePropertyValue $previousVerification
+            $rejection | Add-Member -NotePropertyName problemKey -NotePropertyValue $ProblemKey
+            $rejection | Add-Member -NotePropertyName userDecision -NotePropertyValue $UserDecision
+            $rejection | Add-Member -NotePropertyName evidencePath -NotePropertyValue ([IO.Path]::GetFullPath($EvidencePath))
+            $rejection | Add-Member -NotePropertyName evidenceSha256 -NotePropertyValue ((Get-FileHash -LiteralPath $EvidencePath).Hash)
+            Set-ObjectPropertyValue $task 'supervisionProblemKey' $ProblemKey
         }
         $task.result.verificationResolutionHistory = @($task.result.verificationResolutionHistory) + $rejection
         $task.result.verificationStatus = 'REJECTED'
@@ -1715,7 +1825,7 @@ $($Instruction.Trim())
         Assert-Value ($task.status -ne 'SUCCEEDED') 'A succeeded task cannot be reset. Create an explicit follow-up task instead.'
         $resetRoot = Get-RepairRootTask $queue $task
         $resetBudget = Get-RepairBudgetState $queue $resetRoot
-        if ($resetBudget.used -ge $resetBudget.limit) {
+        if ((Test-TaskFailureStopped $resetRoot) -or $resetBudget.used -ge $resetBudget.limit) {
             Assert-RepairDecision $queue $resetRoot $DiagnosisTaskId $UserDecision $TaskId
             Use-RepairDecision $resetRoot $DiagnosisTaskId $UserDecision $TaskId
         }
@@ -1825,6 +1935,7 @@ $($Instruction.Trim())
             $queue = Read-JsonFile $queuePath
             $retainedTask = if ($null -ne $worker.activeTaskId) { Get-Task $queue $worker.activeTaskId } else { $null }
             if ($null -ne $retainedTask -and $retainedTask.status -eq 'PAUSED_CIRCUIT') {
+                Assert-Value (-not (Test-TaskFailureStopped $retainedTask)) 'Failure stop limit reached; READONLY_DIAGNOSIS and user decision required.'
                 $retainedTask.status = 'RUNNING'
                 $retainedTask.claimedAt = $now.ToString('o')
                 $retainedTask.attempts = [int]$retainedTask.attempts + 1
@@ -1832,6 +1943,7 @@ $($Instruction.Trim())
                 $worker.circuit.state = 'HALF_OPEN'
                 $worker.circuit.openUntil = $null
                 $worker.leaseUntil = $now.AddMinutes($LeaseMinutes).ToString('o')
+                Initialize-TaskExecution $retainedTask $worker
                 Save-JsonFile $queuePath $queue
                 Save-JsonFile $workerPath $workers
                 Write-Result ([ordered]@{ action = 'CLAIMED_RETRY'; task = $retainedTask; leaseUntil = $worker.leaseUntil })
@@ -1944,6 +2056,7 @@ $($Instruction.Trim())
             return
         }
 
+        Assert-Value (-not (Test-TaskFailureStopped $selected)) 'Failure stop limit reached; READONLY_DIAGNOSIS and user decision required.'
         $selected.status = 'RUNNING'
         $selected.claimedAt = $now.ToString('o')
         $selected.attempts = [int]$selected.attempts + 1
@@ -1953,6 +2066,7 @@ $($Instruction.Trim())
         $worker.circuit.state = 'CLOSED'
         $worker.circuit.openUntil = $null
         $worker.circuit.reason = $null
+        Initialize-TaskExecution $selected $worker
         if ($TriggerSource -eq 'AUTOMATIC') {
             $modeState.automatic.status = 'RUNNING'
             $modeState.updatedAt = $now.ToString('o')
@@ -1995,6 +2109,31 @@ $($Instruction.Trim())
         return
     }
 
+    if ($Action -eq 'RecordCodeValidation') {
+        Assert-Value ($Pipeline -eq 'CODE' -and $task.status -eq 'RUNNING') 'CODE self-validation requires the running CODE task.'
+        Assert-Value ($ProblemKey -and $ValidationResult -and (Test-Path -LiteralPath $EvidencePath -PathType Leaf)) 'Stable ProblemKey, result, and evidence file are required.'
+        Assert-Value ($ExecutionId -and $task.execution.executionId -ceq $ExecutionId -and $OwnerThreadId -ceq $task.execution.ownerThreadId) 'CODE validation must be bound to the current visible execution.'
+        $history=@($task.codeValidationHistory | Where-Object {$null -ne $_})
+        $unresolved=@($history | Select-Object -Last 1 | Where-Object {$_.result -eq 'FAILED'})
+        if($ValidationResult -eq 'FAILED' -and $unresolved.Count -gt 0){
+            Assert-Value ($unresolved[0].problemKey -ceq $ProblemKey) 'A different key cannot clear or disguise a continuing CODE self-validation error.'
+        }
+        $history+= [pscustomobject]@{at=$now.ToString('o');attempt=$task.attempts;executionId=$task.execution.executionId;problemKey=$ProblemKey;result=$ValidationResult;evidencePath=[IO.Path]::GetFullPath($EvidencePath);evidenceSha256=(Get-FileHash -LiteralPath $EvidencePath -Algorithm SHA256).Hash}
+        Set-ObjectPropertyValue $task 'codeValidationHistory' $history
+        $retry=Get-CodeValidationRetryState $task $ProblemKey
+        if($ValidationResult -eq 'FAILED' -and $retry.exhausted){
+            $task.errorHistory=@($task.errorHistory)+[pscustomobject]@{at=$now.ToString('o');attempt=$task.attempts;kind='VERIFICATION';message="CODE self-validation retry limit reached: $ProblemKey";problemKey=$ProblemKey}
+            $task.status='NEEDS_USER'
+            Open-Circuit $worker $now $CooldownMinutes "CODE self-validation retry limit: $ProblemKey"
+        }
+        Save-JsonFile $queuePath $queue;Save-JsonFile $workerPath $workers
+        $modeState=Read-ModeState
+        $handoff=$null
+        if($retry.exhausted -and $ValidationResult -eq 'FAILED' -and $modeState.mode -eq 'SUPERVISED'){$handoff=Close-SupervisedRun $modeState $queue $workers $task 'FAIL'}
+        Write-Result ([ordered]@{action=$(if($retry.exhausted -and $ValidationResult -eq 'FAILED'){'CODE_VALIDATION_STOP'}else{'CODE_VALIDATION_RECORDED'});taskId=$TaskId;problemKey=$ProblemKey;failureCount=$retry.failureCount;retryCount=$retry.retryCount;retryLimit=2;supervisorHandoff=$handoff})
+        return
+    }
+
     if ($Action -eq 'RenewLease') {
         Assert-Value ($task.status -eq 'RUNNING') 'Only a running task can renew its lease.'
         $worker.leaseUntil = $now.AddMinutes($LeaseMinutes).ToString('o')
@@ -2020,8 +2159,20 @@ $($Instruction.Trim())
             Assert-Value (Test-Path -LiteralPath $comparator -PathType Leaf) 'Acceptance comparator is unavailable.'
             $contractPath = Join-Path $workspaceRoot ("inputs/acceptance/{0}.json" -f $TaskId)
             Assert-Value (Test-Path -LiteralPath $contractPath -PathType Leaf) "Predefined acceptance contract is missing: $contractPath"
-            $acceptanceResult = (& $comparator -TaskId $TaskId -ContractPath $contractPath -AcceptancePath $fullAcceptance -EvidenceRoot (Split-Path -Parent $fullAcceptance) | ConvertFrom-Json)
-            Assert-Value ($acceptanceResult.action -eq 'ACCEPTANCE_MATCHED') ("Acceptance comparison failed: " + ($acceptanceResult.mismatches | ConvertTo-Json -Depth 8 -Compress))
+            $comparisonError=$null
+            try {$acceptanceResult = (& $comparator -TaskId $TaskId -ContractPath $contractPath -AcceptancePath $fullAcceptance -EvidenceRoot (Split-Path -Parent $fullAcceptance) | ConvertFrom-Json -DateKind String)}
+            catch {$comparisonError=$_.Exception.Message}
+            if($comparisonError -or $acceptanceResult.action -ne 'ACCEPTANCE_MATCHED'){
+                $detail=if($comparisonError){$comparisonError}else{($acceptanceResult.mismatches | ConvertTo-Json -Depth 8 -Compress)}
+                $task.errorHistory=@($task.errorHistory)+[pscustomobject]@{at=$now.ToString('o');attempt=$task.attempts;kind='VERIFICATION';message="Control acceptance failed: $detail";stage='CONTROL_ACCEPTANCE'}
+                $task.status='NEEDS_USER'
+                Open-Circuit $worker $now $CooldownMinutes 'Control acceptance failed'
+                Save-JsonFile $queuePath $queue;Save-JsonFile $workerPath $workers
+                $modeState=Read-ModeState;$handoff=$null
+                if($modeState.mode -eq 'SUPERVISED'){$handoff=Close-SupervisedRun $modeState $queue $workers $task 'FAIL'}
+                Write-Result ([ordered]@{action='CONTROL_ACCEPTANCE_STOP';task=$task;comparison=$acceptanceResult;error=$comparisonError;supervisorHandoff=$handoff})
+                return
+            }
         }
 
         $verificationDisposition = Get-VerificationDisposition $task
@@ -2074,7 +2225,7 @@ $($Instruction.Trim())
             kind = $ErrorKind
             message = $ErrorMessage.Trim()
         }
-        if ([int]$task.attempts -ge [int]$task.maxAttempts) {
+        if ((Test-TaskFailureStopped $task) -or [int]$task.attempts -ge [int]$task.maxAttempts) {
             $task.status = 'NEEDS_USER'
         }
         else {

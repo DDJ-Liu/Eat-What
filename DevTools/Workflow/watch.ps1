@@ -10,6 +10,8 @@ param(
     [string]$TaskOutputRoot = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) '.ai-workspace/outputs'),
     [string]$ThreadCursorPath,
     [string]$UnityHeartbeatPath,
+    [switch]$CollectUnity,
+    [string]$UnityMcpUrl = 'http://localhost:8080/mcp',
     [string]$UserStatusPath = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) '.ai-workspace/inputs/USER_WORK_STATUS.md'),
     [string]$DeliveryScript,
     [DateTimeOffset]$Now = [DateTimeOffset]::Now
@@ -52,6 +54,13 @@ function Get-TaskOutputStamp([string]$Id) {
     return ($files | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc.ToString('o')
 }
 function Task-Level($Task) {
+    if([string]$Task.supervisionPolicy.supervisionLevel -in @('light','full')){return [string]$Task.supervisionPolicy.supervisionLevel}
+    if($Task.supervisionPolicy.supervisionLevel){throw "Invalid supervisionPolicy.supervisionLevel on $($Task.id)"}
+    if($Task.supervisionPolicy){
+        $keys=@($Task.supervisionPolicy.resourceKeys)
+        if($Task.pipeline -eq 'CODE' -and $keys.Count -gt 0 -and @($keys | Where-Object {$_ -notin @('workflow-devtools','documentation','read-only')}).Count -eq 0){return 'light'}
+        return 'full'
+    }
     if ([string]$Task.supervisionLevel -in @('light','full')) { return [string]$Task.supervisionLevel }
     if ($Task.pipeline -eq 'CODE' -and @($Task.resourceKeys | Where-Object { $_ -notmatch '^(DevTools/|docs/|read-only)' }).Count -eq 0) { return 'light' }
     return 'full'
@@ -88,6 +97,10 @@ function Invoke-WatchOnce {
         if ($null -eq $pair[1]) { $missing.Add([string]$pair[0]) }
     }
     $thread = if ($ThreadCursorPath) { Read-Json $ThreadCursorPath } else { $null }
+    if($CollectUnity){
+        $UnityHeartbeatPath=Join-Path $OutputRoot 'unity-heartbeat.json'
+        & (Join-Path $PSScriptRoot 'Get-UnityHeartbeat.ps1') -Endpoint $UnityMcpUrl -StateRoot $StateRoot -OutputPath $UnityHeartbeatPath | Out-Null
+    }
     $unity = if ($UnityHeartbeatPath) { Read-Json $UnityHeartbeatPath } else { $null }
     $threadAt = Source-At $thread
     $unityAt = Source-At $unity
@@ -108,7 +121,7 @@ function Invoke-WatchOnce {
         else { @() }
     $gated = ($null -eq $mode -or $mode.mode -notin @('SUPERVISED','AUTOMATIC') -or $scope.Count -eq 0 -or
         ($mode.mode -eq 'SUPERVISED' -and
-        ([bool]$mode.supervised.stopRequested -or [bool]$mode.supervised.exitRequested)) -or
+        ([bool]$mode.supervised.stopRequested -or [bool]$mode.supervised.exitRequested -or [string]$mode.supervised.status -in @('PAUSED','CIRCUIT','COMPLETE','WAITING_USER','STOPPED'))) -or
         ($mode.mode -eq 'AUTOMATIC' -and ([bool]$mode.automatic.stopRequested -or
         [string]$mode.automatic.status -in @('COMPLETE','BLOCKED','STOPPED'))))
     $userScope = @($queue.tasks | Where-Object { $_.id -in $scope } | ForEach-Object {
@@ -117,16 +130,18 @@ function Invoke-WatchOnce {
     $sessionBinding = if ($mode.mode -eq 'SUPERVISED') { [string]$mode.supervised.sessionId }
         elseif ($mode.mode -eq 'AUTOMATIC') { [string]$mode.automatic.chainId }
         else { $null }
-    foreach ($task in @($queue.tasks | Where-Object { $null -ne $_ })) {
+    foreach ($task in @($queue.tasks | Where-Object { $null -ne $_ -and $_.id -in $scope })) {
         $id = [string]$task.id
         $before = $priorById[$id]
         $errors = @($task.errorHistory | Where-Object { $null -ne $_ }).Count
         $verification = [string]$task.result.verificationStatus
         $stamp = Get-TaskOutputStamp $id
-        $progress = if ($before -and $before.status -ceq $task.status -and
-            $before.errors -eq $errors -and $before.outputStamp -ceq $stamp) {
-            [string]$before.progressAt
-        } else { $Now.ToString('o') }
+        $worker=$workers.workers.([string]$task.pipeline)
+        $progress=$null
+        if($worker.activeTaskId -ceq $id -and $worker.lastProgressAt){
+            $candidate=[DateTimeOffset]::Parse([string]$worker.lastProgressAt)
+            if($candidate -le $Now){$progress=$candidate.ToString('o')}
+        }
         $threadFingerprint = if ($thread -and [string]$thread.taskId -ceq $id) {
             [string]$thread.cursor + '|' + [string]$thread.progressVersion
         } else { $null }
@@ -135,12 +150,10 @@ function Invoke-WatchOnce {
         } else { $null }
         if ($threadFingerprint -eq '|' ) { $threadFingerprint=$null }
         if ($unityFingerprint -eq '|' ) { $unityFingerprint=$null }
-        if ($before -and $threadFingerprint -and $threadFingerprint -cne [string]$before.threadFingerprint -and
-            $threadAt -and $threadAt -le $Now) { $progress=$threadAt.ToString('o') }
-        if ($before -and $unityFingerprint -and $unityFingerprint -cne [string]$before.unityFingerprint -and
-            $unityAt -and $unityAt -le $Now -and $unityAt -gt [DateTimeOffset]::Parse($progress)) {
-            $progress=$unityAt.ToString('o')
-        }
+        # Editor/thread observations are health evidence, never synthetic task progress.
+        $unityFingerprint=if($unity -and $unity.taskId -ceq $id -and $unity.available -eq $true -and $unityAt -and ($Now-$unityAt).TotalMinutes -le $NoProgressMinutes){
+            '{0}|{1}|{2}|{3}|{4}' -f $unity.instanceId,$unity.isPlaying,$unity.isCompiling,$unity.sceneDirty,$unity.scenePath
+        }else{$null}
         $level = Task-Level $task
         $rootId = if ($task.repairContext.rootTaskId) { [string]$task.repairContext.rootTaskId } else { $id }
         $root = @($queue.tasks | Where-Object id -eq $rootId | Select-Object -First 1)[0]
@@ -148,10 +161,22 @@ function Invoke-WatchOnce {
         $snapshot = [pscustomobject]@{id=$id;status=[string]$task.status;verification=$verification;
             errors=$errors;outputStamp=$stamp;progressAt=$progress;supervisionLevel=$level;repairUsed=$repairUsed;
             threadFingerprint=$threadFingerprint;unityFingerprint=$unityFingerprint;
+            appTurnCount=$task.execution.appTurnCount;maxTurns=$task.maxTurns;executionId=$task.execution.executionId;
+            workerLastProgressAt=$progress;progressUnavailableReason=$(if(-not $progress){'No valid owned worker.lastProgressAt'}else{$null});
+            failureStopped=(Test-TaskFailureStopped $task);
             userDoneCount=$(if ($before) { [int]$before.userDoneCount } else { 0 })}
         $taskSnapshots.Add($snapshot)
         if ($gated -or $null -eq $before) { continue }
         if ($id -notin $scope) { continue }
+        if($progress -and $before.progressAt -and $progress -cne $before.progressAt){
+            Event $events 'WORKER_PROGRESS' $id $workerPath "$id/progress/$progress"
+        }
+        if($unityFingerprint -and $before.unityFingerprint -and $unityFingerprint -cne $before.unityFingerprint){
+            Event $events 'UNITY_STATE_CHANGED' $id $UnityHeartbeatPath "$id/unity/$($unity.observedAt)/$unityFingerprint"
+        }
+        if($task.execution -and $null -ne $task.execution.appTurnCount -and [int]$task.execution.appTurnCount -ge 120){
+            Event $events 'TURN_LIMIT' $id $queuePath "$id/turn-limit/$($task.execution.executionId)"
+        }
         $terminal = if ($task.status -in @('FAILED','SUCCEEDED','NEEDS_USER','PAUSED_CIRCUIT')) {
             [string]$task.status
         } elseif ($verification -in @('PENDING_USER','REJECTED')) { 'NEEDS_USER' } else { $null }
@@ -173,7 +198,7 @@ function Invoke-WatchOnce {
                     Event $events 'LEASE_EXPIRING' $id $workerPath "$id/lease/$($worker.leaseUntil)"
                 }
             }
-            if (($Now - [DateTimeOffset]::Parse($progress)).TotalMinutes -ge $NoProgressMinutes) {
+            if ($progress -and ($Now - [DateTimeOffset]::Parse($progress)).TotalMinutes -ge $NoProgressMinutes) {
                 Event $events 'NO_PROGRESS' $id $queuePath "$id/no-progress/$progress"
             }
         }
@@ -201,6 +226,8 @@ function Invoke-WatchOnce {
         if ($item.kind -in @('LEASE_EXPIRING','NO_PROGRESS')) { $item.next='REVIEW_OR_RENEW' }
         elseif ($item.kind -eq 'REPAIR_BUDGET') { $item.next='READONLY_DIAGNOSIS' }
         elseif ($item.kind -eq 'USER_DONE') { $item.next='RECHECK_DEPENDENCIES' }
+        elseif($item.kind -eq 'TURN_LIMIT'){$item.next='CHECKPOINT_AND_NEW_VISIBLE_THREAD'}
+        if($after.failureStopped -and $item.kind -in @('TERMINAL','ERROR_INCREASED','REPAIR_BUDGET')){$item.next='READONLY_DIAGNOSIS'}
         $eventPath = Join-Path $inbox ("{0}-{1}.json" -f $item.taskId, [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes([string]$item.key))).Substring(0,16))
         Save-Json $eventPath $item
         $item | Add-Member -NotePropertyName packagePath -NotePropertyValue $eventPath
@@ -233,7 +260,9 @@ function Invoke-WatchOnce {
     }
     $cursor = [ordered]@{schemaVersion=1;observedAt=$Now.ToString('o');scopeStatus=$scopeStatus;
         tasks=@($taskSnapshots);pending=@($pending);seenKeys=@($known);missingSources=@($missing);userStates=$userStates;
-        userDoneCounts=$userDoneCounts}
+        userDoneCounts=$userDoneCounts
+        unityHeartbeat=$unity;workerProgress=@($taskSnapshots | Where-Object {$_.id -in $scope} | Select-Object id,workerLastProgressAt,progressUnavailableReason,appTurnCount,maxTurns)
+    }
     Save-Json $cursorPath $cursor
     $delivered = 0
     $batches = @($pending | Group-Object batchId)
@@ -321,7 +350,7 @@ function Invoke-WatchOnce {
         Write-TaskUsageRecord -TaskId $item.taskId -Lane CONTROL -Phase execute -Event 'watch_event' -Source 'workflow-watch' -Coverage 'event_detected' -Metadata @{kind=$item.kind;key=$item.key} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null
     }
     if ($delivered -gt 0) {
-        Write-TaskUsageRecord -TaskId WATCH -Lane CONTROL -Phase execute -Event 'watch_wakeup' -Source 'workflow-watch' -Coverage 'adapter_receipt' -Metadata @{count=$delivered} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null
+        Write-TaskUsageRecord -TaskId WATCH -Lane CONTROL -Phase execute -Event $(if($DeliveryScript){'watch_wakeup'}else{'watch_ack'}) -Source 'workflow-watch' -Coverage 'adapter_receipt' -Metadata @{count=$delivered} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null
     }
     if ($newEvents.Count -eq 0) {
         Write-TaskUsageRecord -TaskId WATCH -Lane CONTROL -Phase execute -Event 'watch_no_event' -Source 'workflow-watch' -Coverage 'single_poll' -Metadata @{scopeStatus=$scopeStatus} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null

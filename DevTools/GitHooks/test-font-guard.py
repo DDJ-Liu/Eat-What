@@ -69,13 +69,17 @@ with tempfile.TemporaryDirectory(prefix='mig63-font-') as tmp:
     git('config', 'core.autocrlf', 'false')
     git('config', 'core.hooksPath', '.git/hooks')
     (repo / LEGACY).parent.mkdir(parents=True)
-    original = (ROOT / LEGACY).read_bytes()
+    original = b'isolated historical legacy font baseline\n'
     (repo / LEGACY).write_bytes(original)
     (repo / 'DevTools/GitHooks').mkdir(parents=True)
     shutil.copy2(
         ROOT / 'DevTools/GitHooks/check-mig63-font.sh',
         repo / 'DevTools/GitHooks/check-mig63-font.sh'
     )
+    # Bind the historical constant to isolated fixture bytes; production is untouched.
+    guard = repo / 'DevTools/GitHooks/check-mig63-font.sh'
+    guard.write_text(guard.read_text().replace(
+        '1d379a7eb64de1871194614f83bf61ac52e0d323677048fe237e3fbd3b399cc2', sha(original)), encoding='utf-8')
     shutil.copy2(ROOT / '.ai-workspace/MIG63/pre-commit.sh', repo / '.git/hooks/pre-commit')
     git('add', LEGACY)
 
@@ -168,5 +172,39 @@ with tempfile.TemporaryDirectory(prefix='mig63-font-') as tmp:
     git('add', STATIC, DYNAMIC)
     (repo / DYNAMIC).unlink()
     check('missing dynamic fallback blocks', False)
+
+    value = json.loads((repo / MANIFEST).read_text())
+    value['protectionMode'] = 'STATIC_ONLY'
+    (repo / MANIFEST).write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
+    git('add', MANIFEST)
+    check('static-only permits missing dynamic (R3 validates empty fallback separately)', True)
+    (repo / LEGACY).write_bytes(changed)
+    stage_blob(LEGACY, pointer(changed))
+    check('static-only permits approved current legacy work/index changes', True)
+    (repo / DYNAMIC).write_bytes(dynamic_content + b'cached glyph')
+    stage_blob(DYNAMIC, pointer(dynamic_content + b'other cache'))
+    check('static-only has no fixed dynamic byte protection', True)
+    (repo / STATIC).write_bytes(static_content + b'drift')
+    check('static-only still rejects working static drift', False)
+    (repo / STATIC).write_bytes(static_content)
+    stage_blob(STATIC, pointer(static_content + b'drift'))
+    check('static-only still rejects staged static LFS drift', False)
+    stage_blob(STATIC, pointer(static_content))
+    check('static-only exact static LFS content passes', True)
+    git('update-index', '--force-remove', STATIC)
+    check('static-only missing static index blocks', False)
+    stage_blob(STATIC, pointer(static_content))
+    (repo / STATIC).unlink()
+    check('static-only missing static working asset blocks', False)
+    (repo / STATIC).write_bytes(static_content)
+    value['protectionMode'] = 'UNKNOWN'
+    (repo / MANIFEST).write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
+    git('add', MANIFEST)
+    check('unknown protection mode blocks', False)
+    value['protectionMode'] = 'STATIC_ONLY'
+    value['approvalStatus'] = 'PENDING_REVIEW'
+    (repo / MANIFEST).write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
+    git('add', MANIFEST)
+    check('static-only unapproved manifest blocks', False)
 
 print(json.dumps({'count': len(results), 'results': results}, indent=2))

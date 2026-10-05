@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "approvalStatus": "APPROVED",
-  "approvedBy": "USER: 批准当前双字体纳入检查点 (2026-10-05)",
-  "approvedAtUtc": "2026-10-05T08:49:22.7977793Z",
+  "approvedBy": "USER: 2026-10-05 保护名单仅保留 Static；提交已确认工作树（布局与字体）",
+  "approvedAtUtc": "2026-10-05T11:02:16.619821+00:00",
   "generatedAtUtc": "2026-09-22T21:00:56.8569474Z",
   "legacyAssetPath": "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset",
   "legacyAssetSha256": "1D379A7EB64DE1871194614F83BF61AC52E0D323677048FE237E3FBD3B399CC2",
@@ -20,5 +20,7 @@
   "sourceHanFallbackAssetPath": "Assets/Font/Heavy/SourceHanSansSC-Heavy SDF.asset",
   "sourceFontPath": "Assets/Font/Heavy/SourceHanSansSC-Heavy.otf",
   "staticAtlasRewritten": false,
-  "approvalScope": "Exact unchanged Static and empty DynamicFallback checkpoint only; FONT-R scene migration and visual acceptance remain pending."
+  "approvalScope": "Only Static is byte-protected. Current worktree including layout and WithFallback is approved for checkpoint; FONT-R continues at R2, retains three materials and recalculates UpdateShaderRatios in R3. Historical build hashes/counts below remain historical observations; visual acceptance remains pending.",
+  "protectionMode": "STATIC_ONLY",
+  "checkpointLegacyAssetSha256": "CE0CA137381C8874DA1EF1033DFFC90ED7B986B26B9A08A59806B943F3700763"
 }

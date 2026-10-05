@@ -2106,3 +2106,174 @@ Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md and inputs/U1-R1-2026
 > Superseded AI-000171 : {"at":"2026-10-05T16:47:21.9505539+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"FONT-R 链替换旧字体/E2卡；E2仅在 FONT-R4 人工验收后重新准入。","userDecision":"用户文档：AI170/171/172 CLOSED_SUPERSEDED，FONT-R代替，不再续跑。","verification":".ai-workspace/inputs/控制台输入_PRE-5b验收_FONT-R字体迁移重做_PRE-5c_20261005.md；bootstrap12项+Workflow Final11/11"}
 
 > Superseded AI-000172 : {"at":"2026-10-05T16:47:22.0644116+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"FONT-R 链替换旧字体/E2卡；E2仅在 FONT-R4 人工验收后重新准入。","userDecision":"用户文档：AI170/171/172 CLOSED_SUPERSEDED，FONT-R代替，不再续跑。","verification":".ai-workspace/inputs/控制台输入_PRE-5b验收_FONT-R字体迁移重做_PRE-5c_20261005.md；bootstrap12项+Workflow Final11/11"}
+## AI-000201 | [CODE] [PRE5C-FONTR] PRE-5c
+
+- 序号：201
+- 提交时间：2026-10-05T16:54:27.1971564+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/PRE5c_CODE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:27.3598449+08:00: {"policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.3264102+08:00","supervisionLevel":"light"},"taskId":"AI-000201"}
+## AI-000202 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R0-PRE
+
+- 序号：202
+- 提交时间：2026-10-05T16:54:27.4068733+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R0-PRE_ENGINE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:27.5032034+08:00: {"policy":{"resourceKeys":["font-readonly-inventory"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.4824905+08:00","supervisionLevel":"full"},"taskId":"AI-000202"}
+## AI-000203 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R0
+
+- 序号：203
+- 提交时间：2026-10-05T16:54:27.5563814+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000202, AI-000201
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R0_ENGINE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:27.6482570+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.6197956+08:00","supervisionLevel":"full"},"taskId":"AI-000203"}
+## AI-000204 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R1
+
+- 序号：204
+- 提交时间：2026-10-05T16:54:27.6944030+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000203
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R1_ENGINE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:27.8065438+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.7776630+08:00","supervisionLevel":"full"},"taskId":"AI-000204"}
+## AI-000205 | [CODE] [PRE5C-FONTR] FONT-R2
+
+- 序号：205
+- 提交时间：2026-10-05T16:54:27.8490504+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000204
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R2_CODE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:27.9838478+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.9430629+08:00","supervisionLevel":"light"},"taskId":"AI-000205"}
+## AI-000206 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R2-COMPILE
+
+- 序号：206
+- 提交时间：2026-10-05T16:54:28.0295951+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000205
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R2-COMPILE_ENGINE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:28.1516219+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:28.1098762+08:00","supervisionLevel":"full"},"taskId":"AI-000206"}
+## AI-000207 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R3
+
+- 序号：207
+- 提交时间：2026-10-05T16:54:28.2039134+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000206
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3_ENGINE.md；先读COMMON.md及用户原件全部文本。
+
+> SUPERVISED POLICY at 2026-10-05T16:54:28.3359324+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:28.3065373+08:00","supervisionLevel":"full"},"taskId":"AI-000207"}
+
+> SUPERVISED START at 2026-10-05T16:56:09.4757817+08:00: {"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000201","AI-000202","AI-000203","AI-000204","AI-000205","AI-000206","AI-000207"],"heartbeatAutomationId":"ai","createdAt":"2026-10-05T16:56:09.4693866+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED AUTOMATION_BOUND at 2026-10-05T16:56:57.3200153+08:00: {"automationId":"watch-60"}
+
+> SUPERVISED AUTOMATION_BOUND at 2026-10-05T17:14:07.3280747+08:00: {"heartbeatMinutes":60,"automationId":"watch-60"}
+
+> Verification resolved for AI-000202 at 2026-10-05T17:26:01.5359193+08:00: decision=VERIFIED; summary=用户确认AI202只读清单，并以直接文件复制覆盖原草案Git方法；不表示恢复或视觉完成。; evidence=用户2026-10-05明确批准AI202两场景精确源；覆盖旧恢复方法为6e58cb8已核blob直接复制，不建index/tree/ref；零引用后删除3材质及空Materials/meta；R0由用户提交后才开R1，不含视觉签收。详见inputs/FONT-R-PRE5c-20261005/FONT-R0_用户批准与执行修订_20261005.md；Compare-Acceptance 5/5，两个源blob及完整SHA由控制台独立核验，source-blobs-verified.json。
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-05T17:26:01.8544104+08:00: {"userDecision":"用户2026-10-05明确批准AI202两场景精确源；覆盖旧恢复方法为6e58cb8已核blob直接复制，不建index/tree/ref；零引用后删除3材质及空Materials/meta；R0由用户提交后才开R1，不含视觉签收。详见inputs/FONT-R-PRE5c-20261005/FONT-R0_用户批准与执行修订_20261005.md","taskId":"AI-000202"}
+
+> SUPERVISED POLICY at 2026-10-05T17:26:01.9584645+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户指定R0复制到位后由用户提交；在实际恢复提交核验前保留人工gate，FONT-R1不得领取。","updatedAt":"2026-10-05T17:26:01.9202606+08:00","supervisionLevel":"full"},"taskId":"AI-000203"}
+> Instruction revision for AI-000203 at 2026-10-05T17:26:02.0443618+08:00
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R0_ENGINE.md；先读COMMON、用户原件全文及FONT-R0_用户批准与执行修订_20261005.md。仅两场景指定blob直接复制；核SHA/零引用/Console/clean后删三材质及空Materials/meta；CODEBASE_MAP修订。无index/tree/ref/AI暂存提交；完成等待用户提交后才开R1。
+> Instruction revision for AI-000204 at 2026-10-05T17:26:02.1110572+08:00
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R1_ENGINE.md；先读COMMON、用户原件全文及FONT-R0_用户批准与执行修订_20261005.md。用户恢复提交实际核验、USER-FONT-R0-COMMIT DONE、AI203 gate批准后才领取，不代用户提交R0。
+
+> SUPERVISED PauseSupervision at 2026-10-05T17:28:50.9072973+08:00: {"reason":"AI201首个实质验证失败，NEEDS_USER/HUMAN stop，ProblemKey workflow:app-turn-json-timezone-loss；按用户一次失败即停暂停本批。AI202新批准有效，AI203依赖未满足，不派发恢复；待用户对只读诊断给出修复决定。","userDecision":""}
+
+> User-adjudicated CODE stop AI-000201 : {"at":"2026-10-05T17:40:26.8367882+08:00","decision":"CODE_SELF_VALIDATION_CONTINUE","errorIndex":0,"errorKind":"EXECUTION","errorMessage":"首次实质验证失败：RecordTaskTurn拒绝当前线程真实app turn；ConvertFrom-Json将UTC时间转DateTime后经string丢失时区，实际readonly对照false/true。按COMMON R-ST停止，不修复/Recover；未跑Workflow Final、未部署WATCH。证据 .ai-workspace/outputs/FONT-R-PRE5c/AI-000201/AI-000201_停止报告.md","problemKey":"workflow:app-turn-json-timezone-loss","userDecision":"用户2026-10-05直接Resume AI-000201并判定此次停止为误触发，保留草稿继续原PRE5c；R-ST三档修订：CODE交付前自验证在120回合/同错重试≤2次内迭代，ENGINE/DATA生产写入与控制台验收失败一次即停。原文inputs/FONT-R-PRE5c-20261005/AI201_继续执行与RST三档修订_20261005.md。","verification":"本轮fresh wait_threads：CODE原线程01a10b39-5faf-7a11-8a93-65396938a23e idle/completed；worker IDLE/CLOSED无lease/RUNNING；用户明确判误停并Resume；控制bootstrap18项+既有管理12项通过、Parser0，原错误及源码/状态已保全。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai201-resume-20261005\\user-decision.json","previousStatus":"NEEDS_USER","previousExecution":{"executionId":"f9077ac3d1c8445f815bdaea7915ac5b","ownerThreadId":"01a10b39-5faf-7a11-8a93-65396938a23e","attempt":1,"maxTurns":120,"appTurnCount":null,"appTurns":[],"toolProgressIds":["adopt-existing-claim","ce669e8500154af598f85c0928ce6768/start","ce669e8500154af598f85c0928ce6768/finish"],"claimedAt":"2026-10-05T16:57:48.4349737+08:00","countUnavailableReason":"Exact app turn source unavailable; provider responses are not app turns.","limitReached":false,"checkpointPath":null}}
+> Instruction revision for AI-000201 at 2026-10-05T17:40:27.1412005+08:00
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/PRE5c_CODE.md；必读COMMON、原件全文及AI201_继续执行与RST三档修订_20261005.md。用户判旧停止为误触发，原草稿/历史保留，原201继续；全仓JSON日期保真/DateTimeOffset UTC及五模块回归，三档停止规则、120回合/同错重试≤2次、Workflow Final/Top5/acceptance/P-049/TK-WF-03/04。WATCH受限查询权限不处理，部署审批等完成版。
+
+> SUPERVISED ResumeSupervision at 2026-10-05T17:40:27.2146478+08:00: {"reason":"用户明确Resume原AI201并修订RST三档；仅原201先继续，FONT-R生产/用户提交/视觉gate保持。","userDecision":"用户2026-10-05直接Resume AI-000201并判定此次停止为误触发，保留草稿继续原PRE5c；R-ST三档修订：CODE交付前自验证在120回合/同错重试≤2次内迭代，ENGINE/DATA生产写入与控制台验收失败一次即停。原文inputs/FONT-R-PRE5c-20261005/AI201_继续执行与RST三档修订_20261005.md。"}
+
+> SUPERVISED PauseSupervision at 2026-10-05T18:26:31.9405624+08:00: {"userDecision":"","reason":"用户选择保留18:12—18:13字体和正式场景新增变化，先只读对账；FONT-R0恢复/删除及后继暂停，AI201成功史保留。"}
+
+> SUPERVISED BreakSupervision at 2026-10-05T18:33:43.8650819+08:00: {"userDecision":"","reason":"CONTROL_ACCEPTANCE_FAILED AI-000201 workflow:turn-limit-handoff-clears-stop；隔离真实核心证明累计120回合换线程后limitReached=false，Checkpoint CONTINUE且RecordTaskProgress可写。按用户R-ST控制验收首败即停，不自修/重置/派发；证据outputs/control/FONT-R-PRE5c-20261005/ai201-review-20261005/turn-limit-handoff-result.json。另保留两处用户选择先只读对账的资源变化。"}
+
+> Verification rejected for AI-000201 at 2026-10-05T18:57:42.3034918+08:00: decision=REJECTED; reason=保留旧控制验收失败及新用户软限修订；只阻断AI201，独立链可继续。
+
+> SUPERVISED PauseSupervision at 2026-10-05T18:57:42.5493150+08:00: {"reason":"按用户最新决定整理取消的203/204与新R2链，随后正式Resume同一session。","userDecision":""}
+
+> Superseded AI-000203 : {"at":"2026-10-05T18:57:42.6112783+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"用户取消FONT-R0恢复与R1空保存/恢复提交；确认当前工作树新基线，从R2继续。","userDecision":"用户2026-10-05：恢复监管，AI201保持任务级阻断；批准AI201最小修复；120软限、软限后30分钟无进度或临时240才硬停；取消AI203/204；提交确认工作树后FONT-R从R2继续。","verification":"inputs/FONT-R-PRE5c-20261005/监管软限与FONT-R新基线_20261005.md"}
+
+> Superseded AI-000204 : {"at":"2026-10-05T18:57:42.7593042+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"用户取消FONT-R0恢复与R1空保存/恢复提交；确认当前工作树新基线，从R2继续。","userDecision":"用户2026-10-05：恢复监管，AI201保持任务级阻断；批准AI201最小修复；120软限、软限后30分钟无进度或临时240才硬停；取消AI203/204；提交确认工作树后FONT-R从R2继续。","verification":"inputs/FONT-R-PRE5c-20261005/监管软限与FONT-R新基线_20261005.md"}
+
+> Dependency correction for AI-000205 at 2026-10-05T18:57:42.9123691+08:00: none
+## AI-000208 | [CODE] PRE-5c AI201受控修复：累计软限、任务拒验隔离与正式证据路径
+
+- 序号：208
+- 提交时间：2026-10-05T19:06:00.3557372+08:00
+- 模块 ID：无
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/PRE5c-TURN-SOFT-REPAIR_CODE.md 和COMMON；仅PowerShell/协议，修复AI201控制拒验，交付后独立核验。
+
+> SUPERVISED POLICY at 2026-10-05T19:06:31.4797403+08:00: {"policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准AI201最小修复；独立任务级阻断，不阻FONT-R，完成后独立复核。","updatedAt":"2026-10-05T19:06:31.4203636+08:00","supervisionLevel":"light"},"taskId":"AI-000208"}
+
+> SUPERVISED EXTEND at 2026-10-05T19:06:31.5946036+08:00: {"taskIds":["AI-000208"],"reason":"用户本轮明确批准AI201草案1~3及软限/任务拒验修复；实际Enqueue返回208，预算归原201。"}
+> Instruction revision for AI-000205 at 2026-10-05T19:06:31.6655320+08:00
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R2_CODE.md、COMMON和最新用户决定；用户确认当前工作树提交为新基线，取消203/204，直接R2；只源码和离线夹具，复用三材质并实现幂等，不启动Unity。
+> Instruction revision for AI-000207 at 2026-10-05T19:06:31.7341666+08:00
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3_ENGINE.md、COMMON和最新用户决定；取消203/204，沿当前确认基线执行R3幂等迁移，三现有材质保留并重调UpdateShaderRatios；Static唯一精确保护，视觉gate保留。
+
+> SUPERVISED POLICY at 2026-10-05T19:06:31.8087599+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前工作树新基线后直接R2，CODE交付前同键重试<=2；AI201不作为依赖。","updatedAt":"2026-10-05T19:06:31.7702091+08:00","supervisionLevel":"light"},"taskId":"AI-000205"}

@@ -39,7 +39,7 @@ function Invoke-Queue {
     $raw = & (Join-Path $testRoot 'queue.ps1') @Arguments | Out-String
     if ($Arguments.Action -in @('Poll','Complete','SupervisionCheckpoint')) {
         $bytes=[Text.Encoding]::UTF8.GetByteCount($raw.Trim())
-        if ($bytes -gt 2048) { throw "Compact $($Arguments.Action) response exceeded 2KB: $bytes" }
+        if ($bytes -gt 757) { throw "Compact $($Arguments.Action) response exceeded 759B including CRLF: $bytes" }
         $script:compactResponseBytes.Add($bytes)
     }
     $result = $raw | ConvertFrom-Json

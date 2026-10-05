@@ -6,6 +6,9 @@ param(
     [Parameter(Mandatory = $true)][string]$CommandPath,
     [string[]]$ArgumentList = @(),
     [string]$Model,
+    [string]$OwnerThreadId,
+    [string]$ExecutionId,
+    [string]$QueueScriptPath,
     [string]$RuntimeRoot
 )
 
@@ -34,6 +37,20 @@ function Get-PowerShell7Path {
     return $candidate
 }
 
+# Only a real wrapped invocation reports progress. WATCH never invokes this API.
+$productionRoot=Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) '.ai-workspace/runtime'
+$progressEnabled=$QueueScriptPath -or ([IO.Path]::GetFullPath($RuntimeRoot) -eq [IO.Path]::GetFullPath($productionRoot))
+if($progressEnabled){
+    if(-not $OwnerThreadId -or -not $ExecutionId){throw 'Progress requires OwnerThreadId and ExecutionId from the actual claim.'}
+    if(-not $QueueScriptPath){$QueueScriptPath=Join-Path (Split-Path -Parent $productionRoot) 'queue.ps1'}
+}
+$progressId=[guid]::NewGuid().ToString('N')
+function Report-Progress([string]$Stage) {
+    if($progressEnabled){
+        & $QueueScriptPath -Action RecordTaskProgress -Pipeline $Lane -TaskId $TaskId -OwnerThreadId $OwnerThreadId -ExecutionId $ExecutionId -ProgressId "$progressId/$Stage" | Out-Null
+    }
+}
+Report-Progress 'start'
 $startedAt = [DateTimeOffset]::Now
 $captured = @()
 $exitCode = 0
@@ -72,6 +89,7 @@ Write-TaskUsageRecord -TaskId $TaskId -Lane $Lane -Phase $Phase -Event ("tool:{0
     -Metadata @{ command = $CommandPath; exitCode = $exitCode; startedAt = $startedAt.ToString('o'); durationMs = [Math]::Round(([DateTimeOffset]::Now - $startedAt).TotalMilliseconds, 3) } `
     -RuntimeRoot $RuntimeRoot | Out-Null
 
+Report-Progress 'finish'
 if ($text.Length -gt 0) { Write-Output $text.TrimEnd() }
 if ($null -ne $failure) { throw $failure }
 if ($exitCode -ne 0) { throw "Wrapped command exited with code ${exitCode}: $CommandPath" }

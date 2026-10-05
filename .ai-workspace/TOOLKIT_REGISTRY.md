@@ -74,3 +74,4 @@
 - TK-WF-01: [WF.md](toolkit/WF.md#tk-wf-01)
 - TK-WF-02: [WF.md](toolkit/WF.md#tk-wf-02)
 - TK-WF-03: [WF.md](toolkit/WF.md#tk-wf-03)
+- TK-WF-04: [WF.md](toolkit/WF.md#tk-wf-04)

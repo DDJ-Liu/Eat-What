@@ -32,3 +32,5 @@ TK-WF-04（PRE-5b）：DevTools/Workflow/watch.ps1、Manage-WatchHost.ps1、Comp
 2026-09-23：AI164已在两个精确命令各经正式审批的正常宿主通过Unity6000.3.24f1真实baseline/overlay，退出0/0、不同nonce、0/1生成差异、主Editor共存和生产不变。受限宿主LocalLow/许可失败的旧记录保留；零diff时空JSON缺失记录WARNING，独立清单补证，不新增工具或擅改运行器。详见 `outputs/U1-PRE/AI-000164/host-context-recovery-20260923/`。
 
 2026-10-04：TK-WF-03增加 `DevTools/Workflow/Invoke-UsageReporting.ps1`、`USAGE_REPORTING.md`、`Test-UsageReporting.ps1`，原ai固定前置调用；北京时间周三上一整周、漏报补齐、真实补发标记、源快照和幂等原子发布。Get-UsageReport支持同一Records快照并将单次/合计排名分开。只写outputs，暂停后不自行Resume；保持原计量null口径。
+
+2026-10-05 PRE-5c / AI-000201：TK-WF-03 增真实 app turn 绑定计数、跨 attempt 120 上限、provider 响应单列、明确分母 cache 比率；`RecordCodeValidation` 按稳定 key 留首败/重试/解决证据。TK-WF-04 增 `Get-UnityHeartbeat.ps1`、`Read-WatchInbox.ps1`；WATCH 读真实 worker 进度和嵌套监管等级，新增 WORKER_PROGRESS/UNITY_STATE_CHANGED/TURN_LIMIT 幂等事件。`Manage-WatchHost.ps1` 可选只读采集但未部署。长期回归 `Test-Pre5c.ps1`、`Test-ControlAdministration.ps1`、`Test-UserCodeResume.ps1` 纳入 Workflow profile。

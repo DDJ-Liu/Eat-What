@@ -11,7 +11,7 @@
 5. 不修改 `.unity`、`.prefab`、`.asset`、`.meta`，不打开或控制 Unity Editor。
 6. 采用最小改动，运行与任务相称的编辑器外验证，并检查 Git diff。
 7. 预计执行超过 20 分钟时调用 `RenewLease -LeaseMinutes 30`，之后至少每 20 分钟续租一次。
-8. 遇到问题先自行搜索项目已有用法、修正命令/临时验证器或采用安全后备；修复失败后再按 `WORKFLOW.md` 分级。非阻碍问题 `RecordIssue` 后继续；产品代码无法编译、写入状态不明、权限/工具无后备或核心实现无法完成时才 `Fail`。
+8. 遇到问题先自行搜索项目已有用法并修正。交付前 CODE 自验证失败用 `RecordCodeValidation -ProblemKey <稳定键> -ValidationResult FAILED -EvidencePath <证据> -OwnerThreadId <本线线程> -ExecutionId <当前执行>` 逐次登记；首次失败后最多重试两次，成功用 `RESOLVED` 登记，超限停止。120 个真实 app turn 跨 attempt 累计；不能靠换 key、换 attempt 或 provider 响应条目清零。非阻碍问题 `RecordIssue` 后继续；真实阻断再 `Fail`。控制台验收失败首败停止，不降级为内部重试。
 9. 测试表现异常或测试未触发不得 `Fail`；记录为 `TEST_OBSERVATION/TEST_TRIGGER`，写清已尝试修复和人工复核步骤，然后完成其余内容并 `Complete`。结果为 `PENDING_USER`，不得阻止后续任务。
 10. 只有代码产物成立才调用 `Complete`；完成回执必须统一说明非阻碍问题、测试待人工事项与残余风险。
 11. `AUTOMATIC` 下必须读取 `Complete` 的 `autoHandoff`：即使 `verificationStatus=PENDING_USER` 也必须接力。目标 `threadId` 不同则发送完整消息；目标就是当前 CODE 线程时禁止向自身发送，直接在当前轮按下一 `TaskId` 再 `Poll -Pipeline CODE -TriggerSource AUTOMATIC` 并继续。只有调用 `Fail` 后才禁止下一项。

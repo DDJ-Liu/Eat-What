@@ -14,3 +14,5 @@ PRE-5b 新门：新领取任务的 Complete 必须附任务卡预声明的 accep
 DATA 车道沿用同一队列/token/lease/停止门。旧注册态仅兼容 `executorKind=CONTROL_SUBAGENT`；控制台用 `DataLaneStatus` 核查闲置/预约，再以 `BindDataPipeline -PipelineThreadId <id> -UserDecision <授权> -Verification <应用可达与闲置证据>` 原子绑定可见线程。绑定后所有路由必须为 `THREAD` 与精确 `threadId`，缺失/损坏时拒绝回退；轮次与隔离发布入口见 [workers/DATA.md](workers/DATA.md) 和 [DATA_PIPELINE.md](../DevTools/DataTables/DATA_PIPELINE.md)。
 
 详细节索引：运行模式 §0；不变量 §1；车道 §2；状态 §3；领取 §4；问题分级 §5；熔断 §6；维护 §7；完成门槛 §8。
+
+PRE-5c R-ST：ENGINE/DATA 写生产资产失败一次停并只读诊断；CODE 交付前自验证按同一 problemKey 记录首败和至多两次重试，120 个真实 app turn 跨 attempt 累计，超限才停；任一车道控制台机器验收失败一次停。旧 AI201 误停只经用户证据用 `ResumeCodeValidationStop` 审定，失败史不清。

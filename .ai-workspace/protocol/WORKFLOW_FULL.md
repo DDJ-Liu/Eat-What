@@ -223,3 +223,9 @@ queue.ps1 -Action RecordIssue -Pipeline <PIPELINE> -TaskId <TASK_ID> -IssueKind 
 
 新修复卡用 -WorkKind REPAIR -ParentTaskId <root>，只读诊断用 READONLY_DIAGNOSIS。同根自动修复总预算 2，跨编号、模式、problemKey 不清零；已配对的监管恢复与修复卡按同一轮计，历史恢复数原样保留。常见先修复后恢复顺序：原任务依赖已成功的修复卡，RecoverSupervisionTask 传 -PairedRepairTaskId <card>，核同根、成功、晚于最新失败、未配对后才生成恢复ID并回写卡片，计同一个slot；不能故意先Recover以获取ID。先恢复后建卡保留 -PairedRecoveryId 路径。第 2 次失败只允许只读诊断，下一修复须关联诊断且有明确用户决定；Enqueue/ReviseInstruction/ResetTask/RecoverSupervisionTask 共用该门，不借新编号绕过。
 
+
+## PRE-5c · 分级停止与真实回合
+
+R-ST（用户 2026-10-05）：ENGINE/DATA 写生产资产失败一次停止，转只读诊断；CODE 交付前自验证失败属任务内迭代，用 `RecordCodeValidation` 绑定当前 executionId/ownerThreadId、稳定 problemKey 和证据，首次失败后至多重试两次，超限停止；任一车道控制台 `Compare-Acceptance` 验收失败一次停止。不能将 CODE 自验证首败一律 `Fail`，也不能把机器验收失败降级。旧 AI201 经 `ResumeCodeValidationStop` 用户审定继续同任务，保留 attempts、失败和恢复史；该已审定自验证失败计入原 problemKey 首次失败，后续同键只余两次重试。
+
+`RecordTaskTurn` 仅接受原始 Codex app turn 与当前执行重叠的证据；provider 响应另计。`maxTurns=120` 是协作停止门，跨 attempt 保留真实计数，不宣称平台硬上限。JSON 日期用 PowerShell 7 `ConvertFrom-Json -DateKind String` 保留时区，比较按 DateTimeOffset 的 UTC 瞬时语义；无时区输入不得补猜。Poll/Complete/Checkpoint 摘要按实际 UTF-8（含 CRLF）小于 759 字节，全文从 receiptPath 读取。

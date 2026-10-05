@@ -1,4 +1,4 @@
-﻿# Dot-sourced by queue.ps1. All actions execute under the queue's existing mutex.
+# Dot-sourced by queue.ps1. All actions execute under the queue's existing mutex.
 # This library schedules only; desktop messaging/heartbeat tools stay with CONTROL_CHAT.
 
 function Set-SupervisedProperty {
@@ -71,7 +71,7 @@ function Test-SupervisionReservationRoute {
     if ([string]::IsNullOrWhiteSpace($reservedRouteKey)) {
         # Backward compatibility for pre-route tickets is limited to static lanes and
         # the explicit legacy DATA subagent state. A bound DATA thread never accepts it.
-        return ($Task.pipeline -ne 'DATA' -or [int]$executionTarget.routeRevision -eq 0)
+        return ([int]$executionTarget.routeRevision -eq 0)
     }
     return $reservedRouteKey -eq $currentRouteKey
 }
@@ -101,7 +101,8 @@ function New-SupervisedSession {
         createdAt = Get-NowIso; stopRequested = $false; exitRequested = $false
         reservations = @(); lastSweepAt = $null
         delegatedAuthority = 'Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.'
-        heartbeatMinutes = 15; maxRepairsPerProblem = 3; maxRepairsPerTask = 6
+        heartbeatMinutes = $(if($null -ne $HeartbeatMinutes){[int]$HeartbeatMinutes}elseif((Get-ObjectPropertyValue (Get-ObjectPropertyValue $ModeState 'supervised') 'heartbeatMinutes')){[int]$ModeState.supervised.heartbeatMinutes}else{15})
+        maxRepairsPerProblem = 3; maxRepairsPerTask = 6
     })
     Write-SupervisionAudit 'START' $ModeState.supervised
 }
@@ -244,7 +245,7 @@ function Close-SupervisedRun {
         $repairs = @(Get-SupervisionRepairs $Task)
         $exhausted = @($repairs | Where-Object { $_.problemKey -eq $key }).Count -ge 3 -or $repairs.Count -ge 6
         # Circuit belongs to the task/branch, not the whole lane. Never retry on time alone.
-        $Task.status = if ($exhausted -or $FailureScope -ne 'TASK') { 'NEEDS_USER' } else { 'PAUSED_CIRCUIT' }
+        $Task.status = if ((Test-TaskFailureStopped $Task) -or $exhausted -or $FailureScope -ne 'TASK') { 'NEEDS_USER' } else { 'PAUSED_CIRCUIT' }
         if ($FailureScope -eq 'GLOBAL') {
             $ModeState.supervised.status = 'CIRCUIT'
             $ModeState.supervised.stopRequested = $true
@@ -286,6 +287,11 @@ function Invoke-SupervisionAction {
             gateApproved = [bool]$oldPolicy.gateApproved; reason = $Reason; updatedAt = Get-NowIso
             supervisionLevel = $level
         })
+        if($null -ne $FailureStopLimit){
+            $oldLimit=Get-TaskFailureStopLimit $t
+            Assert-Value (-not (Test-TaskFailureStopped $t) -and ($null -eq $oldLimit -or $FailureStopLimit -le $oldLimit)) 'Cannot loosen or reset a failure stop policy.'
+            Set-SupervisedProperty $t 'failureStopLimit' ([int]$FailureStopLimit)
+        }
         Save-JsonFile $queuePath $q
         if ($null -ne $m.PSObject.Properties['supervised']) {
             $m.supervised.reservations = @($m.supervised.reservations | Where-Object { $_.taskId -ne $TaskId })
@@ -375,9 +381,10 @@ function Invoke-SupervisionAction {
     if ($Action -eq 'BindSupervisionAutomation') {
         Assert-Value (-not [string]::IsNullOrWhiteSpace($AutomationId)) 'Use the actual ID returned by desktop automation_update.'
         Set-SupervisedProperty $s 'heartbeatAutomationId' $AutomationId.Trim()
+        if($null -ne $HeartbeatMinutes){Set-SupervisedProperty $s 'heartbeatMinutes' ([int]$HeartbeatMinutes)}
         Save-JsonFile $modePath $m
-        Write-SupervisionAudit 'AUTOMATION_BOUND' @{automationId=$AutomationId}
-        Write-Result @{action='SUPERVISION_AUTOMATION_BOUND';automationId=$AutomationId}; return
+        Write-SupervisionAudit 'AUTOMATION_BOUND' @{automationId=$AutomationId;heartbeatMinutes=$s.heartbeatMinutes}
+        Write-Result @{action='SUPERVISION_AUTOMATION_BOUND';automationId=$AutomationId;heartbeatMinutes=$s.heartbeatMinutes}; return
     }
 
     if ($Action -in @('PauseSupervision','ExitSupervision','BreakSupervision','ResumeSupervision')) {
@@ -451,7 +458,7 @@ function Invoke-SupervisionAction {
                 Assert-Value ($context.diagnosisTaskId -and $context.userDecision) 'Post-budget repair card lacks diagnosis and user decision.'
             }
         }
-        if ($budget.used -ge $budget.limit -and $null -eq $pairedCard) {
+        if ((Test-TaskFailureStopped $root) -or ($budget.used -ge $budget.limit -and $null -eq $pairedCard)) {
             Assert-RepairDecision $q $root $DiagnosisTaskId $UserDecision $TaskId
             Use-RepairDecision $root $DiagnosisTaskId $UserDecision $TaskId
         }
@@ -478,9 +485,13 @@ function Invoke-SupervisionAction {
         $t = Get-Task $q $TaskId; $worker=Get-Worker $w $Pipeline
         Assert-Value ($null -ne $t -and $t.pipeline -eq $Pipeline -and $t.status -eq 'RUNNING' -and $worker.activeTaskId -eq $TaskId) 'Worker does not own this active task.'
         if ($Action -eq 'SupervisionCheckpoint') {
-            Write-Result @{action= $(if ($s.stopRequested -or $s.status -ne 'ACTIVE') {'STOP_AT_SAFE_CHECKPOINT'} else {'CONTINUE'}); taskId=$TaskId}; return
+            Write-Result @{action= $(if ($t.execution.limitReached) {'STOP_AT_TURN_LIMIT'} elseif ($s.stopRequested -or $s.status -ne 'ACTIVE') {'STOP_AT_SAFE_CHECKPOINT'} else {'CONTINUE'}); taskId=$TaskId}; return
         }
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Summary) -and -not [string]::IsNullOrWhiteSpace($Verification)) 'Yield requires saved progress and safe现场 evidence.'
+        if($t.execution.limitReached){
+            Assert-Value ($Artifacts.Count -gt 0 -and @($Artifacts | Where-Object {-not (Test-Path -LiteralPath $_ -PathType Leaf)}).Count -eq 0) 'Turn limit yield requires saved checkpoint artifacts.'
+            $t.execution.checkpointPath=@($Artifacts)
+        }
         Set-SupervisedProperty $t 'supervisionCheckpoint' ([pscustomobject]@{at=Get-NowIso; summary=$Summary; verification=$Verification})
         $t.status='QUEUED'; Clear-SupervisionWorker $worker
         Finish-SupervisionExit $m $q
@@ -519,6 +530,7 @@ function Invoke-SupervisionAction {
         foreach ($otherReservation in @($s.reservations | Where-Object {$_.taskId -ne $TaskId})) {
             $held += @(Get-SupervisionResources (Get-Task $q $otherReservation.taskId))
         }
+        Assert-Value (-not (Test-TaskFailureStopped $t)) 'Failure stop limit reached; READONLY_DIAGNOSIS and user decision required.'
         Assert-Value ($t.pipeline -eq $Pipeline -and $s.taskIds -contains $TaskId) 'Wrong pipeline or out-of-scope task.'
         Assert-Value ($t.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and $worker.status -eq 'IDLE') 'Task or worker is no longer idle.'
         Assert-Value ($worker.circuit.state -eq 'CLOSED') 'Worker circuit is not closed.'
@@ -529,6 +541,7 @@ function Invoke-SupervisionAction {
         Set-SupervisedProperty $t 'supervisionConsecutiveDispatchMisses' 0
         $worker.status='BUSY'; $worker.activeTaskId=$TaskId; $worker.lastPollAt=Get-NowIso
         $worker.leaseUntil=[DateTimeOffset]::Now.AddMinutes($LeaseMinutes).ToString('o')
+        Initialize-TaskExecution $t $worker
         $s.reservations=@($s.reservations | Where-Object {$_.taskId -ne $TaskId})
         Save-JsonFile $queuePath $q; Save-JsonFile $workerPath $w; Save-JsonFile $modePath $m
         Write-Result @{action='CLAIMED'; task=$t; leaseUntil=$worker.leaseUntil; supervisorThreadId=$s.controllerThreadId}; return

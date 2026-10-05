@@ -3,7 +3,9 @@ param(
     [Parameter(Mandatory)][ValidateSet('Status','Install','Uninstall')][string]$Action,
     [ValidateRange(5,10)][int]$IntervalMinutes = 5,
     [string]$TaskName = 'EatWhat-WATCH-PRE5b',
-    [string]$DeliveryScript
+    [string]$DeliveryScript,
+    [switch]$CollectUnity,
+    [string]$UnityMcpUrl='http://localhost:8080/mcp'
 )
 $ErrorActionPreference = 'Stop'
 if ($PSVersionTable.PSVersion.Major -lt 7) { throw 'PS7 or later is required.' }
@@ -17,7 +19,10 @@ if ($existing -and [string]$existing.Description -cne $marker) {
 }
 if ($Action -eq 'Status') {
     [pscustomobject]@{action='WATCH_HOST_STATUS';taskName=$TaskName;installed=($null -ne $existing);
-        state=$(if($existing){[string]$existing.State}else{$null});intervalMinutes=$IntervalMinutes} |
+        state=$(if($existing){[string]$existing.State}else{$null});requestedIntervalMinutes=$IntervalMinutes;
+        actualTriggers=$(if($existing){@($existing.Triggers|ForEach-Object {$_.Repetition.Interval})}else{@()});
+        actualArguments=$(if($existing){@($existing.Actions.Arguments)}else{@()});
+        lastRun=$(if($existing){Get-ScheduledTaskInfo -TaskName $TaskName|Select-Object LastRunTime,LastTaskResult,NextRunTime}else{$null})} |
         ConvertTo-Json -Compress
     return
 }
@@ -29,6 +34,7 @@ if ($Action -eq 'Uninstall') {
 }
 if ($existing) { throw 'WATCH host already installed; inspect status, then explicitly uninstall before changing it.' }
 $args = "-NoProfile -WindowStyle Hidden -File `"$watch`" -IntervalMinutes $IntervalMinutes"
+if($CollectUnity){$args += ' -CollectUnity -UnityMcpUrl "'+$UnityMcpUrl+'"'}
 if ($DeliveryScript) {
     $delivery = [IO.Path]::GetFullPath($DeliveryScript)
     if (-not (Test-Path -LiteralPath $delivery -PathType Leaf)) { throw 'Delivery adapter is missing.' }

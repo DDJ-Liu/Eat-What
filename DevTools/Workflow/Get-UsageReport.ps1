@@ -59,7 +59,25 @@ function Get-PeriodSummary([object[]]$Items) {
     } | Sort-Object @{Expression='toolResultBytes';Descending=$true},taskId | Select-Object -First 5)
     $provider = @($Items | Where-Object { $_.source -eq 'codex-provider-token_usage_record' })
     $watch = @($Items | Where-Object { $_.source -eq 'workflow-watch' })
+    $appTurns=@($Items | Where-Object {$_.source -eq 'codex-app-turn' -and $_.event -eq 'app_turn'})
+    $turnsByTask=@($Items | Group-Object taskId | ForEach-Object {
+        $app=@($_.Group | Where-Object {$_.source -eq 'codex-app-turn' -and $_.event -eq 'app_turn'} |
+            ForEach-Object {"$($_.metadata.threadId)|$($_.metadata.turnId)"} | Sort-Object -Unique)
+        $responses=@($_.Group | Where-Object {$_.source -eq 'codex-provider-token_usage_record'} |
+            ForEach-Object {$_.metadata.responseId} | Where-Object {$_} | Sort-Object -Unique)
+        [pscustomobject]@{taskId=$_.Name;observedAppTurns=$(if($app.Count){$app.Count}else{$null});
+            providerResponses=$(if($responses.Count){$responses.Count}else{$null});
+            coverage='Observed exact IDs only; unavailable source is null, not a full task count.'}
+    })
+    $cachePairs=@($provider|Where-Object {$null -ne $_.inputTokens -and $null -ne $_.cachedInputTokens})
+    $cacheDenominator=[long](($cachePairs|Measure-Object inputTokens -Sum).Sum)
+    $cacheNumerator=[long](($cachePairs|Measure-Object cachedInputTokens -Sum).Sum)
+    $cache=@{cachedInputTokens=$cacheNumerator;inputTokens=$cacheDenominator;pairedResponseCount=$cachePairs.Count;
+        ratio=$(if($cacheDenominator -gt 0){[double]$cacheNumerator/$cacheDenominator}else{$null});
+        denominatorDefinition='Sum of inputTokens only for provider responses with BOTH inputTokens and cachedInputTokens.'}
+
     [pscustomobject]@{ recordCount=$Items.Count; byLanePhase=$byLanePhase; topCalls=$topCalls; topRecords=$topRecords; topTasks=$topTasks;
+        turnsByTask=$turnsByTask;observedAppTurnCount=$(if($appTurns.Count){@($appTurns|ForEach-Object {"$($_.metadata.threadId)|$($_.metadata.turnId)"}|Sort-Object -Unique).Count}else{$null});cacheHitRate=$cache;
         providerResponseCount=$provider.Count;providerModels=@($provider.model | Where-Object { $_ } | Sort-Object -Unique);
         watchEvents=@($watch | Where-Object { $_.event -eq 'watch_event' }).Count;
         watchWakeups=@($watch | Where-Object { $_.event -eq 'watch_wakeup' }).Count;
@@ -102,6 +120,19 @@ else {
             $byteValue = if ($null -eq $row.resultBytes) { 'null' } else { [string]$row.resultBytes }
             $lines.Add("| $($row.lane) | $($row.phase) | $($row.records) | $inputValue ($($row.inputTokenCoverage)/$($row.records)) | $outputValue ($($row.outputTokenCoverage)/$($row.records)) | $callValue ($($row.toolCallCoverage)/$($row.records)) | $byteValue ($($row.resultByteCoverage)/$($row.records)) |")
         }
+        $lines.Add('')
+        $lines.Add('App turns per task (observed) / provider responses / cache hit rate:')
+        $lines.Add('')
+        $lines.Add('| Task | App turns/task | Provider responses | Cache hit rate |')
+        $lines.Add('| --- | ---: | ---: | --- |')
+        $cacheText=if($null -eq $summary.cacheHitRate.ratio){'null'}else{'{0:P2} ({1}/{2} input tokens; {3} paired responses)' -f $summary.cacheHitRate.ratio,$summary.cacheHitRate.cachedInputTokens,$summary.cacheHitRate.inputTokens,$summary.cacheHitRate.pairedResponseCount}
+        foreach($row in $summary.turnsByTask){
+            $turnText=if($null -eq $row.observedAppTurns){'null'}else{[string]$row.observedAppTurns}
+            $responseText=if($null -eq $row.providerResponses){'null'}else{[string]$row.providerResponses}
+            $lines.Add("| $($row.taskId) | $turnText | $responseText | Period rate below |")
+        }
+        $lines.Add("Cache hit rate for this period: $cacheText. Denominator: paired provider input tokens; never account quota or response count.")
+        $lines.Add('App turns and provider responses are distinct exact-ID observations, not inferred total task rounds.')
         $lines.Add('')
         $lines.Add('Top 5 calls by result bytes:')
         foreach ($item in @($summary.topCalls)) { $lines.Add("- $($item.toolResultBytes) bytes | $($item.taskId) | $($item.lane)/$($item.phase) | $($item.event)") }

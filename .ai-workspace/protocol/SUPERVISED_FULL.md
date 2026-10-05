@@ -6,7 +6,7 @@
 
 2026-09-08：第四种独立模式。实现入口 `.ai-workspace/queue.ps1`、`.ai-workspace/supervised.ps1`；不替换 MANUAL / AUTOMATIC / SCHEDULED。本文只在 SUPERVISED 生效，优先于旧协议中“阻断后只等用户、严格队首 FIFO、执行器成功后自行接力”的通用规则。
 
-## 接管方式：事件回报 + 15 分钟补漏
+## 接管方式：事件回报 + 已配置周期补漏
 
 2026-09-16领取兼容性补充：派发、领取、续租和结算统一使用当前控制台的 PowerShell 7 宿主执行 `& .ai-workspace/queue.ps1 ...`，不要额外套用 Windows PowerShell 5 的 `powershell.exe`。AI132 已实测同一有效票据在旧宿主领取失败、在派发端同版宿主成功；任务定义指纹依赖 JSON/日期序列化，跨版本不能默认等价。当前已安装宿主为 `C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe`。使用既有正常执行权限，不降低 ExecutionPolicy、不绕过票据/指纹/依赖/平台审批；失败先核真实票据与版本，不能盲目重发或 Reset。
 
@@ -14,7 +14,7 @@
 
 - `Complete` / `Fail` / `YieldSupervisionTask` 返回 `supervisorHandoff`，执行器用任务消息工具发回其中的控制台线程，然后结束。没有下一棒执行器接力。
 - 回报只是提醒，队列与实时线程状态才是事实。旧回报、重复回报、退出后的迟到回报都必须重读 ModeStatus，不得照旧消息执行。
-- 控制台 heartbeat 每 15 分钟一次，仅补漏；状态不变或无可处理内容保持安静。任务回报到达时立即做一轮，不等周期。
+- 控制台 heartbeat 按 mode-state 的 heartbeatMinutes 补漏（PRE-5c 当前 60 分钟）；状态不变或无可处理内容保持安静。任务回报到达时立即做一轮，不等周期。
 - 本地定时执行需要电脑开机且 Codex 应用可运行；休眠、应用退出、网络或用量限制会延迟处理，不承诺实时/常驻后台服务。重启后先检查现场，不能因时间过去就把任务标成功或复跑写入。
 - 单轮检查不等待整条链结束；若用 wait_threads，使用不超过 60 秒的一次等待或 timeoutMs=0 快照，新用户输入优先处理。
 
@@ -74,12 +74,12 @@
 ### 漏触发的固定自愈契约
 
 - 前置 SUCCEEDED、后继依赖全满足但未领取：即使前置的回报完全丢失，handoffGaps 仍报告 DISPATCH_DUE，巡检重新预约并投递后继；不得 ResetTask/重跑成功前置。
-- 派发已预约但消息未送达、执行器没有领取：10 分钟票据到期；下次 15 分钟巡检确认线程 idle 后，ReconcileSupervision 记录一次未领取并清掉旧票据，再派发新令牌。旧消息迟到无法领取。
+- 派发已预约但消息未送达、执行器没有领取：10 分钟票据到期；下次已配置周期巡检确认线程 idle 后，ReconcileSupervision 记录一次未领取并清掉旧票据，再派发新令牌。旧消息迟到无法领取。
 - 前置已结束但 Worker 仍 BUSY/CIRCUIT_OPEN：必须确认真实线程 idle、队列无该线 RUNNING，才可清理 Worker；SUCCEEDED/错误历史不变。真实 active 或所有权不清时只列 needsInspection，不释放。
 - 执行器有最终报告但队列仍 RUNNING：不能凭报告推定成功或直接复跑；检查报告和产物，确认前一轮终止后按孤儿规则留痕，恢复原任务时先核实已落地步骤，禁止重复不可幂等写入。
-- 连续三次派发到期均未领取：任务 NEEDS_USER，报告消息/应用可用性问题；不计作三次业务执行，也不无限每 15 分钟盲发。成功领取会清零连续未领取计数，历史仍保留。
+- 连续三次派发到期均未领取：任务 NEEDS_USER，报告消息/应用可用性问题；不计作三次业务执行，也不无限逐周期盲发。成功领取会清零连续未领取计数，历史仍保留。
 - 完成判定必须覆盖 scope 全部任务。存在 READY/运行任务/可恢复失败就不能因为某一条线到段尾停用监管；仅全部完成、全部被人工/终止性阻断卡住、用户停止或全局熔断才停用。
-- 在应用正常运行且线程空闲的条件下，普通漏触发会在下一轮巡检补发，通常不超过一个 15 分钟周期；应用休眠、工具不可用或运行占用不在该时效保证内。不能承诺消息永不丢失，只能保证对账检查和有上限的恢复。
+- 在应用正常运行且线程空闲的条件下，普通漏触发会在下一轮巡检补发，通常不超过一个已配置周期；应用休眠、工具不可用或运行占用不在该时效保证内。不能承诺消息永不丢失，只能保证对账检查和有上限的恢复。
 
 ### 独立日常美术服务（不计入监管 scope）
 
@@ -94,7 +94,7 @@
 - 普通非闸门 PENDING_USER 不阻止机器链结算，但保留待验清单，不能写成人工通过；人工断点仍按 WAITING_USER 停下。
 - 最后一项 Complete 在队列互斥锁内自动写 MANUAL、session.status=COMPLETE、completion 时间/范围/待验项并清预约。最终真实人工闸门批准也会检查完成。
 - SupervisionStatus 是幂等兜底检查：漏回报或旧会话全部完成时补结算；ReconcileSupervision 和 DispatchSupervision 也检查。对账后必须重读返回模式，已结算不能继续派发。暂停/退出/熔断会话不会被此检查擅自恢复。
-- 队列返回 automationDirective=PAUSE；执行器仍将 supervisorHandoff 回控制台，由控制台汇总并用 automation_update 暂停原 ai 日程（保留15分钟设置），不触及 ART 午夜日程。若应用工具暂停失败，模式门禁已关闭业务；报告失败，下次迟到 heartbeat 只补暂停。
+- 队列返回 automationDirective=PAUSE；执行器仍将 supervisorHandoff 回控制台，由控制台汇总并用 automation_update 暂停原 ai 日程（保留已登记周期设置），不触及 ART 午夜日程。若应用工具暂停失败，模式门禁已关闭业务；报告失败，下次迟到 heartbeat 只补暂停。
 - 不因新任务入队或迟到消息重启监管；下一轮须用户明确重新进入，保留任务级恢复历史。
 
 ## 恢复与熔断
@@ -138,14 +138,20 @@
 
 ## heartbeat 接入契约
 
-首次实际进入监管模式时，由控制台用 Codex automation_update 在**当前控制台线程**建立唯一 heartbeat（名称“AI监管模式补漏”，15 分钟）；先检查既有 automations 配置，已有则完整保留字段更新，不创建重复项。随后 `BindSupervisionAutomation -AutomationId <工具实际返回ID>` 登记到 mode-state 的 supervised.heartbeatAutomationId；下一次 session 保留此 ID，查实后更新同一项。监管模式下四条通用定时领取 ai-10 / ai-mcp-10 / ai-aigc-10 / ai-10-2 均保持 PAUSED；独立日常美术审查不受此限制。当前 ai-10-2 为新美术线定时领取，不再是已删除的历史九任务巡检器；必须以 `.ai-workspace/PIPELINES.md` 和应用实际名称/目标核对，不凭历史 ID 含义删除日程。
+首次实际进入监管模式时，由控制台用 Codex automation_update 在**当前控制台线程**建立唯一 heartbeat（名称“AI监管模式补漏”，本批 60 分钟）；先检查既有 automations 配置，已有则完整保留字段更新，不创建重复项。随后 `BindSupervisionAutomation -AutomationId <工具实际返回ID>` 登记到 mode-state 的 supervised.heartbeatAutomationId；下一次 session 保留此 ID，查实后更新同一项。监管模式下四条通用定时领取 ai-10 / ai-mcp-10 / ai-aigc-10 / ai-10-2 均保持 PAUSED；独立日常美术审查不受此限制。当前 ai-10-2 为新美术线定时领取，不再是已删除的历史九任务巡检器；必须以 `.ai-workspace/PIPELINES.md` 和应用实际名称/目标核对，不凭历史 ID 含义删除日程。
 
 提示词使用 `.ai-workspace/templates/SUPERVISED_HEARTBEAT.md` 全文。停止/退出/批次完成/全部抵达人工断点或全局熔断时暂停此 heartbeat；只有用户继续时恢复。无变化不通知，任务完成、需要人工或不可安全恢复时才通知。queue.ps1 只返回状态/派发与旧 heartbeat 指令，不调用应用 API；未完成 automation_update 不能报告“监管已具备定时保障”。
 
-2026-09-08 初版开发时未启动监管；之后由用户本轮明确指令授权激活，周期改为 15 分钟。实际启用与 scope 仍以 mode-state 和应用自动化状态为准。
+2026-09-08 初版开发时未启动监管；之后由用户本轮明确指令授权激活，当时周期为 15 分钟；PRE-5c 本批改为 60 分钟。实际启用与 scope 仍以 mode-state 和应用自动化状态为准。
 ## PRE-5b · 分层监管与根预算
 
 任务 supervisionLevel=light|full：DevTools/文档/只读默认 light，场景/Prefab/迁移写入默认 full；显式值优先且非法拒绝。light 保留安全/权限即时停止与结束审查；full 再启用 WATCH 租约将到期/无进度规则。WATCH 5～10 分钟只读观察，不 Poll、不占任务编号；模式/stop/scope/迟到门与持久 inbox 去重见 DevTools/Workflow/watch.ps1。桌面端无获支持的 run-now API，生产唤醒适配器须由控制台部署并核真实回执，夹具不能冒充实机。
 
 修复预算按根任务跨模式累计至 2；原 supervisionRepairs 的历史次数不被迁移或重写。常用 Fail→REPAIR子卡成功→Recover 顺序用 -PairedRepairTaskId 指向同根、成功、晚于最新失败且未配对的依赖卡，Recover生成 repairId 并回填该卡，只算原slot；同卡不能在新失败后复用。先Recover后修卡可用 -PairedRecoveryId。预算耗尽仅只读诊断，诊断与明确用户决策后方可再审定修复。此门不降低原安全/人工/全局停止规则。
 
+
+## PRE-5c · 本批监管
+
+本批控制台 heartbeat 为 60 分钟，以 mode-state.supervised.heartbeatMinutes 和 app automation 绑定为准，旧 ai/ART 日程不变。WATCH 通过无模型宿主只读正式 worker.lastProgressAt、supervisionPolicy.supervisionLevel 及可用时已核 localhost:8080 Unity MCP 实例；新增 WORKER_PROGRESS、UNITY_STATE_CHANGED、TURN_LIMIT 事件持久去重并由绑定控制台读/ack，空 inbox 立即结束。断连/陈旧为 null+原因。宿主计划查询的拒绝访问已被用户排除本任务，部署与桌面唤醒回执待完成版。
+
+三档 R-ST 见 WORKFLOW_FULL PRE-5c；`SupervisionCheckpoint` 每批写前照旧，120 个真实 app turn 不因 claim/Recover 清零。

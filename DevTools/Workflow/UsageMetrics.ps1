@@ -2,6 +2,7 @@
 param()
 
 $script:UsageUtf8NoBom = [System.Text.UTF8Encoding]::new($false)
+. (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) '.ai-workspace/repair-budget.ps1')
 
 function ConvertTo-UsageMetric {
     param(

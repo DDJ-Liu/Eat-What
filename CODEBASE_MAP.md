@@ -1,6 +1,6 @@
 # 《是啊，吃什么》代码结构与修改导航
 
-最后完整结构复核：2026-09-17；2026-10-05仅核DATA-R1及PRE-5b相关模块，不提升完整复核日期。当前Unity6000.3.24f1原工作区功能分支；正式DATA-R1已发布并经隔离Unity核验，P2场景/玩法与Excel显示仍待验，旧AI170/171/172停线。按下列模块节定位实际源码，历史逐次专项记录和原概述见[本任务保全快照](.ai-workspace/outputs/PRE-5b/AI-000200/history/CODEBASE_MAP_before_slim.md)；快照的相对链接仍以原仓库根为基准。
+最后完整结构复核：2026-09-17；2026-10-05仅核DATA-R1及PRE-5b相关模块，不提升完整复核日期。当前Unity6000.3.24f1原工作区功能分支；正式DATA-R1已发布并经隔离Unity核验，P2场景/玩法与Excel显示仍待验，AI170/171/172已由FONT-R替代，旧失败史及最终视觉待验保留。按下列模块节定位实际源码，历史逐次专项记录和原概述见[本任务保全快照](.ai-workspace/outputs/PRE-5b/AI-000200/history/CODEBASE_MAP_before_slim.md)；快照的相对链接仍以原仓库根为基准。
 
 ## 1. 工程入口
 
@@ -29,7 +29,7 @@ Spine保护范围：Assets/Scenes/Spine Sample.unity和Assets/Scenes/ToolTests/H
 
 迁移侧滚轮专项：`Assets/Scripts/MouseInteractive/MouseManager.cs` 直接累计Input System统一滚轮单位，冷却期最多保留一步，目标/层/失焦时清理，冷却使用unscaled time；Windows专用`×120`桥接已在MIG-F01移除。手感参数来自T8 `fridge_scroll_threshold`（缺失/非法默认1）与`fridge_scroll_cooldown`（缺失/非法默认0.2秒），由`CK01GeneratedDataCatalog`按invariant culture解析，再经`ShortCycleSessionManager.Start → MouseManager.ConfigureScrollInput`单一路径应用，FridgeScrollLab不设旁路。配置人员入口见[区域滚动说明](组件说明文档/区域滚动_配置与复用说明.md)。本轮源码/静态验证完成，生成资产刷新、Play与Windows/Mac真实硬件手感由后续F3/F4及人工验收完成；旧2022回退基线不用于打开已接棒目录。Windows API保持D3D11优先/D3D12第二，Auto=false。
 
-2026-09-23 FIX-T5 专项：`ShortCycleCameraPanController` 的原三槽序列化值保持不变并扩为 P1/P0Left/P0Center/Right；`ShortCycleSpace.viewTable[].cameraSlot` 决定 Phase0 子视图目标槽。Director 仅在目标槽变化时复用既有 Pan/输入锁/generation，Pan 完成后才激活目标视图；同槽 ①↔④ 不产生 PanStarted。Set 的逻辑激活再与正交相机世界矩形、缓存的子 Renderer 世界 bounds 并集相交，无 Renderer/无可用相机均保留逻辑可见并只发节流诊断。AI168增加TK-MOT-14 `CameraViewportAnchor` 和显式 `keepVisualActiveAcrossSpaces`：锚定控件Renderer不参与世界bounds；持续结构绕过相机裁切导致的逻辑Deactivate，但焦点与交互仍单独关闭，普通Set/Modal默认行为不变。AI156 已完成原正式场景接线：四 Marker 的 x=-25.6/-12.8/0/25.6；线索板两锚点同为(-19.2,-2.1168,-0.3)，Shared/ClueBoard_Group/ClueBoard_HitArea 复用鼠标动作/状态门控，旧实体按钮退役。AI165的④书页压暗和板外返回保持；后续AI169已完成ClueBoard持续标志和两个返回按钮viewport(.06,.08)接线，P0Left改为-9.6，并通过连续构图/Play机器回归，最终多宽高比画面仍PENDING_USER。上列-12.8为AI156历史值，不是现布局。配置入口见[镜头视口锚定说明](组件说明文档/镜头视口锚定_配置与复用说明.md)。CoverTitle例外及171行、Lab60迁移范围已由用户批准；正式字体执行当前等AI179修复后恢复原AI170，最终视觉不代签。
+2026-09-23 FIX-T5 专项：`ShortCycleCameraPanController` 的原三槽序列化值保持不变并扩为 P1/P0Left/P0Center/Right；`ShortCycleSpace.viewTable[].cameraSlot` 决定 Phase0 子视图目标槽。Director 仅在目标槽变化时复用既有 Pan/输入锁/generation，Pan 完成后才激活目标视图；同槽 ①↔④ 不产生 PanStarted。Set 的逻辑激活再与正交相机世界矩形、缓存的子 Renderer 世界 bounds 并集相交，无 Renderer/无可用相机均保留逻辑可见并只发节流诊断。AI168增加TK-MOT-14 `CameraViewportAnchor` 和显式 `keepVisualActiveAcrossSpaces`：锚定控件Renderer不参与世界bounds；持续结构绕过相机裁切导致的逻辑Deactivate，但焦点与交互仍单独关闭，普通Set/Modal默认行为不变。AI156 已完成原正式场景接线：四 Marker 的 x=-25.6/-12.8/0/25.6；线索板两锚点同为(-19.2,-2.1168,-0.3)，Shared/ClueBoard_Group/ClueBoard_HitArea 复用鼠标动作/状态门控，旧实体按钮退役。AI165的④书页压暗和板外返回保持；后续AI169已完成ClueBoard持续标志和两个返回按钮viewport(.06,.08)接线，P0Left改为-9.6，并通过连续构图/Play机器回归，最终多宽高比画面仍PENDING_USER。上列-12.8为AI156历史值，不是现布局。配置入口见[镜头视口锚定说明](组件说明文档/镜头视口锚定_配置与复用说明.md)。CoverTitle例外及171行、Lab60迁移范围已由用户批准；AI170/171/172 已被 FONT-R 替代，旧失败/恢复史保留。用户2026-10-05最新取消AI203/204恢复与恢复提交，确认当前布局及字体为新基线，由控制台正常hook提交后直接AI205 R2→AI206编译→AI207 R3幂等执行。只保护Static精确字节，三现有材质和GUID保留并在R3重调UpdateShaderRatios；布局新变化保留，最终视觉仍待用户。
 
 ## 2. ShortCycle 当前主链
 
