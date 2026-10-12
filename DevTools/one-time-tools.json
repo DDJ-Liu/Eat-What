@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "policyEffective": "next-batch-after-2026-10-12",
+  "tools": [
+    {
+      "sourcePath": "Assets/Editor/Fonts/FontSwapOnce.cs",
+      "status": "completed-retained",
+      "runnerPaths": [
+        "DevTools/Fonts/Test-FontSwapOnce.ps1",
+        "DevTools/Fonts/deprecated/Test-FontSwap.ps1"
+      ],
+      "verification": "offline-compile-and-one-real-editor-execution",
+      "independentProcessTests": false,
+      "coldLoadTests": false,
+      "includeInFinal": false
+    }
+  ]
+}

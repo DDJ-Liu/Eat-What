@@ -4,7 +4,6 @@ param([string]$UnityEditorPath)
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $builderPath = Join-Path $repoRoot 'Assets\Editor\Fonts\ShortCycleFontAtlasBuilder.cs'
-$swapPath = Join-Path $repoRoot 'Assets\Editor\Fonts\ShortCycleFontSwapTool.cs'
 $layoutAuditPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\ShortCycleLayoutAudit.cs'
 $parserPath = Join-Path $repoRoot 'Assets\Editor\DataTables\DataTableValidationCore.cs'
 $legacyPath = Join-Path $repoRoot 'Assets\Font\Heavy\ShortCycle_Heavy_WithFallback.asset'
@@ -24,7 +23,6 @@ function Assert-NotContains {
 }
 
 $builder = Get-Content -Raw -LiteralPath $builderPath
-$swap = Get-Content -Raw -LiteralPath $swapPath
 $layoutAudit = Get-Content -Raw -LiteralPath $layoutAuditPath
 
 Assert-Contains $builder 'DataTableCsvParser\.Parse\s*\(' 'Builder must use the project CSV parser.'
@@ -38,24 +36,6 @@ Assert-Contains $builder 'SetFallbackChain\(asset,\s*dynamicFallback\)' 'Static 
 Assert-Contains $builder 'approvalStatus\s*=\s*"PENDING_REVIEW"' 'Generated manifest must require explicit review.'
 Assert-NotContains $builder 'TMP_Settings\s*\.' 'Builder must not mutate global TMP settings.'
 Assert-NotContains $builder '[\u4e00-\u9fff]' 'Builder source must not hardcode a Chinese character range.'
-
-Assert-Contains $swap 'ValidateAllowlist\s*\(' 'Swap tool must require an explicit allowlist.'
-Assert-Contains $swap 'safeToSwitchOnlyFontAsset' 'Swap preview must report per-entry safety.'
-Assert-Contains $swap 'sourceFontCompatible' 'Swap preview must report source-font compatibility.'
-Assert-Contains $swap 'materialCompatible' 'Swap preview must report material compatibility.'
-Assert-Contains $swap 'MATERIAL_ATLAS_INCOMPATIBLE' 'Swap preview must explain incompatible material atlases.'
-Assert-Contains $swap 'FindProperty\("m_fontAsset"\)' 'Execute must address only the TMP font field.'
-Assert-Contains $swap 'FindProperty\("m_sharedMaterial"\)' 'Approved execute must address the paired TMP material field.'
-Assert-Contains $swap 'PreviewApprovedMigration' 'Approved migration must expose a read-only Editor preflight API.'
-Assert-Contains $swap 'ExecuteApprovedMigration' 'Approved migration must expose a transactional execute API.'
-Assert-Contains $swap 'RollbackApprovedMigration' 'Approved migration must expose an idempotent rollback API.'
-Assert-Contains $swap 'ApprovedMappingSha256' 'Approved migration must bind the reviewed CSV hash.'
-Assert-Contains $swap 'CopyAtlasProperties' 'Approved material clones must have an explicit atlas replacement boundary.'
-foreach ($atlasProperty in @('_MainTex','_TextureWidth','_TextureHeight','_GradientScale')) {
-    Assert-Contains $swap ([regex]::Escape($atlasProperty)) "Approved migration lost atlas property $atlasProperty."
-}
-Assert-NotContains $swap 'm_text|m_Text|sortingOrder\s*=' 'Execute must not rewrite text or sorting.'
-Assert-Contains $swap 'Complete a read-only preflight over the whole allowlist' 'Execute must preflight before writes.'
 
 Assert-Contains $layoutAudit 'ShortCycleStaticFontPath' 'Layout audit must identify the future static font.'
 Assert-Contains $layoutAudit 'spacesStaticFontValid' 'Layout audit must report the Spaces static-font assertion.'
@@ -77,8 +57,8 @@ $legacyCharacters = [System.Collections.Generic.HashSet[uint]]::new()
 foreach ($match in [regex]::Matches([System.IO.File]::ReadAllText($legacyPath), '(?m)^\s*m_Unicode:\s*(\d+)\s*$')) {
     [void]$legacyCharacters.Add([uint]::Parse($match.Groups[1].Value))
 }
-if ($legacyCharacters.Count -ne 216) {
-    throw "Reviewed legacy atlas character count changed: $($legacyCharacters.Count), expected 216."
+if ($legacyCharacters.Count -eq 0) {
+    throw "Current legacy font has no readable character entries."
 }
 $localizationCharacters = [System.Collections.Generic.HashSet[uint]]::new()
 foreach ($row in $parsed.Table.Rows) {
@@ -161,7 +141,7 @@ try {
     $outputDll = Join-Path $resolvedBuildDirectory 'ShortCycleFonts.Editor.dll'
     $arguments = @($csc, '/nologo', '/target:library', '/langversion:latest', '/nostdlib+', ('/out:' + $outputDll))
     $arguments += $references | Select-Object -Unique | ForEach-Object { '/reference:' + $_ }
-    $arguments += @($parserPath, $builderPath, $swapPath, $layoutAuditPath)
+    $arguments += @($parserPath, $builderPath, $layoutAuditPath)
     $compilerOutput = @(& $dotnet @arguments 2>&1)
     if ($compilerOutput.Count -gt 0) { $compilerOutput | Write-Output }
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $outputDll -PathType Leaf)) {

@@ -90,8 +90,7 @@ $profileRunners = [ordered]@{
         'DevTools/Rendering/Test-EtherBubbleDistortion.ps1'
     )
     Fonts = @(
-        'DevTools/Fonts/Test-ShortCycleFonts.ps1',
-        'DevTools/Fonts/Test-FontSwap.ps1'
+        'DevTools/Fonts/Test-ShortCycleFonts.ps1'
     )
 }
 
@@ -120,6 +119,14 @@ foreach ($path in $RunnerPath) {
     if (-not $runners.Contains($full)) { $runners.Add($full) }
 }
 
+# Once-only tools never enter Final, including through a Custom runner.
+$onceOnly = Get-Content -LiteralPath (Join-Path $repositoryRoot 'DevTools/one-time-tools.json') -Raw | ConvertFrom-Json
+if ($Mode -eq 'Final') {
+    foreach ($runner in $runners) {
+        $relative = [IO.Path]::GetRelativePath($repositoryRoot,[IO.Path]::GetFullPath($runner)).Replace('\','/')
+        if (@($onceOnly.tools | Where-Object { $_.runnerPaths -icontains $relative }).Count -gt 0) { throw "One-time tool runner cannot enter Final: $relative" }
+    }
+}
 [void][System.IO.Directory]::CreateDirectory($StateRoot)
 $safeTaskId = $TaskId -replace '[^A-Za-z0-9_.-]', '_'
 $historyPath = Join-Path $StateRoot ("verify-all-{0}.jsonl" -f $safeTaskId)
