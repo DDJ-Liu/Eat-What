@@ -116,3 +116,6 @@ Assets/Plugins/Febucci/Text Animator/Extra/Typewriter Sound - Package.unitypacka
 Assets/Plugins/Febucci/Text Animator/Integrations/PlayMaker - Integration.unitypackage.meta
 Assets/Plugins/Febucci/Text Animator/Integrations/Visual Scripting - Integration.unitypackage.meta
 Assets/Spine Examples/
+
+# E2 raw evidence contains LOCAL_ONLY machine logs and client snapshots.
+/.ai-workspace/archive/E2-20261012/

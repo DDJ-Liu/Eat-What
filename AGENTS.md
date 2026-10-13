@@ -34,7 +34,7 @@ Unity 版本：6000.3.24f1（E1已验收、原工作区H接棒通过；禁止用
 
 - 原工作区 `D:/GameProject/Eat-What` 使用 `codex/unity6-followup` 和6000.3.24f1；H已通过，业务代码冻结/迁移侧文件独占解除。三场景及引用Prefab的定向重序列化已独立完成；后续业务由用户指定范围后推进，main不直接开发。
 - 独立迁移工作区 `D:/GameProject/Eat-What-U6` 使用 `migration/unity-6.3`；首次 Unity 6 打开由用户执行，不能自动使用其它版本替代。实际导入状态以该副本 ProjectVersion 和台账为准。
-- 用户已冻结C=65604ab并确认37bb854人工终验通过；E1时main与unity6.3-baseline指向该候选。H接棒和独立定向重序列化已通过机器回归，H后格式提交及记录已按用户最新决定集成main，标签仍固定37bb854；后续开发在codex/unity6-followup，最新入口为 `.ai-workspace/MIG63/E1H_接棒与后续项.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 `Assets/Editor/MIG63Validation`，不能作为临时垃圾清理。
+- 用户已冻结C=65604ab并确认37bb854人工终验通过；E1时main与unity6.3-baseline指向该候选。H接棒和独立定向重序列化已通过机器回归，H后格式提交及记录已按用户最新决定集成main，标签仍固定37bb854；后续开发在codex/unity6-followup，最新入口为 `.ai-workspace/MIG63/E1H_接棒与后续项.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 `Assets/Editor/ProjectValidation`，不能作为临时垃圾清理。
 - main 仅接收经过验收的集成，不直接开发；`backup/pre-unity6-20260920` 固定保留启动基线。迁移成果在 E1 前不得进入原 2022 工作区。
 - 采用手动 MIG- 台账，不启动或复制原自动队列。Spine Sample 与 HorizontalPlayerControllerTest 预研必须保留；不能通过删除或排除其编译完成迁移。
 - M4已将MCP收敛为仓库内固定Editor包；服务端来源/锁文件及恢复方式见 `DevTools/MCP/README.md`。使用前每次发现/选择实例并核对Application.dataPath与版本；共享EditorPrefs和外部客户端配置不得盲目改写，不接原自动队列。序列化操作优先MCP/审定Editor API，不手改YAML。

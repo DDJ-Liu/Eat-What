@@ -7,7 +7,7 @@ using UnityEngine;
 using Spine.Unity;
 
 // Tests saved reference scenes. All animation, input and equipment changes are Play-only.
-internal static class MIG63SpineSceneProbe
+internal static class SpineSceneProbe
 {
     static SkeletonMecanim[] actors;
     static HorizontalPlayerController movement;
@@ -15,14 +15,14 @@ internal static class MIG63SpineSceneProbe
     static Camera camera;
     static RenderTexture target;
 
-    [MenuItem("Tools/MIG63/Validation/Spine Sample Saved Scene")]
-    public static void Sample() => MIG63ValidationSession.Begin("spine-scene", "Assets/Scenes/Spine Sample.unity");
+    [MenuItem("Tools/Project Validation/Spine Sample Saved Scene")]
+    public static void Sample() => SceneValidationSession.Begin("spine-scene", "Assets/Scenes/Spine Sample.unity");
 
-    [MenuItem("Tools/MIG63/Validation/Horizontal Saved Scene")]
-    public static void Horizontal() => MIG63ValidationSession.Begin("spine-scene", "Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity");
+    [MenuItem("Tools/Project Validation/Horizontal Saved Scene")]
+    public static void Horizontal() => SceneValidationSession.Begin("spine-scene", "Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity");
 
-    static void Check(bool value, string message) => MIG63ValidationSession.Check(value, message);
-    static void Next(int stage, double delay = .4) => MIG63ValidationSession.Advance(stage, delay);
+    static void Check(bool value, string message) => SceneValidationSession.Check(value, message);
+    static void Next(int stage, double delay = .4) => SceneValidationSession.Advance(stage, delay);
     static void Input(float value)
     {
         if (movement != null) movement.SetHorizontalInput(value);
@@ -41,7 +41,7 @@ internal static class MIG63SpineSceneProbe
             RenderTexture.active = target;
             texture.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);
             texture.Apply();
-            File.WriteAllBytes(Path.Combine(MIG63ValidationSession.Output, name + ".png"), texture.EncodeToPNG());
+            File.WriteAllBytes(Path.Combine(SceneValidationSession.Output, name + ".png"), texture.EncodeToPNG());
         } finally { RenderTexture.active = previous; UnityEngine.Object.DestroyImmediate(texture); }
     }
     internal static void Cleanup()
@@ -51,7 +51,7 @@ internal static class MIG63SpineSceneProbe
     }
     internal static void Tick()
     {
-        int stage = MIG63ValidationSession.Stage;
+        int stage = SceneValidationSession.Stage;
         if (stage == 0) {
             actors = UnityEngine.Object.FindObjectsByType<SkeletonMecanim>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             movement = UnityEngine.Object.FindFirstObjectByType<HorizontalPlayerController>();
@@ -109,7 +109,7 @@ internal static class MIG63SpineSceneProbe
         }
         if (stage == 5) {
             Check(actors.All(a => a.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("kick")), "saved Animator enters kick");
-            Capture("03-kick"); MIG63ValidationSession.Finish();
+            Capture("03-kick"); SceneValidationSession.Finish();
         }
     }
 }

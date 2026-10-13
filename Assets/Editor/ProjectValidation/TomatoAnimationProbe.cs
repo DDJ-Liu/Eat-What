@@ -9,23 +9,23 @@ using UnityEngine;
 using Spine.Unity;
 
 // Builds an unsaved runtime fixture from the existing Tomato data; no asset imports/builds.
-internal static class MIG63TomatoProbe
+internal static class TomatoAnimationProbe
 {
- static string Output => MIG63ValidationSession.Output;
+ static string Output => SceneValidationSession.Output;
  static SkeletonAnimation actor; static SkeletonMecanim mecanim; static HorizontalPlayerController movement;
  static CharacterEquipment equipment; static Animator animator; static Camera camera; static RenderTexture target;
  static float previousX;
  static readonly List<UnityEngine.Object> owned = new List<UnityEngine.Object>();
- static void Check(bool condition, string message) => MIG63ValidationSession.Check(condition, message);
- static void Advance(int stage) => MIG63ValidationSession.Advance(stage, .75);
+ static void Check(bool condition, string message) => SceneValidationSession.Check(condition, message);
+ static void Advance(int stage) => SceneValidationSession.Advance(stage, .75);
 
- [MenuItem("Tools/MIG63/Validation/Tomato Dual Path GPU %#F10")]
+ [MenuItem("Tools/Project Validation/Tomato Dual Path GPU %#F10")]
  public static void Run()
  {
      var asset = AssetDatabase.LoadAssetAtPath<SkeletonDataAsset>("Assets/Scripts/Spine_Package/Avatars/Tomato/skeleton_SkeletonData.asset");
      if (asset == null || asset.GetSkeletonData(false).Version != "3.8.99")
          throw new InvalidOperationException("Requires the approved Tomato 3.8.99 fixture.");
-     MIG63ValidationSession.Begin("tomato", null);
+     SceneValidationSession.Begin("tomato", null);
  }
  static void Set(object instance,string name,object value){instance.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).SetValue(instance,value);}
  static CharacterEquipment Dress(GameObject go){var c=go.AddComponent<CharacterEquipment>();c.baseSkin="Tomato_Non";c.autoOptimize=false;c.equipmentSlots=new List<CharacterEquipment.EquipmentSlot>();foreach(var part in new[]{"Hair","Eyes","Ear","Mouth","TopCloth","BottomCloth","Shoes"})c.equipmentSlots.Add(new CharacterEquipment.EquipmentSlot(part,"Tomato_"+part+"_A"));return c;}
@@ -42,7 +42,7 @@ internal static class MIG63TomatoProbe
  internal static void Cleanup(){if(camera!=null)camera.targetTexture=null;if(target!=null){target.Release();UnityEngine.Object.DestroyImmediate(target);target=null;}if(animator!=null)animator.runtimeAnimatorController=null;foreach(var obj in owned.AsEnumerable().Reverse())if(obj!=null)UnityEngine.Object.DestroyImmediate(obj);owned.Clear();}
  internal static void Tick()
  {
-  var stage = MIG63ValidationSession.Stage;
+  var stage = SceneValidationSession.Stage;
   if(stage==0){Setup();Advance(1);return;}
   if(stage==1){Check(actor.valid&&mecanim.valid,"both SkeletonAnimation and SkeletonMecanim initialize");Check(actor.GetComponent<MeshFilter>().sharedMesh.vertexCount>0&&mecanim.GetComponent<MeshFilter>().sharedMesh.vertexCount>0,"both paths generate visible attachment meshes");Check(actor.AnimationState.GetCurrent(0).Animation.Name=="idle","controller initializes idle");Frame();Advance(2);return;}
   if(stage==2){Capture("01-idle");previousX=actor.transform.position.x;movement.SetHorizontalInput(1);animator.Play("walk",0,0);Advance(3);return;}
@@ -52,6 +52,6 @@ internal static class MIG63TomatoProbe
   if(stage==6){Check(actor.AnimationState.GetCurrent(0).Animation.Name=="idle","stopping restores idle");Check(actor.Skeleton.Skin.Name=="character-combined"&&mecanim.Skeleton.Skin.Name=="character-combined","CharacterEquipment applies combined skin on both paths");Frame();Advance(7);return;}
   if(stage==7){Capture("03-equipment");actor.AnimationState.SetAnimation(0,"kick",true);animator.Play("kick",0,0);Advance(8);return;}
   if(stage==8){Check(actor.AnimationState.GetCurrent(0).Animation.Name=="kick"&&animator.GetCurrentAnimatorStateInfo(0).IsName("kick"),"kick executes on both animation paths");Frame();Advance(9);return;}
-  if(stage==9){Capture("04-kick");MIG63ValidationSession.Finish();}
+  if(stage==9){Capture("04-kick");SceneValidationSession.Finish();}
  }
 }

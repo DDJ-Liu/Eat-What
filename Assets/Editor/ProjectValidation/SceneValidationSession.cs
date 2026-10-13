@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 // Registers callbacks only. Tests start exclusively from explicit menu commands.
 [InitializeOnLoad]
-internal static class MIG63ValidationSession
+internal static class SceneValidationSession
 {
     const string Key = "MIG63.Validation.";
     const string Font = "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
@@ -21,7 +21,7 @@ internal static class MIG63ValidationSession
     internal static string Output => SessionState.GetString(Key + "output", "");
     internal static int Stage { get => SessionState.GetInt(Key + "stage", 0); set => SessionState.SetInt(Key + "stage", value); }
     internal static int Sequence { get => SessionState.GetInt(Key + "sequence", 0); set => SessionState.SetInt(Key + "sequence", value); }
-    static MIG63ValidationSession()
+    static SceneValidationSession()
     {
         EditorApplication.update += Tick;
         EditorApplication.playModeStateChanged += StateChanged;
@@ -104,8 +104,8 @@ internal static class MIG63ValidationSession
         File.AppendAllText(Path.Combine(Output, "failure.txt"), error + "\n");
         SessionState.SetBool(Key + "finishing", true);
         SessionState.SetBool(Key + "complete", false);
-        MIG63TomatoProbe.Cleanup();
-        MIG63SpineSceneProbe.Cleanup();
+        TomatoAnimationProbe.Cleanup();
+        SpineSceneProbe.Cleanup();
         if (EditorApplication.isPlayingOrWillChangePlaymode) EditorApplication.isPlaying = false;
         else EditorApplication.delayCall += Restore;
     }
@@ -121,8 +121,8 @@ internal static class MIG63ValidationSession
         {
             SessionState.SetBool(Key + "ready", false);
             SessionState.SetBool(Key + "finishing", true);
-            MIG63TomatoProbe.Cleanup();
-            MIG63SpineSceneProbe.Cleanup();
+            TomatoAnimationProbe.Cleanup();
+            SpineSceneProbe.Cleanup();
         }
         if (state == PlayModeStateChange.EnteredEditMode) EditorApplication.delayCall += Restore;
     }
@@ -163,9 +163,9 @@ internal static class MIG63ValidationSession
             if (DateTime.UtcNow.Ticks > long.Parse(SessionState.GetString(Key + "deadline", "0")))
                 throw new TimeoutException("MIG63 validation exceeded 120 seconds.");
             if (!EditorApplication.isPlaying || EditorApplication.isPaused || !SessionState.GetBool(Key + "ready", false) || EditorApplication.timeSinceStartup < Next) return;
-            if (SessionState.GetString(Key + "kind", "") == "wheel") MIG63WheelProbe.Tick();
-            else if (SessionState.GetString(Key + "kind", "") == "spine-scene") MIG63SpineSceneProbe.Tick();
-            else MIG63TomatoProbe.Tick();
+            if (SessionState.GetString(Key + "kind", "") == "wheel") ScrollWheelProbe.Tick();
+            else if (SessionState.GetString(Key + "kind", "") == "spine-scene") SpineSceneProbe.Tick();
+            else TomatoAnimationProbe.Tick();
         }
         catch (Exception error) { Fail(error); }
         finally { busy = false; }

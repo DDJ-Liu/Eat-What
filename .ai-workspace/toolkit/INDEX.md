@@ -2,6 +2,8 @@
 
 > 代码改动清单三问先查本表，再按域读取正文。旧入口 `.ai-workspace/TOOLKIT_REGISTRY.md` 保持兼容。
 
+长期 Editor 场景/滚轮/Tomato 验证探针保留在 `Assets/Editor/ProjectValidation/`，手动菜单为 `Tools/Project Validation/`；使用说明见 `DevTools/ProjectValidation/README.md`。E2 仅更名并保留 GUID，历史输出仍在 `.ai-workspace/outputs/MIG63/Validation/`。
+
 | ID | 名称/摘要 | 域 | 正文 |
 | --- | --- | --- | --- |
 | TK-CMD-01 | CommandManager + CommandBindingAsset Command/ | CMD | [CMD.md](CMD.md#tk-cmd-01) |

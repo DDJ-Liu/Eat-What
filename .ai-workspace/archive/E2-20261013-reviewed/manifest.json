@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "scope": "Reviewed E2 evidence subset; not the complete migration recovery archive",
+  "fileCount": 22,
+  "files": [
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/临时项登记.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/临时项登记.md",
+      "bytes": 6288,
+      "sha256": "956AE48156F3ECF7B3E6011CA7DA5CBBAA76E21378C87A019E245DE3B99097F3"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/迁移基线.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/迁移基线.md",
+      "bytes": 28279,
+      "sha256": "031399440C962710DB263903B7EA7A091C520593CBE7403918287E124282A59C"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/首次打开迁移项目.ps1",
+      "source": "original local archive: migration/.ai-workspace/MIG63/首次打开迁移项目.ps1",
+      "bytes": 2236,
+      "sha256": "F189FA76239050F5974F9EF1C4A6D1C24BC851E95281C5EC3837506E6E87A310"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/首次导入操作.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/首次导入操作.md",
+      "bytes": 2503,
+      "sha256": "484404CCA321B8E9A8550EA7EE909EF2F32E22F35E00D27E5892CE48417D846C"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/执行台账.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/执行台账.md",
+      "bytes": 13849,
+      "sha256": "E95DCF42CE065B5904B74A1963FA021D3766C6569C332A59BE5CB2E489D7AEEF"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/M1_首次导入诊断与修复清单.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/M1_首次导入诊断与修复清单.md",
+      "bytes": 10148,
+      "sha256": "AF8822AF5EF726C39D2D1EE3C0AAFEA93D962EC2F9ADE204FE3A8538B24F4A5C"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/M2M3_执行结果与人工验收.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/M2M3_执行结果与人工验收.md",
+      "bytes": 11944,
+      "sha256": "9F5DFF89FC6FC2E35589287898D042E72C15CCBAF883C5BC2EB9E4994B94548B"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/M3R_迁移分支增量.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/M3R_迁移分支增量.md",
+      "bytes": 3775,
+      "sha256": "E2E109DB9000A924EFFB1A42681E51AB48D86F00C5A545B7CF2F24CA035CF1F1"
+    },
+    {
+      "archivePath": "migration/.ai-workspace/MIG63/M3R_人工反馈处理与补漏.md",
+      "source": "original local archive: migration/.ai-workspace/MIG63/M3R_人工反馈处理与补漏.md",
+      "bytes": 18032,
+      "sha256": "ABD4C1A35087668B47176361FCBEA039AE4D5402A704B768824F1CA1B31B9F5A"
+    },
+    {
+      "archivePath": "E2/AI-000219/REPORT.md",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/REPORT.md",
+      "bytes": 3116,
+      "sha256": "503A51ADB633554510099B8D0D376656AFE44FC26145499E13C994174E805ECB"
+    },
+    {
+      "archivePath": "E2/AI-000219/evidence.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/evidence.json",
+      "bytes": 4451,
+      "sha256": "B22DCB16B2A7EDCE4485102FD02D307BBAA2170D82F699FECE3D52F64C192426"
+    },
+    {
+      "archivePath": "E2/AI-000219/acceptance.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/acceptance.json",
+      "bytes": 1139,
+      "sha256": "57B76BE2198F1634F180C582FE30F604C75CCD415C4441A7CBC81168EF7986BF"
+    },
+    {
+      "archivePath": "E2/AI-000219/restore-result.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/restore-result.json",
+      "bytes": 687,
+      "sha256": "5C16BDB7FF95A5BE43FD4C2150203CEBBC94FE4C61819FF43C81B64A904E9768"
+    },
+    {
+      "archivePath": "E2/AI-000219/恢复报告.md",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/恢复报告.md",
+      "bytes": 1181,
+      "sha256": "BA80A8806F3D206E59041E80AB27D76CAEE6EF1FCD604C039CB61FD0625E5CE1"
+    },
+    {
+      "archivePath": "E2/AI-000219/rename-plan.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/rename-plan.json",
+      "bytes": 6175,
+      "sha256": "7215B762207B4120C9C715EB444F29ADC39818AD66C069663AD03B01AD42742C"
+    },
+    {
+      "archivePath": "E2/AI-000219/hook-config-plan.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/hook-config-plan.json",
+      "bytes": 1785,
+      "sha256": "E80F1EB5305CA89E196A8ECAE73704083348A7034F2D68F86F78718A77E48A0F"
+    },
+    {
+      "archivePath": "E2/AI-000219/git-review-plan.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/git-review-plan.json",
+      "bytes": 887,
+      "sha256": "6833E7EFC1744A433ADBDACCEAFEB95E37CA09B941C3ADC6E18FF85650FB17A0"
+    },
+    {
+      "archivePath": "E2/AI-000219/remaining-conditions.md",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000219/remaining-conditions.md",
+      "bytes": 1118,
+      "sha256": "2AED16DDC2D2F8FFD817DDE0BFA3FC666F036E5CF9C910F1731930D8C12432F9"
+    },
+    {
+      "archivePath": "E2/AI-000220/REPORT.md",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000220/REPORT.md",
+      "bytes": 3574,
+      "sha256": "39CE080B3DA930A57BC2246BA38C315A66C8B2EDDD83121B6C7E60D0C45D654E"
+    },
+    {
+      "archivePath": "E2/AI-000220/evidence.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000220/evidence.json",
+      "bytes": 4407,
+      "sha256": "85C534A32D61514FEEC6C46164476212A64536B3199A318BB91001A8EAE226CD"
+    },
+    {
+      "archivePath": "E2/AI-000220/acceptance.json",
+      "source": ".ai-workspace/outputs/E2-20261012/AI-000220/acceptance.json",
+      "bytes": 939,
+      "sha256": "3E7C8E9C933FC806DDD23C92003725CA87C0B798AF64CD1C802CE43C290C73B6"
+    },
+    {
+      "archivePath": "E2/AI-000220/AI-000220_editor.png",
+      "source": "Captures/AI-000220/AI-000220_editor.png",
+      "bytes": 623825,
+      "sha256": "436DE9B037395035E18DA710C54074323949E4BB8F13F272BE71E5099ECBC2BE"
+    }
+  ],
+  "zipBytes": 688776,
+  "zipSha256": "0153732B8C9B08C324ECA15875A7FA8497590E43BCB118474A66A38A714A237A",
+  "restoredFiles": 22,
+  "mismatches": 0,
+  "publication": "Prepared for user push; remote persistence unverified",
+  "completeLocalArchive": {
+    "path": ".ai-workspace/archive/E2-20261012/records.zip",
+    "files": 5133,
+    "sha256": "5F73219CDF2F1D024941B7CC19EA14BE1930D274321EFBE20F76D9E2DC781AB4",
+    "disposition": "LOCAL_ONLY; retained, excluded from Git; private backup required before source cleanup"
+  }
+}
