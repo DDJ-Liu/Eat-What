@@ -1,10 +1,10 @@
 # MIG63 E1 集成、H 接棒与后续项
 
-> 2026-10-13 E2提交整理：AI219/AI220均SUCCEEDED/VERIFIED，自动链已于10-12 20:12完成（AUTOMATIC/COMPLETE，无运行节点）。用户授权本轮在codex/unity6-followup整理与提交，推送由用户执行。长期工具保GUID更名已验收；可入库证据与剩余条件见[收束记录](E2_收束与提交.md)。完整本地原始包保留且不入库；远端持久化、迁移专属配置/副本清理和最终main集成仍待后续，E2整体未关闭。
+> 2026-10-13 E2后续：AI219/220/221均VERIFIED；用户已推送e5bd37e，远端LFS子集实际恢复22/22。完整5,133文件包及64文件补充包已保全至E:/MIG63-Backups/E2-20261013（本机私有备份）。迁移专属hook/phase已解除，迁移clone已于14:31安全删除；字体/LFS/main与backup保护、长期工具、Spine Examples和旧备份保留。当前AUTOMATIC/COMPLETE，无运行节点；用户已授权本轮E2收尾提交及本地main快进；实际提交/集成结果以outputs/control/E2-FINAL-COMMIT-20261013/commit-result.json为准，远端推送仍由用户完成。 详见[收束记录](E2_收束与提交.md)。
 
 > 2026-09-22 用户更新分支规则：当前成果（含H后格式提交）集成main，旧content/p0p1-layout关闭并删除；从新main建立codex/unity6-followup并跟踪同名origin，后续F和E2由“AI工作流-控制台（接管）”管理，E2完整关闭时再集成main。F待用户指定，MANUAL和历史队列保持，不自动派发。E1标签仍固定37bb854，backup保持ec3aa7c；迁移分支/副本暂留。详见[控制台移交](H后分支切换与控制台移交.md)。本文下方“格式提交留在content、main保持37bb854”等表述记录H完成时点，已由此次分支决定接续。
 
-最后专项核对：2026-10-12（字体收束、实际队列与E2准备；未重做E1/H或全项目复核）。F-α原功能与字体R4、Excel已获用户验收。AI207 VERIFIED，AI162后续待验已结清；AI214由AI217覆盖，正式CLOSED_SUPERSEDED，四次失败不改成通过。字体范围Git提交09cd180已完成；用户10-13另授权本轮E2本地提交、推送由用户执行。当前E2自动链已COMPLETE，无运行节点，watch-60仍暂停；旧AI170/171/172已CLOSED_SUPERSEDED，不按旧编号恢复派发。E2本地归档与恢复验证已由AI219完成、长期工具保GUID功能更名已由AI220实施；迁移专属配置/副本清理、本轮E2提交收束、远端持久化及最终main集成按页首新决定处理。Spine Examples未经决定默认保留，远端持久化及恢复证明完成前不删除迁移副本。详见outputs/control/FONT-R-CLOSEOUT-20261012/收尾与剩余事项.md；下方旧阶段事实不改。
+最后专项核对：2026-10-13（E2远端恢复、私有保全、配置解除和副本清理；未重做E1/H、字体或全项目复核）。AI219/220/221均SUCCEEDED/VERIFIED；字体、Excel及人工配表验收保持。旧失败、许可和CLOSED_SUPERSEDED记录不改。Spine Examples默认保留，布局/P2由原任务承接。下文日期段落是阶段历史，以页首当前事实为准。
 
 ## E1 验收与远端基线
 

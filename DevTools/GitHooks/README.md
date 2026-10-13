@@ -4,7 +4,7 @@
 
 `DevTools/Fonts/ShortCycleFontBuildManifest.json` 必须APPROVED，带批准人/时间，工作树和index完全一致，Static路径固定；缺Static、未知模式、未批准/不一致manifest或Static任一表示漂移均拒绝。manifest旧生成时间/旧字体哈希/字数只是历史生成观测，不伪改为本轮重建结果。用户已确认当前布局与字体用于新基线checkpoint，不等于字体迁移或视觉签收。
 
-正常pre-commit仍调用 `check-mig63-font.sh`，不修改本地hook/config、不使用no-verify。历史无Static clone保留旧精确legacy检查；没有protectionMode的旧manifest保留旧双字体合同。已经提交Static的仓库不允许删除Static降级到旧模式。
+正常pre-commit仍调用 `check-mig63-font.sh`，不使用no-verify；日常字体任务不改本地hook/config。2026-10-13 E2仅解除迁移phase和旧分支冻结；安装与便携hook一致，字体、main/backup保护及LFS pre-push保持。历史无Static clone保留旧精确legacy检查；没有protectionMode的旧manifest保留旧双字体合同。已经提交Static的仓库不允许删除Static降级到旧模式。
 
 回归：`python DevTools/GitHooks/test-font-guard.py` 在临时Git仓库调用真实hook，覆盖旧合同及STATIC_ONLY的工作树/index/LFS/审批/缺失/漂移；历史SHA常量仅在隔离夹具中绑定合成历史字节，不改生产字体/index。Windows使用Git for Windows bash。shell源码固定LF。
 

@@ -1,8 +1,8 @@
 # 《是啊，吃什么》代码结构与修改导航
 
-2026-10-13 E2提交整理：AI219/AI220均SUCCEEDED/VERIFIED，自动链已于10-12 20:12完成（AUTOMATIC/COMPLETE，无运行节点）。用户授权本轮在codex/unity6-followup整理与提交，推送由用户执行。长期工具保GUID更名已验收；可入库证据与剩余条件见[收束记录](.ai-workspace/MIG63/E2_收束与提交.md)。完整本地原始包保留且不入库；远端持久化、迁移专属配置/副本清理和最终main集成仍待后续，E2整体未关闭。
+2026-10-13 E2后续：AI219/220/221均VERIFIED；用户已推送e5bd37e，远端LFS子集实际恢复22/22。完整5,133文件包及64文件补充包已保全至E:/MIG63-Backups/E2-20261013（本机私有备份）。迁移专属hook/phase已解除，迁移clone已于14:31安全删除；字体/LFS/main与backup保护、长期工具、Spine Examples和旧备份保留。当前AUTOMATIC/COMPLETE，无运行节点；用户已授权本轮E2收尾提交及本地main快进；实际提交/集成结果以outputs/control/E2-FINAL-COMMIT-20261013/commit-result.json为准，远端推送仍由用户完成。 详见[收束记录](.ai-workspace/MIG63/E2_收束与提交.md)。
 
-2026-10-12 字体收束专项：用户已确认字体、Excel验收通过，并明确授权字体范围Git提交。AI214已正式CLOSED_SUPERSEDED（由AI217完整9/9覆盖，四次失败及旧许可保留）；AI162旧预览待验已由AI207的171配对、Play/Build及R4人工结论结清为VERIFIED。六个迁移资产与已验收版本一致，当前6000.3.24f1场景clean、Console原生0错误/0警告；长期字体工具18项静态检查、真实DLL离线编译和37项提交守卫夹具通过。未发现本次字体范围未解决问题。一次性迁移停用留存、不重跑。当时为MANUAL/watch-60暂停且E2尚待准备；10-13的实际E2状态由页首更新，迁移专属清理仍未执行。完整项目复核日期不变；下文旧时点状态保留为历史。详见DevTools/Fonts/README.md及.ai-workspace/outputs/control/FONT-R-CLOSEOUT-20261012/收尾与剩余事项.md。
+2026-10-12 字体收束专项：用户已确认字体、Excel验收通过，并明确授权字体范围Git提交。AI214已正式CLOSED_SUPERSEDED（由AI217完整9/9覆盖，四次失败及旧许可保留）；AI162旧预览待验已由AI207的171配对、Play/Build及R4人工结论结清为VERIFIED。六个迁移资产与已验收版本一致，当前6000.3.24f1场景clean、Console原生0错误/0警告；长期字体工具18项静态检查、真实DLL离线编译和37项提交守卫夹具通过。未发现本次字体范围未解决问题。一次性迁移停用留存、不重跑。当时为MANUAL/watch-60暂停且E2尚待准备；10-13的实际E2状态由页首更新；迁移专属清理的后续完成事实见页首。完整项目复核日期不变；下文旧时点状态保留为历史。详见DevTools/Fonts/README.md及.ai-workspace/outputs/control/FONT-R-CLOSEOUT-20261012/收尾与剩余事项.md。
 
 最后完整结构复核：2026-09-17；2026-10-05仅核DATA-R1及PRE-5b相关模块，不提升完整复核日期。当前Unity6000.3.24f1原工作区功能分支；正式DATA-R1已发布并经隔离Unity核验，P2场景/玩法与Excel显示仍待验，AI170/171/172已由FONT-R替代，旧失败史及最终视觉待验保留。按下列模块节定位实际源码，历史逐次专项记录和原概述见[本任务保全快照](.ai-workspace/outputs/PRE-5b/AI-000200/history/CODEBASE_MAP_before_slim.md)；快照的相对链接仍以原仓库根为基准。
 
