@@ -1,5 +1,18 @@
 # 当前输入
 
+## 2026-10-13 当前排布输入
+
+用户已指定接收设计/控制端回写的两份附件，作为后续 ShortCycle_P0P1 排布指导：
+
+- [指导书 v0.3 原件](排布指导书_ShortCycle_P0P1_v0_3.md)：采用 2026-10-13 实测坐标，16:9 / Size 7.2；四机位 x=-25.6/-9.6/0/+25.6，线索板两锚点重合。v0.1/v0.2 的推算坐标不再作为现行目标。
+- [设计端回填 CSV 原件](排布书v0_3_回填_设计端填写_20261013.csv)：71 行、13 列；前六列测绘数据及身份与原回填模板一致。指导书中的不带日期简称指向此文件，不另造一份可编辑副本。
+- [稳定入口](排布指导书_ShortCycle_P0P1.md)：指向以上两份原件；[旧版归档](../archive/2026-10-13-layout-guidance/README.md)保存 v0.1、v0.2 与旧稳定入口的原始字节和路径。
+
+2026-10-14实施与验收完成：AI226三弹层锚定、AI227/228气泡配表及导入、AI229封面接线均已完成；用户已人工验收并关闭AI226/229，原MCP失败与一次续行历史保留。两文案为“吃什么”和“汪！”。TRAY-FIX由AI222/223覆盖；U2/U3/U4终调及第四SlotBlock仍等待v0.4，现有显隐0～1能力保留。原授权见[LAYOUT-V03本轮范围](LAYOUT-V03-20261013/授权与处置.md)，正式结算见[人工验收记录](../outputs/control/LAYOUT-V03-20261014/human-acceptance/settlement.json)。
+
+下方 2026-09 历史段落保留当时授权与状态，不用于覆盖上述当前版本或恢复旧任务。当前运行/任务状态以 CORE 和正式队列为准。
+
+
 2026-09-24 17:30 用户改为手动诊断：已正式 ExitSupervision，当前 MANUAL / PAUSED_MODE，stopRequested、exitRequested=true，原 ai 保持 PAUSED。仅诊断，不修复/回退/重试/派发。已用不保存的材质副本复现 FromHeavy 的 TMP ScaleRatioA/B/C 重算导致指纹失效；回退在复制备份前被同一材质守卫拦住。40 条 kern 非目标 override 来源已定位为旧字段加载转换及保存结构保护缺口，另有 ROLLBACK_FAILED 重入条件的源码推导，未执行重入。失败现场24文件及字体/CSV10文件本轮SHA不变，部分保存状态尚未恢复；原错误/恢复史和人工结论不改。详细报告：`.ai-workspace/outputs/control/U1-PRE-R1-20260923/manual-diagnosis-20260924/AI170失败原因定位报告.md`。下方较早接力均为历史，不构成新的执行授权；本条专项核验不提升完整复核日期。
 
 2026-09-24 17:16 最新停止状态：AI170第7次执行真实失败，full事务ROLLBACK_FAILED、第一批APPLYING，原7错误/6issue/6恢复完整保留。单FromSourceHan样例1项已成功并回退，但全量第一批FromHeavy新材质出现OWNED_MATERIAL_DRIFT且公开回退同样失败；不能称零写入或已恢复。控制台只读核实两场景SHA已变、五Prefab与7个既有meta不变，三新材质保留，其中FromHeavy内容SHA与创建记录不同；主场景另有40条新增m_ActiveFontFeatures.Array.data[0] override待归属核验。正式备份和样例快照各14文件均匹配，失败现场另保全24文件。17:20主Editor单ShortCycle/Edit/clean/Console0仅表示无未保存脏场景，不代表磁盘已回基线。session CIRCUIT、stopRequested=true，原ai已PAUSED；CODE/ENGINE均idle，不Reconcile放行、不派发、不追加补丁/Reset/换key绕最后额度。原批准有效，需用户明确新的现场诊断与受控恢复范围，不能自动继续全量迁移。详细报告outputs/control/U1-PRE-R1-20260923/AI170第七轮失败现场与全队列未关闭清单.md；AI171/172等待，DATA已验保持，人审/Git/E2条件不变。
@@ -10,14 +23,14 @@
 
 前 145 项的需求、批准、修订与旧配表包已收录到 [2026-09-17 阶段归档](../archive/2026-09-17/README.md)。2026-09-22 已按原路径恢复仍需跨阶段引用的 Schema、需求基准、CSV v1.2 对照样本和排布指导书 v0.1，并投放 v0.2、追踪表 v1.2.2、规划 v2.1.1、USER 状态及设计端只读副本。
 
-常驻文件名模式为：`排布指导书_*`、`CK01-B_配表Schema_*`、`CK01_P0P1_需求对照基准_*`（含无后缀现行主本）、`P0-P1_模块拆分追踪表_*`、`P0-P1_开发路径规划_*`、`AI开发工作流总档_*`、`U1-PRE_*`、`控制台输入_U1前置任务包PRE-1~5派发_*`、`USER_WORK_STATUS.md`。机器事实以 `DevTools/Workflow/Archive-Stage.ps1 -PermanentInputPatterns` 为准；新版核对完成后旧版才归档。CSV v1.2 仅作历史对照，权威 CSV 仍在根目录 `DataTables/`。当前 v1.5.2、v2.2 与 PRE 执行覆盖必须保留；不存在的指导书 v0.3、追踪表 v1.2.3 不得伪造。
+常驻文件名模式为：`排布指导书_*`、`排布书v*_回填_*.csv`、`CK01-B_配表Schema_*`、`CK01_P0P1_需求对照基准_*`（含无后缀现行主本）、`P0-P1_模块拆分追踪表_*`、`P0-P1_开发路径规划_*`、`AI开发工作流总档_*`、`U1-PRE_*`、`控制台输入_U1前置任务包PRE-1~5派发_*`、`USER_WORK_STATUS.md`。机器事实以 `DevTools/Workflow/Archive-Stage.ps1 -PermanentInputPatterns` 为准；新版核对完成后旧版才归档。CSV v1.2 仅作历史对照，权威 CSV 仍在根目录 `DataTables/`。当前 v1.5.2、v2.2 与 PRE 执行覆盖必须保留；指导书 v0.3 已于 2026-10-13 按用户附件接收；未收到的追踪表 v1.2.3 仍不得伪造。
 
 当前 F 批次采用 F-α；`_TUNE` 全工程审查和搁置素材保持原决定。
 
 2026-09-23 新增独立结构修复输入：
 
 - `控制台输入_FIX-T5空间结构修复派发_20260923.md`：G68/G69/D-H 与 FIX-T5a→FIX-T5b 的精确范围。用户最新指令将其定为 **F-α 之外的额外开发链**；不得加入 F-α 依赖或阻塞 F-α 验收。
-- `排布指导书_ShortCycle_P0P1.md`：当前稳定排布入口，内容由已审 v0.2 投放；FIX-T5 以同日派发文档作为覆盖增量。T5b 通过后的 v0.3 仍由设计端按派发文档 §4 产出。
+- `排布指导书_ShortCycle_P0P1.md`：稳定排布入口，2026-10-13 已转为 v0.3 与设计回填表索引；原 v0.2 稳定入口已归档。上述 FIX-T5 派发仍保留历史执行范围。
 # 2026-09-23 外显 DATA 追加
 
 用户要求建立可见独立配表线，入口见 [DATA-VISIBLE 授权与接力](DATA-VISIBLE_外显配表线授权与接力_20260923.md)。已创建常驻任务“AI流水线-配表DATA”（01a0ce9d-8e5a-7542-82b6-6d27609d99e0）；[AI174 路由改造](DATA-VISIBLE-20260923/DATA-VIS-1_CODE.md) → 控制台正式绑定 → [AI175 实际领取回报](DATA-VISIBLE-20260923/DATA-VIS-2_DATA.md)已加入监管。当前路由未绑定；不重跑AI164，不替USER-U1标DONE。

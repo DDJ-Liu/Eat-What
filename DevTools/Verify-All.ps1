@@ -61,8 +61,12 @@ $profileRunners = [ordered]@{
         '.ai-workspace/tests/Test-RepairBudget.ps1',
         'DevTools/Workflow/Test-Watch.ps1',
         'DevTools/Workflow/Test-Pre5c.ps1',
+        'DevTools/Workflow/Test-SupervisionHandoff.ps1',
         '.ai-workspace/tests/Test-ControlAdministration.ps1',
-        '.ai-workspace/tests/Test-UserCodeResume.ps1',
+        '.ai-workspace/tests/Test-ControlCompletedReview.ps1',
+        'DevTools/Workflow/Test-TurnSoftRepair.ps1',
+        'DevTools/Workflow/Test-ApprovedResume.ps1',
+        # Retired one-off continuation suites remain historical, outside Final.
         'DevTools/Workflow/Test-CoplayUsage.ps1',
         'DevTools/Workflow/Test-DocumentationIndex.ps1'
     )

@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-10-14T08:45:23.7020430+08:00",
+  "userDecision": "人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知",
+  "mode": "AUTOMATIC",
+  "automatic": {
+    "chainId": "AUTO-20261014-084523549",
+    "status": "COMPLETE",
+    "createdAt": "2026-10-14T08:45:23.5501974+08:00",
+    "completedAt": "2026-10-14T08:45:23.5552212+08:00",
+    "taskIds": [],
+    "currentIndex": 0,
+    "currentTaskId": null,
+    "completedTaskIds": [],
+    "blockedTaskId": null,
+    "lastError": null
+  },
+  "previousCompletedChain": {
+    "chainId": "AUTO-20261014-010951933",
+    "status": "COMPLETE",
+    "createdAt": "2026-10-14T01:09:51.9338085+08:00",
+    "completedAt": "2026-10-14T01:34:33.2373220+08:00",
+    "taskIds": [
+      "AI-000228",
+      "AI-000229"
+    ],
+    "currentIndex": 2,
+    "currentTaskId": null,
+    "completedTaskIds": [
+      "AI-000228",
+      "AI-000229"
+    ],
+    "blockedTaskId": null,
+    "lastError": null
+  },
+  "tasks": [
+    {
+      "id": "AI-000226",
+      "status": "SUCCEEDED",
+      "verification": "VERIFIED",
+      "gateApproved": true,
+      "attempts": 2,
+      "maxAttempts": 1,
+      "errorCount": 1,
+      "humanDecision": {
+        "at": "2026-10-14T08:45:23.3423851+08:00",
+        "userDecision": "人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知"
+      }
+    },
+    {
+      "id": "AI-000229",
+      "status": "SUCCEEDED",
+      "verification": "VERIFIED",
+      "gateApproved": true,
+      "attempts": 1,
+      "maxAttempts": 1,
+      "errorCount": 0,
+      "humanDecision": {
+        "at": "2026-10-14T08:45:23.4503180+08:00",
+        "userDecision": "人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知"
+      }
+    }
+  ],
+  "ai190Unchanged": true,
+  "ai190Status": "PENDING_USER",
+  "productionWorkRepeated": false,
+  "gitCommitOrPush": false,
+  "note": "Existing gate API requires MANUAL. Temporary switch used only to record explicit human decisions, then restored AUTOMATIC with explicit completed task IDs. No task was dispatched; previous completed chain retained in this receipt."
+}

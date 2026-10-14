@@ -57,4 +57,4 @@ DevTools/Verify-All.ps1的Workflow profile已登记Test-UsageReporting.ps1。仅
 
 ## PRE-5c
 
-任务 Codex app turn 与 provider 响应分别计数；120 回合上限跨 attempt 保留。Get-UsageReport 的 cache 比率只在已观测 inputTokens 分母上计算，缺分母为 null+原因。WATCH 可选真实 worker 进度和 Unity MCP 心跳；绑定控制台以 `Read-WatchInbox.ps1` 读/ack，空箱立即结束。宿主部署未核，不把夹具唤醒计作实机。
+任务 Codex app turn 与 provider 响应分别计数；120软限、240临时硬保护跨attempt保留；120保存交接后继续，软限后30分钟无实际进度硬停。WorkCompleted须有新证据，Observation/Heartbeat不刷新计时。正式硬限待瘦身落地后实测满两周。Get-UsageReport 的 cache 比率只在已观测 inputTokens 分母上计算，缺分母为 null+原因。WATCH 可选真实 worker 进度和 Unity MCP 心跳；绑定控制台以 `Read-WatchInbox.ps1` 读/ack，空箱立即结束。宿主部署未核，不把夹具唤醒计作实机。

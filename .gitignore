@@ -119,3 +119,6 @@ Assets/Spine Examples/
 
 # E2 raw evidence contains LOCAL_ONLY machine logs and client snapshots.
 /.ai-workspace/archive/E2-20261012/
+
+# Local control-review deliveries duplicate evidence and can contain machine snapshots.
+/.ai-workspace/exports/

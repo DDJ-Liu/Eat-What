@@ -35,8 +35,11 @@ namespace EatWhat.Cooking.ShortCycle
 
         public event Action<ShortCycleCameraSlot, ShortCycleCameraSlot> PanStarted;
         public event Action<ShortCycleCameraSlot> PanCompleted;
+        public event Action<float> PanProgressed;
 
         public ShortCycleCameraSlot CurrentSlot { get; private set; }
+        public bool IsPanning { get { return activePan != null; } }
+        public float NormalizedProgress { get; private set; }
         public Camera ControlledCamera { get { return controlledCamera; } }
         public float CameraX
         {
@@ -91,6 +94,14 @@ namespace EatWhat.Cooking.ShortCycle
             return true;
         }
 
+        public bool IsAtSlot(ShortCycleCameraSlot slot)
+        {
+            Vector3 position;
+            return slot == CurrentSlot && controlledCamera != null &&
+                TryGetMarkerPosition(slot, out position) &&
+                IsAtMarker(controlledCamera.transform.position, position);
+        }
+
         public bool PanTo(ShortCycleCameraSlot slot, Action onComplete = null)
         {
             Vector3 destination;
@@ -104,7 +115,7 @@ namespace EatWhat.Cooking.ShortCycle
                 StopActivePan();
             }
 
-            if (slot == CurrentSlot && IsAtMarker(controlledCamera.transform.position, destination))
+            if (IsAtSlot(slot))
             {
                 if (onComplete != null) onComplete();
                 return true;
@@ -117,6 +128,17 @@ namespace EatWhat.Cooking.ShortCycle
                 started(fromSlot, slot);
             }
 
+            NormalizedProgress = 0f;
+            if (!IsUsableDuration(panDuration))
+            {
+                controlledCamera.transform.position = destination;
+                CurrentSlot = slot;
+                NotifyProgress(1f);
+                var instantCompleted = PanCompleted;
+                if (instantCompleted != null) instantCompleted(slot);
+                if (onComplete != null) onComplete();
+                return true;
+            }
             activePan = StartCoroutine(PanRoutine(slot, destination, onComplete));
             return true;
         }
@@ -136,11 +158,13 @@ namespace EatWhat.Cooking.ShortCycle
                     var progress = Math.Min(1f, elapsed / duration);
                     var curveValue = EvaluatePanProgress(panCurve, progress);
                     controlledCamera.transform.position = Vector3.LerpUnclamped(start, destination, curveValue);
+                    NotifyProgress(progress);
                     yield return null;
                 }
 
                 controlledCamera.transform.position = destination;
                 CurrentSlot = targetSlot;
+                NotifyProgress(1f);
             }
             finally
             {
@@ -158,6 +182,13 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 onComplete();
             }
+        }
+
+        private void NotifyProgress(float progress)
+        {
+            NormalizedProgress = progress;
+            var callback = PanProgressed;
+            if (callback != null) callback(progress);
         }
 
         private static bool HasUsableCurve(AnimationCurve curve)
@@ -181,6 +212,11 @@ namespace EatWhat.Cooking.ShortCycle
         }
 
         private void OnDisable()
+        {
+            StopActivePan();
+        }
+
+        public void CancelPan()
         {
             StopActivePan();
         }

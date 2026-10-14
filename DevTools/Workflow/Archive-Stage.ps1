@@ -5,6 +5,7 @@ param(
     [string]$OriginalPath,
     [string[]]$PermanentInputPatterns = @(
         '排布指导书_*',
+        '排布书v*_回填_*.csv',
         'CK01-B_配表Schema_*',
         'CK01_P0P1_需求对照基准_*',
         'CK01_P0P1_需求对照基准.md',

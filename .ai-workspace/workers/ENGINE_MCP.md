@@ -69,3 +69,5 @@ DATA 长期分工中，ENGINE_MCP 只承担任务卡明确拆出的 Unity 接线
 - `验收不通过 AI-xxxxxx：<原因>`：确认同上后调用 `RejectVerification -Reason <原因>`，不修改任务、不返工、不触发后续任务。
 
 其它用户消息一律不执行、不入队，只回复“请在控制台下达”后结束。TaskId 不属于 ENGINE_MCP 时提示用户转对应流水线或控制台。你仍禁止 `Enqueue`、`ReviseInstruction`、`ResetTask`、`ReclassifyTask` 和任务定义改写。
+
+监管结算回传：Prepare 一次登记 → 读取完整 messagePath → app 向绑定控制台发送一次 → Record 保存实际 SENT/REJECTED/UNKNOWN；禁止自行派后继。具体见 `DevTools/Workflow/HANDOFF.md`。历史拒绝不重试；NOTIFY_CONTROLLER 不能只打印路径或留在本线。

@@ -4,7 +4,7 @@ AI-000189 表头说明：集中元数据位于 header-descriptions.mjs，由 aut
 
 只读人工工作簿并创建隔离注释候选的公开入口：Update-HeaderComments.ps1 -InputWorkbook <源或格式候选.xlsx> -CandidateWorkbook <新的隔离路径.xlsx> -ExpectedInputSha256 <源SHA256> [-DataTablesRoot <当前表目录>]。结果返回119字段覆盖、候选 SHA、工具旧线程合并数、内容/结构差异数及独立备注保护审计。AI-000193 后旧 Type/Reference 必须与当前 schema 的完整旧模板逐字匹配，AI189 新注释也必须与本轮生成文本逐字匹配；作者名或前缀单独不构成删除权。未知增补、用户回复和未归属的 tc= 兼容备注保留；无法安全分离时拒绝生成并删除不可信候选，不回写源。已归属旧工具次线程仅在没有回复、兼容备注与其原文精确对应时合并；重复执行不堆叠。DATA AI-000191 必须先复核备注保护审计与 Excel 客户端显示，再按 FormatOrCommentOnly 门、冻结 SHA、备份和审计发布；不能仅凭单元格内容/结构0差异代签备注安全。不得用旧 CSV 重建人工工作簿。
 
-最后核对：2026-10-04；范围：14 份 schema、人工工作簿只读副本、共享校验器、格式候选、源/候选/目标并发漂移门与逐格来源，未进入 Unity；Excel 客户端最终视觉显示仍待 DATA 人工验收。
+最近专项核对：2026-10-12，修复格式脚本删除旧规则后遗留的空 x14 条件格式扩展及空数据验证容器；生产工作簿仅移除这些空容器，14 表/2087 个已存单元格、类型、样式、批注均保持，内容/结构差异为 0。修复原件及新格式候选均经 Excel 普通模式只读打开通过；用户已确认 Excel 人工检查通过；按其“矩形底修正后标记通过”的决定，119条表头注释已恢复标准矩形并经原生预览确认，AI186/AI191 已正式 VERIFIED。详细签收见 `.ai-workspace/outputs/control/WORKBOOK-REPAIR-20261012/comment-shapes/ACCEPTANCE.md`。此前 2026-10-04 的 schema/并发漂移门/逐格来源核验范围不变；本次未导出 CSV 或进入 Unity。证据：`.ai-workspace/outputs/control/WORKBOOK-REPAIR-20261012/REPORT.md`。
 
 本目录提供 `TK-DAT-07` 配表往返工具。Excel 与直接编辑 CSV 两条路径最终都调用同一份项目校验器；这里不复制 V-01～V-12，也不导入或改写 Unity 资产。Unity `Import All` 仍由后续 ENGINE 任务执行。
 

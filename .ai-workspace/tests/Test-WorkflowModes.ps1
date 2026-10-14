@@ -56,6 +56,7 @@ try {
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'queue.ps1') -Destination (Join-Path $testRoot 'queue.ps1')
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'repair-budget.ps1') -Destination (Join-Path $testRoot 'repair-budget.ps1')
     Copy-Item -LiteralPath (Join-Path $sourceRoot 'supervised.ps1') -Destination (Join-Path $testRoot 'supervised.ps1')
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'approved-resume.ps1') -Destination (Join-Path $testRoot 'approved-resume.ps1')
     [System.IO.File]::WriteAllText((Join-Path $testRoot 'INSTRUCTIONS.md'), '# Test ledger', $utf8NoBom)
 
     $tasks = @(
@@ -110,10 +111,15 @@ try {
     $blockedPoll = Invoke-Queue @{ Action='Poll'; Pipeline='ART_AIGC'; TaskId='AI-000002'; TriggerSource='AUTOMATIC' }
     Assert-Equal $blockedPoll.action 'AUTO_WAITING_USER' 'Automatic polling must remain stopped after failure.'
 
-    $reset = Invoke-Queue @{ Action='ResetTask'; TaskId='AI-000002' }
-    Assert-Equal $reset.autoHandoff.taskId 'AI-000002' 'Human reset must prepare the failed task itself, not skip it.'
-    $retryClaim = Invoke-Queue @{ Action='Poll'; Pipeline='ART_AIGC'; TaskId='AI-000002'; TriggerSource='AUTOMATIC' }
-    Assert-Equal $retryClaim.action 'CLAIMED' 'Reset automatic task must be claimable.'
+    Assert-Throws { Invoke-Queue @{ Action='ResetTask'; TaskId='AI-000002' } } 'Failed task cannot reset away its history.'
+    $resumeScope='{"paths":["outputs/art-preview"],"operations":["render"]}'
+    $approved = Invoke-Queue @{ Action='ApproveResume'; TaskId='AI-000002'; Runs=1; Scope=$resumeScope; ApprovalId='fixture-user-resume'; UserDecision='Approve one render run including idempotence.'; ControllerThreadId='01a08798-8b2a-7d41-9aa8-ab44affd520a'; OwnerThreadId=$autoClaim.task.execution.ownerThreadId; IdlePipelines=@('ART_AIGC'); Verification='fixture fresh idle' }
+    Assert-Equal $approved.autoHandoff.taskId 'AI-000002' 'Approval resumes the current failed task, not its successor.'
+    Assert-Equal $approved.autoHandoff.message.Contains(' -Scope ') $true 'Automatic handoff must include approved scope.'
+    $retryClaim = Invoke-Queue @{ Action='Poll'; Pipeline='ART_AIGC'; TaskId='AI-000002'; TriggerSource='AUTOMATIC'; Scope=$resumeScope }
+    Assert-Equal $retryClaim.action 'CLAIMED' 'Approved automatic task must be claimable.'
+    Assert-Equal $retryClaim.task.errorHistory.Count 1 'Continuation keeps its failure history.'
+    Assert-Equal $retryClaim.task.resumeApproval.usedRuns 1 'Continuation consumes one approved run.'
     $testIssue = Invoke-Queue @{ Action='RecordIssue'; Pipeline='ART_AIGC'; TaskId='AI-000002'; IssueKind='TEST_TRIGGER'; IssueMessage='automated preview trigger did not fire; manual steps recorded' }
     Assert-Equal $testIssue.action 'ISSUE_RECORDED' 'A test trigger problem must be recorded without failing.'
     $artComplete = Invoke-Queue @{ Action='Complete'; Pipeline='ART_AIGC'; TaskId='AI-000002'; Summary='done'; Verification='implementation verified; preview pending user' }

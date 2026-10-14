@@ -1,5 +1,18 @@
 # 项目开发规范
 
+## 下一批次四条硬上限（2026-10-12 用户决定）
+
+从本次规则更新后的下一批次起生效；已完成字体工作不返工，旧证据与失败记录保留。本节优先于下文及历史任务卡中更重的验证、保护和专用续行要求。
+
+1. **验证成本 ≤ 改动规模。** 改动不超过 10 个字段时，验收上限为允许清单内的 `git diff` 加一张截图；全量路径哈希只在批次末做一次，不在任务/步骤/重试间重复。禁止把内存快照、纹理 JSON 导出作为常规验收。
+2. **保护放在提交边界。** 受保护资产只在提交前由 hook 核 SHA；任务中不做内存层保护。TMP 绑定先设 `fontSharedMaterial`，再设 `font`，以绑定顺序预防副作用。用户未保存成果仍不得覆盖；不以保护为由恢复整套内存比对。
+3. **一次性工具限制。** 标记为一次性的脚本（如 FontSwapOnce）只做离线编译和真实 Editor 单次执行，不建独立进程/冷加载测试，不进 Final。`DevTools/one-time-tools.json` 登记源码与专属 runner；已完成工具停用留存，不因规则更新重跑。
+4. **唯一通用续行。** 失败任务仅通过 `queue.ps1 -Action ApproveResume -TaskId … -Runs N -Scope …` 批准；用户决定须包含次数与范围，一轮内的幂等检查算在同一次批准内。禁止为单次续行新增入口与夹具。保留原任务、累计次数、失败史、修复预算与人工闸门；不会自动恢复监管。参数和消费语义见 [.ai-workspace/toolkit/WF.md](.ai-workspace/toolkit/WF.md#approve-resume)。
+
+## 固定职能流水线（2026-10-12 用户决定）
+
+后续任务按既有 CODE、ENGINE_MCP、DATA、ART_AIGC、ART_ASSET 职能分配，复用 `.ai-workspace/PIPELINES.md` 登记的固定 chat，不再默认每条任务新开 chat。只有用户明确要求另开时才创建；上下文压缩、任务编号变化或一般交接不构成新开理由。运行中任务保持当前所有权，到安全结算点再由控制台正式改绑；旧单任务 chat 归档保留，队列编号、失败/许可历史和输入输出证据不删除。此决定只改组织方式，不切换执行模式或扩大业务范围。
+
 ## 项目状态
 
 这是一个正在积极开发的现有 Unity 项目。
@@ -34,7 +47,7 @@ Unity 版本：6000.3.24f1（E1已验收、原工作区H接棒通过；禁止用
 
 - 原工作区 `D:/GameProject/Eat-What` 使用 `codex/unity6-followup` 和6000.3.24f1；H已通过，业务代码冻结/迁移侧文件独占解除。三场景及引用Prefab的定向重序列化已独立完成；后续业务由用户指定范围后推进，main不直接开发。
 - 独立迁移副本 `D:/GameProject/Eat-What-U6` 已于2026-10-13在E2远端恢复及私有保全通过后安全删除；远端迁移分支与E1/backup标签仍保留。后续使用主工作区6000.3.24f1；恢复资料和最终Git收口见 `.ai-workspace/MIG63/E2_收束与提交.md`。
-- 用户已冻结C=65604ab并确认37bb854人工终验通过；E1时main与unity6.3-baseline指向该候选。H接棒和独立定向重序列化已通过机器回归，H后格式提交及记录已按用户最新决定集成main，标签仍固定37bb854；后续开发在codex/unity6-followup，最新入口为 `.ai-workspace/MIG63/E1H_接棒与后续项.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 `Assets/Editor/ProjectValidation`，不能作为临时垃圾清理。
+- 用户已冻结C=65604ab并确认37bb854人工终验通过；E1时main与unity6.3-baseline指向该候选。H接棒和独立定向重序列化已通过机器回归，H后格式提交及记录已按用户最新决定集成main，标签仍固定37bb854；后续开发在codex/unity6-followup，最新入口为 `.ai-workspace/MIG63/E1H_接棒与后续项.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 E2 保 GUID 更名后的 `Assets/Editor/ProjectValidation`，不能作为临时垃圾清理。
 - main 仅接收经过验收的集成，不直接开发；`backup/pre-unity6-20260920` 固定保留启动基线。迁移成果在 E1 前不得进入原 2022 工作区。
 - 采用手动 MIG- 台账，不启动或复制原自动队列。Spine Sample 与 HorizontalPlayerControllerTest 预研必须保留；不能通过删除或排除其编译完成迁移。
 - M4已将MCP收敛为仓库内固定Editor包；服务端来源/锁文件及恢复方式见 `DevTools/MCP/README.md`。使用前每次发现/选择实例并核对Application.dataPath与版本；共享EditorPrefs和外部客户端配置不得盲目改写，不接原自动队列。序列化操作优先MCP/审定Editor API，不手改YAML。
@@ -122,6 +135,8 @@ When working with Unity:
 ### 阶段归档与入口简洁化
 
 用户于2026-09-17要求阶段完成后整理AI工作区并保留任务输入/输出。当前历史入口为`.ai-workspace/archive/2026-09-17/README.md`，完整包由Git LFS管理，manifest记录原路径与SHA-256。归档先校验、后清理已核对的历史副本；不得清空活动队列编号、错误史或独立美术服务基线，不移除Unity测试探针和Lab。长期测试夹具应放在`DevTools/*/Fixtures/`，不依赖会被归档的inputs。项目入口文档直接维护当前结论，详细过程记录进入任务输出。归档不代表获得未来提交、推送或新业务触发授权；本次提交/推送/合并按用户本轮明确指令执行。
+
+控制端轻量审查包不替代完整归档，不能据包内排除清单删除原件。2026-10-14安排的下一次归档事项见`.ai-workspace/ARCHIVE_PRESERVATION.md`；该次安排属于一次性计划，不新增长期项目规则。
 
 ### 视觉特效组件的配置与使用说明
 

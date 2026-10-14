@@ -11,7 +11,7 @@
 5. 不修改 `.unity`、`.prefab`、`.asset`、`.meta`，不打开或控制 Unity Editor。
 6. 采用最小改动，运行与任务相称的编辑器外验证，并检查 Git diff。
 7. 预计执行超过 20 分钟时调用 `RenewLease -LeaseMinutes 30`，之后至少每 20 分钟续租一次。
-8. 遇到问题先自行搜索项目已有用法并修正。交付前 CODE 自验证失败用 `RecordCodeValidation -ProblemKey <稳定键> -ValidationResult FAILED -EvidencePath <证据> -OwnerThreadId <本线线程> -ExecutionId <当前执行>` 逐次登记；首次失败后最多重试两次，成功用 `RESOLVED` 登记，超限停止。120 个真实 app turn 跨 attempt 累计；不能靠换 key、换 attempt 或 provider 响应条目清零。非阻碍问题 `RecordIssue` 后继续；真实阻断再 `Fail`。控制台验收失败首败停止，不降级为内部重试。
+8. 遇到问题先自行搜索项目已有用法并修正。交付前 CODE 自验证失败用 `RecordCodeValidation -ProblemKey <稳定键> -ValidationResult FAILED -EvidencePath <证据> -OwnerThreadId <本线线程> -ExecutionId <当前执行>` 逐次登记；首次失败后最多重试两次，成功用 `RESOLVED` 登记，超限停止。120 个真实app turn跨attempt累计，先按协议Yield保存检查点；后续复用固定CODE chat，只有用户明确要求才改用新chat，软/硬停及累计计数保持；240临时硬停或软限后30分钟无实际进度才硬停。不能靠换key/attempt或provider响应清零；进度默认Observation，WorkCompleted须落盘证据。非阻碍问题 `RecordIssue` 后继续；真实阻断再 `Fail`。控制台验收失败首败停止，不降级为内部重试。
 9. 测试表现异常或测试未触发不得 `Fail`；记录为 `TEST_OBSERVATION/TEST_TRIGGER`，写清已尝试修复和人工复核步骤，然后完成其余内容并 `Complete`。结果为 `PENDING_USER`，不得阻止后续任务。
 10. 只有代码产物成立才调用 `Complete`；完成回执必须统一说明非阻碍问题、测试待人工事项与残余风险。
 11. `AUTOMATIC` 下必须读取 `Complete` 的 `autoHandoff`：即使 `verificationStatus=PENDING_USER` 也必须接力。目标 `threadId` 不同则发送完整消息；目标就是当前 CODE 线程时禁止向自身发送，直接在当前轮按下一 `TaskId` 再 `Poll -Pipeline CODE -TriggerSource AUTOMATIC` 并继续。只有调用 `Fail` 后才禁止下一项。
@@ -39,3 +39,5 @@ DATA 长期分工中，CODE 只维护队列路由、导表工具、schema 和业
 - `验收不通过 AI-xxxxxx：<原因>`：确认同上后调用 `RejectVerification -Reason <原因>`，不修改任务、不返工、不触发后续任务。
 
 其它用户消息一律不执行、不入队，只回复“请在控制台下达”后结束。TaskId 不属于 CODE 时提示用户转对应流水线或控制台。你仍禁止 `Enqueue`、`ReviseInstruction`、`ResetTask`、`ReclassifyTask` 和任务定义改写。
+
+监管结算回传：Prepare 一次登记 → 读取完整 messagePath → app 向绑定控制台发送一次 → Record 保存实际 SENT/REJECTED/UNKNOWN；禁止自行派后继。具体见 `DevTools/Workflow/HANDOFF.md`。历史拒绝不重试；NOTIFY_CONTROLLER 不能只打印路径或留在本线。

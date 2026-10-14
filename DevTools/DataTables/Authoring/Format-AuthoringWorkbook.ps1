@@ -175,7 +175,19 @@ try{
                     $f1=New-Element $xml 'formula1';$f1.InnerText='INDIRECT("'+$targetRange+'")';[void]$dv.AppendChild($f1);[void]$dvRoot.AppendChild($dv)
                 }
             }
-            $dvRoot.SetAttribute('count',[string]$dvRoot.ChildNodes.Count)
+            $dvCount=$dvRoot.SelectNodes('s:dataValidation',$ns).Count
+            if($dvCount -eq 0){[void]$dvRoot.ParentNode.RemoveChild($dvRoot)}
+            else{$dvRoot.SetAttribute('count',[string]$dvCount)}
+            # Removing the last legacy rule must also remove its empty Excel extension.
+            # Excel rejects these empty containers even when XML and cell data are valid.
+            $ns.AddNamespace('x14','http://schemas.microsoft.com/office/spreadsheetml/2009/9/main')
+            foreach($empty in @($xml.SelectNodes('/s:worksheet/s:extLst/s:ext[@uri="{78C0D931-6437-407d-A8EE-F0AAD7539E65}"]/x14:conditionalFormattings[not(*)]',$ns))){
+                $extension=$empty.ParentNode
+                [void]$extension.RemoveChild($empty)
+                if($extension.SelectNodes('*').Count -eq 0){[void]$extension.ParentNode.RemoveChild($extension)}
+            }
+            $extensions=$xml.SelectSingleNode('/s:worksheet/s:extLst',$ns)
+            if($extensions -and $extensions.SelectNodes('*').Count -eq 0){[void]$extensions.ParentNode.RemoveChild($extensions)}
             Write-Xml $zip $entry $xml
         }
     }finally{$zip.Dispose()}

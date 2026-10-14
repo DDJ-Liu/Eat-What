@@ -176,6 +176,18 @@ Assert-SourceContains $spaceSource '(?s)WantsActive.*?KeepVisualActiveAcrossSpac
     'Persistent visual activation must not grant focus outside the original logical view/space state.'
 Assert-SourceContains $directorSource '(?s)persistentVisual.*request\.Key\.IsInView' `
     'Persistent physical visuals must bypass camera-culling deactivation without changing default Sets.'
+Assert-SourceContains $presentationSetSource '(?s)appearAtProgress\s*=\s*0f.*?disappearAtProgress\s*=\s*0f' `
+    'Per-Set appearance and disappearance progress must both default to transition start.'
+Assert-SourceContains $spaceSource '(?s)visualOnlySets.*?WantsVisualOnly.*?return\s+false' `
+    'Visual-only space references must be explicit and must not grant interaction focus.'
+Assert-SourceContains $directorSource '(?s)visualOnlyRequests\.Contains\s*\(\s*request\.Key\s*\).*?request\.Key\.IsInView' `
+    'A currently requested visual-only Set must remain logically active beyond the camera bounds.'
+Assert-SourceContains $stateMachineSource '(?s)IShortCyclePresentationBatchHost.*?BeginPresentationChange.*?EndPresentationChange' `
+    'FSM exit and entry must be one visibility decision rather than two flashes.'
+Assert-SourceContains $cameraPanSource '(?s)event\s+Action<float>\s+PanProgressed.*?NotifyProgress\s*\(\s*progress\s*\)' `
+    'Visibility timing must receive raw normalized pan time, not eased camera distance.'
+Assert-SourceContains $directorSource '(?s)BeginTimedVisibility.*?PanProgressed\s*\+=\s*ApplyTimedVisibility.*?AtProgress' `
+    'Director must apply the Set-specific thresholds from the active camera pan.'
 
 Assert-SourceContains $fridgeScrollTraceProbeSource '\[CK01-F-SCROLL-TRACE\]' `
     'The real-wheel diagnostic must use the single CK01-F trace prefix.'
@@ -524,8 +536,10 @@ Assert-SourceContains $cameraPanSource 'HasUsableCurve\s*\(\s*curve\s*\)\s*\?\s*
     'Camera pan must preserve valid authored curves while using linear progress for missing curves.'
 Assert-SourceContains $cameraPanSource '!float\.IsNaN\s*\(\s*duration\s*\)\s*&&\s*!float\.IsInfinity\s*\(\s*duration\s*\)' `
     'Camera pan must reject non-finite durations instead of hanging.'
-Assert-SourceContains $cameraPanSource '(?s)if\s*\(\s*activePan\s*!=\s*null\s*\)\s*\{\s*StopActivePan\s*\(\s*\)\s*;\s*\}.*?slot\s*==\s*CurrentSlot\s*&&\s*IsAtMarker' `
+Assert-SourceContains $cameraPanSource '(?s)if\s*\(\s*activePan\s*!=\s*null\s*\)\s*\{\s*StopActivePan\s*\(\s*\)\s*;\s*\}.*?IsAtSlot\s*\(\s*slot\s*\)' `
     'Camera pan must cancel an active request before considering same-slot synchronous completion.'
+Assert-SourceContains $cameraPanSource '(?s)bool\s+IsAtSlot\s*\([^)]*\).*?slot\s*==\s*CurrentSlot.*?IsAtMarker' `
+    'Same-slot completion must use the current marker and actual camera position.'
 Assert-SourceContains $cameraPanSource 'Vector3\.Distance\s*\(\s*position\s*,\s*markerPosition\s*\)\s*<=\s*0\.0001f' `
     'Same-slot synchronous completion must require the camera to be physically at the requested marker.'
 Assert-SourceNotContains $overflowGateSource 'SetActive|\.Find\s*\(|FindObjectOfType|CurrentPhase' `
@@ -853,5 +867,5 @@ $result = [EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
     success = $true
     result = $result
     compiledSourceCount = $sourcePaths.Count
-    staticBindingAssertions = 275
+    staticBindingAssertions = 282
 } | ConvertTo-Json -Depth 3

@@ -15,4 +15,4 @@ DATA 车道沿用同一队列/token/lease/停止门。旧注册态仅兼容 `exe
 
 详细节索引：运行模式 §0；不变量 §1；车道 §2；状态 §3；领取 §4；问题分级 §5；熔断 §6；维护 §7；完成门槛 §8。
 
-PRE-5c R-ST：ENGINE/DATA 写生产资产失败一次停并只读诊断；CODE 交付前自验证按同一 problemKey 记录首败和至多两次重试，120 个真实 app turn 跨 attempt 累计，超限才停；任一车道控制台机器验收失败一次停。旧 AI201 误停只经用户证据用 `ResumeCodeValidationStop` 审定，失败史不清。
+PRE-5c R-ST：ENGINE/DATA生产写首败停；CODE同稳定key首败后重试≤2；控制拒验只阻断任务/依赖链。120真实app turn先保存交接后继续；240临时硬停或软限后30分钟无实际进度硬停。完整合同见WORKFLOW_FULL PRE-5c；旧AI201 REJECTED与失败史保留。

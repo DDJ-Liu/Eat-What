@@ -15,4 +15,11 @@ namespace EatWhat.Cooking.ShortCycle
         void SetTrayView(ShortCycleTrayView view);
         void ClearSessionPresentation();
     }
+
+    /// <summary>Optional boundary for an FSM exit/entry pair that forms one visual switch.</summary>
+    public interface IShortCyclePresentationBatchHost
+    {
+        void BeginPresentationChange();
+        void EndPresentationChange();
+    }
 }

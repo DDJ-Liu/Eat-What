@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$CompactEvidenceRoot)
+param([string]$CompactEvidenceRoot = $env:EATWHAT_COMPACT_EVIDENCE_ROOT)
 $ErrorActionPreference = 'Stop'
 $sourceRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $fixtureProject = Join-Path ([IO.Path]::GetTempPath()) ('EatWhatSupervised-' + [Guid]::NewGuid().ToString('N'))
@@ -55,7 +55,12 @@ function Init {
     SaveFixture 'mode' @{schemaVersion=1;mode='MANUAL';updatedAt='2026-09-08T00:00:00Z';updatedBy='TEST';automatic=@{chainId=$null;status='IDLE';createdAt=$null;completedAt=$null;taskIds=@();currentIndex=0;currentTaskId=$null;completedTaskIds=@();blockedTaskId=$null;lastError=$null}}
 }
 function AddTask([string]$Lane, [string[]]$Deps=@()) {
-    (Q @{Action='Enqueue';Pipeline=$Lane;Title='test';Instruction='test';DependsOn=$Deps}).task.id
+    $id=(Q @{Action='Enqueue';Pipeline=$Lane;Title='test';Instruction='test';DependsOn=$Deps}).task.id
+    # This suite retains pre-policy recovery-history coverage. New-policy gates use Test-ApprovedResume.
+    $q=Get-Content -LiteralPath (Join-Path $testRoot 'runtime/queue-state.json') -Raw | ConvertFrom-Json
+    @($q.tasks | Where-Object id -eq $id)[0].PSObject.Properties.Remove('resumePolicy')
+    SaveFixture 'queue' $q
+    return $id
 }
 function StartSession([string[]]$Ids) { Q @{Action='SetMode';Mode='SUPERVISED';TaskIds=$Ids;ControllerThreadId='controller-test'} }
 function Dispatch { Q @{Action='DispatchSupervision';IdlePipelines=@('CODE','ART_AIGC','ENGINE_MCP')} }

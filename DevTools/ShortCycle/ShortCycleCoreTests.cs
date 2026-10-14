@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
@@ -29,6 +30,10 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             VerifyCameraSlotVisibilityContract();
             VerifyCameraViewportAnchorContract();
             VerifySubviewCameraRoutingAndWorldVisibility();
+            VerifyCrossSpaceVisualPreparationAndReversal();
+            VerifyTimedVisibilityAndVisualOnlyOwnership();
+            VerifyTransitionStartVisibilityAndInactiveTray();
+            VerifyExitCarrierCompletesBeforeContainerRecycling();
             VerifyCameraPanCurveAndLifecycleContract();
             VerifyManualDriverKeyMap();
             VerifyGridPieceContracts();
@@ -223,6 +228,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var persistent = new ShortCyclePresentationSet();
             SetPrivateField(persistent, "containerRoot", persistentRoot);
             SetPrivateField(persistent, "gatedInteractions", new UnityEngine.MonoBehaviour[] { persistentGate });
+            SetPrivateField(persistent, "overflowRenderers", new[] { persistentRenderer });
             SetPrivateField(persistent, "keepVisualActiveAcrossSpaces", true);
             var persistentP0 = new ShortCycleSpace();
             var persistentP1 = new ShortCycleSpace();
@@ -928,7 +934,12 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             SetPrivateField(pan, "rightReservedMarker", rightMarker);
 
             var catalogSet = new ShortCyclePresentationSet();
+            var browseRoot = new GameObject();
+            browseRoot.AddComponent<Renderer>().bounds =
+                new Bounds(new Vector3(-19.2f, 0f, 0f), new Vector3(5f, 4f, 1f));
+            browseRoot.SetActive(false);
             var browseSet = new ShortCyclePresentationSet();
+            SetPrivateField(browseSet, "containerRoot", browseRoot);
             var clueSet = new ShortCyclePresentationSet();
             var space = new ShortCycleSpace();
             SetPrivateField(space, "spaceId", ShortCycleSpaceId.Phase0);
@@ -966,14 +977,15 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 "Catalog (state ③) must activate at P0-Center without a redundant pan.");
             director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeCatalog);
             director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
-            Assert(panStartedCount == 1 && !space.WantsActive(browseSet),
-                "③→① must defer Browse activation while the P0-Center→P0-Left pan is pending.");
+            Assert(panStartedCount == 1 && space.WantsActive(browseSet) &&
+                browseRoot.activeSelf && !browseSet.IsFocused,
+                "③→① must prepare offscreen Browse visuals at pan start but defer interaction focus.");
             Assert(pan.AdvanceCoroutinesOnce() && inputLock.Gate.IsLocked,
                 "③→① must own the input lock while the camera is moving.");
             AdvanceCoroutinesToCompletion(pan);
-            Assert(space.WantsActive(browseSet) && !inputLock.Gate.IsLocked &&
+            Assert(space.WantsActive(browseSet) && browseSet.IsFocused && !inputLock.Gate.IsLocked &&
                 pan.CurrentSlot == ShortCycleCameraSlot.P0Left,
-                "③→① must activate Browse only after P0-Left arrival and release the lock.");
+                "③→① must focus Browse only after P0-Left arrival and release the lock.");
 
             director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
             director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.ClueBoardShell);
@@ -984,14 +996,15 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             Assert(panStartedCount == 1 && space.WantsActive(browseSet),
                 "④→① must remain on P0-Left and must not raise PanStarted.");
 
-            var clueBoundsSet = CreateBoundsSet(new Bounds(new Vector3(-19.2f, 0f, 0f), new Vector3(10f, 4f, 1f)));
+            // Synthetic bounds at the user-saved anchor; this is not a scene geometry rewrite.
+            var clueBoundsSet = CreateBoundsSet(new Bounds(new Vector3(-16.39f, 0f, 0f), new Vector3(5f, 4f, 1f)));
             var rightPageSet = CreateBoundsSet(new Bounds(new Vector3(6.4f, 0f, 0f), new Vector3(10f, 4f, 1f)));
             var p0LeftRect = new Rect(-25.6f, -7.2f, 25.6f, 14.4f);
             var p1Rect = new Rect(-38.4f, -7.2f, 25.6f, 14.4f);
             var p0CenterRect = new Rect(-12.8f, -7.2f, 25.6f, 14.4f);
             Assert(clueBoundsSet.IsInView(p0LeftRect) && clueBoundsSet.IsInView(p1Rect) &&
                 !clueBoundsSet.IsInView(p0CenterRect),
-                "The fixed clue board bounds must intersect P0-Left/P1 but not P0-Center.");
+                "Synthetic bounds at the saved clue-board anchor must intersect P0-Left/P1 but not P0-Center.");
             Assert(rightPageSet.IsInView(p0CenterRect) && !rightPageSet.IsInView(p0LeftRect),
                 "The real right-page bounds must intersect P0-Center but not P0-Left.");
             var cachedRendererArray = GetPrivateField(rightPageSet, "boundsRenderers");
@@ -1029,6 +1042,339 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             rendererObject.AddComponent<Renderer>().bounds = bounds;
             set.MarkBoundsDirty();
             return set;
+        }
+
+        private static void VerifyCrossSpaceVisualPreparationAndReversal()
+        {
+            var previousDelta = Time.unscaledDeltaTime;
+            Time.unscaledDeltaTime = 0.25f;
+            var camera = new Camera { orthographicSize = 7.2f, aspect = 16f / 9f };
+            var p0Marker = new Transform { position = Vector3.zero };
+            var p1Marker = new Transform { position = new Vector3(-25.6f, 0f, 0f) };
+            camera.transform.position = p0Marker.position;
+            var inputLock = new ShortCycleInputLockController();
+            var pan = CreateCameraPan(camera, p0Marker, p1Marker, inputLock);
+            var p0 = new ShortCycleSpace();
+            var p1 = new ShortCycleSpace();
+            SetPrivateField(p1, "spaceId", ShortCycleSpaceId.Phase1);
+            SetPrivateField(p1, "cameraSlot", ShortCycleCameraSlot.P1);
+            var p0Root = new GameObject();
+            p0Root.transform.SetParent(p0.transform, false);
+            p0Root.AddComponent<Renderer>().bounds =
+                new Bounds(Vector3.zero, new Vector3(5f, 4f, 1f));
+            var p0Set = new ShortCyclePresentationSet();
+            SetPrivateField(p0Set, "containerRoot", p0Root);
+            SetPrivateField(p0, "structureSets", new[] { p0Set });
+            var p1Root = new GameObject();
+            p1Root.transform.SetParent(p1.transform, false);
+            p1Root.AddComponent<Renderer>().bounds =
+                new Bounds(p1Marker.position, new Vector3(5f, 4f, 1f));
+            p1Root.SetActive(false);
+            var p1Gate = new MonoBehaviour();
+            var p1Set = new ShortCyclePresentationSet();
+            SetPrivateField(p1Set, "containerRoot", p1Root);
+            SetPrivateField(p1Set, "gatedInteractions", new MonoBehaviour[] { p1Gate });
+            SetPrivateField(p1, "structureSets", new[] { p1Set });
+            var director = new ShortCyclePresentationDirector();
+            SetPrivateField(director, "spaces", new[] { p0, p1 });
+            SetPrivateField(director, "cameraPanController", pan);
+
+            director.EnterSpace(ShortCycleSpaceId.Phase0);
+            var persistentWrites = p0Root.SetActiveCallCount;
+            director.LeaveSpace(ShortCycleSpaceId.Phase0);
+            director.EnterSpace(ShortCycleSpaceId.Phase1);
+            var staleGeneration = director.Generation;
+            Assert(p0Root.activeSelf && p1Root.activeSelf && !p1Set.IsFocused && !p1Gate.enabled &&
+                p0Root.SetActiveCallCount == persistentWrites,
+                "P0 physical structure and offscreen P1 visual must coexist from pan start without P1 input.");
+            Assert(pan.AdvanceCoroutinesOnce() && inputLock.Gate.IsLocked,
+                "Cross-space movement must retain its input lock while the visual target is ready.");
+            director.LeaveSpace(ShortCycleSpaceId.Phase1);
+            director.EnterSpace(ShortCycleSpaceId.Phase0);
+            AdvanceCoroutinesToCompletion(pan);
+            typeof(ShortCyclePresentationDirector).GetMethod("CompleteArrival", BindingFlags.Instance | BindingFlags.NonPublic)
+                .Invoke(director, new object[] { staleGeneration, p1 });
+            Assert(p0Root.activeSelf && !p1Root.activeSelf && !p1Gate.enabled &&
+                !inputLock.Gate.IsLocked && pan.CurrentSlot == ShortCycleCameraSlot.P0Center &&
+                p0Root.SetActiveCallCount == persistentWrites,
+                "Mid-pan reversal must cancel stale P1 arrival and keep P0 physical structure stable.");
+
+            director.LeaveSpace(ShortCycleSpaceId.Phase0);
+            director.EnterSpace(ShortCycleSpaceId.Phase1);
+            Assert(p1Root.activeSelf && !p1Gate.enabled,
+                "Reentry must prepare P1 visuals without enabling interaction early.");
+            AdvanceCoroutinesToCompletion(pan);
+            Assert(p1Root.activeSelf && p1Set.IsFocused && p1Gate.enabled &&
+                !inputLock.Gate.IsLocked && pan.CurrentSlot == ShortCycleCameraSlot.P1,
+                "Only completed P1 arrival may grant interaction focus.");
+            director.ClearSessionPresentation();
+            Time.unscaledDeltaTime = previousDelta;
+        }
+
+        private static void VerifyTimedVisibilityAndVisualOnlyOwnership()
+        {
+            var oldDelta = Time.unscaledDeltaTime;
+            Time.unscaledDeltaTime = 0.25f;
+            var camera = new Camera { orthographicSize = 7.2f, aspect = 16f / 9f };
+            var p0Marker = new Transform { position = Vector3.zero };
+            var p1Marker = new Transform { position = new Vector3(-25.6f, 0f, 0f) };
+            camera.transform.position = p0Marker.position;
+            var pan = CreateCameraPan(camera, p0Marker, p1Marker, new ShortCycleInputLockController());
+            SetPrivateField(pan, "panDuration", 1f);
+            var p0 = new ShortCycleSpace();
+            var p1 = new ShortCycleSpace();
+            SetPrivateField(p1, "spaceId", ShortCycleSpaceId.Phase1);
+            SetPrivateField(p1, "cameraSlot", ShortCycleCameraSlot.P1);
+            var oldRoot = new GameObject();
+            oldRoot.AddComponent<Renderer>().bounds = new Bounds(Vector3.zero, new Vector3(4f, 4f, 1f));
+            var newRoot = new GameObject();
+            newRoot.AddComponent<Renderer>().bounds = new Bounds(p1Marker.position, new Vector3(4f, 4f, 1f));
+            var bookRoot = new GameObject();
+            bookRoot.AddComponent<Renderer>().bounds = new Bounds(Vector3.zero, new Vector3(4f, 4f, 1f));
+            var oldGate = new MonoBehaviour();
+            var newGate = new MonoBehaviour();
+            var bookGate = new MonoBehaviour();
+            var oldSet = new ShortCyclePresentationSet();
+            var newSet = new ShortCyclePresentationSet();
+            var bookSet = new ShortCyclePresentationSet();
+            SetPrivateField(oldSet, "containerRoot", oldRoot);
+            SetPrivateField(newSet, "containerRoot", newRoot);
+            SetPrivateField(bookSet, "containerRoot", bookRoot);
+            SetPrivateField(oldSet, "gatedInteractions", new MonoBehaviour[] { oldGate });
+            SetPrivateField(newSet, "gatedInteractions", new MonoBehaviour[] { newGate });
+            SetPrivateField(bookSet, "gatedInteractions", new MonoBehaviour[] { bookGate });
+            SetPrivateField(oldSet, "disappearAtProgress", 0.5f);
+            SetPrivateField(newSet, "appearAtProgress", 1f);
+            SetPrivateField(p0, "viewTable", new[] { new ShortCycleViewSetEntry
+                { view = ShortCyclePhase0View.RecipeBrowse, sets = new[] { oldSet, bookSet } } });
+            SetPrivateField(p1, "structureSets", new[] { newSet });
+            SetPrivateField(p1, "visualOnlySets", new[] { bookSet });
+            var director = new ShortCyclePresentationDirector();
+            SetPrivateField(director, "spaces", new[] { p0, p1 });
+            SetPrivateField(director, "cameraPanController", pan);
+            var trace = new List<string>();
+            var save = new TraceSaveBoundary(trace);
+            var machine = new ShortCycleStateMachine(
+                new ShortCycleContext(), save,
+                new ShortCycleDataProcessor(new TraceInventory(trace), save, new TraceHandoff(trace)),
+                new TraceExit(), director);
+            Assert(machine.TryEnter(null, ShortCycleTriggerContext.FreeTry).Succeeded &&
+                machine.TryShowPhase0View(ShortCyclePhase0View.RecipeCatalog).Succeeded &&
+                machine.TrySelectRecipe("rcp_timing", false).Succeeded,
+                "The real FSM must enter Browse before the timed visual switch.");
+            Assert(oldSet.DisappearAtProgress == 0.5f && newSet.AppearAtProgress == 1f &&
+                bookSet.AppearAtProgress == 0f && bookSet.DisappearAtProgress == 0f,
+                "Each Set must own clamped, default-zero appearance and disappearance progress.");
+            Assert(oldRoot.activeSelf && !newRoot.activeSelf && bookRoot.activeSelf &&
+                oldGate.enabled && bookGate.enabled,
+                "Initial view must be settled without a timed startup flash.");
+
+            Action goToKitchen = () => Assert(machine.TryStartCooking().Succeeded,
+                "The real FSM must execute HideView/LeaveSpace/EnterSpace as one timed change.");
+            Action returnToBook = () => Assert(machine.TryReturnToPhase0().Succeeded,
+                "The real FSM must execute LeaveSpace/EnterSpace/ShowView as one timed return.");
+            goToKitchen();
+            Assert(oldRoot.activeSelf && !newRoot.activeSelf && bookRoot.activeSelf &&
+                !oldGate.enabled && !bookGate.enabled && !newGate.enabled,
+                "Exit must close input immediately while old/book visuals survive the Hide/Leave/Enter pair.");
+            Assert(pan.AdvanceCoroutinesOnce() && oldRoot.activeSelf && !newRoot.activeSelf,
+                "At progress 0.25 the old view remains and the 1.0 target is still hidden.");
+            returnToBook();
+            AdvanceCoroutinesToCompletion(pan);
+            Assert(oldRoot.activeSelf && !newRoot.activeSelf && bookRoot.activeSelf &&
+                oldGate.enabled && bookGate.enabled && !newGate.enabled,
+                "Reversal must discard the stale appearance/disappearance plan and restore only the new focus.");
+
+            goToKitchen();
+            Assert(pan.AdvanceCoroutinesOnce() && oldRoot.activeSelf && !newRoot.activeSelf,
+                "A fresh pan must restart normalized progress from zero.");
+            Assert(pan.AdvanceCoroutinesOnce() && !oldRoot.activeSelf && !newRoot.activeSelf &&
+                bookRoot.activeSelf && !bookGate.enabled,
+                "At progress 0.5 only the departing Set hides; the shared book remains visual-only.");
+            pan.AdvanceCoroutinesOnce();
+            Assert(pan.AdvanceCoroutinesOnce() && newRoot.activeSelf && !newGate.enabled,
+                "At progress 1.0 the target appears but is not clickable until arrival completes.");
+            var activationWrites = newRoot.SetActiveCallCount;
+            AdvanceCoroutinesToCompletion(pan);
+            Assert(newRoot.activeSelf && newGate.enabled && bookRoot.activeSelf && !bookGate.enabled &&
+                newRoot.SetActiveCallCount == activationWrites,
+                "Arrival must focus once without reactivating the target or hiding offscreen visual-only book.");
+            SetPrivateField(oldSet, "appearAtProgress", 0.5f);
+            SetPrivateField(newSet, "disappearAtProgress", 1f);
+            Time.unscaledDeltaTime = 0.75f;
+            returnToBook();
+            Assert(pan.AdvanceCoroutinesOnce() && oldRoot.activeSelf && newRoot.activeSelf &&
+                !oldGate.enabled && !newGate.enabled,
+                "A skipped intermediate frame must cross the 0.5 appearance point without early input.");
+            Assert(pan.AdvanceCoroutinesOnce() && !newRoot.activeSelf && oldRoot.activeSelf,
+                "The departing Set with disappearance point 1.0 must hide at the end.");
+            AdvanceCoroutinesToCompletion(pan);
+            Assert(oldGate.enabled && !newGate.enabled && bookGate.enabled,
+                "Return arrival must restore only the active view's interaction.");
+            var stableWrites = oldRoot.SetActiveCallCount;
+            director.ShowView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
+            Assert(oldRoot.SetActiveCallCount == stableWrites,
+                "A repeated stable same-slot request must not reactivate an already-visible Set.");
+            SetPrivateField(pan, "panDuration", 0f);
+            goToKitchen();
+            Assert(!pan.IsPanning && newRoot.activeSelf && !oldRoot.activeSelf,
+                "Zero-duration entry must settle even when configured thresholds are nonzero.");
+            returnToBook();
+            Assert(!pan.IsPanning && oldRoot.activeSelf && !newRoot.activeSelf && bookRoot.activeSelf,
+                "A zero-duration switch ignores fractional thresholds and settles immediately.");
+            director.HideView(ShortCycleSpaceId.Phase0, ShortCyclePhase0View.RecipeBrowse);
+            Assert(!oldRoot.activeSelf && !bookRoot.activeSelf,
+                "Leaving the last view without an incoming view must not retain timed visuals.");
+            machine.Teardown();
+            Assert(!pan.IsPanning && !oldSet.IsFocused && !newSet.IsFocused && !bookSet.IsFocused &&
+                GetPrivateField(oldSet, "requestedActive") == null &&
+                GetPrivateField(bookSet, "requestedActive") == null,
+                "Session cleanup must release the pan and every transient visibility request.");
+            Time.unscaledDeltaTime = oldDelta;
+        }
+
+        private static void VerifyTransitionStartVisibilityAndInactiveTray()
+        {
+            var child = new GameObject();
+            child.SetActive(false);
+            var controller = new TransitionController();
+            SetPrivateField(controller, "presetTarget", new GameObject().transform);
+            SetPrivateField(controller, "presets", new List<TransitionPreset>
+            {
+                new TransitionPreset
+                {
+                    name = "Show",
+                    visibility = new List<TransitionVisibilityTarget>
+                    {
+                        new TransitionVisibilityTarget { target = child, visible = true }
+                    }
+                },
+                new TransitionPreset
+                {
+                    name = "Hide",
+                    visibility = new List<TransitionVisibilityTarget>
+                    {
+                        new TransitionVisibilityTarget { target = child, visible = false }
+                    }
+                }
+            });
+            var completed = 0;
+            var cancelled = 0;
+            Assert(controller.GoTo("Show", () => completed++, () => cancelled++) && child.activeSelf,
+                "Incoming preset child must be visible at transition start.");
+            controller.CancelAll();
+            Assert(!child.activeSelf && cancelled == 1 && completed == 0,
+                "Cancellation must restore an early-enabled child without a stale completion.");
+            Assert(controller.GoTo("Show") && child.activeSelf, "Reentry must prepare the child again.");
+            AdvanceCoroutinesToCompletion(controller);
+            var stableWrites = child.SetActiveCallCount;
+            Assert(child.activeSelf && controller.GoTo("Hide") && !child.activeSelf,
+                "Outgoing child must hide when its exit preset starts.");
+            Assert(child.SetActiveCallCount == stableWrites + 1,
+                "The hide request must make exactly one child visibility write at its start.");
+            controller.CancelAll();
+            Assert(child.activeSelf && child.SetActiveCallCount == stableWrites + 2,
+                "Cancelling an early hide must restore the prior visible child.");
+            Assert(controller.GoTo("Hide") && !child.activeSelf,
+                "Reentered hide must take effect at its new start boundary.");
+            var completionWrites = child.SetActiveCallCount;
+            AdvanceCoroutinesToCompletion(controller);
+            Assert(!child.activeSelf && child.SetActiveCallCount == completionWrites,
+                "Child visibility must not be rewritten at exit completion.");
+            var alphaHost = new GameObject();
+            var alphaController = new TransitionController();
+            SetPrivateField(alphaController, "presetTarget", new GameObject().transform);
+            SetPrivateField(alphaController, "presetAlphaRenderers",
+                new List<SpriteRenderer> { alphaHost.AddComponent<SpriteRenderer>() });
+            SetPrivateField(alphaController, "presets", new List<TransitionPreset>
+            {
+                new TransitionPreset
+                {
+                    name = "NoAlphaHide",
+                    applyAlpha = false,
+                    visibility = new List<TransitionVisibilityTarget>
+                    {
+                        new TransitionVisibilityTarget { target = alphaHost, visible = false }
+                    }
+                }
+            });
+            Assert(alphaController.GoTo("NoAlphaHide") && !alphaHost.activeSelf,
+                "A listed alpha renderer is an ordinary child when this preset does not animate alpha.");
+            alphaController.CancelAll();
+            Assert(alphaHost.activeSelf, "Cancelling an ordinary early hide must restore its prior active state.");
+
+            var carrierCompleted = 0;
+            var carrierCancelled = 0;
+            SetPrivateField(controller, "presets", new List<TransitionPreset>
+            {
+                new TransitionPreset
+                {
+                    name = "CarrierHide",
+                    visibility = new List<TransitionVisibilityTarget>
+                    {
+                        new TransitionVisibilityTarget { target = controller.gameObject, visible = false }
+                    }
+                }
+            });
+            Assert(controller.GoTo("CarrierHide", () => carrierCompleted++, () => carrierCancelled++) &&
+                controller.gameObject.activeSelf,
+                "A preset must keep its own coroutine carrier active until the exit motion completes.");
+            controller.CancelAll();
+            Assert(controller.gameObject.activeSelf && carrierCompleted == 0 && carrierCancelled == 1,
+                "Cancelling a carrier exit must leave its still-running host active.");
+            Assert(controller.GoTo("CarrierHide", () => carrierCompleted++, () => carrierCancelled++) &&
+                controller.gameObject.activeSelf,
+                "A cancelled carrier exit must be restartable.");
+            AdvanceCoroutinesToCompletion(controller);
+            InvokePrivateMethod(controller, "OnDisable");
+            Assert(!controller.gameObject.activeSelf && carrierCompleted == 1 && carrierCancelled == 1,
+                "Only the actual exit carrier may be disabled at completion without a false cancel.");
+
+            var trayController = new TransitionController();
+            SetPrivateField(trayController, "presetTarget", new GameObject().transform);
+            SetPrivateField(trayController, "presets", new List<TransitionPreset>
+            {
+                new TransitionPreset { name = "Collapsed" }
+            });
+            var tray = new ShortCycleTrayPresentation();
+            SetPrivateField(tray, "transitionController", trayController);
+            trayController.gameObject.SetActive(false);
+            Assert(!trayController.GoTo("Collapsed") && trayController.StartedCoroutineCount == 0,
+                "The shared preset controller must reject inactive coroutine starts.");
+            tray.Apply(ShortCycleTrayView.Collapsed);
+            Assert(trayController.StartedCoroutineCount == 0,
+                "An inactive tray TransitionController must not start a coroutine.");
+            trayController.gameObject.SetActive(true);
+            InvokePrivateMethod(tray, "OnEnable");
+            Assert(trayController.StartedCoroutineCount == 1,
+                "The queued tray preset must start when its controller becomes active.");
+            tray.Apply(ShortCycleTrayView.Collapsed);
+            Assert(trayController.StartedCoroutineCount == 1,
+                "Repeated stable tray view must not restart the preset.");
+            trayController.CancelAll();
+        }
+
+        private static void VerifyExitCarrierCompletesBeforeContainerRecycling()
+        {
+            var root = new GameObject();
+            var gate = new MonoBehaviour();
+            var controller = new TransitionController();
+            var exitCarrier = new ExitCarrierProbe();
+            controller.RegisterBehaviour(exitCarrier);
+            var set = new ShortCyclePresentationSet();
+            SetPrivateField(set, "containerRoot", root);
+            SetPrivateField(set, "gatedInteractions", new MonoBehaviour[] { gate });
+            SetPrivateField(set, "transitionController", controller);
+            SetPrivateField(set, "enterTransition", "");
+            set.Activate();
+            set.SetFocus(true);
+            set.Deactivate();
+            Assert(root.activeSelf && !gate.enabled && !set.IsFocused &&
+                exitCarrier.ActiveCoroutineCount == 1,
+                "The exit-animation carrier may remain active, but its interaction must close at exit start.");
+            AdvanceCoroutinesToCompletion(exitCarrier);
+            Assert(!root.activeSelf && exitCarrier.ActiveCoroutineCount == 0,
+                "The container may be recycled only when its own exit animation completes.");
         }
 
         private static void VerifyCameraPanCurveAndLifecycleContract()
@@ -3089,6 +3435,20 @@ namespace EatWhat.Cooking.ShortCycle.Tests
         {
             public int DisposeCount { get; private set; }
             public void Dispose() { DisposeCount++; }
+        }
+
+        private sealed class ExitCarrierProbe : TransitionBehaviour
+        {
+            protected override bool TryCreateTransition(string transitionName, out IEnumerator transition)
+            {
+                transition = transitionName == "Hide" ? Exit() : null;
+                return transition != null;
+            }
+
+            private static IEnumerator Exit()
+            {
+                yield return null;
+            }
         }
     }
 }

@@ -175,7 +175,7 @@ function Invoke-WatchOnce {
             Event $events 'UNITY_STATE_CHANGED' $id $UnityHeartbeatPath "$id/unity/$($unity.observedAt)/$unityFingerprint"
         }
         if($task.execution -and $null -ne $task.execution.appTurnCount -and [int]$task.execution.appTurnCount -ge 120){
-            Event $events 'TURN_LIMIT' $id $queuePath "$id/turn-limit/$($task.execution.executionId)"
+            Event $events 'TURN_SOFT_LIMIT' $id $queuePath "$id/turn-soft-limit"
         }
         $terminal = if ($task.status -in @('FAILED','SUCCEEDED','NEEDS_USER','PAUSED_CIRCUIT')) {
             [string]$task.status
@@ -226,7 +226,7 @@ function Invoke-WatchOnce {
         if ($item.kind -in @('LEASE_EXPIRING','NO_PROGRESS')) { $item.next='REVIEW_OR_RENEW' }
         elseif ($item.kind -eq 'REPAIR_BUDGET') { $item.next='READONLY_DIAGNOSIS' }
         elseif ($item.kind -eq 'USER_DONE') { $item.next='RECHECK_DEPENDENCIES' }
-        elseif($item.kind -eq 'TURN_LIMIT'){$item.next='CHECKPOINT_AND_NEW_VISIBLE_THREAD'}
+        elseif($item.kind -eq 'TURN_SOFT_LIMIT'){$item.next='CHECKPOINT_AND_NEW_VISIBLE_THREAD'}
         if($after.failureStopped -and $item.kind -in @('TERMINAL','ERROR_INCREASED','REPAIR_BUDGET')){$item.next='READONLY_DIAGNOSIS'}
         $eventPath = Join-Path $inbox ("{0}-{1}.json" -f $item.taskId, [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes([string]$item.key))).Substring(0,16))
         Save-Json $eventPath $item

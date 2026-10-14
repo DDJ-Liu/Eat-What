@@ -1,5 +1,7 @@
 # 监管模式（SUPERVISED）
 
+> 2026-10-12 下一批次优先规则：执行 [AGENTS.md 四条硬上限](../../AGENTS.md#下一批次四条硬上限2026-10-12-用户决定)。≤10 字段只验允许清单 diff + 一张截图；全路径哈希每批末一次；资产 SHA 仅提交 hook，任务中无内存保护；一次性工具仅离线编译 + Editor 单次执行，不进 Final。失败续行统一 [ApproveResume](../toolkit/WF.md#approve-resume)，幂等算同一批准。下文 FONT-R 专用许可/内存保护/冷启动测试是历史，禁止按旧规则新增续行入口或夹具。当前 MANUAL/watch-60 暂停，不再做字体返工。
+
 > 2026-09-10用户明确调整：所有人工审查统一后置，不能干扰开发。当前session通过DeferSupervisionReviews登记reviewDeferral.enabled=true；人工结果仍未批准，机器成功依赖满足后可继续开发。旧条款要求的中途人审时序在此会话被覆盖，机器失败、已拒绝结果、资源/权限及最终人工结算仍保留。精确范围 `.ai-workspace/inputs/人工审查统一后置_20260910.md`。
 
 > 2026-09-09 优先规则：当前监管任务链全部完成后自动切回 MANUAL，保留 session.status=COMPLETE 与完成/待人工记录，并暂停原监管 heartbeat。取消控制台 ART 日报轮询、回传接收与12小时催报；独立美术午夜生成仍保留，不能据此继续运行控制台日程。
@@ -90,7 +92,7 @@
 ### 全部完成后自动回手动（2026-09-09）
 
 - “当前任务链”仅指本次 supervised.taskIds（包括明确 ExtendSupervision 的范围），不隐式收编范围外排队任务，也不包含独立 ART 日期服务。
-- 必须 scope 非空、逐项 SUCCEEDED、无 REJECTED、无未通过 HumanGateAfter/ReviewDependsOn/依赖闸门；队列无 RUNNING，Worker 无残留 BUSY/activeTaskId。缺失任务、取消、失败、待办和所有权不明都不是全部完成。
+- 必须 scope 非空、逐项 SUCCEEDED、无 REJECTED、无未通过 HumanGateAfter/ReviewDependsOn/依赖闸门；队列无 RUNNING，Worker 无残留 BUSY/activeTaskId。缺失任务、未审定取消、失败、待办和所有权不明都不是全部完成。正式SupersedeTask且取消依据齐全的CLOSED_SUPERSEDED按已取消节点收口，单列cancelledTaskIds，绝不记为SUCCEEDED。
 - 普通非闸门 PENDING_USER 不阻止机器链结算，但保留待验清单，不能写成人工通过；人工断点仍按 WAITING_USER 停下。
 - 最后一项 Complete 在队列互斥锁内自动写 MANUAL、session.status=COMPLETE、completion 时间/范围/待验项并清预约。最终真实人工闸门批准也会检查完成。
 - SupervisionStatus 是幂等兜底检查：漏回报或旧会话全部完成时补结算；ReconcileSupervision 和 DispatchSupervision 也检查。对账后必须重读返回模式，已结算不能继续派发。暂停/退出/熔断会话不会被此检查擅自恢复。
@@ -155,3 +157,40 @@
 本批控制台 heartbeat 为 60 分钟，以 mode-state.supervised.heartbeatMinutes 和 app automation 绑定为准，旧 ai/ART 日程不变。WATCH 通过无模型宿主只读正式 worker.lastProgressAt、supervisionPolicy.supervisionLevel 及可用时已核 localhost:8080 Unity MCP 实例；新增 WORKER_PROGRESS、UNITY_STATE_CHANGED、TURN_LIMIT 事件持久去重并由绑定控制台读/ack，空 inbox 立即结束。断连/陈旧为 null+原因。宿主计划查询的拒绝访问已被用户排除本任务，部署与桌面唤醒回执待完成版。
 
 三档 R-ST 见 WORKFLOW_FULL PRE-5c；`SupervisionCheckpoint` 每批写前照旧，120 个真实 app turn 不因 claim/Recover 清零。
+
+## 结算回传与接收确认（2026-10-05）
+
+2026-10-05 回传修复：本轮用户明确要求修复 AI205 完成未回传后再继续工作流。当前批执行器结算后按 DevTools/Workflow/HANDOFF.md 向绑定控制台一次性发送完整 supervisorHandoff，记录原始投递结果；控制台接收登记后独立验收。历史 AI191/195 的已拒绝回传不重试、不换通道；暂停/退出不重启。
+
+`Manage-SupervisionHandoff.ps1` 将任务/attempt/execution/session/source/controller/完整回执 SHA 绑定。Prepare 原子登记一次发送；Record 留真实 app 返回原文与 SHA，不将投递当验收；Receive 去重、停止时仅 REPORT_ONLY。最终自动 MANUAL/COMPLETE 可报告完成，不重启监管。无获支持 run-now API 时 WATCH 的 PENDING 是已观察但未送达，60分钟控制台仅作补漏；不能声称 WATCH 已即时唤醒。执行步骤与不确定投递处置见 `DevTools/Workflow/HANDOFF.md`。
+
+
+AI208现行实现：真实 app turn 按事件去重、跨线程/attempt累计；120仅产生一次 TURN_SOFT_LIMIT。该过渡只允许保存证据与交接：YieldSupervisionTask绑定task/execution/owner、文件SHA和软限时间，新可见线程领取时复核后继续。累计240或软限后距最后实际进度30分钟触发锁存硬停；240只是临时保护。Initialize、Checkpoint、RecordTaskProgress和Complete共用Sync-TaskTurnGate，不信任可被重置的limitReached布尔值。缺计数保留null及原因，不能抵消已记录的软限/硬停。
+进度默认Observation；WorkCompleted必须有落盘证据，重复ProgressId或同SHA证据、Heartbeat、只读观察、领取和交接均不刷新实际进度。Invoke-TaskTool只在成功完成工作后记录进度；只读调用显式传-ProgressKind Observation，开始/失败均不充进度。
+控制拒验只阻断本任务及其依赖；独立链继续。RejectVerification在队列锁内绑定原结果快照/SHA、CONTROL_ACCEPTANCE、稳定key及证据SHA，保留原报告和历史。只有显式ResolveControlRejection，绑定后续已完成的同根修复、独立控制台、两结果SHA及最新拒验证据后，才追加解决记录；不自动修改AI201 REJECTED，也不代过人工gate。仅有正式SupersedeTask取消依据的CLOSED_SUPERSEDED可作为scope已取消收口，状态不改SUCCEEDED，后继仍须满足真实依赖。
+正式硬限待瘦身措施落地后连续实测满两周再定。本卡将独立读取批处理、紧凑回执与全文证据分离、一次Workflow聚合和重复事件去重落地；本次只有离线样本，未满足两周，不宣称240为正式最终值。WATCH宿主部署仍待验。
+
+2026-10-06 获批失败续行：ResumeApprovedTask 仅控制端使用；同一原ENGINE/DATA根任务NEEDS_USER，经已消费给同根REPAIR的真实用户决定、独立验收及新真实编译/一次只读预检，绑定原全部错误/三份结果/证据与源资源SHA后，发一次20分钟有效的领取许可。调用与Poll均验证，原线程正式重绑/fresh idle、ACTIVE scope必须满足；旧attempt/maxAttempts/失败/回合/人工gate保持。repair卡与续行配同一repairId，根预算不重复计；重复请求幂等，不重复消费诊断。原失败门不全局放松，只有这一未用许可可领取一次，新的生产失败仍NEEDS_USER。证据漂移/陈旧/错根/无授权/占用/暂停直接拒绝留审计；不使用Manual Reset或新任务替代原任务。实现approved-resume.ps1，回归DevTools/Workflow/Test-ApprovedResume.ps1。许可不代替执行前fresh Editor保护或R4视觉验收。
+
+2026-10-06 原只读诊断补验续行：ResumeApprovedTask 另接 APPROVED_VALIDATION_RESUME，仅对同根 ENGINE/DATA 的一次 TOOL_UNAVAILABLE 只读诊断中断；需人类续行原话、独立环境/编译/清理方案证据、全部失败史/原修复结果/源码与全序列化快照 SHA、fresh idle 与同 session/route 绑定。一次凭证只续原卡，保留 attempt/maxAttempts/错误/人工gate，不另占修复slot。只有该补验实际完成且独立 VERIFIED、凭证已消费且失败史未变，才可在根生产恢复时排除这条工具中断的时间屏障；原错误仍永久保留，新生产/验收失败不豁免。实现 .ai-workspace/approved-resume.ps1，真实 queue 回归 DevTools/Workflow/Test-ApprovedResume.ps1；不替代生产写阶段或用户清理。
+## 2026-10-07 AI214 独立进程一次首载
+用户直接批准修改正式续行入口（输入 AI214_独立进程首载一次续行批准_20261007.md），APPROVED_COLD_PROCESS_VALIDATION 只承接原只读诊断恰好两次中断：首个 TOOL_UNAVAILABLE 和随后已导入1/1/1而尚未调用guard的 VERIFICATION。原始 probe 必须证明 guard未返回且未锁存，绑定之前已消费许可/全部失败史/213结果/源码/3399集合及当前环境的SHA。其它失败或实际guard失败不适用。
+新20分钟一次凭证 purpose=READONLY_COLD_PROCESS，保留旧凭证到approvedResumeHistory，领取才使attempt2→3；maxAttempts、错误、累计回合、人工gate和根预算2/2不重置、不新增REPAIR。重复请求幂等，旧票据不能再领；第三次失败不再发许可。仅在原214实际完成且独立VERIFIED后才可排除这两次已核只读验证中断对根恢复时序的屏障，原错误永久保留，原207生产失败不豁免。
+原线程fresh idle、原route/session/ACTIVE和证据漂移门继续有效。独立输出项目同版本Unity一次准备后退出，再启动另一进程证明0/0/0并唯一调用未修改9EE源码guard；主工程零写入，不预热/卸载重试，不修改实现迎合验收，失败即停。独立目录完整保留，原主工程清理已核闭环；不是MCP删除替代通道。原七项不重跑，真实首载还须独立验收。入口与回归沿用approved-resume.ps1/Test-ApprovedResume.ps1，不代表Static恢复或原207生产续行已获准执行。
+
+## 2026-10-07 AI214 宿主中断获批续行
+用户新授权推进修复后，APPROVED_HOST_PROCESS_VALIDATION只接受原AI214第三次TOOL_UNAVAILABLE、key unity-license:isolated-process-initialization-failed，且原准备进程已退出、入口无产物/验证进程0/guard0。绑定三条失败SHA、旧冷进程凭证/原始冷预条件证据、两份旧凭证链、213验收/主源码/序列化全集及新用户原话。不同用户身份的同一只读LocalLow探针必须分别显示受限失败/获批宿主成功、无Unity启动/配置写入，时效2小时；环境/原线程idle仍30分钟及同scope/route。
+一次READONLY_HOST_PROCESS领取attempt4，原历史/次数/maxAttempts/根预算/回合/人工gate均保留。独立新attempt4输出；准备和验证各一次，分别require_escalated，平台拒绝停止，探针获批不等于Unity获批。无共享进程/许可配置变更，无卸载/预热或新失败重试。只有原卡完整原生验收且独立VERIFIED，严格核对这条证据链后才排除已解决诊断中断时序屏障；不豁免生产失败。166项真实queue隔离回归覆盖拒绝分支及消费/失败保留，合成测试不代表Unity通过。
+
+
+## 2026-10-09 原AI217探针场景补验
+用户原话“进行一次补验”对应原待决定方案。APPROVED_PROBE_SCENE_VALIDATION仅接受217/root207/repair216首次EXECUTION及精确untitled-scene key：绑定原任务/唯一冷guard成功/0次保存/原进程正常退出2、完整失败及216结果SHA。新READONLY_PROBE_SCENE凭证原卡仅领取一次attempt2；旧次数/失败/根预算3保持。新隔离目录先由准备Editor保存无字体引用空Base，验证先打开，再0/0/0→唯一guard→原9项/4保存；准备与验证各一次且各正式平台审查，新失败停。环境核验明确只基于原独立编译和当前磁盘，不伪称fresh主Editor状态。只有本卡完整SUCCEEDED/VERIFIED且已消费凭证与原证据仍一致才排除此已解决探针中断的时序屏障；生产失败不豁免。220项真实queue隔离回归；首次夹具scope引用错误原文保留。授权和入口证据见outputs/control/FONT-R-PRE5c-20261005/ai217-probe-resume-20261009。
+## 2026-10-09 已批准Static恢复与后继修复
+用户要求检查修复未触发并触发后续任务。AI217已真实9/9，并未丢失完成；原控制台提前结束且缺少独立恢复写入口，使仍为2C的Static无法满足原207恢复后的只读预检前置。现Enqueue -WorkKind APPROVED_RESTORE只接同根已获批REPAIR和完整原生验证；控制台SHA绑定原恢复授权/最新推进授权、两独立review、原错误全集、预算、任务卡/一次Static复制计划、生产源和序列化全集。Enqueue与正式SUPERVISED Poll重复校验，证据30分钟、重复卡/错根/暂停/陈旧/漂移/新错误拒绝。仅一次领取，ENGINE生产失败一次停。该阶段不计新REPAIR，不配根恢复、不清任何历史。
+恢复与其预检属于一个可验收目标，但必须分开字节基线：先fresh Editor/未知dirty保护、核Git blob/LFS和原备份，只复制已批准Static一次；再从恢复后基线做真实编译与唯一Run(true)=171，保留3399集合/源码/Console/dirty。Complete十二项与控制独立签收后，ResumeApprovedTask才允许这份APPROVED_RESTORE的POST_RESTORE_READONLY_PREFLIGHT证据作为前置；必须明确productionWrites=1、fresh备份SHA与五项恢复检查，原七项预检不放松。继续原207的原线程、现有修复slot、错误/attempt/R4保持。不能把任务整体伪称READONLY_DIAGNOSIS，也不创建新生产根/第四REPAIR。入口approved-resume.ps1、queue.ps1、supervised.ps1；Test-ApprovedRestore.ps1实测49项正式queue隔离回归，包括恢复后同slot原根再领取。合成用例不代表生产恢复已完成。
+控制端每次独立验收后必须查看全scope和既有授权后继，未完成获批链不得因本次子验收结束默认为新的人工等待；业务门槛未达/真实新失败/人工R4仍停止对应链。WATCH普通空日志不触发业务复审。
+### 已批映射文件锁单次续行（2026-10-09）
+ResumeApprovedTask 的 APPROVED_RESTORE_RESUME 只接受原APPROVED_RESTORE首次映射锁失败且独立核复制/导入/写入均0；绑定本次用户原话、旧消费许可、原任务/全部错误/预算、原12项合同、一次ReleaseCachedFileHandles+一次复制计划和fresh Editor/编译/3399。原卡attempt2消费新许可，原许可和maxAttempts=1保留；新错误/重复/漂移/陈旧/未知dirty均拒绝，不新建恢复卡。原生Release前后保护状态必须一致，不改生产代码、不卸载或换写入方式。完整验收后，才排除这一已解决零写入工具阶段错误对根诊断修复时序的阻断，原始错误永久保留；原207仍须真实恢复后预检并配同216slot。
+
+### 2026-10-09 原207幂等审批中断续行
+用户明确“批准恢复监管，继续剩余工作”后，先正式ResumeSupervision恢复同session，再由ResumeApprovedTask的APPROVED_IDEMPOTENCE_RESUME核原PERMISSION拒绝、首调成功changed0及第二调未进入Editor。新许可APPROVED_IDEMPOTENCE_REMAINDER仅允许原卡一次第二Run(false)和原11项剩余验收；绑定原消费许可、错误全集、215/216/218独立验收、原216配对、预算、原合同、新用户原话及fresh源码/编译/Editor/3399。原许可进入历史，attempt累计，根恢复数和repair预算不增加；新错误、旧票重放、状态/证据/路径集合漂移、陈旧、已执行第二调均拒绝，Poll重复核验。平台逐次审批保留，新拒绝或真实失败即停，不重跑AI218、成功首调或Run(true)，不改CA4/恢复Static；全11项通过仍PENDING_USER/R4人工。Test-ApprovedRestore现134项真实queue隔离回归，合成验证不代表Unity验收。控制原证据与实际路径见outputs/control/FONT-R-PRE5c-20261005/ai207-idempotence-resume-20261009。

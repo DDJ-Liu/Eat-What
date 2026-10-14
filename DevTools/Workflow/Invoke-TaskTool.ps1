@@ -9,6 +9,7 @@ param(
     [string]$OwnerThreadId,
     [string]$ExecutionId,
     [string]$QueueScriptPath,
+    [ValidateSet('WorkCompleted','Observation')][string]$ProgressKind = 'WorkCompleted',
     [string]$RuntimeRoot
 )
 
@@ -45,9 +46,10 @@ if($progressEnabled){
     if(-not $QueueScriptPath){$QueueScriptPath=Join-Path (Split-Path -Parent $productionRoot) 'queue.ps1'}
 }
 $progressId=[guid]::NewGuid().ToString('N')
-function Report-Progress([string]$Stage) {
+function Report-Progress([string]$Stage,[string]$ProofPath) {
     if($progressEnabled){
-        & $QueueScriptPath -Action RecordTaskProgress -Pipeline $Lane -TaskId $TaskId -OwnerThreadId $OwnerThreadId -ExecutionId $ExecutionId -ProgressId "$progressId/$Stage" | Out-Null
+        $kind=if($Stage -eq 'finish' -and $exitCode -eq 0){$ProgressKind}else{'Observation'}
+        & $QueueScriptPath -Action RecordTaskProgress -Pipeline $Lane -TaskId $TaskId -OwnerThreadId $OwnerThreadId -ExecutionId $ExecutionId -ProgressId "$progressId/$Stage" -ProgressKind $kind -EvidencePath $ProofPath | Out-Null
     }
 }
 Report-Progress 'start'
@@ -89,7 +91,14 @@ Write-TaskUsageRecord -TaskId $TaskId -Lane $Lane -Phase $Phase -Event ("tool:{0
     -Metadata @{ command = $CommandPath; exitCode = $exitCode; startedAt = $startedAt.ToString('o'); durationMs = [Math]::Round(([DateTimeOffset]::Now - $startedAt).TotalMilliseconds, 3) } `
     -RuntimeRoot $RuntimeRoot | Out-Null
 
-Report-Progress 'finish'
+$proofPath=$null
+if($progressEnabled -and $exitCode -eq 0 -and $ProgressKind -eq 'WorkCompleted'){
+    $proofDir=Join-Path (Split-Path -Parent $QueueScriptPath) "outputs/tool-progress/$TaskId"
+    [void][IO.Directory]::CreateDirectory($proofDir)
+    $proofPath=Join-Path $proofDir "$progressId.json"
+    [IO.File]::WriteAllText($proofPath,(@{taskId=$TaskId;executionId=$ExecutionId;command=$CommandPath;arguments=$ArgumentList;output=$text;exitCode=$exitCode}|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
+}
+Report-Progress 'finish' $proofPath
 if ($text.Length -gt 0) { Write-Output $text.TrimEnd() }
 if ($null -ne $failure) { throw $failure }
 if ($exitCode -ne 0) { throw "Wrapped command exited with code ${exitCode}: $CommandPath" }

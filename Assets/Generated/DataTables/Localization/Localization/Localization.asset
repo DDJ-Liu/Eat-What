@@ -327,3 +327,7 @@ MonoBehaviour:
     zh_cn: "\u76AE\u86CB\u5976\u8336\u9762"
   - key: var_ofanqie_danhuangpai.name
     zh_cn: "\u86CB\u9EC4\u756A\u8304\u6C99\u62C9"
+  - key: ui_p0_cover_bubble_a.text
+    zh_cn: "\u5403\u4EC0\u4E48"
+  - key: ui_p0_cover_bubble_b.text
+    zh_cn: "\u6C6A\uFF01"

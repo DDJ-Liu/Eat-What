@@ -16,7 +16,7 @@ namespace EatWhat.Cooking.ShortCycle
     /// guarded by a generation number so cancelled camera callbacks cannot land late.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class ShortCyclePresentationDirector : MonoBehaviour, IShortCyclePresentationHost
+    public sealed class ShortCyclePresentationDirector : MonoBehaviour, IShortCyclePresentationHost, IShortCyclePresentationBatchHost
     {
         [SerializeField] private ShortCycleSpace[] spaces = new ShortCycleSpace[0];
         [SerializeField] private ShortCycleSpace sharedSpace = null;
@@ -32,8 +32,34 @@ namespace EatWhat.Cooking.ShortCycle
         private bool missingCameraWarningIssued;
         private readonly Dictionary<ShortCyclePresentationSet, bool> activationRequests = new Dictionary<ShortCyclePresentationSet, bool>();
         private readonly HashSet<ShortCyclePresentationSet> focusRequests = new HashSet<ShortCyclePresentationSet>();
+        private readonly HashSet<ShortCyclePresentationSet> preparingRequests = new HashSet<ShortCyclePresentationSet>();
+        private readonly HashSet<ShortCyclePresentationSet> visualOnlyRequests = new HashSet<ShortCyclePresentationSet>();
+        private struct VisibilityChange
+        {
+            public bool Active;
+            public float AtProgress;
+        }
+        private readonly Dictionary<ShortCyclePresentationSet, VisibilityChange> visibilityChanges =
+            new Dictionary<ShortCyclePresentationSet, VisibilityChange>();
+        private int presentationChangeDepth;
 
         public int Generation { get { return generation; } }
+
+        public void BeginPresentationChange()
+        {
+            if (presentationChangeDepth++ != 0) return;
+            CancelTimedVisibility();
+            if (cameraPanController != null) cameraPanController.CancelPan();
+        }
+
+        public void EndPresentationChange()
+        {
+            if (presentationChangeDepth == 0) return;
+            if (--presentationChangeDepth != 0) return;
+            if (cameraPanController != null && cameraPanController.IsPanning)
+                BeginTimedVisibility();
+            else MergeVisibility();
+        }
 
         public void LeaveSpace(ShortCycleSpaceId space)
         {
@@ -79,6 +105,7 @@ namespace EatWhat.Cooking.ShortCycle
                 return;
             }
 
+            target.PrepareVisuals();
             foreach (var traveler in travelingElements ?? new ShortCycleTravelingElement[0])
                 if (traveler != null) traveler.MoveTo(space);
 
@@ -91,6 +118,7 @@ namespace EatWhat.Cooking.ShortCycle
                 return;
             }
 
+            MergeVisibility();
             if (!RequestPan(target.CameraSlot, () => CompleteArrival(requestGeneration, target)))
                 CompleteArrival(requestGeneration, target);
         }
@@ -108,6 +136,10 @@ namespace EatWhat.Cooking.ShortCycle
 
             ShortCycleCameraSlot slot;
             target.TryResolveCameraSlot(view, out slot);
+            if (cameraPanController == null || !cameraPanController.IsAtSlot(slot))
+                target.PrepareVisuals();
+            target.ShowView(view);
+            MergeVisibility();
             if (!RequestPan(slot, () => CompleteViewArrival(requestGeneration, target, view)))
                 CompleteViewArrival(requestGeneration, target, view);
         }
@@ -117,7 +149,11 @@ namespace EatWhat.Cooking.ShortCycle
             OwnVisibility();
             generation++;
             var target = ResolveSpace(space);
-            if (target != null) target.HideView(view);
+            if (target != null)
+            {
+                target.HideView(view);
+                target.CancelVisualPreparation();
+            }
             MergeVisibility();
         }
 
@@ -145,6 +181,9 @@ namespace EatWhat.Cooking.ShortCycle
         public void ClearSessionPresentation()
         {
             generation++;
+            CancelTimedVisibility();
+            presentationChangeDepth = 0;
+            if (cameraPanController != null) cameraPanController.CancelPan();
             pendingDeparture = null;
             pendingViewArrival = null;
             missingCameraWarningIssued = false;
@@ -163,11 +202,14 @@ namespace EatWhat.Cooking.ShortCycle
             if (interactionLayerStack != null) interactionLayerStack.RestoreTransientState();
             activationRequests.Clear();
             focusRequests.Clear();
+            preparingRequests.Clear();
+            visualOnlyRequests.Clear();
         }
 
         private void CompleteArrival(int requestGeneration, ShortCycleSpace target)
         {
             if (requestGeneration != generation || target == null) return;
+            CancelTimedVisibility();
             if (pendingViewArrival == target) pendingViewArrival = null;
             target.ArriveFocus();
             MergeVisibility();
@@ -176,12 +218,12 @@ namespace EatWhat.Cooking.ShortCycle
         private void CompleteViewArrival(int requestGeneration, ShortCycleSpace target, ShortCyclePhase0View view)
         {
             if (requestGeneration != generation || target == null) return;
-            target.ShowView(view);
+            CancelTimedVisibility();
             if (pendingViewArrival == target)
             {
                 pendingViewArrival = null;
-                target.ArriveFocus();
             }
+            target.ArriveFocus();
             MergeVisibility();
         }
 
@@ -213,11 +255,9 @@ namespace EatWhat.Cooking.ShortCycle
 
         private void MergeVisibility()
         {
-            activationRequests.Clear();
-            focusRequests.Clear();
-            foreach (var candidate in spaces ?? new ShortCycleSpace[0]) CollectRequests(candidate);
-            CollectRequests(sharedSpace);
-
+            if (presentationChangeDepth != 0) return;
+            if (visibilityChanges.Count != 0) CancelTimedVisibility();
+            CollectVisibilityRequests();
             Rect cameraRect;
             var hasCameraRect = ShortCycleSpace.TryGetCameraWorldRect(
                 cameraPanController == null ? null : cameraPanController.ControlledCamera, out cameraRect);
@@ -230,9 +270,62 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 var persistentVisual = request.Key.KeepVisualActiveAcrossSpaces;
                 var visible = (request.Value || persistentVisual) &&
-                    (persistentVisual || !hasCameraRect || request.Key.IsInView(cameraRect));
+                    (persistentVisual || visualOnlyRequests.Contains(request.Key) ||
+                        preparingRequests.Contains(request.Key) ||
+                        !hasCameraRect || request.Key.IsInView(cameraRect));
                 request.Key.ApplyVisibility(visible, visible && focusRequests.Contains(request.Key));
             }
+        }
+
+        private void CollectVisibilityRequests()
+        {
+            activationRequests.Clear();
+            focusRequests.Clear();
+            preparingRequests.Clear();
+            visualOnlyRequests.Clear();
+            foreach (var candidate in spaces ?? new ShortCycleSpace[0]) CollectRequests(candidate);
+            CollectRequests(sharedSpace);
+        }
+
+        private void BeginTimedVisibility()
+        {
+            CollectVisibilityRequests();
+            visibilityChanges.Clear();
+            foreach (var request in activationRequests)
+            {
+                var set = request.Key;
+                var desired = request.Value || set.KeepVisualActiveAcrossSpaces;
+                if (!set.HasVisibilityRequest || set.IsVisibilityRequested == desired)
+                {
+                    set.ApplyVisibility(desired, false);
+                    continue;
+                }
+                var threshold = desired ? set.AppearAtProgress : set.DisappearAtProgress;
+                if (threshold <= 0f) set.ApplyVisibility(desired, false);
+                else
+                {
+                    set.SetFocus(false);
+                    visibilityChanges[set] = new VisibilityChange { Active = desired, AtProgress = threshold };
+                }
+            }
+            if (visibilityChanges.Count == 0) return;
+            cameraPanController.PanProgressed += ApplyTimedVisibility;
+            ApplyTimedVisibility(cameraPanController.NormalizedProgress);
+        }
+
+        private void ApplyTimedVisibility(float progress)
+        {
+            foreach (var request in visibilityChanges)
+            {
+                if (progress >= request.Value.AtProgress)
+                    request.Key.ApplyVisibility(request.Value.Active, false);
+            }
+        }
+
+        private void CancelTimedVisibility()
+        {
+            if (cameraPanController != null) cameraPanController.PanProgressed -= ApplyTimedVisibility;
+            visibilityChanges.Clear();
         }
 
         private void CollectRequests(ShortCycleSpace space)
@@ -240,10 +333,13 @@ namespace EatWhat.Cooking.ShortCycle
             if (space == null) return;
             foreach (var set in space.ReferencedSets())
             {
+                var wantsActive = space.WantsActive(set);
                 bool previous;
                 activationRequests.TryGetValue(set, out previous);
-                activationRequests[set] = previous || space.WantsActive(set);
+                activationRequests[set] = previous || wantsActive;
                 if (space.WantsFocus(set)) focusRequests.Add(set);
+                if (wantsActive && space.IsPreparingVisuals) preparingRequests.Add(set);
+                if (space.WantsVisualOnly(set)) visualOnlyRequests.Add(set);
             }
         }
 

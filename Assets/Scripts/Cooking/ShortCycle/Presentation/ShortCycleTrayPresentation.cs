@@ -9,11 +9,26 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private string collapsedPreset = "Collapsed";
         [SerializeField] private string highlightPreset = "Highlight";
         [SerializeField] private string detailPreset = "Detail";
+        private ShortCycleTrayView requestedView;
+        private bool hasRequestedView;
+        private bool pendingView;
 
         public void Apply(ShortCycleTrayView view)
         {
-            if (transitionController == null) return;
-            transitionController.GoTo(ResolvePreset(view));
+            if (hasRequestedView && requestedView == view && !pendingView) return;
+            requestedView = view;
+            hasRequestedView = true;
+            pendingView = true;
+            ApplyPendingView();
+        }
+
+        private void OnEnable() { ApplyPendingView(); }
+        private void OnDisable() { if (hasRequestedView) pendingView = true; }
+
+        private void ApplyPendingView()
+        {
+            if (!pendingView || transitionController == null || !transitionController.isActiveAndEnabled) return;
+            if (transitionController.GoTo(ResolvePreset(requestedView))) pendingView = false;
         }
 
         private string ResolvePreset(ShortCycleTrayView view)

@@ -18,6 +18,8 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private string exitTransition = "Hide";
         [SerializeField] private DeactivateMode deactivateMode = DeactivateMode.ContainerInactive;
         [SerializeField] private bool keepVisualActiveAcrossSpaces = false;
+        [SerializeField, Range(0f, 1f)] private float appearAtProgress = 0f;
+        [SerializeField, Range(0f, 1f)] private float disappearAtProgress = 0f;
 
         private bool[] originalRendererEnabled = new bool[0];
         private Renderer[] hiddenRenderers = new Renderer[0];
@@ -41,13 +43,27 @@ namespace EatWhat.Cooking.ShortCycle
         public Transform ContainerTransform { get { return containerRoot == null ? transform : containerRoot.transform; } }
         public MouseInteractionLayer InteractionLayer { get { return interactionLayer; } }
         public bool KeepVisualActiveAcrossSpaces { get { return keepVisualActiveAcrossSpaces; } }
+        public float AppearAtProgress { get { return SafeProgress(appearAtProgress); } }
+        public float DisappearAtProgress { get { return SafeProgress(disappearAtProgress); } }
+        internal bool IsVisibilityRequested { get { return requestedActive == true; } }
+        internal bool HasVisibilityRequest { get { return requestedActive.HasValue; } }
 
         private void OnEnable() { CaptureTransientState(); MarkBoundsDirty(); }
         private void OnDisable() { if (!internalLifecycleChange) RestoreTransientState(false); }
         private void OnDestroy() { RestoreTransientState(false); }
         private void OnTransformChildrenChanged() { MarkBoundsDirty(); }
         private void OnDidApplyAnimationProperties() { MarkBoundsDirty(); }
-        private void OnValidate() { MarkBoundsDirty(); }
+        private void OnValidate()
+        {
+            appearAtProgress = SafeProgress(appearAtProgress);
+            disappearAtProgress = SafeProgress(disappearAtProgress);
+            MarkBoundsDirty();
+        }
+
+        private static float SafeProgress(float value)
+        {
+            return float.IsNaN(value) || float.IsInfinity(value) ? 0f : Mathf.Clamp01(value);
+        }
 
         public void MarkBoundsDirty()
         {
@@ -97,21 +113,25 @@ namespace EatWhat.Cooking.ShortCycle
 
         public void Activate()
         {
+            if (requestedActive == true) return;
             CaptureTransientState();
             requestedActive = true;
+            requestedFocus = null;
             transitionGeneration++;
             if (transitionController != null) transitionController.CancelAll();
             hidden = false;
             RestoreHiddenRenderers();
-            if (containerRoot != null) containerRoot.SetActive(true);
+            if (containerRoot != null && !containerRoot.activeSelf) containerRoot.SetActive(true);
             if (transitionController != null && !string.IsNullOrEmpty(enterTransition))
                 transitionController.PlayTransition(enterTransition);
         }
 
         public void Deactivate()
         {
+            if (requestedActive == false) return;
             CaptureTransientState();
             requestedActive = false;
+            requestedFocus = null;
             var request = ++transitionGeneration;
             if (transitionController != null) transitionController.CancelAll();
             SetFocus(false);
@@ -119,7 +139,8 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 hidden = true;
                 for (var i = 0; i < hiddenRenderers.Length; i++)
-                    if (hiddenRenderers[i] != null) hiddenRenderers[i].enabled = false;
+                    if (hiddenRenderers[i] != null && hiddenRenderers[i].enabled)
+                        hiddenRenderers[i].enabled = false;
                 return;
             }
             if (transitionController != null && !string.IsNullOrEmpty(exitTransition))
@@ -138,7 +159,11 @@ namespace EatWhat.Cooking.ShortCycle
             IsFocused = focused;
             var renderers = overflowRenderers ?? new Renderer[0];
             for (var index = 0; index < renderers.Length; index++)
-                if (renderers[index] != null) renderers[index].enabled = !hidden && focused && originalRendererEnabled[index];
+            {
+                var shouldRender = !hidden && requestedActive == true && originalRendererEnabled[index];
+                if (renderers[index] != null && renderers[index].enabled != shouldRender)
+                    renderers[index].enabled = shouldRender;
+            }
 
             var gates = gatedInteractions ?? new MonoBehaviour[0];
             for (var index = 0; index < gates.Length; index++)
@@ -260,7 +285,7 @@ namespace EatWhat.Cooking.ShortCycle
             internalLifecycleChange = true;
             try
             {
-                if (containerRoot != null) containerRoot.SetActive(false);
+                if (containerRoot != null && containerRoot.activeSelf) containerRoot.SetActive(false);
             }
             finally { internalLifecycleChange = false; }
         }
@@ -268,7 +293,8 @@ namespace EatWhat.Cooking.ShortCycle
         private void RestoreHiddenRenderers()
         {
             for (var i = 0; i < hiddenRenderers.Length; i++)
-                if (hiddenRenderers[i] != null) hiddenRenderers[i].enabled = originalHiddenEnabled[i];
+                if (hiddenRenderers[i] != null && hiddenRenderers[i].enabled != originalHiddenEnabled[i])
+                    hiddenRenderers[i].enabled = originalHiddenEnabled[i];
         }
     }
 }

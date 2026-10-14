@@ -19,16 +19,26 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private ShortCycleCameraSlot cameraSlot = ShortCycleCameraSlot.P0Center;
         [SerializeField] private MouseInteractionLayer spaceLayer = null;
         [SerializeField] private ShortCyclePresentationSet[] structureSets = new ShortCyclePresentationSet[0];
+        [SerializeField] private ShortCyclePresentationSet[] visualOnlySets = new ShortCyclePresentationSet[0];
         [SerializeField] private ShortCycleViewSetEntry[] viewTable = new ShortCycleViewSetEntry[0];
         private readonly HashSet<ShortCyclePhase0View> visibleViews = new HashSet<ShortCyclePhase0View>();
         private bool focused;
         private bool arrived;
+        private bool preparingVisuals;
         internal bool DirectorOwnsVisibility { get; set; }
 
         public ShortCycleSpaceId SpaceId { get { return spaceId; } }
         public ShortCycleCameraSlot CameraSlot { get { return cameraSlot; } }
         public MouseInteractionLayer SpaceLayer { get { return spaceLayer; } }
         internal bool HasViewCameraRouting { get { return viewTable != null && viewTable.Length > 0; } }
+        internal bool IsPreparingVisuals { get { return preparingVisuals; } }
+
+        public void PrepareVisuals()
+        {
+            preparingVisuals = true;
+            focused = false;
+            ApplyStandaloneVisibility();
+        }
 
         public bool TryResolveCameraSlot(ShortCyclePhase0View view, out ShortCycleCameraSlot slot)
         {
@@ -94,12 +104,22 @@ namespace EatWhat.Cooking.ShortCycle
         {
             focused = true;
             arrived = true;
+            preparingVisuals = false;
             ApplyStandaloneVisibility();
         }
 
         public void LeaveFocus()
         {
             focused = false;
+            preparingVisuals = false;
+            ApplyStandaloneVisibility();
+        }
+
+        public void CancelVisualPreparation()
+        {
+            if (!preparingVisuals) return;
+            preparingVisuals = false;
+            focused = arrived;
             ApplyStandaloneVisibility();
         }
 
@@ -116,8 +136,11 @@ namespace EatWhat.Cooking.ShortCycle
         {
             focused = false;
             arrived = false;
+            preparingVisuals = false;
             visibleViews.Clear();
             foreach (var set in structureSets ?? new ShortCyclePresentationSet[0])
+                if (set != null) set.RestoreTransientState();
+            foreach (var set in visualOnlySets ?? new ShortCyclePresentationSet[0])
                 if (set != null) set.RestoreTransientState();
             foreach (var row in viewTable ?? new ShortCycleViewSetEntry[0])
                 foreach (var set in row == null || row.sets == null ? new ShortCyclePresentationSet[0] : row.sets)
@@ -127,6 +150,8 @@ namespace EatWhat.Cooking.ShortCycle
         internal IEnumerable<ShortCyclePresentationSet> ReferencedSets()
         {
             foreach (var set in structureSets ?? new ShortCyclePresentationSet[0])
+                if (set != null) yield return set;
+            foreach (var set in visualOnlySets ?? new ShortCyclePresentationSet[0])
                 if (set != null) yield return set;
             foreach (var row in viewTable ?? new ShortCycleViewSetEntry[0])
                 foreach (var set in row == null || row.sets == null ? new ShortCyclePresentationSet[0] : row.sets)
@@ -141,19 +166,34 @@ namespace EatWhat.Cooking.ShortCycle
 
         private bool WantsLogicalActive(ShortCyclePresentationSet candidate)
         {
+            foreach (var set in visualOnlySets ?? new ShortCyclePresentationSet[0])
+                if (set == candidate && (focused || preparingVisuals)) return true;
             foreach (var set in structureSets ?? new ShortCyclePresentationSet[0])
-                if (set == candidate && (focused || (arrived && candidate.ContainerTransform.IsChildOf(transform))))
+                if (set == candidate && (focused || preparingVisuals ||
+                    (arrived && candidate.ContainerTransform.IsChildOf(transform))))
                     return true;
             foreach (var row in viewTable ?? new ShortCycleViewSetEntry[0])
             {
-                if (!focused || row == null || !visibleViews.Contains(row.view)) continue;
+                if ((!focused && !preparingVisuals) || row == null || !visibleViews.Contains(row.view)) continue;
                 foreach (var set in row.sets ?? new ShortCyclePresentationSet[0])
                     if (set == candidate) return true;
             }
             return false;
         }
 
-        internal bool WantsFocus(ShortCyclePresentationSet set) { return focused && WantsLogicalActive(set); }
+        internal bool WantsFocus(ShortCyclePresentationSet set)
+        {
+            foreach (var visualOnly in visualOnlySets ?? new ShortCyclePresentationSet[0])
+                if (visualOnly == set) return false;
+            return focused && WantsLogicalActive(set);
+        }
+
+        internal bool WantsVisualOnly(ShortCyclePresentationSet candidate)
+        {
+            foreach (var set in visualOnlySets ?? new ShortCyclePresentationSet[0])
+                if (set == candidate && (focused || preparingVisuals)) return true;
+            return false;
+        }
 
         private void ApplyStandaloneVisibility()
         {

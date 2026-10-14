@@ -1,5 +1,7 @@
 # AI 工作流协议
 
+> 2026-10-12 下一批次优先规则：执行 [AGENTS.md 四条硬上限](../../AGENTS.md#下一批次四条硬上限2026-10-12-用户决定)。≤10 字段只验允许清单 diff + 一张截图；全路径哈希每批末一次；资产 SHA 仅提交 hook，任务中无内存保护；一次性工具仅离线编译 + Editor 单次执行，不进 Final。失败续行统一 [ApproveResume](../toolkit/WF.md#approve-resume)，幂等算同一批准。下文 FONT-R 专用许可/内存保护/冷启动测试是历史，禁止按旧规则新增续行入口或夹具。当前 MANUAL/watch-60 暂停，不再做字体返工。
+
 > **H后现行规则：** 2026-09-22 用户更新分支规则：当前成果（含H后格式提交）集成main，旧content/p0p1-layout关闭并删除；从新main建立codex/unity6-followup并跟踪同名origin，后续F和E2由“AI工作流-控制台（接管）”管理，E2完整关闭时再集成main。F待用户指定，MANUAL和历史队列保持，不自动派发。E1标签仍固定37bb854，backup保持ec3aa7c；迁移分支/副本暂留。固定引擎6000.3.24f1；双工作区冻结/路由已解除，生产实例仍需路径核对。[交接与待办](MIG63/H后分支切换与控制台移交.md)为本轮入口；[设计总档v1.5](design/AI开发工作流总档_设计端_v1_5.md)供设计端同步。
 
 > 2026-09-15验证清理修订（用户明确）：MCP/Play自身操作产生且归属已核实的临时dirty由执行器自动恢复，不新增人工审批或仅凭dirty熔断。执行前记录恢复点及临时操作，执行后核对并清理；未知/用户已有未保存变化及实际平台拒绝仍保护。完整流程见`.ai-workspace/UNITY_SCENE_CLEANUP.md`，ENGINE_MCP必须执行并交清理证据。
@@ -226,6 +228,8 @@ queue.ps1 -Action RecordIssue -Pipeline <PIPELINE> -TaskId <TASK_ID> -IssueKind 
 
 ## PRE-5c · 分级停止与真实回合
 
-R-ST（用户 2026-10-05）：ENGINE/DATA 写生产资产失败一次停止，转只读诊断；CODE 交付前自验证失败属任务内迭代，用 `RecordCodeValidation` 绑定当前 executionId/ownerThreadId、稳定 problemKey 和证据，首次失败后至多重试两次，超限停止；任一车道控制台 `Compare-Acceptance` 验收失败一次停止。不能将 CODE 自验证首败一律 `Fail`，也不能把机器验收失败降级。旧 AI201 经 `ResumeCodeValidationStop` 用户审定继续同任务，保留 attempts、失败和恢复史；该已审定自验证失败计入原 problemKey 首次失败，后续同键只余两次重试。
-
-`RecordTaskTurn` 仅接受原始 Codex app turn 与当前执行重叠的证据；provider 响应另计。`maxTurns=120` 是协作停止门，跨 attempt 保留真实计数，不宣称平台硬上限。JSON 日期用 PowerShell 7 `ConvertFrom-Json -DateKind String` 保留时区，比较按 DateTimeOffset 的 UTC 瞬时语义；无时区输入不得补猜。Poll/Complete/Checkpoint 摘要按实际 UTF-8（含 CRLF）小于 759 字节，全文从 receiptPath 读取。
+AI208现行实现：真实 app turn 按事件去重、跨线程/attempt累计；120仅产生一次 TURN_SOFT_LIMIT。该过渡只允许保存证据与交接：YieldSupervisionTask绑定task/execution/owner、文件SHA和软限时间，新可见线程领取时复核后继续。累计240或软限后距最后实际进度30分钟触发锁存硬停；240只是临时保护。Initialize、Checkpoint、RecordTaskProgress和Complete共用Sync-TaskTurnGate，不信任可被重置的limitReached布尔值。缺计数保留null及原因，不能抵消已记录的软限/硬停。
+进度默认Observation；WorkCompleted必须有落盘证据，重复ProgressId或同SHA证据、Heartbeat、只读观察、领取和交接均不刷新实际进度。Invoke-TaskTool只在成功完成工作后记录进度；只读调用显式传-ProgressKind Observation，开始/失败均不充进度。
+控制拒验只阻断本任务及其依赖；独立链继续。RejectVerification在队列锁内绑定原结果快照/SHA、CONTROL_ACCEPTANCE、稳定key及证据SHA，保留原报告和历史。只有显式ResolveControlRejection，绑定后续已完成的同根修复、独立控制台、两结果SHA及最新拒验证据后，才追加解决记录；不自动修改AI201 REJECTED，也不代过人工gate。仅有正式SupersedeTask取消依据的CLOSED_SUPERSEDED可作为scope已取消收口，状态不改SUCCEEDED，后继仍须满足真实依赖。
+正式硬限待瘦身措施落地后连续实测满两周再定。本卡将独立读取批处理、紧凑回执与全文证据分离、一次Workflow聚合和重复事件去重落地；本次只有离线样本，未满足两周，不宣称240为正式最终值。WATCH宿主部署仍待验。
+ENGINE/DATA生产写失败首败停并只读诊断；CODE交付前同一稳定key首败后重试≤2，用RecordCodeValidation追加失败/解决证据，不改预算。旧AI201 UTC误停审定和所有历史保留。JSON读入继续DateKind String，时间必须有显式时区，比较UTC瞬时值。Poll/Complete/Checkpoint摘要目标≤2KB，Top5合计<4KB，全文按receiptPath/messagePath读取。

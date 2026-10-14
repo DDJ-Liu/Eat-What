@@ -1,0 +1,56 @@
+[
+  {
+    "originalPath": ".ai-workspace/CORE.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\CORE.md",
+    "bytes": 9090,
+    "sha256": "9DA99C0CAF83F95FE9C7D6B69363779ABA5A4E364C0766A60463F3AD2A1F02D0"
+  },
+  {
+    "originalPath": ".ai-workspace/CONTROL_CHAT.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\CONTROL_CHAT.md",
+    "bytes": 2182,
+    "sha256": "77FE58DF9CDF8177F3D73142298C3CE3DAC2BF18A9AAFCC0C27EF568B872CD4B"
+  },
+  {
+    "originalPath": ".ai-workspace/PIPELINES.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\PIPELINES.md",
+    "bytes": 4547,
+    "sha256": "84E829C46AE0D1C2C815EEE4353683174A1D7AB9C40628A20A6906BB7EE949AF"
+  },
+  {
+    "originalPath": ".ai-workspace/README.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\README.md",
+    "bytes": 1587,
+    "sha256": "4816EED4BD0EFC4561081F4B64779F806AE7E7E4996159D4742AA64EB4C78C9D"
+  },
+  {
+    "originalPath": ".ai-workspace/outputs/control/人工处理索引.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\outputs\\control\\人工处理索引.md",
+    "bytes": 2386,
+    "sha256": "59A944FB429BD4DE573A0A318DB8A6FF2069C86E4091829DE1C99278CD03801B"
+  },
+  {
+    "originalPath": "CODEBASE_MAP.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\CODEBASE_MAP.md",
+    "bytes": 40014,
+    "sha256": "E7ADA8A84FD4B9CC33C02E339C2993204BAAD7303EB750953F3835E737C3344D"
+  },
+  {
+    "originalPath": "项目整体阅读理解与推进基线_2026-08-14.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\项目整体阅读理解与推进基线_2026-08-14.md",
+    "bytes": 27767,
+    "sha256": "5BE9FF4D4B84325AEA3136C0B579F98E2F162F14109CA5C4FE6FC256AD12F7C2"
+  },
+  {
+    "originalPath": ".ai-workspace/workers/CODE.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\workers\\CODE.md",
+    "bytes": 7241,
+    "sha256": "8F9BA487A8E9F7CEE347256B1DEC3B822CDCF24BBEC2CA971F82179E8C228135"
+  },
+  {
+    "originalPath": ".ai-workspace/inputs/E2-20261012/授权与边界.md",
+    "archivedPath": ".ai-workspace\\archive\\2026-10-12-workflow-closeout\\entry-before\\.ai-workspace\\inputs\\E2-20261012\\授权与边界.md",
+    "bytes": 2924,
+    "sha256": "ABCC4667F67C80C45CB06280D9E845144D69196D0D8CE8F33207E96466BE5CCB"
+  }
+]

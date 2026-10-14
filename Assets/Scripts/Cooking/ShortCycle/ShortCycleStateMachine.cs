@@ -121,9 +121,15 @@ namespace EatWhat.Cooking.ShortCycle
         private void ChangeState(ShortCycleStateMachine sessionManager, ShortCyclePhase0StateBase next, bool notify)
         {
             if (ReferenceEquals(currentState, next)) return;
-            if (currentState != null) currentState.ExitState(sessionManager);
-            currentState = next;
-            currentState.EnterState(sessionManager);
+            var batch = sessionManager.PresentationHost as IShortCyclePresentationBatchHost;
+            if (batch != null) batch.BeginPresentationChange();
+            try
+            {
+                if (currentState != null) currentState.ExitState(sessionManager);
+                currentState = next;
+                currentState.EnterState(sessionManager);
+            }
+            finally { if (batch != null) batch.EndPresentationChange(); }
             if (notify) sessionManager.NotifyStateChanged();
         }
 
@@ -367,9 +373,15 @@ namespace EatWhat.Cooking.ShortCycle
         private void ChangeState(ShortCycleSessionStateBase next)
         {
             if (ReferenceEquals(currentState, next)) return;
-            if (currentState != null) currentState.ExitState(this);
-            currentState = next;
-            currentState.EnterState(this);
+            var batch = presentationHost as IShortCyclePresentationBatchHost;
+            if (batch != null) batch.BeginPresentationChange();
+            try
+            {
+                if (currentState != null) currentState.ExitState(this);
+                currentState = next;
+                currentState.EnterState(this);
+            }
+            finally { if (batch != null) batch.EndPresentationChange(); }
             NotifyStateChanged();
         }
     }

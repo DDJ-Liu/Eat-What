@@ -74,10 +74,10 @@ try{
         $turn=Q @{Action='RecordTaskTurn';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;EvidencePath=$proofPath}
         if($n -eq 119){Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'CONTINUE') '119 continues'}
     }
-    Check ($turn.appTurnCount -eq 120 -and $turn.action -eq 'STOP_AT_TURN_LIMIT') '120 is cooperative stop'
+    Check ($turn.appTurnCount -eq 120 -and $turn.action -eq 'TURN_SOFT_LIMIT') '120 requests a soft checkpoint handoff'
     $duplicate=Q @{Action='RecordTaskTurn';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;EvidencePath=$proofPath}
     Check ($duplicate.duplicate -and $duplicate.appTurnCount -eq 120) 'turn identity deduplicated'
-    Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'STOP_AT_TURN_LIMIT') 'checkpoint honors limit'
+    Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'TURN_SOFT_LIMIT') 'checkpoint honors soft transition'
     Reject {Q $progress} 'no tool progress beyond turn limit'
     Reject {Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='checkpoint';Verification='safe'}} 'turn yield requires actual artifacts'
     Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='checkpoint';Verification='safe';Artifacts=@($proofPath)}|Out-Null
@@ -133,7 +133,7 @@ try{
     $next=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(1)|ConvertFrom-Json
     Check ($next.detected -eq 3) 'exactly three new events'
     $cursor=Get-Content "$watchOut/cursor.json" -Raw|ConvertFrom-Json
-    foreach($kind in @('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_LIMIT')){Check (@($cursor.pending|Where-Object kind -eq $kind).Count -eq 1) "$kind once"}
+    foreach($kind in @('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_SOFT_LIMIT')){Check (@($cursor.pending|Where-Object kind -eq $kind).Count -eq 1) "$kind once"}
     Check ($cursor.tasks[0].supervisionLevel -eq 'light') 'nested real policy wins over legacy full'
     $again=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(2)|ConvertFrom-Json
     Check ($again.detected -eq 0 -and $again.delivered -eq 0) 'repeat no new event and zero wakeups'
@@ -163,7 +163,7 @@ try{
     $legacy=[pscustomobject]@{failureAdjudications=@([pscustomobject]@{decision='CODE_SELF_VALIDATION_CONTINUE';problemKey='fixture:old-error'});codeValidationHistory=@()}
     Check ((Get-CodeValidationRetryState $legacy 'fixture:old-error').failureCount -eq 1) 'adjudicated old CODE failure consumes original retry slot'
     Reject {ConvertTo-WorkflowUtcInstant '2026-10-05T00:30:00'} 'repair budget UTC parser rejects zone-free timestamp'
-    $result=@{result='PASS';fixtureOnly=$true;checks=$script:checks.Count;tested=@($script:checks);newKinds=@('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_LIMIT');responses=@($script:responses);finalCursor=$cursor}
+    $result=@{result='PASS';fixtureOnly=$true;checks=$script:checks.Count;tested=@($script:checks);newKinds=@('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_SOFT_LIMIT');responses=@($script:responses);finalCursor=$cursor}
     if($env:EATWHAT_PRE5C_EVIDENCE_ROOT){Save (Join-Path $env:EATWHAT_PRE5C_EVIDENCE_ROOT 'pre5c-fixtures.json') $result}
     @{result='PASS';checks=$script:checks.Count;newKinds=$result.newKinds}|ConvertTo-Json -Compress
 }finally{

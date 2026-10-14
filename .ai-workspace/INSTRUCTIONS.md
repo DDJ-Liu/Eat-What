@@ -2277,3 +2277,495 @@ Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md and inputs/U1-R1-2026
 读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3_ENGINE.md、COMMON和最新用户决定；取消203/204，沿当前确认基线执行R3幂等迁移，三现有材质保留并重调UpdateShaderRatios；Static唯一精确保护，视觉gate保留。
 
 > SUPERVISED POLICY at 2026-10-05T19:06:31.8087599+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前工作树新基线后直接R2，CODE交付前同键重试<=2；AI201不作为依赖。","updatedAt":"2026-10-05T19:06:31.7702091+08:00","supervisionLevel":"light"},"taskId":"AI-000205"}
+
+> SUPERVISED ResumeSupervision at 2026-10-05T19:08:15.9013738+08:00: {"reason":"用户最新明确解除全局CIRCUIT；当前确认工作树已正常提交ee27ac2，取消203/204，从205 R2继续，201只保留任务级REJECTED，208已登记修复。","userDecision":"恢复监管；AI201保持任务级阻断，其余链不受影响；FONT-R取消203/204，提交当前工作树后从R2继续；120软限及240临时保护按最新卡修复。"}
+
+> SUPERVISED POLICY at 2026-10-05T19:10:19.9400879+08:00: {"taskId":"AI-000207","policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户取消203/204而保留R4用户视觉签收；当前基线幂等R3三材质复用，Static唯一保护。","updatedAt":"2026-10-05T19:10:19.9028404+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED PauseSupervision at 2026-10-05T19:44:15.9949993+08:00: {"reason":"用户最新要求先定位修复AI205完成回传断点，再继续后续工作流；临时维护暂停派发，不重置任务或记全局CIRCUIT。","userDecision":""}
+
+> SUPERVISED ResumeSupervision at 2026-10-05T19:58:07.2409998+08:00: {"reason":"回传27项及Workflow Final15/15已通过；恢复同session仅作AI205一次实际回传，然后独立核验再派后继。","userDecision":"AI205任务完成，但是没有进行回传，首先定位调整后的工作流的结构执行问题，并尝试修复，修复完成后再继续后续的工作流任务"}
+> Control rejection resolved AI-000201 : {"at":"2026-10-05T20:39:58.7590447+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"workflow:turn-limit-handoff-clears-stop","repairTaskId":"AI-000208","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","userDecision":"用户2026-10-05批准AI201最小修复并要求完成后独立复核；120软限交接继续，30分钟无进度或临时240硬停；控制拒验任务级。","verification":"AI208生产源码21SHA一致、机器验收10/10、第三次Workflow Final17/17；独立真实队列核心交接/漂移拒绝/累计121/240硬停通过；7摘要全文对照一致。保留旧拒验与失败史，WATCH部署与人工gate不代签。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai208-review-20261005\\controller-review-decision.json","evidenceSha256":"4C30BB99614F97C87FD3072EF20491929EB3993104948BB4B604F450D21BD53E","rejectedResultSha256":"B0E8899D1142C56315517170EFCD41FFE915648B66E1AD415932934679260DEB","repairResultSha256":"A3623BFC9F04FF52648341BEDD82407C2E12DEABC580B5788177C3458B8C6051"}
+## AI-000209 | [CODE] [PRE5C-FONTR] FONT-R3 已批准Shader修复只读诊断登记
+
+- 序号：209
+- 提交时间：2026-10-05T23:45:10.3034252+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000206
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-SHADER-DIAGNOSIS_CODE.md、AI207_Shader修复批准_20261005.md及COMMON。仅只读核现物和既有诊断，满足正式同根修复入口；不改源码/生产资产/运行Unity。
+
+> SUPERVISED POLICY at 2026-10-05T23:45:33.7987090+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准原207最小Shader修复；只读登记同根诊断为正式REPAIR入口前置，无生产操作。","updatedAt":"2026-10-05T23:45:33.7286492+08:00","supervisionLevel":"light"},"taskId":"AI-000209"}
+
+> SUPERVISED EXTEND at 2026-10-05T23:45:33.9327712+08:00: {"taskIds":["AI-000209"],"reason":"用户批准同根修复，登记必需只读诊断，保留207原失败。"}
+## AI-000210 | [CODE] [PRE5C-FONTR] FONT-R3 精确Shader合同修复
+
+- 序号：210
+- 提交时间：2026-10-06T00:03:23.4346211+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000206, AI-000209
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-SHADER-REPAIR_CODE.md、AI207_Shader修复批准_20261005.md、COMMON及同根AI209诊断。只FontSwapOnce/必要离线夹具/文档，保持三材质Shader/GUID与Static；现场异Shader组合及严格反例，一次Fonts Final；不启动Unity/写序列化资产/恢复207。
+
+> SUPERVISED POLICY at 2026-10-06T00:03:48.7081330+08:00: {"taskId":"AI-000210","policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准AI207同根最小Shader修复；AI209诊断独立核验通过，CODE只源码/离线夹具，完成后控制独立核验。","updatedAt":"2026-10-06T00:03:48.6284968+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-10-06T00:03:48.8196483+08:00: {"taskIds":["AI-000210"],"reason":"用户批准同根修复，正式REPAIR root207/diagnosis209，原207不提前恢复。"}
+## AI-000211 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R3 Shader修复真实编译与只读预检
+
+- 序号：211
+- 提交时间：2026-10-06T00:25:36.9325379+08:00
+- 模块 ID：PRE5C-FONTR
+- 初始状态：QUEUED
+- 前置依赖：AI-000210
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-SHADER-PREFLIGHT_ENGINE.md、COMMON及用户批准。AI210已控制8/8/七源码SHA与3399资源保护核验；仅同工程Unity6000.3.24f1本版真实编译和一次Run(true)，不运行Run(false)/Play/Build、不写生产、不恢复207。
+
+> SUPERVISED POLICY at 2026-10-06T00:29:39.9917064+08:00: {"taskId":"AI-000211","policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准原207修复；AI210独立核验通过，211仅真实编译和一次只读预检，独占Unity/字体/场景资源。","updatedAt":"2026-10-06T00:29:39.9313458+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-06T00:29:40.1106393+08:00: {"reason":"同根207获批修复后真实编译/只读预检；独立验收后才准原207正式续行。","taskIds":["AI-000211"]}
+
+> SUPERVISED APPROVED_CONTINUATION at 2026-10-06T01:32:15.5060220+08:00: {"rawFailureCount":1,"record":{"repairId":"3c72b75d78604f85b1a638d1cd121fe3","at":"2026-10-06T01:32:15.4265987+08:00","problemKey":"font-r3:existing-material-shader-contract-mismatch","plan":"AI210 precise Standard source/target with Mobile Static atlas contract; preserve three material Shader/GUID, Static bytes and R4. Actual source4A68E5FD4B0B90A0F93309C2305ACEA8DA828F0960323411BB9726CA532562D5 passed AI211 real Unity preflight. One continuation paired to repair210, all original failures and counters retained.","evidence":"Independent 210/211 acceptance and 3399 fingerprints; real source-bound compilation and single Run(true)=171; Workflow Final18/18 and 39 core cases. Fresh original207 READY/idle, ENGINE route5; Reconcile no repairs/inspection. Evidence .ai-workspace/outputs/control/FONT-R-PRE5c-20261005/ai211-review-20261006/","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","repairTaskId":"AI-000210","decision":"USER_APPROVED_CONTINUATION","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai211-review-20261006\\resume-proof.json","evidenceSha256":"61308F910FC7C71E33B5DDCF92530D6D292196DEE4B8D1C302F88C1F676D2ADB"},"attempts":1,"budgetUsed":1,"taskId":"AI-000207"}
+## AI-000212 | [CODE] [FONT-R] FONT-R3 新生产ratio失败只读诊断
+
+- 序号：212
+- 提交时间：2026-10-06T02:00:07.0875711+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：AI-000210
+- 允许越过：False
+- 最大尝试次数：3
+
+### 指令
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-RATIO-DIAGNOSIS_CODE.md、AI207_StaticRatio修复恢复批准_20261006.md、COMMON和控制ai207-attempt2-review。仅最新同根只读诊断与现物核对，不修改源码/生产资产，不Unity、不恢复207。
+
+> SUPERVISED POLICY at 2026-10-06T02:00:29.9330435+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批准Static ratio最小修复；本卡仅最新错误后的同根只读诊断登记，不写生产或运行Unity。","updatedAt":"2026-10-06T02:00:29.8669517+08:00","supervisionLevel":"light"},"taskId":"AI-000212"}
+
+> SUPERVISED EXTEND at 2026-10-06T02:03:51.8025271+08:00: {"reason":"用户批准本次Static ratio最小修复；加入同根最新失败后的只读诊断前置，保留207错误和预算。","taskIds":["AI-000212"]}
+## AI-000213 | [CODE] [FONT-R] Static原生材质副作用保护修复
+
+- 序号：213
+- 提交时间：2026-10-06T03:13:51.2587316+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：AI-000212
+- 允许越过：False
+- 最大尝试次数：3
+
+### 指令
+
+执行 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-STATIC-GUARD-REPAIR_CODE.md；授权 AI207_StaticRatio修复恢复批准_20261006.md，AI212诊断已控制独立5/5及39引用/3399SHA通过。仅源码/离线夹具/文档，不Unity/生产写入/Static恢复；原207第二修复slot，保留失败史。
+
+> SUPERVISED POLICY at 2026-10-06T03:14:12.5416494+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准第二slot最小Static保护源码修复，AI212最新同根诊断独立核验已通过，仅CODE源码与离线夹具。","updatedAt":"2026-10-06T03:14:12.4783333+08:00","supervisionLevel":"light"},"taskId":"AI-000213"}
+
+> SUPERVISED EXTEND at 2026-10-06T03:14:12.6747095+08:00: {"taskIds":["AI-000213"],"reason":"纳入用户批准的原207同根第二张必要REPAIR，诊断212与精确用户原话绑定，保留失败与额度。"}
+## AI-000214 | [ENGINE_MCP] [FONT-R] Static保护真实Unity隔离验证
+
+- 序号：214
+- 提交时间：2026-10-06T04:20:50.6835619+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：AI-000213
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-NATIVE-GUARD-VALIDATION_ENGINE.md 并严格执行；AI213控制9/9及源码/3399资源已核。本任务同根READONLY_DIAGNOSIS，仅真实Unity独占临时夹具的加载/渲染/Bind/保存正反例，不恢复或写既有生产资源，不Run(true/false)或续207；9项预定义验收。
+
+> SUPERVISED POLICY at 2026-10-06T04:21:15.7428495+08:00: {"taskId":"AI-000214","policy":{"resourceKeys":["unity-editor","font-assets","font-source"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI213已独立核验；用户批准范围内真实原生隔离验证，仅任务自有临时资产，3399既有生产资源不写，原207不恢复。","updatedAt":"2026-10-06T04:21:15.6887339+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-06T04:21:15.8596363+08:00: {"reason":"加入已批准修复的必要真实Unity隔离验收，不新增修复slot或替代原207。","taskIds":["AI-000214"]}
+
+> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-06T10:01:10.7344578+08:00: {"rawFailureCount":1,"taskId":"AI-000214","attempts":1,"rootTaskId":"AI-000207","budgetUsed":2,"grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai214-user-cleanup-resume-20261006\\resume-proof.json","evidenceSha256":"B5329B3E2B302486517CA55025C99C926E1F7C039EEE0E22E77650DF8A887B07","expectedAttempt":2,"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","failureHistorySha256":"C4F8BBC534C67648A5AE485C75A6BD8F80C79912F31301F6446B484BB1F82739","routeKey":"THREAD|01a10dba-6240-7be0-b2fb-0a6209f51284|6","expiresAt":"2026-10-06T02:21:10.6712404+00:00","purpose":"READONLY_VALIDATION","consumedAt":null,"executionId":null,"rootTaskId":"AI-000207","resumeId":"0e4742cf84234d24b6b70896ccc6f504"}}
+
+> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-07T00:54:05.5360738+08:00: {"taskId":"AI-000214","rawFailureCount":2,"attempts":2,"grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai214-cold-process-approved-20261007\\resume-proof.json","evidenceSha256":"A7D98EC88C607DD95E404A23AEDC1718ACAD176600927E73ED8352A7A031962E","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","consumedAt":null,"expiresAt":"2026-10-06T17:14:05.4641232+00:00","routeKey":"THREAD|01a10dba-6240-7be0-b2fb-0a6209f51284|6","rootTaskId":"AI-000207","purpose":"READONLY_COLD_PROCESS","expectedAttempt":3,"executionId":null,"resumeId":"8a0f909c0da1467bbb212ba292218fa0","failureHistorySha256":"E5A35D456696CCDEA92033F72E7E2275A38BD42BC633F2E09AE4541D971AD29C"},"budgetUsed":2,"rootTaskId":"AI-000207"}
+
+> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-07T11:03:04.2356683+08:00: {"rawFailureCount":3,"attempts":3,"rootTaskId":"AI-000207","budgetUsed":2,"taskId":"AI-000214","grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai214-host-repair-20261007\\resume-proof.json","evidenceSha256":"6607925C30D580072DEEFE2DFBC5D02E6D92D4A511AC7B565E16DFCB64BCC8A0","expectedAttempt":4,"resumeId":"2edc6350f8bf4757a802262089524dd1","consumedAt":null,"failureHistorySha256":"EDAD5CE54BA40586BA87914FC9728623C78D2999CFB4394B4F20FB0D0C719173","expiresAt":"2026-10-07T03:23:04.1686715+00:00","routeKey":"THREAD|01a10dba-6240-7be0-b2fb-0a6209f51284|6","executionId":null,"purpose":"READONLY_HOST_PROCESS","rootTaskId":"AI-000207","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1"}}
+## AI-000215 | [ENGINE_MCP] [FONT-R] 冷首载快照差异取证
+
+- 序号：215
+- 提交时间：2026-10-08T15:38:39.5154856+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-COLD-SNAPSHOT-DIAG_ENGINE.md
+
+> SUPERVISED POLICY at 2026-10-08T15:43:51.8791138+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","font-source"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"新增额度批准后的隔离只读取证；原顺序两快照，禁止主工程写，单次诊断，合同AI-000215.json","updatedAt":"2026-10-08T15:43:51.7946413+08:00","supervisionLevel":"light"},"taskId":"AI-000215"}
+
+> SUPERVISED EXTEND at 2026-10-08T15:43:52.7129577+08:00: {"reason":"用户新增一次修复额度并继续；先将同根只读诊断215纳入原会话，不恢复214，不消耗第三修复卡额度。","taskIds":["AI-000215"]}
+## AI-000216 | [CODE] [FONT-R] 冷首载快照一致性最小修复
+
+- 序号：216
+- 提交时间：2026-10-08T16:07:28.6353087+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：AI-000215
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-COLD-SNAPSHOT-REPAIR_CODE.md
+
+> SUPERVISED POLICY at 2026-10-08T16:07:59.7905800+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":["AI-000215"],"humanGateAfter":false,"gateApproved":false,"reason":"唯一第三REPAIR：AI215六项诊断及控制32原始引用/两快照/3399/PDB独立核验通过，最小采样顺序修复，尚未原生验证。","updatedAt":"2026-10-08T16:07:59.7268117+08:00","supervisionLevel":"light"},"taskId":"AI-000216"}
+
+> SUPERVISED EXTEND at 2026-10-08T16:08:00.6305468+08:00: {"reason":"用户唯一第三修复额度已由同根AI215诊断及UserDecision正式消费给AI216；旧史/旧许可保留。","taskIds":["AI-000216"]}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-08T16:13:03.3137354+08:00: {"taskId":"AI-000215","userDecision":"用户2026-10-08直接指示：新增一次修复额度，继续尝试修复。另外，我需要你维护一个这次字体相关问题的修复路径报告。此决定批准原待决方案：先隔离记录两次内存快照差异，再依实证完成唯一第三次定向修复。AI215六项诊断合同及32份证据已由控制独立核验，通过此项技术诊断到修复的依赖；不代表人工视觉R4或原207生产验收。授权原件inputs/FONT-R-PRE5c-20261005/冷首载定向修复第三额度批准_20261008.md。"}
+## AI-000217 | [ENGINE_MCP] [FONT-R] 第三修复完整原生隔离验证
+
+- 序号：217
+- 提交时间：2026-10-08T16:35:50.9608320+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：AI-000216
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-COLD-SNAPSHOT-NATIVE_ENGINE.md
+
+> SUPERVISED POLICY at 2026-10-08T16:35:51.1650947+08:00: {"taskId":"AI-000217","policy":{"resourceKeys":["unity-editor","font-assets","font-source"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"新源码CA4已独立通过AI216九项CODE合同；按现有用户第三次修复批准做单次全新独立Unity九项验证。DependsOn为机器依赖，不新增人工复核边或R4签收。","updatedAt":"2026-10-08T16:35:51.1176672+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-08T16:35:51.2285920+08:00: {"reason":"用户已批准第三定向修复及新实现单次原生验证，AI216独立验收通过。","taskIds":["AI-000217"]}
+
+> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-09T15:36:34.0973062+08:00: {"budgetUsed":3,"rawFailureCount":1,"attempts":1,"taskId":"AI-000217","rootTaskId":"AI-000207","grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai217-probe-resume-20261009\\resume-proof.json","evidenceSha256":"3D5023A080DD8B9D42AD2EFC9CAE05234F7940F532304D045C1E897A983EFFFB","expectedAttempt":2,"purpose":"READONLY_PROBE_SCENE","failureHistorySha256":"941D4EA307F0733A37DE290F54A1870635F36819FD559C242A9201CFEF93A1C2","expiresAt":"2026-10-09T07:56:34.0220254+00:00","resumeId":"27e37ca42c08466a9ab407124514861c","rootTaskId":"AI-000207","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","consumedAt":null,"routeKey":"THREAD|01a11a9d-890b-7421-990f-f11276655300|8","executionId":null}}
+## AI-000218 | [ENGINE_MCP] [FONT-R] 已批准Static恢复与主工程只读预检
+
+- 序号：218
+- 提交时间：2026-10-09T16:24:34.3229514+08:00
+- 模块 ID：FONT-R
+- 初始状态：QUEUED
+- 前置依赖：AI-000216, AI-000217
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-STATIC-RESTORE-PREFLIGHT_ENGINE.md
+
+> SUPERVISED POLICY at 2026-10-09T16:24:43.4722125+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","font-source","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原216与217独立验收已通过，现有用户授权一次Static恢复并形成恢复后只读预检；机器依赖，不代签R4。","updatedAt":"2026-10-09T16:24:43.4279103+08:00","supervisionLevel":"full"},"taskId":"AI-000218"}
+
+> SUPERVISED EXTEND at 2026-10-09T16:24:43.5293646+08:00: {"reason":"用户最新要求实际触发获批后继；同根207既有修复的恢复及预检，不新增第四REPAIR。","taskIds":["AI-000218"]}
+
+> SUPERVISED APPROVED_RESTORE_CONTINUATION at 2026-10-09T17:07:05.1722728+08:00: {"budgetUsed":3,"taskId":"AI-000218","grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai218-cached-handles-resume-20261009\\resume-proof.json","evidenceSha256":"CD876579240F388EA03A3BFC0A3621A0E5D137962DCF7C4C70D4F182704734F9","executionId":null,"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","resumeId":"ee5125e4cacc4686927a021e12daee9e","routeKey":"THREAD|01a11fc1-904f-71f2-a94e-2580e523cdf8|9","expectedAttempt":2,"purpose":"APPROVED_STATIC_RESTORE_RETRY","consumedAt":null,"expiresAt":"2026-10-09T09:27:05.1205484+00:00","failureHistorySha256":"017BBF838F91FCF7809BA96B632A1B6AA2309FEE405E1837AAEEFDDF9B31FDCD","rootTaskId":"AI-000207"},"rawFailureCount":1,"attempts":1,"rootTaskId":"AI-000207"}
+
+> SUPERVISED APPROVED_CONTINUATION at 2026-10-09T17:26:02.3009351+08:00: {"attempts":2,"taskId":"AI-000207","rawFailureCount":2,"budgetUsed":3,"record":{"repairId":"3df4ff0a03dd4cf59ab26ab5a3320294","at":"2026-10-09T17:26:02.2426398+08:00","problemKey":"font-r3:static-embedded-material-ratio-drift","plan":"已批准Static E877恢复完成，按216第三slot正式续原207完整11项；不重复Run(true)，Run(false)自身完整保护、一次Build与成功后的幂等；新生产失败即停；R4人工、PENDING_USER不代签、不提交。","evidence":"215诊断/216修复独立VERIFIED；218同卡新真实恢复+唯一Run(true)=171已独立12/12，3176引用匹配、3399新基线、CA4 PE/PDB/现场dirty与OTF保护明确。原207 fresh READY idle，原全部错误/许可/预算保留。","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","repairTaskId":"AI-000216","decision":"USER_APPROVED_CONTINUATION","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai218-cached-handles-resume-20261009\\root207-resume-proof.json","evidenceSha256":"532F799CA1BB063FC45E0CFAAED07B15C7FC7F21F4419408F79D96AA77D419BA"}}
+
+> SUPERVISED ResumeSupervision at 2026-10-09T17:57:45.6708354+08:00: {"reason":"用户明确批准恢复同session，原207仅补一次未执行的幂等及原剩余验收；仍须正式同卡新许可，不复用旧票。","userDecision":"批准恢复监管，继续剩余工作"}
+
+> SUPERVISED APPROVED_CONTINUATION_REFUSED at 2026-10-09T18:12:44.3998915+08:00: {"controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","problemKey":"font-r3:idempotence-production-permission-rejected","reason":"Only the exact unexecuted permission interruption may continue.","taskId":"AI-000207"}
+
+> SUPERVISED APPROVED_IDEMPOTENCE_CONTINUATION at 2026-10-09T18:13:45.1622979+08:00: {"attempts":3,"rawFailureCount":3,"taskId":"AI-000207","recoveryCount":2,"budgetUsed":3,"grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai207-idempotence-resume-20261009\\resume-proof.json","evidenceSha256":"9444EEDD5259F61764A4482EDE64DD6569E1BE0131B2E56BD27529889C0C64C4","routeKey":"THREAD|01a10c14-6e78-7831-a7ab-5f603271dfbe|10","consumedAt":null,"rootTaskId":"AI-000207","expectedAttempt":4,"resumeId":"f5ab1488bf9d480098fd418d3f13d9eb","expiresAt":"2026-10-09T10:33:45.0925219+00:00","purpose":"APPROVED_IDEMPOTENCE_REMAINDER","executionId":null,"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","failureHistorySha256":"14FFB96C7F77694D5E33F950E3634166E969CAB0B9E84D661321727CFD73617D"}}
+
+> Verification resolved for AI-000207 at 2026-10-09T20:58:13.0244099+08:00: decision=VERIFIED; summary=用户人工视觉验收通过，FONT-R4已签收。; evidence=2026-10-09主控制台用户直接原话：人工视觉验收通过。对应AI207 attempt4五视图/CoverTitle的R4；机器11/11独立PASSED证据保持。原话与边界见 .ai-workspace/outputs/control/FONT-R-PRE5c-20261005/r4-user-acceptance-20261009/user-acceptance.json；旧观察/失败/许可保留，不外推F/P2/Excel验收或提交/E2执行。
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-09T20:58:13.3807136+08:00: {"userDecision":"人工视觉验收通过","taskId":"AI-000207"}
+
+> SUPERVISED ExitSupervision at 2026-10-09T21:32:24.2849268+08:00: {"userDecision":"按你提出的合理处理进行操作，切回手动模式","reason":"用户确认本轮无运行或可派发任务，字体R4已通过；退出监管并保留AI214旧失败、全部待办和证据。"}
+
+> Verification resolved for AI-000186 at 2026-10-12T18:14:32.8365618+08:00: decision=VERIFIED; summary=用户Excel人工检查通过；表头注释矩形修正已完成，相关人工验收通过。; evidence=用户2026-10-12直接确认Excel人工检查通过，并明确表头注释恢复矩形后可标记相关验收通过；本轮119注释原生Excel矩形及截图通过、共享发布内容/结构差异0。证据 outputs/control/WORKBOOK-REPAIR-20261012/comment-shapes/ACCEPTANCE.md、excel-final-validation.json、final-preview.png、publish-result.json。原AI186共享漂移门修复及两轮Final6/6既有证据保留，本轮不重跑；P2延期/46警告保持。
+
+> Verification resolved for AI-000191 at 2026-10-12T18:14:33.0562254+08:00: decision=VERIFIED; summary=用户Excel人工检查通过；表头注释矩形修正已完成，相关人工验收通过。; evidence=用户2026-10-12直接确认Excel人工检查通过，并明确表头注释恢复矩形后可标记相关验收通过；本轮119注释原生Excel矩形及截图通过、共享发布内容/结构差异0。证据 outputs/control/WORKBOOK-REPAIR-20261012/comment-shapes/ACCEPTANCE.md、excel-final-validation.json、final-preview.png、publish-result.json。原AI186共享漂移门修复及两轮Final6/6既有证据保留，本轮不重跑；P2延期/46警告保持。
+
+> Superseded AI-000214 : {"at":"2026-10-12T18:33:11.5379092+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"NEEDS_USER","accepted":false,"reason":"AI214旧冷首载验证已被AI217 attempt2同源码CA4完整原生9/9验证覆盖，后续AI218恢复12/12、AI207原11/11及用户R4人工验收均已通过。按用户明确要求关闭旧任务，保留四次失败、许可、累计及根修复预算；本卡不改写为验收成功。","userDecision":"用户2026-10-12：现在字体和Excel都已验收通过；授权字体相关Git提交，同时关闭214任务并完整检查字体修复。","verification":".ai-workspace/outputs/control/FONT-R-PRE5c-20261005/ai217-probe-resume-20261009/independent-review.json；AI207正式VERIFIED与R4用户通过；本轮收尾目录outputs/control/FONT-R-CLOSEOUT-20261012。"}
+
+> Verification resolved for AI-000162 at 2026-10-12T18:33:46.8879152+08:00: decision=VERIFIED; summary=双字体资产后续171配对、全视图Play/Build与CoverTitle人工验收已由AI207及用户R4通过，解除旧PRE1预览阶段待验。; evidence=AI207 attempt4控制独立原11/11 PASSED及正式VERIFIED；用户2026-10-09人工视觉验收通过，2026-10-12再次确认字体验收通过。原AI162 executeAllowed=false预览结果保留为迁移前事实，后续通过不改写当时结果。
+## AI-000219 | [CODE] [E2-20261012] E2迁移证据归档与恢复验证
+
+- 序号：219
+- 提交时间：2026-10-12T19:33:09.8723820+08:00
+- 模块 ID：E2-20261012
+- 初始状态：QUEUED
+- 前置依赖：AI-000207
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+# E2 自动执行授权与边界（2026-10-12）
+
+用户本轮原话：“你先自动推进E2的相关工作，这部分内容进入自动触发模式执行。推进的同时我进行相关的收尾和人工检查验收”。
+承接前一轮已完成字体提交09cd180、AI214 CLOSED_SUPERSEDED、AI162/207 VERIFIED及Excel验收；原每个新子任务使用新可见chat要求保持。本次仅建立E2当前可自动执行段219→220；不恢复旧171/172、不恢复旧监管session、不纳入其它8条待验事项。用户要求AUTOMATIC成功后自动触发后继，按MODES正式autoHandoff执行，平台实际拒绝不得绕过。
+
+先读CORE、各车道与任务卡、MODES；本文件的新决定覆盖旧手动状态，不更改历史。所有exec固定PS7：C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。cwd D:/GameProject/Eat-What。runtime只正式queue API，Status先存本地只输出摘要；不打印整队列/纹理JSON/巨型逐文件清单。计费tokens缺失写null，不以工具输出估算代账单。
+
+本段边界：
+- 用户并行人工检查；不改xlsx/CSV/生成配表/业务场景内容，不覆盖或提交现有Excel/工作流未提交改动，不清除任何未知dirty，不全局SaveAssets。
+- 字体已验收，不再运行FontSwapOnce/Run(true/false)、不恢复Static、不Play/Build重验字体、不建冷加载进程/内存快照/纹理JSON；受保护资产SHA只在实际提交前hook检查。本批不新建测试框架/续行入口，失败若获新批准仅用ApproveResume(task,runs=N,scope)。
+- 相称验证：定向路径/引用/GUID/编译/Console及一张必要Editor截图；不为≤10字段小改动跑全套Final。迁移归档按实际源范围单次采样，批末一次包/恢复校验；不附带3399生产全路径hash循环。
+- 允许读取迁移副本D:/GameProject/Eat-What-U6与既有迁移证据/备份；新增归档和证据仅在主项目内。本段不删除副本、不删除源证据/备份，不移除Hub、不改共享许可/EditorPrefs/Claude配置或系统Editor，不删除Spine Examples/Tomato/Labs/探针/backup/tag。
+- 沿2026-09-23精确E2边界，本段没有新增Git提交/推送/合并授权。完成可review的归档、更名和精确Git清单后再收口；远端已有状态只读核对，未持久化真实缺口标明，不把本地zip当远端可恢复。本次字体Git授权已经完成，不扩张到其它未提交工作。
+- 受限操作正常平台审查；新真实失败立即正式记录并停止本链，不换API/通道规避。普通参数错误/环境查询问题按非阻碍问题记录；用户并行编辑导致暂不能操作Editor是协调等待，不假写验收成功。
+- 最后只报告本自动段成果及E2剩余条件；E2整体归档/远端/清理/最终main集成未完成前不能宣称E2关闭。既有F/P2/布局人工项不代签。
+
+# AI-000219 · E2迁移归档与恢复验证（CODE）
+
+只在正式AUTOMATIC接力、Poll返回CLAIMED后执行。先读.ai-workspace/inputs/E2-20261012/授权与边界.md、.ai-workspace/workers/CODE.md、.ai-workspace/MIG63/迁移基线.md的归档/清理节、.ai-workspace/MIG63/临时项登记.md、.ai-workspace/MIG63/E1H_接棒与后续项.md、.ai-workspace/MIG63/H后分支切换与控制台移交.md，及DevTools/Workflow/Archive-Stage.ps1。P/TK按CORE索引读归档、引用保护、输出预算相关条目。
+
+目标：实际完成本地迁移证据归档和恢复验证，交后继220可用的精确更名清单及安全条件。不是字体修复卡，不占旧根预算。
+1. 只读清点主工程与迁移副本的分支、tracked/untracked/ignored独有成果、证据范围/总量；保护本轮人类并行文件。源主范围 .ai-workspace/outputs/MIG63、.ai-workspace/MIG63；副本对应MIG63证据、既有备份位置依台账逐一实查，不全仓打包Library/Temp/Build缓存/.git。不擅读无关个人目录。
+2. 在.ai-workspace/archive/E2-20261012/保存可恢复包、manifest和README。明确纳入/未纳入及原因；原路径、字节数和包内容完整性绑定。必要快照/独有成果进入包或明确保留路径；不能因ignored漏掉独有文件。既有Archive-Stage默认范围若会吞入活动runtime/活跃input/output，则只借其校验方法，不运行无选择的Create/Prune。允许本任务简短执行脚本，不开发通用归档框架/新夹具。
+3. 在本卡输出restore-check目录实际恢复并核对归档内容；做一次批末完整性校验。只读核可达的既有远端分支/提交/LFS状态，未获准新推送不push；缺少新包远端持久化是下一阶段条件，诚实登记，不谎称E2已完成。
+4. 核本卡更名范围实际源码/引用，交rename-plan.json给220：Assets/Editor/MIG63Validation → Assets/Editor/ProjectValidation（4脚本文件改为SceneValidationSession.cs、ScrollWheelProbe.cs、TomatoAnimationProbe.cs、SpineSceneProbe.cs，类名/菜单/实际调用同步）；DevTools/MIG63 → DevTools/ProjectValidation；Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller → 同目录TomatoPreview.controller。不存在/目标冲突/有范围外实际引用就记录准确处理，不猜路径。不实际修改Assets/meta或操作Unity。
+5. 输出迁移专属hook/config可解除候选和保留项清单，本卡不修改.git/hooks/config，不清理副本/备份，不触碰字体。保留main/font/LFS保护，Claude按原用户决定保留。同步本卡输出文档即可，避免与220抢写根文档。
+
+输出.ai-workspace/outputs/E2-20261012/AI-000219/REPORT.md、evidence.json、acceptance.json、rename-plan.json、inventory.json、恢复报告。contract .ai-workspace/inputs/acceptance/AI-000219.json，5项预声明：inventoryScoped、archiveCreatedAndRestored、userWorkPreserved、renamePlanGrounded、remainingConditionsHonest。checks须对应原始产物，不只手写true。交付时证据包含包/恢复路径与实际结果；远端未持久化不算此本地归档合同失败。
+成功Complete时附AcceptancePath和Artifacts，完整保存receipt/messagePath；返回autoHandoff=TRIGGER_TASK后按目标threadId原文发送一次220接力，当前用户自动触发要求是发送接力的直接任务授权，必要时只读主控制台核原话。不可自行认为报告完就结束不触发后继；平台真拒绝则保留原文告知，不换通道。20分钟前续租；不自行Enqueue/Bind/SetMode。
+## AI-000220 | [ENGINE_MCP] [E2-20261012] E2长期工具功能更名与引用收口
+
+- 序号：220
+- 提交时间：2026-10-12T19:33:10.0069788+08:00
+- 模块 ID：E2-20261012
+- 初始状态：QUEUED
+- 前置依赖：AI-000219
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+# E2 自动执行授权与边界（2026-10-12）
+
+用户本轮原话：“你先自动推进E2的相关工作，这部分内容进入自动触发模式执行。推进的同时我进行相关的收尾和人工检查验收”。
+承接前一轮已完成字体提交09cd180、AI214 CLOSED_SUPERSEDED、AI162/207 VERIFIED及Excel验收；原每个新子任务使用新可见chat要求保持。本次仅建立E2当前可自动执行段219→220；不恢复旧171/172、不恢复旧监管session、不纳入其它8条待验事项。用户要求AUTOMATIC成功后自动触发后继，按MODES正式autoHandoff执行，平台实际拒绝不得绕过。
+
+先读CORE、各车道与任务卡、MODES；本文件的新决定覆盖旧手动状态，不更改历史。所有exec固定PS7：C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。cwd D:/GameProject/Eat-What。runtime只正式queue API，Status先存本地只输出摘要；不打印整队列/纹理JSON/巨型逐文件清单。计费tokens缺失写null，不以工具输出估算代账单。
+
+本段边界：
+- 用户并行人工检查；不改xlsx/CSV/生成配表/业务场景内容，不覆盖或提交现有Excel/工作流未提交改动，不清除任何未知dirty，不全局SaveAssets。
+- 字体已验收，不再运行FontSwapOnce/Run(true/false)、不恢复Static、不Play/Build重验字体、不建冷加载进程/内存快照/纹理JSON；受保护资产SHA只在实际提交前hook检查。本批不新建测试框架/续行入口，失败若获新批准仅用ApproveResume(task,runs=N,scope)。
+- 相称验证：定向路径/引用/GUID/编译/Console及一张必要Editor截图；不为≤10字段小改动跑全套Final。迁移归档按实际源范围单次采样，批末一次包/恢复校验；不附带3399生产全路径hash循环。
+- 允许读取迁移副本D:/GameProject/Eat-What-U6与既有迁移证据/备份；新增归档和证据仅在主项目内。本段不删除副本、不删除源证据/备份，不移除Hub、不改共享许可/EditorPrefs/Claude配置或系统Editor，不删除Spine Examples/Tomato/Labs/探针/backup/tag。
+- 沿2026-09-23精确E2边界，本段没有新增Git提交/推送/合并授权。完成可review的归档、更名和精确Git清单后再收口；远端已有状态只读核对，未持久化真实缺口标明，不把本地zip当远端可恢复。本次字体Git授权已经完成，不扩张到其它未提交工作。
+- 受限操作正常平台审查；新真实失败立即正式记录并停止本链，不换API/通道规避。普通参数错误/环境查询问题按非阻碍问题记录；用户并行编辑导致暂不能操作Editor是协调等待，不假写验收成功。
+- 最后只报告本自动段成果及E2剩余条件；E2整体归档/远端/清理/最终main集成未完成前不能宣称E2关闭。既有F/P2/布局人工项不代签。
+
+# AI-000220 · E2长期工具保GUID更名与引用收口（ENGINE_MCP）
+
+依赖219成功；只在正式AUTOMATIC接力Poll CLAIMED后执行。先读.ai-workspace/inputs/E2-20261012/授权与边界.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/UNITY_SCENE_CLEANUP.md、219的REPORT/rename-plan/恢复报告、DevTools/MIG63/README及4个实际工具源文件/引用；已移动时按rename-plan读新路径，不猜。
+目标：完成授权长期工具按功能更名，保留原能力/GUID并交付E2可审查状态。本卡允许为本次Editor工具更名同步必要C#类名/直接调用/菜单字符串与文档路径，不改业务逻辑，不借此做字体/布局/Excel返工。
+
+批准路径动作与恢复点：
+- Assets/Editor/MIG63Validation/目录 → Assets/Editor/ProjectValidation/；其MIG63ValidationSession.cs→SceneValidationSession.cs、MIG63WheelProbe.cs→ScrollWheelProbe.cs、MIG63TomatoProbe.cs→TomatoAnimationProbe.cs、MIG63SpineSceneProbe.cs→SpineSceneProbe.cs，各自meta随Editor移动保GUID。C#类名/直接引用/菜单按对应功能同步，函数行为不变。
+- Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller → Assets/Scripts/Spine_Package/Avatars/Tomato/TomatoPreview.controller，保GUID与动画配置/绑定；不改场景Prefab。
+- DevTools/MIG63/README.md及目录 → DevTools/ProjectValidation/README.md；长期导航/使用说明和直接路径引用同步（历史证据原件不回写）。
+- 恢复点：.ai-workspace/outputs/E2-20261012/AI-000220/backup-before/。只备份本次源文件/meta及将改的直接引用文件，记录相对路径；保存前核未知并行漂移。目标已存在时不覆盖。
+先发现MCP实例，核6000.3.24f1和D:/GameProject/Eat-What/Assets。用户可能正在人工检查：若Play/编译/用户未保存变化影响此更名，先做只读与文档并报告协调点；不全局保存、不切场景、不清用户dirty。移动Unity资产使用AssetDatabase.MoveAsset及必要批次控制，禁止手改YAML/meta。只改必要源引用；保证file/class对应与原公开功能，不新建一次性测试工程或新冷Unity进程。
+
+验证只做本更名所需：实际前后GUID对应、直接引用指向、Editor编译通过/Console新增Error0、菜单功能入口仍存在、1张Editor可见结果截图。不为改名重新全套Play/Build，不运行FontSwapOnce或长期探针里的场景变更/保存动作。如持久资源变化超出计划，保全并停止。批末清理确属本卡的临时对象/脚本（若有），旧证据与备份保留。
+
+原地更新DevTools/ProjectValidation/README、CODEBASE_MAP、项目基线、MIG63执行台账/临时项及工具索引的定位与E2真实阶段，保留其它并行文档段落和历史。提交E2候选路径/差异清单、保留/清理候选、下一阶段Git/远端持久化条件。此段不stage/commit/push/merge，不删迁移副本/备份/Spine Examples，不修改.git hook/config/Hub/共享配置；具体处置在归档已持久化与reviewable清单后再落实，不能因更名成功就写E2_COMPLETE。可自动完成部分必须完成，不因尚有条件性清理就漏做更名。
+
+输出.ai-workspace/outputs/E2-20261012/AI-000220/REPORT.md、evidence.json、acceptance.json和引用/GUID/编译/screenshot证明。contract .ai-workspace/inputs/acceptance/AI-000220.json，5项：functionalMovesVerified、guidsAndReferencesPreserved、editorCompilationPassed、userStatePreserved、documentationAndRemainingUpdated。事实需有原始证据。成功Complete附AcceptancePath，保存回执；CHAIN_COMPLETE结束，最终明确“本自动段完成、E2整体待持久化与剩余条件”。不自动代签人工，不恢复watch日程，不另开新链。20分钟前续租；新真实生产失败只一次，官方Fail后停止，不换API重试。
+
+> Verification resolved for AI-000174 at 2026-10-12T19:42:06.4375066+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
+
+> Verification resolved for AI-000195 at 2026-10-12T19:42:06.7240285+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
+
+> Verification resolved for AI-000196 at 2026-10-12T19:42:06.8587112+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
+
+> Verification resolved for AI-000198 at 2026-10-12T19:42:06.9663794+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
+> Instruction revision for AI-000220 at 2026-10-12T19:46:40.6749293+08:00
+
+# E2 自动执行授权与边界（2026-10-12）
+
+用户本轮原话：“你先自动推进E2的相关工作，这部分内容进入自动触发模式执行。推进的同时我进行相关的收尾和人工检查验收”。
+承接前一轮已完成字体提交09cd180、AI214 CLOSED_SUPERSEDED、AI162/207 VERIFIED及Excel验收；用户后续明确改回固定职能chat；原每任务新开chat要求已撤销。本次仅建立E2当前可自动执行段219→220；AI219保持原运行所有权至结算，220已改绑固定ENGINE，CODE随后回原固定线；不恢复旧171/172、不恢复旧监管session、不纳入其它8条待验事项。用户要求AUTOMATIC成功后自动触发后继，按MODES正式autoHandoff执行，平台实际拒绝不得绕过。
+
+先读CORE、各车道与任务卡、MODES；本文件的新决定覆盖旧手动状态，不更改历史。所有exec固定PS7：C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。cwd D:/GameProject/Eat-What。runtime只正式queue API，Status先存本地只输出摘要；不打印整队列/纹理JSON/巨型逐文件清单。计费tokens缺失写null，不以工具输出估算代账单。
+
+本段边界：
+- 用户并行人工检查；不改xlsx/CSV/生成配表/业务场景内容，不覆盖或提交现有Excel/工作流未提交改动，不清除任何未知dirty，不全局SaveAssets。
+- 字体已验收，不再运行FontSwapOnce/Run(true/false)、不恢复Static、不Play/Build重验字体、不建冷加载进程/内存快照/纹理JSON；受保护资产SHA只在实际提交前hook检查。本批不新建测试框架/续行入口，失败若获新批准仅用ApproveResume(task,runs=N,scope)。
+- 相称验证：定向路径/引用/GUID/编译/Console及一张必要Editor截图；不为≤10字段小改动跑全套Final。迁移归档按实际源范围单次采样，批末一次包/恢复校验；不附带3399生产全路径hash循环。
+- 允许读取迁移副本D:/GameProject/Eat-What-U6与既有迁移证据/备份；新增归档和证据仅在主项目内。本段不删除副本、不删除源证据/备份，不移除Hub、不改共享许可/EditorPrefs/Claude配置或系统Editor，不删除Spine Examples/Tomato/Labs/探针/backup/tag。
+- 沿2026-09-23精确E2边界，本段没有新增Git提交/推送/合并授权。完成可review的归档、更名和精确Git清单后再收口；远端已有状态只读核对，未持久化真实缺口标明，不把本地zip当远端可恢复。本次字体Git授权已经完成，不扩张到其它未提交工作。
+- 受限操作正常平台审查；新真实失败立即正式记录并停止本链，不换API/通道规避。普通参数错误/环境查询问题按非阻碍问题记录；用户并行编辑导致暂不能操作Editor是协调等待，不假写验收成功。
+- 最后只报告本自动段成果及E2剩余条件；E2整体归档/远端/清理/最终main集成未完成前不能宣称E2关闭。既有F/P2/布局人工项不代签。
+
+# AI-000220 · E2长期工具保GUID更名与引用收口（ENGINE_MCP）
+
+依赖219成功；只在正式AUTOMATIC接力Poll CLAIMED后执行。先读.ai-workspace/inputs/E2-20261012/授权与边界.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/UNITY_SCENE_CLEANUP.md、219的REPORT/rename-plan/恢复报告、DevTools/MIG63/README及4个实际工具源文件/引用；已移动时按rename-plan读新路径，不猜。
+目标：完成授权长期工具按功能更名，保留原能力/GUID并交付E2可审查状态。本卡允许为本次Editor工具更名同步必要C#类名/直接调用/菜单字符串与文档路径，不改业务逻辑，不借此做字体/布局/Excel返工。
+
+批准路径动作与恢复点：
+- Assets/Editor/MIG63Validation/目录 → Assets/Editor/ProjectValidation/；其MIG63ValidationSession.cs→SceneValidationSession.cs、MIG63WheelProbe.cs→ScrollWheelProbe.cs、MIG63TomatoProbe.cs→TomatoAnimationProbe.cs、MIG63SpineSceneProbe.cs→SpineSceneProbe.cs，各自meta随Editor移动保GUID。C#类名/直接引用/菜单按对应功能同步，函数行为不变。
+- Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller → Assets/Scripts/Spine_Package/Avatars/Tomato/TomatoPreview.controller，保GUID与动画配置/绑定；不改场景Prefab。
+- DevTools/MIG63/README.md及目录 → DevTools/ProjectValidation/README.md；长期导航/使用说明和直接路径引用同步（历史证据原件不回写）。
+- 恢复点：.ai-workspace/outputs/E2-20261012/AI-000220/backup-before/。只备份本次源文件/meta及将改的直接引用文件，记录相对路径；保存前核未知并行漂移。目标已存在时不覆盖。
+先发现MCP实例，核6000.3.24f1和D:/GameProject/Eat-What/Assets。用户可能正在人工检查：若Play/编译/用户未保存变化影响此更名，先做只读与文档并报告协调点；不全局保存、不切场景、不清用户dirty。移动Unity资产使用AssetDatabase.MoveAsset及必要批次控制，禁止手改YAML/meta。只改必要源引用；保证file/class对应与原公开功能，不新建一次性测试工程或新冷Unity进程。
+
+验证只做本更名所需：实际前后GUID对应、直接引用指向、Editor编译通过/Console新增Error0、菜单功能入口仍存在、1张Editor可见结果截图。不为改名重新全套Play/Build，不运行FontSwapOnce或长期探针里的场景变更/保存动作。如持久资源变化超出计划，保全并停止。批末清理确属本卡的临时对象/脚本（若有），旧证据与备份保留。
+
+原地更新DevTools/ProjectValidation/README、CODEBASE_MAP、项目基线、MIG63执行台账/临时项及工具索引的定位与E2真实阶段，保留其它并行文档段落和历史。提交E2候选路径/差异清单、保留/清理候选、下一阶段Git/远端持久化条件。此段不stage/commit/push/merge，不删迁移副本/备份/Spine Examples，不修改.git hook/config/Hub/共享配置；具体处置在归档已持久化与reviewable清单后再落实，不能因更名成功就写E2_COMPLETE。可自动完成部分必须完成，不因尚有条件性清理就漏做更名。
+
+输出.ai-workspace/outputs/E2-20261012/AI-000220/REPORT.md、evidence.json、acceptance.json和引用/GUID/编译/screenshot证明。contract .ai-workspace/inputs/acceptance/AI-000220.json，5项：functionalMovesVerified、guidsAndReferencesPreserved、editorCompilationPassed、userStatePreserved、documentationAndRemainingUpdated。事实需有原始证据。成功Complete附AcceptancePath，保存回执；CHAIN_COMPLETE结束，最终明确“本自动段完成、E2整体待持久化与剩余条件”。不自动代签人工，不恢复watch日程，不另开新链。20分钟前续租；新真实生产失败只一次，官方Fail后停止，不换API重试。
+## AI-000221 | [CODE] [E2-20261013] E2远端恢复、私有保全与迁移配置解除
+
+- 序号：221
+- 提交时间：2026-10-13T14:13:52.7319334+08:00
+- 模块 ID：E2-20261013
+- 初始状态：QUEUED
+- 前置依赖：AI-000220
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/E2-20261013/E2_CLOSE_CODE.md；合同 .ai-workspace/inputs/acceptance/AI-000221.json。固定CODE，无新chat。用户已推送并明确继续E2；限本卡六项目标，不删除clone/Hub、不提交推送、控制台最终收口。
+## AI-000222 | [CODE] [UI-VIS] ShortCycle全状态显隐归属与动画开始时机修复
+
+- 序号：222
+- 提交时间：2026-10-13T15:32:53.7939717+08:00
+- 模块 ID：UI-VIS
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/VISIBILITY-20261013/CODE.md；用户已明确授权全状态显隐与动画统一通查修复，保留新锚点。
+## AI-000223 | [ENGINE_MCP] [UI-VIS] ShortCycle显隐动画全路径场景修复与统一验收
+
+- 序号：223
+- 提交时间：2026-10-13T15:33:24.7971356+08:00
+- 模块 ID：UI-VIS
+- 初始状态：QUEUED
+- 前置依赖：AI-000222
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/VISIBILITY-20261013/ENGINE.md；读取AI-000222交接，保留用户已调整锚点；最终仅PENDING_USER待一次验收。
+## AI-000224 | [CODE] [UI-VIS-TIMING] [UI-VIS] 按用户调整显示规则并新增可配置显隐进度
+
+- 序号：224
+- 提交时间：2026-10-13T19:56:53.8977915+08:00
+- 模块 ID：UI-VIS-TIMING
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/VISIBILITY-TIMING-20261013/CODE.md；用户授权3任务内新增功能，本批限定CODE→ENGINE两任务。旧AI223仍待人工，不重做字体/Excel。
+## AI-000225 | [ENGINE_MCP] [UI-VIS-TIMING] [UI-VIS] 线索板限定状态、冰箱食谱本连续显示与时机配置验收
+
+- 序号：225
+- 提交时间：2026-10-13T19:56:54.0337926+08:00
+- 模块 ID：UI-VIS-TIMING
+- 初始状态：QUEUED
+- 前置依赖：AI-000224
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/VISIBILITY-TIMING-20261013/ENGINE.md；只本卡显示规则与新timing，保留用户锚点，禁止全局SaveAssets及旧字体操作。
+
+> Verification resolved for AI-000223 at 2026-10-13T22:47:29.2884280+08:00: decision=VERIFIED; summary=用户人工验收通过，本批显示与动画工作关闭。; evidence=用户本轮直接明确：验收通过。这部分的相关任务可以关闭。原文及范围见outputs/control/P0P1-LAYOUT-CURRENT-20261013/user-acceptance.json；保留原机器证据、会话重载和Package Manager EMFILE历史，不声称环境问题已修复。
+
+> Verification resolved for AI-000225 at 2026-10-13T22:47:29.5598633+08:00: decision=VERIFIED; summary=用户人工验收通过，本批显示与动画工作关闭。; evidence=用户本轮直接明确：验收通过。这部分的相关任务可以关闭。原文及范围见outputs/control/P0P1-LAYOUT-CURRENT-20261013/user-acceptance.json；保留原机器证据、会话重载和Package Manager EMFILE历史，不声称环境问题已修复。
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-13T23:05:16.6071000+08:00: {"userDecision":"用户明确授权关闭本卡人工门并以持续监测/新派优化替代旧验收待办，非声称旧布局无缺陷。原话：AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","taskId":"AI-000169"}
+
+> Closed without acceptance for AI-000156 at 2026-10-13T23:05:16.6844798+08:00: {"at":"2026-10-13T23:05:16.6844798+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"用户明确关闭旧布局/压暗/构图待验卡，后续改由控制端监测并按新问题独立下派持续修复或优化；原执行、拒验/待验及错误记录保留，关闭不记为旧技术或视觉缺陷全部修复。","userDecision":"AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"REJECTED","accepted":false,"archivedIssues":[{"at":"2026-09-23T03:59:57.1686361+08:00","attempt":1,"kind":"TEST_OBSERVATION","message":"ShortCycleLayoutAudit 的 FIX-T5 新断言均为 True，目标 Heavy TMP 为 208/208 Renderer 已启用、缺失 0、禁用 0；但总 kTakeoverValid 仍因既有 CoverTitle 使用 Heavy SDF 而为 False。该字体范围属于 PRE-1，AI-000156 未修改字体资产，需人工按既有 PRE-1 边界复核，不阻断本任务。"},{"at":"2026-09-23T04:00:05.7742406+08:00","attempt":1,"kind":"TEST_OBSERVATION","message":"④ ClueBoardShell 运行截图与状态/命中验证均通过：真实 ClueBoard_HitArea 唯一命中，Browse Set 与旧按钮已禁用，Esc 返回与相机槽正确；但截图右半区表现为空暗背景，而非可明确辨识的书页变暗效果。该纯视觉判断交由用户查看 04_ClueBoardShell.png 人工确认，不再自动改场景。"},{"at":"2026-09-23T04:00:18.0124791+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"请在 Unity 6000.3.24f1 打开 ShortCycle_P0P1，按 Cover→OpenCover→SelectRecipe→点击线索板→Esc→StartCooking→Return→Esc→Esc 路径人工复核：四区构图、P0Left/P1 平滑移动、④遮罩/变暗观感、线索板区域只触发一次且不穿透、Esc 返回栈、Kitchen 冰箱/托盘/线索板同时可见。对照 01_Cover.png 至 05_Kitchen.png；自动证据 PanStarted 精确 4 次、Console 0 Error/Exception/Assert、场景 clean。"}]}
+
+> Closed without acceptance for AI-000165 at 2026-10-13T23:05:16.8444247+08:00: {"at":"2026-10-13T23:05:16.8444247+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"用户明确关闭旧布局/压暗/构图待验卡，后续改由控制端监测并按新问题独立下派持续修复或优化；原执行、拒验/待验及错误记录保留，关闭不记为旧技术或视觉缺陷全部修复。","userDecision":"AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"PENDING_USER","accepted":false,"archivedIssues":[{"at":"2026-09-23T06:29:30.7391943+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"需用户人工复核 01_Browse.png 与 04_ClueBoardShell.png 的压暗强度、构图和视觉观感；机器验证已确认同机位、书页仍可见、交互不穿透。"}]}
+
+> Closed without acceptance for AI-000169 at 2026-10-13T23:05:16.9602174+08:00: {"at":"2026-10-13T23:05:16.9602174+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"用户明确关闭旧布局/压暗/构图待验卡，后续改由控制端监测并按新问题独立下派持续修复或优化；原执行、拒验/待验及错误记录保留，关闭不记为旧技术或视觉缺陷全部修复。","userDecision":"AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"PENDING_USER","accepted":false,"archivedIssues":[{"at":"2026-09-23T23:36:04.2625068+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"机器验证已完成；仍需用户人工确认 16:9/4:3 Browse 与 P1 构图、全书约66.88%和右页约33.76%的观感、猫/板/托盘比例及ClueBoard压暗强度。证据见 .ai-workspace/outputs/U1-PRE-R1/AI-000169/screenshots/ 与完成报告；不得由机器代签。"}]}
+
+> Historical verification recorded for AI-000174 at 2026-10-13T23:05:17.0702017+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户确认现存警告已知、接受并可保留；本卡维持验收关闭，不再挂人工待处理。; evidence=用户本轮明确接受本卡原TEST_OBSERVATION警告；保留原断言/警告文本与历史，不修改业务配置迎合旧断言，不重跑测试或声称警告消失。决定与范围见outputs/control/TASK-CLOSURE-20261013/before-and-decision.json。; userDecision=AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容
+
+> Historical verification recorded for AI-000195 at 2026-10-13T23:05:17.1958071+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户确认现存警告已知、接受并可保留；本卡维持验收关闭，不再挂人工待处理。; evidence=用户本轮明确接受本卡原TEST_OBSERVATION警告；保留原断言/警告文本与历史，不修改业务配置迎合旧断言，不重跑测试或声称警告消失。决定与范围见outputs/control/TASK-CLOSURE-20261013/before-and-decision.json。; userDecision=AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容
+
+> Historical verification recorded for AI-000221 at 2026-10-13T23:24:20.0159544+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户完成E2远端main推送，控制只读核实与411257d一致；E2整体关闭，AI219/220/221保持VERIFIED，无E2剩余人工或机器待办。; evidence=本轮git ls-remote成功确认origin/main及origin/codex/unity6-followup均为411257ddf5afda4ca578865dd8eb37a9621a7288，与本地main和已验收E2收尾提交相同。原归档恢复/私有保全/长期工具更名/配置解除/迁移副本清理证据继续有效；不重跑或改写旧验收。依据outputs/control/E2-FINAL-CLOSURE-20261013/remote-and-closure.json。; userDecision=E2的远端推送完成，你核实一下后可以整体进行相关任务的关闭
+## AI-000226 | [ENGINE_MCP] [LAYOUT-V03] 三弹层视口锚定与指导书待办核对
+
+- 序号：226
+- 提交时间：2026-10-13T23:34:26.9480084+08:00
+- 模块 ID：LAYOUT-V03
+- 初始状态：QUEUED
+- 前置依赖：AI-000225
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/LAYOUT-V03-20261013/ENGINE.md；用户明确授权场景改动及自动模式。仅LAY-01，气泡文字等待用户，旧Tray不重复返工。
+
+> SUPERVISED RESUME_APPROVED at 2026-10-14T00:26:49.4006326+08:00: {"approvalId":"USER-20261014-AI226-ONCE-COVER-BUBBLE","scope":{"paths":[".ai-workspace/outputs/LAYOUT-V03-20261013/AI-000226","组件说明文档/ShortCycle状态显隐与镜头切换_配置说明.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity"],"operations":["configure-modal-anchors","idempotence-check","play-validation","read-console","save-scene","update-configuration-doc","write-evidence"]},"taskId":"AI-000226","userDecision":"Unity/MCP已恢复，批准AI226在原三弹层范围内续行一次，完成后继续推进“吃什么”和“汪！”两个气泡的配表与场景接线，保持自动模式，做到需要我验收时再汇报。进行下一轮任务汇报时同时告知我AI190的目前状态和进度","runs":1,"usedRuns":0}
+## AI-000227 | [DATA] [COVER-BUBBLE-SOURCE] 两个封面气泡文案源与忠实导出
+
+- 序号：227
+- 提交时间：2026-10-14T00:32:08.7466325+08:00
+- 模块 ID：COVER-BUBBLE-SOURCE
+- 初始状态：QUEUED
+- 前置依赖：AI-000226
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/LAYOUT-V03-20261013/COVER-BUBBLE-SOURCE_DATA.md；仅两个已批准气泡文案，固定DATA，源xlsx与忠实CSV、新USER-U1-R2 EXPORTED；不Unity/字体/发布生成物。授权和最终人工边界见同目录AI226续行与气泡自动链批准_20261014.md。
+
+> SUPERVISED POLICY at 2026-10-14T00:54:08.8931169+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"原任务卡及用户授权要求最终人工视觉验收；Complete未登记MANUAL_VERIFICATION而默认机器VERIFIED。保留6/6机器成功，补上未批准人工gate；不重跑或伪造新失败。","updatedAt":"2026-10-14T00:54:08.8183927+08:00","supervisionLevel":"full"},"taskId":"AI-000226"}
+
+## AI-000228 | [DATA] [DATA-R2] USER-U1 round pipeline
+
+- 用户轮次：USER-U1-R2 / USER-U1
+- CSV摘要：ECA0AE9CF87481A7543E702A4696F6BAC966B8A3254B7FECE5D65C53B7253E47
+- 初始状态：QUEUED
+
+> Instruction revision for AI-000228 at 2026-10-14T01:09:16.4764848+08:00
+
+执行 .ai-workspace/inputs/LAYOUT-V03-20261013/COVER-BUBBLE-IMPORT_DATA.md。绑定本卡真实USER-U1-R2 DONE及AI227源/CSV交付，仅现有公开CSV解析、LocTableAsset.ReplaceEntries和AssetDatabase.SaveAssetIfDirty单Localization资产导入。禁止默认Run-DataPipeline/ImportAll/FontBuilder/全局SaveAssets/额外进程/字体返工。输出LAYOUT-V03-20261014/本TaskId。用户授权自动DATA→ENGINE接力，真实失败一次停。
+
+> Dependency correction for AI-000228 at 2026-10-14T01:09:16.5694039+08:00: AI-000227
+
+> SUPERVISED POLICY at 2026-10-14T01:09:16.6874960+08:00: {"policy":{"resourceKeys":["data-batch","generated-assets","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户只批准本地化两条记录；固定DATA通过既有公开解析/替换/定向保存入口单资产导入，不接旧字体batch。","updatedAt":"2026-10-14T01:09:16.6432260+08:00","supervisionLevel":"full"},"taskId":"AI-000228"}
+## AI-000229 | [ENGINE_MCP] [COVER-BUBBLE] 封面两个气泡本地化文字与场景显隐接线
+
+- 序号：229
+- 提交时间：2026-10-14T01:09:51.4132197+08:00
+- 模块 ID：COVER-BUBBLE
+- 初始状态：QUEUED
+- 前置依赖：AI-000228
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行 .ai-workspace/inputs/LAYOUT-V03-20261013/COVER-BUBBLE_ENGINE.md，仅P0现有Bubble_01_AIGC/Bubble_02_AIGC添加或复用TMP+LocalizedText和必要既有Set登记；实际DATA两key成功后接线吃什么/汪！。保留既有排版和AI226三锚点。相称Play/1图，Complete前正式RecordIssue MANUAL_VERIFICATION，三弹层+气泡合并待人工验收。当前固定ENGINE，用户授权自动完整handoff，无新chat/提交/字体返工。
+
+> SUPERVISED POLICY at 2026-10-14T01:09:51.8266776+08:00: {"taskId":"AI-000229","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"原用户要求自动推进至人工视觉验收；明确保留最终三弹层/两气泡人工gate，不能由机器代签。","updatedAt":"2026-10-14T01:09:51.6933940+08:00","supervisionLevel":"full"}}
+
+> Verification resolved for AI-000229 at 2026-10-14T08:45:23.0045759+08:00: decision=VERIFIED; summary=用户明确人工验收通过，AI229封面两气泡接线完成关闭。; evidence=2026-10-14主控制台直接用户原话：人工验收通过，AI226和AI229可以关闭。两泡与三弹层合并验收；详见outputs/control/LAYOUT-V03-20261014/human-acceptance/user-decision.json。
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-14T08:45:23.3821057+08:00: {"userDecision":"人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知","taskId":"AI-000226"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-14T08:45:23.4862387+08:00: {"userDecision":"人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知","taskId":"AI-000229"}

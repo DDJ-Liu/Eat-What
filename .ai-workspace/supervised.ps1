@@ -134,6 +134,10 @@ function Get-SupervisionBlockers {
     return @($reasons | Select-Object -Unique)
 }
 
+function Test-SupervisionCancelled($Task) {
+    $closure=Get-ObjectPropertyValue $Task 'supersession'
+    return ($Task.status -eq 'CLOSED_SUPERSEDED' -and $closure.decision -eq 'CLOSED_SUPERSEDED' -and $closure.userDecision -and $closure.reason -and $closure.verification -and $closure.accepted -eq $false)
+}
 function Get-SupervisionSnapshot {
     param($ModeState, $QueueState, $Workers)
     $s = $ModeState.supervised
@@ -142,7 +146,7 @@ function Get-SupervisionSnapshot {
         $task = Get-Task $QueueState $id
         if ($null -eq $task) { throw "Supervised task missing: $id" }
         $rows += [pscustomobject]@{
-            taskId = $id; pipeline = $task.pipeline; status = $task.status
+            taskId = $id; pipeline = $task.pipeline; status = $task.status; cancelled = (Test-SupervisionCancelled $task)
             blockers = @(Get-SupervisionBlockers $QueueState $task $ModeState)
             humanGate = ($task.status -eq 'SUCCEEDED' -and (Test-SupervisionGate $task))
             humanReviewDeferred = ((Test-SupervisionReviewsDeferred $ModeState) -and (Test-SupervisionGate $task))
@@ -152,7 +156,7 @@ function Get-SupervisionSnapshot {
             verificationStatus = Get-TaskVerificationStatus $task
         }
     }
-    $unresolved = @($rows | Where-Object { $_.status -ne 'SUCCEEDED' -or $_.humanGate -or $_.verificationStatus -eq 'REJECTED' -or $_.blockers.Count -gt 0 })
+    $unresolved = @($rows | Where-Object { -not $_.cancelled -and ($_.status -ne 'SUCCEEDED' -or $_.humanGate -or $_.verificationStatus -eq 'REJECTED' -or $_.blockers.Count -gt 0) })
     $running = @($QueueState.tasks | Where-Object { $_.status -eq 'RUNNING' })
     $ownedWorkers = @($Workers.workers.PSObject.Properties | Where-Object { $_.Value.status -eq 'BUSY' -or $_.Value.activeTaskId })
     $ready = @($rows | Where-Object { $_.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and $_.blockers.Count -eq 0 })
@@ -190,6 +194,7 @@ function Get-SupervisionNotice {
     param($ModeState, $Task, [string]$Event)
     return [pscustomobject]@{
         action = 'NOTIFY_CONTROLLER'; threadId = $ModeState.supervised.controllerThreadId
+        taskId = $Task.id; sessionId = $ModeState.supervised.sessionId; sourceThreadId = $Task.execution.ownerThreadId; event = $Event
         automationDirective = Get-SupervisionAutomationDirective $ModeState
         message = "监管回报 $Event / $($Task.id)。请在 D:\GameProject\Eat-What 读取 .ai-workspace/SUPERVISED.md，运行 queue.ps1 -Action SupervisionStatus，复查当前模式和任务线程状态后做单轮监管。不要沿用旧 AUTOMATIC 接力，不要默认重置任务；若已退出监管仅汇总回报。若 session.status=COMPLETE，任务链已自动回 MANUAL：汇总完成/待人工项并通过 automation_update 暂停 session.heartbeatAutomationId；其它非活动状态同样暂停监管日程，不接收或轮询 ART 日报。"
     }
@@ -215,13 +220,14 @@ function Complete-SupervisionIfReady {
     if (@($Workers.workers.PSObject.Properties | Where-Object { $_.Value.status -eq 'BUSY' -or $_.Value.activeTaskId }).Count -gt 0) { return $false }
     foreach ($id in @($s.taskIds)) {
         $task = Get-Task $QueueState $id
+        if($null -ne $task -and (Test-SupervisionCancelled $task)){continue}
         if ($null -eq $task -or $task.status -ne 'SUCCEEDED' -or (Test-SupervisionGate $task) -or
             (Get-TaskVerificationStatus $task) -eq 'REJECTED' -or @(Get-SupervisionBlockers $QueueState $task $ModeState).Count -gt 0) { return $false }
     }
     $completedAt = Get-NowIso
     $s.status='COMPLETE'; $s.stopRequested=$true; $s.exitRequested=$false; $s.reservations=@()
     Set-SupervisedProperty $s 'completion' ([pscustomobject]@{
-        at=$completedAt; reason='ALL_SCOPE_TASKS_SUCCEEDED'; taskIds=@($s.taskIds)
+        at=$completedAt; reason=$(if(@($s.taskIds | Where-Object {Test-SupervisionCancelled (Get-Task $QueueState $_)}).Count){'ALL_SCOPE_TASKS_RESOLVED'}else{'ALL_SCOPE_TASKS_SUCCEEDED'}); taskIds=@($s.taskIds); cancelledTaskIds=@($s.taskIds | Where-Object {Test-SupervisionCancelled (Get-Task $QueueState $_)})
         pendingUserTaskIds=@($s.taskIds | Where-Object { (Get-TaskVerificationStatus (Get-Task $QueueState $_)) -eq 'PENDING_USER' })
     })
     $ModeState.mode='MANUAL'; $ModeState.updatedAt=$completedAt; $ModeState.updatedBy='CONTROL_CHAT'
@@ -245,7 +251,7 @@ function Close-SupervisedRun {
         $repairs = @(Get-SupervisionRepairs $Task)
         $exhausted = @($repairs | Where-Object { $_.problemKey -eq $key }).Count -ge 3 -or $repairs.Count -ge 6
         # Circuit belongs to the task/branch, not the whole lane. Never retry on time alone.
-        $Task.status = if ((Test-TaskFailureStopped $Task) -or $exhausted -or $FailureScope -ne 'TASK') { 'NEEDS_USER' } else { 'PAUSED_CIRCUIT' }
+        $Task.status = if ((Get-ObjectPropertyValue $Task 'resumeApproval') -or (Test-TaskFailureStopped $Task) -or $exhausted -or $FailureScope -ne 'TASK') { 'NEEDS_USER' } else { 'PAUSED_CIRCUIT' }
         if ($FailureScope -eq 'GLOBAL') {
             $ModeState.supervised.status = 'CIRCUIT'
             $ModeState.supervised.stopRequested = $true
@@ -422,6 +428,7 @@ function Invoke-SupervisionAction {
     }
     if ($Action -eq 'RecoverSupervisionTask') {
         $t = Get-Task $q $TaskId
+        Assert-Value ((Get-ObjectPropertyValue $t 'resumePolicy') -ne 'BOUNDED_APPROVAL_V1') 'Next-batch tasks resume only through ApproveResume.'
         Assert-Value ($null -ne $t -and $s.taskIds -contains $TaskId -and $t.status -eq 'PAUSED_CIRCUIT') 'Only a recoverable failed task in this scope can be retried; NEEDS_USER requires human intervention.'
         Assert-Value ($s.status -eq 'ACTIVE') 'Supervision is paused.'
         Assert-Value (@(Get-SupervisionBlockers $q $t $m).Count -eq 0) 'Repair prerequisites or human gates are still unresolved; do not spend a recovery attempt.'
@@ -475,6 +482,7 @@ function Invoke-SupervisionAction {
             $pairedBudget = Get-RepairBudgetState $q $root
             Assert-Value ($pairedBudget.used -eq $budget.used) 'Pairing a repair and recovery changed the root budget.'
         }
+        Assert-Value (-not (Get-ObjectPropertyValue $t 'resumeApproval')) 'Use ApproveResume to reuse remaining approved runs.'
         $t.status='QUEUED'; $t.claimedAt=$null
         if ($worker.activeTaskId -eq $TaskId) { Clear-SupervisionWorker $worker }
         Save-JsonFile $queuePath $q; Save-JsonFile $workerPath $w
@@ -484,16 +492,30 @@ function Invoke-SupervisionAction {
     if ($Action -in @('SupervisionCheckpoint','YieldSupervisionTask')) {
         $t = Get-Task $q $TaskId; $worker=Get-Worker $w $Pipeline
         Assert-Value ($null -ne $t -and $t.pipeline -eq $Pipeline -and $t.status -eq 'RUNNING' -and $worker.activeTaskId -eq $TaskId) 'Worker does not own this active task.'
+        $turnGate=Sync-TaskTurnGate $t
         if ($Action -eq 'SupervisionCheckpoint') {
-            Write-Result @{action= $(if ($t.execution.limitReached) {'STOP_AT_TURN_LIMIT'} elseif ($s.stopRequested -or $s.status -ne 'ACTIVE') {'STOP_AT_SAFE_CHECKPOINT'} else {'CONTINUE'}); taskId=$TaskId}; return
+            if ((Get-ObjectPropertyValue $t 'resumeApproval') -and -not $s.stopRequested -and $s.status -eq 'ACTIVE') {
+                . (Join-Path $workspaceRoot 'approved-resume.ps1')
+                Assert-Value ($t.execution.resumeApprovalId -ceq $t.resumeApproval.approvalId) 'Active approval binding changed.'
+                Assert-ResumeScope $t.execution.approvedScope $Scope
+            }
+            Save-JsonFile $queuePath $q
+            Write-Result @{action= $(if ($s.stopRequested -or $s.status -ne 'ACTIVE') {'STOP_AT_SAFE_CHECKPOINT'} else {$turnGate}); taskId=$TaskId;turnGate=$turnGate}; return
         }
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Summary) -and -not [string]::IsNullOrWhiteSpace($Verification)) 'Yield requires saved progress and safe现场 evidence.'
-        if($t.execution.limitReached){
+        if($turnGate -in @('TURN_SOFT_LIMIT','STOP_AT_TURN_LIMIT')){
             Assert-Value ($Artifacts.Count -gt 0 -and @($Artifacts | Where-Object {-not (Test-Path -LiteralPath $_ -PathType Leaf)}).Count -eq 0) 'Turn limit yield requires saved checkpoint artifacts.'
-            $t.execution.checkpointPath=@($Artifacts)
+            Set-ObjectPropertyValue $t.execution 'checkpointPath' @($Artifacts)
+            if($turnGate -eq 'TURN_SOFT_LIMIT'){
+                Set-ObjectPropertyValue $t.execution 'softLimitHandoff' ([pscustomobject]@{
+                    at=Get-NowIso;taskId=$TaskId;executionId=$t.execution.executionId;ownerThreadId=$t.execution.ownerThreadId
+                    appTurnCount=$t.execution.appTurnCount;softLimitAt=$t.execution.softLimitAt
+                    artifacts=@($Artifacts | ForEach-Object {[pscustomobject]@{path=[IO.Path]::GetFullPath($_);sha256=(Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash}})
+                })
+            }
         }
         Set-SupervisedProperty $t 'supervisionCheckpoint' ([pscustomobject]@{at=Get-NowIso; summary=$Summary; verification=$Verification})
-        $t.status='QUEUED'; Clear-SupervisionWorker $worker
+        $t.status=if($turnGate -eq 'STOP_AT_TURN_LIMIT'){'NEEDS_USER'}else{'QUEUED'}; Clear-SupervisionWorker $worker
         Finish-SupervisionExit $m $q
         Save-JsonFile $queuePath $q; Save-JsonFile $workerPath $w; Save-JsonFile $modePath $m
         Write-Result @{action='SUPERVISION_YIELDED'; taskId=$TaskId; supervisorHandoff=(Get-SupervisionNotice $m $t 'YIELDED')}; return
@@ -530,18 +552,31 @@ function Invoke-SupervisionAction {
         foreach ($otherReservation in @($s.reservations | Where-Object {$_.taskId -ne $TaskId})) {
             $held += @(Get-SupervisionResources (Get-Task $q $otherReservation.taskId))
         }
-        Assert-Value (-not (Test-TaskFailureStopped $t)) 'Failure stop limit reached; READONLY_DIAGNOSIS and user decision required.'
+        $approvedGrant=$null; $boundedGrant=$null
+        Assert-Value (-not ((Get-ObjectPropertyValue $t 'resumePolicy') -eq 'BOUNDED_APPROVAL_V1' -and @($t.errorHistory | Where-Object { $_ }).Count -gt 0) -or (Get-ObjectPropertyValue $t 'resumeApproval')) 'Failed next-batch task requires ApproveResume.'
+        if (Get-ObjectPropertyValue $t 'resumeApproval') {
+            . (Join-Path $workspaceRoot 'approved-resume.ps1')
+            $boundedGrant=Assert-BoundedResume $t $m $Scope
+        } elseif(Test-TaskFailureStopped $t){
+            Assert-Value ($null -ne (Get-ObjectPropertyValue $t 'approvedResume')) 'Failure stop limit reached; READONLY_DIAGNOSIS and user decision required.'
+            . (Join-Path $workspaceRoot 'approved-resume.ps1')
+            $approvedGrant=Assert-PendingApprovedResume $t $q $m
+        }
         Assert-Value ($t.pipeline -eq $Pipeline -and $s.taskIds -contains $TaskId) 'Wrong pipeline or out-of-scope task.'
         Assert-Value ($t.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and $worker.status -eq 'IDLE') 'Task or worker is no longer idle.'
         Assert-Value ($worker.circuit.state -eq 'CLOSED') 'Worker circuit is not closed.'
         Assert-Value (@(Get-SupervisionBlockers $q $t $m).Count -eq 0) 'Dependencies or human gates changed; do not claim.'
         Assert-Value (-not (Test-ArtAuditBlocksTask $t)) 'Daily art audit must finish before this task can claim.'
         Assert-Value (@(Get-SupervisionResources $t | Where-Object {$held -contains $_}).Count -eq 0) 'A running task holds a conflicting resource.'
+        if($t.workKind -ceq 'APPROVED_RESTORE'){. (Join-Path $workspaceRoot 'approved-resume.ps1');[void](Assert-ApprovedStaticRestore $t $q $m)}
         $t.status='RUNNING'; $t.attempts=[int]$t.attempts+1; $t.claimedAt=Get-NowIso
         Set-SupervisedProperty $t 'supervisionConsecutiveDispatchMisses' 0
         $worker.status='BUSY'; $worker.activeTaskId=$TaskId; $worker.lastPollAt=Get-NowIso
         $worker.leaseUntil=[DateTimeOffset]::Now.AddMinutes($LeaseMinutes).ToString('o')
         Initialize-TaskExecution $t $worker
+        if ($boundedGrant) { Use-BoundedResume $t $boundedGrant }
+        if($approvedGrant){$approvedGrant.consumedAt=Get-NowIso;$approvedGrant.executionId=$t.execution.executionId}
+        if($t.workKind -ceq 'APPROVED_RESTORE' -and -not $approvedGrant){$t.approvedRestore.consumedAt=Get-NowIso;$t.approvedRestore.executionId=$t.execution.executionId}
         $s.reservations=@($s.reservations | Where-Object {$_.taskId -ne $TaskId})
         Save-JsonFile $queuePath $q; Save-JsonFile $workerPath $w; Save-JsonFile $modePath $m
         Write-Result @{action='CLAIMED'; task=$t; leaseUntil=$worker.leaseUntil; supervisorThreadId=$s.controllerThreadId}; return
@@ -560,10 +595,15 @@ function Invoke-SupervisionAction {
         $routeKey = Get-PipelineRouteKey $executionTarget
         $s.reservations += [pscustomobject]@{taskId=$t.id; token=$token; fingerprint=(Get-SupervisionFingerprint $t); routeKey=$routeKey; expiresAt=[DateTimeOffset]::Now.AddMinutes(10).ToString('o')}
         $held += $resources
+        $resumeScopeArgument = ''
+        if (Get-ObjectPropertyValue $t 'resumeApproval') {
+            $scopeJson = ($t.resumeApproval.scope | ConvertTo-Json -Depth 10 -Compress).Replace("'", "''")
+            $resumeScopeArgument = " -Scope '$scopeJson'"
+        }
         $message = @"
 监管模式派发 $($t.id)。先读取 .ai-workspace/WORKFLOW.md、.ai-workspace/SUPERVISED.md、对应 .ai-workspace/workers/$($t.pipeline).md 与项目入口。
-仅运行：& .ai-workspace/queue.ps1 -Action Poll -Pipeline $($t.pipeline) -TaskId $($t.id) -TriggerSource SUPERVISED -DispatchToken $token
-只有 CLAIMED 才执行。每批生产写入前 SupervisionCheckpoint；暂停则安全留痕 YieldSupervisionTask。阻断先留证 Fail，ProblemKey 用稳定根因标识；Complete/Fail/Yield 后发送返回的 supervisorHandoff 到控制台并结束，禁止自己派发后继或 AUTOMATIC 接力。控制台已获本任务范围内执行与必要修复授权，人工验收/设计决策及平台安全审批不能代过。
+仅运行：& .ai-workspace/queue.ps1 -Action Poll -Pipeline $($t.pipeline) -TaskId $($t.id) -TriggerSource SUPERVISED -DispatchToken $token$resumeScopeArgument
+只有 CLAIMED 才执行。批准续行的每批生产写入前 SupervisionCheckpoint 须带实际本批 -Scope（不得超出领取范围）；其它任务按原检查点规则；暂停则安全留痕 YieldSupervisionTask。阻断先留证 Fail，ProblemKey 用稳定根因标识；Complete/Fail/Yield 后按 Manage-SupervisionHandoff.ps1 Prepare → 完整消息一次发送绑定控制台 → Record 保存真实投递原文；控制台 Receive 去重接收（不等于验收），然后结束，禁止自己派发后继或 AUTOMATIC 接力。控制台已获本任务范围内执行与必要修复授权，人工验收/设计决策及平台安全审批不能代过。
 "@.Trim()
         $dispatches += [pscustomobject]@{taskId=$t.id; pipeline=$t.pipeline; executorKind=$executionTarget.executorKind; threadId=$executionTarget.threadId; routeRevision=$executionTarget.routeRevision; token=$token; message=$message}
     }

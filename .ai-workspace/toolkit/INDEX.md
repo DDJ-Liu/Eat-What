@@ -52,7 +52,7 @@
 | TK-LAY-08 | FridgeCatRig + FridgeCatTier Cooking/ShortCycle/Presentation/ | LAY | [LAY.md](LAY.md#tk-lay-08) |
 | TK-LOC-01 | LocService / LocTextCatalog DataBase/Localization/ | LOC | [LOC.md](LOC.md#tk-loc-01) |
 | TK-LOC-02 | LocalizedText Tools/Localization/ | LOC | [LOC.md](LOC.md#tk-loc-02) |
-| TK-LOC-03 | ShortCycle静态主字体/空动态回退构建、白名单预览、批准字体+材质事务迁移与回退 | LOC | [LOC.md](LOC.md#tk-loc-03) |
+| TK-LOC-03 | ShortCycle静态/动态字体构建、FontSwapOnce 171身份幂等迁移；旧事务迁移器弃用 | LOC | [LOC.md](LOC.md#tk-loc-03) |
 | TK-MOT-01 | TransitionController Tools/Transition/ | MOT | [MOT.md](MOT.md#tk-mot-01) |
 | TK-MOT-02 | TransitionBehaviour 基类 + _Alpha / _Scale / _ImageSequence / _SpriteSequence / _Position / _Rotation Tools/Transition/ | MOT | [MOT.md](MOT.md#tk-mot-02) |
 | TK-MOT-03 | ArcPathController + ArcPathComponent + FollowArcPath_* | MOT | [MOT.md](MOT.md#tk-mot-03) |

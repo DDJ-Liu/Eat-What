@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-13T23:20:18.496934+08:00",
+  "purpose": "User requested v0.3 intake and previous layout-guidance version archive",
+  "zip": "records.zip",
+  "zipSha256": "2A71E9DA8A4944D935A8C67A785D21BD0717FAFC8C7FB1C88F73E52098F3CB10",
+  "files": [
+    {
+      "originalPath": ".ai-workspace/inputs/排布指导书_ShortCycle_P0P1_v0_1.md",
+      "bytes": 14558,
+      "sha256": "AC00929D33AF378DF715671A9D3C421A4402286755EECD0F974F0D776D857590",
+      "disposition": "archived-superseded"
+    },
+    {
+      "originalPath": ".ai-workspace/inputs/排布指导书_ShortCycle_P0P1_v0_2.md",
+      "bytes": 14855,
+      "sha256": "DCDFEA1FA9FA7B58CD1EE07E68ED87073A92F340CE1257359EBFD06B00312381",
+      "disposition": "archived-superseded"
+    },
+    {
+      "originalPath": ".ai-workspace/inputs/排布指导书_ShortCycle_P0P1.md",
+      "bytes": 15147,
+      "sha256": "21C157D4826D631AC541A95AB2AB3078DAA4334194251E4A23382E00DB27697C",
+      "disposition": "archived-superseded"
+    }
+  ]
+}

@@ -18,6 +18,9 @@ public class TransitionController : MonoBehaviour
     private Coroutine activePresetCoroutine;
     private Action activeCancel;
     private int generation;
+    private readonly Dictionary<GameObject, bool> earlyVisibility = new Dictionary<GameObject, bool>();
+    private readonly List<GameObject> deferredExitCarriers = new List<GameObject>();
+    private bool committingExitCarriers;
 
     public void RegisterBehaviour(TransitionBehaviour behaviour)
     {
@@ -58,11 +61,26 @@ public class TransitionController : MonoBehaviour
         TransitionPreset preset = null;
         foreach (var candidate in presets)
             if (candidate != null && candidate.name == presetName) { preset = candidate; break; }
-        if (preset == null || presetTarget == null) return false;
+        if (preset == null || presetTarget == null || !isActiveAndEnabled || !gameObject.activeInHierarchy)
+            return false;
 
         CancelAll();
         var requestGeneration = ++generation;
         activeCancel = onCancel;
+        // Preset child visibility is a state decision, not the transition carrier's
+        // own lifetime. Apply both show and hide at the request boundary.
+        foreach (var row in preset.visibility ?? new List<TransitionVisibilityTarget>())
+        {
+            if (row == null || row.target == null || row.target.activeSelf == row.visible) continue;
+            if (!row.visible && IsExitCarrier(row.target, preset))
+            {
+                if (!deferredExitCarriers.Contains(row.target)) deferredExitCarriers.Add(row.target);
+                continue;
+            }
+            if (!earlyVisibility.ContainsKey(row.target))
+                earlyVisibility[row.target] = row.target.activeSelf;
+            row.target.SetActive(row.visible);
+        }
         activePresetCoroutine = StartCoroutine(ApplyPreset(requestGeneration, preset, onComplete));
         return true;
     }
@@ -75,6 +93,13 @@ public class TransitionController : MonoBehaviour
         {
             StopCoroutine(activePresetCoroutine);
             activePresetCoroutine = null;
+        }
+        if (!committingExitCarriers)
+        {
+            foreach (var row in earlyVisibility)
+                if (row.Key != null && row.Key.activeSelf != row.Value) row.Key.SetActive(row.Value);
+            earlyVisibility.Clear();
+            deferredExitCarriers.Clear();
         }
         foreach (var behaviour in registeredBehaviours)
             if (behaviour != null) cancelled |= behaviour.Cancel();
@@ -126,11 +151,32 @@ public class TransitionController : MonoBehaviour
         if (preset.applyPosition) WritePosition(preset.positionSpace, preset.position);
         if (preset.applyScale) presetTarget.localScale = preset.localScale;
         if (preset.applyAlpha) ApplyAlpha(fromAlpha, preset.alpha, 1f);
-        foreach (var row in preset.visibility ?? new List<TransitionVisibilityTarget>())
-            if (row != null && row.target != null) row.target.SetActive(row.visible);
         activePresetCoroutine = null;
         activeCancel = null;
+        earlyVisibility.Clear();
+        committingExitCarriers = true;
+        try
+        {
+            foreach (var carrier in deferredExitCarriers)
+                if (carrier != null && carrier.activeSelf) carrier.SetActive(false);
+        }
+        finally
+        {
+            deferredExitCarriers.Clear();
+            committingExitCarriers = false;
+        }
         if (onComplete != null) onComplete();
+    }
+
+    private bool IsExitCarrier(GameObject target, TransitionPreset preset)
+    {
+        if (transform.IsChildOf(target.transform)) return true;
+        if ((preset.applyPosition || preset.applyScale) &&
+            presetTarget != null && presetTarget.IsChildOf(target.transform)) return true;
+        if (preset.applyAlpha)
+            foreach (var renderer in presetAlphaRenderers)
+                if (renderer != null && renderer.transform.IsChildOf(target.transform)) return true;
+        return false;
     }
 
     private void ApplyAlpha(float[] from, float target, float progress)

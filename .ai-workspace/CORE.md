@@ -1,8 +1,10 @@
 # AI 工作区 CORE
 
-2026-10-13 当前：AI219/220/221均VERIFIED，E2技术清理完成，AUTOMATIC/COMPLETE，无运行节点。归档恢复、私有保全、配置解除和clone删除均完成；本轮E2收尾提交及本地main快进已获用户授权，实际结果见outputs/control/E2-FINAL-COMMIT-20261013/commit-result.json；远端推送待用户完成。字体、Excel及人工配表/导表已验收，不返工。见[MIG63收束](MIG63/E2_收束与提交.md)与[人工索引](outputs/control/人工处理索引.md)。
+2026-10-14 当前阶段：AI222～225显隐/动画及0～1时机配置、AI226三弹层锚定、AI227～229封面气泡配表/接线均已完成，相关用户人工验收已通过；两文案为“吃什么”“汪！”。字体、Excel与E2已关闭；AI190仍PENDING_USER，旧CookingProcess仅参考、新P2待开发；U2～U6独立人工项以USER_WORK_STATUS为准。当前AUTOMATIC，自动链COMPLETE，无运行任务，旧WATCH暂停。用户本轮已授权阶段提交及合入本地main，未执行推送。
 
-当前模式、任务与历史以队列为准。2026-10-05专项历史逐条保存在[本任务保全快照](outputs/PRE-5b/AI-000200/history/CORE_before_slim.md)；当前DATA-R1已完成，旧字体停止线与人工待验保留。PRE-5b工具见[TK-WF-04](toolkit/WF.md#tk-wf-04)。
+固定职能chat见[PIPELINES](PIPELINES.md)；四条硬上限见[AGENTS](../AGENTS.md)，批准续行只用ApproveResume。AI190仅下一次归档一次性保全，核验后不自动延续，见[安排](ARCHIVE_PRESERVATION.md)。[人工索引](outputs/control/人工处理索引.md)与正式队列为状态入口；[提交前页首原文](outputs/control/STAGE-COMMIT-20261014/entry-history.md)保留所有旧时点结论。
+
+历史归档索引：[2026-10-12整理](archive/2026-10-12-workflow-closeout/README.md)。
 
 ## 1. 共同不变量
 
@@ -18,7 +20,7 @@
 
 1. 读取任务卡点名的文件/节、对应 worker 和本页“按需读取表”；检查 Git 与目标实现，不凭文档直接改生产代码。
 2. 一个任务 = 一个可验收目标。内部步骤用检查点；禁止 P-047 式每步一任务。工具/脚本先查 [toolkit/INDEX.md](toolkit/INDEX.md)，坑按任务卡 P 编号从 [pitfalls/INDEX.md](pitfalls/INDEX.md) 定位。
-3. 先做窄范围检查，再做一次收口验证；最终验证默认最多两次，额外重复必须写原因。MCP/长日志/层级遍历结果写入任务输出，只回路径、计数和最多 20 条异常；截图不内联。
+3. 先按下一批次四条硬上限确定验证清单；小字段改动不扩成全套 Final，一次性工具不进 Final。其它必要收口验证沿用既有入口；MCP/长日志/层级遍历结果写入任务输出，只回路径、计数和最多 20 条异常；截图不内联。
 4. 成功调用 `Complete`；真实阻断调用 `Fail`；测试表现或触发问题按完整协议记录为 `TEST_OBSERVATION/TEST_TRIGGER`，不得误报产品失败。结算返回 handoff 时原样发送指定线程并停止。
 
 ## 3. 报告与影响
@@ -48,13 +50,4 @@
 | 项目状态/路线 | 项目基线页首与相关专项，不默认全文 |
 | 历史输入/报告 | `inputs/README.md` 或 archive manifest 按原路径/SHA 查询 |
 
-完整规则入口：[WORKFLOW](protocol/WORKFLOW_FULL.md)、[SUPERVISED](protocol/SUPERVISED_FULL.md)、[CONTROL](protocol/CONTROL_CHAT_FULL.md)。旧 `KNOWN_PITFALLS.md` 与 `TOOLKIT_REGISTRY.md` 保持兼容索引。
-
-
-
-
-PRE-5b 工作流工具索引：WATCH 无模型增量观察与宿主适配、机器验收、跨模式根修复预算、provider/Coplay 精确计量见 [TK-WF-04](toolkit/WF.md#tk-wf-04) 和 [完整协议](protocol/WORKFLOW_FULL.md)。旧监管 ai 暂停、旧任务历史及人工结论不因工具交付更改；真实桌面唤醒未经部署/回执，不视为已上线。
-
-
-PRE-5c 最新用户口径（2026-10-05）：控制台验收失败只阻断该任务/依赖链，独立链继续；ENGINE/DATA生产写失败一次停并只读诊断，CODE交付前同一稳定错误重试≤2。真实app turn跨线程/attempt累计：120为TURN_SOFT_LIMIT，先留交接检查点再继续；仅软限后30分钟无实际进度或240临时硬停。正式硬限数值待瘦身落地实测满两周后再定。AI201原交付控制拒验已登记REJECTED，最小PowerShell/协议修复及独立复核尚待完成；不得将新口径写成已测试的脚本能力。WATCH宿主部署仍待后验。
-FONT-R最新：取消AI203/204，用户确认当前布局/字体并授权正常hook提交新基线，AI205→206→207从R2继续；只保护Static，三材质保留并在R3重调UpdateShaderRatios。当前卡与授权见inputs/FONT-R-PRE5c-20261005/COMMON.md；最终视觉待用户。
+完整规则入口：[WORKFLOW](protocol/WORKFLOW_FULL.md)、[SUPERVISED](protocol/SUPERVISED_FULL.md)、[CONTROL](protocol/CONTROL_CHAT_FULL.md)。执行仍保留失败次数/修复预算、120实际回合软限和临时240硬限，按完整协议处理；切换chat不能清零。
