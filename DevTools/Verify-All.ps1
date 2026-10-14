@@ -5,7 +5,8 @@ param(
     [ValidateSet('Incremental', 'Final')][string]$Mode = 'Final',
     [string]$RepeatReason,
     [string[]]$RunnerPath = @(),
-    [string]$StateRoot
+    [string]$StateRoot,
+    [string]$ReuseManifestPath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -14,6 +15,50 @@ if ([string]::IsNullOrWhiteSpace($StateRoot)) {
     $StateRoot = Join-Path $repositoryRoot '.ai-workspace/runtime/verify-all'
 }
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+
+function Get-ReuseFingerprint {
+    param([string]$ManifestPath, [string]$Runner, [string]$PowerShellPath)
+    if ([string]::IsNullOrWhiteSpace($ManifestPath)) { return $null }
+    $manifestFull = [IO.Path]::GetFullPath($(if ([IO.Path]::IsPathRooted($ManifestPath)) { $ManifestPath } else { Join-Path $repositoryRoot $ManifestPath }))
+    if (-not (Test-Path -LiteralPath $manifestFull -PathType Leaf)) { return $null }
+    try { $manifest = Get-Content -LiteralPath $manifestFull -Raw | ConvertFrom-Json -DateKind String }
+    catch { return $null }
+    if ($manifest.schemaVersion -ne 2) { return $null }
+    $runnerRelative = [IO.Path]::GetRelativePath($repositoryRoot,[IO.Path]::GetFullPath($Runner)).Replace('\','/')
+    $specs = @($manifest.runners | Where-Object { [string]$_.path -ceq $runnerRelative })
+    if ($specs.Count -ne 1) { return $null }
+    $spec = $specs[0]
+    if ($spec.dependencyMode -cne 'closed' -or $spec.sideEffectFree -ne $true -or
+        [string]::IsNullOrWhiteSpace([string]$spec.scope) -or $null -eq $spec.parameters -or
+        @($spec.inputPaths).Count -eq 0) { return $null }
+    $rootPrefix = [IO.Path]::GetFullPath($repositoryRoot).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar
+    $files = [Collections.Generic.SortedDictionary[string,string]]::new([StringComparer]::Ordinal)
+    foreach ($path in @($spec.inputPaths) + @($Runner) + @($PSCommandPath)) {
+        if ([string]::IsNullOrWhiteSpace([string]$path) -or [string]$path -match '[*?\[\]]') { return $null }
+        $full = [IO.Path]::GetFullPath($(if ([IO.Path]::IsPathRooted([string]$path)) { [string]$path } else { Join-Path $repositoryRoot ([string]$path) }))
+        if (-not $full.StartsWith($rootPrefix,[StringComparison]::OrdinalIgnoreCase)) { return $null }
+        if (-not (Test-Path -LiteralPath $full)) { return $null }
+        $item = Get-Item -LiteralPath $full -Force
+        if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { return $null }
+        $members = if ($item.PSIsContainer) { @(Get-ChildItem -LiteralPath $full -Recurse -Force) } else { @($item) }
+        if ($item.PSIsContainer) {
+            $directoryKey = [IO.Path]::GetRelativePath($repositoryRoot,$item.FullName).Replace('\','/') + '/'
+            $files[$directoryKey] = 'DIR'
+        }
+        foreach ($member in $members) {
+            if ($member.Attributes -band [IO.FileAttributes]::ReparsePoint) { return $null }
+            $relative = [IO.Path]::GetRelativePath($repositoryRoot,$member.FullName).Replace('\','/')
+            if ($member.PSIsContainer) { $files[$relative + '/'] = 'DIR' }
+            else { $files[$relative] = (Get-FileHash -LiteralPath $member.FullName -Algorithm SHA256).Hash }
+        }
+    }
+    $payload = [ordered]@{schemaVersion=2;taskId=$TaskId;profile=$Profile;mode=$Mode;runner=$runnerRelative;
+        scope=[string]$spec.scope;parameters=$spec.parameters;
+        powerShellVersion=$PSVersionTable.PSVersion.ToString();powerShellPath=$PowerShellPath;
+        files=@($files.GetEnumerator() | ForEach-Object { [ordered]@{path=$_.Key;sha256=$_.Value} })}
+    $json = $payload | ConvertTo-Json -Depth 15 -Compress
+    return [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8NoBom.GetBytes($json)))
+}
 
 function Get-PowerShell7Path {
     $candidate = if ($PSVersionTable.PSEdition -eq 'Core') {
@@ -57,6 +102,7 @@ $profileRunners = [ordered]@{
         '.ai-workspace/tests/Test-DataLane.ps1',
         'DevTools/Workflow/Test-UsageMetrics.ps1',
         'DevTools/Workflow/Test-UsageReporting.ps1',
+        'DevTools/Workflow/Test-UsageOptimization.ps1',
         'DevTools/Workflow/Test-Acceptance.ps1',
         '.ai-workspace/tests/Test-RepairBudget.ps1',
         'DevTools/Workflow/Test-Watch.ps1',
@@ -147,6 +193,7 @@ if ($Mode -eq 'Final' -and $priorFinals -ge 2 -and [string]::IsNullOrWhiteSpace(
 }
 
 $startedAt = [DateTimeOffset]::Now
+$runId = [Guid]::NewGuid().ToString('N').Substring(0,12)
 $results = New-Object System.Collections.Generic.List[object]
 $failure = $null
 try {
@@ -164,15 +211,44 @@ try {
     }
     else {
         $powerShell = Get-PowerShell7Path
+        $runnerOrdinal=0
         foreach ($runner in $runners) {
+            $runnerOrdinal++
             if (-not (Test-Path -LiteralPath $runner)) { throw "Missing runner: $runner" }
+            $fingerprint = Get-ReuseFingerprint $ReuseManifestPath $runner $powerShell
+            $latest = $null
+            if ($fingerprint -and (Test-Path -LiteralPath $historyPath)) {
+                foreach ($line in [IO.File]::ReadLines($historyPath)) {
+                    if ([string]::IsNullOrWhiteSpace($line)) { continue }
+                    $entry = $line | ConvertFrom-Json -DateKind String
+                    if ($entry.taskId -cne $TaskId -or $entry.mode -ne 'Final') { continue }
+                    foreach ($item in @($entry.results | Where-Object { $_.path -ceq $runner })) {
+                        $latest = [pscustomobject]@{recordedAt=$entry.recordedAt;item=$item}
+                    }
+                }
+            }
+            if ($latest -and $latest.item.status -in @('PASSED','REUSED') -and
+                $latest.item.reuseFingerprint -ceq $fingerprint) {
+                $results.Add([pscustomobject]@{path=$runner;status='REUSED';exitCode=0;
+                    reuseFingerprint=$fingerprint;reusedFrom=$latest.recordedAt})
+                continue
+            }
             $runnerStarted = [DateTimeOffset]::Now
             $global:LASTEXITCODE = 0
             $runnerOutput = @(& $powerShell -NoProfile -File $runner 2>&1)
             $exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+            $outputPath = Join-Path $StateRoot ("verify-all-{0}-{1}-{2:D2}.log" -f $safeTaskId,$runId,$runnerOrdinal)
+            [IO.File]::WriteAllText($outputPath,($runnerOutput | Out-String),$utf8NoBom)
             if ($runnerOutput.Count -gt 0) { $runnerOutput | Write-Output }
-            if ($exitCode -ne 0) { throw "Runner exited with code ${exitCode}: $runner" }
-            $results.Add([pscustomobject]@{ path=$runner; status='PASSED'; exitCode=$exitCode; durationMs=[Math]::Round(([DateTimeOffset]::Now-$runnerStarted).TotalMilliseconds,3) })
+            if ($exitCode -ne 0) {
+                $results.Add([pscustomobject]@{path=$runner;status='FAILED';exitCode=$exitCode;reuseFingerprint=$fingerprint;outputPath=$outputPath})
+                throw ("Runner exited with code {0}: {1}" -f $exitCode,$runner)
+            }
+            $afterFingerprint = if ($fingerprint) { Get-ReuseFingerprint $ReuseManifestPath $runner $powerShell } else { $null }
+            $stableFingerprint = if ($fingerprint -and $fingerprint -ceq $afterFingerprint) { $fingerprint } else { $null }
+            $results.Add([pscustomobject]@{ path=$runner; status='PASSED'; exitCode=$exitCode;
+                reuseFingerprint=$stableFingerprint;outputPath=$outputPath;
+                durationMs=[Math]::Round(([DateTimeOffset]::Now-$runnerStarted).TotalMilliseconds,3) })
         }
     }
 }
@@ -191,6 +267,8 @@ $record = [ordered]@{
     repeatReason=if ([string]::IsNullOrWhiteSpace($RepeatReason)) { $null } else { $RepeatReason.Trim() }
     priorFinalRuns=$priorFinals
     runnerCount=$runners.Count
+    executedCount=@($results | Where-Object status -eq 'PASSED').Count
+    reusedCount=@($results | Where-Object status -eq 'REUSED').Count
     durationMs=[Math]::Round(([DateTimeOffset]::Now-$startedAt).TotalMilliseconds,3)
     success=($null -eq $failure)
     results=$resultArray
@@ -199,5 +277,7 @@ $record = [ordered]@{
 [System.IO.File]::AppendAllText($historyPath, (($record | ConvertTo-Json -Depth 10 -Compress) + [Environment]::NewLine), $utf8NoBom)
 if ($null -ne $failure) { throw $failure }
 
-[pscustomobject]@{ action='VERIFY_ALL_PASSED'; taskId=$TaskId; profile=$Profile; mode=$Mode; runnerCount=$runners.Count; historyPath=$historyPath; results=$resultArray } |
+[pscustomobject]@{ action='VERIFY_ALL_PASSED'; taskId=$TaskId; profile=$Profile; mode=$Mode; runnerCount=$runners.Count;
+    executedCount=@($results | Where-Object status -eq 'PASSED').Count;reusedCount=@($results | Where-Object status -eq 'REUSED').Count;
+    historyPath=$historyPath; results=$resultArray } |
     ConvertTo-Json -Depth 8

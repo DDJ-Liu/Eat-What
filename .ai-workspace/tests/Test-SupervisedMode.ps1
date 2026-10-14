@@ -21,6 +21,7 @@ function SaveFixture([string]$Name, $Data) {
     [IO.File]::WriteAllText((Join-Path $testRoot "runtime/$Name-state.json"), ($Data | ConvertTo-Json -Depth 30), $utf8)
 }
 function Q([hashtable]$ArgsTable) {
+    if ($ArgsTable.Action -eq 'Status') { $ArgsTable.FullStatus = $true }
     if ($ArgsTable.Action -eq 'Complete' -and -not $ArgsTable.AcceptancePath) {
         $ArgsTable.AcceptancePath=Initialize-AcceptanceFixture $testRoot $ArgsTable.TaskId $sourceRoot
     }

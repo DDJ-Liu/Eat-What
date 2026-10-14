@@ -1,5 +1,9 @@
 # ShortCycle 字体工具
 
+> 2026-10-14 AI-000241 退出后发布合同：Static 发布凭据取本次隔离 Editor 退出、长度/mtime 稳定后的磁盘 SHA；批准 manifest 的旧 Static SHA 只保护 live 原值。Dynamic 只记录前后 glyph 数并要求最终 0，不把批内或候选 Dynamic SHA 当发布门。CurrentCsvValidation 的精确 AI-000235 选项 A + -Publish 只发布字体，Generated 不动。详见 [DATA 管线](../DataTables/DATA_PIPELINE.md) 与 [P-051](../../.ai-workspace/pitfalls/CODE.md#p-051-unity-font-post-exit)。本卡只改 DevTools，不代签原卡生产/视觉验收。
+
+> 2026-10-14 AI-000234 长期接口：既有 DATA 隔离 ImportAllBatch 默认重建 Static+空 Dynamic，可用 -RebuildStaticFont:$false 关闭；BuildAll 只保存自身脏资产，不调用全局 SaveAssets。实际字符集以当前 legacy 资产与 Localization.csv/zh_cn 的项目解析器并集为准，旧 216 是历史记录，不作当前数目断言。Static 缺字时增量扩展，不删既有字符或重建身份；导表成功和字体失败分别结算。发布由 Run-DataPipeline.ps1 的独立字体事务处理，备份、授权/CSV/字数/码点/SHA 审计及 STATIC_ONLY hook 合同见 [DATA 管线](../DataTables/DATA_PIPELINE.md)。本卡仅离线工具，不发布生产字体、不重跑 FontSwapOnce；实际发布和 Editor 验证分别留给 AI-000235/236。
+
 > 2026-10-12 下一批次规则：FontSwapOnce 已完成、停用留存，本次不返工。一次性脚本今后只做离线编译 + Editor 单次执行，不做独立进程/冷加载测试、不进 Final；资产 SHA 仅在提交前由 hook 核对，任务中不做内存保护。TMP 绑定遵守 material → font。下文 AI205～218 的快照、冷加载和 StaticGuard 验收均为历史证据，不作新任务要求。参见 [AGENTS.md](../../AGENTS.md) 与 [通用续行入口](../../.ai-workspace/toolkit/WF.md#approve-resume)。
 
 最后专项核对：2026-10-12。AI217原生9/9、AI218恢复12/12、AI207机器11/11及用户R4视觉均通过，AI207 VERIFIED/人工门已批。FontSwapOnce一次性迁移已完成，标记停用留存；不再运行迁移，源码CA4/264行和证据保留。长期AtlasBuilder/LayoutAudit/hook继续使用。

@@ -1,4 +1,4 @@
-﻿function Read-ArtDailyConfig([string]$Root) {
+function Read-ArtDailyConfig([string]$Root) {
     $path=Join-Path $Root 'inputs/art/ART_DAILY_CONFIG.json'
     if (Test-Path -LiteralPath $path) {return Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json}
     return $null
@@ -129,6 +129,7 @@ function Get-ArtDailyAnalysis($Snapshot,$Previous,$Diff,$Config,$PendingConfig) 
             }
         }
         if($item.requiresManualNaming){$ready=$false;$status='待人工核对源命名恢复/迁移映射；不能仅凭旧文件消失视为完成'}
+        if($item.requiresManualReview){$ready=$false;$status+='；待人工核对：'+[string]$item.reviewNote}
         $prior=@($Previous.pendingItems | Where-Object id -eq $item.id) | Select-Object -First 1
         $first=$prior.firstAppearedAt
         if(-not $first -and $hits.Count){$first=([DateTimeOffset]$Snapshot.capturedAt).ToOffset([timespan]::FromHours(8)).ToString('yyyy-MM-dd')}
@@ -140,7 +141,7 @@ function Get-ArtDailyAnalysis($Snapshot,$Previous,$Diff,$Config,$PendingConfig) 
         $triggers += [pscustomobject]@{key=$item.id;condition=$item.expected;hit=$item.ready;deployAllowed=($item.ready -and $blocked.Count -eq 0);blockedFiles=$blocked;paths=$item.paths;target=$item.trigger;card=$item.card}
     }
     $triggers += [pscustomobject]@{key='red';condition='任何 🔴（含前日报未处理红项）';hit=($red.Count -gt 0);deployAllowed=$false;blockedFiles=@($red.Keys);paths=@($red.Keys);target='PENDING_USER 提醒，不入队';card=$null}
-    return [pscustomobject]@{dims=@($dims);issues=@($issues);pending=@($pending);triggers=@($triggers);redFiles=@($red.Values)}
+    return [pscustomobject]@{requirementsDocument=$Config.requirementsDocument;dims=@($dims);issues=@($issues);pending=@($pending);triggers=@($triggers);redFiles=@($red.Values)}
 }
 function Format-ArtCanvas($File) {if($null -ne $File.png){return "$($File.png.width)×$($File.png.height)"};return '未知/无同期尺寸证据'}
 function Write-ArtDailyCsv($Path,$Rows,[string[]]$Columns) {
@@ -180,6 +181,7 @@ function New-ArtDailyReport($Snapshot,$Previous,$Diff,$Analysis) {
     foreach($i in $Analysis.issues){Line "| $(Cell $i.path) | $(Cell $i.kind) | $(Cell $i.detail) | $(Cell $i.suggestion) |"}
     if(-not $Analysis.issues.Count){Line '| 未发现文件级问题 | — | 不代表视觉/PSD分层已验收 | — |'}
     Line;Line '## 4. 待产清单状态';Line
+    if($Analysis.requirementsDocument){Line ('需求对照原件：.ai-workspace/'+(Cell $Analysis.requirementsDocument)+'；机器命中不代表人工验收，未定项保留待核对。');Line}
     Line '| 待产项 | 期望文件名 | 今日状态 | 首次出现日期 |';Line '|---|---|---|---|'
     foreach($i in $Analysis.pending){Line "| $(Cell $i.name) | $(Cell $i.expected) | $(Cell $i.status) | $(Cell $i.firstAppearedAt) |"}
     Line '首次出现日期为审查系统首次观察日期，不伪造真实创作/上传时间；条目由控制台维护，本车道仅填状态。'

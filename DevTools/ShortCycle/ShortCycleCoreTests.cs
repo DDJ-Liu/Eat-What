@@ -53,6 +53,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             VerifyModalScrollVerificationControl();
             VerifyDirectorLayerOwnership();
             VerifyGeneratedDataCatalogAndInventory();
+            VerifyCarrierResolverAndWarning();
             VerifyTrayControllerRequiresHost();
             return "PASS: CK01-C pure logic tests (FSM/session/presentation/actions/grid/data + v2.2 contracts + fridge-cat rig/blink/discrete scroll/real-wheel trace).";
         }
@@ -2758,6 +2759,115 @@ namespace EatWhat.Cooking.ShortCycle.Tests
         private static bool ColorsMatch(UnityEngine.Color left, UnityEngine.Color right)
         {
             return left.r == right.r && left.g == right.g && left.b == right.b && left.a == right.a;
+        }
+
+        private sealed class CarrierWarningLog : IShortCycleCarrierWarningLog
+        {
+            public readonly List<string> Messages = new List<string>();
+            public void LogWarning(string message) { Messages.Add(message); }
+        }
+
+        private static void VerifyCarrierResolverAndWarning()
+        {
+            var records = new[]
+            {
+                new ShortCycleCarrierRecord("p-b", new[] { "ingredient", "other" }, "cut", "board-b"),
+                new ShortCycleCarrierRecord("p-a", new[] { "ingredient" }, "cut", "board-a"),
+                new ShortCycleCarrierRecord("p-a-repeat", new[] { "ingredient" }, "cut", "board-a"),
+                new ShortCycleCarrierRecord("p-wrong-action", new[] { "ingredient" }, "heat", "board-d"),
+                new ShortCycleCarrierRecord("p-wrong-input", new[] { "other" }, "cut", "board-e"),
+                new ShortCycleCarrierRecord("p-blocked", new[] { "ingredient" }, "cut", "board-c"),
+                new ShortCycleCarrierRecord("p-unlisted", new[] { "ingredient" }, "cut", "board-f")
+            };
+            var whitelist = new RecipeWhitelist("recipe", new[]
+            {
+                "p-a", "p-a-repeat", "p-b", "p-wrong-action", "p-wrong-input", "p-blocked"
+            });
+            var area = new AreaConstraint("area", new[] { "cut" },
+                new[] { "board-a", "board-b", "board-d", "board-e", "board-f" });
+            var resolver = new ShortCycleCarrierResolver(whitelist, area, records);
+            var both = resolver.Resolve("recipe", "area", "ingredient",
+                new[] { "board-b", "board-c", "board-d", "board-e", "board-f", "board-a", "board-a" });
+            Assert(both.IsAmbiguous && both.CarrierId == "board-a",
+                "Carrier choice must follow T1 whitelist, not T12 or scene order.");
+            AssertTrace(both.Candidates, "board-a", "board-b");
+
+            var log = new CarrierWarningLog();
+            var warning = new ShortCycleCarrierWarning(log);
+            warning.Report("recipe", "area", "ingredient", both);
+            warning.Report("recipe", "area", "ingredient", both);
+            Assert(log.Messages.Count == 1 &&
+                log.Messages[0] == "[CK01-S02] 多候选承载物：recipe=recipe area=area item=ingredient " +
+                    "candidates=[board-a,board-b] → 取白名单首条 board-a（配置缺陷：请收敛 T1.whitelist_proc_ids）",
+                "Ambiguous lookup must emit the exact Chinese diagnostic once per session tuple.");
+
+            var single = resolver.Resolve("recipe", "area", "ingredient", new[] { "board-a" });
+            Assert(!single.IsAmbiguous && single.CarrierId == "board-a", "One present carrier must resolve.");
+            AssertTrace(single.Candidates, "board-a");
+            warning.Report("recipe", "area", "other", single);
+            Assert(log.Messages.Count == 1, "A single candidate must not warn.");
+
+            var none = resolver.Resolve("recipe", "area", "ingredient", new string[0]);
+            Assert(none.CarrierId == null && none.Candidates.Count == 0 && !none.IsAmbiguous,
+                "No scene carrier must yield an empty resolution.");
+            Assert(resolver.Resolve("wrong-recipe", "area", "ingredient", new[] { "board-a" })
+                .Candidates.Count == 0 &&
+                resolver.Resolve("recipe", "wrong-area", "ingredient", new[] { "board-a" })
+                .Candidates.Count == 0, "Recipe and area identity must constrain lookup.");
+            warning.Report("recipe", "area", "ingredient", none);
+            Assert(log.Messages.Count == 1, "Zero candidates must not warn.");
+
+            var session = new ShortCycleSessionManager();
+            SetPrivateField(session, "carrierWarning", warning);
+            InvokePrivateMethodWithResult(session, "HandleStateChanged",
+                ShortCyclePhase.None, ShortCyclePhase0View.Cover);
+            warning.Report("recipe", "area", "ingredient", both);
+            Assert(log.Messages.Count == 2, "Actual Session teardown notification must reset warning dedupe.");
+
+            var recipe = new CK01RecipeData
+            {
+                whitelist_proc_ids = new List<string> { "p-b", "p-a" }
+            };
+            var rowA = new CK01ProcessingRecordData
+            {
+                input_01 = "ingredient", action = "cut", carrier = "board-a"
+            };
+            var rowB = new CK01ProcessingRecordData
+            {
+                input_01 = "ingredient", action = "cut", carrier = "board-b"
+            };
+            var kitchen = new KitchenAreaData
+            {
+                preset_tools = new List<string> { "board-a" },
+                allowed_actions = new List<string> { "cut" },
+                allowed_carriers = new List<string> { "board-a", "board-b" }
+            };
+            var catalog = new CK01GeneratedDataCatalog();
+            Assert(catalog.ReplaceTables(new[]
+            {
+                new CK01GeneratedDataTable("Recipes", null, new[]
+                    { new CK01GeneratedDataRowReference("recipe", recipe) }),
+                new CK01GeneratedDataTable("ProcessingRecords", null, new[]
+                {
+                    new CK01GeneratedDataRowReference("p-a", rowA),
+                    new CK01GeneratedDataRowReference("p-b", rowB)
+                }),
+                new CK01GeneratedDataTable("KitchenAreas", null, new[]
+                    { new CK01GeneratedDataRowReference("area", kitchen) })
+            }), "Carrier fixture catalog must be populated.");
+            SetPrivateField(session, "dataCatalog", catalog);
+            IShortCycleCarrierQuery query = session;
+            ShortCycleCarrierResolution resolved;
+            string diagnostic;
+            Assert(query.TryResolveCarrier("recipe", "area", "ingredient",
+                new[] { "board-a", "board-b" }, out resolved, out diagnostic) &&
+                diagnostic == null && resolved.CarrierId == "board-b",
+                "Adjacent read-only query must use Catalog IDs and preserve whitelist order.");
+            AssertTrace(resolved.Candidates, "board-b", "board-a");
+            Assert(!query.TryResolveCarrier("recipe", "missing-area", "ingredient",
+                new[] { "board-a" }, out resolved, out diagnostic) &&
+                resolved == null && !string.IsNullOrEmpty(diagnostic),
+                "Missing Catalog constraints must fail without an invented carrier.");
         }
 
         private static void VerifyGeneratedDataCatalogAndInventory()

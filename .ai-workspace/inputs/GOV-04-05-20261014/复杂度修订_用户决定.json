@@ -1,0 +1,15 @@
+{
+  "gov04": {
+    "turnBudget": 80,
+    "complexity": "M"
+  },
+  "userQuote": "分级冲突回复（GOV-04 / GOV-05）：\n1. 分级表\"新建工具\"一条修订为：**新建需登记新 TK 编号的长期工具（含夹具并进 Final）→ L**；在既有工具族（TK-WF-03/04、TK-DAT-07 等）内新增脚本或夹具，按改动文件数判级，不单独升级。此修订随 GOV-05 一并写入 CORE / CONTROL_CHAT。\n2. 据此重判：\n   - GOV-04：新增 Get-ThreadContext.ps1 与一份夹具，属 TK-WF-03/04 扩充，不新登记编号；改动 8 文件、无场景/Play → **M / 80**，维持原标注。\n   - GOV-05：改动 queue.ps1、模板、CORE、CONTROL_CHAT、workers×3、Get-UsageReport + 一份夹具，文件数 >3 → 由 S 改为 **M / 80**；我原标 S 是按条目数判的，按文件数应为 M。\n3. 两卡若执行中发现必须新登记 TK 编号，执行器在回执里说明并由控制台升级为 L，不自行扩范围。",
+  "gov05": {
+    "turnBudget": 80,
+    "complexity": "M"
+  },
+  "sourceThreadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+  "appliesTo": "本两卡与GOV05将落档的通用分级规则；不扩大业务范围。",
+  "source": "direct-human-user",
+  "receivedAt": "2026-10-14T18:36:38.7023249+08:00"
+}

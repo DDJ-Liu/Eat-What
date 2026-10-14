@@ -67,7 +67,9 @@ namespace EatWhat.DataTables
             public string nonce;
             public string completedAtUtc;
             public bool importCompleted;
+            public bool fontBuildRequested;
             public bool fontBuildCompleted;
+            public string fontBuildError;
             public int createdCount;
             public int updatedCount;
             public int unchangedCount;
@@ -174,22 +176,42 @@ namespace EatWhat.DataTables
                         string.Join("\n", report.errors.ToArray()));
                 }
 
-                var fontManifest = RebuildShortCycleFonts();
                 var localizationGlyphs = ReadLocalizationGlyphs();
-                var fontLocalizationCharacterCount = ReadRequiredIntField(
-                    fontManifest,
-                    "localizationCharacterCount");
-                if (localizationGlyphs.Length != fontLocalizationCharacterCount)
-                {
-                    throw new InvalidOperationException(
-                        "Localization glyph count disagrees with the font build manifest. parser=" +
-                        localizationGlyphs.Length + " fontManifest=" + fontLocalizationCharacterCount);
-                }
-
                 var runId = ReadRequiredBatchEnvironment("EATWHAT_DATA_RUN_ID");
                 var nonce = ReadRequiredBatchEnvironment("EATWHAT_DATA_COMPLETION_NONCE");
                 var completionPath = ResolveCompletionCredentialPath(
                     ReadRequiredBatchEnvironment("EATWHAT_DATA_COMPLETION_PATH"));
+                // Prove the generated catalog and its dependency closure before
+                // attempting the independent font candidate in the same batch.
+                var dependencyProof = BuildBatchDependencyProof(runId, nonce);
+                var fontBuildRequested = Environment.GetEnvironmentVariable(
+                    "EATWHAT_REBUILD_STATIC_FONT") != "0";
+                object fontManifest = null;
+                string fontBuildError = null;
+                if (fontBuildRequested)
+                {
+                    try
+                    {
+                        fontManifest = RebuildShortCycleFonts();
+                        var fontCount = ReadRequiredIntField(
+                            fontManifest, "localizationCharacterCount");
+                        if (localizationGlyphs.Length != fontCount)
+                            throw new InvalidOperationException(
+                                "Localization glyph count disagrees with the font build manifest.");
+                    }
+                    catch (Exception exception)
+                    {
+                        var diagnostic = exception is TargetInvocationException invocation &&
+                                         invocation.InnerException != null
+                            ? invocation.InnerException
+                            : exception;
+                        fontBuildError = diagnostic.GetType().Name + ": " +
+                            diagnostic.Message.Replace('\r', ' ').Replace('\n', ' ');
+                        Debug.LogWarning("[FONT] BATCH_FONT_FAILED; DATA import remains independently valid. " +
+                            fontBuildError);
+                    }
+                }
+
                 var credential = new DataBatchCompletionCredential
                 {
                     success = true,
@@ -197,20 +219,29 @@ namespace EatWhat.DataTables
                     nonce = nonce,
                     completedAtUtc = DateTimeOffset.Now.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture),
                     importCompleted = true,
-                    fontBuildCompleted = true,
+                    fontBuildRequested = fontBuildRequested,
+                    fontBuildCompleted = fontManifest != null,
+                    fontBuildError = fontBuildError,
                     createdCount = report.createdAssets.Count,
                     updatedCount = report.updatedAssets.Count,
                     unchangedCount = report.unchangedAssets.Count,
                     localizationGlyphs = localizationGlyphs,
                     localizationCharacterCount = localizationGlyphs.Length,
-                    fontLocalizationCharacterCount = fontLocalizationCharacterCount,
-                    requiredCharacterCount = ReadRequiredIntField(fontManifest, "requiredCharacterCount"),
-                    staticCharacterCount = ReadRequiredIntField(fontManifest, "staticCharacterCount"),
-                    dynamicCharacterCount = ReadRequiredIntField(fontManifest, "dynamicCharacterCount"),
-                    staticAssetSha256 = ReadRequiredStringField(fontManifest, "staticAssetSha256"),
-                    dynamicAssetSha256 = ReadRequiredStringField(fontManifest, "dynamicEmptyAssetSha256"),
-                    staticAtlasRewritten = ReadRequiredBoolField(fontManifest, "staticAtlasRewritten"),
-                    dependencyProof = BuildBatchDependencyProof(runId, nonce)
+                    fontLocalizationCharacterCount = fontManifest == null ? 0 :
+                        ReadRequiredIntField(fontManifest, "localizationCharacterCount"),
+                    requiredCharacterCount = fontManifest == null ? 0 :
+                        ReadRequiredIntField(fontManifest, "requiredCharacterCount"),
+                    staticCharacterCount = fontManifest == null ? 0 :
+                        ReadRequiredIntField(fontManifest, "staticCharacterCount"),
+                    dynamicCharacterCount = fontManifest == null ? 0 :
+                        ReadRequiredIntField(fontManifest, "dynamicCharacterCount"),
+                    staticAssetSha256 = fontManifest == null ? null :
+                        ReadRequiredStringField(fontManifest, "staticAssetSha256"),
+                    dynamicAssetSha256 = fontManifest == null ? null :
+                        ReadRequiredStringField(fontManifest, "dynamicEmptyAssetSha256"),
+                    staticAtlasRewritten = fontManifest != null &&
+                        ReadRequiredBoolField(fontManifest, "staticAtlasRewritten"),
+                    dependencyProof = dependencyProof
                 };
                 WriteCompletionCredential(completionPath, credential);
 
@@ -220,7 +251,8 @@ namespace EatWhat.DataTables
                           " created=" + report.createdAssets.Count +
                           " updated=" + report.updatedAssets.Count +
                           " unchanged=" + report.unchangedAssets.Count +
-                          " fontEntry=EatWhat.EditorTools.Fonts.ShortCycleFontAtlasBuilder.BuildAll");
+                          " fontBuild=" + (fontManifest != null ? "OK" :
+                              fontBuildRequested ? "FAILED" : "DISABLED"));
             }
             catch (Exception exception)
             {

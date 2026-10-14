@@ -72,7 +72,7 @@ function ConvertTo-CoreSchema {
         $column = [EatWhat.DataTables.DataTableColumnSchema]::new()
         $column.name = [string]$rawColumn.name
         $column.csvColumn = [string]$rawColumn.csvColumn
-        $column.type = [string]$rawColumn.type
+        $column.type = if ($rawColumn.deprecated) { 'string' } else { [string]$rawColumn.type }
         $column.required = [bool]$rawColumn.required
         $column.defaultValue = [string]$rawColumn.defaultValue
         $column.enumType = [string]$rawColumn.enumType
@@ -308,6 +308,49 @@ function Get-ReverseOrigins {
     }
 }
 
+function Get-OrderedCarrierCandidates {
+    param(
+        [Parameter(Mandatory)]$RecordsTable,
+        [Parameter(Mandatory)][string[]]$Whitelist,
+        [Parameter(Mandatory)][string]$InputItem,
+        [Parameter(Mandatory)]$AllowedActions,
+        [Parameter(Mandatory)]$AllowedCarriers,
+        [Parameter(Mandatory)]$SceneTools
+    )
+
+    $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    $candidates = [System.Collections.Generic.List[string]]::new()
+    foreach ($procId in $Whitelist) {
+        $row = Get-RowById $RecordsTable 'proc_id' $procId
+        if ($null -eq $row -or $InputItem -notin @(Get-ProcessingInputs $RecordsTable $row)) { continue }
+        $action = Get-ColumnValue $RecordsTable $row 'action'
+        $carrier = Get-ColumnValue $RecordsTable $row 'carrier'
+        if ([string]::IsNullOrWhiteSpace($carrier) -or
+            -not $AllowedActions.Contains($action) -or
+            -not $AllowedCarriers.Contains($carrier) -or
+            -not $SceneTools.Contains($carrier)) { continue }
+        if ($seen.Add($carrier)) { [void]$candidates.Add($carrier) }
+    }
+    return $candidates.ToArray()
+}
+
+function Get-RecipeSlotIngredients {
+    param([Parameter(Mandatory)]$Recipes,[Parameter(Mandatory)]$RecipeRow,[Parameter(Mandatory)]$Slots)
+
+    $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    $ingredients = [System.Collections.Generic.List[string]]::new()
+    foreach ($slotId in @(Get-ColumnValues $Recipes $RecipeRow 'slots')) {
+        $slot = Get-RowById $Slots 'slot_id' $slotId
+        if ($null -eq $slot) { continue }
+        foreach ($field in @('standard_ingredient') + @(1..8 | ForEach-Object { 'sub_{0:d2}' -f $_ })) {
+            $item = Get-ColumnValue $Slots $slot $field
+            if (-not [string]::IsNullOrWhiteSpace($item) -and $seen.Add($item)) {
+                [void]$ingredients.Add($item)
+            }
+        }
+    }
+    return $ingredients.ToArray()
+}
 function Invoke-CK01SchemaRules {
     param([Parameter(Mandatory)][object[]]$Records)
 
@@ -601,47 +644,31 @@ function Invoke-CK01SchemaRules {
                 final_proc_ids = @($finalProcIds)
             })
 
-            if ($sceneInventoryUsable -and $null -ne $areas -and $null -ne $tools) {
+            if ($sceneInventoryUsable -and $null -ne $areas) {
                 foreach ($areaRow in $areas.Parse.Table.Rows) {
                     $areaId = Get-ColumnValue $areas $areaRow 'id'
-                    if (-not $seenAreaIds.Contains($areaId)) { continue }
+                    if (-not $seenAreaIds.Contains($areaId) -or -not $sceneToolsByArea.ContainsKey($areaId)) { continue }
                     $allowedActions = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-                    foreach ($actionId in @(Get-ColumnValues $areas $areaRow 'allowed_actions')) { [void]$allowedActions.Add($actionId) }
+                    foreach ($id in @(Get-ColumnValues $areas $areaRow 'allowed_actions')) { [void]$allowedActions.Add($id) }
                     $allowedCarriers = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-                    foreach ($carrierId in @(Get-ColumnValues $areas $areaRow 'allowed_carriers')) { [void]$allowedCarriers.Add($carrierId) }
-                    $configuredTools = $sceneToolsByArea[$areaId]
-                    if ($null -eq $configuredTools) { continue }
-
-                    $candidatesByInput = @{}
-                    foreach ($recordRow in $recordsTable.Parse.Table.Rows) {
-                        $procId = Get-ColumnValue $recordsTable $recordRow 'proc_id'
-                        if (-not $whitelistSet.Contains($procId)) { continue }
-                        $actionId = Get-ColumnValue $recordsTable $recordRow 'action'
-                        $carrierId = Get-ColumnValue $recordsTable $recordRow 'carrier'
-                        if ([string]::IsNullOrWhiteSpace($carrierId) -or -not $allowedActions.Contains($actionId) -or
-                            -not $allowedCarriers.Contains($carrierId) -or -not $configuredTools.Contains($carrierId)) { continue }
-                        foreach ($inputItem in @(Get-ProcessingInputs $recordsTable $recordRow)) {
-                            if (-not $candidatesByInput.ContainsKey($inputItem)) {
-                                $candidatesByInput[$inputItem] = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-                            }
-                            [void]$candidatesByInput[$inputItem].Add($carrierId)
-                        }
+                    foreach ($id in @(Get-ColumnValues $areas $areaRow 'allowed_carriers')) { [void]$allowedCarriers.Add($id) }
+                    $inputs = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+                    foreach ($procId in $whitelist) {
+                        $recordRow = Get-RowById $recordsTable 'proc_id' $procId
+                        if ($null -eq $recordRow) { continue }
+                        foreach ($item in @(Get-ProcessingInputs $recordsTable $recordRow)) { [void]$inputs.Add($item) }
                     }
-
-                    foreach ($inputItem in @($candidatesByInput.Keys | Sort-Object)) {
-                        $candidates = @($candidatesByInput[$inputItem] | Sort-Object)
+                    foreach ($inputItem in @($inputs | Sort-Object)) {
+                        $candidates = @(Get-OrderedCarrierCandidates -RecordsTable $recordsTable -Whitelist $whitelist -InputItem $inputItem -AllowedActions $allowedActions -AllowedCarriers $allowedCarriers -SceneTools $sceneToolsByArea[$areaId])
                         if ($candidates.Count -le 1) { continue }
-                        Add-RuleWarning $recipes $recipeRow 'whitelist_proc_ids' "[V-04] recipe '$recipeId', area '$areaId', input '$inputItem' activates multiple carriers: $($candidates -join ', ')."
+                        Add-RuleWarning $recipes $recipeRow 'whitelist_proc_ids' "[V-04] recipe '$recipeId', area '$areaId', input '$inputItem' activates multiple carriers: $($candidates -join ', '); choose whitelist-first '$($candidates[0])'."
                         [void]$multiCandidateCarriers.Add([pscustomobject]@{
-                            recipe_id = $recipeId
-                            area_id = $areaId
-                            input_item = $inputItem
-                            candidate_carriers = @($candidates)
+                            rule = 'V-04'; recipe_id = $recipeId; area_id = $areaId; input_item = $inputItem
+                            candidate_carriers = @($candidates); selected_carrier = $candidates[0]
                         })
                     }
                 }
             }
-
             if ($null -ne $slotTable -and $null -ne $items) {
                 $slotIngredients = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
                 foreach ($slotId in @(Get-ColumnValues $recipes $recipeRow 'slots')) {
@@ -736,6 +763,10 @@ function Invoke-CK01SchemaRules {
             $allowedActions = @(Get-ColumnValues $areas $areaRow 'allowed_actions')
             $allowedCarriers = @(Get-ColumnValues $areas $areaRow 'allowed_carriers')
             $coreFacility = Get-ColumnValue $areas $areaRow 'core_facility'
+            $seenActions = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+            foreach ($actionId in $allowedActions) {
+                if (-not $seenActions.Add($actionId)) { Add-RuleError $areas $areaRow 'allowed_actions' "[V-08] duplicate action '$actionId'." }
+            }
             if ($allowedActions.Count -lt 1) { Add-RuleError $areas $areaRow 'allowed_actions' '[V-08] must contain at least one action.' }
             if ($allowedCarriers.Count -lt 1) { Add-RuleError $areas $areaRow 'allowed_carriers' '[V-08] must contain at least one carrier/facility.' }
             if ($coreFacility -notin $allowedCarriers) { Add-RuleError $areas $areaRow 'allowed_carriers' "[V-08] must include core_facility '$coreFacility'." }
@@ -755,29 +786,31 @@ function Invoke-CK01SchemaRules {
         }
     }
 
-    if ($null -ne $recordsTable -and $null -ne $areas) {
-        foreach ($recordRow in $recordsTable.Parse.Table.Rows) {
-            $actionId = Get-ColumnValue $recordsTable $recordRow 'action'
-            $carrierId = Get-ColumnValue $recordsTable $recordRow 'carrier'
-            $supportedAreaIds = [System.Collections.Generic.List[string]]::new()
+    if ($sceneInventoryUsable -and $null -ne $recipes -and $null -ne $recordsTable -and
+        $null -ne $areas -and $null -ne $slotTable) {
+        foreach ($recipeRow in $recipes.Parse.Table.Rows) {
+            $recipeId = Get-ColumnValue $recipes $recipeRow 'recipe_id'
+            $whitelist = @(Get-ColumnValues $recipes $recipeRow 'whitelist_proc_ids')
+            $ingredients = @(Get-RecipeSlotIngredients -Recipes $recipes -RecipeRow $recipeRow -Slots $slotTable)
             foreach ($areaRow in $areas.Parse.Table.Rows) {
-                $actions = @(Get-ColumnValues $areas $areaRow 'allowed_actions')
-                $carriers = @(Get-ColumnValues $areas $areaRow 'allowed_carriers')
                 $areaId = Get-ColumnValue $areas $areaRow 'id'
-                if ($sceneInventoryUsable -and -not $seenAreaIds.Contains($areaId)) { continue }
-                if ($actionId -in $actions -and ([string]::IsNullOrWhiteSpace($carrierId) -or
-                    ($carrierId -in $carriers -and (-not $sceneInventoryUsable -or
-                    ($sceneToolsByArea.ContainsKey($areaId) -and $sceneToolsByArea[$areaId].Contains($carrierId)))))) {
-                    [void]$supportedAreaIds.Add((Get-ColumnValue $areas $areaRow 'id'))
+                if (-not $seenAreaIds.Contains($areaId) -or -not $sceneToolsByArea.ContainsKey($areaId)) { continue }
+                $allowedActions = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+                foreach ($id in @(Get-ColumnValues $areas $areaRow 'allowed_actions')) { [void]$allowedActions.Add($id) }
+                $allowedCarriers = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+                foreach ($id in @(Get-ColumnValues $areas $areaRow 'allowed_carriers')) { [void]$allowedCarriers.Add($id) }
+                foreach ($item in $ingredients) {
+                    $candidates = @(Get-OrderedCarrierCandidates -RecordsTable $recordsTable -Whitelist $whitelist -InputItem $item -AllowedActions $allowedActions -AllowedCarriers $allowedCarriers -SceneTools $sceneToolsByArea[$areaId])
+                    if ($candidates.Count -le 1) { continue }
+                    Add-RuleWarning $recipes $recipeRow 'whitelist_proc_ids' "[V-09] recipe '$recipeId', area '$areaId', ingredient '$item' has multiple carriers: $($candidates -join ', '); choose whitelist-first '$($candidates[0])'."
+                    [void]$multiCandidateCarriers.Add([pscustomobject]@{
+                        rule = 'V-09'; recipe_id = $recipeId; area_id = $areaId; input_item = $item
+                        candidate_carriers = @($candidates); selected_carrier = $candidates[0]
+                    })
                 }
-            }
-            if ($supportedAreaIds.Count -eq 0) {
-                $supportBasis = if ($sceneInventoryUsable) { 'present scene area with active matching carrier' } else { 'KitchenAreas constraint (scene inventory unverified)' }
-                Add-RuleWarning $recordsTable $recordRow 'action' "[V-09] record '$(Get-ColumnValue $recordsTable $recordRow 'proc_id')' is not supported by any $supportBasis."
             }
         }
     }
-
     $slotReferences = [System.Collections.Generic.List[object]]::new()
     if ($null -ne $recipes -and $null -ne $slotTable) {
         foreach ($recipeRow in $recipes.Parse.Table.Rows) {
@@ -933,6 +966,7 @@ foreach ($sourceRecord in $records) {
 
 $allErrors = [System.Collections.Generic.List[string]]::new()
 $allWarnings = [System.Collections.Generic.List[string]]::new()
+$allInfos = [System.Collections.Generic.List[string]]::new()
 $reportRecords = [System.Collections.Generic.List[object]]::new()
 foreach ($record in $records) {
     $record.Result = [EatWhat.DataTables.DataTableValidator]::Validate($record.Schema, $record.Parse, $context)
@@ -1037,6 +1071,9 @@ else {
     }
 }
 
+if (-not $sceneInventoryUsable) {
+    [void]$allInfos.Add("[V-04/V-08/V-09] 未注入可用场景清单，跳过场景依赖检查；静态外键与区域约束仍校验。状态：$sceneInventoryStatus。")
+}
 $audits = Invoke-CK01SchemaRules -Records @($records)
 foreach ($record in $records) {
     foreach ($validationError in $record.Result.Errors) {
@@ -1054,7 +1091,7 @@ foreach ($record in $records) {
         warnings = @($record.Result.Warnings)
     })
 }
-if (($RequireSceneInventory -or (-not [string]::IsNullOrWhiteSpace($SceneInventoryPath))) -and
+if ($RequireSceneInventory -and
     -not $sceneInventoryUsable) {
     foreach ($issue in $sceneInventoryIssues) { [void]$allErrors.Add("[SCENE_INVENTORY_UNVERIFIED] $issue") }
 }
@@ -1081,6 +1118,7 @@ $report = [pscustomobject]@{
     schemaCount = $records.Count
     errors = @($allErrors)
     warnings = @($allWarnings)
+    infos = @($allInfos)
     v24RuleCounts = [pscustomobject]$v24RuleCounts
     schemas = @($reportRecords)
     audits = $audits
@@ -1125,6 +1163,7 @@ if (-not $Quiet) {
             warningCount = @($report.warnings).Count
             errors = @($report.errors)
             warnings = @($report.warnings)
+            infos = @($report.infos)
             reportPaths = [pscustomobject]$quickReportPaths
         } | ConvertTo-Json -Depth 8
     }

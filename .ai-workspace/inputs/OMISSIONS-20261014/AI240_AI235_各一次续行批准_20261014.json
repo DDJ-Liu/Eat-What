@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-14T20:24:11.1943664+08:00",
+  "source": "本控制台用户直接回复",
+  "userDecision": "两个任务都进行明确的批准续行",
+  "proposalAccepted": {
+    "AI240": "原卡1次，仅正式结算，复用现有源码和28项/控制6项结果，不重跑测试、不修改源码",
+    "AI235": "原卡1次，原范围发布及同轮幂等验证，须AI240结算通过后执行；原卡幂等采用no-op离线证据，不第二次生产实跑"
+  },
+  "approvalIds": {
+    "AI240": "user-20261014-resume-240-settlement-1",
+    "AI235": "user-20261014-resume-235-release-1"
+  },
+  "scope240": {
+    "paths": [
+      ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240"
+    ],
+    "operations": [
+      "reuse-evidence",
+      "settlement"
+    ]
+  },
+  "scope235": {
+    "paths": [
+      "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset",
+      "Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset",
+      "DevTools/Fonts/ShortCycleFontBuildManifest.json",
+      "DevTools/Fonts/backup",
+      "DevTools/DataTables/.batch-workspace",
+      ".ai-workspace/outputs/OMISSIONS-20261014/AI-000235"
+    ],
+    "operations": [
+      "preflight-read",
+      "release-cached-handles",
+      "isolated-data-font-build",
+      "publish-fonts",
+      "update-font-manifest",
+      "backup",
+      "reuse-evidence",
+      "settlement",
+      "idempotence-check"
+    ]
+  }
+}

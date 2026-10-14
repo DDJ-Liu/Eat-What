@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'RecordTaskProgress', 'RecordTaskTurn', 'RecordCodeValidation', 'ResolveControlRejection', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'ResumeCodeValidationStop', 'ResumeApprovedTask', 'ApproveResume', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
+    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'RecordTaskProgress', 'RecordTaskTurn', 'CheckManagedTool', 'WriteHandoff', 'RecordCodeValidation', 'ResolveControlRejection', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'RecordSupervisionHeartbeatContext', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'ResumeCodeValidationStop', 'ResumeApprovedTask', 'ApproveResume', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
     [string]$Action,
 
     [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET', 'ART')]
@@ -10,6 +10,9 @@ param(
     [string]$Title,
     [string]$Instruction,
     [string]$ModuleId,
+    [string]$FromTaskId,
+    [string]$ToTaskId,
+    [Alias('Full')][switch]$FullStatus,
     [string[]]$DependsOn = @(),
     [string]$TaskId,
     [string]$Summary,
@@ -34,6 +37,13 @@ param(
     [string[]]$TaskIds = @(),
 
     [string]$ControllerThreadId,
+    [ValidateSet('S','M','L')][string]$Complexity,
+    [string]$IdleTurnsJson,
+    [string]$BudgetExplanation,
+    [string]$HeartbeatId,
+    [string]$UsageLimitsSamplePath,
+    [string]$UsageLimitsUnavailableReason,
+    [Nullable[long]]$ContextFreshBytes,
     [string]$AutomationId,
     [string]$PipelineThreadId,
     [string]$AuditSourcePath = 'E:\EatWhat\美术资产',
@@ -52,6 +62,7 @@ param(
     [string]$ProgressId,
     [ValidateSet('WorkCompleted','Observation','Heartbeat')][string]$ProgressKind = 'Observation',
     [string]$EvidencePath,
+    [string]$HandoffJson,
     [ValidateSet('FAILED','RESOLVED')][string]$ValidationResult,
     [ValidateRange(5,1440)][Nullable[int]]$HeartbeatMinutes,
     [ValidateRange(1,20)][Nullable[int]]$FailureStopLimit,
@@ -128,6 +139,22 @@ function Assert-Value {
 }
 
 # Shared cumulative gate. 240 is temporary, pending two weeks of post-slimming measurements.
+function Test-SavedTaskHandoff($Task) {
+    $run=Get-ObjectPropertyValue $Task 'execution'
+    $saved=Get-ObjectPropertyValue $run 'softLimitHandoff'
+    $path=[string](Get-ObjectPropertyValue $saved 'path')
+    if(-not $path -or -not (Test-Path -LiteralPath $path -PathType Leaf)){return $false}
+    if((Get-Item -LiteralPath $path).Length -gt 4096){return $false}
+    if((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -cne [string]$saved.sha256){return $false}
+    try {$data=Read-JsonFile $path} catch {return $false}
+    return ($data.schemaVersion -eq 1 -and $data.taskId -ceq $Task.id -and
+        [int]$data.attempt -eq [int]$saved.attempt -and $data.executionId -ceq $saved.executionId -and
+        $data.ownerThreadId -ceq $saved.ownerThreadId -and [int]$data.appTurnCount -ge 120 -and
+        @($data.completed | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }).Count -gt 0 -and
+        @($data.remaining | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }).Count -gt 0 -and
+        $null -ne $data.keyState -and $data.nextCommand -and
+        @($data.evidencePaths | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0)
+}
 function Sync-TaskTurnGate($Task) {
     $run=Get-ObjectPropertyValue $Task 'execution'
     if(-not $run){return 'CONTINUE'}
@@ -156,19 +183,16 @@ function Sync-TaskTurnGate($Task) {
     }
     Set-ObjectPropertyValue $run 'limitReached' ([bool]$reason)
     if($reason){return 'STOP_AT_TURN_LIMIT'}
-    if($softAt -and -not (Get-ObjectPropertyValue $run 'softLimitHandoff')){return 'TURN_SOFT_LIMIT'}
+    if($softAt -and -not (Get-ObjectPropertyValue $run 'handoffFrom')){return 'HANDOFF_REQUIRED'}
     return 'CONTINUE'
 }
 function Initialize-TaskExecution($Task,$Worker) {
     $prior=Get-ObjectPropertyValue $Task 'execution'
     $target=Get-PipelineExecutionTarget ([string]$Task.pipeline)
     $gate=Sync-TaskTurnGate $Task
-    Assert-Value ($gate -eq 'CONTINUE') 'Cumulative turn policy requires a saved handoff, or has reached its temporary hard stop.'
+    Assert-Value ($gate -eq 'CONTINUE' -or ($gate -eq 'HANDOFF_REQUIRED' -and (Test-SavedTaskHandoff $Task))) 'Cumulative turn policy requires a valid saved handoff, or has reached its temporary hard stop.'
     if($prior -and (Get-ObjectPropertyValue $prior 'softLimitAt')){
-        Assert-Value ($prior.ownerThreadId -cne $target.threadId) 'Soft-limit handoff requires a new visible execution thread.'
-        foreach($artifact in @($prior.softLimitHandoff.artifacts)){
-            Assert-Value ((Test-Path -LiteralPath $artifact.path -PathType Leaf) -and (Get-FileHash -LiteralPath $artifact.path -Algorithm SHA256).Hash -ceq $artifact.sha256) 'Soft-limit checkpoint changed or is missing.'
-        }
+        Assert-Value (Test-SavedTaskHandoff $Task) 'Soft-limit checkpoint changed or is missing.'
     }
     if($prior){Set-ObjectPropertyValue $Task 'executionHistory' @(@((Get-ObjectPropertyValue $Task 'executionHistory') | Where-Object {$null -ne $_})+$prior)}
     $carriedTurns=@()
@@ -185,6 +209,7 @@ function Initialize-TaskExecution($Task,$Worker) {
     foreach($field in @('toolProgressIds','progressEvidenceHashes','checkpointPath','softLimitAt','softLimitHandoff','hardStopAt','hardStopReason','lastActualProgressAt','turnLimitHistory')){
         Set-ObjectPropertyValue $run $field (Get-ObjectPropertyValue $prior $field)
     }
+    Set-ObjectPropertyValue $run 'handoffFrom' $(if($prior -and $prior.softLimitAt){$prior.softLimitHandoff.path}else{$null})
     Set-ObjectPropertyValue $Task 'execution' $run
     [void](Sync-TaskTurnGate $Task)
     Set-ObjectPropertyValue $Worker 'activeExecutionId' $run.executionId
@@ -251,7 +276,45 @@ function Invoke-TaskObservation {
     }
     $gate=Sync-TaskTurnGate $t
     Save-JsonFile $queuePath $q;Save-JsonFile $workerPath $w
-    Write-Result @{action=$(if($gate -eq 'CONTINUE'){'OBSERVATION_RECORDED'}else{$gate});taskId=$TaskId;executionId=$run.executionId;duplicate=$duplicate;lastProgressAt=$worker.lastProgressAt;appTurnCount=$run.appTurnCount;maxTurns=120;temporaryHardTurns=240;next=$(if($gate -eq 'TURN_SOFT_LIMIT'){'SAVE_CHECKPOINT_AND_HANDOFF'}elseif($gate -eq 'STOP_AT_TURN_LIMIT'){'STOP_AND_REPORT'}else{$null})}
+    Write-Result @{action=$(if($gate -eq 'CONTINUE'){'OBSERVATION_RECORDED'}else{$gate});taskId=$TaskId;executionId=$run.executionId;duplicate=$duplicate;lastProgressAt=$worker.lastProgressAt;appTurnCount=$run.appTurnCount;maxTurns=120;temporaryHardTurns=240;next=$(if($gate -eq 'HANDOFF_REQUIRED'){'WRITE_HANDOFF_AND_YIELD'}elseif($gate -eq 'STOP_AT_TURN_LIMIT'){'STOP_AND_REPORT'}else{$null})}
+}
+function Invoke-TurnHandoffAction {
+    $q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath
+    $t=Get-Task $q $TaskId;$worker=Get-Worker $w $Pipeline
+    Assert-Value ($t -and $t.pipeline -eq $Pipeline -and $t.status -eq 'RUNNING' -and
+        $worker.status -eq 'BUSY' -and $worker.activeTaskId -eq $TaskId) 'Handoff/tool gate requires active task ownership.'
+    $run=$t.execution
+    Assert-Value ($run -and $ExecutionId -ceq $run.executionId -and $OwnerThreadId -ceq $run.ownerThreadId) 'Handoff/tool gate requires current execution and visible route.'
+    $gate=Sync-TaskTurnGate $t
+    if($Action -eq 'CheckManagedTool'){
+        Save-JsonFile $queuePath $q
+        Write-Result @{action=$(if($gate -eq 'CONTINUE'){'MANAGED_TOOL_ALLOWED'}else{$gate});taskId=$TaskId;handoffFrom=$run.handoffFrom}
+        return
+    }
+    Assert-Value ($gate -eq 'HANDOFF_REQUIRED' -and -not $run.softLimitHandoff) 'WriteHandoff requires an unsaved 120-turn soft-limit handoff.'
+    Assert-Value (-not [string]::IsNullOrWhiteSpace($HandoffJson) -and $utf8NoBom.GetByteCount($HandoffJson) -le 3500) 'Handoff JSON is missing or too large.'
+    $inputData=$HandoffJson | ConvertFrom-Json -DateKind String
+    Assert-Value (@($inputData.completed | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }).Count -gt 0 -and
+        @($inputData.remaining | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }).Count -gt 0 -and
+        $null -ne $inputData.keyState -and -not [string]::IsNullOrWhiteSpace([string]$inputData.nextCommand)) 'Handoff requires completed, remaining, keyState and nextCommand.'
+    $paths=@($inputData.evidencePaths | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) } | ForEach-Object { [IO.Path]::GetFullPath([string]$_) })
+    Assert-Value (@($paths | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) 'Handoff evidence path is missing.'
+    $handoff=[ordered]@{schemaVersion=1;taskId=$TaskId;attempt=[int]$t.attempts;executionId=$run.executionId;
+        ownerThreadId=$run.ownerThreadId;appTurnCount=[int]$run.appTurnCount;softLimitAt=$run.softLimitAt;
+        completed=@($inputData.completed);remaining=@($inputData.remaining);keyState=$inputData.keyState;
+        evidencePaths=$paths;nextCommand=[string]$inputData.nextCommand;recordedAt=Get-NowIso}
+    $body=($handoff | ConvertTo-Json -Depth 12) + [Environment]::NewLine
+    Assert-Value ($utf8NoBom.GetByteCount($body) -le 4096) 'Serialized handoff exceeds 4 KiB.'
+    $directory=Join-Path $workspaceRoot 'runtime/handoffs'
+    [void][IO.Directory]::CreateDirectory($directory)
+    $path=Join-Path $directory ("{0}-{1}.json" -f $TaskId,$t.attempts)
+    Assert-Value (-not (Test-Path -LiteralPath $path)) 'Handoff for this attempt already exists; refusing overwrite.'
+    Save-TextFile $path $body
+    Set-ObjectPropertyValue $run 'softLimitHandoff' ([pscustomobject]@{path=$path;sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash;
+        attempt=[int]$t.attempts;executionId=$run.executionId;ownerThreadId=$run.ownerThreadId;at=Get-NowIso})
+    Set-ObjectPropertyValue $run 'checkpointPath' @($path)
+    Save-JsonFile $queuePath $q
+    Write-Result @{action='HANDOFF_SAVED';taskId=$TaskId;handoffPath=$path;bytes=$utf8NoBom.GetByteCount($body)}
 }
 function Get-PipelineExecutionTarget {
     param([string]$Lane)
@@ -365,12 +428,39 @@ function Get-WorkflowUsagePhase {
 }
 
 function Write-Result {
-    param([object]$Value)
+    param([object]$Value, [switch]$CompactOutput)
     # Settlement handoffs retain a task/execution snapshot before compacting.
     if ((Get-ObjectPropertyValue $Value 'supervisorHandoff') -and -not (Get-ObjectPropertyValue $Value 'task') -and $TaskId) {
         $Value['task'] = Get-Task (Read-JsonFile $queuePath) $TaskId
     }
-    $json = $Value | ConvertTo-Json -Depth 30
+    $contextTask = Get-ObjectPropertyValue $Value 'task'
+    $resultAction = [string](Get-ObjectPropertyValue $Value 'action')
+    if ($contextTask -and (($Action -eq 'Poll' -and $resultAction -in @('CLAIMED','CLAIMED_RETRY')) -or
+            ($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED'))) {
+        $threadId = [string](Get-ObjectPropertyValue $contextTask.execution 'ownerThreadId')
+        $executionId = [string](Get-ObjectPropertyValue $contextTask.execution 'executionId')
+        $lifecycle = if ($Action -eq 'Poll') { 'claim' } else { 'complete' }
+        try {
+            $context = & (Join-Path $projectRoot 'DevTools/Workflow/Get-ThreadContext.ps1') -ThreadId $threadId -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | ConvertFrom-Json -DateKind String
+        }
+        catch {
+            $context = [pscustomobject]@{contextTokens=$null;contextSource='unknown';contextWarning='NONE';
+                observedAt=$null;method=$null;responseId=$null;reason="Context reader unavailable: $($_.Exception.Message)"}
+        }
+        $Value['contextTokens'] = $context.contextTokens
+        $Value['contextSource'] = [string]$context.contextSource
+        $Value['contextWarning'] = [string]$context.contextWarning
+        $Value['contextReason'] = [string]$context.reason
+        $lifecycleKey = "$($contextTask.id)|$executionId|$lifecycle"
+        try {
+            $priorContext = @(Read-TaskUsageRecords -RuntimeRoot (Join-Path $workspaceRoot 'runtime') |
+                Where-Object { $_.event -eq 'thread_context' -and [string]$_.metadata.lifecycleKey -ceq $lifecycleKey })
+            if ($priorContext.Count -eq 0) {
+                Write-TaskUsageRecord -TaskId ([string]$contextTask.id) -Lane ([string]$contextTask.pipeline) -Phase $(if ($lifecycle -eq 'claim') { 'claim' } else { 'report' }) -Event 'thread_context' -InputTokens $null -OutputTokens $null -ContextTokens $context.contextTokens -ContextSource $context.contextSource -ContextWarning $context.contextWarning -Role worker -Source 'workflow-thread-context' -Coverage 'Latest associated response or explicit fresh-byte estimate; never cumulative provider tokens or account quota.' -UnavailableReason @{inputTokens='Context observation is not task input-token billing.';outputTokens='Context observation is not output-token billing.';contextTokens=[string]$context.reason} -Metadata @{threadId=$threadId;executionId=$executionId;lifecycleKey=$lifecycleKey;method=$context.method;observedAt=$context.observedAt;responseId=$context.responseId;reason=$context.reason} -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Out-Null
+            }
+        } catch { } # A telemetry failure must not replay an already-mutated queue action.
+    }
+    $json = $Value | ConvertTo-Json -Depth 30 -Compress:$CompactOutput
     if ($Action -in @('Poll', 'Complete', 'SupervisionCheckpoint','Fail','YieldSupervisionTask') -or (Get-ObjectPropertyValue $Value 'supervisorHandoff')) {
         $receiptTask = Get-ObjectPropertyValue $Value 'task'
         $receiptTaskId = if ($null -ne $receiptTask) { [string]$receiptTask.id } else { [string]$TaskId }
@@ -386,7 +476,13 @@ function Write-Result {
             pipeline = $(if ($null -ne $receiptTask) { [string]$receiptTask.pipeline } else { [string]$Pipeline })
             task = $(if ($null -ne $receiptTask) { [ordered]@{ id=[string]$receiptTask.id; pipeline=[string]$receiptTask.pipeline; status=[string]$receiptTask.status; attempts=[int]$receiptTask.attempts } } else { $null })
             leaseUntil = Get-ObjectPropertyValue $Value 'leaseUntil'
+            handoffFrom = $(if ($null -ne $receiptTask) { Get-ObjectPropertyValue $receiptTask.execution 'handoffFrom' } else { Get-ObjectPropertyValue $Value 'handoffFrom' })
             receiptPath = $receiptPath
+        }
+        if ($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED') {
+            $compact['contextWarning'] = Get-ObjectPropertyValue $Value 'contextWarning'
+            $compact['contextTokens'] = Get-ObjectPropertyValue $Value 'contextTokens'
+            $compact['contextSource'] = Get-ObjectPropertyValue $Value 'contextSource'
         }
         foreach ($name in @('autoHandoff', 'supervisorHandoff')) {
             $handoff = Get-ObjectPropertyValue $Value $name
@@ -417,7 +513,9 @@ function Write-Result {
         }
         if([Text.Encoding]::UTF8.GetByteCount($json) -gt 757){
             # Full routing and messages remain in the bound receipt. Never fail a completed mutation for verbose metadata.
-            $json=[ordered]@{action=$compact.action;taskId=$receiptTaskId;pipeline=$compact.pipeline;receiptPath=$receiptPath}|ConvertTo-Json -Compress
+            $fallback=[ordered]@{action=$compact.action;taskId=$receiptTaskId;pipeline=$compact.pipeline;receiptPath=$receiptPath}
+            if($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED'){$fallback.contextWarning=$compact.contextWarning}
+            $json=$fallback|ConvertTo-Json -Compress
         }
         Assert-Value ([Text.Encoding]::UTF8.GetByteCount($json) -le 757) 'Queue compact receipt exceeds 759 UTF8 bytes including CRLF.'
     }
@@ -449,6 +547,16 @@ function Write-Result {
                 else { Get-WorkflowUsagePhase $Action }
                 $model = if (-not [string]::IsNullOrWhiteSpace($env:CODEX_MODEL)) { $env:CODEX_MODEL } elseif (-not [string]::IsNullOrWhiteSpace($env:OPENAI_MODEL)) { $env:OPENAI_MODEL } else { $null }
                 $responseBytes = [System.Text.Encoding]::UTF8.GetByteCount($json)
+                $usageMetadata=@{ action=$Action; resultAction=[string](Get-ObjectPropertyValue $Value 'action'); triggerSource=$TriggerSource; hostVersion=$PSVersionTable.PSVersion.ToString() }
+                if($Action -eq 'Complete' -and $taskObject -and $taskObject.result){
+                    $tier=Get-ObjectPropertyValue $taskObject.result 'tierMetrics'
+                    if($tier){
+                        foreach($name in @('complexity','turnBudget','turnsActual','turnRatio','idleTurns','idleRatio','overBudget','budgetExplanation','unavailableReason')){
+                            $usageMetadata[$name]=Get-ObjectPropertyValue $tier $name
+                        }
+                        $usageMetadata['executionId']=Get-ObjectPropertyValue $taskObject.execution 'executionId'
+                    }
+                }
                 Write-TaskUsageRecord -TaskId $recordTaskId -Lane $recordLane -Phase $recordPhase `
                     -Event ("queue:{0}" -f $Action) -Model $model -InputTokens $null -OutputTokens $null `
                     -ToolCallCount 1 -ToolResultBytes $responseBytes -Source '.ai-workspace/queue.ps1:Write-Result' `
@@ -458,7 +566,7 @@ function Write-Result {
                         inputTokens = 'Provider input-token usage was not exposed to queue.ps1.'
                         outputTokens = 'Provider output-token usage was not exposed to queue.ps1.'
                     } `
-                    -Metadata @{ action=$Action; resultAction=[string](Get-ObjectPropertyValue $Value 'action'); triggerSource=$TriggerSource; hostVersion=$PSVersionTable.PSVersion.ToString() } `
+                    -Metadata $usageMetadata `
                     -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Out-Null
             }
         }
@@ -673,6 +781,66 @@ function Get-TaskStatusAggregate {
         taskStatuses = [pscustomobject]$taskStatuses
         verificationStatuses = [pscustomobject]$verificationStatuses
     }
+}
+
+function Get-CompactTaskItem {
+    param([object]$Task)
+    $updatedAt = foreach ($name in @('updatedAt','completedAt','claimedAt','createdAt')) {
+        $value = [string](Get-ObjectPropertyValue $Task $name)
+        if (-not [string]::IsNullOrWhiteSpace($value)) { $value; break }
+    }
+    $item = [ordered]@{
+        id = [string]$Task.id
+        module = Get-TaskModuleId $Task
+        lane = [string]$Task.pipeline
+        status = [string]$Task.status
+        verification = Get-TaskVerificationStatus $Task
+        updatedAt = $updatedAt
+    }
+    if ([Text.Encoding]::UTF8.GetByteCount(($item | ConvertTo-Json -Compress)) -gt 200) {
+        $item.module = '[see snapshot]'
+        $item['moduleTruncated'] = $true
+    }
+    Assert-Value ([Text.Encoding]::UTF8.GetByteCount(($item | ConvertTo-Json -Compress)) -le 200) "Compact task item exceeds 200 UTF-8 bytes: $($Task.id)"
+    return $item
+}
+
+function Get-StatusSnapshotPath {
+    param([string]$Kind, [object]$FullValue)
+    $root = Join-Path $workspaceRoot 'runtime/status-snapshots'
+    [void][IO.Directory]::CreateDirectory($root)
+    $key = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($Kind))).Substring(0,16)
+    $indexPath = Join-Path $root "latest-$key.json"
+    $sources = @($queuePath,$workerPath,$modePath | ForEach-Object {
+        $info = Get-Item -LiteralPath $_ -ErrorAction Stop
+        [ordered]@{name=$info.Name;length=$info.Length;modifiedUtcTicks=$info.LastWriteTimeUtc.Ticks}
+    })
+    $signature = $sources | ConvertTo-Json -Depth 4 -Compress
+    $index = $null
+    $candidate = $null
+    if (Test-Path -LiteralPath $indexPath -PathType Leaf) {
+        try {
+            $index = Read-JsonFile $indexPath
+            $candidate = [IO.Path]::GetFullPath([string]$index.path)
+            if (-not $candidate.StartsWith(([IO.Path]::GetFullPath($root).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar),[StringComparison]::OrdinalIgnoreCase) -or
+                -not (Test-Path -LiteralPath $candidate -PathType Leaf)) { $index = $null }
+            elseif ($index.signature -ceq $signature) { return $candidate }
+        } catch { $index = $null }
+    }
+    # A no-op state rewrite changes timestamps but not content. Hash only on metadata drift,
+    # avoiding a second multi-MB snapshot for an identical state.
+    $contentSignature = (@($queuePath,$workerPath,$modePath | ForEach-Object {
+        (Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash
+    }) -join '|')
+    if ($null -ne $index -and $index.contentSignature -ceq $contentSignature) {
+        Save-JsonFile $indexPath ([ordered]@{signature=$signature;contentSignature=$contentSignature;path=$candidate})
+        return $candidate
+    }
+    $stamp = (Get-Date).ToString('yyyyMMddTHHmmssfffffff')
+    $path = Join-Path $root ("{0}-{1}-{2}.json" -f $stamp,$key,[guid]::NewGuid().ToString('N').Substring(0,8))
+    Save-TextFile $path (($FullValue | ConvertTo-Json -Depth 30) + [Environment]::NewLine)
+    Save-JsonFile $indexPath ([ordered]@{signature=$signature;contentSignature=$contentSignature;path=$path})
+    return $path
 }
 
 function Get-QueueStateWithTasks {
@@ -1175,6 +1343,7 @@ try {
     }
 
     if ($Action -in @('RecordTaskProgress','RecordTaskTurn')) { Invoke-TaskObservation; return }
+    if ($Action -in @('CheckManagedTool','WriteHandoff')) { Invoke-TurnHandoffAction; return }
     if ($Action -in @('ResumeApprovedTask','ResumeCodeValidationStop')) { throw 'Legacy continuation entry retired. Use ApproveResume -TaskId -Runs -Scope -ApprovalId -UserDecision.' }
     if ($Action -eq 'ApproveResume') {
         . (Join-Path $workspaceRoot 'approved-resume.ps1')
@@ -1322,20 +1491,69 @@ try {
     if ($Action -eq 'Status') {
         $queue = Read-JsonFile $queuePath
         $normalizedModuleId = Get-NormalizedModuleId $ModuleId
-        $statusTasks = if ($null -eq $normalizedModuleId) {
-            @($queue.tasks)
+        foreach ($filterId in @($TaskId, $FromTaskId, $ToTaskId)) {
+            if (-not [string]::IsNullOrWhiteSpace($filterId)) {
+                Assert-Value ($filterId -match '^AI-[0-9]{6}$') "Invalid Status task ID: $filterId"
+            }
         }
-        else {
-            @($queue.tasks | Where-Object { (Get-TaskModuleId $_) -eq $normalizedModuleId })
-        }
-        Write-Result ([ordered]@{
-            action = 'STATUS'
-            mode = Read-ModeState
-            queue = Get-QueueStateWithTasks $queue $statusTasks
-            workers = Read-JsonFile $workerPath
-            moduleId = $normalizedModuleId
-            statusAggregate = Get-TaskStatusAggregate $statusTasks $normalizedModuleId
+        Assert-Value (-not ($TaskId -and ($FromTaskId -or $ToTaskId))) 'Status TaskId and range filters are mutually exclusive.'
+        Assert-Value (-not ($FromTaskId -and $ToTaskId -and [string]::CompareOrdinal($FromTaskId,$ToTaskId) -gt 0)) 'Status range is reversed.'
+        $statusTasks = @($queue.tasks | Where-Object {
+            ($null -eq $normalizedModuleId -or (Get-TaskModuleId $_) -eq $normalizedModuleId) -and
+            (-not $TaskId -or $_.id -eq $TaskId) -and
+            (-not $FromTaskId -or [string]::CompareOrdinal([string]$_.id,$FromTaskId) -ge 0) -and
+            (-not $ToTaskId -or [string]::CompareOrdinal([string]$_.id,$ToTaskId) -le 0)
         })
+        $modeState = Read-ModeState
+        $workerState = Read-JsonFile $workerPath
+        $aggregate = Get-TaskStatusAggregate $statusTasks $normalizedModuleId
+        if ($FullStatus) {
+            Write-Result ([ordered]@{action='STATUS';mode=$modeState;queue=(Get-QueueStateWithTasks $queue $statusTasks);
+                workers=$workerState;moduleId=$normalizedModuleId;statusAggregate=$aggregate})
+            return
+        }
+        $attention = if ($TaskId -or $FromTaskId -or $ToTaskId) { @($statusTasks) } else {
+            @($statusTasks | Where-Object { $_.status -in @('RUNNING','NEEDS_USER','PAUSED_CIRCUIT') -or
+                (Get-TaskVerificationStatus $_) -in @('PENDING_USER','REJECTED') } |
+                Sort-Object @{Expression={
+                    if ($_.status -eq 'RUNNING') { 0 }
+                    elseif ((Get-TaskVerificationStatus $_) -eq 'REJECTED') { 1 }
+                    elseif ((Get-TaskVerificationStatus $_) -eq 'PENDING_USER') { 2 }
+                    elseif ($_.status -eq 'NEEDS_USER') { 3 }
+                    elseif ($_.status -eq 'PAUSED_CIRCUIT') { 4 }
+                    else { 5 }
+                }},sequence)
+        }
+        $limit = 20
+        $workerSummary = [ordered]@{}
+        foreach ($lane in @($workerState.workers.PSObject.Properties.Name)) {
+            $worker = $workerState.workers.$lane
+            $workerSummary[$lane] = [ordered]@{status=$worker.status;activeTaskId=$worker.activeTaskId;
+                leaseUntil=$worker.leaseUntil;circuit=$worker.circuit.state}
+        }
+        $snapshot = [ordered]@{action='STATUS';mode=$modeState;queue=$queue;workers=$workerState;
+            moduleId=$null;statusAggregate=(Get-TaskStatusAggregate $queue.tasks $null)}
+        $snapshotPath = Get-StatusSnapshotPath 'Status' $snapshot
+        $response = [ordered]@{
+            action='STATUS';representation='COMPACT';mode=[ordered]@{mode=$modeState.mode;
+                automaticStatus=$modeState.automatic.status;currentTaskId=$modeState.automatic.currentTaskId;
+                supervisedStatus=$modeState.supervised.status;stopRequested=[bool]$modeState.supervised.stopRequested;
+                exitRequested=[bool]$modeState.supervised.exitRequested}
+            queue=[ordered]@{total=$statusTasks.Count;statusCounts=$aggregate.taskStatuses;
+                verificationCounts=$aggregate.verificationStatuses;
+                tasks=@($attention | Select-Object -First $limit | ForEach-Object { Get-CompactTaskItem $_ });
+                overflowCount=[Math]::Max(0,$attention.Count-$limit)}
+            workers=[ordered]@{workers=$workerSummary};moduleId=$normalizedModuleId;
+            filter=[ordered]@{taskId=$TaskId;fromTaskId=$FromTaskId;toTaskId=$ToTaskId}
+            snapshotPath=$snapshotPath;fullStatus='queue.ps1 -Action Status -FullStatus'
+        }
+        while ([Text.Encoding]::UTF8.GetByteCount(($response | ConvertTo-Json -Depth 10 -Compress)) -gt 2046 -and
+            @($response.queue.tasks).Count -gt 0) {
+            $response.queue.tasks = @($response.queue.tasks | Select-Object -SkipLast 1)
+            $response.queue.overflowCount++
+        }
+        Assert-Value ([Text.Encoding]::UTF8.GetByteCount(($response | ConvertTo-Json -Depth 10 -Compress)) -le 2046) 'Compact Status exceeds 2 KiB including CRLF.'
+        Write-Result $response -CompactOutput
         return
     }
 
@@ -1493,6 +1711,7 @@ try {
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Pipeline)) 'Pipeline is required for Enqueue.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Title)) 'Title is required for Enqueue.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Instruction)) 'Instruction is required for Enqueue.'
+        Assert-Value (-not [string]::IsNullOrWhiteSpace($Complexity)) 'New Enqueue requires Complexity S, M, or L.'
 
         $workers = Read-JsonFile $workerPath
         [void](Get-Worker $workers $Pipeline)
@@ -1566,6 +1785,10 @@ try {
             moduleId = $normalizedModuleId
             title = $normalizedTitle
             instruction = $Instruction.Trim()
+            complexity = $Complexity
+            turnBudget = (Get-TaskTierBudget $Complexity)
+            tierContractVersion = 1
+            tierSource = 'Enqueue'
             dependsOn = @($DependsOn)
             allowBypass = [bool]$AllowBypass
             status = 'QUEUED'
@@ -1606,6 +1829,7 @@ try {
 - 前置依赖：$dependencyText
 - 允许越过：$([bool]$AllowBypass)
 - 最大尝试次数：$MaxAttempts
+- 复杂度/轮次预算：$Complexity / $(Get-TaskTierBudget $Complexity)
 
 ### 指令
 
@@ -1670,6 +1894,12 @@ $($Instruction.Trim())
         }
 
         $task.instruction = $Instruction.Trim()
+        if($Complexity){
+            Set-ObjectPropertyValue $task 'complexity' $Complexity
+            Set-ObjectPropertyValue $task 'turnBudget' (Get-TaskTierBudget $Complexity)
+            Set-ObjectPropertyValue $task 'tierContractVersion' 1
+            Set-ObjectPropertyValue $task 'tierSource' 'ReviseInstruction'
+        }
         Save-JsonFile $queuePath $queue
 
         $revisionEntry = @"
@@ -1678,6 +1908,7 @@ $($Instruction.Trim())
 
 $($Instruction.Trim())
 "@
+        if($Complexity){$revisionEntry+="`r`nComplexity/turnBudget: $Complexity / $(Get-TaskTierBudget $Complexity)"}
         [System.IO.File]::AppendAllText($ledgerPath, $revisionEntry, $utf8NoBom)
         Write-Result ([ordered]@{ action = 'INSTRUCTION_REVISED'; task = $task })
         return
@@ -1919,7 +2150,23 @@ $($Instruction.Trim())
 
     if ($Action -eq 'PendingReview') {
         $queue = Read-JsonFile $queuePath
-        Write-Result (Get-PendingReviewSnapshot $queue (Get-NormalizedModuleId $ModuleId))
+        $normalizedModuleId = Get-NormalizedModuleId $ModuleId
+        $review = Get-PendingReviewSnapshot $queue $normalizedModuleId
+        if ($FullStatus) { Write-Result $review; return }
+        $snapshotPath = Get-StatusSnapshotPath ("PendingReview:$normalizedModuleId") $review
+        $response = [ordered]@{action='PENDING_REVIEW';representation='COMPACT';moduleId=$normalizedModuleId;
+            totals=$review.totals;items=@($review.items | Select-Object -First 20 | ForEach-Object {
+                $sourceTask = Get-Task $queue $_.taskId
+                Get-CompactTaskItem $sourceTask
+            });overflowCount=[Math]::Max(0,@($review.items).Count-20);
+            snapshotPath=$snapshotPath;fullStatus='queue.ps1 -Action PendingReview -FullStatus'}
+        while ([Text.Encoding]::UTF8.GetByteCount(($response | ConvertTo-Json -Depth 8 -Compress)) -gt 2046 -and
+            @($response.items).Count -gt 0) {
+            $response.items = @($response.items | Select-Object -SkipLast 1)
+            $response.overflowCount++
+        }
+        Assert-Value ([Text.Encoding]::UTF8.GetByteCount(($response | ConvertTo-Json -Depth 8 -Compress)) -le 2046) 'Compact PendingReview exceeds 2 KiB including CRLF.'
+        Write-Result $response -CompactOutput
         return
     }
 
@@ -2171,6 +2418,8 @@ $($Instruction.Trim())
         Assert-Value ($selected.workKind -cne 'APPROVED_RESTORE') 'Approved restoration can only claim through SUPERVISED.'
         $boundedGrant=$null
         Assert-Value (-not ((Get-ObjectPropertyValue $selected 'resumePolicy') -eq 'BOUNDED_APPROVAL_V1' -and @($selected.errorHistory | Where-Object { $_ }).Count -gt 0) -or (Get-ObjectPropertyValue $selected 'resumeApproval')) 'Failed next-batch task requires ApproveResume.'
+        Assert-Value ((Get-ObjectPropertyValue $selected 'complexity') -in @('S','M','L') -and
+            [int](Get-ObjectPropertyValue $selected 'turnBudget') -eq (Get-TaskTierBudget ([string]$selected.complexity))) 'Queued task requires formal Complexity/turnBudget classification before Poll.'
         if (Get-ObjectPropertyValue $selected 'resumeApproval') {
             . (Join-Path $workspaceRoot 'approved-resume.ps1')
             $boundedGrant=Assert-BoundedResume $selected $modeState $Scope
@@ -2268,6 +2517,38 @@ $($Instruction.Trim())
         Assert-Value ($turnGate -eq 'CONTINUE') 'Complete requires an open cumulative turn gate.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Summary)) 'Summary is required for Complete.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Verification)) 'Verification evidence is required for Complete.'
+        $storedTier=[string](Get-ObjectPropertyValue $task 'complexity')
+        if($storedTier){
+            Assert-Value ($storedTier -in @('S','M','L') -and
+                [int](Get-ObjectPropertyValue $task 'turnBudget') -eq (Get-TaskTierBudget $storedTier)) 'Stored task complexity/turnBudget contract is invalid.'
+            Assert-Value (-not $Complexity -or $Complexity -eq $storedTier) 'Complete cannot reclassify an existing task.'
+        } elseif($Complexity){
+            Assert-Value ($task.instruction -match "(?i)complexity\s*[:=]\s*$Complexity\b") 'Running legacy task needs an explicit original planning source for Complete complexity.'
+            $storedTier=$Complexity
+        }
+        $tierMetrics=$null
+        if($storedTier){
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($IdleTurnsJson)) 'Tiered Complete requires idleTurns with all four categories.'
+            $budget=Get-TaskTierBudget $storedTier
+            $actual=if($null -ne $task.execution.appTurnCount){[long]$task.execution.appTurnCount}else{$null}
+            $idle=ConvertTo-TaskIdleMetrics -IdleTurnsJson $IdleTurnsJson -ActualTurns $actual
+            $over=if($null -eq $actual){$null}else{[bool]($actual -gt $budget)}
+            if($over){Assert-Value (-not [string]::IsNullOrWhiteSpace($BudgetExplanation)) 'Over-budget Complete requires an explanation of necessary work or idle overhead.'}
+            $tierMetrics=[pscustomobject]@{
+                complexity=$storedTier;turnBudget=$budget;turnsActual=$actual
+                turnRatio=$(if($null -eq $actual){$null}else{[double]$actual/[double]$budget})
+                idleTurns=$idle.idleTurns;idleRatio=$idle.idleRatio;idleCategories=$idle.categories
+                idleUnionMethod=$idle.unionMethod;overBudget=$over
+                budgetExplanation=$(if($BudgetExplanation){$BudgetExplanation.Trim()}else{$null})
+                unavailableReason=$(if($null -eq $actual){'Exact app turn count unavailable; provider responses and tool calls are not substitutes.'}
+                    else{$idle.unavailableReason})
+            }
+        } else {
+            Assert-Value (-not $IdleTurnsJson) 'Cannot attach idleTurns without a formally sourced complexity tier.'
+            $tierMetrics=[pscustomobject]@{complexity=$null;turnBudget=$null;turnsActual=$null;turnRatio=$null;
+                idleTurns=$null;idleRatio=$null;idleCategories=$null;overBudget=$null;budgetExplanation=$null;
+                unavailableReason='Legacy task was already running without a complexity contract; no historical values were fabricated.'}
+        }
         $acceptanceResult = $null
         # Historical SUCCEEDED records remain untouched; every new Complete,
         # including a future claim of an older task number, uses the new gate.
@@ -2299,6 +2580,12 @@ $($Instruction.Trim())
             }
         }
 
+        if($storedTier -and -not (Get-ObjectPropertyValue $task 'complexity')){
+            Set-ObjectPropertyValue $task 'complexity' $storedTier
+            Set-ObjectPropertyValue $task 'turnBudget' (Get-TaskTierBudget $storedTier)
+            Set-ObjectPropertyValue $task 'tierContractVersion' 1
+            Set-ObjectPropertyValue $task 'tierSource' 'Complete-explicit-original-plan'
+        }
         $verificationDisposition = Get-VerificationDisposition $task
         $task.status = 'SUCCEEDED'
         $task.completedAt = $now.ToString('o')
@@ -2311,6 +2598,7 @@ $($Instruction.Trim())
             manualVerificationRequired = $verificationDisposition.manualVerificationRequired
             manualVerificationIssues = @($verificationDisposition.manualVerificationIssues)
             acceptance = $acceptanceResult
+            tierMetrics = $tierMetrics
         }
         $worker.status = 'IDLE'
         $worker.activeTaskId = $null

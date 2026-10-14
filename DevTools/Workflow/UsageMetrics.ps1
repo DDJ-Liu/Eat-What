@@ -18,6 +18,64 @@ function ConvertTo-UsageMetric {
     return $number
 }
 
+function Get-TaskTierBudget {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][ValidateSet('S','M','L')][string]$Complexity)
+    switch ($Complexity) { 'S' { return 40 }; 'M' { return 80 }; 'L' { return 120 } }
+}
+
+function ConvertTo-TaskIdleMetrics {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$IdleTurnsJson,[AllowNull()][object]$ActualTurns)
+    if ([string]::IsNullOrWhiteSpace($IdleTurnsJson)) { throw 'idleTurns is required for a tiered Complete.' }
+    try { $inputValue=$IdleTurnsJson|ConvertFrom-Json -AsHashtable -DateKind String }
+    catch { throw "Invalid idleTurns JSON: $($_.Exception.Message)" }
+    if ($null -eq $inputValue -or $inputValue -isnot [System.Collections.IDictionary]) { throw 'idleTurns must be an object.' }
+    $names=@('validationReruns','readbackConfirmations','toolErrorRetries','repeatFileReads')
+    $categories=[ordered]@{}
+    $unique=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $hasUnknown=$false
+    foreach($name in $names){
+        if(-not $inputValue.Contains($name)){throw "idleTurns.$name is required."}
+        $item=$inputValue[$name]
+        if($null -eq $item -or $item -isnot [System.Collections.IDictionary] -or -not $item.Contains('count')){
+            throw "idleTurns.$name must contain count."
+        }
+        $count=ConvertTo-UsageMetric $item['count'] "idleTurns.$name.count"
+        $ids=@($item['turnIds']|Where-Object {-not [string]::IsNullOrWhiteSpace([string]$_)}|ForEach-Object {[string]$_})
+        if($null -eq $count){
+            if(-not [string]$item['reason']){throw "idleTurns.$name null count requires reason."}
+            if($ids.Count){throw "idleTurns.$name unknown count cannot declare exact turn IDs."}
+            $hasUnknown=$true
+        }else{
+            if($ids.Count -ne $count -or @($ids|Sort-Object -Unique).Count -ne $ids.Count){
+                throw "idleTurns.$name count must equal distinct exact turnIds."
+            }
+            if($count -gt 0 -and [string]::IsNullOrWhiteSpace([string]$item['evidence'])){
+                throw "idleTurns.$name positive count requires classification evidence."
+            }
+            foreach($id in $ids){[void]$unique.Add($id)}
+        }
+        $categories[$name]=[pscustomobject]@{
+            count=$count;turnIds=$(if($null -eq $count){$null}else{@($ids)});
+            evidence=$(if($item.Contains('evidence')){[string]$item['evidence']}else{$null});
+            reason=$(if($null -eq $count){[string]$item['reason']}else{$null})
+        }
+    }
+    $actual=ConvertTo-UsageMetric $ActualTurns 'ActualTurns'
+    $idleCount=if($hasUnknown){$null}else{[long]$unique.Count}
+    if($null -ne $actual -and $null -ne $idleCount -and $idleCount -gt $actual){throw 'Unique idle turns exceed observed app turns.'}
+    $ratio=if($null -eq $actual -or $null -eq $idleCount){$null}
+        elseif($actual -eq 0){if($idleCount -eq 0){0.0}else{throw 'Idle turns exceed zero app turns.'}}
+        else{[double]$idleCount/[double]$actual}
+    return [pscustomobject]@{
+        categories=[pscustomobject]$categories;idleTurns=$idleCount;idleRatio=$ratio;
+        unavailableReason=$(if($hasUnknown){'At least one idle category lacks exact turn coverage.'}
+            elseif($null -eq $actual){'Exact app turn count is unavailable.'}else{$null});
+        unionMethod='Distinct appTurnId across four categories; overlapping classifications count once.'
+    }
+}
+
 function Write-TaskUsageRecord {
     [CmdletBinding()]
     param(
@@ -32,6 +90,10 @@ function Write-TaskUsageRecord {
         [AllowNull()][object]$ReasoningOutputTokens,
         [AllowNull()][object]$ToolCallCount,
         [AllowNull()][object]$ToolResultBytes,
+        [AllowNull()][object]$ContextTokens,
+        [ValidateSet('provider','estimated','unknown')][string]$ContextSource,
+        [ValidateSet('NONE','ADVISE','STRONG')][string]$ContextWarning,
+        [ValidateSet('worker','console')][string]$Role,
         [Parameter(Mandatory = $true)][string]$Source,
         [Parameter(Mandatory = $true)][string]$Coverage,
         [hashtable]$UnavailableReason = @{},
@@ -62,6 +124,11 @@ function Write-TaskUsageRecord {
             $reasons[$name] = $reason
         }
     }
+    if ($ContextSource -and $null -eq (ConvertTo-UsageMetric $ContextTokens 'ContextTokens')) {
+        $contextReason=[string]$UnavailableReason['contextTokens']
+        if ([string]::IsNullOrWhiteSpace($contextReason)) { $contextReason='No exact or estimated thread-context observation was available.' }
+        $reasons['contextTokens']=$contextReason
+    }
     $modelValue = if ([string]::IsNullOrWhiteSpace($Model)) { $null } else { [string]$Model }
     if ($null -eq $modelValue) {
         $modelReason = [string]$UnavailableReason['model']
@@ -89,6 +156,12 @@ function Write-TaskUsageRecord {
         coverage = $Coverage.Trim()
         unavailableReason = [pscustomobject]$reasons
         metadata = [pscustomobject]$Metadata
+    }
+    if ($Event -eq 'thread_context' -or $ContextSource) {
+        $record['contextTokens'] = ConvertTo-UsageMetric $ContextTokens 'ContextTokens'
+        $record['contextSource'] = $(if ($ContextSource) { $ContextSource } else { 'unknown' })
+        $record['contextWarning'] = $(if ($ContextWarning) { $ContextWarning } else { 'NONE' })
+        $record['role'] = $(if ($Role) { $Role } else { $null })
     }
 
     [void][System.IO.Directory]::CreateDirectory($RuntimeRoot)

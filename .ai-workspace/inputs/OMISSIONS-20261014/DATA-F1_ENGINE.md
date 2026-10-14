@@ -1,0 +1,7 @@
+# DATA-F1 发布后Editor验证（ENGINE_MCP）
+读本目录DATA-F1_选项A授权.md、原件DATA-F1、CORE、对应workers、AGENTS四条硬上限、两项目页首及字体/配表相关节、toolkit对应入口与实际代码。固定PS7 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe、项目根正式queue API，runtime只正式API写。每批写前SupervisionCheckpoint。正式失败一次即停，后续只用通用ApproveResume，不新建入口或夹具。旧字体修复卡不恢复、FontSwapOnce不调用，不编造用量。没有Git提交推送。结算即时回传为用户已长期授权的监管硬规则：读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，按 DevTools/Workflow/HANDOFF.md 同轮 Prepare→一次真实Send→Record，控制台Receive后独立验收；不等60分钟WATCH，不自行领取后继。旧无发送授权条件已由用户覆盖，停止与去重门禁保留。产物统一.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/{REPORT.md,evidence.json,acceptance.json}，六要素简报，原始大结果落盘。
+
+依赖DATA单次发布成功并控制核审。固定ENGINE chat。只做一次发布后实际Editor验证：发现并核6000.3.24f1和D:/GameProject/Eat-What/Assets，正常Refresh/Compile必要目标Import一次；确认Static实际所需字符覆盖、Guid/meta及已有atlas/material引用有效。LocService两值吃什么/汪！；一次Play看封面两气泡实际文字，一张截图，Console新增错误及本任务临时状态自主恢复。不Build、不全视图、不冷进程、不旧迁移/FontSwapOnce、不完整内存/textureJSON、不全量路径SHA。
+允许调用审定长期入口定向清空本次Play新增Dynamic后SaveAssetIfDirty(dynamic)一次，保持glyph/character0；它属于本次发布验证收尾，不是第二次Static重建。保持用户原dirty和场景/Transform，没有用户未知变化不能保存。保存目标仅Dynamic，不SaveAssets全局写入。
+若无法稳定触发视觉按真实TEST_OBSERVATION/PENDING_USER报告，不把真正编译/数据损坏误降级。本卡HumanGateAfter保持人工视觉验收，机器检查不代签。提交hook SHA留待真正Git提交时；只读取CODE/DATA审核结果，不追加重验旧字体。
+checks：editorVersionAndCompile,staticCoverage,localizationVisible,dynamicEmpty,layoutAndUserStatePreserved,consoleAndTargetedDiff,unknownPreserved。

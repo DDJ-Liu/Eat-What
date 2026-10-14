@@ -1,0 +1,13 @@
+{
+  "source": "0BC2B721E729199D1F90837556CC1E07F60C068D8951F0AAC6CE4A6B849E291F",
+  "userDecision": "以用户投放的v2.4.1为准，只改schema.json与校验器；变更稿可归档。检查人工段/美术需求文档引用路径。",
+  "finalSchema": "CFACED03E42A6C01C3DBAFB11727729A733FFA11AD98BE5CDA0CBD5DC0A63174",
+  "scopeNote": "定向夹具为验证支持；既有人工门未批准/延期；两卡按文件数M80",
+  "excluded": [
+    "Schema正文",
+    "Authoring",
+    "xlsx",
+    "CSV",
+    "字体/生成物"
+  ]
+}

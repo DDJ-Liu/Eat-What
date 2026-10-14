@@ -44,6 +44,10 @@ $progressEnabled=$QueueScriptPath -or ([IO.Path]::GetFullPath($RuntimeRoot) -eq 
 if($progressEnabled){
     if(-not $OwnerThreadId -or -not $ExecutionId){throw 'Progress requires OwnerThreadId and ExecutionId from the actual claim.'}
     if(-not $QueueScriptPath){$QueueScriptPath=Join-Path (Split-Path -Parent $productionRoot) 'queue.ps1'}
+    $preflight=& $QueueScriptPath -Action CheckManagedTool -Pipeline $Lane -TaskId $TaskId -OwnerThreadId $OwnerThreadId -ExecutionId $ExecutionId | ConvertFrom-Json -DateKind String
+    if($preflight.action -ne 'MANAGED_TOOL_ALLOWED'){
+        throw "Managed tool invocation refused by cumulative turn gate: $($preflight.action). Save a bounded WriteHandoff checkpoint and Yield before continuing."
+    }
 }
 $progressId=[guid]::NewGuid().ToString('N')
 function Report-Progress([string]$Stage,[string]$ProofPath) {

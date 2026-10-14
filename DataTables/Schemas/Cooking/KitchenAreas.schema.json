@@ -16,16 +16,15 @@
     { "name": "areaName", "csvColumn": "areaName", "type": "string", "required": true },
     { "name": "containerTags", "csvColumn": "containerTags", "type": "list<enum>", "enumType": "ContainerTag", "separator": "|", "required": true, "minItems": 1 },
     { "name": "core_facility", "csvColumn": "core_facility", "type": "ref", "required": true },
-    { "name": "preset_tools", "csvColumn": "preset_tools", "type": "list<ref>", "separator": "|", "required": false },
-    { "name": "allowed_actions", "csvColumn": "allowed_actions", "type": "list<ref>", "separator": "|", "required": true, "minItems": 1 },
-    { "name": "allowed_carriers", "csvColumn": "allowed_carriers", "type": "list<ref>", "separator": "|", "required": true, "minItems": 1 },
+    { "name": "preset_tools", "csvColumn": "preset_tools", "type": "list<ref>", "separator": "|", "required": false, "deprecated": true, "description": "已废弃（v2.4.1），留空；保留旧列及已填内容，不参与授予或校验。" },
+    { "name": "allowed_actions", "csvColumn": "allowed_actions", "type": "list<ref>", "separator": "|", "required": true, "minItems": 1, "description": "本分区允许动作的约束集合；实际可用工具来自场景 SceneToolIdentity 清单。" },
+    { "name": "allowed_carriers", "csvColumn": "allowed_carriers", "type": "list<ref>", "separator": "|", "required": true, "minItems": 1, "description": "本分区允许承载物/设施的约束集合，须含 core_facility；与场景 SceneToolIdentity 清单取交才可用，不是预载配置。" },
     { "name": "is_unlocked_default", "csvColumn": "is_unlocked_default", "type": "bool", "required": true, "defaultValue": "true" },
     { "name": "unlock_condition", "csvColumn": "unlock_condition", "type": "string", "required": false },
     { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }
   ],
   "references": [
     { "field": "core_facility", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id" },
-    { "field": "preset_tools", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id", "isList": true, "separator": "|" },
     { "field": "allowed_actions", "targetSchema": "Cooking/ProcessActions.schema.json", "targetField": "action_id", "isList": true, "separator": "|" },
     { "field": "allowed_carriers", "targetSchema": "Cooking/Tools.schema.json", "targetField": "tool_id", "isList": true, "separator": "|" }
   ],

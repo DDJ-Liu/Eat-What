@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([switch]$FontTransactionOnly)
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -96,6 +96,145 @@ function Invoke-GuiBatchFixture {
     }
 }
 
+if ($FontTransactionOnly) {
+    $fontTestRoot = Join-Path ([IO.Path]::GetTempPath()) ('EatWhatFontTransaction-' + [guid]::NewGuid().ToString('N'))
+    [void][IO.Directory]::CreateDirectory($fontTestRoot)
+    function New-FontTransactionFixture {
+        param([string]$Name,[bool]$AddCharacter,[bool]$LiveDynamicGlyph=$false)
+        $root = Join-Path $fontTestRoot $Name
+        $stage = Join-Path $root 'stage'
+        foreach ($base in @($root,$stage)) {
+            foreach ($relative in @('Assets/Font/Heavy','DevTools/Fonts','DataTables/Localization','.ai-workspace/inputs')) {
+                [void][IO.Directory]::CreateDirectory((Join-Path $base $relative))
+            }
+        }
+        $staticName='ShortCycle_Heavy_Static.asset'
+        $dynamicName='ShortCycle_Heavy_DynamicFallback.asset'
+        $fontDir=Join-Path $root 'Assets/Font/Heavy'
+        $stageFontDir=Join-Path $stage 'Assets/Font/Heavy'
+        $oldStatic="--- !u!114 &11400000`n  m_Unicode: 65`n--- !u!21 &2100000`n"
+        $newStatic=if ($AddCharacter) {"--- !u!114 &11400000`n  m_Unicode: 65`n  m_Unicode: 66`n--- !u!21 &2100000`n"} else {$oldStatic}
+        $emptyDynamic="--- !u!114 &11400000`n  m_GlyphTable: []`n  m_CharacterTable: []`n--- !u!21 &2100000`n"
+        $usedDynamic="--- !u!114 &11400000`n  m_GlyphTable:`n  - m_Index: 1`n  m_CharacterTable:`n  - m_Unicode: 67`n--- !u!21 &2100000`n"
+        [IO.File]::WriteAllText((Join-Path $fontDir $staticName),$oldStatic,$utf8NoBom)
+        [IO.File]::WriteAllText((Join-Path $stageFontDir $staticName),$newStatic,$utf8NoBom)
+        foreach ($base in @($fontDir,$stageFontDir)) {
+            [IO.File]::WriteAllText((Join-Path $base $dynamicName),$(if($base -ceq $fontDir -and $LiveDynamicGlyph){$usedDynamic}else{$emptyDynamic}),$utf8NoBom)
+            foreach ($name in @($staticName,$dynamicName)) {
+                [IO.File]::WriteAllText((Join-Path $base ($name+'.meta')),'guid: stable',$utf8NoBom)
+            }
+        }
+        $csv=Join-Path $root 'DataTables/Localization/Localization.csv'
+        [IO.File]::WriteAllText($csv,"loc_key,zh_cn`nT,AB`n",$utf8NoBom)
+        $csvHash=(Get-FileHash -LiteralPath $csv -Algorithm SHA256).Hash
+        $oldHash=(Get-FileHash -LiteralPath (Join-Path $fontDir $staticName) -Algorithm SHA256).Hash
+        $newHash=(Get-FileHash -LiteralPath (Join-Path $stageFontDir $staticName) -Algorithm SHA256).Hash
+        $liveManifest=[ordered]@{protectionMode='STATIC_ONLY';approvalStatus='APPROVED';approvedBy='USER';staticAssetSha256=$oldHash;dynamicEmptyAssetSha256='LEGACY_DYNAMIC_SHA_NOT_A_CONTRACT'}
+        $candidate=[ordered]@{localizationCsvSha256=$csvHash;dynamicCharacterCount=0;staticAssetSha256='PRE_EXIT_STATIC_SHA_NOT_A_CREDENTIAL';dynamicEmptyAssetSha256='PRE_EXIT_DYNAMIC_SHA_NOT_A_CONTRACT';staticCharacterCount=if($AddCharacter){2}else{1};requiredCodepoints=@('U+0041','U+0042');addedCodepoints=if($AddCharacter){@('U+0042')}else{@()}}
+        $manifestRelative='DevTools/Fonts/ShortCycleFontBuildManifest.json'
+        [IO.File]::WriteAllText((Join-Path $root $manifestRelative),($liveManifest|ConvertTo-Json -Depth 8),$utf8NoBom)
+        [IO.File]::WriteAllText((Join-Path $stage $manifestRelative),($candidate|ConvertTo-Json -Depth 8),$utf8NoBom)
+        $approval=Join-Path $root '.ai-workspace/inputs/decision.json'
+        [IO.File]::WriteAllText($approval,(@{status='DONE';userDecision='approve';roundId='TEST-R1'}|ConvertTo-Json),$utf8NoBom)
+        $dataFile=Join-Path $root 'Assets/Generated/DataTables/data.txt'
+        [void][IO.Directory]::CreateDirectory((Split-Path -Parent $dataFile))
+        [IO.File]::WriteAllText($dataFile,'DATA_ALREADY_PUBLISHED',$utf8NoBom)
+        return [pscustomobject]@{root=$root;stage=$stage;approval=$approval;csvHash=$csvHash;oldHash=$oldHash;newHash=$newHash;dataFile=$dataFile}
+    }
+    function Invoke-FontFixture {
+        param($Fixture,[scriptblock]$Hook,[string]$PostExitStaticSha256)
+        if (-not $PostExitStaticSha256) { $PostExitStaticSha256=$Fixture.newHash }
+        return Invoke-FontPublicationTransaction -RepositoryRoot $Fixture.root -StagedProjectRoot $Fixture.stage -BackupRoot (Join-Path $Fixture.root 'DevTools/Fonts/backup/TEST-R1/run') -TaskId 'AI-TEST' -RoundId 'TEST-R1' -RunId 'TEST-RUN' -SourceCsvSha256 $Fixture.csvHash -ApprovalPath $Fixture.approval -ExpectedStaticSha256 $PostExitStaticSha256 -TestHook $Hook
+    }
+    try {
+        $noChange=New-FontTransactionFixture -Name 'no-change' -AddCharacter $false
+        $noChangeManifest=(Get-FileHash -LiteralPath (Join-Path $noChange.root 'DevTools/Fonts/ShortCycleFontBuildManifest.json') -Algorithm SHA256).Hash
+        $noChangeResult=Invoke-FontFixture -Fixture $noChange
+        Assert-True ($noChangeResult.action -ceq 'NO_CHANGES' -and -not (Test-Path -LiteralPath (Join-Path $noChange.root 'DevTools/Fonts/backup'))) 'unchanged characters do not write fonts or create backup'
+        Assert-True ((Get-FileHash -LiteralPath (Join-Path $noChange.root 'DevTools/Fonts/ShortCycleFontBuildManifest.json') -Algorithm SHA256).Hash -ceq $noChangeManifest) 'unchanged characters do not write manifest'
+        $published=New-FontTransactionFixture -Name 'published' -AddCharacter $true -LiveDynamicGlyph $true
+        $publishedResult=Invoke-FontFixture -Fixture $published
+        $publishedManifest=Get-Content -LiteralPath (Join-Path $published.root 'DevTools/Fonts/ShortCycleFontBuildManifest.json') -Raw | ConvertFrom-Json
+        Assert-True ($publishedResult.action -ceq 'PUBLISHED' -and $publishedResult.addedCodepoints[0] -ceq 'U+0042') 'new character publishes one scoped font change'
+        Assert-True ($publishedManifest.staticAssetSha256 -ceq $published.newHash -and $publishedManifest.approvalStatus -ceq 'APPROVED' -and $publishedManifest.publicationAudit.taskId -ceq 'AI-TEST' -and $publishedManifest.publicationAudit.runId -ceq 'TEST-RUN' -and $publishedManifest.publicationAudit.oldStaticSha256 -ceq $published.oldHash) 'new baseline updates once with run and old/new Static audit'
+        Assert-True ($publishedResult.beforeDynamicGlyphCount -eq 1 -and $publishedResult.afterDynamicGlyphCount -eq 0 -and (Get-FontAssetGlyphCount -Path (Join-Path $published.root 'Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset')) -eq 0) 'Dynamic publication records glyph counts and ends empty'
+        Assert-True ($publishedManifest.dynamicEmptyAssetSha256 -ceq 'LEGACY_DYNAMIC_SHA_NOT_A_CONTRACT') 'Dynamic batch SHA is not promoted into publication manifest contract'
+        Assert-True ((Test-Path -LiteralPath (Join-Path $publishedResult.backup 'ShortCycle_Heavy_Static.asset')) -and (Get-Content -LiteralPath $published.dataFile -Raw) -ceq 'DATA_ALREADY_PUBLISHED') 'font backup exists and data publication remains independent'
+        $postExit=New-FontTransactionFixture -Name 'post-exit' -AddCharacter $true -LiveDynamicGlyph $true
+        $postExitStatic=Join-Path $postExit.stage 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'
+        $postExitDynamic=Join-Path $postExit.stage 'Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset'
+        [IO.File]::AppendAllText($postExitStatic,"# post-batch Static serialization`n",$utf8NoBom)
+        [IO.File]::AppendAllText($postExitDynamic,"# TMP quit callback changed empty serialization`n",$utf8NoBom)
+        $postExitCredential=Get-StablePostExitStaticCredential -Path $postExitStatic
+        Assert-True ($postExitCredential.sha256 -ceq (Get-FileHash -LiteralPath $postExitStatic -Algorithm SHA256).Hash -and
+            $postExitCredential.sha256 -cne $postExit.newHash -and $postExitCredential.length -gt 0) 'post-exit Static credential uses stable final disk bytes'
+        $postExitResult=Invoke-FontFixture -Fixture $postExit -PostExitStaticSha256 $postExitCredential.sha256
+        Assert-True ($postExitResult.action -ceq 'PUBLISHED' -and
+            (Get-FontAssetGlyphCount -Path (Join-Path $postExit.root 'Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset')) -eq 0) 'TMP quit rewrite of empty Dynamic is published without its stale batch SHA'
+        $staticDrift=New-FontTransactionFixture -Name 'static-drift' -AddCharacter $true
+        [IO.File]::AppendAllText((Join-Path $staticDrift.stage 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'),"# post-exit Static drift`n",$utf8NoBom)
+        $staticFailure=Assert-Throws {Invoke-FontFixture -Fixture $staticDrift} 'post-exit Static credential mismatch is rejected before publication'
+        Assert-True ($staticFailure.Exception.Message -like 'Static font SHA differs*' -and
+            -not (Test-Path -LiteralPath (Join-Path $staticDrift.root 'DevTools/Fonts/backup'))) 'Static drift does not create backup or write live files'
+        $runSource=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'Run-DataPipeline.ps1') -Raw
+        Assert-True ($runSource.Contains('CurrentCsvValidation -Publish requires the exact AI-000235 font-only approval.') -and
+            $runSource.Contains('if ($Publish -and -not $isCurrentCsvValidation)') -and
+            $runSource.Contains('$fontApproval = if ($isCurrentCsvValidation) {$FontPublishApprovalPath} else {$roundPath}')) 'CurrentCsv font-only Publish bypasses Generated publication'
+        $rollback=New-FontTransactionFixture -Name 'rollback' -AddCharacter $true
+        $rollbackManifest=(Get-FileHash -LiteralPath (Join-Path $rollback.root 'DevTools/Fonts/ShortCycleFontBuildManifest.json') -Algorithm SHA256).Hash
+        $rollbackHook={param($phase) if ($phase -ceq 'AfterWrite:ShortCycle_Heavy_Static.asset') {throw 'injected font failure'}}
+        $rollbackFailure=Assert-Throws {Invoke-FontFixture -Fixture $rollback -Hook $rollbackHook} 'font write failure triggers rollback'
+        Assert-True ($rollbackFailure.Exception.Message -like 'FONT_FAILED_ROLLED_BACK:*') 'font failure is identified separately from data'
+        Assert-True ((Get-FileHash -LiteralPath (Join-Path $rollback.root 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset') -Algorithm SHA256).Hash -ceq $rollback.oldHash) 'font asset rollback restores prior bytes'
+        Assert-True ((Get-FileHash -LiteralPath (Join-Path $rollback.root 'DevTools/Fonts/ShortCycleFontBuildManifest.json') -Algorithm SHA256).Hash -ceq $rollbackManifest -and (Get-Content -LiteralPath $rollback.dataFile -Raw) -ceq 'DATA_ALREADY_PUBLISHED') 'font rollback preserves manifest and successful data'
+        $identity=New-FontTransactionFixture -Name 'identity' -AddCharacter $true
+        $identityAsset=Join-Path $identity.stage 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'
+        [IO.File]::WriteAllText($identityAsset,([IO.File]::ReadAllText($identityAsset).Replace('&2100000','&2200000')),$utf8NoBom)
+        [void](Assert-Throws {Invoke-FontFixture -Fixture $identity} 'removed local fileID is rejected before publication')
+        Assert-True ((Get-FileHash -LiteralPath (Join-Path $identity.root 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset') -Algorithm SHA256).Hash -ceq $identity.oldHash) 'identity rejection preserves live asset'
+        $meta=New-FontTransactionFixture -Name 'meta' -AddCharacter $true
+        [IO.File]::WriteAllText((Join-Path $meta.stage 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset.meta'),'guid: changed',$utf8NoBom)
+        [void](Assert-Throws {Invoke-FontFixture -Fixture $meta} 'meta/GUID drift is rejected before publication')
+        $unknown=New-FontTransactionFixture -Name 'unknown' -AddCharacter $true
+        $unknownAsset=Join-Path $unknown.root 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'
+        $unknownHook={
+            param($phase)
+            if ($phase -ceq 'AfterWrite:ShortCycle_Heavy_Static.asset') {
+                [IO.File]::WriteAllText($unknownAsset,'UNKNOWN_EXTERNAL_WRITE',$utf8NoBom)
+                throw 'injected external drift'
+            }
+        }.GetNewClosure()
+        $unknownFailure=Assert-Throws {Invoke-FontFixture -Fixture $unknown -Hook $unknownHook} 'unknown concurrent font write blocks unsafe rollback'
+        Assert-True ($unknownFailure.Exception.Message -like 'FONT_ROLLBACK_FAILED:*' -and
+            (Get-Content -LiteralPath $unknownAsset -Raw) -ceq 'UNKNOWN_EXTERNAL_WRITE' -and
+            (Get-Content -LiteralPath $unknown.dataFile -Raw) -ceq 'DATA_ALREADY_PUBLISHED') 'unknown font bytes and successful data are preserved'
+        $dynamicRollback=New-FontTransactionFixture -Name 'dynamic-rollback' -AddCharacter $false -LiveDynamicGlyph $true
+        $dynamicRollbackHook={param($phase) if ($phase -ceq 'AfterWrite:ShortCycle_Heavy_DynamicFallback.asset') {throw 'injected Dynamic failure'}}
+        $dynamicRollbackFailure=Assert-Throws {Invoke-FontFixture -Fixture $dynamicRollback -Hook $dynamicRollbackHook} 'Dynamic write failure triggers scoped rollback'
+        Assert-True ($dynamicRollbackFailure.Exception.Message -like 'FONT_FAILED_ROLLED_BACK:*' -and
+            (Get-FontAssetGlyphCount -Path (Join-Path $dynamicRollback.root 'Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset')) -eq 1) 'Dynamic rollback restores prior glyphs without SHA gate'
+        $dynamicUnknown=New-FontTransactionFixture -Name 'dynamic-unknown' -AddCharacter $false -LiveDynamicGlyph $true
+        $dynamicUnknownAsset=Join-Path $dynamicUnknown.root 'Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset'
+        $dynamicUnknownHook={param($phase) if ($phase -ceq 'AfterWrite:ShortCycle_Heavy_DynamicFallback.asset') {
+            [IO.File]::WriteAllText($dynamicUnknownAsset,'UNKNOWN_DYNAMIC_USER_WRITE',$utf8NoBom)
+            throw 'injected external Dynamic drift'
+        }}.GetNewClosure()
+        $dynamicUnknownFailure=Assert-Throws {Invoke-FontFixture -Fixture $dynamicUnknown -Hook $dynamicUnknownHook} 'unknown Dynamic drift blocks rollback'
+        Assert-True ($dynamicUnknownFailure.Exception.Message -like 'FONT_ROLLBACK_FAILED:*' -and
+            (Get-Content -LiteralPath $dynamicUnknownAsset -Raw) -ceq 'UNKNOWN_DYNAMIC_USER_WRITE') 'unknown Dynamic bytes remain untouched'
+        [pscustomobject]@{result='PASS';mode='FONT_TRANSACTION_ONLY';checkCount=$checks.Count;checks=@($checks);unityStarted=$false;productionWritten=$false}|ConvertTo-Json -Depth 5
+    }
+    finally {
+        $resolved=[IO.Path]::GetFullPath($fontTestRoot)
+        $tempBase=[IO.Path]::GetFullPath([IO.Path]::GetTempPath())
+        if ($resolved.StartsWith($tempBase,[StringComparison]::OrdinalIgnoreCase) -and
+            (Split-Path -Leaf $resolved).StartsWith('EatWhatFontTransaction-',[StringComparison]::Ordinal)) {
+            Remove-Item -LiteralPath $resolved -Recurse -Force
+        }
+    }
+    return
+}
+
 $testRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('EatWhatBatchImport-' + [Guid]::NewGuid().ToString('N'))
 [System.IO.Directory]::CreateDirectory($testRoot) | Out-Null
 $productionRoots = @(
@@ -117,7 +256,7 @@ try {
     $commonSource = Get-Content -LiteralPath $commonPath -Raw
     $importerSource = Get-Content -LiteralPath $importerPath -Raw
     Assert-True ($runSource.Contains("DefaultParameterSetName = 'Round'")) 'normal DATA rounds remain the default parameter set'
-    Assert-True ($runSource.Contains('CurrentCsvValidation is isolation-only and can never publish')) 'current CSV validation mode has a hard publish prohibition'
+    Assert-True ($runSource.Contains('CurrentCsvValidation -Publish requires the exact AI-000235 font-only approval.') -and $runSource.Contains('if ($Publish -and -not $isCurrentCsvValidation)')) 'current CSV font-only approval cannot publish Generated'
     Assert-True ($runSource.Contains('DIRECT_CSV_NO_SOURCE_WORKBOOK_FORMAT')) 'direct CSV batch explicitly reports absent workbook formatting provenance'
     Assert-True ($runSource.Contains('ROUND_CSV_MANIFEST_WORKBOOK_FORMAT_NOT_RECHECKED')) 'round batch does not pretend to revalidate workbook formatting'
     Assert-True ($runSource.Contains('DevTools/DataTables/.batch-workspace')) 'approved batch workspace is explicit'

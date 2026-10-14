@@ -16,7 +16,8 @@ namespace EatWhat.Cooking.ShortCycle
     }
 
     /// <summary>Scene owner for the pure-C# short-cycle FSM and its boundaries.</summary>
-    public sealed class ShortCycleSessionManager : MonoBehaviour
+    public sealed class ShortCycleSessionManager : MonoBehaviour,
+        IShortCycleCarrierQuery, IShortCycleCarrierWarningLog
     {
         [SerializeField] private InventoryManager inventoryManager = null;
         [SerializeField] private PlayerProfile playerProfile = null;
@@ -36,6 +37,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         private ObservableNoOpSaveBoundary saveBoundary;
         private ShortCycleStateMachine stateMachine;
+        private ShortCycleCarrierWarning carrierWarning;
 
         public event Action<ShortCyclePhase, ShortCyclePhase0View> StateChanged;
         public ShortCycleContext Context { get { return stateMachine == null ? null : stateMachine.Context; } }
@@ -51,6 +53,7 @@ namespace EatWhat.Cooking.ShortCycle
         private void Awake()
         {
             saveBoundary = new ObservableNoOpSaveBoundary();
+            carrierWarning = new ShortCycleCarrierWarning(this);
             var inventoryGateway = inventoryManager == null
                 ? new UnavailableInventoryConsumptionGateway("InventoryManager is not connected to generated Items assets.")
                 : (IInventoryConsumptionGateway)inventoryManager;
@@ -111,6 +114,49 @@ namespace EatWhat.Cooking.ShortCycle
         private void OnDestroy()
         {
             if (stateMachine != null) stateMachine.StateChanged -= HandleStateChanged;
+            if (carrierWarning != null) carrierWarning.ResetSession();
+        }
+
+        public bool TryResolveCarrier(string recipeId, string areaId, string itemId,
+            System.Collections.Generic.IEnumerable<string> sceneCarriers,
+            out ShortCycleCarrierResolution resolution, out string diagnostic)
+        {
+            resolution = null;
+            if (dataCatalog == null)
+            {
+                diagnostic = "CK01 generated data catalog is not connected.";
+                return false;
+            }
+
+            RecipeWhitelist whitelist;
+            AreaConstraint area;
+            if (!dataCatalog.TryGetRecipeWhitelist(recipeId, out whitelist, out diagnostic) ||
+                !dataCatalog.TryGetAreaConstraint(areaId, out area, out diagnostic))
+                return false;
+
+            var records = new System.Collections.Generic.List<ShortCycleCarrierRecord>();
+            foreach (var recordId in whitelist.ProcessingRecordIds)
+            {
+                CK01ProcessingRecordData row;
+                if (!dataCatalog.TryGetProcessingRecord(recordId, out row, out diagnostic))
+                    return false;
+                records.Add(new ShortCycleCarrierRecord(recordId,
+                    new[] { row.input_01, row.input_02, row.input_03,
+                        row.input_04, row.input_05, row.input_06 },
+                    row.action, row.carrier));
+            }
+
+            resolution = new ShortCycleCarrierResolver(whitelist, area, records)
+                .Resolve(recipeId, areaId, itemId, sceneCarriers);
+            if (carrierWarning == null) carrierWarning = new ShortCycleCarrierWarning(this);
+            carrierWarning.Report(recipeId, areaId, itemId, resolution);
+            diagnostic = null;
+            return true;
+        }
+
+        public void LogWarning(string message)
+        {
+            Debug.LogWarning(message, this);
         }
 
         public ShortCycleTransitionResult BeginSession(string recipeId, ShortCycleTriggerContext triggerContext)
@@ -285,6 +331,8 @@ namespace EatWhat.Cooking.ShortCycle
 
         private void HandleStateChanged(ShortCyclePhase phase, ShortCyclePhase0View phase0View)
         {
+            if (phase == ShortCyclePhase.None && carrierWarning != null)
+                carrierWarning.ResetSession();
             var callback = StateChanged;
             if (callback != null) callback(phase, phase0View);
         }

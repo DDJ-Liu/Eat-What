@@ -133,6 +133,12 @@ $proof=[pscustomobject]@{batchId=$batch.batchId;eventDigest=$batch.eventDigest;e
     $manual=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(42) | ConvertFrom-Json
     Check $manual.scopeStatus 'STOPPED_OR_MANUAL' 'manual gate'
     Check $manual.delivered 0 'manual no dispatch'
+    Check $manual.outputScans 0 'manual gate performs zero recursive output scans'
+    $usageLog=Join-Path $state 'usage-202609.jsonl'
+    $quietBytes=(Get-Item -LiteralPath $usageLog).Length
+    $manualRepeat=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(42).AddSeconds(30) | ConvertFrom-Json
+    Check $manualRepeat.outputScans 0 'unchanged stopped tick still performs zero output scans'
+    Check ((Get-Item -LiteralPath $usageLog).Length) $quietBytes 'unchanged stopped tick adds no repeated empty log'
     $mode.mode='AUTOMATIC'
     $mode.automatic.taskIds=@('AI-000901')
     $mode.automatic.chainId='new-other-task-chain'
@@ -152,7 +158,40 @@ $proof=[pscustomobject]@{batchId=$batch.batchId;eventDigest=$batch.eventDigest;e
     Check $secondCursor.userDoneCounts.'USER-U1' 2 'two DONE transitions persisted'
     $repeatDone=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(46) | ConvertFrom-Json
     Check $repeatDone.detected 0 'same DONE observation deduplicated'
-    [pscustomobject]@{result='PASS';checks=43;events=$kinds;fixtureRoot=$root}|ConvertTo-Json -Depth 4
+    $mode.automatic | Add-Member -NotePropertyName status -NotePropertyValue 'WAITING_USER' -Force
+    Save (Join-Path $state 'mode-state.json') $mode
+    $wait=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(47) -CollectUnity -UnityMcpUrl 'http://127.0.0.1:1/mcp' | ConvertFrom-Json
+    Check ($wait.scopeStatus -eq 'STOPPED_OR_MANUAL' -and $wait.outputScans -eq 0) $true 'WAITING_USER skips Unity and recursive output scan'
+    $dueWhileStopped=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now ([DateTimeOffset]::Parse('2026-09-30T00:00:00+08:00')) -CollectUnity -UnityMcpUrl 'http://127.0.0.1:1/mcp' | ConvertFrom-Json
+    Check ($dueWhileStopped.outputScans -eq 0 -and
+        (Test-Path -LiteralPath (Join-Path $usage 'weekly/2026-09-21_2026-09-27/report.md'))) $true 'stopped WATCH still catches up due weekly report'
+    # Dedicated isolated soft-limit timeline: baseline, stalled+hard event, dedupe, then stopped scope.
+    $softAt=$at.AddHours(2)
+    $softTask=[pscustomobject]@{id='AI-000907';pipeline='CODE';status='RUNNING';attempts=2;errorHistory=@();resourceKeys=@('DevTools/Workflow');result=$null;repairContext=$null;supervisionLevel='light';supervisionRepairs=@();
+        execution=[pscustomobject]@{appTurnCount=120;softLimitAt=$softAt.ToString('o');softLimitHandoff=$null;hardStopReason=$null;hardStopAt=$null;checkpointPath=$null}}
+    $queue.tasks=@($softTask);$mode.mode='SUPERVISED';$mode.supervised | Add-Member -NotePropertyName status -NotePropertyValue 'ACTIVE' -Force
+    $mode.supervised.stopRequested=$false;$mode.supervised.taskIds=@($softTask.id)
+    Save (Join-Path $state 'queue-state.json') $queue
+    Save (Join-Path $state 'mode-state.json') $mode
+    $softCommon=@{}+$common;$softCommon.OutputRoot=Join-Path $root 'watch-soft'
+    $softBase=& (Join-Path $PSScriptRoot 'watch.ps1') @softCommon -Now $softAt | ConvertFrom-Json
+    Check $softBase.detected 0 'soft-limit baseline quiet'
+    $softTask.execution.hardStopReason='NO_ACTUAL_PROGRESS_30_MINUTES';$softTask.execution.hardStopAt=$softAt.AddMinutes(30).ToString('o')
+    Save (Join-Path $state 'queue-state.json') $queue
+    $softNext=& (Join-Path $PSScriptRoot 'watch.ps1') @softCommon -Now $softAt.AddMinutes(31) | ConvertFrom-Json
+    Check $softNext.detected 3 'soft, stalled, hard-limit events emitted once'
+    $softCursor=Get-Content (Join-Path $softCommon.OutputRoot 'cursor.json') -Raw|ConvertFrom-Json
+    foreach($kind in @('TURN_SOFT_LIMIT','HANDOFF_STALLED','TURN_LIMIT')){
+        Check @($softCursor.pending|Where-Object kind -eq $kind).Count 1 "$kind recorded once"
+    }
+    $expected=Join-Path $state 'handoffs/AI-000907-2.json'
+    Check @($softCursor.pending|Where-Object { $_.kind -eq 'TURN_LIMIT' -and $_.handoffPath -eq $expected }).Count 1 'TURN_LIMIT carries expected handoff path'
+    $softAgain=& (Join-Path $PSScriptRoot 'watch.ps1') @softCommon -Now $softAt.AddMinutes(32) | ConvertFrom-Json
+    Check $softAgain.detected 0 'soft-limit events deduplicate'
+    $mode.supervised.stopRequested=$true;Save (Join-Path $state 'mode-state.json') $mode
+    $softStopped=& (Join-Path $PSScriptRoot 'watch.ps1') @softCommon -Now $softAt.AddMinutes(33) | ConvertFrom-Json
+    Check ($softStopped.scopeStatus -eq 'STOPPED_OR_MANUAL' -and $softStopped.detected -eq 0 -and $softStopped.outputScans -eq 0) $true 'stopped WATCH emits no new handoff events'
+    [pscustomobject]@{result='PASS';checks=55;events=$kinds;fixtureRoot=$root}|ConvertTo-Json -Depth 4
 }
 finally {
     if(Test-Path -LiteralPath $root -PathType Container){

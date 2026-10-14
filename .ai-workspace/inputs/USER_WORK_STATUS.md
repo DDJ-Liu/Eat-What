@@ -10,7 +10,7 @@
 | USER-U2 | 排布·P0 食谱本（封面/目录卡/①页/小签/ESC/页签） | M2-B1-R2/R3、M3-B1-R1、M4-B1-R2/R3、M4-B2-R3 | TODO | | 前置 A2a，后置 A2b |
 | USER-U3 | 排布·P1 托盘与格架（托盘/20 锚点/三态/GO 狗/容量/格件/整猫/_ScaleComp） | M7-B1-R1/R3、M7-B3-R1、M6-B1-R5/R6 | TODO | | |
 | USER-U4 | 排布·线索板与镜头（④ 展开态/SubSlot 回写/TIPS/机位/平移） | M5-B1-R3、M1-B5-R2、M8-B1-R1 | DOING | | 2026-10-13用户已调整线索板锚点；两锚点及板本体保存位置(-16.39,-0.68,-0.3)保持。AI222/223旧显示修复与AI224/225新规则/时机配置的机器验收均通过；本批CODE5/5、ENGINE6/6及用户人工验收均通过，AI223/225已VERIFIED；U4完整排布仍DOING，设计/控制端指导书v0.3及71行回填表已接收，见[稳定入口](排布指导书_ShortCycle_P0P1.md)；终调值及第四SlotBlock规则待U4回填v0.4，接收不改变本行状态。 |
-| USER-U5 | 白名单与分区约束复核（whitelist 3/6/3、T14；补 G2-ref） | M9-B2-R1/R2 | TODO | | 依赖 U1 |
+| USER-U5 | 白名单与分区约束复核（whitelist 3/6/3、T14；补 G2-ref） | M9-B2-R1/R2 | TODO | | 依赖 U1；AI242只读报告0错误/44警告，场景清单未提供（UNVERIFIED）；供本项及P2复核，见[报告](../outputs/G74-20261014/AI-000242/current-validation-final.json)，未擅改业务值。 |
 | USER-U6 | 文案定稿（4 条待对齐 + prd_unknown.flavor） | M1-B4-R5 | TODO | | 可选 |
 | USER-FONT-R0-COMMIT | 已取消的恢复提交（保留历史） | 原FONT-R0 → R1 | BLOCKED | | 2026-10-05用户取消AI203/204；不再要求或标记恢复DONE，以当前工作树新基线替代，非后继依赖。 |
 | USER-U1-EXCEL | 统一工作簿Excel客户端格式/中文表头注释验收 | AI186 / AI191 | DONE | 2026-10-12 | 用户确认“Excel人工检查通过”，要求矩形底修正后标记通过；119注释矩形已原生验证及发布，正式ResolveVerification完成。证据 outputs/control/WORKBOOK-REPAIR-20261012/comment-shapes/ACCEPTANCE.md；不概括后续U1/P2完成。 |

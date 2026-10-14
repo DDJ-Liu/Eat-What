@@ -9,5 +9,6 @@
   "outputRoot": "outputs/art/daily",
   "controllerThreadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
   "controllerReceptionEnabled": false,
-  "overdueHours": 12
+  "overdueHours": 12,
+  "requirementsDocument": "inputs/art/美术需求单_P0P1_v1_20261014.md"
 }

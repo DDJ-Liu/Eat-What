@@ -57,6 +57,8 @@ namespace EatWhat.EditorTools.Fonts
             public string sourceHanFallbackAssetPath;
             public string sourceFontPath;
             public bool staticAtlasRewritten;
+            public string[] requiredCodepoints;
+            public string[] addedCodepoints;
         }
 
         [MenuItem(MenuRoot + "Build Static Atlas + Empty Dynamic Fallback")]
@@ -106,6 +108,13 @@ namespace EatWhat.EditorTools.Fonts
             var localizationCharacters = ReadLocalizationCharacters(LocalizationCsvPath);
             var requiredCharacters = new HashSet<uint>(legacyCharacters);
             requiredCharacters.UnionWith(localizationCharacters);
+            var staticBefore = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(StaticFontAssetPath);
+            var existingCharacters = staticBefore == null
+                ? new HashSet<uint>()
+                : new HashSet<uint>(staticBefore.characterTable
+                    .Where(character => character != null).Select(character => character.unicode));
+            var addedCodepoints = requiredCharacters.Where(value => !existingCharacters.Contains(value))
+                .OrderBy(value => value).ToArray();
 
             var dynamicFallback = EnsureDynamicFallback(legacy, sourceHan);
             var staticAtlasRewritten = EnsureStaticFont(
@@ -113,13 +122,16 @@ namespace EatWhat.EditorTools.Fonts
                 dynamicFallback,
                 requiredCharacters.OrderBy(value => value).ToArray());
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            var staticAsset = LoadRequired<TMP_FontAsset>(StaticFontAssetPath);
+            if (EditorUtility.IsDirty(staticAsset)) AssetDatabase.SaveAssetIfDirty(staticAsset);
+            if (EditorUtility.IsDirty(dynamicFallback)) AssetDatabase.SaveAssetIfDirty(dynamicFallback);
             var manifest = CreateManifest(
                 legacyCharacters.Count,
                 localizationCharacters.Count,
                 requiredCharacters.Count,
-                staticAtlasRewritten);
+                staticAtlasRewritten,
+                requiredCharacters,
+                addedCodepoints);
             WriteManifestIfChanged(manifest);
             return manifest;
         }
@@ -132,8 +144,7 @@ namespace EatWhat.EditorTools.Fonts
             dynamicFallback.atlasPopulationMode = AtlasPopulationMode.Dynamic;
             SetFallbackChain(dynamicFallback, sourceHan);
             EditorUtility.SetDirty(dynamicFallback);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssetIfDirty(dynamicFallback);
 
             var legacy = LoadRequired<TMP_FontAsset>(LegacyFontAssetPath);
             var legacyCount = legacy.characterTable.Count;
@@ -143,7 +154,9 @@ namespace EatWhat.EditorTools.Fonts
                 legacyCount,
                 localizationCount,
                 staticAsset.characterTable.Count,
-                false);
+                false,
+                null,
+                null);
             WriteManifestIfChanged(manifest);
             return manifest;
         }
@@ -346,7 +359,9 @@ namespace EatWhat.EditorTools.Fonts
             int legacyCount,
             int localizationCount,
             int requiredCount,
-            bool staticAtlasRewritten)
+            bool staticAtlasRewritten,
+            IEnumerable<uint> requiredCodepoints,
+            IEnumerable<uint> addedCodepoints)
         {
             var staticAsset = LoadRequired<TMP_FontAsset>(StaticFontAssetPath);
             var dynamicAsset = LoadRequired<TMP_FontAsset>(DynamicFallbackAssetPath);
@@ -371,8 +386,18 @@ namespace EatWhat.EditorTools.Fonts
                 dynamicCharacterCount = dynamicAsset.characterTable.Count,
                 sourceHanFallbackAssetPath = SourceHanFallbackAssetPath,
                 sourceFontPath = AssetDatabase.GetAssetPath(staticAsset.sourceFontFile),
-                staticAtlasRewritten = staticAtlasRewritten
+                staticAtlasRewritten = staticAtlasRewritten,
+                requiredCodepoints = FormatCodepoints(requiredCodepoints),
+                addedCodepoints = FormatCodepoints(addedCodepoints)
             };
+        }
+
+        private static string[] FormatCodepoints(IEnumerable<uint> codepoints)
+        {
+            return codepoints == null
+                ? Array.Empty<string>()
+                : codepoints.OrderBy(value => value)
+                    .Select(value => "U+" + value.ToString("X4")).ToArray();
         }
 
         private static void WriteManifestIfChanged(BuildManifest manifest)
@@ -388,6 +413,13 @@ namespace EatWhat.EditorTools.Fonts
                     manifest.approvalStatus = existing.approvalStatus;
                     manifest.approvedBy = existing.approvedBy;
                     manifest.approvedAtUtc = existing.approvedAtUtc;
+                }
+                if (existing != null && SameProtectedContent(existing, manifest) &&
+                    existing.localizationCsvSha256 == manifest.localizationCsvSha256 &&
+                    existing.localizationCharacterCount == manifest.localizationCharacterCount &&
+                    existing.staticCharacterCount == manifest.staticCharacterCount)
+                {
+                    manifest.generatedAtUtc = existing.generatedAtUtc;
                 }
             }
             var json = JsonUtility.ToJson(manifest, true) + Environment.NewLine;

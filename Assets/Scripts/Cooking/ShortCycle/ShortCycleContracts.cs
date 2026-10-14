@@ -191,6 +191,44 @@ namespace EatWhat.Cooking.ShortCycle
         int GetQuantity(string itemId);
     }
 
+    /// <summary>Read-only carrier lookup for a future Phase 2 consumer.</summary>
+    public interface IShortCycleCarrierQuery
+    {
+        bool TryResolveCarrier(string recipeId, string areaId, string itemId,
+            IEnumerable<string> sceneCarriers, out ShortCycleCarrierResolution resolution,
+            out string diagnostic);
+    }
+
+    public sealed class ShortCycleCarrierRecord
+    {
+        public ShortCycleCarrierRecord(string id, IEnumerable<string> inputs, string action, string carrier)
+        {
+            Id = id;
+            Inputs = new List<string>(inputs ?? new string[0]).AsReadOnly();
+            Action = action;
+            Carrier = carrier;
+        }
+
+        public string Id { get; private set; }
+        public IList<string> Inputs { get; private set; }
+        public string Action { get; private set; }
+        public string Carrier { get; private set; }
+    }
+
+    public sealed class ShortCycleCarrierResolution
+    {
+        public ShortCycleCarrierResolution(IEnumerable<string> candidates)
+        {
+            var ordered = new List<string>(candidates ?? new string[0]);
+            Candidates = ordered.AsReadOnly();
+            CarrierId = ordered.Count == 0 ? null : ordered[0];
+        }
+
+        public string CarrierId { get; private set; }
+        public IList<string> Candidates { get; private set; }
+        public bool IsAmbiguous { get { return Candidates.Count > 1; } }
+    }
+
     public sealed class ObservableNoOpSaveBoundary : ISaveBoundary
     {
         private readonly List<ShortCycleSavePoint> reachedSavePoints = new List<ShortCycleSavePoint>();

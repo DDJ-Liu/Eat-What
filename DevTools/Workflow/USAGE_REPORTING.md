@@ -1,5 +1,7 @@
 # 用量日报与周报（TK-WF-03）
 
+2026-10-14实测限制：runtime provider最近仍停在10-04，GOV04重复取旧137875；精确原生10-14样本控制台190300、CODE197981已为ADVISE。当前reader无陈旧淘汰/自动provider导入，console心跳无真实采样且WATCH未完整消费console记录。不能将NONE当实时低量；本轮只留诊断，不改变模式或新派任务。见[报告](../../.ai-workspace/outputs/control/STAGE-GOV-G74-COMMIT-20261014/提交前检查与上下文提醒诊断.md)。
+
 ## PRE-5b 增量：WATCH、provider 与 Coplay（TK-WF-04）
 
 原 ai 监管 heartbeat 当前保持 PAUSED；本工具交付不擅自启用或更改应用日程。watch.ps1 以正常 PowerShell 7 无模型运行，单轮默认、-Continuous 默认5分钟；也可由 Manage-WatchHost.ps1 所示受控宿主定时。状态源为队列/worker/mode、可选线程 cursor 与 Unity 实例心跳、USER_WORK_STATUS；源缺失/陈旧降级，不把 WATCH 自身日志计作任务进度。六类增量事件及证据写入持久 inbox，相同事件去重、单批次仅调用一次 -DeliveryScript。批次ID、事件摘要、创建时mode/session/scope冻结；外部调用前先原子写DISPATCHING与attempt ID，进程中断后只读核回执并转UNKNOWN，不自动重投。UNKNOWN（包括抛错或回执不匹配）只读检查同名 .receipt.json 的 batchId/eventDigest/eventCount/delivered 四字段；新的事件另立批次，不混入旧 UNKNOWN。仅适配器明确返回 NOT_SENT 且 attempted=false 才记确定失败；旧会话PENDING转EXPIRED_SCOPE保留、不在新链补发，旧 pending/failed 需控制端核定。STOP/MANUAL/非scope/迟到结果禁止派发，light 不发 full 专属租约/无进度警报。桌面端没有正式事件 run-now API，目前只有可测试适配接口；控制台需另行部署、接入并核真实回执，不把夹具算实机唤醒。
@@ -8,9 +10,25 @@ USER_DONE 去重键包含持久的同一 USER 条目完成转换序号；只有�
 
 Import-ProviderUsage.ps1 只接受精确 task/attempt/claim-complete 时间窗的原始 provider 响应，不读取凭证或别的聊天；按 responseId 去重，单响应 usage/token/model 进入原 runtime JSONL。2026-09-28至10-04 的控制端原始事件导入240条、区间外拒绝1条；2026-10-07周报只是隔离 OutputRoot 预览，正式应出前不发布。get_usage_limits 的 usedPercent 仅账号共享配额变化，不能记作任务 token；无 normalModelSlug 时 model=null 与原因保留。
 
+GOV-04：Get-ThreadContext.ps1 对精确 threadId 仅取最新一条 provider 响应的 inputTokens，记录观测时间/responseId；该单次输入并非真正的完整存活窗口。缺精确响应时只允许传入明确 fresh UTF-8 字节作四字节每 token 粗估，仍缺则 contextTokens=null/contextSource=unknown。Poll 领取与 Complete 各在 usage JSONL 追加一次 role=worker、event=thread_context，按 executionId+生命周期去重；Complete 回执附 NONE/ADVISE(≥150K)/STRONG(≥200K)，NONE+unknown 不表示已测低量。
+
+活跃控制台每个实际 60 分钟心跳最多调用一次 queue.ps1 -Action RecordSupervisionHeartbeatContext -ControllerThreadId <绑定线程> -HeartbeatId <本轮唯一ID> -UsageLimitsSamplePath <工作区内真实get_usage_limits原始输出路径>；若 app 用量不可得，则改传 -UsageLimitsUnavailableReason <原因>，不重试。可选 -ContextFreshBytes 仅供明确新鲜字节粗估。该队列入口不调用 app，也不扫描聊天；样本引用和SHA只说明全账号用量快照，非任务成本。非活动/停止态拒绝采样；EMPTY只做此一次采样，不派业务。WATCH原无模型5分钟轮询不调用此入口。STRONG在WATCH首次跨阈值时产生最小CONTEXT_HIGH入箱，不自动重载、Yield或改模式。旧报告仍不可覆盖；新周报按worker/console和provider/estimated/unknown列覆盖、范围与STRONG次数。
+
 Summarize-CoplayLog.ps1 要求 taskId/attempt/时间窗/requestId/response 的实际带标签 JSONL，按请求 ID 去重计数与返回 UTF-8 字节；缺日志为 null，不能以0替代。Import-CoplayUsage.ps1 可登记经控制端明确绑定的实际样本，必须标明客户端观察还是服务端 RPC，不能拿夹具冒充真实 Unity 操作。领取时上下文只统计 CORE、任务卡及点名输入的原文字节/SHA，完成时配额原值另存。日报/周报的 WATCH 次数与 provider 覆盖字段不改变原北京周三上整周、补报及已发布报告不可覆盖规则。
 
-最后专项核验：2026-10-04。此入口不触发业务任务或改变运行模式。
+最后专项核验：2026-10-14（AI230状态摘要、验证复用、WATCH停止门禁与报表到期检查；不代表全项目复核）。此入口不触发业务任务或改变运行模式。
+
+## 2026-10-14 用量优化（AI-000230）
+
+控制收尾已观察既有宿主2026-10-14 16:41真实轮次进入STOPPED_OR_MANUAL，并保持原pending；16:40真实报表检查sourceScan=SKIPPED_ALREADY_PUBLISHED、下一周报应出10-21。旧桌面WATCH仍暂停，宿主注册查询未重试；这不是桌面即时唤醒验收。完整证据见`.ai-workspace/outputs/control/USAGE-OPT-20261014/independent-review.json`。
+
+`queue.ps1 -Action Status` 默认只返回≤2 KiB UTF-8摘要：模式（含监管停止位）、各车道忙闲/租约/熔断、总匹配数、最多20条需关注任务与`overflowCount`。`-TaskId`精确查已成功任务，`-FromTaskId/-ToTaskId`查闭区间；完整机器对象必须显式`-FullStatus`（可与过滤参数合用），不能把摘要`queue.tasks`当全部任务或拿`fullStatus`指令当已落盘的三状态快照。旧机器消费者已切为显式全文。状态回执仍走队列统一计量出口；不把未暴露token/model由返回字节推算。
+
+AI-000231 增量：摘要另含按任务状态与验收状态的精确计数；注意项优先运行、拒验/待验、需人工及熔断，单项最多200 UTF-8字节（id、module、lane、status、verification、updatedAt），超长模块以占位标明截断并通过全文查看。`snapshotPath` 指向 `runtime/status-snapshots/<时间戳>.json` 的未过滤三状态全文；源状态文件元数据未变时直接复用，元数据漂移但三源文件字节未变时核哈希后复用，避免空轮或无操作重写反复落盘MB全文。`-Full` 是 `-FullStatus` 别名，显式全文保留旧结构；`PendingReview` 默认同样返回≤2 KiB摘要与可读全文快照，需要旧items/groups明细时显式加 `-Full`。不存在 ListTasks 动作，未新增。`Get-UsageReport.ps1` 的 daily/weekly 增 `actionMaxResultBytes`，按观测到的动作返回字节取最大，`queue:Status` 即使未观测也列 null 与原因；历史已发布周报不重发。源码/夹具不能证明真实宿主后续报告运行。
+
+`Verify-All.ps1`优先单次Custom运行受影响runner，显式`-ReuseManifestPath`才启用逐runner成功复用。清单schemaVersion=2，每个runner单独列`path`、`dependencyMode: closed`、`sideEffectFree: true`、`scope`、`parameters`、`inputPaths`（相对仓库的明确文件/目录；目录含新增/移除成员）；runner、聚合器、PowerShell环境、声明的输入闭包共同成指纹。无清单、闭包不明、路径缺失/跳转、最新同runner失败、输入变化或运行中漂移都执行，不凭较早成功绕过失败。结果`PASSED/REUSED`和来源写入同TaskId历史；清单是人工逐runner审定的opt-in，不自动推断任意脚本依赖，也不为本卡全Workflow域默认启用。
+
+WATCH先从mode判停：MANUAL、监管暂停/退出、自动COMPLETE/BLOCKED/WAITING_USER等非活动态不做递归任务输出扫描、线程读取或Unity采集/派发；保留inbox未确认票据，不制造ACK。相同空/缺源轮次仅状态变化或北京时间跨日写一次无事件记录；新事件仍按原持久去重机制处理。每轮末的报表调用独立于业务停门。报告器仅在日报首次到期、周三周报到期或漏报时扫描用量JSONL；已发布的同日报/周报通过轻量文件签名索引跳过源扫描，签名变化先重新校验证据元数据和报告SHA，损坏原件保留并抛错，修复后可重新校验。既有正式周报不因本次重写；宿主是否真实调度仍以新run记录为证，离线夹具不算上线。
 
 ## 运行与产物
 

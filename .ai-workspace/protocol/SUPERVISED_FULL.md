@@ -1,5 +1,9 @@
 # 监管模式（SUPERVISED）
 
+## 监管结算长期发送授权（2026-10-14）
+
+用户已授权本批及以后所有监管任务结算后立即回传一次，详见[原话](../inputs/监管结算即时回传_用户长期授权_20261014.json)与[完整步骤](../../DevTools/Workflow/HANDOFF.md)。Complete/Fail/Yield同轮Prepare→Send→Record，控制台Receive→独立验收→fresh idle/Reconcile/Dispatch；不是等待下一次60分钟WATCH。旧缺少发送授权条款不再适用此范围；停止、去重、拒绝不重试及人工门仍有效。
+
 > 2026-10-12 下一批次优先规则：执行 [AGENTS.md 四条硬上限](../../AGENTS.md#下一批次四条硬上限2026-10-12-用户决定)。≤10 字段只验允许清单 diff + 一张截图；全路径哈希每批末一次；资产 SHA 仅提交 hook，任务中无内存保护；一次性工具仅离线编译 + Editor 单次执行，不进 Final。失败续行统一 [ApproveResume](../toolkit/WF.md#approve-resume)，幂等算同一批准。下文 FONT-R 专用许可/内存保护/冷启动测试是历史，禁止按旧规则新增续行入口或夹具。当前 MANUAL/watch-60 暂停，不再做字体返工。
 
 > 2026-09-10用户明确调整：所有人工审查统一后置，不能干扰开发。当前session通过DeferSupervisionReviews登记reviewDeferral.enabled=true；人工结果仍未批准，机器成功依赖满足后可继续开发。旧条款要求的中途人审时序在此会话被覆盖，机器失败、已拒绝结果、资源/权限及最终人工结算仍保留。精确范围 `.ai-workspace/inputs/人工审查统一后置_20260910.md`。
@@ -165,7 +169,7 @@
 `Manage-SupervisionHandoff.ps1` 将任务/attempt/execution/session/source/controller/完整回执 SHA 绑定。Prepare 原子登记一次发送；Record 留真实 app 返回原文与 SHA，不将投递当验收；Receive 去重、停止时仅 REPORT_ONLY。最终自动 MANUAL/COMPLETE 可报告完成，不重启监管。无获支持 run-now API 时 WATCH 的 PENDING 是已观察但未送达，60分钟控制台仅作补漏；不能声称 WATCH 已即时唤醒。执行步骤与不确定投递处置见 `DevTools/Workflow/HANDOFF.md`。
 
 
-AI208现行实现：真实 app turn 按事件去重、跨线程/attempt累计；120仅产生一次 TURN_SOFT_LIMIT。该过渡只允许保存证据与交接：YieldSupervisionTask绑定task/execution/owner、文件SHA和软限时间，新可见线程领取时复核后继续。累计240或软限后距最后实际进度30分钟触发锁存硬停；240只是临时保护。Initialize、Checkpoint、RecordTaskProgress和Complete共用Sync-TaskTurnGate，不信任可被重置的limitReached布尔值。缺计数保留null及原因，不能抵消已记录的软限/硬停。
+AI208基础与GOV-02补齐：真实 app turn 按事件去重、跨attempt累计；120只登记一次 TURN_SOFT_LIMIT 历史事件，对执行器正式返回 HANDOFF_REQUIRED。当前固定职能chat先经 queue.ps1 WriteHandoff 保存 ≤4 KiB 的已完成/剩余/关键状态/证据路径/下一命令到 runtime/handoffs/<task>-<attempt>.json，再 YieldSupervisionTask；保存与结算之间仍禁止受管执行。后续在同一固定chat新一轮领取，队列校验SHA/任务/attempt/执行归属，Poll回执注入 handoffFrom，执行器必须先读交接再续行；正式路由若改变也不清累计。未经有效交接，CheckManagedTool和Invoke-TaskTool在受管执行前拒绝；保存/观察/报告/交接/结算必要API仍可用。这不覆盖任意外部平台工具。累计240或软限后距最后实际进度30分钟触发锁存硬停；240只是临时保护。WATCH对软限后30分钟未交接另报HANDOFF_STALLED，TURN_LIMIT携带预期或实际交接路径；Heartbeat不是进度。Initialize、Checkpoint、RecordTaskProgress和Complete共用Sync-TaskTurnGate，不信任可被重置的limitReached布尔值。缺计数保留null及原因，不能抵消已记录的软限/硬停。
 进度默认Observation；WorkCompleted必须有落盘证据，重复ProgressId或同SHA证据、Heartbeat、只读观察、领取和交接均不刷新实际进度。Invoke-TaskTool只在成功完成工作后记录进度；只读调用显式传-ProgressKind Observation，开始/失败均不充进度。
 控制拒验只阻断本任务及其依赖；独立链继续。RejectVerification在队列锁内绑定原结果快照/SHA、CONTROL_ACCEPTANCE、稳定key及证据SHA，保留原报告和历史。只有显式ResolveControlRejection，绑定后续已完成的同根修复、独立控制台、两结果SHA及最新拒验证据后，才追加解决记录；不自动修改AI201 REJECTED，也不代过人工gate。仅有正式SupersedeTask取消依据的CLOSED_SUPERSEDED可作为scope已取消收口，状态不改SUCCEEDED，后继仍须满足真实依赖。
 正式硬限待瘦身措施落地后连续实测满两周再定。本卡将独立读取批处理、紧凑回执与全文证据分离、一次Workflow聚合和重复事件去重落地；本次只有离线样本，未满足两周，不宣称240为正式最终值。WATCH宿主部署仍待验。

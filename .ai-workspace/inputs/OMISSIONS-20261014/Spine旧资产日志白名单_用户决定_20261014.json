@@ -1,0 +1,8 @@
+{
+  "recordedAt": "2026-10-14T19:40:50.9817849+08:00",
+  "userDecision": "sample和output4的spine读取问题已知，并且已经进行了多轮的放行处理。如果这个报错会持续干扰后续任务的话，在暂时不清除资源本身的前提下，我建议修改spine包的读取代码，单独对这两个资产的报错进行白名单放行而消除报错，不改变原本的版本检查规则",
+  "source": "本控制台用户直接消息",
+  "productionResumeReason": "本条未明确新的生产运行次数；先完成用户已授权代码修复，不自行消费原AI235失败许可。",
+  "scope": "Spine包中对Sample/output4两个已知旧资产的精确加载错误白名单；资源、版本拒绝及其它错误保持",
+  "productionResumeRuns": null
+}

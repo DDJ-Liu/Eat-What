@@ -21,6 +21,10 @@
 
 ## 生命周期
 
+GOV-05：任务卡复杂度S/M/L派生预算40/80/120轮，仅供报告及超额解释；实际监管软/硬门不变。Complete按模板提供四类空转的真实app turn ID与分类证据，未知写null+原因，不能以导表工具次数估算。分级及旧卡兼容见CORE、TK-WF-03/04。
+
 领取、token、lease、`SupervisionCheckpoint`、Complete/Fail/Yield 与其它车道完全相同。注册由 `RegisterDataLane` 保持兼容；绑定只由控制台在 `DataLaneStatus.safeToBind=true` 且已有应用可达/闲置证据时执行。DATA 不自行绑定、换线、重分类或消费轮次；旧票据不可跨 routeRevision。DATA 与 ENGINE 对实际 Unity/生成物访问必须共同持有 `.ai-workspace/runtime/data-publication.lock`；锁冲突、源哈希漂移、batch 非零退出或发布回滚均为停止条件。
+
+监管软限：累计真实app turn到120时先 WriteHandoff 保存≤4 KiB证据，再Yield；固定DATA chat下轮从handoffFrom先读。受管工具在无有效交接时拒绝调用，不以换路由/attempt清累计；240及30分钟无实际进度硬停保持。正式失败续行只用ApproveResume；详见SUPERVISED_FULL。
 
 监管结算回传：Prepare 一次登记 → 读取完整 messagePath → app 向绑定控制台发送一次 → Record 保存实际 SENT/REJECTED/UNKNOWN；禁止自行派后继。具体见 `DevTools/Workflow/HANDOFF.md`。历史拒绝不重试；NOTIFY_CONTROLLER 不能只打印路径或留在本线。

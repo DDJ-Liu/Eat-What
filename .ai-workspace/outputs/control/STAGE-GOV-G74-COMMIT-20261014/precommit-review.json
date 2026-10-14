@@ -1,0 +1,622 @@
+{
+  "at": "2026-10-14T23:58:41.921448+08:00",
+  "approvedCandidateCount": 113,
+  "originalChangedCount": 83,
+  "explicitGuidanceAdditions": [
+    ".ai-workspace/inputs/USAGE-OPT-20261014/任务与授权.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/AI240_AI235_各一次续行批准_20261014.json",
+    ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1b_DATA.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1b_合同修订与单次发布授权_20261014.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_CODE.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_DATA.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_ENGINE.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_选项A授权.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/GOV-01.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/GOV-02.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/GOV-03.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/provenance.json",
+    ".ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-DIAG_CODE.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-REPAIR_CODE.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/Spine旧资产日志白名单_用户决定_20261014.json",
+    ".ai-workspace/inputs/OMISSIONS-20261014/控制台输入_遗漏处置四项派发_20261014.md",
+    ".ai-workspace/inputs/OMISSIONS-20261014/控制端审查包核查报告_AI184-229_20261014.md",
+    ".ai-workspace/inputs/GOV-04-05-20261014/AI236视觉验收与GOV继续_用户决定_20261014.json",
+    ".ai-workspace/inputs/GOV-04-05-20261014/GOV-04_CODE.md",
+    ".ai-workspace/inputs/GOV-04-05-20261014/GOV-05_CODE.md",
+    ".ai-workspace/inputs/GOV-04-05-20261014/provenance.json",
+    ".ai-workspace/inputs/GOV-04-05-20261014/复杂度修订_用户决定.json",
+    ".ai-workspace/inputs/GOV-04-05-20261014/控制台输入_GOV-04上下文预警_GOV-05复杂度分级_20261014.md",
+    ".ai-workspace/inputs/G74-20261014/CODE-R01_CODE.md",
+    ".ai-workspace/inputs/G74-20261014/CODE-R01_ENGINE.md",
+    ".ai-workspace/inputs/G74-20261014/DATA-V1_DATA.md",
+    ".ai-workspace/inputs/G74-20261014/接收与范围.json",
+    ".ai-workspace/inputs/G74-20261014/控制台输入_G74落地_DATA-V1与CODE-R01_20261014.md",
+    ".ai-workspace/inputs/CK01-B_配表Schema_v2_4_1.md",
+    ".ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json"
+  ],
+  "files": [
+    {
+      "path": ".ai-workspace/ARCHIVE_PRESERVATION.md",
+      "bytes": 3277
+    },
+    {
+      "path": ".ai-workspace/ART_ASSET_DAILY.md",
+      "bytes": 2215
+    },
+    {
+      "path": ".ai-workspace/CONTROL_CHAT.md",
+      "bytes": 8657
+    },
+    {
+      "path": ".ai-workspace/CORE.md",
+      "bytes": 10909
+    },
+    {
+      "path": ".ai-workspace/INSTRUCTIONS.md",
+      "bytes": 455112
+    },
+    {
+      "path": ".ai-workspace/PENDING_REVIEW.md",
+      "bytes": 997
+    },
+    {
+      "path": ".ai-workspace/PIPELINES.md",
+      "bytes": 6705
+    },
+    {
+      "path": ".ai-workspace/SUPERVISED.md",
+      "bytes": 6350
+    },
+    {
+      "path": ".ai-workspace/WORKFLOW.md",
+      "bytes": 4420
+    },
+    {
+      "path": ".ai-workspace/art-daily-report.ps1",
+      "bytes": 18520
+    },
+    {
+      "path": ".ai-workspace/inputs/README.md",
+      "bytes": 8686
+    },
+    {
+      "path": ".ai-workspace/inputs/USER_WORK_STATUS.md",
+      "bytes": 4029
+    },
+    {
+      "path": ".ai-workspace/inputs/art/ART_DAILY_CONFIG.json",
+      "bytes": 537
+    },
+    {
+      "path": ".ai-workspace/inputs/art/ART_PENDING_ITEMS.json",
+      "bytes": 7141
+    },
+    {
+      "path": ".ai-workspace/outputs/control/人工处理索引.md",
+      "bytes": 6592
+    },
+    {
+      "path": ".ai-workspace/pitfalls/CODE.md",
+      "bytes": 27858
+    },
+    {
+      "path": ".ai-workspace/pitfalls/INDEX.md",
+      "bytes": 8865
+    },
+    {
+      "path": ".ai-workspace/protocol/CONTROL_CHAT_FULL.md",
+      "bytes": 26654
+    },
+    {
+      "path": ".ai-workspace/protocol/SUPERVISED_FULL.md",
+      "bytes": 39223
+    },
+    {
+      "path": ".ai-workspace/protocol/WORKFLOW_FULL.md",
+      "bytes": 30016
+    },
+    {
+      "path": ".ai-workspace/queue.ps1",
+      "bytes": 158286
+    },
+    {
+      "path": ".ai-workspace/supervised.ps1",
+      "bytes": 47853
+    },
+    {
+      "path": ".ai-workspace/templates/ART_DAILY_TEMPLATE.md",
+      "bytes": 4522
+    },
+    {
+      "path": ".ai-workspace/templates/TASK_COMPLETION_REPORT.md",
+      "bytes": 1380
+    },
+    {
+      "path": ".ai-workspace/tests/Test-ArtDailyV2.ps1",
+      "bytes": 11530
+    },
+    {
+      "path": ".ai-workspace/tests/Test-DataLane.ps1",
+      "bytes": 26494
+    },
+    {
+      "path": ".ai-workspace/tests/Test-QueueReviewAndModules.ps1",
+      "bytes": 26940
+    },
+    {
+      "path": ".ai-workspace/tests/Test-SupervisedMode.ps1",
+      "bytes": 35773
+    },
+    {
+      "path": ".ai-workspace/toolkit/WF.md",
+      "bytes": 14778
+    },
+    {
+      "path": ".ai-workspace/workers/ART.md",
+      "bytes": 7017
+    },
+    {
+      "path": ".ai-workspace/workers/CODE.md",
+      "bytes": 8556
+    },
+    {
+      "path": ".ai-workspace/workers/DATA.md",
+      "bytes": 3533
+    },
+    {
+      "path": ".ai-workspace/workers/ENGINE_MCP.md",
+      "bytes": 13583
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 3301
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 21406
+    },
+    {
+      "path": "Assets/Editor/DataTables/DataTableImportService.cs",
+      "bytes": 72290
+    },
+    {
+      "path": "Assets/Editor/Fonts/ShortCycleFontAtlasBuilder.cs",
+      "bytes": 21015
+    },
+    {
+      "path": "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset",
+      "bytes": 18753641
+    },
+    {
+      "path": "Assets/Scripts/Cooking/ShortCycle/ShortCycleContracts.cs",
+      "bytes": 7826
+    },
+    {
+      "path": "Assets/Scripts/Cooking/ShortCycle/ShortCycleSessionManager.cs",
+      "bytes": 16654
+    },
+    {
+      "path": "Assets/Spine/Editor/spine-unity/Editor/Windows/SkeletonBaker.cs",
+      "bytes": 50356
+    },
+    {
+      "path": "Assets/Spine/Runtime/spine-unity/Asset Types/SkeletonDataAsset.cs",
+      "bytes": 13831
+    },
+    {
+      "path": "CODEBASE_MAP.md",
+      "bytes": 46506
+    },
+    {
+      "path": "DataTables/Schemas/Cooking/KitchenAreas.schema.json",
+      "bytes": 2870
+    },
+    {
+      "path": "DataTables/Schemas/Cooking/RecipeSteps.schema.json",
+      "bytes": 2550
+    },
+    {
+      "path": "DevTools/DataTables/DATA_PIPELINE.md",
+      "bytes": 23682
+    },
+    {
+      "path": "DevTools/DataTables/DataPipeline.Common.ps1",
+      "bytes": 67498
+    },
+    {
+      "path": "DevTools/DataTables/Run-DataPipeline.ps1",
+      "bytes": 27667
+    },
+    {
+      "path": "DevTools/DataTables/Test-BatchImport.ps1",
+      "bytes": 51470
+    },
+    {
+      "path": "DevTools/DataTables/Test-CK01BImportContracts.ps1",
+      "bytes": 22518
+    },
+    {
+      "path": "DevTools/DataTables/Test-SpineLegacyGate.ps1",
+      "bytes": 24628
+    },
+    {
+      "path": "DevTools/DataTables/Test-Validate-DataTables.ps1",
+      "bytes": 9082
+    },
+    {
+      "path": "DevTools/DataTables/Validate-DataTables.ps1",
+      "bytes": 63242
+    },
+    {
+      "path": "DevTools/Fonts/README.md",
+      "bytes": 25609
+    },
+    {
+      "path": "DevTools/Fonts/ShortCycleFontBuildManifest.json",
+      "bytes": 10743
+    },
+    {
+      "path": "DevTools/Fonts/Test-ShortCycleFonts.ps1",
+      "bytes": 10121
+    },
+    {
+      "path": "DevTools/ShortCycle/ShortCycleCoreTests.cs",
+      "bytes": 222367
+    },
+    {
+      "path": "DevTools/Verify-All.ps1",
+      "bytes": 15369
+    },
+    {
+      "path": "DevTools/Workflow/Get-UsageReport.ps1",
+      "bytes": 17251
+    },
+    {
+      "path": "DevTools/Workflow/HANDOFF.md",
+      "bytes": 4014
+    },
+    {
+      "path": "DevTools/Workflow/Invoke-TaskTool.ps1",
+      "bytes": 5757
+    },
+    {
+      "path": "DevTools/Workflow/Invoke-UsageReporting.ps1",
+      "bytes": 14572
+    },
+    {
+      "path": "DevTools/Workflow/Test-Pre5c.ps1",
+      "bytes": 18449
+    },
+    {
+      "path": "DevTools/Workflow/Test-TurnSoftRepair.ps1",
+      "bytes": 15477
+    },
+    {
+      "path": "DevTools/Workflow/Test-UsageReporting.ps1",
+      "bytes": 8453
+    },
+    {
+      "path": "DevTools/Workflow/Test-Watch.ps1",
+      "bytes": 16654
+    },
+    {
+      "path": "DevTools/Workflow/USAGE_REPORTING.md",
+      "bytes": 13238
+    },
+    {
+      "path": "DevTools/Workflow/UsageMetrics.ps1",
+      "bytes": 10309
+    },
+    {
+      "path": "DevTools/Workflow/watch.ps1",
+      "bytes": 27702
+    },
+    {
+      "path": "项目整体阅读理解与推进基线_2026-08-14.md",
+      "bytes": 29474
+    },
+    {
+      "path": ".ai-workspace/archive/2026-10-14-schema-draft/CK01-B_配表Schema_v2_4_1_变更稿_与B1回写_20261014.md",
+      "bytes": 5735
+    },
+    {
+      "path": ".ai-workspace/archive/2026-10-14-schema-draft/README.md",
+      "bytes": 236
+    },
+    {
+      "path": ".ai-workspace/archive/2026-10-14-schema-draft/manifest.json",
+      "bytes": 484
+    },
+    {
+      "path": ".ai-workspace/inputs/art/美术需求单_P0P1_v1_20261014.md",
+      "bytes": 3185
+    },
+    {
+      "path": ".ai-workspace/templates/人工段流程_v2_20261014.md",
+      "bytes": 2675
+    },
+    {
+      "path": "Assets/Scripts/Cooking/ShortCycle/Content/ShortCycleCarrierResolver.cs",
+      "bytes": 2884
+    },
+    {
+      "path": "Assets/Scripts/Cooking/ShortCycle/Content/ShortCycleCarrierResolver.cs.meta",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Scripts/Cooking/ShortCycle/Content/ShortCycleCarrierWarning.cs",
+      "bytes": 1395
+    },
+    {
+      "path": "Assets/Scripts/Cooking/ShortCycle/Content/ShortCycleCarrierWarning.cs.meta",
+      "bytes": 59
+    },
+    {
+      "path": "DevTools/Workflow/Get-ThreadContext.ps1",
+      "bytes": 2189
+    },
+    {
+      "path": "DevTools/Workflow/Test-ContextWarning.ps1",
+      "bytes": 8105
+    },
+    {
+      "path": "DevTools/Workflow/Test-TaskTier.ps1",
+      "bytes": 12785
+    },
+    {
+      "path": "DevTools/Workflow/Test-UsageOptimization.ps1",
+      "bytes": 12482
+    },
+    {
+      "path": ".ai-workspace/inputs/USAGE-OPT-20261014/任务与授权.md",
+      "bytes": 4681
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/AI240_AI235_各一次续行批准_20261014.json",
+      "bytes": 1440
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1b_DATA.md",
+      "bytes": 2948
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1b_合同修订与单次发布授权_20261014.md",
+      "bytes": 1492
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_CODE.md",
+      "bytes": 3703
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_DATA.md",
+      "bytes": 4523
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_ENGINE.md",
+      "bytes": 2485
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_选项A授权.md",
+      "bytes": 2383
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/GOV-01.md",
+      "bytes": 2947
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/GOV-02.md",
+      "bytes": 3274
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/GOV-03.md",
+      "bytes": 2629
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/provenance.json",
+      "bytes": 652
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-DIAG_CODE.md",
+      "bytes": 2174
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-REPAIR_CODE.md",
+      "bytes": 2975
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/Spine旧资产日志白名单_用户决定_20261014.json",
+      "bytes": 792
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/控制台输入_遗漏处置四项派发_20261014.md",
+      "bytes": 6305
+    },
+    {
+      "path": ".ai-workspace/inputs/OMISSIONS-20261014/控制端审查包核查报告_AI184-229_20261014.md",
+      "bytes": 12686
+    },
+    {
+      "path": ".ai-workspace/inputs/GOV-04-05-20261014/AI236视觉验收与GOV继续_用户决定_20261014.json",
+      "bytes": 480
+    },
+    {
+      "path": ".ai-workspace/inputs/GOV-04-05-20261014/GOV-04_CODE.md",
+      "bytes": 6234
+    },
+    {
+      "path": ".ai-workspace/inputs/GOV-04-05-20261014/GOV-05_CODE.md",
+      "bytes": 5725
+    },
+    {
+      "path": ".ai-workspace/inputs/GOV-04-05-20261014/provenance.json",
+      "bytes": 710
+    },
+    {
+      "path": ".ai-workspace/inputs/GOV-04-05-20261014/复杂度修订_用户决定.json",
+      "bytes": 1293
+    },
+    {
+      "path": ".ai-workspace/inputs/GOV-04-05-20261014/控制台输入_GOV-04上下文预警_GOV-05复杂度分级_20261014.md",
+      "bytes": 4636
+    },
+    {
+      "path": ".ai-workspace/inputs/G74-20261014/CODE-R01_CODE.md",
+      "bytes": 3113
+    },
+    {
+      "path": ".ai-workspace/inputs/G74-20261014/CODE-R01_ENGINE.md",
+      "bytes": 887
+    },
+    {
+      "path": ".ai-workspace/inputs/G74-20261014/DATA-V1_DATA.md",
+      "bytes": 3087
+    },
+    {
+      "path": ".ai-workspace/inputs/G74-20261014/接收与范围.json",
+      "bytes": 546
+    },
+    {
+      "path": ".ai-workspace/inputs/G74-20261014/控制台输入_G74落地_DATA-V1与CODE-R01_20261014.md",
+      "bytes": 4367
+    },
+    {
+      "path": ".ai-workspace/inputs/CK01-B_配表Schema_v2_4_1.md",
+      "bytes": 34350
+    },
+    {
+      "path": ".ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json",
+      "bytes": 770
+    }
+  ],
+  "scopeIssues": [],
+  "validationReuse": [
+    {
+      "path": ".ai-workspace/outputs/control/USAGE-OPT-20261014/independent-review.json",
+      "taskId": "AI-000230",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T16:43:06.4061621+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai231-independent-review.json",
+      "taskId": "AI-000231",
+      "decision": "PASSED"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai232-independent-review.json",
+      "taskId": "AI-000232",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T18:23:40.1743070+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai233-independent-review.json",
+      "taskId": "AI-000233",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T18:41:32.1523990+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai234-independent-review.json",
+      "taskId": "AI-000234",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T19:15:03.2546228+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai235-attempt2-independent-review.json",
+      "taskId": "AI-000235",
+      "decision": "PARTIAL_NOT_ACCEPTED",
+      "reviewedAt": "2026-10-14T20:41:46.2168098+08:00",
+      "actualTokens": null
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai235-attempt3-independent-review.json",
+      "taskId": "AI-000235",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T21:37:17.5577685+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai235-independent-review.json",
+      "taskId": "AI-000235",
+      "decision": "PARTIAL_NOT_ACCEPTED"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai236-independent-review.json",
+      "taskId": "AI-000236",
+      "decision": "MACHINE_PASSED_PENDING_USER",
+      "reviewedAt": "2026-10-14T21:53:22.4566627+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai239-independent-review.json",
+      "taskId": "AI-000239",
+      "decision": "PASSED",
+      "checksPassed": 4
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai240-attempt2-independent-review.json",
+      "taskId": "AI-000240",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T20:29:10.5412254+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai240-independent-review.json",
+      "taskId": "AI-000240",
+      "decision": "TECHNICAL_CHECKS_PASSED_FORMAL_STOP"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/OMISSIONS-20261014/ai241-independent-review.json",
+      "taskId": "AI-000241",
+      "decision": "PASSED",
+      "reviewedAt": "2026-10-14T21:26:12.0305113+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/G74-20261014/independent-review-242.json",
+      "taskId": "AI-000242",
+      "decision": "PASSED",
+      "checksPassed": 6,
+      "reviewedAt": "2026-10-14T22:27:33.2393703+08:00",
+      "actualTokens": null,
+      "actualCost": null
+    },
+    {
+      "path": ".ai-workspace/outputs/control/G74-20261014/independent-review-243.json",
+      "taskId": "AI-000243",
+      "decision": "PASSED",
+      "checksPassed": 5,
+      "reviewedAt": "2026-10-14T22:18:50.1558482+08:00",
+      "actualTokens": null
+    },
+    {
+      "path": ".ai-workspace/outputs/control/G74-20261014/independent-review-244.json",
+      "taskId": "AI-000244",
+      "decision": "PASSED",
+      "checksPassed": 3,
+      "reviewedAt": "2026-10-14T22:27:33.2414196+08:00",
+      "actualTokens": null,
+      "actualCost": null
+    },
+    {
+      "path": ".ai-workspace/outputs/control/GOV-04-05-20261014/independent-review-237.json",
+      "taskId": "AI-000237",
+      "decision": "PASSED",
+      "checksPassed": 7,
+      "reviewedAt": "2026-10-14T22:37:22.1381997+08:00"
+    },
+    {
+      "path": ".ai-workspace/outputs/control/GOV-04-05-20261014/independent-review-238.json",
+      "taskId": "AI-000238",
+      "decision": "PASSED",
+      "checksPassed": 7,
+      "reviewedAt": "2026-10-14T22:57:49.3737694+08:00",
+      "actualTokens": null,
+      "actualCost": null
+    }
+  ],
+  "knownLimitation": "GOV04 freshness and controller notification integration gaps; diagnosed separately, not repaired or requeued.",
+  "excluded": "Ignored runtime/cache/build/backup/images/raw telemetry retained locally; no deletion.",
+  "reviewCorrection": "Initial generic runtime folder check falsely included Assets/Spine/Runtime source; replaced with exact transient root checks before staging.",
+  "commitBoundaryAdjustment": {
+    "path": ".gitattributes",
+    "change": "Disable Git text conversion only for the byte-audited font approval manifest.",
+    "reason": "First commit rejected: worktree CRLF (10743 bytes) vs staged LF (10179 bytes); JSON and font SHA equal. Preserve publisher/audit bytes, do not weaken or bypass hook.",
+    "attribute": "-text whitespace=trailing-space,space-before-tab,cr-at-eol"
+  },
+  "finalApprovedCount": 117
+}

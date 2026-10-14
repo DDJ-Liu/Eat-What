@@ -10,6 +10,8 @@ param(
     [string]$WorkspaceRoot,
     [string]$ReportDirectory,
     [ValidateRange(1, 7200)][int]$BatchTimeoutSeconds = 1800,
+    [bool]$RebuildStaticFont = $true,
+    [Parameter(ParameterSetName = 'CurrentCsv')][string]$FontPublishApprovalPath,
     [switch]$Publish,
     [switch]$PlanOnly
 )
@@ -61,7 +63,17 @@ $approvedReportRoot = Join-Path $repositoryRoot '.ai-workspace/runtime/data-repo
 $isCurrentCsvValidation = $PSCmdlet.ParameterSetName -eq 'CurrentCsv'
 
 if ($PlanOnly -and $Publish) { throw '-Publish cannot be combined with -PlanOnly.' }
-if ($isCurrentCsvValidation -and $Publish) { throw 'CurrentCsvValidation is isolation-only and can never publish.' }
+if ($isCurrentCsvValidation -and $Publish -and [string]::IsNullOrWhiteSpace($FontPublishApprovalPath)) {
+    throw 'CurrentCsvValidation -Publish requires the exact AI-000235 font-only approval.'
+}
+if ($PlanOnly -and -not [string]::IsNullOrWhiteSpace($FontPublishApprovalPath)) {
+    throw 'Font publication cannot be combined with -PlanOnly.'
+}
+if (-not [string]::IsNullOrWhiteSpace($FontPublishApprovalPath) -and
+    ($TaskId -cne 'AI-000235' -or -not $RebuildStaticFont -or
+     -not [string]::IsNullOrWhiteSpace($ValidationCsvOverlayPath))) {
+    throw 'Current-CSV font-only publication requires AI-000235, font rebuild, and no CSV overlay.'
+}
 if ($isCurrentCsvValidation -and ($TaskId -eq 'UNSCOPED' -or [string]::IsNullOrWhiteSpace($ValidationSource))) {
     throw 'CurrentCsvValidation requires an explicit TaskId and ValidationSource.'
 }
@@ -120,6 +132,9 @@ $report = [ordered]@{
     batchLogAssessment=$null; dependencyProof=$null
     stages=[System.Collections.Generic.List[object]]::new(); dataApiCalls=[System.Collections.Generic.List[object]]::new()
     published=$false; publicationAction='NOT_REQUESTED'; fontAssetsPublished=$false
+    fontBuildRequested=$RebuildStaticFont; fontBuildCompleted=$false
+    fontBuildError=$null; fontPublicationAction='NOT_REQUESTED'; fontPublication=$null
+    postExitStaticCredential=$null
 }
 $publicationLock = $null
 $completionEvidence = $null
@@ -148,6 +163,21 @@ try {
     foreach ($relative in @('Assets', 'Packages', 'LocalPackages', 'ProjectSettings', 'DataTables')) {
         $source = Join-Path $repositoryRoot $relative
         if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination (Join-Path $batchRoot $relative) -Recurse }
+    }
+    $fontManifestRelative = 'DevTools/Fonts/ShortCycleFontBuildManifest.json'
+    $liveFontManifest = Join-Path $repositoryRoot $fontManifestRelative
+    $fontManifestBeforeSha = $null
+    if ($RebuildStaticFont) {
+        if (-not (Test-Path -LiteralPath $liveFontManifest -PathType Leaf)) {
+            throw "Font baseline manifest missing: $liveFontManifest"
+        }
+        $fontManifestBeforeSha = (Get-FileHash -LiteralPath $liveFontManifest -Algorithm SHA256).Hash
+        $isolatedFontManifest = Join-Path $batchRoot $fontManifestRelative
+        [void](New-Item -ItemType Directory -Path (Split-Path -Parent $isolatedFontManifest) -Force)
+        [System.IO.File]::Copy($liveFontManifest,$isolatedFontManifest,$false)
+        if ((Get-FileHash -LiteralPath $isolatedFontManifest -Algorithm SHA256).Hash -cne $fontManifestBeforeSha) {
+            throw 'Isolated font baseline manifest differs from the live source.'
+        }
     }
     $isolatedSnapshot = Get-DataPipelineInputSnapshot -RepositoryRoot $batchRoot
     if ($isolatedSnapshot.summarySha256 -ne $report.inputSnapshot.summarySha256) {
@@ -199,6 +229,7 @@ try {
             -CompletionNonce $completionNonce `
             -SourceTreeSha256 $report.sourceTreeSha256 `
             -InputSnapshotSha256 $report.inputSnapshot.summarySha256 `
+            -RebuildStaticFont $RebuildStaticFont `
             -TimeoutSeconds $BatchTimeoutSeconds
         $report.batchProcessExitCode = $batchResult.exitCode
         $report.batchProcess = [ordered]@{
@@ -239,9 +270,21 @@ try {
             localizationCharacterCount=[int]$completionEvidence.credential.localizationCharacterCount
             staticAssetSha256=[string]$completionEvidence.credential.staticAssetSha256
             dynamicAssetSha256=[string]$completionEvidence.credential.dynamicAssetSha256
+            fontBuildRequested=[bool]$completionEvidence.credential.fontBuildRequested
+            fontBuildCompleted=[bool]$completionEvidence.credential.fontBuildCompleted
+            fontBuildError=[string]$completionEvidence.credential.fontBuildError
         }
+        $report.fontBuildCompleted = [bool]$completionEvidence.credential.fontBuildCompleted
+        $report.fontBuildError = [string]$completionEvidence.credential.fontBuildError
         $report.dataApiCalls.Add([pscustomobject]@{ api=$batchResult.executeMethod; arguments=@('-batchmode','-quit','-projectPath',$batchRoot,'-logFile',$logPath); exitCode=$batchResult.exitCode })
-        $report.dataApiCalls.Add([pscustomobject]@{ api='EatWhat.EditorTools.Fonts.ShortCycleFontAtlasBuilder.BuildAll'; invokedBy=$batchResult.executeMethod; exitCode=$batchResult.exitCode })
+        if ($RebuildStaticFont) {
+            $report.dataApiCalls.Add([pscustomobject]@{
+                api='EatWhat.EditorTools.Fonts.ShortCycleFontAtlasBuilder.BuildAll'
+                invokedBy=$batchResult.executeMethod
+                exitCode=if ($report.fontBuildCompleted) {0} else {1}
+                error=$report.fontBuildError
+            })
+        }
         $report.stages.Add([pscustomobject]@{
             name='Unity-Batch'; status='PASSED'; processExitCode=$batchResult.exitCode
             processId=$batchResult.processId; processStartedAtUtc=$batchResult.processStartedAtUtc
@@ -310,7 +353,7 @@ try {
         })
     }
 
-    if ($Publish) {
+    if ($Publish -and -not $isCurrentCsvValidation) {
         [void](Assert-SnapshotUnchanged -Expected $report.inputSnapshot -Root $repositoryRoot -Stage 'before publication')
         $backup = Join-Path $reportRoot 'backup'
         $publication = Invoke-DataPublicationTransaction -LiveSourceRoot $dataTablesRoot -ExpectedSourceHash $report.sourceTreeSha256 -LiveTargetRoot $generatedRoot -ExpectedTargetHash $report.targetTreeSha256 -StagedTargetRoot $isolatedGenerated -ExpectedStagedHash $report.dependencyProof.candidateTreeSha256 -BackupRoot $backup
@@ -319,11 +362,46 @@ try {
         $report.dataApiCalls.Add([pscustomobject]@{ api='Invoke-DataPublicationTransaction'; action=$publication.action; exitCode=0; sourceHash=$publication.sourceHash; beforeTargetHash=$publication.beforeTargetHash; afterTargetHash=$publication.afterTargetHash })
         $report.stages.Add([pscustomobject]@{ name='Publish-Generated'; status='PASSED'; action=$publication.action; backup=$publication.backup })
     }
+    if (-not $PlanOnly -and $RebuildStaticFont) {
+        if (-not $report.fontBuildCompleted) {
+            $report.fontPublicationAction = 'FONT_FAILED'
+            throw "FONT_FAILED: isolated font build did not complete: $($report.fontBuildError)"
+        }
+        if ($Publish -or -not [string]::IsNullOrWhiteSpace($FontPublishApprovalPath)) {
+            $fontApproval = if ($isCurrentCsvValidation) {$FontPublishApprovalPath} else {$roundPath}
+            if ((Get-FileHash -LiteralPath $liveFontManifest -Algorithm SHA256).Hash -cne $fontManifestBeforeSha) {
+                $report.fontPublicationAction = 'FONT_FAILED'
+                throw 'FONT_FAILED: live font manifest drifted after isolation copy.'
+            }
+            try {
+                $report.postExitStaticCredential = Get-StablePostExitStaticCredential -Path (Join-Path $batchRoot 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset')
+                $fontPublication = Invoke-FontPublicationTransaction `
+                    -RepositoryRoot $repositoryRoot -StagedProjectRoot $batchRoot `
+                    -BackupRoot (Join-Path $repositoryRoot ("DevTools/Fonts/backup/$safeRoundId/$runId")) `
+                    -TaskId $TaskId -RoundId $roundId -RunId $runId `
+                    -SourceCsvSha256 (Get-FileHash -LiteralPath (Join-Path $repositoryRoot 'DataTables/Localization/Localization.csv') -Algorithm SHA256).Hash `
+                    -ApprovalPath $fontApproval `
+                    -ExpectedStaticSha256 $report.postExitStaticCredential.sha256
+                $report.fontPublication = $fontPublication
+                $report.fontPublicationAction = $fontPublication.action
+                $report.fontAssetsPublished = [bool]$fontPublication.changed
+                $report.stages.Add([pscustomobject]@{
+                    name='Publish-Fonts';status='PASSED';action=$fontPublication.action
+                    backup=$fontPublication.backup;addedCodepoints=$fontPublication.addedCodepoints
+                })
+            }
+            catch {
+                $report.fontPublicationAction = 'FONT_FAILED'
+                $report.stages.Add([pscustomobject]@{name='Publish-Fonts';status='FAILED';reason=$_.Exception.Message})
+                throw
+            }
+        }
+    }
     $report.status = if ($PlanOnly) { 'PLANNED' } else { 'SUCCEEDED' }
     $report.runnerExitCode = 0
 }
 catch {
-    $report.status = 'FAILED'
+    $report.status = if ($report.fontPublicationAction -ceq 'FONT_FAILED') {'FONT_FAILED'} else {'FAILED'}
     $report.error = $_.Exception.Message
     $report.runnerExitCode = 1
     if ($_.Exception.Data.Contains('ExitCode')) {
@@ -356,4 +434,6 @@ finally {
     isolationRoot=$batchRoot; batchProcessExitCode=$report.batchProcessExitCode
     runnerExitCode=$report.runnerExitCode; published=$report.published
     publicationAction=$report.publicationAction; sourceProvenance=$report.sourceProvenance
+    fontBuildRequested=$report.fontBuildRequested; fontBuildCompleted=$report.fontBuildCompleted
+    fontAssetsPublished=$report.fontAssetsPublished; fontPublicationAction=$report.fontPublicationAction
 } | ConvertTo-Json -Depth 6

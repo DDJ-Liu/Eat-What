@@ -34,6 +34,7 @@ function Save-Json([string]$Path, $Value) {
     [System.IO.File]::WriteAllText($Path, (($Value | ConvertTo-Json -Depth 30) + [Environment]::NewLine), $utf8NoBom)
 }
 function Invoke-FixtureQueue([hashtable]$Arguments) {
+    if ($Arguments.Action -eq 'Status') { $Arguments.FullStatus = $true }
     if($Arguments.Action -eq 'Complete' -and -not $Arguments.AcceptancePath){
         $Arguments.AcceptancePath=Initialize-AcceptanceFixture $testWorkspace $Arguments.TaskId (Join-Path $repositoryRoot '.ai-workspace')
     }

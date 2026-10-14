@@ -1,7 +1,187 @@
 [CmdletBinding()]
-param()
+param([switch]$PackagePolicyOnly)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+if ($PackagePolicyOnly) {
+    # Compile the real package class against minimal Unity/Spine stubs and execute
+    # GetSkeletonData, rather than accepting a text-only policy sentinel.
+    $source = Get-Content -LiteralPath (Join-Path $root 'Assets/Spine/Runtime/spine-unity/Asset Types/SkeletonDataAsset.cs') -Raw
+    $stubs = @'
+namespace UnityEngine {
+    public class Object { public string name; }
+    public class ScriptableObject : Object {
+        public static T CreateInstance<T>() where T : ScriptableObject, new() { return new T(); }
+    }
+    public class TextAsset : Object {
+        public byte[] bytes;
+        public string text;
+        public TextAsset(byte[] content) { bytes = content; name = "skeleton.skel.bytes"; }
+    }
+    public class RuntimeAnimatorController : Object { }
+    public sealed class CreateAssetMenuAttribute : System.Attribute {
+        public string fileName, menuName;
+    }
+    public sealed class TooltipAttribute : System.Attribute {
+        public TooltipAttribute(string text) { }
+    }
+    public static class Debug {
+        public static readonly System.Collections.Generic.List<string> Errors = new System.Collections.Generic.List<string>();
+        public static readonly System.Collections.Generic.List<string> Warnings = new System.Collections.Generic.List<string>();
+        public static void LogError(string message, Object context) { Errors.Add(message); }
+        public static void LogWarning(string message, Object context) { Warnings.Add(message); }
+    }
+}
+namespace UnityEditor {
+    public static class AssetDatabase {
+        static readonly System.Collections.Generic.Dictionary<UnityEngine.Object,string> paths =
+            new System.Collections.Generic.Dictionary<UnityEngine.Object,string>();
+        static readonly System.Collections.Generic.Dictionary<string,string> guids =
+            new System.Collections.Generic.Dictionary<string,string>();
+        public static void Register(UnityEngine.Object asset, string path, string guid) {
+            paths[asset] = path; guids[path] = guid;
+        }
+        public static string GetAssetPath(UnityEngine.Object asset) {
+            string path; return asset != null && paths.TryGetValue(asset, out path) ? path : "";
+        }
+        public static string AssetPathToGUID(string path) {
+            string guid; return path != null && guids.TryGetValue(path, out guid) ? guid : "";
+        }
+    }
+}
+namespace Spine {
+    public class SkeletonData { }
+    public class AnimationStateData {
+        public float defaultMix;
+        public AnimationStateData(SkeletonData data) { }
+        public void SetMix(string from, string to, float duration) { }
+    }
+    public abstract class AttachmentLoader { }
+    public class SkeletonBinary {
+        public static string FailureMode = "legacy";
+        public float Scale;
+        public SkeletonBinary(AttachmentLoader loader) { }
+        public SkeletonData ReadSkeletonData(System.IO.Stream stream) {
+            if (FailureMode == "legacy")
+                throw new System.Exception("Unsupported skeleton data, please export with a newer version of Spine.");
+            if (FailureMode == "other")
+                throw new System.InvalidOperationException("other read error");
+            return new SkeletonData();
+        }
+    }
+    public class SkeletonJson {
+        public float Scale;
+        public SkeletonJson(AttachmentLoader loader) { }
+        public SkeletonData ReadSkeletonData(System.IO.TextReader input) { return new SkeletonData(); }
+    }
+}
+namespace Spine.Unity {
+    public class Atlas { }
+    public class AtlasAssetBase : UnityEngine.Object { public Atlas GetAtlas() { return new Atlas(); } }
+    public class RegionlessAttachmentLoader : Spine.AttachmentLoader { }
+    public class AtlasAttachmentLoader : Spine.AttachmentLoader {
+        public AtlasAttachmentLoader(Atlas[] atlases) { }
+    }
+    public class BlendModeMaterials {
+        public void ApplyMaterials(Spine.SkeletonData data) { }
+    }
+    public class SkeletonDataModifierAsset : UnityEngine.Object {
+        public void Apply(Spine.SkeletonData data) { }
+    }
+    public class BlendModeMaterialsAsset : SkeletonDataModifierAsset { }
+    public sealed class SpineAnimationAttribute : System.Attribute {
+        public SpineAnimationAttribute(bool includeNone = false) { }
+    }
+    public static class SkeletonDataCompatibility {
+        public static int Calls;
+        public class VersionInfo { }
+        public class CompatibilityProblemInfo {
+            public string DescriptionString() { return ""; }
+        }
+        public static VersionInfo GetVersionInfo(UnityEngine.TextAsset asset,
+                out bool isSpineSkeletonData, ref string problemDescription) {
+            Calls++;
+            isSpineSkeletonData = true; return new VersionInfo();
+        }
+        public static CompatibilityProblemInfo GetCompatibilityProblemInfo(VersionInfo version) {
+            return Spine.SkeletonBinary.FailureMode == "legacy" ? new CompatibilityProblemInfo() : null;
+        }
+        public static void DisplayCompatibilityProblem(string description, UnityEngine.TextAsset asset) {
+            UnityEngine.Debug.LogError("compatibility mismatch", asset);
+        }
+    }
+}
+'@
+    [void](Add-Type -TypeDefinition ("#define UNITY_EDITOR" + [Environment]::NewLine + $source + [Environment]::NewLine + $stubs) -PassThru -ErrorAction Stop)
+    $checks = [Collections.Generic.List[string]]::new()
+    function PackageCheck([bool]$condition, [string]$name) {
+        if (-not $condition) { throw "FAILED: $name" }
+        $checks.Add($name)
+    }
+    $pairs = @(
+        @{ Name='Sample'; Sda='Assets/Scripts/Spine_Package/Avatars/Sample/skeleton_SkeletonData.asset'; SdaGuid='b44f69c59d41b8448942bd20920ffb8a'; Skeleton='Assets/Scripts/Spine_Package/Avatars/Sample/skeleton.skel.bytes'; SkeletonGuid='7764269dc898db247a75bd6f02049a17' },
+        @{ Name='output4'; Sda='Assets/Scripts/Spine_Package/Avatars/output4/O4.asset'; SdaGuid='4981ec59fd746bc44beb05b0f301e347'; Skeleton='Assets/Scripts/Spine_Package/Avatars/output4/skeleton.skel.bytes'; SkeletonGuid='f49b23c262dd6754caa700f55fe7c879' }
+    )
+    foreach ($pair in $pairs) {
+        $initialErrors = [UnityEngine.Debug]::Errors.Count
+        $initialWarnings = [UnityEngine.Debug]::Warnings.Count
+        $initialCompatibilityCalls = [Spine.Unity.SkeletonDataCompatibility]::Calls
+        $bytes = [IO.File]::ReadAllBytes((Join-Path $root $pair.Skeleton))
+        $sourceAsset = [UnityEngine.TextAsset]::new($bytes)
+        $asset = [Spine.Unity.SkeletonDataAsset]::new()
+        $asset.skeletonJSON = $sourceAsset
+        [UnityEditor.AssetDatabase]::Register($sourceAsset, $pair.Skeleton, $pair.SkeletonGuid)
+        [UnityEditor.AssetDatabase]::Register($asset, $pair.Sda, $pair.SdaGuid)
+        [Spine.SkeletonBinary]::FailureMode = 'legacy'
+        PackageCheck ($null -eq $asset.GetSkeletonData($true) -and $asset.WasApprovedLegacyLoadFailure -and
+            -not $asset.IsLoaded) "$($pair.Name): exact exception and identity still return null"
+        $asset.LogApprovedLegacyLoadFailureOnce()
+        $asset.GetSkeletonData($false) | Out-Null
+        PackageCheck ([UnityEngine.Debug]::Warnings.Count -eq ($initialWarnings + 1) -and
+            [UnityEngine.Debug]::Errors.Count -eq $initialErrors) "$($pair.Name): duplicate quiet/nonquiet hint is deduplicated"
+        PackageCheck ([Spine.Unity.SkeletonDataCompatibility]::Calls -eq $initialCompatibilityCalls) "$($pair.Name): approved exception skips duplicate compatibility Error"
+        $asset.Clear()
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure) "$($pair.Name): Clear resets approval"
+
+        [UnityEditor.AssetDatabase]::Register($asset, $pair.Sda, ('0' * 32))
+        $asset.GetSkeletonData($true) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure) "$($pair.Name): GUID drift rejects"
+        [UnityEditor.AssetDatabase]::Register($asset, ($pair.Sda + '.copy'), $pair.SdaGuid)
+        $asset.GetSkeletonData($true) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure) "$($pair.Name): path drift rejects"
+        [UnityEditor.AssetDatabase]::Register($asset, $pair.Sda, $pair.SdaGuid)
+        [UnityEditor.AssetDatabase]::Register($sourceAsset, $pair.Skeleton, ('0' * 32))
+        $asset.GetSkeletonData($true) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure) "$($pair.Name): skeleton GUID drift rejects"
+        [UnityEditor.AssetDatabase]::Register($sourceAsset, ($pair.Skeleton + '.copy'), $pair.SkeletonGuid)
+        $asset.GetSkeletonData($true) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure) "$($pair.Name): skeleton path drift rejects"
+        [UnityEditor.AssetDatabase]::Register($sourceAsset, $pair.Skeleton, $pair.SkeletonGuid)
+        $sourceAsset.bytes = [byte[]]::new($bytes.Length)
+        $asset.GetSkeletonData($true) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure) "$($pair.Name): payload drift rejects"
+        $sourceAsset.bytes = $bytes
+        [Spine.SkeletonBinary]::FailureMode = 'other'
+        $asset.GetSkeletonData($false) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure -and
+            [UnityEngine.Debug]::Errors.Count -eq ($initialErrors + 1)) "$($pair.Name): new read error remains Error"
+        PackageCheck ([Spine.Unity.SkeletonDataCompatibility]::Calls -gt $initialCompatibilityCalls) "$($pair.Name): unknown failure retains compatibility check"
+        [Spine.SkeletonBinary]::FailureMode = 'success'
+        PackageCheck ($null -ne $asset.GetSkeletonData($true) -and -not $asset.WasApprovedLegacyLoadFailure -and
+            $asset.IsLoaded) "$($pair.Name): subsequent success resets rejection state"
+        $asset.Clear()
+        $asset.skeletonJSON = $null
+        $asset.GetSkeletonData($false) | Out-Null
+        PackageCheck (-not $asset.WasApprovedLegacyLoadFailure -and -not $asset.IsLoaded) "$($pair.Name): missing source cannot reuse prior approval"
+    }
+    $versionSource = Get-Content -LiteralPath (Join-Path $root 'Assets/Spine/Runtime/spine-csharp/SkeletonBinary.cs') -Raw
+    PackageCheck ($versionSource.Contains('if ("3.8.75" == skeletonData.version)') -and
+        $versionSource.Contains('throw new Exception("Unsupported skeleton data, please export with a newer version of Spine.")')) 'production 3.8.75 rejection is retained'
+    $bakerSource = Get-Content -LiteralPath (Join-Path $root 'Assets/Spine/Editor/spine-unity/Editor/Windows/SkeletonBaker.cs') -Raw
+    PackageCheck ($bakerSource.Contains('if (skeletonDataAsset.WasApprovedLegacyLoadFailure)') -and
+        $bakerSource.Contains('Debug.LogError("SkeletonData loading failed! [DATA_SPINE_LOAD_FAILURE')) 'Baker preserves unknown Error branch'
+    [pscustomobject]@{ result='PASS'; mode='PackagePolicyOnly'; checkCount=$checks.Count; checks=@($checks); unityStarted=$false; productionWritten=$false; compiler='PowerShell Add-Type with stubs, not Unity DLL' } | ConvertTo-Json -Depth 5
+    return
+}
 . (Join-Path $PSScriptRoot 'DataPipeline.Common.ps1')
 $approvalPath = Join-Path $root '.ai-workspace/inputs/U1-R1-20260924/Spine遗留例外_批准资产指纹.json'
 $approval = Get-Content -LiteralPath $approvalPath -Raw | ConvertFrom-Json

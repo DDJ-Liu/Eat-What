@@ -1,0 +1,10 @@
+{
+  "scope": "本批及以后所有SUPERVISED任务：向当次session绑定控制台发送一次结算通知。不是新的业务范围、失败重试、人工验收或自动恢复监管授权。",
+  "source": "direct-human-user",
+  "userQuote": "本批结算时发送通知，除此之外，在监管模式中的以后所有的任务安排都应该在任务结算时立即发送通知回传，而非仅本次的临时规则。将其固化为监管模式的硬性规则",
+  "revocable": true,
+  "schemaVersion": 1,
+  "sourceThreadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+  "receivedAt": "2026-10-14T18:23:40.3070319+08:00",
+  "question": "是否授权固定CODE、DATA、ENGINE chat在Complete／Fail／Yield后向本控制台发送一次结算通知？"
+}

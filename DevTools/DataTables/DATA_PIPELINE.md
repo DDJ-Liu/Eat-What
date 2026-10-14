@@ -1,5 +1,17 @@
 # DATA 隔离导表管线
 
+## 2026-10-14 AI-000241 退出后字体发布合同（DATA 工具；生产仍待原 AI-000235）
+
+本次隔离 Unity 进程退出并确认当前 runId/nonce、导入成功后，Runner 对 Static 目标文件作有界长度/mtime 稳定观察，再从磁盘计算发布凭据。批内 manifest/完成凭据的字体 SHA 是历史结果，不作发布 SHA。事务用批准 manifest 旧 Static SHA 保护 live 原值，用退出后的凭据核本次 Static 候选；授权发布才更新批准 manifest 和 run/round、前后字数/码点、旧新 Static SHA 审计。Dynamic 不比较或更新 SHA 发布合同，正常路径直接复制本次已清空候选，以前后 glyph 数和最终 0 验证；路径/meta/本地身份、长度/mtime 并发检查、备份与保守回滚仍保留，仅异常回滚为防覆盖陌生改动做必要字节核对。当前 T9 仅 AI-000235 携精确选项 A 文件可在 CurrentCsvValidation 下加 -Publish；此时只运行字体事务，Generated 始终不发布。无批准的 CurrentCsv -Publish 拒绝；正常 DONE 轮的 Generated→字体顺序不变。AI-000241 只跑 Test-BatchImport.ps1 -FontTransactionOnly，不运行 Unity 或生产发布；原 AI-000235 两次失败留存。
+
+## 2026-10-14 AI-000234 字体联动接口（历史接口，以上述新合同为准）
+
+同一隔离 ImportAllBatch 先验证/生成 catalog，再按默认开启的 -RebuildStaticFont 调用现有 ShortCycleFontAtlasBuilder.BuildAll 一次；传 -RebuildStaticFont:$false 时明确不构建字体。DATA 导入有效与字体构建分别记入完成凭据。字体失败不撤销已成功的 Generated 发布，报告状态为 FONT_FAILED、退出非零并保留诊断；不能把数据成功或字体失败合并成整体成功。没有新增第二个 Unity 验证进程。
+
+正常 DONE 轮的 -Publish 先使用既有 Generated 事务，再独立发布 Static/Dynamic 和 manifest。字体事务只核授权文件、当前 Localization.csv、候选/现场目标字节与 meta、既有本地 fileID 和字符并集；字符集无新增且 Dynamic 无变化则 NO_CHANGES，不写 Static/manifest、不建备份。实际变化时备份到 DevTools/Fonts/backup/<轮次>/<运行ID>/，新 manifest 保留 STATIC_ONLY/APPROVED hook 合同，并写 taskId、roundId、批准文件路径及 SHA、源 CSV SHA、前后字数、新码点和新 Static SHA。中途失败仅回滚本字体事务已写且未发生陌生漂移的目标，不回滚 Generated；陌生漂移保全并报告。脚本不跳过 pre-commit hook，也不代替提交前核验。
+
+当前 T9 的 AI-000235 若无匹配 DONE 轮，只能使用 -CurrentCsvValidation -ValidationSource <明确来源> -TaskId AI-000235 -FontPublishApprovalPath .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_选项A授权.md -UnityPath <Unity6000.3.24f1路径>。该精确授权只允许字体发布；CurrentCsvValidation 的 -Publish 仍拒绝，xlsx、CSV 与 Generated 不发布。执行前处理主 Editor 刷新/文件句柄：确认主 Editor 没有待保存/未知 dirty，停止可能持有目标文件的外部写入，取得同一物理 DATA 锁后只启动现有隔离 batch；返回后再由 ENGINE 在主 Editor 作一次原生验证。本节是 CODE 离线工具契约，不表示 AI-000235 已执行或资源/视觉已验收。下方旧时点的“字体一律不发布”描述仅作为历史记录。
+
 2026-10-05 AI199 CODE 有符号身份修复（未运行 Unity/发布）：dependencyProof schemaVersion 2 的主对象 localFileId、共享 Sprite localFileId 与 textureLocalFileId 均为完整有符号 Int64；非零正负值原样保留，零、缺失、非整数类型、溢出、主子重复及纹理归属/GUID不符拒绝。生产 C# 取 Unity 返回的 long，不转换为 int32、浮点或绝对值；PowerShell 共用校验器仅接收可表示的整数类型，防止隐式截断。Test-NativeRootProof 在隔离夹具调用实际生产 C# 与 PowerShell，以当前资产 Sprite ID -6724980738021171820、纹理 ID 2800000 做 JSON 完整往返及反例；离线通过不代签原 AI194 新一轮真实 Unity 依赖证明或发布。本节不提升下方完整核对日期。
 
 2026-10-05 AI198 CODE 根类型合同修复（未运行 Unity/发布）：同一生产 BuildBatchDependencyProof 对生成目录全部 .asset 仍逐一列根，并调用真实 Unity GetDependencies(..., true) 覆盖递归闭包。根证据 schemaVersion 2 新增主对象 localFileId 和子资产身份；通常每根必须是单对象 ScriptableObject。唯一精确例外为注册路径 Shared/CK01-MissingSpriteTexture.asset：主对象须为具名 Texture2D，且恰有一个具名 Sprite 子对象；二者 GUID/本地文件 ID 稳定、Sprite.texture 必须指向该主纹理。主与子对象均扫描断裂序列化引用，未知子对象、派生 AnimationReferenceAsset/SkeletonDataAsset、缺文件或 meta 拒绝。PowerShell 同轮验证凭证的根/子对象结构、GUID/meta、完整候选清单与哈希、runId/nonce/源快照；AI197 ExpectedStagedHash 发布绑定未变。编辑器外 Test-NativeRootProof 调实际生产 C# 私有证明方法和共用校验器做正反例，旧 Spine 与发布事务回归仍需保持；原 AI194 必须由 DATA 新 Unity 无 Publish/审定后独立 Publish 验证，此处不代签。本节不提升下方完整核对日期。
@@ -102,7 +114,7 @@ pwsh -NoProfile -File DevTools/DataTables/Run-DataPipeline.ps1 `
 - `unity-batch.log`：真实 Unity 运行时才生成，失败含 `[DATA] BATCH_IMPORT_FAILED`；
 - `generated-diff.json`、`generated-catalog.json`；
 - 当前空diff序列不会创建对应diff JSON（AI164已留非阻碍WARNING）；零差异计数读取 `data-pipeline-report.json` 的Diff-Catalog-Glyphs-Fonts阶段，并可对完整generated-catalog清单独立比对，不把缺文件本身当成零差异证明。
-- `font-diff.json`：隔离字体资产前后差异；字体不随生成物事务发布；
+- `font-diff.json`：隔离字体资产前后差异；AI-000234 后字体经独立事务及明确授权才可发布，不与 Generated 共用回滚组；
 - `glyph-list.txt`：由 `DataTableCsvParser` 与字体Builder同语义解析 `Localization.csv/zh_cn` 后写出的 Unicode 码点清单；字形数按本轮实际内容核对，不沿用旧轮次的238或 PowerShell `Import-Csv` 对带引号多行字段的计数；
 - `validation/`：Quick 校验报告；正常发布时另有 `backup/generated-before/`。
 

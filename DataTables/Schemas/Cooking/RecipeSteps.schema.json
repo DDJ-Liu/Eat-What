@@ -11,8 +11,8 @@
     { "name": "recipe_id", "csvColumn": "recipe_id", "type": "ref", "required": true },
     { "name": "next_step_id", "csvColumn": "next_step_id", "type": "ref", "required": false },
     { "name": "display_text_key", "csvColumn": "display_text_key", "type": "loc_key", "required": true, "pattern": "^[a-z][a-z0-9_.]+$" },
-    { "name": "standard_ingredients", "csvColumn": "standard_ingredients", "type": "list<ref>", "separator": ";", "required": false },
-    { "name": "standard_tools", "csvColumn": "standard_tools", "type": "list<ref>", "separator": ";", "required": false },
+    { "name": "standard_ingredients", "csvColumn": "standard_ingredients", "type": "list<ref>", "separator": ";", "required": false, "description": "标准步骤展示食材；可引用 Items 中任意 item_kind（raw/product/staple），分号分隔。" },
+    { "name": "standard_tools", "csvColumn": "standard_tools", "type": "list<ref>", "separator": ";", "required": false, "description": "标准步骤展示工具；引用 Tools.tool_id，分号分隔。" },
     { "name": "trigger_items", "csvColumn": "trigger_items", "type": "list<ref>", "separator": ";", "required": true, "minItems": 1 },
     { "name": "permanent_trigger_items", "csvColumn": "permanent_trigger_items", "type": "list<ref>", "separator": ";", "required": false },
     { "name": "comment", "csvColumn": "comment", "type": "string", "required": false }

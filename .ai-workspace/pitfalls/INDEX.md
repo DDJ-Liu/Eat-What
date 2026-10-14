@@ -4,6 +4,7 @@
 
 | 编号 | 一句话 | 车道 | 正文 |
 | --- | --- | --- | --- |
+| P-051 | Unity 资产 SHA 凭据取 Editor 退出后稳定磁盘；字体 Dynamic 按空 glyph 验收 | [DATA/CODE] | [CODE](CODE.md#p-051-unity-font-post-exit) |
 | P-049 | PowerShell JSON 日期自动转换丢 UTC，须保留显式时区 | [CODE] | [CODE](CODE.md#p-049-code-utc-json) |
 | P-048 | Prefab源批准不自动覆盖映射外继承传播，字体与atlas材质须配对核对 | [CODE/ENGINE_MCP/控制端] | [CODE](CODE.md#p-048-prefab-scope) |
 | P-043 | 临时dirty的归属与验证收尾必须随任务建立 | [ENGINE_MCP/控制端] | [ENGINE_MCP](ENGINE.md#p-043-engine-mcp-控制端) / [设计端与控制端](DESIGN.md#p-043-engine-mcp-控制端) |

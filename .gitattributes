@@ -27,3 +27,6 @@ DevTools/GitHooks/*.sh text eol=lf
 LocalPackages/com.coplaydev.unity-mcp/** -text
 DevTools/MCP/ServerBaseline/** -text
 DevTools/MCP/Coplay.LICENSE -text
+
+# Approval manifest is byte-compared by the font hook; preserve publication bytes.
+DevTools/Fonts/ShortCycleFontBuildManifest.json -text whitespace=trailing-space,space-before-tab,cr-at-eol

@@ -35,10 +35,17 @@ try {
     Check ($null -eq $first.summary.byLanePhase[0].inputTokens) 'unknown provider tokens remain null'
     Check ($first.metadata.missingDates.Count -eq 5 -and $first.metadata.observedDates.Count -eq 2) 'missing dates explicit rather than fabricated zero consumption'
     Check (-not $first.metadata.isBackfill) 'on-time run identified correctly'
+    $reportBytes=[IO.File]::ReadAllBytes((Join-Path $weekPath 'report.md'))
     $hash = (Get-FileHash -LiteralPath (Join-Path $weekPath 'report.md')).Hash
     $again = Invoke-Report '2026-09-30T10:00:00+08:00'
     Check ($again.created.Count -eq 0) 'same-day repeat produces no duplicate'
+    Check ($again.sourceScan -eq 'SKIPPED_ALREADY_PUBLISHED') 'published same-day check skips full usage JSONL scan'
     Check ((Get-FileHash -LiteralPath (Join-Path $weekPath 'report.md')).Hash -eq $hash) 'repeat preserves completed report bytes'
+    $badRuntime=Join-Path $testRoot 'corrupt-unused-runtime'
+    [void][IO.Directory]::CreateDirectory($badRuntime)
+    [IO.File]::WriteAllText((Join-Path $badRuntime 'usage-202609.jsonl'),'{invalid json',[Text.UTF8Encoding]::new($false))
+    $skipBadSource=& $runner -Now ([DateTimeOffset]::Parse('2026-09-30T11:00:00+08:00')) -RuntimeRoot $badRuntime -OutputRoot $output | ConvertFrom-Json -DateKind String
+    Check ($skipBadSource.sourceScan -eq 'SKIPPED_ALREADY_PUBLISHED') 'not-due check does not parse corrupt unrelated source'
     $catchupRoot = Join-Path $testRoot 'catchup'
     $catchup = Invoke-Report '2026-10-07T00:00:00+08:00' $catchupRoot
     Check (@($catchup.created | Where-Object kind -eq weekly).Count -eq 2) 'resume creates all missed weekly reports'
@@ -55,9 +62,16 @@ try {
     Check ($emptyEvidence.summary.recordCount -eq 0 -and $emptyEvidence.metadata.missingDates.Count -eq 7) 'empty source produces explicit coverage-only report'
     [IO.File]::AppendAllText((Join-Path $weekPath 'report.md'), 'external change')
     $rejected = $false
+    try { Invoke-Report '2026-09-30T12:00:00+08:00' | Out-Null } catch { $rejected = $true }
+    Check $rejected 'same-day changed published report is detected without source scan'
+    $rejected = $false
     try { Invoke-Report '2026-10-04T00:00:00+08:00' | Out-Null } catch { $rejected = $true }
     Check $rejected 'modified report rejected rather than silently overwritten or treated as complete'
     Check ((Get-Content -LiteralPath (Join-Path $weekPath 'report.md') -Raw).EndsWith('external change')) 'unknown output retained'
+    [IO.File]::WriteAllBytes((Join-Path $weekPath 'report.md'),$reportBytes)
+    $recovered=Invoke-Report '2026-09-30T13:00:00+08:00'
+    Check ($recovered.sourceScan -eq 'SKIPPED_ALREADY_PUBLISHED' -and
+        (Get-FileHash -LiteralPath (Join-Path $weekPath 'report.md')).Hash -eq $hash) 'restored published report revalidates without source scan'
     $badOutput = Join-Path $testRoot 'partial'
     [void][IO.Directory]::CreateDirectory((Join-Path $badOutput 'weekly/2026-09-21_2026-09-27'))
     $rejected = $false

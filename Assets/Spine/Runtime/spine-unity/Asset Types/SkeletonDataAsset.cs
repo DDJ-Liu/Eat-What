@@ -73,6 +73,55 @@ namespace Spine.Unity {
 		SkeletonData skeletonData;
 		AnimationStateData stateData;
 
+		#if UNITY_EDITOR
+		// This is per load attempt, not a serialized or persistent exemption.
+		public bool WasApprovedLegacyLoadFailure { get; private set; }
+		static readonly HashSet<string> reportedLegacyFailures = new HashSet<string>(StringComparer.Ordinal);
+		const string LegacyVersionError = "Unsupported skeleton data, please export with a newer version of Spine.";
+
+		internal static bool IsApprovedLegacyLoadFailure (Exception error, string sdaPath, string sdaGuid,
+				string skeletonPath, string skeletonGuid, byte[] skeletonBytes) {
+			if (error == null || error.GetType() != typeof(Exception) ||
+					!string.Equals(error.Message, LegacyVersionError, StringComparison.Ordinal) ||
+					error.TargetSite == null || error.TargetSite.DeclaringType != typeof(SkeletonBinary) ||
+					!string.Equals(error.TargetSite.Name, "ReadSkeletonData", StringComparison.Ordinal) ||
+					skeletonBytes == null)
+				return false;
+
+			string expectedHash = null;
+			if (string.Equals(sdaPath, "Assets/Scripts/Spine_Package/Avatars/Sample/skeleton_SkeletonData.asset", StringComparison.Ordinal) &&
+					string.Equals(sdaGuid, "b44f69c59d41b8448942bd20920ffb8a", StringComparison.Ordinal) &&
+					string.Equals(skeletonPath, "Assets/Scripts/Spine_Package/Avatars/Sample/skeleton.skel.bytes", StringComparison.Ordinal) &&
+					string.Equals(skeletonGuid, "7764269dc898db247a75bd6f02049a17", StringComparison.Ordinal))
+				expectedHash = "372CE586F080B9209C97082274331AEC97EFC53F0FE66D5013002E2FBE1CB584";
+			else if (string.Equals(sdaPath, "Assets/Scripts/Spine_Package/Avatars/output4/O4.asset", StringComparison.Ordinal) &&
+					string.Equals(sdaGuid, "4981ec59fd746bc44beb05b0f301e347", StringComparison.Ordinal) &&
+					string.Equals(skeletonPath, "Assets/Scripts/Spine_Package/Avatars/output4/skeleton.skel.bytes", StringComparison.Ordinal) &&
+					string.Equals(skeletonGuid, "f49b23c262dd6754caa700f55fe7c879", StringComparison.Ordinal))
+				expectedHash = "BC664067245D1E010BB4746672821BDAE1D82E367DA3EDBA72C759663747730E";
+
+			if (expectedHash == null)
+				return false;
+			// Hash only an exceptional, exactly identified source; a changed payload fails closed.
+			using (var sha = System.Security.Cryptography.SHA256.Create()) {
+				string actualHash = BitConverter.ToString(sha.ComputeHash(skeletonBytes)).Replace("-", "");
+				return string.Equals(actualHash, expectedHash, StringComparison.Ordinal);
+			}
+		}
+
+		public void LogApprovedLegacyLoadFailureOnce () {
+			if (!WasApprovedLegacyLoadFailure)
+				return;
+			string sdaPath = UnityEditor.AssetDatabase.GetAssetPath(this);
+			string skeletonPath = UnityEditor.AssetDatabase.GetAssetPath(skeletonJSON);
+			string identity = UnityEditor.AssetDatabase.AssetPathToGUID(sdaPath) + ":" +
+				UnityEditor.AssetDatabase.AssetPathToGUID(skeletonPath);
+			if (reportedLegacyFailures.Add(identity))
+				Debug.LogWarning("Known legacy Spine 3.8.75 skeleton remains unsupported " +
+					"[SPINE_LEGACY_3_8_75 sdaPath=" + sdaPath + " skeletonPath=" + skeletonPath + "]", this);
+		}
+		#endif
+
 		#region Runtime Instantiation
 		/// <summary>
 		/// Creates a runtime SkeletonDataAsset.</summary>
@@ -100,6 +149,9 @@ namespace Spine.Unity {
 		public void Clear () {
 			skeletonData = null;
 			stateData = null;
+			#if UNITY_EDITOR
+			WasApprovedLegacyLoadFailure = false;
+			#endif
 		}
 
 		public AnimationStateData GetAnimationStateData () {
@@ -111,6 +163,9 @@ namespace Spine.Unity {
 
 		/// <summary>Loads, caches and returns the SkeletonData from the skeleton data file. Returns the cached SkeletonData after the first time it is called. Pass false to prevent direct errors from being logged.</summary>
 		public SkeletonData GetSkeletonData (bool quiet) {
+			#if UNITY_EDITOR
+			WasApprovedLegacyLoadFailure = false;
+			#endif
 			if (skeletonJSON == null) {
 				if (!quiet)
 					Debug.LogError("Skeleton JSON file not set for SkeletonData asset: " + name, this);
@@ -172,12 +227,24 @@ namespace Spine.Unity {
 				else
 					loadedSkeletonData = SkeletonDataAsset.ReadSkeletonData(skeletonJSON.text, attachmentLoader, skeletonDataScale);
 			} catch (Exception ex) {
+				#if UNITY_EDITOR
+				if (hasBinaryExtension) {
+					string sdaPath = UnityEditor.AssetDatabase.GetAssetPath(this);
+					string skeletonPath = UnityEditor.AssetDatabase.GetAssetPath(skeletonJSON);
+					WasApprovedLegacyLoadFailure = IsApprovedLegacyLoadFailure(ex, sdaPath,
+						UnityEditor.AssetDatabase.AssetPathToGUID(sdaPath), skeletonPath,
+						UnityEditor.AssetDatabase.AssetPathToGUID(skeletonPath), skeletonJSON.bytes);
+				}
+				if (!quiet && WasApprovedLegacyLoadFailure)
+					LogApprovedLegacyLoadFailureOnce();
+				else
+				#endif
 				if (!quiet)
 					Debug.LogError("Error reading skeleton JSON file for SkeletonData asset: " + name + "\n" + ex.Message + "\n" + ex.StackTrace, skeletonJSON);
 			}
 
 			#if UNITY_EDITOR
-			if (loadedSkeletonData == null && !quiet && skeletonJSON != null) {
+			if (loadedSkeletonData == null && !quiet && skeletonJSON != null && !WasApprovedLegacyLoadFailure) {
 				string problemDescription = null;
 				bool isSpineSkeletonData;
 				SkeletonDataCompatibility.VersionInfo fileVersion = SkeletonDataCompatibility.GetVersionInfo(skeletonJSON, out isSpineSkeletonData, ref problemDescription);

@@ -83,6 +83,10 @@ namespace Spine.Unity.Editor {
 		public static void GenerateMecanimAnimationClips (SkeletonDataAsset skeletonDataAsset) {
 			var data = skeletonDataAsset.GetSkeletonData(true);
 			if (data == null) {
+				if (skeletonDataAsset.WasApprovedLegacyLoadFailure) {
+					skeletonDataAsset.LogApprovedLegacyLoadFailureOnce();
+					return;
+				}
 				// Attribute the error at its source. The DATA runner validates these identities
 				// against its approved file fingerprints; nearby import log lines are not evidence.
 				string assetPath = AssetDatabase.GetAssetPath(skeletonDataAsset);

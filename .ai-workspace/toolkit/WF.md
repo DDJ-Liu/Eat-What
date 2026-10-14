@@ -38,6 +38,10 @@ $scope = '{"paths":["Assets/Prefabs/Example.prefab"],"operations":["bind"]}'
 | TK-WF-02 | `.ai-workspace/queue.ps1` DATA API；`DevTools/DataTables/DataRound.Common.ps1`、`DataPipeline.Common.ps1`、`Run-DataPipeline.ps1` | DATA 注册、可见线程状态/原子绑定、route-key 票据防串线、U1 DONE 轮次幂等消费、共享锁、隔离 batch、明确GUI进程等待与当前run完成凭据、源/目标/完整复制范围快照冲突门和保全式回滚发布 | 沿用 | AI-000160/163/164/166/174；注册/绑定/重分类/消费仅控制端；绑定前需应用可达/闲置证据，绑定后无效路由拒绝回退；当前CSV验证模式强制不发布且不伪造DONE；隔离 batch 接 PRE-1 字体构建但字体不进入生成物事务；AI164正常宿主两真实用例0/1差异及独立nonce已通过；DATA/ENGINE 共享全程锁；不提交 |
 | TK-WF-03 | `DevTools/Workflow/UsageMetrics.ps1`、`Initialize-TaskUsage.ps1`、`Invoke-TaskTool.ps1`、`Get-UsageReport.ps1`、`Invoke-UsageReporting.ps1`；`DevTools/Verify-All.ps1` | 任务生命周期真实/缺失用量 JSONL、可选工具包装、日/周聚合与按 profile 的统一验证入口 | 沿用 | AI-000157/173；不建第二队列，不估算 token/容量；`runtime/usage-YYYYMM.jsonl` 只追加；离线测试必须传临时 RuntimeRoot/StateRoot；Final 默认两次，超限留原因；子runner固定正常PS7 `-NoProfile -File`，不传ExecutionPolicy绕过参数 |
 
+2026-10-14 GOV-04 扩展既有 TK-WF-03/04：Get-ThreadContext 只读线程最近精确 provider 响应 inputTokens，或对显式 fresh 字节给出标记的粗估；缺源 null。queue Poll/Complete 各记一次 contextTokens/contextSource，Complete 回执附 NONE/ADVISE/STRONG；RecordSupervisionHeartbeatContext 仅活跃控制台心跳、每 heartbeatId 一次，get_usage_limits 原始引用属全账号快照而非任务账单。Get-UsageReport 分 role/source 报上下文覆盖和 STRONG；WATCH CONTEXT_HIGH 仅阈值转入时入箱，不自动重载或 Yield。定向夹具 Test-ContextWarning；不重发旧周报。
+
+2026-10-14 GOV-05 继续扩充既有 TK-WF-03/04：Enqueue必填S/M/L，预算由40/80/120派生；ReviseInstruction可正式补登记QUEUED旧卡，已运行旧卡按原规划来源兼容Complete，历史完成不回填。Complete记录四类空转、真实app turn去重比例及超额说明；未知null+原因，预算不改变GOV-02门。Get-UsageReport分级汇总真实覆盖、均值、超额和缺失。定向夹具Test-TaskTier，不建新TK、不进独立Final。
+
 2026-09-17：增加阶段归档工具；配表v1.2兼容夹具固定到DevTools/DataTables/Fixtures，AI65历史审计改为按需提取图证。完整旧登记表在阶段ZIP中，所有原有TK编号及当前能力表保留。
 
 TK-WF-04（PRE-5b）：DevTools/Workflow/watch.ps1、Manage-WatchHost.ps1、Compare-Acceptance.ps1、Import-ProviderUsage.ps1、Import-CoplayUsage.ps1、Summarize-CoplayLog.ps1 与队列修复预算门。WATCH 只观察、不领取；单轮或5分钟宿主定时，持久增量 inbox 与单批次适配器回执；桌面事件唤醒尚无正式接口，部署由控制台负责。Complete 强制预声明机器验收，根修复跨模式最多2轮；provider仅精确关联真实事件，Coplay无日志为null。隔离夹具见 Test-Watch/Test-Acceptance/Test-RepairBudget/Test-CoplayUsage。
@@ -63,6 +67,8 @@ TK-WF-04 回传修复（2026-10-05）：`Manage-SupervisionHandoff.ps1` 的 Prep
 
 AI208扩展TK-WF-03/04：queue.ps1 Sync-TaskTurnGate累计120软限/240临时保护/30分钟无实际进度；WorkCompleted证据SHA去重，观察不刷新计时。RejectVerification绑定原结果，ResolveControlRejection绑定完成修复与独立证据；取消scope不改成功。Test-TurnSoftRepair及Test-ControlCompletedReview纳入Workflow，保留UTC/预算/回传回归；正式硬限待瘦身后两周实测。旧AI201的120硬停为历史实现，已被本合同替代；其REJECTED历史保留，2026-10-05 20:39经独立控制复核后正式ResolveControlRejection解决本次阻断。
 
+GOV-02 补齐软限实际链路：queue.ps1 WriteHandoff/CheckManagedTool、supervised.ps1 Yield/SHA接棒、Invoke-TaskTool调用前门禁、WATCH HANDOFF_STALLED/TURN_LIMIT路径；在固定职能chat接棒并保留累计历史。只覆盖受管入口；既有Test-TurnSoftRepair/Test-Pre5c/Test-Watch隔离夹具承担边界回归，不新增专用续行入口。
+
 TK-WF-04 2026-10-06：ResumeApprovedTask + approved-resume.ps1 为原ENGINE/DATA失败任务提供一次证据绑定的获批续行，卡/恢复配对预算与失败历史不变；Test-ApprovedResume纳入Workflow。不是自动重试、不是清失败/人工签收。
 
 2026-10-06 原只读诊断补验续行：ResumeApprovedTask 另接 APPROVED_VALIDATION_RESUME，仅对同根 ENGINE/DATA 的一次 TOOL_UNAVAILABLE 只读诊断中断；需人类续行原话、独立环境/编译/清理方案证据、全部失败史/原修复结果/源码与全序列化快照 SHA、fresh idle 与同 session/route 绑定。一次凭证只续原卡，保留 attempt/maxAttempts/错误/人工gate，不另占修复slot。只有该补验实际完成且独立 VERIFIED、凭证已消费且失败史未变，才可在根生产恢复时排除这条工具中断的时间屏障；原错误仍永久保留，新生产/验收失败不豁免。实现 .ai-workspace/approved-resume.ps1，真实 queue 回归 DevTools/Workflow/Test-ApprovedResume.ps1；不替代生产写阶段或用户清理。
@@ -73,3 +79,7 @@ TK-WF-04 2026-10-06：ResumeApprovedTask + approved-resume.ps1 为原ENGINE/DATA
 2026-10-09 TK-WF-04：原AI217探针场景一次补验入口及220项queue回归，保留全部失败/预算；边界见完整监管协议同日节。
 
 2026-10-09：已批准Static恢复/恢复后只读预检入口与49项回归见 protocol/SUPERVISED_FULL.md 最新节、DevTools/Workflow/Test-ApprovedRestore.ps1；保持同根修复预算。
+
+2026-10-14 AI-000230（TK-WF-03/04）：`Status`默认≤2 KiB摘要、TaskId/闭区间过滤与显式`-FullStatus`；旧全文消费者显式请求。`Verify-All`只对逐runner声明闭合依赖且无外部副作用的schemaVersion=2清单做同任务成功复用，最近失败/未知依赖/前后漂移均执行；默认无清单执行，Custom受影响runner优先于整域重跑。WATCH非活动态先停输出/线程/Unity观察，相同空轮限状态变化/跨日记录；报表到期/漏报独立补齐，已发布轻量签名无变化则不读JSONL，变化复核旧SHA且不覆盖。隔离回归`Test-UsageOptimization`、`Test-Watch`、`Test-UsageReporting`；旧WATCH日程未改，实际宿主生效须另看新run日志。
+
+AI-000231 增量（同一 TK-WF-03/04，不另建工具）：`Status` 加状态计数、优先注意项及可复用的落盘全文路径，`-Full`兼容显式全文；`PendingReview`默认小摘要、`-Full`取旧明细。`Get-UsageReport`增加逐动作最大返回字节，Status无观测时为null及原因；测试沿用`Test-UsageOptimization`，不增加并行夹具或重发旧周报。

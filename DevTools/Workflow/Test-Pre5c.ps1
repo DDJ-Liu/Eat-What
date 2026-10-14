@@ -12,6 +12,7 @@ function Save($path,$data){[void][IO.Directory]::CreateDirectory((Split-Path -Pa
 function Check($ok,$label){if(-not $ok){throw $label};$script:checks.Add($label)}
 function Reject([scriptblock]$body,$label){$rejected=$false;try{& $body|Out-Null}catch{$rejected=$true};Check $rejected $label}
 function Q($args0){
+    if ($args0.Action -eq 'Status') { $args0.FullStatus = $true }
     $raw=(& (Join-Path $ws 'queue.ps1') @args0|Out-String).Trim()
     $r=$raw|ConvertFrom-Json -DateKind String
     if($args0.Action -in @('Poll','SupervisionCheckpoint','Complete')){
@@ -74,15 +75,19 @@ try{
         $turn=Q @{Action='RecordTaskTurn';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;EvidencePath=$proofPath}
         if($n -eq 119){Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'CONTINUE') '119 continues'}
     }
-    Check ($turn.appTurnCount -eq 120 -and $turn.action -eq 'TURN_SOFT_LIMIT') '120 requests a soft checkpoint handoff'
+    Check ($turn.appTurnCount -eq 120 -and $turn.action -eq 'HANDOFF_REQUIRED') '120 requests a soft checkpoint handoff'
     $duplicate=Q @{Action='RecordTaskTurn';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;EvidencePath=$proofPath}
     Check ($duplicate.duplicate -and $duplicate.appTurnCount -eq 120) 'turn identity deduplicated'
-    Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'TURN_SOFT_LIMIT') 'checkpoint honors soft transition'
+    Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'HANDOFF_REQUIRED') 'checkpoint honors soft transition'
     Reject {Q $progress} 'no tool progress beyond turn limit'
     Reject {Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='checkpoint';Verification='safe'}} 'turn yield requires actual artifacts'
-    Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='checkpoint';Verification='safe';Artifacts=@($proofPath)}|Out-Null
+    $handoff=@{completed=@('isolated 120-turn replay');remaining=@('continue fixture');keyState=@{count=120};evidencePaths=@($proofPath);nextCommand='read handoffFrom and continue'}|ConvertTo-Json -Compress
+    $saved=Q @{Action='WriteHandoff';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;HandoffJson=$handoff}
+    Check ($saved.action -eq 'HANDOFF_SAVED') 'formal bounded handoff saved'
+    Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='checkpoint';Verification='safe'}|Out-Null
     $d=(Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches[0]
-    Reject {Q @{Action='Poll';Pipeline='CODE';TaskId=$id;TriggerSource='SUPERVISED';DispatchToken=$d.token}} 'same thread cannot restart exhausted execution'
+    $continued=Q @{Action='Poll';Pipeline='CODE';TaskId=$id;TriggerSource='SUPERVISED';DispatchToken=$d.token}
+    Check ($continued.task.execution.handoffFrom -eq $saved.handoffPath -and $continued.task.execution.appTurnCount -eq 120) 'fixed chat continuation preserves count and handoff'
     # Independent fixture lifecycle for CODE self-validation retry policy.
     Init;$t=StartTask;$id=$t.id;$exec=$t.execution.executionId
     $codeProof=Join-Path $root 'validation-error.txt';[IO.File]::WriteAllText($codeProof,'stable fixture error',$utf8)
@@ -127,7 +132,7 @@ try{
     $common=@{StateRoot=$state;OutputRoot=$watchOut;UsageOutputRoot=(Join-Path $root 'usage');TaskOutputRoot=(Join-Path $root 'outputs');UserStatusPath=(Join-Path $root 'user.md');UnityHeartbeatPath=$unityPath}
     $first=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at|ConvertFrom-Json
     Check ($first.detected -eq 0) 'new events baseline is silent'
-    $wt.execution.appTurnCount=120;Save "$state/queue-state.json" @{tasks=@($wt)}
+    $wt.execution.appTurnCount=120;$wt.execution.softLimitAt=$at.AddMinutes(1).ToString('o');Save "$state/queue-state.json" @{tasks=@($wt)}
     $ww.workers.CODE.lastProgressAt=$at.AddMinutes(1).ToUniversalTime().ToString('o');Save "$state/worker-state.json" $ww
     $unity.isPlaying=$true;$unity.observedAt=$at.AddMinutes(1).ToString('o');Save $unityPath $unity
     $next=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(1)|ConvertFrom-Json

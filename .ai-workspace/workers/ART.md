@@ -1,5 +1,7 @@
 # ART · 美术资产流水线
 
+2026-10-14新增必读：`.ai-workspace/inputs/art/美术需求单_P0P1_v1_20261014.md`。日报§4对照原件1～12与ART_PENDING_ITEMS.json的requirementIds；注明版本。族完整性、未定文件名、底/字两件、两色和用途保留待人工核对，不猜齐套/验收。原件不代替同步/导入/删除改名授权。
+
 本文件是唯一车道规则入口。对外称 ART，内部仍为 ART_ASSET；queue.ps1 接受 -Pipeline ART 并规范化。沿用“AI流水线-美术资产”，不新建第五线、不迁移旧任务。线程/日程见 .ai-workspace/PIPELINES.md。
 
 ## 1. 职责与身份

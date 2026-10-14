@@ -2769,3 +2769,268 @@ Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md and inputs/U1-R1-2026
 > SUPERVISED USER_GATE_APPROVED at 2026-10-14T08:45:23.3821057+08:00: {"userDecision":"人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知","taskId":"AI-000226"}
 
 > SUPERVISED USER_GATE_APPROVED at 2026-10-14T08:45:23.4862387+08:00: {"userDecision":"人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知","taskId":"AI-000229"}
+## AI-000230 | [CODE] [USAGE-OPT] 状态摘要、验证复用与停止轮询降耗，保留周报持续生成
+
+- 序号：230
+- 提交时间：2026-10-14T16:04:45.5286642+08:00
+- 模块 ID：USAGE-OPT
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+用户已授权本轮优化，阅读并执行 .ai-workspace/inputs/USAGE-OPT-20261014/任务与授权.md。固定CODE线，四条硬上限，不做字体/Unity/提交。全部六项合同通过后正式Complete；缺失用量保持null。
+
+> Closed without acceptance for AI-000190 at 2026-10-14T16:55:17.9683063+08:00: {"at":"2026-10-14T16:55:17.9683063+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"旧CookingProcess仅作参考，区域/厨具身份接线由新P2任务接替；保留原PENDING_USER结论、清单JSON及探针证据；不作人工通过。现有已完成卡正式接口为CLOSED_WITHOUT_ACCEPTANCE/SUPERSEDED。","userDecision":"用户2026-10-14要求按已提供遗漏派发文档执行；原件第0项明确关闭AI190为被替代、保留旧证据且非人工通过。","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"PENDING_USER","accepted":false,"archivedIssues":[{"at":"2026-10-04T03:42:30.5642392+08:00","attempt":1,"kind":"TEST_OBSERVATION","message":"Minimal CookingProcess Play Mode advanced from frame 1627/time 11.95075 to frame 3258/time 19.71072 with timeScale=1 and no new Error/Exception/Assert; real inventory remained empty because scene identities are unconfigured. Full cooking interaction and visual availability cannot be accepted from this probe. After DATA/product confirms exact area/tool identities and ENGINE connects them, manually enter CookingProcess, inspect each room and tool availability, move/disable representative tools, check Container interaction and Console, then regenerate the saved-scene manifest; current exported manifest must not be used as a fully verified inventory."}]}
+## AI-000231 | [CODE] [OMISSIONS-20261014] [GOV-01] 控制端遗漏增量处置
+
+- 序号：231
+- 提交时间：2026-10-14T16:55:18.1526025+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行任务卡.ai-workspace/inputs/OMISSIONS-20261014/GOV-01.md；输出.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/。固定CODE/SUPERVISED。本批用户授权和原件见同目录，保留AI230已有改动。
+
+> SUPERVISED POLICY at 2026-10-14T16:55:18.3104353+08:00: {"taskId":"AI-000231","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅现有DevTools及只读文档审查，固定CODE串行；不操作Unity或生产资源，正式失败即停。","updatedAt":"2026-10-14T16:55:18.2797407+08:00","supervisionLevel":"light"}}
+## AI-000232 | [CODE] [OMISSIONS-20261014] [GOV-02] 控制端遗漏增量处置
+
+- 序号：232
+- 提交时间：2026-10-14T16:55:18.3578032+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行任务卡.ai-workspace/inputs/OMISSIONS-20261014/GOV-02.md；输出.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/。固定CODE/SUPERVISED。本批用户授权和原件见同目录，保留AI230已有改动。
+
+> SUPERVISED POLICY at 2026-10-14T16:55:18.4882670+08:00: {"taskId":"AI-000232","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅现有DevTools及只读文档审查，固定CODE串行；不操作Unity或生产资源，正式失败即停。","updatedAt":"2026-10-14T16:55:18.4457555+08:00","supervisionLevel":"light"}}
+## AI-000233 | [CODE] [OMISSIONS-20261014] [GOV-03] 控制端遗漏增量处置
+
+- 序号：233
+- 提交时间：2026-10-14T16:55:18.5306130+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行任务卡.ai-workspace/inputs/OMISSIONS-20261014/GOV-03.md；输出.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/。固定CODE/SUPERVISED。本批用户授权和原件见同目录，保留AI230已有改动。
+
+> SUPERVISED POLICY at 2026-10-14T16:55:18.6594222+08:00: {"taskId":"AI-000233","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅现有DevTools及只读文档审查，固定CODE串行；不操作Unity或生产资源，正式失败即停。","updatedAt":"2026-10-14T16:55:18.6245722+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED START at 2026-10-14T16:55:41.1530822+08:00: {"sessionId":"63adb86921c541a19134e192e330dfb0","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000231","AI-000232","AI-000233"],"heartbeatAutomationId":"watch-60","createdAt":"2026-10-14T16:55:41.1464166+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+## AI-000234 | [CODE] [OMISSIONS-20261014] [DATA-F1_CODE] 选项A导表字体联动
+
+- 序号：234
+- 提交时间：2026-10-14T17:50:10.2074981+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行-F1_选项A授权.md。用户直接选A授权一次实际发布验证。固定职能chat/SUPERVISED，旧字体卡不恢复。只按本卡范围、四条硬上限和依赖执行。
+
+> SUPERVISED POLICY at 2026-10-14T17:50:10.5103402+08:00: {"taskId":"AI-000234","policy":{"resourceKeys":["unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户选A的CODE→DATA→ENGINE依赖链；源码导入/生成物与字体独占共享资源，DATA使用既有物理发布锁；末卡人工视觉门，失败一次即停。","updatedAt":"2026-10-14T17:50:10.4275906+08:00","supervisionLevel":"full"}}
+## AI-000235 | [DATA] [OMISSIONS-20261014] [DATA-F1_DATA] 选项A导表字体联动
+
+- 序号：235
+- 提交时间：2026-10-14T17:50:10.5628177+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：AI-000234
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行-F1_选项A授权.md。用户直接选A授权一次实际发布验证。固定职能chat/SUPERVISED，旧字体卡不恢复。只按本卡范围、四条硬上限和依赖执行。
+
+> SUPERVISED POLICY at 2026-10-14T17:50:10.7056892+08:00: {"taskId":"AI-000235","policy":{"resourceKeys":["unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户选A的CODE→DATA→ENGINE依赖链；源码导入/生成物与字体独占共享资源，DATA使用既有物理发布锁；末卡人工视觉门，失败一次即停。","updatedAt":"2026-10-14T17:50:10.6718952+08:00","supervisionLevel":"full"}}
+## AI-000236 | [ENGINE_MCP] [OMISSIONS-20261014] [DATA-F1_ENGINE] 选项A导表字体联动
+
+- 序号：236
+- 提交时间：2026-10-14T17:50:10.7509879+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：AI-000235
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行-F1_选项A授权.md。用户直接选A授权一次实际发布验证。固定职能chat/SUPERVISED，旧字体卡不恢复。只按本卡范围、四条硬上限和依赖执行。
+
+> SUPERVISED POLICY at 2026-10-14T17:50:10.8697597+08:00: {"taskId":"AI-000236","policy":{"resourceKeys":["unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户选A的CODE→DATA→ENGINE依赖链；源码导入/生成物与字体独占共享资源，DATA使用既有物理发布锁；末卡人工视觉门，失败一次即停。","updatedAt":"2026-10-14T17:50:10.8368421+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-14T17:50:38.2820252+08:00: {"taskIds":["AI-000234","AI-000235","AI-000236"],"reason":"用户本轮直接选择A，明确授权导表联动静态字体重建与一次实际发布验证；依赖CODE工具→DATA发布→ENGINE验收，沿用当前监管并保持旧字体任务关闭。"}
+> Instruction revision for AI-000233 at 2026-10-14T18:25:04.2944215+08:00
+
+执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/GOV-03.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000233/。固定CODE职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
+> Instruction revision for AI-000234 at 2026-10-14T18:25:04.4727195+08:00
+
+执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_CODE.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000234/。固定CODE职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
+> Instruction revision for AI-000235 at 2026-10-14T18:25:04.5648563+08:00
+
+执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_DATA.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000235/。固定DATA职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
+> Instruction revision for AI-000236 at 2026-10-14T18:25:04.6554564+08:00
+
+执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_ENGINE.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000236/。固定ENGINE_MCP职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
+## AI-000237 | [CODE] [GOV-04-05-20261014] GOV-04 上下文量监测与用户重载预警
+
+- 序号：237
+- 提交时间：2026-10-14T18:39:24.5893546+08:00
+- 模块 ID：GOV-04-05-20261014
+- 初始状态：QUEUED
+- 前置依赖：AI-000236
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行任务卡 .ai-workspace/inputs/GOV-04-05-20261014/GOV-04_CODE.md，原件及复杂度修订_用户决定.json同目录；complexity=M，turnBudget=80，既有TK-WF-03/04扩充。用户要求排在现有已下派任务之后，因此依赖AI-000236并保留其人工门；不提前执行。固定CODE/SUPERVISED，不新chat，不扩大业务；保留AI230～233既有成果。输出.ai-workspace/outputs/GOV-04-05-20261014/<TaskId>/。Complete/Fail/Yield同轮按长期授权立即回传一次，控制台独立验收，不等WATCH。缺失真实用量null；estimated仅限明确标注的上下文量级，禁止当实际tokens/账单。四条硬上限及无Git提交推送保持。
+
+> SUPERVISED POLICY at 2026-10-14T18:39:24.8079494+08:00: {"taskId":"AI-000237","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户追加GOV04/05在现有链后，依赖AI236并保留其人工门；纯工作流治理，无Unity/业务资产，固定CODE串行；已签收改动不返工。","updatedAt":"2026-10-14T18:39:24.7554094+08:00","supervisionLevel":"light"}}
+## AI-000238 | [CODE] [GOV-04-05-20261014] GOV-05 复杂度分级与轮次预算
+
+- 序号：238
+- 提交时间：2026-10-14T18:39:24.8689592+08:00
+- 模块 ID：GOV-04-05-20261014
+- 初始状态：QUEUED
+- 前置依赖：AI-000236
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+执行任务卡 .ai-workspace/inputs/GOV-04-05-20261014/GOV-05_CODE.md，原件及复杂度修订_用户决定.json同目录；complexity=M，turnBudget=80，既有TK-WF-03/04扩充。用户要求排在现有已下派任务之后，因此依赖AI-000236并保留其人工门；不提前执行。固定CODE/SUPERVISED，不新chat，不扩大业务；保留AI230～233既有成果。输出.ai-workspace/outputs/GOV-04-05-20261014/<TaskId>/。Complete/Fail/Yield同轮按长期授权立即回传一次，控制台独立验收，不等WATCH。缺失真实用量null；estimated仅限明确标注的上下文量级，禁止当实际tokens/账单。四条硬上限及无Git提交推送保持。
+
+> SUPERVISED POLICY at 2026-10-14T18:39:24.9996320+08:00: {"taskId":"AI-000238","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户追加GOV04/05在现有链后，依赖AI236并保留其人工门；纯工作流治理，无Unity/业务资产，固定CODE串行；已签收改动不返工。","updatedAt":"2026-10-14T18:39:24.9702110+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-10-14T18:39:25.1314079+08:00: {"reason":"用户2026-10-14明确要求读GOV04/05文档并下派，维持监管且排在已下派任务之后；用户修订两卡为M/80，保留现有231～236与236人工门。","taskIds":["AI-000237","AI-000238"]}
+
+> Verification resolved for AI-000234 at 2026-10-14T19:15:03.5240908+08:00: decision=VERIFIED; summary=控制独立CODE合同6/6通过；两项旧测试观察已按当前源码/政策核实，原失败保留。; evidence=控制证据 outputs/control/OMISSIONS-20261014/ai234-independent-review.json、ai234-compare.json、ai234-app-test-results.json。核实际app编译/14项事务输出及源实现；非人工视觉签收，AI235/236仍待原生验证。
+## AI-000239 | [CODE] [OMISSIONS-20261014] Spine已知旧资产白名单只读定位
+
+- 序号：239
+- 提交时间：2026-10-14T19:40:51.2957342+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+按 .ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-DIAG_CODE.md 做紧凑只读定位；先读用户最新Spine旧资产日志白名单_用户决定_20261014.json。复用现有原始日志/8指纹，禁止Unity/测试重跑及生产修改；交付四项合同后立即结算回传。
+
+> SUPERVISED POLICY at 2026-10-14T19:41:47.5318839+08:00: {"taskId":"AI-000239","policy":{"resourceKeys":["documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户指定包内精确白名单；原235失败后的正式只读定位复用既有证据，为同根修复提供依据，不重试生产。","updatedAt":"2026-10-14T19:41:47.4754933+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-10-14T19:41:47.6666193+08:00: {"reason":"用户最新直接要求Spine包内Sample/output4白名单处理，加入原235同根定位，后续同根修复沿固定CODE。","taskIds":["AI-000239"]}
+## AI-000240 | [CODE] [OMISSIONS-20261014] Spine两旧资产精确日志白名单修复
+
+- 序号：240
+- 提交时间：2026-10-14T19:52:55.9889519+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-REPAIR_CODE.md 及原AI239报告。实施用户已授权两个旧资产精确报错白名单，保留资产与版本拒绝。预声明6检查，比例验证，不运行Unity/生产发布/全量Final。用户长期授权结算即时回传。
+
+> SUPERVISED POLICY at 2026-10-14T19:52:56.2134524+08:00: {"policy":{"resourceKeys":["spine-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前用户直接授权包级精确白名单，M80按实际文件数规划；不改变原AI235次数与后置人工门。","updatedAt":"2026-10-14T19:52:56.1627528+08:00","supervisionLevel":"light"},"taskId":"AI-000240"}
+
+> SUPERVISED EXTEND at 2026-10-14T19:52:56.2748279+08:00: {"taskIds":["AI-000240"],"reason":"AI239已独立4/4；按用户新决定安排原235根首次修复，无新根或生产重跑。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-14T20:24:11.8600049+08:00: {"usedRuns":0,"userDecision":"用户直接回复：两个任务都进行明确的批准续行。明确承接：AI240原卡1次，仅完成结算，复用现有结果，不重跑测试、不改源码；AI235随后原范围续行1次含幂等。批准原件 inputs/OMISSIONS-20261014/AI240_AI235_各一次续行批准_20261014.json。","taskId":"AI-000240","runs":1,"approvalId":"user-20261014-resume-240-settlement-1","scope":{"paths":[".ai-workspace/outputs/OMISSIONS-20261014/AI-000240"],"operations":["idempotence-check","reuse-evidence","settlement"]}}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-14T20:29:11.2238569+08:00: {"runs":1,"taskId":"AI-000235","approvalId":"user-20261014-resume-235-release-1","userDecision":"用户直接回复：两个任务都进行明确的批准续行。明确承接：AI240仅结算1次已正式VERIFIED；AI235原卡1次，原范围字体发布及同轮幂等验证（原卡规定复用no-op证据，不第二次生产写入）。批准原件inputs/OMISSIONS-20261014/AI240_AI235_各一次续行批准_20261014.json。","scope":{"paths":[".ai-workspace/outputs/OMISSIONS-20261014/AI-000235","Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset","Assets/Font/Heavy/ShortCycle_Heavy_Static.asset","DevTools/DataTables/.batch-workspace","DevTools/Fonts/backup","DevTools/Fonts/ShortCycleFontBuildManifest.json"],"operations":["backup","idempotence-check","isolated-data-font-build","preflight-read","publish-fonts","release-cached-handles","reuse-evidence","settlement","update-font-manifest"]},"usedRuns":0}
+## AI-000241 | [DATA] [OMISSIONS-20261014] [DATA-F1b] 退出后字体发布合同 S/40
+
+- 序号：241
+- 提交时间：2026-10-14T21:06:47.5707156+08:00
+- 模块 ID：OMISSIONS-20261014
+- 初始状态：QUEUED
+- 前置依赖：AI-000234, AI-000240
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+用户明确指定DATA-F1b新合同卡，读.ai-workspace/inputs/OMISSIONS-20261014/DATA-F1b_DATA.md及同目录最新授权。固定DATA，S/40，不碰.cs/生产资源/Unity；只改DevTools与P-051，五项预声明验收。原235 attempt2已正式Fail且一次许可已消费，保留其历史和原链；本卡是用户指定合同修订，不续领/替代原235，验收后才由控制按新授权ApproveResume原235一次。用户长期授权结算即时回传。
+
+> SUPERVISED POLICY at 2026-10-14T21:06:47.8643429+08:00: {"taskId":"AI-000241","policy":{"resourceKeys":["workflow-devtools","documentation","data-batch","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户明确新增DATA-F1b合同变更S40，仅DevTools离线小卡；原235失败保留，不授权生产执行。","updatedAt":"2026-10-14T21:06:47.7888705+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-10-14T21:06:47.9836199+08:00: {"reason":"用户三步安排：先DATA-F1b合同修订独立验收，再原235仅一次发布及236验证；不提前领取旧卡。","taskIds":["AI-000241"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-14T21:26:12.4048413+08:00: {"runs":1,"taskId":"AI-000235","userDecision":"用户2026-10-14三步明确批准：DATA-F1b修订合同完成后，ApproveResume DATA-F1一次，加-Publish；Static337→396、两气泡进静态集、Dynamic0glyph、更新保护基线并审计，随后AI236 Play。原话inputs/OMISSIONS-20261014/DATA-F1b_合同修订与单次发布授权_20261014.md。AI241已SUCCEEDED/VERIFIED，控制独立5/5。","approvalId":"user-20261014-data-f1b-publish-1","usedRuns":0,"scope":{"paths":[".ai-workspace/outputs/OMISSIONS-20261014/AI-000235","Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset","Assets/Font/Heavy/ShortCycle_Heavy_Static.asset","DevTools/DataTables/.batch-workspace","DevTools/Fonts/backup","DevTools/Fonts/ShortCycleFontBuildManifest.json"],"operations":["backup","idempotence-check","isolated-data-font-build","post-exit-credential","preflight-read","publish-fonts","release-cached-handles","reuse-evidence","settlement","update-font-manifest","update-protection-baseline"]}}
+## AI-000242 | [DATA] [G74-20261014] G74 DATA-V1 Schema v2.4.1校验差异
+
+- 序号：242
+- 提交时间：2026-10-14T22:05:50.6207062+08:00
+- 模块 ID：G74-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/G74-20261014/DATA-V1_DATA.md，用户修订和最终Schema优先。预声明合同 inputs/acceptance/<TaskId>.json；只在本票CLAIMED后执行。
+
+> SUPERVISED POLICY at 2026-10-14T22:05:50.9530354+08:00: {"taskId":"AI-000242","policy":{"resourceKeys":["g74-schema-validator"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户G74两卡明确下派；独立数据校验与CODE实现，ENGINE仅编译收口；无UI/场景人工门。","updatedAt":"2026-10-14T22:05:50.8799648+08:00","supervisionLevel":"light"}}
+## AI-000243 | [CODE] [G74-20261014] G74 CODE-R01承载物解析与去抖warning
+
+- 序号：243
+- 提交时间：2026-10-14T22:05:50.9970941+08:00
+- 模块 ID：G74-20261014
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/G74-20261014/CODE-R01_CODE.md，用户修订和最终Schema优先。预声明合同 inputs/acceptance/<TaskId>.json；只在本票CLAIMED后执行。
+
+> SUPERVISED POLICY at 2026-10-14T22:05:51.1300124+08:00: {"taskId":"AI-000243","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户G74两卡明确下派；独立数据校验与CODE实现，ENGINE仅编译收口；无UI/场景人工门。","updatedAt":"2026-10-14T22:05:51.0965451+08:00","supervisionLevel":"light"}}
+## AI-000244 | [ENGINE_MCP] [G74-20261014] G74 CODE-R01 Editor编译收口
+
+- 序号：244
+- 提交时间：2026-10-14T22:05:51.1875646+08:00
+- 模块 ID：G74-20261014
+- 初始状态：QUEUED
+- 前置依赖：AI-000243
+- 允许越过：False
+- 最大尝试次数：1
+
+### 指令
+
+读取 .ai-workspace/inputs/G74-20261014/CODE-R01_ENGINE.md，用户修订和最终Schema优先。预声明合同 inputs/acceptance/<TaskId>.json；只在本票CLAIMED后执行。
+
+> SUPERVISED POLICY at 2026-10-14T22:05:51.3199497+08:00: {"taskId":"AI-000244","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户G74两卡明确下派；独立数据校验与CODE实现，ENGINE仅编译收口；无UI/场景人工门。","updatedAt":"2026-10-14T22:05:51.2679927+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-10-14T22:05:51.4239152+08:00: {"taskIds":["AI-000242","AI-000243","AI-000244"],"reason":"用户2026-10-14追加G74文档读取与两卡认领，保留原scope和236人工门，独立两卡及ENGINE编译后继。"}
+
+> Verification resolved for AI-000236 at 2026-10-14T22:16:37.6032482+08:00: decision=VERIFIED; summary=用户确认本次截图人工视觉验收通过，允许AI237/238继续。; evidence=用户原话：AI237／238可以继续，人工对截图视觉的验证通过；原件.ai-workspace/inputs/GOV-04-05-20261014/AI236视觉验收与GOV继续_用户决定_20261014.json；原机器7/7及原截图保持，无新Unity调用。
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-14T22:16:37.9427908+08:00: {"taskId":"AI-000236","userDecision":"AI237／238可以继续，人工对截图视觉的验证通过；原件.ai-workspace/inputs/GOV-04-05-20261014/AI236视觉验收与GOV继续_用户决定_20261014.json"}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-10-14T22:52:23.7555077+08:00: {"at":"2026-10-14T22:52:23.6882873+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000231","AI-000232","AI-000233","AI-000234","AI-000235","AI-000236","AI-000237","AI-000238","AI-000239","AI-000240","AI-000241","AI-000242","AI-000243","AI-000244"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}

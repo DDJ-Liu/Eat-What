@@ -1,5 +1,5 @@
 ﻿[CmdletBinding()]
-param()
+param([switch]$CompileOnly)
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -43,6 +43,15 @@ try {
         $importService
     )
     if (-not ('EatWhat.DataTables.DataTableImportService' -as [type])) { Add-Type -Path $compileSources }
+    if ($CompileOnly) {
+        [pscustomobject]@{
+            success=$true; mode='COMPILE_ONLY'; compiledSourceCount=$compileSources.Count
+            importAllBatchPublic=$null -ne [EatWhat.DataTables.DataTableImportService].GetMethod(
+                'ImportAllBatch', [System.Reflection.BindingFlags]'Public, Static')
+            unityStarted=$false
+        } | ConvertTo-Json
+        return
+    }
 
     $registrations = [EatWhat.DataTables.CK01ImportRegistry]::GetRegistrations()
     Assert-True ($registrations.Count -eq 14) 'CK01 import registry must contain all fourteen tables.'

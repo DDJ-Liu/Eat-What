@@ -370,6 +370,7 @@ function Invoke-DataBatchCommand {
         [Parameter(Mandatory)][string]$CompletionNonce,
         [string]$SourceTreeSha256,
         [string]$InputSnapshotSha256,
+        [bool]$RebuildStaticFont = $true,
         [ValidateRange(1, 7200)][int]$TimeoutSeconds = 1800
     )
 
@@ -403,6 +404,7 @@ function Invoke-DataBatchCommand {
     $startInfo.Environment['EATWHAT_DATA_RUN_ID'] = $RunId
     $startInfo.Environment['EATWHAT_DATA_COMPLETION_NONCE'] = $CompletionNonce
     $startInfo.Environment['EATWHAT_DATA_COMPLETION_PATH'] = $fullCompletionPath
+    $startInfo.Environment['EATWHAT_REBUILD_STATIC_FONT'] = if ($RebuildStaticFont) {'1'} else {'0'}
     if ($SourceTreeSha256) { $startInfo.Environment['EATWHAT_DATA_SOURCE_TREE_SHA256'] = $SourceTreeSha256 }
     if ($InputSnapshotSha256) { $startInfo.Environment['EATWHAT_DATA_INPUT_SNAPSHOT_SHA256'] = $InputSnapshotSha256 }
 
@@ -496,8 +498,8 @@ function Confirm-DataBatchCompletionCredential {
         throw "DATA batch completion credential is not valid JSON: $fullPath ($($_.Exception.Message))"
     }
     if ([int]$credential.schemaVersion -ne 1 -or -not [bool]$credential.success -or
-        -not [bool]$credential.importCompleted -or -not [bool]$credential.fontBuildCompleted) {
-        throw 'DATA batch completion credential does not prove successful import and font build.'
+        -not [bool]$credential.importCompleted) {
+        throw 'DATA batch completion credential does not prove successful import.'
     }
     if (-not [string]::Equals([string]$credential.runId, $ExpectedRunId, [StringComparison]::Ordinal) -or
         -not [string]::Equals([string]$credential.nonce, $ExpectedNonce, [StringComparison]::Ordinal)) {
@@ -524,14 +526,23 @@ function Confirm-DataBatchCompletionCredential {
     $glyphs = @($credential.localizationGlyphs)
     $localizationCount = [int]$credential.localizationCharacterCount
     $fontLocalizationCount = [int]$credential.fontLocalizationCharacterCount
-    if ($glyphs.Count -ne $localizationCount -or $localizationCount -ne $fontLocalizationCount -or
+    $fontRequested = if ($null -eq $credential.PSObject.Properties['fontBuildRequested']) {
+        $true
+    } else { [bool]$credential.fontBuildRequested }
+    if ($glyphs.Count -ne $localizationCount -or
+        ([bool]$credential.fontBuildCompleted -and $localizationCount -ne $fontLocalizationCount) -or
         @($glyphs | Select-Object -Unique).Count -ne $glyphs.Count) {
         throw 'DATA batch completion credential glyph counts do not agree with project parser/font results.'
     }
-    if ([int]$credential.dynamicCharacterCount -ne 0 -or
+    if ([bool]$credential.fontBuildCompleted -and
+        ([int]$credential.dynamicCharacterCount -ne 0 -or
         [string]::IsNullOrWhiteSpace([string]$credential.staticAssetSha256) -or
-        [string]::IsNullOrWhiteSpace([string]$credential.dynamicAssetSha256)) {
+        [string]::IsNullOrWhiteSpace([string]$credential.dynamicAssetSha256))) {
         throw 'DATA batch completion credential has invalid font build results.'
+    }
+    if ($fontRequested -and -not [bool]$credential.fontBuildCompleted -and
+        [string]::IsNullOrWhiteSpace([string]$credential.fontBuildError)) {
+        throw 'DATA batch reports font failure without a diagnostic.'
     }
     return [pscustomobject]@{
         path=$fullPath
@@ -911,5 +922,336 @@ function Invoke-DataPublicationTransaction {
         if ($rollbackFailed -and (Test-Path -LiteralPath $previous)) {
             Write-Warning "DATA rollback evidence preserved at $previous (backup: $backupSnapshot)"
         }
+    }
+}
+
+function Get-FontAssetUnicodeSet {
+    param([Parameter(Mandatory)][string]$Path)
+    $text = [IO.File]::ReadAllText($Path)
+    return @([regex]::Matches($text, '(?m)^\s*m_Unicode:\s*(\d+)\s*$') |
+        ForEach-Object { [uint]$_.Groups[1].Value } | Sort-Object -Unique)
+}
+
+function Get-FontAssetLocalIds {
+    param([Parameter(Mandatory)][string]$Path)
+    $text = [IO.File]::ReadAllText($Path)
+    return @([regex]::Matches($text, '(?m)^--- !u!\d+ &(-?\d+)\s*$') |
+        ForEach-Object { [string]$_.Groups[1].Value } | Sort-Object -Unique)
+}
+
+function Get-StablePostExitStaticCredential {
+    param([Parameter(Mandatory)][string]$Path)
+    for ($attempt = 0; $attempt -lt 4; $attempt++) {
+        $first = Get-Item -LiteralPath $Path -ErrorAction Stop
+        Start-Sleep -Milliseconds 150
+        $second = Get-Item -LiteralPath $Path -ErrorAction Stop
+        if ($first.Length -ne $second.Length -or $first.LastWriteTimeUtc -ne $second.LastWriteTimeUtc) { continue }
+        $sha = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash
+        $third = Get-Item -LiteralPath $Path -ErrorAction Stop
+        if ($second.Length -eq $third.Length -and $second.LastWriteTimeUtc -eq $third.LastWriteTimeUtc) {
+            return [pscustomobject]@{path=$Path;sha256=$sha;length=$third.Length;lastWriteTimeUtc=$third.LastWriteTimeUtc.ToString('o')}
+        }
+    }
+    throw "Post-exit Static font file did not stabilize: $Path"
+}
+
+function Test-FontFilesEqual {
+    param([Parameter(Mandatory)][string]$Left,[Parameter(Mandatory)][string]$Right)
+    $a=[IO.File]::OpenRead($Left); $b=[IO.File]::OpenRead($Right)
+    try {
+        if ($a.Length -ne $b.Length) { return $false }
+        $leftBytes=[byte[]]::new(65536); $rightBytes=[byte[]]::new(65536)
+        while (($count=$a.Read($leftBytes,0,$leftBytes.Length)) -gt 0) {
+            if ($b.Read($rightBytes,0,$count) -ne $count) { return $false }
+            for ($i=0;$i -lt $count;$i++) { if ($leftBytes[$i] -ne $rightBytes[$i]) { return $false } }
+        }
+        return $true
+    }
+    finally { $a.Dispose(); $b.Dispose() }
+}
+
+function Get-FontAssetGlyphCount {
+    param([Parameter(Mandatory)][string]$Path)
+    $text=[IO.File]::ReadAllText($Path)
+    if ([regex]::IsMatch($text,'(?m)^[ \t]*m_GlyphTable:[ \t]*\[[ \t]*\][ \t]*$')) { return 0 }
+    $section=[regex]::Match($text,'(?ms)^[ \t]*m_GlyphTable:[ \t]*\r?\n(?<entries>.*?)(?=^[ \t]*m_CharacterTable:)')
+    if (-not $section.Success) { throw "Font glyph table is missing: $Path" }
+    return [regex]::Matches($section.Groups['entries'].Value,'(?m)^[ \t]*-[ \t]+m_Index:[ \t]*\d+[ \t]*$').Count
+}
+
+function Invoke-FontPublicationTransaction {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$RepositoryRoot,
+        [Parameter(Mandatory)][string]$StagedProjectRoot,
+        [Parameter(Mandatory)][string]$BackupRoot,
+        [Parameter(Mandatory)][string]$TaskId,
+        [Parameter(Mandatory)][string]$RoundId,
+        [Parameter(Mandatory)][string]$RunId,
+        [Parameter(Mandatory)][string]$SourceCsvSha256,
+        [Parameter(Mandatory)][string]$ApprovalPath,
+        [Parameter(Mandatory)][string]$ExpectedStaticSha256,
+        [scriptblock]$TestHook
+    )
+    $root = [IO.Path]::GetFullPath($RepositoryRoot)
+    $stagedRoot = [IO.Path]::GetFullPath($StagedProjectRoot)
+    $backup = Assert-DataPathWithin -Path $BackupRoot -AllowedRoot (Join-Path $root 'DevTools/Fonts/backup')
+    $approval = [IO.Path]::GetFullPath($ApprovalPath)
+    $allowedApprovalRoot = Join-Path $root '.ai-workspace'
+    [void](Assert-DataPathWithin -Path $approval -AllowedRoot $allowedApprovalRoot)
+    if (-not (Test-Path -LiteralPath $approval -PathType Leaf)) { throw 'Font publication approval is missing.' }
+    $approvalText = [IO.File]::ReadAllText($approval)
+    if ($approval.EndsWith('.json', [StringComparison]::OrdinalIgnoreCase)) {
+        $decision = $approvalText | ConvertFrom-Json -DateKind String
+        if ([string]$decision.status -cne 'DONE' -or
+            [string]::IsNullOrWhiteSpace([string]$decision.userDecision) -or
+            [string]$decision.roundId -cne $RoundId) {
+            throw 'Font publication requires the matching approved DONE round.'
+        }
+    }
+    elseif ($TaskId -cne 'AI-000235' -or $RoundId -cne 'CURRENT-CSV-VALIDATION' -or
+        $approval -cne (Join-Path $root '.ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_选项A授权.md') -or
+        -not $approvalText.Contains('A：授权导表后联动静态字体重建，并进行一次实际发布验证')) {
+        throw 'Current-CSV font-only publication requires the exact user option-A approval.'
+    }
+    $csv = Join-Path $root 'DataTables/Localization/Localization.csv'
+    if ((Get-FileHash -LiteralPath $csv -Algorithm SHA256).Hash -cne $SourceCsvSha256) {
+        throw 'Font publication source CSV drifted after the isolated batch.'
+    }
+    $manifestRelative = 'DevTools/Fonts/ShortCycleFontBuildManifest.json'
+    $candidateManifestPath = Join-Path $stagedRoot $manifestRelative
+    $liveManifestPath = Join-Path $root $manifestRelative
+    if (-not (Test-Path -LiteralPath $candidateManifestPath -PathType Leaf) -or
+        -not (Test-Path -LiteralPath $liveManifestPath -PathType Leaf)) {
+        throw 'Font publication requires candidate and live manifests.'
+    }
+    $candidate = Get-Content -LiteralPath $candidateManifestPath -Raw | ConvertFrom-Json -DateKind String
+    $liveManifest = Get-Content -LiteralPath $liveManifestPath -Raw | ConvertFrom-Json -AsHashtable -DateKind String
+    if ($liveManifest.protectionMode -cne 'STATIC_ONLY' -or
+        $liveManifest.approvalStatus -cne 'APPROVED' -or
+        [string]::IsNullOrWhiteSpace([string]$liveManifest.approvedBy) -or
+        $candidate.localizationCsvSha256 -cne $SourceCsvSha256 -or
+        [int]$candidate.dynamicCharacterCount -ne 0) {
+        throw 'Font candidate or live approval manifest has an invalid publication contract.'
+    }
+    $names = @('ShortCycle_Heavy_Static.asset','ShortCycle_Heavy_DynamicFallback.asset')
+    $before = @{}; $after = @{}; $paths = @{}; $stagedPaths = @{}
+    foreach ($name in $names) {
+        $relative = Join-Path 'Assets/Font/Heavy' $name
+        $paths[$name] = Join-Path $root $relative
+        $stagedPaths[$name] = Join-Path $stagedRoot $relative
+        foreach ($path in @($paths[$name],$stagedPaths[$name],($paths[$name]+'.meta'),($stagedPaths[$name]+'.meta'))) {
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Font asset or meta missing: $path" }
+        }
+        if ((Get-FileHash -LiteralPath ($paths[$name]+'.meta') -Algorithm SHA256).Hash -cne
+            (Get-FileHash -LiteralPath ($stagedPaths[$name]+'.meta') -Algorithm SHA256).Hash) {
+            throw "Font meta/GUID identity changed in isolation: $name"
+        }
+        if ($name -ceq $names[0]) {
+            $before[$name] = (Get-FileHash -LiteralPath $paths[$name] -Algorithm SHA256).Hash
+            $after[$name] = (Get-FileHash -LiteralPath $stagedPaths[$name] -Algorithm SHA256).Hash
+        }
+        $oldIds = @(Get-FontAssetLocalIds -Path $paths[$name])
+        $newIds = @(Get-FontAssetLocalIds -Path $stagedPaths[$name])
+        if ($oldIds.Count -eq 0 -or @($oldIds | Where-Object { $_ -cnotin $newIds }).Count -ne 0) {
+            throw "Font candidate removes an existing material/atlas/local fileID: $name"
+        }
+    }
+    if ($before[$names[0]] -cne [string]$liveManifest.staticAssetSha256 -or
+        $after[$names[0]] -cne $ExpectedStaticSha256) {
+        throw 'Static font SHA differs from approved live baseline or stable post-exit candidate.'
+    }
+    $oldCharacters = @(Get-FontAssetUnicodeSet -Path $paths[$names[0]])
+    $newCharacters = @(Get-FontAssetUnicodeSet -Path $stagedPaths[$names[0]])
+    $oldDynamicGlyphs = Get-FontAssetGlyphCount -Path $paths[$names[1]]
+    $newDynamicGlyphs = Get-FontAssetGlyphCount -Path $stagedPaths[$names[1]]
+    $oldDynamicCharacters = @(Get-FontAssetUnicodeSet -Path $paths[$names[1]]).Count
+    $newDynamicCharacters = @(Get-FontAssetUnicodeSet -Path $stagedPaths[$names[1]]).Count
+    $dynamicStamp = Get-Item -LiteralPath $paths[$names[1]]
+    $stagedDynamicStamp = Get-Item -LiteralPath $stagedPaths[$names[1]]
+    if ($newDynamicCharacters -ne 0 -or $newDynamicGlyphs -ne 0) {
+        throw 'Font candidate dynamic fallback is not empty.'
+    }
+    if ($oldCharacters.Count -eq 0 -or @($oldCharacters | Where-Object { $_ -notin $newCharacters }).Count -ne 0) {
+        throw 'Font candidate drops existing static characters.'
+    }
+    if ([int]$candidate.staticCharacterCount -ne $newCharacters.Count) {
+        throw 'Font candidate static character count disagrees with serialized asset.'
+    }
+    $added = @($newCharacters | Where-Object { $_ -notin $oldCharacters } |
+        ForEach-Object { 'U+' + $_.ToString('X4') })
+    $staticChanged = $added.Count -gt 0
+    if ($staticChanged -and $before[$names[0]] -ceq $after[$names[0]]) {
+        throw 'Font candidate claims new static characters but has identical bytes.'
+    }
+    $dynamicChanged = $oldDynamicGlyphs -ne 0 -or $oldDynamicCharacters -ne 0
+    if (-not $staticChanged -and -not $dynamicChanged) {
+        if ($TestHook) { & $TestHook 'BeforeNoChanges' }
+        $dynamicNow = Get-Item -LiteralPath $paths[$names[1]]
+        if ((Get-FileHash -LiteralPath $csv -Algorithm SHA256).Hash -cne $SourceCsvSha256 -or
+            (Get-FileHash -LiteralPath $paths[$names[0]] -Algorithm SHA256).Hash -cne $before[$names[0]] -or
+            $dynamicNow.Length -ne $dynamicStamp.Length -or
+            $dynamicNow.LastWriteTimeUtc -ne $dynamicStamp.LastWriteTimeUtc -or
+            (Get-FontAssetGlyphCount -Path $paths[$names[1]]) -ne 0) {
+            throw 'Font no-op source or live bytes drifted.'
+        }
+        return [pscustomobject]@{action='NO_CHANGES';changed=$false;addedCodepoints=@();
+            beforeCharacterCount=$oldCharacters.Count;afterCharacterCount=$oldCharacters.Count;
+            beforeDynamicGlyphCount=0;afterDynamicGlyphCount=0;
+            staticSha256=$before[$names[0]];backup=$null}
+    }
+    if (Test-Path -LiteralPath $backup) { throw "Font backup already exists: $backup" }
+    [void][IO.Directory]::CreateDirectory($backup)
+    $writeNames = @()
+    if ($staticChanged) { $writeNames += $names[0] }
+    if ($dynamicChanged) { $writeNames += $names[1] }
+    $allLive = @($writeNames | ForEach-Object { $paths[$_] }) + @($liveManifestPath)
+    $allBefore = @{}; $allAfter = @{}; $backupPaths = @{}; $dynamicBackupStamp = $null
+    foreach ($path in $allLive) {
+        $name = [IO.Path]::GetFileName($path)
+        $backupPaths[$path] = Join-Path $backup $name
+        if ($name -ceq $names[1]) {
+            $dynamicNow = Get-Item -LiteralPath $path
+            if ($dynamicNow.Length -ne $dynamicStamp.Length -or
+                $dynamicNow.LastWriteTimeUtc -ne $dynamicStamp.LastWriteTimeUtc) {
+                throw 'Dynamic font changed before backup.'
+            }
+        } else { $allBefore[$path] = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash }
+        [IO.File]::Copy($path,$backupPaths[$path],$false)
+        if ($name -ceq $names[1]) {
+            $dynamicBackupStamp = Get-Item -LiteralPath $backupPaths[$path]
+            $liveAfterBackup = Get-Item -LiteralPath $path
+            if ($dynamicBackupStamp.Length -ne $dynamicStamp.Length -or
+                $liveAfterBackup.Length -ne $dynamicStamp.Length -or
+                $liveAfterBackup.LastWriteTimeUtc -ne $dynamicStamp.LastWriteTimeUtc) {
+                throw "Dynamic font changed while backing up: $name"
+            }
+        } elseif ((Get-FileHash -LiteralPath $backupPaths[$path] -Algorithm SHA256).Hash -cne $allBefore[$path]) {
+            throw "Font backup verification failed: $name"
+        }
+    }
+    if ($staticChanged) { $allAfter[$paths[$names[0]]] = $after[$names[0]] }
+    $liveManifest.staticAssetSha256 = if ($staticChanged) {$after[$names[0]]} else {$before[$names[0]]}
+    # The pre-exit Dynamic SHA in the candidate manifest is historical, not a publication contract.
+    foreach ($key in @('legacyAssetSha256','localizationCsvSha256','localizationCharacterCount',
+        'requiredCharacterCount','staticCharacterCount','dynamicCharacterCount','staticAtlasRewritten',
+        'requiredCodepoints','addedCodepoints','generatedAtUtc')) {
+        $liveManifest[$key] = $candidate.$key
+    }
+    if (-not $staticChanged) { $liveManifest.staticAtlasRewritten = $false }
+    $liveManifest.approvalStatus = 'APPROVED'
+    $liveManifest.approvedBy = 'USER: ' + $approval
+    $liveManifest.approvedAtUtc = [DateTimeOffset]::UtcNow.ToString('o')
+    $liveManifest.publicationAudit = [ordered]@{
+        taskId=$TaskId;roundId=$RoundId;runId=$RunId;approvalPath=$approval
+        approvalSha256=(Get-FileHash -LiteralPath $approval -Algorithm SHA256).Hash
+        sourceCsvPath='DataTables/Localization/Localization.csv';sourceCsvSha256=$SourceCsvSha256
+        beforeCharacterCount=$oldCharacters.Count;afterCharacterCount=$newCharacters.Count
+        addedCodepoints=$added;oldStaticSha256=$before[$names[0]]
+        newStaticSha256=$liveManifest.staticAssetSha256
+        beforeDynamicGlyphCount=$oldDynamicGlyphs;afterDynamicGlyphCount=0
+        backup=$backup
+    }
+    $manifestBytes = [Text.UTF8Encoding]::new($false).GetBytes(
+        (($liveManifest | ConvertTo-Json -Depth 16) + [Environment]::NewLine))
+    $allAfter[$liveManifestPath] = [Convert]::ToHexString(
+        [Security.Cryptography.SHA256]::HashData($manifestBytes))
+    $written = [Collections.Generic.List[string]]::new()
+    $temp = $null
+    $tempTarget = $null
+    try {
+        foreach ($path in $allLive) {
+            $isDynamic = $path -ceq $paths[$names[1]]
+            if ((Get-FileHash -LiteralPath $csv -Algorithm SHA256).Hash -cne $SourceCsvSha256 -or
+                (Get-FileHash -LiteralPath $approval -Algorithm SHA256).Hash -cne $liveManifest.publicationAudit.approvalSha256) {
+                throw "Font publication source or approval drift before write: $path"
+            }
+            if ($isDynamic) {
+                $candidateNow = Get-Item -LiteralPath $stagedPaths[$names[1]]
+                $liveNow = Get-Item -LiteralPath $path
+                if ($candidateNow.Length -ne $stagedDynamicStamp.Length -or
+                    $candidateNow.LastWriteTimeUtc -ne $stagedDynamicStamp.LastWriteTimeUtc -or
+                    $liveNow.Length -ne $dynamicStamp.Length -or
+                    $liveNow.LastWriteTimeUtc -ne $dynamicStamp.LastWriteTimeUtc) {
+                    throw "Dynamic font candidate or live target drifted before write: $path"
+                }
+            } elseif ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -cne $allBefore[$path]) {
+                throw "Font publication drift before write: $path"
+            }
+            $temp = "$path.__fontincoming.$([guid]::NewGuid().ToString('N'))"
+            $tempTarget = $path
+            if ($path -ceq $liveManifestPath) { [IO.File]::WriteAllBytes($temp,$manifestBytes) }
+            else { [IO.File]::Copy($stagedPaths[[IO.Path]::GetFileName($path)],$temp,$false) }
+            if ($isDynamic) {
+                if ((Get-Item -LiteralPath $temp).Length -ne $stagedDynamicStamp.Length) {
+                    throw "Dynamic incoming copy length differs: $temp"
+                }
+            } elseif ((Get-FileHash -LiteralPath $temp -Algorithm SHA256).Hash -cne $allAfter[$path]) {
+                throw "Font incoming bytes differ: $temp"
+            }
+            [IO.File]::Move($temp,$path,$true)
+            $written.Add($path)
+            if ($TestHook) { & $TestHook ('AfterWrite:'+[IO.Path]::GetFileName($path)) }
+        }
+        foreach ($path in $allLive) {
+            if ($path -ceq $paths[$names[1]]) {
+                if ((Get-FontAssetGlyphCount -Path $path) -ne 0 -or
+                    @(Get-FontAssetUnicodeSet -Path $path).Count -ne 0 -or
+                    (Get-Item -LiteralPath $path).Length -ne $stagedDynamicStamp.Length) {
+                    throw "Dynamic font is not the empty candidate after publication: $path"
+                }
+            } elseif ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -cne $allAfter[$path]) {
+                throw "Font publication post-write mismatch: $path"
+            }
+        }
+        return [pscustomobject]@{action='PUBLISHED';changed=$true;addedCodepoints=$added;
+            beforeCharacterCount=$oldCharacters.Count;afterCharacterCount=$newCharacters.Count;
+            beforeDynamicGlyphCount=$oldDynamicGlyphs;afterDynamicGlyphCount=0;
+            staticSha256=$liveManifest.staticAssetSha256;
+            manifestSha256=$allAfter[$liveManifestPath];backup=$backup;approvalPath=$approval}
+    }
+    catch {
+        $primary = $_
+        try {
+            for ($index = $written.Count - 1; $index -ge 0; $index--) {
+                $path = $written[$index]
+                if ($path -ceq $paths[$names[1]]) {
+                    if (-not (Test-FontFilesEqual -Left $path -Right $stagedPaths[$names[1]])) {
+                        throw "Font rollback refuses unknown changed Dynamic target: $path"
+                    }
+                    $backupNow = Get-Item -LiteralPath $backupPaths[$path]
+                    if ($backupNow.Length -ne $dynamicBackupStamp.Length -or
+                        $backupNow.LastWriteTimeUtc -ne $dynamicBackupStamp.LastWriteTimeUtc) {
+                        throw "Font rollback Dynamic backup drifted: $path"
+                    }
+                    [IO.File]::Copy($backupPaths[$path],$path,$true)
+                    if (-not (Test-FontFilesEqual -Left $path -Right $backupPaths[$path])) {
+                        throw "Font rollback Dynamic restore differs from backup: $path"
+                    }
+                } else {
+                    if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -cne $allAfter[$path]) {
+                        throw "Font rollback refuses unknown changed target: $path"
+                    }
+                    if ((Get-FileHash -LiteralPath $backupPaths[$path] -Algorithm SHA256).Hash -cne $allBefore[$path]) {
+                        throw "Font rollback backup drifted: $path"
+                    }
+                    [IO.File]::Copy($backupPaths[$path],$path,$true)
+                }
+            }
+            if ($temp -and (Test-Path -LiteralPath $temp -PathType Leaf)) {
+                if ($tempTarget -ceq $paths[$names[1]]) {
+                    if (-not (Test-FontFilesEqual -Left $temp -Right $stagedPaths[$names[1]])) {
+                        throw "Font incoming Dynamic temp has unknown bytes and was preserved: $temp"
+                    }
+                } elseif ((Get-FileHash -LiteralPath $temp -Algorithm SHA256).Hash -cne $allAfter[$tempTarget]) {
+                    throw "Font incoming temp has unknown bytes and was preserved: $temp"
+                }
+                Remove-Item -LiteralPath $temp -Force
+            }
+        }
+        catch {
+            throw "FONT_ROLLBACK_FAILED: primary=$($primary.Exception.Message) rollback=$($_.Exception.Message) backup=$backup"
+        }
+        throw "FONT_FAILED_ROLLED_BACK: $($primary.Exception.Message) backup=$backup"
     }
 }

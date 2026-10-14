@@ -55,6 +55,7 @@ function Save-FixtureJson {
 
 function Invoke-QueueRaw {
     param([hashtable]$Parameters)
+    if ($Parameters.Action -eq 'Status' -and -not $Parameters.ContainsKey('FullStatus')) { $Parameters.FullStatus = $true }
     $raw = & (Join-Path $testRoot 'queue.ps1') @Parameters | Out-String
     return $raw
 }
@@ -200,7 +201,7 @@ try {
     [void](Invoke-Queue @{ Action = 'RecordIssue'; Pipeline = 'ART_AIGC'; TaskId = $artTask.task.id; IssueKind = 'TEST_OBSERVATION'; IssueMessage = 'Review this ART result manually.' })
     [void](Invoke-Queue @{ Action = 'Complete'; Pipeline = 'ART_AIGC'; TaskId = $artTask.task.id; Summary = 'ART completion'; Artifacts = @('art-artifact'); Verification = 'ART evidence' })
 
-    $pendingReview = Invoke-Queue @{ Action = 'PendingReview' }
+    $pendingReview = Invoke-Queue @{ Action = 'PendingReview'; FullStatus = $true }
     Assert-Equal $pendingReview.totals.rejected 1 'PendingReview must explicitly aggregate REJECTED items.'
     Assert-Equal $pendingReview.totals.pendingUser 3 'PendingReview must include historical and newly pending items.'
     Assert-True (@($pendingReview.items | Where-Object { $_.taskId -eq $engineTask.task.id -and $null -eq $_.moduleId }).Count -eq 1) 'PendingReview must expose null for a task without ModuleId.'
@@ -228,7 +229,7 @@ try {
     Assert-Equal $artResolution.task.result.verificationStatus 'VERIFIED' 'ResolveVerification must produce VERIFIED.'
     Assert-Equal $artResolution.resolution.decision 'VERIFIED' 'Resolution history must include a VERIFIED decision.'
     Assert-Equal $artResolution.task.result.verificationResolutionHistory[0].decision 'VERIFIED' 'Persisted resolution history must include VERIFIED.'
-    $reviewAfterResolve = Invoke-Queue @{ Action = 'PendingReview' }
+    $reviewAfterResolve = Invoke-Queue @{ Action = 'PendingReview'; FullStatus = $true }
     Assert-True (@($reviewAfterResolve.items | Where-Object { $_.taskId -eq $artTask.task.id }).Count -eq 0) 'Resolved task must be removed from PendingReview data.'
     $reviewTextAfterResolve = Get-Content -Raw -Encoding utf8 $reviewPath
     Assert-True (-not $reviewTextAfterResolve.Contains($artTask.task.id)) 'Resolved task must be removed from PENDING_REVIEW.md.'
@@ -306,7 +307,7 @@ try {
     $waived = Invoke-Queue @{Action='CloseWithoutAcceptance';TaskId=$engineTask.task.id;ClosureReason='TECHNICAL_REVIEW_WAIVED';Reason='No independent manual technical review route; later integration remains.';UserDecision='Close technical records without manual acceptance.'}
     Assert-Equal $waived.closure.previousVerificationStatus 'PENDING_USER' 'Technical waiver must preserve previous pending state.'
     Assert-Equal $waived.closure.reasonKind 'TECHNICAL_REVIEW_WAIVED' 'Technical waiver must be distinguished from obsolescence.'
-    $afterCloseReview = Invoke-Queue @{Action='PendingReview'}
+    $afterCloseReview = Invoke-Queue @{Action='PendingReview';FullStatus=$true}
     Assert-True (@($afterCloseReview.items | Where-Object { $_.taskId -in @($codeTask.task.id,$engineTask.task.id) }).Count -eq 0) 'Administratively closed tasks must leave pending review.'
     $afterCloseStatus = Invoke-Queue @{Action='Status'}
     Assert-Equal $afterCloseStatus.statusAggregate.verificationStatuses.CLOSED_WITHOUT_ACCEPTANCE 2 'Status must count administrative closures separately.'

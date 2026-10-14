@@ -1,5 +1,10 @@
 # 流水线任务与计划任务映射
 
+2026-10-14最新收口：session63adb86921c541a19134e192e330dfb0的AI231～244共14卡正式SUCCEEDED/VERIFIED，22:52:23已自动回MANUAL/COMPLETE，无待领取卡；watch-60已PAUSED，独立周报宿主和ART保持。AI236已由用户直接视觉通过；AI237/238各独立7/7，定向夹具最终15/29项通过，保留用户明确M/80及实际12/14文件；G74的AI242/243/244独立6/6、5/5、3/3通过。GOV04首次真实console心跳采样本批未发生，仍未验证，后续新监管批次首次真实心跳补核，不为此恢复或轮询本session；旧provider输入不是当前窗口。U2～U6/P2及44条配表警告仍按既有范围处理。旧失败/许可保留，未知计费null，无本轮Git提交推送。证据outputs/control/GOV-04-05-20261014/independent-review-238.json、scope-closeout.json与收口与剩余事项.md。
+
+2026-10-14 旧阶段快照（当前以上页首及实时队列为准）：SUPERVISED session 63adb86921c541a19134e192e330dfb0现纳入AI231～240。AI231/232/233已独立验收，AI233即时回传已实证；AI234工具已独立6/6通过并正式VERIFIED；AI235于19:29正式Fail/NEEDS_USER：唯一隔离构建成功后被两条旧Spine错误日志门拦住，生产发布0；控制3/6，用户已改选包级精确白名单，AI239只读定位4/4通过、AI240已按用户新批准仅结算1次正式VERIFIED，复用技术6/6及离线28/28，三次夹具失败史保留；原AI235同范围1次续行已执行，attempt2于20:38:08正式Fail/NEEDS_USER：Spine日志门通过（Error0），TMP退出回调在凭据生成后再次清理Dynamic，候选SHA不一致；事务在备份/生产写入前停止，生产写0，控制3/6未接受。用户明确选择DATA-F1 A：AI234 CODE扩充现有工具→AI235 DATA当前T9单次字体发布→AI236 ENGINE一次原生验证及后置人工门。此前A/B等待已解除；旧字体修复卡不恢复，四条硬上限保持。AI190已CLOSED_WITHOUT_ACCEPTANCE（SUPERSEDED）、原证据与下一次归档一次性保全保留。两卡各一次批准均已消费，AI240完成、AI235累计两失败；session ACTIVE/WAITING_USER且无ready，WATCH暂停以免无效轮询，周报独立宿主和旧worker/ai及ART不变。本轮无Git提交推送。用户追加GOV04/05已入同session的AI237/238，均M/80、固定CODE，依赖AI236并保留其人工门；排在既有链后，不提前插队。原件/用户分级修订/执行卡见inputs/GOV-04-05-20261014；上下文/分级功能尚待实现，不冒称上线。
+
+
 2026-10-12用户恢复固定职能chat分配，不再每条任务新开chat；固定映射如下。CODE和ENGINE均已正式改绑原线，AI219完成接力后已归档，DATA/两条ART线保持。2026-10-13自动链已COMPLETE，本轮旧卡收尾后当前MANUAL；四个旧十分钟日程、监管ai与watch-60均PAUSED，独立ART日期服务不变。后文带日期段落是历史，不用于恢复旧任务或旧日程。
 
 | 角色 | Codex 任务标题 | Task ID | Automation ID | `SCHEDULED` 周期 |

@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param()
 $ErrorActionPreference='Stop'
 $source=Split-Path -Parent $PSScriptRoot
@@ -66,7 +66,15 @@ $report=Get-Content -LiteralPath $result.reportPath -Raw -Encoding UTF8
 foreach($i in 1..7){Check ($report -match ('## '+$i+'\.')) $true ('section '+$i)}
 Check ($report -match '修改 1') $true 'report counters use correct scope'
 Check ($m.baselinePath -like '*AI000057_manifest.json') $true 'explicit sync seed is used'
-Check @($m.pendingItems).Count 11 'fixed pending rows including v2.4 unknown product'
+$pendingDefinition=Get-Content -LiteralPath (Join-Path $source 'inputs/art/ART_PENDING_ITEMS.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+Check @($m.pendingItems).Count @($pendingDefinition.items).Count 'report covers all configured pending rows'
+Check (@($pendingDefinition.items.requirementIds | Sort-Object -Unique) -join ',') '1,2,3,4,5,6,7,8,9,10,11,12' 'all v1 requirement rows mapped'
+Check ($report -match '美术需求单_P0P1_v1_20261014.md') $true 'report records authoritative document path'
+$manualConfig=[pscustomobject]@{items=@([pscustomobject]@{id='manual';name='manual';expected='PNG';patterns=@('*.png');requiresManualReview=$true;reviewNote='visual confirmation'})}
+$manualAnalysis=Get-ArtDailyAnalysis $m $m @() ([pscustomobject]@{}) $manualConfig
+Check ($manualAnalysis.pending[0].paths.Count -gt 0) $true 'manual case has actual matched files'
+Check $manualAnalysis.pending[0].ready $false 'file matches never bypass manual review'
+Check ($manualAnalysis.pending[0].status -match 'visual confirmation') $true 'manual reason is reported'
 Check @($m.pendingItems | Where-Object id -eq 'prd_unknown').Count 1 'unknown product remains a single tracked pending item'
 $status=Q @{Action='ArtDailyControlStatus'}
 Check @($status.reports).Count 1 'controller receives unreviewed report'

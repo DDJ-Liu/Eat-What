@@ -13,6 +13,15 @@
 
 后续任务按既有 CODE、ENGINE_MCP、DATA、ART_AIGC、ART_ASSET 职能分配，复用 `.ai-workspace/PIPELINES.md` 登记的固定 chat，不再默认每条任务新开 chat。只有用户明确要求另开时才创建；上下文压缩、任务编号变化或一般交接不构成新开理由。运行中任务保持当前所有权，到安全结算点再由控制台正式改绑；旧单任务 chat 归档保留，队列编号、失败/许可历史和输入输出证据不删除。此决定只改组织方式，不切换执行模式或扩大业务范围。
 
+## 监管结算即时回传（2026-10-14 用户长期授权）
+
+> 用户原话：本批结算时发送通知，除此之外，在监管模式中的以后所有的任务安排都应该在任务结算时立即发送通知回传，而非仅本次的临时规则。将其固化为监管模式的硬性规则
+
+本批及以后所有 SUPERVISED 任务在 Complete、Fail 或 YieldSupervisionTask 正式结算后，必须在当前轮次立即向该 session 绑定的控制台发送一次完整 supervisorHandoff，不等待 WATCH 周期，不只在执行线打印路径。用户已直接授权此类结算通知，原话见 [用户长期授权](.ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json)；任务编号、批次或固定职能 chat 变化无需重复索取同一发送许可，用户后续停止或撤销要求优先。
+
+沿用现有 Prepare → 一次实际 app send_message_to_thread → Record → 控制台 Receive；以任务/attempt/execution/session/notice 绑定去重。Prepare 返回 HANDOFF_NO_RESEND、投递 UNKNOWN 或被拒绝均不得自动重发、换通道或伪报 SENT；停止/退出时遵守正式 Prepare 门禁，保留结算文件供控制台读取。只通知绑定控制台，不授权任意对外消息或业务重试。
+
+控制台收到通知后及时独立验收，再核实时 mode、全部 scope、fresh idle、Reconcile/Dispatch 推进已授权后继；人工门、失败停止、次数/范围及修复预算保持。Receive 不等于验收，执行器不自行领取后继。60 分钟 WATCH 仅作漏报兜底，停止态不做业务轮询；不能把规则落档、Prepare 或合成回执当作实际唤醒成功。
 ## 项目状态
 
 这是一个正在积极开发的现有 Unity 项目。

@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$HistoricalQueuePath)
 $ErrorActionPreference='Stop'
 $repo=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $root=Join-Path ([IO.Path]::GetTempPath()) ('EatWhatTurnSoftRepair-'+[guid]::NewGuid().ToString('N'))
@@ -49,6 +49,7 @@ function Seed([int]$count,$softAt,$actualAt,$handoff=$false) {
     $q=QueueState;$r=$q.tasks[0].execution
     $r.appTurnCount=$count;$r.softLimitAt=$softAt;$r.lastActualProgressAt=$actualAt
     $r.softLimitHandoff=if($handoff){@{artifacts=@();fixture=$true}}else{$null}
+    $r.handoffFrom=if($handoff){'isolated-fixture-continuation'}else{$null}
     $r.hardStopAt=$null;$r.hardStopReason=$null;$r.limitReached=$false
     Save "$state/queue-state.json" $q
 }
@@ -63,37 +64,51 @@ function Progress($key,$kind='Observation',$evidence=$null) {Q @{Action='RecordT
 $proofPath=Join-Path $root 'turn-proof.json';$eventPath=Join-Path $root 'raw-app-turn.json'
 $checkpointPath=Join-Path $root 'saved-checkpoint.json'
 Init;$t=StartTask;$id=$t.id;$exec=$t.execution.executionId
+if($HistoricalQueuePath){
+    $historical=Get-Content -LiteralPath $HistoricalQueuePath -Raw|ConvertFrom-Json -DateKind String
+    $old=@($historical.tasks|Where-Object id -eq 'AI-000170')[0]
+    Check (@($old.supervisionRepairs).Count -eq 6) 'AI170 has six historical recovery records in read-only source'
+    $q=QueueState
+    $q.tasks[0] | Add-Member -NotePropertyName supervisionRepairs -NotePropertyValue @($old.supervisionRepairs) -Force
+    Save "$state/queue-state.json" $q
+    Check (@((Active).supervisionRepairs).Count -eq 6) 'six recovery records copied into isolated fixture only'
+}
 Check ($null -eq $t.execution.appTurnCount -and (Checkpoint).action -eq 'CONTINUE') 'missing exact count remains null and does not invent a stop'
 Seed 119 $null $null
 Check ((Checkpoint).action -eq 'CONTINUE') '119 open'
+Check ((Q @{Action='CheckManagedTool';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec}).action -eq 'MANAGED_TOOL_ALLOWED') '119 permits managed execution'
 $turn=Turn 'boundary-120'
-Check ($turn.appTurnCount -eq 120 -and $turn.action -eq 'TURN_SOFT_LIMIT') '120 emits soft transition through real native turn API'
+Check ($turn.appTurnCount -eq 120 -and $turn.action -eq 'HANDOFF_REQUIRED') '120 requires bounded handoff through real native turn API'
 $soft=(Active).execution.softLimitAt
 $turn=Turn 'boundary-120'
 Check ($turn.duplicate -and $turn.appTurnCount -eq 120) 'repeated event does not count twice'
-Check ((Checkpoint).action -eq 'TURN_SOFT_LIMIT' -and @((Active).execution.turnLimitHistory | Where-Object event -eq TURN_SOFT_LIMIT).Count -eq 1) 'repeated checkpoints keep one soft-limit event'
+Check ((Checkpoint).action -eq 'HANDOFF_REQUIRED' -and @((Active).execution.turnLimitHistory | Where-Object event -eq TURN_SOFT_LIMIT).Count -eq 1) 'repeated checkpoints keep one soft-limit event'
+Check ((Q @{Action='CheckManagedTool';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec}).action -eq 'HANDOFF_REQUIRED') 'queue refuses managed tool before handoff'
+$dummy=Join-Path $root 'managed-dummy.ps1';$dummyMarker=Join-Path $root 'managed-dummy-ran.txt'
+[IO.File]::WriteAllText($dummy,("[IO.File]::WriteAllText('{0}','ran')" -f $dummyMarker),$utf8)
+Reject {& (Join-Path $repo 'DevTools/Workflow/Invoke-TaskTool.ps1') -TaskId $id -Lane CODE -CommandPath $dummy -QueueScriptPath (Join-Path $ws 'queue.ps1') -RuntimeRoot $state -OwnerThreadId $route -ExecutionId $exec} 'Invoke-TaskTool refuses command before execution'
+Check (-not (Test-Path -LiteralPath $dummyMarker)) 'managed command side effect absent after refusal'
 Reject {Progress 'work-blocked-before-checkpoint' 'WorkCompleted' $proofPath} 'soft transition permits handoff only'
 Reject {Q @{Action='Complete';Pipeline='CODE';TaskId=$id;Summary='bad';Verification='bad'}} 'complete cannot skip soft handoff'
 Reject {Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='safe';Verification='saved'}} 'soft handoff requires saved artifacts'
 Save $checkpointPath @{taskId=$id;executionId=$exec;summary='synthetic isolated checkpoint'}
-Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='safe checkpoint';Verification='fixture saved';Artifacts=@($checkpointPath)}|Out-Null
+$handoffInput=@{completed=@('isolated replay reached 120');remaining=@('continue synthetic task');keyState=@{attempt=1;repairs=6};evidencePaths=@($checkpointPath);nextCommand='read handoffFrom; continue fixed CODE chat'}|ConvertTo-Json -Depth 8 -Compress
+$saved=Q @{Action='WriteHandoff';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;HandoffJson=$handoffInput}
+Check ($saved.action -eq 'HANDOFF_SAVED' -and (Get-Item -LiteralPath $saved.handoffPath).Length -le 4096) 'formal handoff saved within 4 KiB'
+Check ((Q @{Action='CheckManagedTool';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec}).action -eq 'HANDOFF_REQUIRED') 'saved handoff still refuses work until Yield'
+Q @{Action='YieldSupervisionTask';Pipeline='CODE';TaskId=$id;Summary='safe checkpoint';Verification='fixture saved'}|Out-Null
 $before=Active
-Check ($before.status -eq 'QUEUED' -and $before.execution.softLimitHandoff.taskId -eq $id -and $before.execution.softLimitHandoff.artifacts[0].sha256 -eq (Get-FileHash $checkpointPath).Hash) 'checkpoint belongs to task and binds artifact SHA'
-$d=(Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches[0]
-Reject {Q @{Action='Poll';Pipeline='CODE';TaskId=$id;TriggerSource='SUPERVISED';DispatchToken=$d.token}} 'same thread cannot consume soft handoff'
-# Rebind only after formally cancelling the old unused reservation via pause/resume.
-Q @{Action='PauseSupervision';Reason='fixture rebind'}|Out-Null
-$route='49e35083-c123-45ff-9dc5-2a21e3344488'
-Q @{Action='BindExecutionPipeline';Pipeline='CODE';PipelineThreadId=$route;UserDecision='fixture handoff';Verification='fixture idle'}|Out-Null
-Q @{Action='ResumeSupervision';Reason='fixture resume';UserDecision='fixture'}|Out-Null
+Check ($before.status -eq 'QUEUED' -and $before.execution.softLimitHandoff.path -eq $saved.handoffPath -and $before.execution.softLimitHandoff.sha256 -eq (Get-FileHash $saved.handoffPath).Hash) 'checkpoint belongs to task and binds artifact SHA'
 $d=(Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches[0]
 $t=(Q @{Action='Poll';Pipeline='CODE';TaskId=$id;TriggerSource='SUPERVISED';DispatchToken=$d.token}).task;$exec=$t.execution.executionId
-Check ($t.attempts -eq 2 -and $t.execution.appTurnCount -eq 120 -and $t.execution.softLimitAt -ceq $soft -and @($t.executionHistory).Count -eq 1) 'new thread preserves attempts count soft clock and history'
+Check ($t.attempts -eq 2 -and $t.execution.appTurnCount -eq 120 -and $t.execution.softLimitAt -ceq $soft -and @($t.executionHistory).Count -eq 1 -and $t.execution.handoffFrom -eq $saved.handoffPath) 'fixed chat continuation injects handoffFrom and preserves cumulative count'
+if($HistoricalQueuePath){Check (@($t.supervisionRepairs).Count -eq 6) 'AI170 copied recovery history survives isolated continuation'}
 Check ((Checkpoint).action -eq 'CONTINUE') 'saved soft checkpoint permits continuation after handoff'
 $turn=Turn 'boundary-120'
 Check ($turn.duplicate -and $turn.appTurnCount -eq 120) 'event dedupe survives cross-thread claim'
 $turn=Turn 'boundary-121'
 Check ($turn.appTurnCount -eq 121 -and (Checkpoint).action -eq 'CONTINUE') '121 continues'
+Check ((Q @{Action='CheckManagedTool';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec}).action -eq 'MANAGED_TOOL_ALLOWED') 'continuation reopens managed execution'
 Seed 239 $soft $null $true
 Check ((Checkpoint).action -eq 'CONTINUE') '239 continues after handoff'
 $turn=Turn 'boundary-240'

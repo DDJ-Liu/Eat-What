@@ -1,5 +1,7 @@
 # ART-DAILY-YYYYMMDD · 美术资产每日审查
 
+- 需求依据：`.ai-workspace/inputs/art/美术需求单_P0P1_v1_20261014.md`（v1），§4对照1～12；ART_PENDING_ITEMS.json为机器派生。通配命中不代表齐套/人工验收，未定项按原件人工核对。
+
 - 审查时间：YYYY-MM-DD 00:00 +08:00（实际执行 HH:MM，若延后写延后原因：前序任务 AI-xxxxxx）
 - 审查根：E:\EatWhat\美术资产
 - 基线：ART-DAILY-YYYYMMDD（或 art-sync-*.json）

@@ -16,6 +16,26 @@ $RuntimeRoot = [IO.Path]::GetFullPath($RuntimeRoot)
 $utf8 = [Text.UTF8Encoding]::new($false)
 $created = [Collections.Generic.List[object]]::new()
 $existing = [Collections.Generic.List[string]]::new()
+$dueDates = [Collections.Generic.List[DateTimeOffset]]::new()
+for ($candidate=$firstDue; $candidate -le $today; $candidate=$candidate.AddDays(7)) { $dueDates.Add($candidate) }
+$nextDue = $candidate
+$expectedBundles = [Collections.Generic.List[object]]::new()
+foreach ($dueDate in $dueDates) {
+    $start=$dueDate.AddDays(-9); $end=$dueDate.AddDays(-2)
+    $key="$($start.ToString('yyyy-MM-dd'))_$($end.AddDays(-1).ToString('yyyy-MM-dd'))"
+    $expectedBundles.Add([pscustomobject]@{kind='weekly';start=$start;end=$end;due=$dueDate;path=(Join-Path $OutputRoot "weekly/$key")})
+}
+$expectedBundles.Add([pscustomobject]@{kind='daily';start=$today;end=$today.AddDays(1);due=$today;
+    path=(Join-Path $OutputRoot ("daily/" + $today.ToString('yyyy-MM-dd')))})
+$publicationPending=$false
+foreach ($bundle in $expectedBundles) {
+    if (-not (Test-Path -LiteralPath $bundle.path -PathType Container)) { $publicationPending=$true; continue }
+    foreach ($name in @('report.md','evidence.json')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $bundle.path $name) -PathType Leaf)) {
+            throw "Existing usage report is incomplete; preserve and review: $($bundle.path)"
+        }
+    }
+}
 
 function Get-TextSha([string]$Text) {
     [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes($Text)))
@@ -116,6 +136,43 @@ function Publish-UsageBundle([string]$Kind, [DateTimeOffset]$Start, [DateTimeOff
     $created.Add([pscustomobject]@{ kind=$Kind; path=$reportPath; records=$selected.Count; isBackfill=$meta.isBackfill })
 }
 
+function Get-PublishedSignatures {
+    $signatures=[ordered]@{}
+    foreach ($bundle in $expectedBundles) {
+        $entry=[ordered]@{}
+        foreach ($name in @('report.md','evidence.json')) {
+            $file=Get-Item -LiteralPath (Join-Path $bundle.path $name) -ErrorAction Stop
+            $entry[$name]=[ordered]@{bytes=$file.Length;modifiedUtc=$file.LastWriteTimeUtc.ToString('o')}
+        }
+        $signatures[$bundle.path]=$entry
+    }
+    return $signatures
+}
+function Save-SignatureIndex($Signatures) {
+    [void][IO.Directory]::CreateDirectory($OutputRoot)
+    $destination=Join-Path $OutputRoot 'integrity-index.json'
+    $temporary="$destination.pending-$([Guid]::NewGuid().ToString('N'))"
+    [IO.File]::WriteAllText($temporary,([ordered]@{schemaVersion=1;bundles=$Signatures}|ConvertTo-Json -Depth 8),$utf8)
+    [IO.File]::Move($temporary,$destination,$true)
+}
+
+if (-not $publicationPending) {
+    $signatures=Get-PublishedSignatures
+    $indexPath=Join-Path $OutputRoot 'integrity-index.json'
+    $oldIndex=try { if(Test-Path -LiteralPath $indexPath -PathType Leaf){Get-Content -LiteralPath $indexPath -Raw|ConvertFrom-Json -DateKind String} } catch { $null }
+    $currentJson=$signatures|ConvertTo-Json -Depth 8 -Compress
+    $oldJson=if($oldIndex -and $oldIndex.schemaVersion -eq 1){$oldIndex.bundles|ConvertTo-Json -Depth 8 -Compress}else{$null}
+    if($currentJson -cne $oldJson){
+        # Revalidate changed report files without scanning any usage JSONL source.
+        foreach($bundle in $expectedBundles){Publish-UsageBundle $bundle.kind $bundle.start $bundle.end $bundle.due}
+        Save-SignatureIndex $signatures
+    }
+    [pscustomobject]@{action='USAGE_REPORTS_CHECKED';checkedAt=$localNow.ToString('o');created=@();
+        existingCount=$expectedBundles.Count;nextWeeklyDue=$nextDue.ToString('o');
+        sourceScan='SKIPPED_ALREADY_PUBLISHED';limitations='No task or mode changes.'}|ConvertTo-Json -Depth 6
+    return
+}
+
 $reportMutex = [Threading.Mutex]::new($false, ('Local\EatWhat_UsageReports_' + (Get-TextSha $OutputRoot.ToUpperInvariant())))
 $reportLock = $false
 try {
@@ -139,14 +196,16 @@ try {
         $logMutex.Dispose()
     }
     # Wednesday's report refers to the previous Monday-Sunday, never the incomplete current week.
-    for ($due=$firstDue; $due -le $today; $due=$due.AddDays(7)) {
+    foreach ($due in $dueDates) {
         Publish-UsageBundle 'weekly' $due.AddDays(-9) $due.AddDays(-2) $due
     }
     Publish-UsageBundle 'daily' $today $today.AddDays(1) $today
+    Save-SignatureIndex (Get-PublishedSignatures)
     [pscustomobject]@{
         action='USAGE_REPORTS_CHECKED'; checkedAt=$localNow.ToString('o')
         created=@($created.ToArray()); existingCount=$existing.Count
-        nextWeeklyDue=$due.ToString('o')
+        nextWeeklyDue=$nextDue.ToString('o')
+        sourceScan='EXECUTED_DUE_PUBLICATION'
         limitations='Paused/unavailable host cannot run; next invocation catches up. No task or mode changes.'
     } | ConvertTo-Json -Depth 6
 }

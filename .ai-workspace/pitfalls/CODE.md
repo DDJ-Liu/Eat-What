@@ -2,6 +2,15 @@
 
 > 从 [INDEX.md](INDEX.md) 按 P 编号定位。跨车道/全流水线条目会在相关车道重复，正文语义保持一致。
 
+<a id="p-051-unity-font-post-exit"></a>
+
+## P-051 | [DATA/CODE] Unity 资产 SHA 凭据必须取 Editor 退出后的稳定磁盘文件
+
+- 现象：隔离 batch 在写完成凭据后正常退出，TMP 的 EditorApplicationQuit 回调又清理 DynamicFallback，导致批内记录的 SHA 与退出后的候选文件不一致；AI-000235 attempt2 在字体事务写入前拒绝。
+- 总规则：凡对 Unity 资产取 SHA 凭据，须先核本次 Editor 进程真实退出，再有界观察目标文件长度与修改时间稳定，最后从磁盘计算；进程内预先记录的 SHA 只是历史结果，不能代替退出后发布凭据。受保护资产旧批准基线只保护 live 原值，授权流水线在发布时才更新基线，不能拿旧 SHA 要求新候选相等。本次字体实例另核 runId/nonce 与导表成功，Static 候选须等于本次退出后凭据。
+- 字体实例中，Dynamic 不参与发布、临时文件、写后或回滚的 SHA 合同，也不比较候选 manifest 的 Dynamic SHA；正常路径直接复制已清空候选，以前后 glyph 数和最终 0 验收，不另设逐字节内容门。仍核路径/meta/本地身份、长度/mtime 并发漂移，保留备份与逐文件事务；仅异常回滚时为避免覆盖陌生改动可做必要的字节核对。授权发布时更新 Static 的批准 manifest，审计 run/round、字形差异及旧新 SHA；无变化不重写。
+- 来源：用户 2026-10-14 DATA-F1b 明确决定；原 AI-000235 两次失败与批准消费保留。AI-000241 只改 DevTools，不运行 Unity 或生产发布。
+
 <a id="p-049-code-utc-json"></a>
 
 ## P-049 | [CODE] PowerShell ConvertFrom-Json 自动日期转换丢失 UTC

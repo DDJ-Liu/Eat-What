@@ -1,0 +1,43 @@
+{
+  "observedThrough": "2026-10-14T23:55:04.669+08:00",
+  "thresholds": {
+    "advise": 150000,
+    "strong": 200000
+  },
+  "samples": [
+    {
+      "role": "console",
+      "threadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+      "observedAt": "2026-10-14T15:55:04.669Z",
+      "responseId": "resp_08638590debbb313016acfa5b802ac87d09b83c90de2dcf4a7",
+      "inputTokens": 190300,
+      "source": "native token_usage_record",
+      "derivedWarning": "ADVISE"
+    },
+    {
+      "role": "CODE",
+      "threadId": "01a01316-9760-7911-a5d6-ac155907dddb",
+      "observedAt": "2026-10-14T14:53:10.455Z",
+      "responseId": "resp_00eba1af520a9b9e016acf9751b17487d0976ef126dd34454a",
+      "inputTokens": 197981,
+      "source": "native token_usage_record",
+      "derivedWarning": "ADVISE"
+    }
+  ],
+  "runtimeReader": {
+    "console": {
+      "contextTokens": null,
+      "source": "unknown",
+      "warning": "NONE"
+    },
+    "CODE": {
+      "contextTokens": 137875,
+      "observedAt": "2026-10-04T19:47:08.275Z",
+      "warning": "NONE"
+    }
+  },
+  "liveContextTokens": null,
+  "taskTotalTokens": null,
+  "billedCost": null,
+  "limitation": "Per-response input samples; not aggregate billing or complete live context. No runtime record imported or rewritten."
+}

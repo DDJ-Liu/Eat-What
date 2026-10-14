@@ -228,7 +228,7 @@ queue.ps1 -Action RecordIssue -Pipeline <PIPELINE> -TaskId <TASK_ID> -IssueKind 
 
 ## PRE-5c · 分级停止与真实回合
 
-AI208现行实现：真实 app turn 按事件去重、跨线程/attempt累计；120仅产生一次 TURN_SOFT_LIMIT。该过渡只允许保存证据与交接：YieldSupervisionTask绑定task/execution/owner、文件SHA和软限时间，新可见线程领取时复核后继续。累计240或软限后距最后实际进度30分钟触发锁存硬停；240只是临时保护。Initialize、Checkpoint、RecordTaskProgress和Complete共用Sync-TaskTurnGate，不信任可被重置的limitReached布尔值。缺计数保留null及原因，不能抵消已记录的软限/硬停。
+AI208基础与GOV-02补齐：真实 app turn 按事件去重、跨attempt累计；120只登记一次 TURN_SOFT_LIMIT 历史事件，对执行器正式返回 HANDOFF_REQUIRED。固定职能chat当前轮调用WriteHandoff保存≤4 KiB的已完成/剩余/关键状态/证据路径/下一命令到runtime/handoffs/<task>-<attempt>.json，再YieldSupervisionTask；下一轮同chat领取时校验SHA并注入handoffFrom，先读后续行。路由变更也不清累计；无有效交接时CheckManagedTool/Invoke-TaskTool拒绝受管执行，但不声称拦截任意平台外部工具。WATCH在软限后30分钟无交接报HANDOFF_STALLED，TURN_LIMIT带交接路径。累计240或软限后距最后实际进度30分钟触发锁存硬停；240只是临时保护。Heartbeat不算实际进度。Initialize、Checkpoint、RecordTaskProgress和Complete共用Sync-TaskTurnGate，不信任可被重置的limitReached布尔值。缺计数保留null及原因，不能抵消已记录的软限/硬停。
 进度默认Observation；WorkCompleted必须有落盘证据，重复ProgressId或同SHA证据、Heartbeat、只读观察、领取和交接均不刷新实际进度。Invoke-TaskTool只在成功完成工作后记录进度；只读调用显式传-ProgressKind Observation，开始/失败均不充进度。
 控制拒验只阻断本任务及其依赖；独立链继续。RejectVerification在队列锁内绑定原结果快照/SHA、CONTROL_ACCEPTANCE、稳定key及证据SHA，保留原报告和历史。只有显式ResolveControlRejection，绑定后续已完成的同根修复、独立控制台、两结果SHA及最新拒验证据后，才追加解决记录；不自动修改AI201 REJECTED，也不代过人工gate。仅有正式SupersedeTask取消依据的CLOSED_SUPERSEDED可作为scope已取消收口，状态不改SUCCEEDED，后继仍须满足真实依赖。
 正式硬限待瘦身措施落地后连续实测满两周再定。本卡将独立读取批处理、紧凑回执与全文证据分离、一次Workflow聚合和重复事件去重落地；本次只有离线样本，未满足两周，不宣称240为正式最终值。WATCH宿主部署仍待验。

@@ -314,6 +314,38 @@ function Invoke-SupervisionAction {
     }
     Assert-Value ($null -ne $m.PSObject.Properties['supervised']) 'No supervised session configured.'
     $s = $m.supervised
+    if ($Action -eq 'RecordSupervisionHeartbeatContext') {
+        Assert-Value ($m.mode -eq 'SUPERVISED' -and $s.status -in @('ACTIVE','EMPTY') -and
+            -not [bool]$s.stopRequested -and -not [bool]$s.exitRequested) 'Inactive or stopped supervision must not sample context.'
+        Assert-Value ($ControllerThreadId -ceq [string]$s.controllerThreadId) 'Controller thread does not match the active session.'
+        Assert-Value (-not [string]::IsNullOrWhiteSpace($HeartbeatId)) 'HeartbeatId is required for one-sample-per-heartbeat deduplication.'
+        $runtimeRoot = Join-Path $workspaceRoot 'runtime'
+        $key = "$($s.sessionId)|$HeartbeatId|console"
+        $old = @(Read-TaskUsageRecords -RuntimeRoot $runtimeRoot | Where-Object {
+            $_.event -eq 'thread_context' -and [string]$_.metadata.lifecycleKey -ceq $key
+        })
+        if ($old.Count -gt 0) {
+            Write-Result @{action='CONSOLE_CONTEXT_ALREADY_RECORDED';heartbeatId=$HeartbeatId;
+                contextTokens=$old[-1].contextTokens;contextSource=$old[-1].contextSource;
+                contextWarning=$old[-1].contextWarning}; return
+        }
+        $sampleRef=$null; $sampleHash=$null
+        if ($UsageLimitsSamplePath) {
+            $sampleRef=[IO.Path]::GetFullPath($UsageLimitsSamplePath)
+            Assert-Value ($sampleRef.StartsWith(([IO.Path]::GetFullPath($projectRoot) + [IO.Path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase) -and
+                (Test-Path -LiteralPath $sampleRef -PathType Leaf)) 'Raw get_usage_limits sample must be an existing workspace file.'
+            $sampleHash=(Get-FileHash -LiteralPath $sampleRef -Algorithm SHA256).Hash
+        } else {
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($UsageLimitsUnavailableReason)) 'Supply a raw get_usage_limits sample reference or its unavailable reason; do not fabricate a sample.'
+        }
+        $contextArgs=@{ThreadId=$ControllerThreadId;RuntimeRoot=$runtimeRoot}
+        if($null -ne $ContextFreshBytes){$contextArgs.FreshBytes=$ContextFreshBytes;$contextArgs.FreshBytesObservedAt=(Get-NowIso)}
+        $context=& (Join-Path $projectRoot 'DevTools/Workflow/Get-ThreadContext.ps1') @contextArgs | ConvertFrom-Json -DateKind String
+        Write-TaskUsageRecord -TaskId 'CONSOLE' -Lane 'CONTROL' -Phase 'execute' -Event 'thread_context' -Role console -ContextTokens $context.contextTokens -ContextSource $context.contextSource -ContextWarning $context.contextWarning -Source 'workflow-thread-context' -Coverage 'One active controller heartbeat; account usage sample is a global snapshot reference, not task billing.' -UnavailableReason @{inputTokens='Context is not task billing.';outputTokens='Context is not task billing.';contextTokens=[string]$context.reason} -Metadata @{threadId=$ControllerThreadId;sessionId=$s.sessionId;heartbeatId=$HeartbeatId;lifecycleKey=$key;method=$context.method;responseId=$context.responseId;samplePath=$sampleRef;sampleSha256=$sampleHash;sampleUnavailableReason=$UsageLimitsUnavailableReason;accountScope='global_not_task'} -RuntimeRoot $runtimeRoot | Out-Null
+        Write-Result @{action='CONSOLE_CONTEXT_RECORDED';heartbeatId=$HeartbeatId;
+            contextTokens=$context.contextTokens;contextSource=$context.contextSource;
+            contextWarning=$context.contextWarning;samplePath=$sampleRef}; return
+    }
     if ($Action -eq 'SupervisionStatus') {
         # Idempotent fallback for a lost final callback or an older fully-complete session.
         if (Complete-SupervisionIfReady $m $q $w) { Save-JsonFile $modePath $m }
@@ -503,16 +535,13 @@ function Invoke-SupervisionAction {
             Write-Result @{action= $(if ($s.stopRequested -or $s.status -ne 'ACTIVE') {'STOP_AT_SAFE_CHECKPOINT'} else {$turnGate}); taskId=$TaskId;turnGate=$turnGate}; return
         }
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Summary) -and -not [string]::IsNullOrWhiteSpace($Verification)) 'Yield requires saved progress and safe现场 evidence.'
-        if($turnGate -in @('TURN_SOFT_LIMIT','STOP_AT_TURN_LIMIT')){
-            Assert-Value ($Artifacts.Count -gt 0 -and @($Artifacts | Where-Object {-not (Test-Path -LiteralPath $_ -PathType Leaf)}).Count -eq 0) 'Turn limit yield requires saved checkpoint artifacts.'
+        if($turnGate -eq 'HANDOFF_REQUIRED'){
+            Assert-Value (Test-SavedTaskHandoff $t) 'Soft-limit yield requires a formal, SHA-bound WriteHandoff checkpoint.'
+            Set-ObjectPropertyValue $t.execution 'checkpointPath' @($t.execution.softLimitHandoff.path)
+        }
+        if($turnGate -eq 'STOP_AT_TURN_LIMIT'){
+            Assert-Value ($Artifacts.Count -gt 0 -and @($Artifacts | Where-Object {-not (Test-Path -LiteralPath $_ -PathType Leaf)}).Count -eq 0) 'Hard-limit yield requires saved checkpoint artifacts.'
             Set-ObjectPropertyValue $t.execution 'checkpointPath' @($Artifacts)
-            if($turnGate -eq 'TURN_SOFT_LIMIT'){
-                Set-ObjectPropertyValue $t.execution 'softLimitHandoff' ([pscustomobject]@{
-                    at=Get-NowIso;taskId=$TaskId;executionId=$t.execution.executionId;ownerThreadId=$t.execution.ownerThreadId
-                    appTurnCount=$t.execution.appTurnCount;softLimitAt=$t.execution.softLimitAt
-                    artifacts=@($Artifacts | ForEach-Object {[pscustomobject]@{path=[IO.Path]::GetFullPath($_);sha256=(Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash}})
-                })
-            }
         }
         Set-SupervisedProperty $t 'supervisionCheckpoint' ([pscustomobject]@{at=Get-NowIso; summary=$Summary; verification=$Verification})
         $t.status=if($turnGate -eq 'STOP_AT_TURN_LIMIT'){'NEEDS_USER'}else{'QUEUED'}; Clear-SupervisionWorker $worker
@@ -564,6 +593,8 @@ function Invoke-SupervisionAction {
         }
         Assert-Value ($t.pipeline -eq $Pipeline -and $s.taskIds -contains $TaskId) 'Wrong pipeline or out-of-scope task.'
         Assert-Value ($t.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and $worker.status -eq 'IDLE') 'Task or worker is no longer idle.'
+        Assert-Value ((Get-ObjectPropertyValue $t 'complexity') -in @('S','M','L') -and
+            [int](Get-ObjectPropertyValue $t 'turnBudget') -eq (Get-TaskTierBudget ([string]$t.complexity))) 'Queued task requires formal Complexity/turnBudget classification before Poll.'
         Assert-Value ($worker.circuit.state -eq 'CLOSED') 'Worker circuit is not closed.'
         Assert-Value (@(Get-SupervisionBlockers $q $t $m).Count -eq 0) 'Dependencies or human gates changed; do not claim.'
         Assert-Value (-not (Test-ArtAuditBlocksTask $t)) 'Daily art audit must finish before this task can claim.'
@@ -603,7 +634,7 @@ function Invoke-SupervisionAction {
         $message = @"
 监管模式派发 $($t.id)。先读取 .ai-workspace/WORKFLOW.md、.ai-workspace/SUPERVISED.md、对应 .ai-workspace/workers/$($t.pipeline).md 与项目入口。
 仅运行：& .ai-workspace/queue.ps1 -Action Poll -Pipeline $($t.pipeline) -TaskId $($t.id) -TriggerSource SUPERVISED -DispatchToken $token$resumeScopeArgument
-只有 CLAIMED 才执行。批准续行的每批生产写入前 SupervisionCheckpoint 须带实际本批 -Scope（不得超出领取范围）；其它任务按原检查点规则；暂停则安全留痕 YieldSupervisionTask。阻断先留证 Fail，ProblemKey 用稳定根因标识；Complete/Fail/Yield 后按 Manage-SupervisionHandoff.ps1 Prepare → 完整消息一次发送绑定控制台 → Record 保存真实投递原文；控制台 Receive 去重接收（不等于验收），然后结束，禁止自己派发后继或 AUTOMATIC 接力。控制台已获本任务范围内执行与必要修复授权，人工验收/设计决策及平台安全审批不能代过。
+只有 CLAIMED 才执行；若Poll返回handoffFrom，先读取并核对SHA绑定交接，累计计数不清零。批准续行的每批生产写入前 SupervisionCheckpoint 须带实际本批 -Scope（不得超出领取范围）；其它任务按原检查点规则。HANDOFF_REQUIRED时先WriteHandoff保存≤4 KiB检查点再Yield，当前轮不继续受管执行；暂停也安全留痕Yield。阻断先留证 Fail，ProblemKey 用稳定根因标识；Complete/Fail/Yield 后按 Manage-SupervisionHandoff.ps1 Prepare → 完整消息一次发送绑定控制台 → Record 保存真实投递原文；控制台 Receive 去重接收（不等于验收），然后结束，禁止自己派发后继或 AUTOMATIC 接力。控制台已获本任务范围内执行与必要修复授权，人工验收/设计决策及平台安全审批不能代过。
 "@.Trim()
         $dispatches += [pscustomobject]@{taskId=$t.id; pipeline=$t.pipeline; executorKind=$executionTarget.executorKind; threadId=$executionTarget.threadId; routeRevision=$executionTarget.routeRevision; token=$token; message=$message}
     }

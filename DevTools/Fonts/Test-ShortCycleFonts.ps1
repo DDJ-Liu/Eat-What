@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath)
+param([string]$UnityEditorPath,[switch]$SkipGuardFixture)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -29,6 +29,8 @@ Assert-Contains $builder 'DataTableCsvParser\.Parse\s*\(' 'Builder must use the 
 Assert-Contains $builder 'LegacyFontAssetPath' 'Builder must source the reviewed legacy character table.'
 Assert-Contains $builder 'LocalizationCsvPath' 'Builder must include localization CSV text.'
 Assert-Contains $builder 'requiredCharacters\.UnionWith\(localizationCharacters\)' 'Builder must union both character sources.'
+Assert-Contains $builder 'AssetDatabase\.SaveAssetIfDirty\(staticAsset\)' 'Builder must save only the scoped static asset.'
+Assert-NotContains $builder 'AssetDatabase\.SaveAssets\s*\(' 'Builder must not save unrelated project assets.'
 Assert-Contains $builder 'missing\.Length\s*>\s*0' 'Builder must gate atlas writes on missing characters.'
 Assert-Contains $builder 'ClearFontAssetData\(false\)' 'Dynamic fallback needs an explicit clear-for-commit path.'
 Assert-Contains $builder 'SetFallbackChain\(asset,\s*sourceHan\)' 'Dynamic fallback must end at SourceHan.'
@@ -155,11 +157,14 @@ finally {
     }
 }
 
-$python = Get-Command python -ErrorAction Stop
-$guardOutput = @(& $python.Source (Join-Path $repoRoot 'DevTools\GitHooks\test-font-guard.py') 2>&1)
-if ($guardOutput.Count -gt 0) { $guardOutput | Write-Output }
-if ($LASTEXITCODE -ne 0) { throw "Font guard fake-repository tests failed with exit $LASTEXITCODE." }
-$guardResult = ($guardOutput -join [Environment]::NewLine) | ConvertFrom-Json
+$guardResult = $null
+if (-not $SkipGuardFixture) {
+    $python = Get-Command python -ErrorAction Stop
+    $guardOutput = @(& $python.Source (Join-Path $repoRoot 'DevTools\GitHooks\test-font-guard.py') 2>&1)
+    if ($guardOutput.Count -gt 0) { $guardOutput | Write-Output }
+    if ($LASTEXITCODE -ne 0) { throw "Font guard fake-repository tests failed with exit $LASTEXITCODE." }
+    $guardResult = ($guardOutput -join [Environment]::NewLine) | ConvertFrom-Json
+}
 
 [pscustomobject]@{
     success = $true
@@ -169,5 +174,6 @@ $guardResult = ($guardOutput -join [Environment]::NewLine) | ConvertFrom-Json
     localizationCharacterCount = $localizationCharacters.Count
     requiredCharacterCount = $requiredCharacters.Count
     compiledEditorDllBytes = $compiledBytes
-    guardCases = $guardResult.count
+    guardCases = if ($null -eq $guardResult) {0} else {$guardResult.count}
+    guardFixtureSkipped = [bool]$SkipGuardFixture
 } | ConvertTo-Json -Depth 4

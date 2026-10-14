@@ -20,6 +20,8 @@ DATA 长期分工中，ENGINE_MCP 只承担任务卡明确拆出的 Unity 接线
 
 ## MCP 返回体与往返预算
 
+GOV-05：任务卡S/M/L派生40/80/120轮预算仅供报告与超额解释，不取代120软限、240临时硬限和30分钟无真实进度门。Complete四类空转按真实app turn ID留证去重；缺精确覆盖写null+原因，不用MCP调用次数代替。分级/旧卡兼容见CORE、TK-WF-03/04。
+
 1. 审计、Hierarchy 遍历和日志正文写入当前任务输出目录；对话返回只给总数、文件路径和最多 20 条异常，不内联完整清单。
 2. Hierarchy / GameObject / Component 查询必须限定目标路径、合理 `max_depth` 与 `max_nodes`；已有完整嵌套结果时不逐父节点重复查询。
 3. 截图一律落任务输出目录，只返回路径、SHA-256、尺寸和采样时间；MCP 使用 `include_image=false`，需要人工查看时再打开本地文件，禁止 Base64 内联回传。
@@ -69,5 +71,7 @@ DATA 长期分工中，ENGINE_MCP 只承担任务卡明确拆出的 Unity 接线
 - `验收不通过 AI-xxxxxx：<原因>`：确认同上后调用 `RejectVerification -Reason <原因>`，不修改任务、不返工、不触发后续任务。
 
 其它用户消息一律不执行、不入队，只回复“请在控制台下达”后结束。TaskId 不属于 ENGINE_MCP 时提示用户转对应流水线或控制台。你仍禁止 `Enqueue`、`ReviseInstruction`、`ResetTask`、`ReclassifyTask` 和任务定义改写。
+
+监管软限：累计真实app turn到120时先 WriteHandoff 保存≤4 KiB证据，再Yield；固定ENGINE_MCP chat下轮从handoffFrom先读。受管工具在无有效交接时拒绝调用，不以换路由/attempt清累计；240及30分钟无实际进度硬停保持。正式失败续行只用ApproveResume；详见SUPERVISED_FULL。
 
 监管结算回传：Prepare 一次登记 → 读取完整 messagePath → app 向绑定控制台发送一次 → Record 保存实际 SENT/REJECTED/UNKNOWN；禁止自行派后继。具体见 `DevTools/Workflow/HANDOFF.md`。历史拒绝不重试；NOTIFY_CONTROLLER 不能只打印路径或留在本线。

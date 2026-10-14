@@ -1,5 +1,15 @@
 # 当前输入
 
+## 2026-10-14 指导文档与G74
+- 人工段实际在 [templates/人工段流程v2](../templates/人工段流程_v2_20261014.md)，此为清单编制依据，不是某批验收记录。
+- [P0P1美术需求v1](art/美术需求单_P0P1_v1_20261014.md) 为日报对照；JSON只是派生匹配。现有Archive-Stage已整体保留inputs/art；templates不属于该工具inputs/outputs归档范围。
+- [最终Schema v2.4.1](CK01-B_配表Schema_v2_4_1.md) 为权威；[G74原件](G74-20261014/控制台输入_G74落地_DATA-V1与CODE-R01_20261014.md)和有效执行卡同目录，用户修订见接收与范围.json。DATA不改正文/Authoring/xlsx/CSV。AI242 DATA与AI243 CODE并行，AI244 ENGINE编译尾步。
+- [旧变更稿保全](../archive/2026-10-14-schema-draft/README.md) 不再作活动规范；旧v2.4保持历史引用，不作无关清理。
+
+## 2026-10-14 GOV04/05追加
+
+[原件](GOV-04-05-20261014/控制台输入_GOV-04上下文预警_GOV-05复杂度分级_20261014.md)已逐字节接收；[用户复杂度修订](GOV-04-05-20261014/复杂度修订_用户决定.json)优先于旧标题：两卡M/80，既有工具族新增脚本不单独升L。执行卡GOV-04_CODE.md/GOV-05_CODE.md同目录；AI237/238均依赖AI236及其人工门，固定CODE后置执行。无需重开chat或恢复旧字体任务。
+
 ## 2026-10-13 当前排布输入
 
 用户已指定接收设计/控制端回写的两份附件，作为后续 ShortCycle_P0P1 排布指导：
@@ -34,3 +44,5 @@
 # 2026-09-23 外显 DATA 追加
 
 用户要求建立可见独立配表线，入口见 [DATA-VISIBLE 授权与接力](DATA-VISIBLE_外显配表线授权与接力_20260923.md)。已创建常驻任务“AI流水线-配表DATA”（01a0ce9d-8e5a-7542-82b6-6d27609d99e0）；[AI174 路由改造](DATA-VISIBLE-20260923/DATA-VIS-1_CODE.md) → 控制台正式绑定 → [AI175 实际领取回报](DATA-VISIBLE-20260923/DATA-VIS-2_DATA.md)已加入监管。当前路由未绑定；不重跑AI164，不替USER-U1标DONE。
+
+2026-10-14控制端遗漏批次：[原件及任务卡](OMISSIONS-20261014/)，provenance.json记录两份原件来源/SHA；GOV01→AI231、GOV02→AI232、GOV03→AI233；DATA-F1用户已选择A，授权见OMISSIONS-20261014/DATA-F1_选项A授权.md，AI234→235→236。
