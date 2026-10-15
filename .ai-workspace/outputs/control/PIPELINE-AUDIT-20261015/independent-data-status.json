@@ -1,0 +1,79 @@
+{
+  "action": "DATA_LANE_STATUS",
+  "pipeline": "DATA",
+  "registered": true,
+  "bound": true,
+  "executionTarget": {
+    "executorKind": "THREAD",
+    "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+    "routeRevision": 2,
+    "routeState": "BOUND"
+  },
+  "worker": {
+    "status": "IDLE",
+    "activeTaskId": null,
+    "lastPollAt": "2026-10-14T22:07:11.0367107+08:00",
+    "leaseUntil": null,
+    "executorKind": "THREAD",
+    "circuit": {
+      "state": "CLOSED",
+      "openUntil": null,
+      "reason": null
+    },
+    "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+    "routeRevision": 2,
+    "routeBoundAt": "2026-10-15T17:33:25.4693870+08:00",
+    "routeHistory": [
+      {
+        "at": "2026-09-23T23:24:22.1183796+08:00",
+        "before": {
+          "executorKind": "CONTROL_SUBAGENT",
+          "threadId": null,
+          "routeRevision": 0,
+          "routeState": "LEGACY_REGISTERED"
+        },
+        "after": {
+          "executorKind": "THREAD",
+          "threadId": "01a0ce9d-8e5a-7542-82b6-6d27609d99e0",
+          "routeRevision": 1,
+          "routeState": "BOUND"
+        },
+        "userDecision": "增加额外任务，建立一条外显的data流水线，保证后续所有的配表处理放在这条独立流水线上进行处理",
+        "verification": "2026-09-23本轮应用wait_threads确认DATA真实idle/completed；read_thread确认threadId=01a0ce9d-8e5a-7542-82b6-6d27609d99e0、host=local、cwd=D:/GameProject/Eat-What。原始返回见outputs/control/DATA-VISIBLE-20260923/ai174-bind-app-evidence.json。DataLaneStatus safeToBind=true，DATA IDLE、无RUNNING/activeTaskId/lease/预约/自动接力；前置AI174 SUCCEEDED，Workflow最终6/6通过，源码哈希已核。原TEST_OBSERVATION/PENDING_USER历史保留，不作人工签收。"
+      },
+      {
+        "at": "2026-10-15T17:33:25.4693870+08:00",
+        "before": {
+          "executorKind": "THREAD",
+          "threadId": "01a0ce9d-8e5a-7542-82b6-6d27609d99e0",
+          "routeRevision": 1,
+          "routeState": "BOUND"
+        },
+        "after": {
+          "executorKind": "THREAD",
+          "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+          "routeRevision": 2,
+          "routeState": "BOUND"
+        },
+        "userDecision": "2026-10-15用户明确授权固定管线新开继承，过大DATA/ART一并重载，执行线先控制台最后；inputs/PIPELINE-RELOAD-20261015/用户授权.json",
+        "verification": "New fixed chats READY then fresh app idle at correct cwd; zero queue RUNNING and no worker lease; ART daily RUNNING0. Saved acceptance in outputs/control/PIPELINE-RELOAD-20261015."
+      }
+    ],
+    "activeExecutionId": "ae7b5ec32420425389bd99e8f4db524c",
+    "lastProgressAt": null,
+    "lastProgressSource": null
+  },
+  "runningTaskIds": [],
+  "reservations": [],
+  "pendingAutomaticTaskId": null,
+  "safeToBind": true,
+  "externalReachabilityVerified": false,
+  "externalReachabilityNote": "Thread format is validated locally. Reachability and real idle state require controller/app evidence supplied through -Verification.",
+  "consoleContext": {
+    "threadId": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+    "tokens": 171116,
+    "source": "provider",
+    "warning": "ADVISE",
+    "reason": "One response input-token sample, not the complete live context window or task billing."
+  }
+}

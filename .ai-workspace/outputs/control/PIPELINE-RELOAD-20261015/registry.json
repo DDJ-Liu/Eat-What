@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-15T18:03:10.6822934+08:00",
+  "phase": "CONTROL_ACTIVE_OLD_ARCHIVED",
+  "mode": "MANUAL",
+  "controller": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+  "routes": {
+    "CODE": [
+      "01a01316-9760-7911-a5d6-ac155907dddb",
+      "01a13ed1-d7f1-7cd3-9207-9f0878a16fec"
+    ],
+    "ENGINE_MCP": [
+      "01a01316-2d47-7861-9012-5ab5d3fd8458",
+      "01a13ed2-3056-7671-a20b-173658adc657"
+    ],
+    "DATA": [
+      "01a0ce9d-8e5a-7542-82b6-6d27609d99e0",
+      "01a13ed2-89b4-7a72-87e5-4551dc7f8e17"
+    ],
+    "ART_ASSET": [
+      "01a07f70-c76d-72c3-8ad4-08dc6ec14538",
+      "01a13ed2-d479-7c93-94ef-223e3b5b36e9"
+    ],
+    "CONTROL": [
+      "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+      "01a13ef5-eda9-7882-b1c9-eca47a6470d9"
+    ]
+  },
+  "unchangedAigc": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+  "artBaselinePreserved": true,
+  "oldController": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+  "finalAudit": "../PIPELINE-AUDIT-20261015/app-and-host.json"
+}

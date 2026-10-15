@@ -1,0 +1,14 @@
+{
+  "taskId": "AI-000246",
+  "action": "SMOKE_PASSED",
+  "dataRouteRevision": 2,
+  "dataThreadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+  "statusBytesWithCRLF": 1790,
+  "mode": "MANUAL",
+  "modeUnchanged": true,
+  "workersUnchanged": true,
+  "consoleContextSource": "provider",
+  "ownerContextSource": "provider",
+  "consoleWarning": "ADVISE",
+  "ownerWarning": "NONE"
+}

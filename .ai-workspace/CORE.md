@@ -1,5 +1,10 @@
 # AI 工作区 CORE
 
+2026-10-15接管复核与AI-000246收口：五旧chat归档及7项应用日程已独立核实，5分钟无模型用量宿主继续、15份日/周报告完整，10-21下次周报。新增回执对象兼容修复已SUCCEEDED/VERIFIED（CODE86/86、控制4/4），MANUAL、U2～U6/P2和旧session历史不变；用户授权本轮提交并合main。详情outputs/control/PIPELINE-AUDIT-20261015/审查报告.md（相对.ai-workspace）。仅定向核验，不改完整复核日期。
+
+2026-10-15用户明确授权本次新开继承：CODE、ENGINE_MCP、DATA、ART_ASSET已先行接管，新主控制台最后接管。固定地址以[PIPELINES](PIPELINES.md)为准；交接[COMMON](inputs/PIPELINE-RELOAD-20261015/COMMON.md)。MANUAL及全部245卡原结算保持；旧已完成session的控制台地址属于历史，不改写、不复用来启动业务。未来新监管须显式绑定新控制台。此为本次人工授权，不新增自动重载规则。
+
+
 2026-10-15 AI-000245修复入口：精确线程原生日志的单次响应input_tokens经30分钟有效期、有界尾读/缓存用于提醒；正式队列普通回执可显式传ControllerThreadId（控制台）或OwnerThreadId（执行线），MANUAL Status同样可返回预警。ADVISE/STRONG只建议用户手动重载；未知为null+原因，非完整窗口/任务账单。WATCH的console事件由绑定控制台Read-WatchInbox消费，停止态不轮询。下述10-14诊断保留为历史。
 
 日常回复约定：固定控制台每次处理人类直接请求，在最终回复前优先在本轮已有普通正式queue命令上传入ControllerThreadId；若本轮完全没有queue命令，至多调用一次轻量Status作提醒采样（MANUAL也适用，不启监管、不做定时空轮询）。执行器普通queue命令带OwnerThreadId和当前TaskId，领取/Complete已有采样可复用。ADVISE/STRONG随本轮回复提示用户，同一稳定档位不反复刷屏；STRONG在当前卡安全结算后建议用户手动重载继承。完全无工具调用的平台消息无法被项目脚本自动截获。

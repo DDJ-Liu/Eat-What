@@ -121,13 +121,14 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $script:workflowUsageContext = $null
 if (Test-Path -LiteralPath $usageLibrary) { . $usageLibrary }
 $pipelineThreads = [ordered]@{
-    CODE = '01a01316-9760-7911-a5d6-ac155907dddb'
-    ENGINE_MCP = '01a01316-2d47-7861-9012-5ab5d3fd8458'
+    CODE = '01a13ed1-d7f1-7cd3-9207-9f0878a16fec'
+    ENGINE_MCP = '01a13ed2-3056-7671-a20b-173658adc657'
     ART_AIGC = '01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8'
-    ART_ASSET = '01a07f70-c76d-72c3-8ad4-08dc6ec14538'
+    ART_ASSET = '01a13ed2-d479-7c93-94ef-223e3b5b36e9'
     DATA = $null
 }
 $controllerThreads = @(
+    '01a13ef5-eda9-7882-b1c9-eca47a6470d9', # Current controller; archived IDs below remain reserved.
     '01a08798-8b2a-7d41-9aa8-ab44affd520a',
     '01a01321-2354-7b01-b5d1-f971a30d44b0'
 )
@@ -429,6 +430,13 @@ function Get-WorkflowUsagePhase {
 
 function Write-Result {
     param([object]$Value, [switch]$CompactOutput)
+    # Read-only snapshots may be PSCustomObject; use the same writable reply
+    # shape as dictionary actions before adding context or fallback fields.
+    if ($Value -is [pscustomobject]) {
+        $reply = [ordered]@{}
+        foreach ($property in $Value.PSObject.Properties) { $reply[$property.Name] = $property.Value }
+        $Value = $reply
+    }
     # Settlement handoffs retain a task/execution snapshot before compacting.
     if ((Get-ObjectPropertyValue $Value 'supervisorHandoff') -and -not (Get-ObjectPropertyValue $Value 'task') -and $TaskId) {
         $Value['task'] = Get-Task (Read-JsonFile $queuePath) $TaskId

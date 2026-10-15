@@ -1,0 +1,27 @@
+{
+  "action": "DATA_PIPELINE_BOUND",
+  "pipeline": "DATA",
+  "changed": true,
+  "before": {
+    "executorKind": "THREAD",
+    "threadId": "01a0ce9d-8e5a-7542-82b6-6d27609d99e0",
+    "routeRevision": 1,
+    "routeState": "BOUND"
+  },
+  "after": {
+    "executorKind": "THREAD",
+    "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+    "routeRevision": 2,
+    "routeState": "BOUND"
+  },
+  "boundAt": "2026-10-15T17:33:25.4693870+08:00",
+  "userDecision": "2026-10-15用户明确授权固定管线新开继承，过大DATA/ART一并重载，执行线先控制台最后；inputs/PIPELINE-RELOAD-20261015/用户授权.json",
+  "verification": "New fixed chats READY then fresh app idle at correct cwd; zero queue RUNNING and no worker lease; ART daily RUNNING0. Saved acceptance in outputs/control/PIPELINE-RELOAD-20261015.",
+  "consoleContext": {
+    "threadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+    "tokens": 230573,
+    "source": "provider",
+    "warning": "STRONG",
+    "reason": "One response input-token sample, not the complete live context window or task billing."
+  }
+}

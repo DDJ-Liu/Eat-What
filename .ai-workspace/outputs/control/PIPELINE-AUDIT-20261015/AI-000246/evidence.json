@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "taskId": "AI-000246",
+  "recordedAt": "2026-10-15T18:23:10.5513855+08:00",
+  "checks": {
+    "typedReplies": true,
+    "compatibilityAndScope": true
+  },
+  "productionFiles": [
+    ".ai-workspace/queue.ps1",
+    "DevTools/Workflow/Test-ContextWarning.ps1",
+    "DevTools/Workflow/USAGE_REPORTING.md"
+  ],
+  "implementation": {
+    "globalHelperUnchanged": true,
+    "inheritedQueueChangesPreserved": true,
+    "replyNormalizationAddedLines": 7
+  },
+  "validation": {
+    "checksPassed": 86,
+    "profile": "Custom",
+    "smoke": "smoke.json",
+    "shapes": [
+      "hashtable",
+      "ordered",
+      "pscustomobject"
+    ],
+    "finalRuns": 1,
+    "diff": "allowed-files.diff",
+    "checksFailed": 0,
+    "roles": [
+      "console",
+      "owner"
+    ],
+    "readerOutcomes": [
+      "provider",
+      "unknown",
+      "throw"
+    ],
+    "typedReplyScenarios": 18,
+    "existingChecks": 49,
+    "log": "verify-final.log",
+    "gitDiffCheck": "PASSED",
+    "newChecks": 37,
+    "runner": "DevTools/Workflow/Test-ContextWarning.ps1"
+  },
+  "scope": {
+    "dataImports": 0,
+    "gitCommits": 0,
+    "unityOperations": 0,
+    "mode": "MANUAL",
+    "assetHashScans": 0,
+    "outgoingMessages": 0
+  },
+  "documentation": {
+    "usageReportingUpdated": true,
+    "projectDocuments": "No module, entry point, contract, or roadmap change; local reply serialization compatibility only.",
+    "toolRegistration": "Existing TK-WF-03/04; no new tool or runner."
+  },
+  "limitations": [
+    "Native first supervised heartbeat remains for a future real session; not exercised here."
+  ],
+  "toolObservations": [
+    "Initial patch anchor mismatch made no edits.",
+    "apply_patch reported a reparse point on both absolute and relative paths. Native PS7 inspected every path component and found no reparse points; guarded edits preserved the before snapshots and rejected drift.",
+    "Git emitted its existing LF/CRLF conversion advisory; diff --check passed."
+  ],
+  "usage": {
+    "contextSemantics": "Fresh single response input-token proxy, not full context or task billing.",
+    "controllerContextWarning": "ADVISE",
+    "controllerContextTokens": 161522,
+    "idleTurns": null,
+    "reason": "Exact app turn IDs are not exposed; tool calls and provider responses are not substitutes.",
+    "appTurns": null,
+    "ownerContextWarning": "NONE",
+    "ownerContextTokens": 125578
+  }
+}

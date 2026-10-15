@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "taskId": "AI-000246",
+  "checks": [
+    {
+      "id": "typedReplies",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.typedReplies",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "id": "compatibilityAndScope",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.compatibilityAndScope",
+      "actual": true,
+      "passed": true
+    }
+  ]
+}

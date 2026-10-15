@@ -1,0 +1,9 @@
+{
+  "action": "USAGE_REPORTS_CHECKED",
+  "checkedAt": "2026-10-15T18:11:12.2979168+08:00",
+  "created": [],
+  "existingCount": 4,
+  "nextWeeklyDue": "2026-10-21T00:00:00.0000000+08:00",
+  "sourceScan": "SKIPPED_ALREADY_PUBLISHED",
+  "limitations": "No task or mode changes."
+}

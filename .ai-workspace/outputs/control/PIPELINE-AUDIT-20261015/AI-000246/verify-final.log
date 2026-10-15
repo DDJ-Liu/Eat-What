@@ -1,0 +1,21 @@
+{"status":"PASS","checks":86,"fixtureRoot":"C:\\Users\\DDJ\\AppData\\Local\\Temp\\EatWhatContext-d9487cf1c8b44e42890171d809066ab3"}
+{
+  "action": "VERIFY_ALL_PASSED",
+  "taskId": "AI-000246",
+  "profile": "Custom",
+  "mode": "Final",
+  "runnerCount": 1,
+  "executedCount": 1,
+  "reusedCount": 0,
+  "historyPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\runtime\\verify-all\\verify-all-AI-000246.jsonl",
+  "results": [
+    {
+      "path": "D:\\GameProject\\Eat-What\\DevTools\\Workflow\\Test-ContextWarning.ps1",
+      "status": "PASSED",
+      "exitCode": 0,
+      "reuseFingerprint": null,
+      "outputPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\runtime\\verify-all\\verify-all-AI-000246-ef7f6c944464-01.log",
+      "durationMs": 2410.881
+    }
+  ]
+}

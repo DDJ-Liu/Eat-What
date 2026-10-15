@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-15T17:07:05.5391616+08:00",
+  "userRequest": "现在对code线、mcp线和主控制台三条管线分别进行新管线的开启、旧内容继承和职能接管。你自行决定和处理相关管线要进行继承的内容的整理和传递转交。另外还有两个额外点：1、同时也检查下另外几个常用流水线管线，如果发现别的管线的上下文也过大、对这些过大管线同样进行继承重载 2、为了保证该次任务工作流不被打断，优先处理完其它管线的继承重载后，最后再进行本主控制台的重载",
+  "decisions": [
+    "Fresh visible project chats for CODE, ENGINE_MCP, DATA, ART_ASSET; CONTROL last",
+    "AIGC unknown sample: preserve existing chat",
+    "Transfer summaries and permanent document pointers; preserve all old histories",
+    "MANUAL; no business tasks, Git commit/push, Unity or source asset operations",
+    "Rebind existing routes and automation targets without changing schedules or notification policy; archive superseded chats only after ready acknowledgement"
+  ]
+}

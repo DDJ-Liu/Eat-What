@@ -1,5 +1,10 @@
 # 控制任务约定 · 核心入口
 
+2026-10-15接管复核：旧主控与四旧执行线已归档，7项应用日程的目标/周期/启停/通知均核对；独立EatWhat-WATCH-PRE5b每5分钟宿主继续，日报为当日首次快照、周三汇总上一整周，下次周报10-21。MANUAL下ai/watch-60暂停，报告落盘继续但不承诺控制台自动消息通知。证据outputs/control/PIPELINE-AUDIT-20261015/。本轮用户已另行授权CODE最小兼容修复后提交并merge main；不启旧监管。
+
+2026-10-15本次授权继承：常驻主控制台改为01a13ef5-eda9-7882-b1c9-eca47a6470d9，执行线地址见PIPELINES；未来SetMode及控制命令显式传本新ControllerThreadId，已完成旧session的地址不回写。ai/watch-60迁移到新主控且仍PAUSED，独立ART及周报保持。交接范围、旧新映射与待办见outputs/control/PIPELINE-RELOAD-20261015/交接完成报告.md。
+
+
 2026-10-15 AI-000245：需报告上下文的正式控制命令显式带当前固定ControllerThreadId；MANUAL下Status也能返回consoleContext。只有新鲜精确原生单次响应可触发150K/200K提示，unknown不当作低量。WATCH仅活动监管会话按绑定控制台消费CONTEXT_HIGH，Read/Ack核session/digest/线程；完全不调用工具的平台消息无法被脚本钩住。旧阶段结论保留。
 
 日常最终回复前的固定调用习惯：每次人类直接请求，若本轮已有普通正式queue命令，就在该命令上传ControllerThreadId并读取提醒；若没有queue命令，最多一次轻量Status采样后回复，MANUAL亦然。不得为了提醒启动监管或空闲定时轮询。执行线普通queue命令传OwnerThreadId+当前TaskId，领取/Complete已有采样复用；本轮ADVISE/STRONG随回复告知用户，同档稳定样本不刷屏，STRONG在当前卡安全结算后建议手动重载继承。无工具调用的平台消息无法自动截获。

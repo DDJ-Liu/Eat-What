@@ -1,0 +1,33 @@
+{
+  "workers": [
+    {
+      "lane": "CODE",
+      "threadId": "01a13ed1-d7f1-7cd3-9207-9f0878a16fec",
+      "revision": 11,
+      "status": "BUSY",
+      "activeTaskId": "AI-000246"
+    },
+    {
+      "lane": "ENGINE_MCP",
+      "threadId": "01a13ed2-3056-7671-a20b-173658adc657",
+      "revision": 13,
+      "status": "IDLE",
+      "activeTaskId": null
+    },
+    {
+      "lane": "DATA",
+      "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+      "revision": 2,
+      "status": "IDLE",
+      "activeTaskId": null
+    }
+  ],
+  "art": {
+    "threadId": "01a13ed2-d479-7c93-94ef-223e3b5b36e9",
+    "automationId": "automation",
+    "enabled": true,
+    "jobsPreserved": true,
+    "baselinePreserved": true,
+    "enabledPreserved": true
+  }
+}

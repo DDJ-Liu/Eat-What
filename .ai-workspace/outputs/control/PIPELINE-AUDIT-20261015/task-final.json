@@ -1,0 +1,111 @@
+{
+  "id": "AI-000246",
+  "sequence": 246,
+  "pipeline": "CODE",
+  "moduleId": "GOV-04",
+  "title": "[GOV-04] 回执上下文写入兼容对象类型",
+  "instruction": "用户于2026-10-15检查管线继承后明确选择“修复并验证后提交合并”，授权固定CODE线最小修复。本卡MANUAL；保持模式和全部日程，不触发旧监管；是已完成AI245之后新发现的回执兼容问题，不恢复旧任务/失败预算。\n目标仅两项：1）queue.ps1 Write-Result支持字典与PSCustomObject回执追加上下文，实际 DataLaneStatus -ControllerThreadId 不再报Unable to index into PSObject，原动作/路由完整。2）正常/unknown异常分支与OwnerThreadId相关写入保持一致，原阈值/去重/Status体积/业务和计费语义不变；用现有Test-ContextWarning补必要回归并单次定向验证。\n已定位第467/476行均用$Value['consoleContext']，DataLaneStatus第1415行传PSCustomObject；失败catch再次同样下标写入。优先复用已有Set-ObjectPropertyValue或等价最小统一类型处理，检查邻近Owner写入，不重构。源码/流程以实际为准。\n允许生产文件仅.ai-workspace/queue.ps1、DevTools/Workflow/Test-ContextWarning.ps1、DevTools/Workflow/USAGE_REPORTING.md；inputs/acceptance本卡合同只读；证据写.ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/AI-000246。已有queue静态路由和art-audit修改属于交接成果，保留。控制台同步维护其它文档，勿改CORE/PIPELINES/CODEBASE_MAP/基线。\n先读CORE最小入口、本CODE规则和TK-WF-03/04及AI245相关代码，不通扫历史。固定PS7 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。精确TaskId、OwnerThreadId、TriggerSource MANUAL只Poll一次。按S/40，两项认领、最多三生产文件、无Unity/Play/Build。保持用户所有未提交成果。禁止Git提交/推送/merge（由控制台收尾），不发其它chat、不建立日程/新工具/全套Final、不做全量资产哈希。\n复用已有Test-ContextWarning单个Custom runner一次，必要只补真实类型差异回归，不造常规内存/纹理验收。真实DataLaneStatus只读回读、Status小摘要为必要冒烟；不重绑DATA、不跑导表。失败按现有规则留证据，不绕闸。Complete合同见inputs/acceptance/AI-000246.json，需typedReplies=true、compatibilityAndScope=true真实证据。最终返回源码改动、验证、Complete状态和证据路径，由控制台wait读取，无需消息回传。用户授权Git只属于控制台，不把本卡成功称已提交。",
+  "complexity": "S",
+  "turnBudget": 40,
+  "tierContractVersion": 1,
+  "tierSource": "Enqueue",
+  "dependsOn": [],
+  "allowBypass": false,
+  "status": "SUCCEEDED",
+  "attempts": 1,
+  "maxAttempts": 1,
+  "failureStopLimit": 1,
+  "createdAt": "2026-10-15T18:13:35.5884042+08:00",
+  "claimedAt": "2026-10-15T18:14:40.5867293+08:00",
+  "completedAt": "2026-10-15T18:23:32.3595915+08:00",
+  "result": {
+    "summary": "Write-Result统一PSCustomObject回执类型，正常/unknown/异常及Owner路径兼容；保留继承路由。仅三文件，MANUAL，等待主控独立验收与统一提交。",
+    "artifacts": [
+      "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PIPELINE-AUDIT-20261015\\AI-000246\\REPORT.md",
+      "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PIPELINE-AUDIT-20261015\\AI-000246\\evidence.json",
+      "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PIPELINE-AUDIT-20261015\\AI-000246\\verify-final.log",
+      "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PIPELINE-AUDIT-20261015\\AI-000246\\smoke.json",
+      "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PIPELINE-AUDIT-20261015\\AI-000246\\allowed-files.diff"
+    ],
+    "verification": "Test-ContextWarning单Custom runner、一次Final：86/86通过；真实DataLaneStatus双端上下文成功；Status含CRLF1790字节；MANUAL/worker状态不变；diff --check通过；无Unity/导表/提交。",
+    "nonBlockingIssues": [],
+    "verificationStatus": "VERIFIED",
+    "manualVerificationRequired": false,
+    "manualVerificationIssues": [],
+    "acceptance": {
+      "action": "ACCEPTANCE_MATCHED",
+      "taskId": "AI-000246",
+      "requiredCount": 2,
+      "submittedCount": 2,
+      "mismatches": [],
+      "contractPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\inputs\\acceptance\\AI-000246.json",
+      "acceptancePath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PIPELINE-AUDIT-20261015\\AI-000246\\acceptance.json"
+    },
+    "tierMetrics": {
+      "complexity": "S",
+      "turnBudget": 40,
+      "turnsActual": null,
+      "turnRatio": null,
+      "idleTurns": null,
+      "idleRatio": null,
+      "idleCategories": {
+        "validationReruns": {
+          "count": null,
+          "turnIds": null,
+          "evidence": null,
+          "reason": "Exact app turn IDs are unavailable; tool calls and provider responses are not substitutes."
+        },
+        "readbackConfirmations": {
+          "count": null,
+          "turnIds": null,
+          "evidence": null,
+          "reason": "Exact app turn IDs are unavailable; tool calls and provider responses are not substitutes."
+        },
+        "toolErrorRetries": {
+          "count": null,
+          "turnIds": null,
+          "evidence": null,
+          "reason": "Exact app turn IDs are unavailable; tool calls and provider responses are not substitutes."
+        },
+        "repeatFileReads": {
+          "count": null,
+          "turnIds": null,
+          "evidence": null,
+          "reason": "Exact app turn IDs are unavailable; tool calls and provider responses are not substitutes."
+        }
+      },
+      "idleUnionMethod": "Distinct appTurnId across four categories; overlapping classifications count once.",
+      "overBudget": null,
+      "budgetExplanation": null,
+      "unavailableReason": "Exact app turn count unavailable; provider responses and tool calls are not substitutes."
+    }
+  },
+  "errorHistory": [],
+  "issueHistory": [],
+  "workKind": "FEATURE",
+  "resumePolicy": "BOUNDED_APPROVAL_V1",
+  "repairContext": null,
+  "maxTurns": 120,
+  "execution": {
+    "executionId": "d539a06dcb834c72afc588957b9e490d",
+    "ownerThreadId": "01a13ed1-d7f1-7cd3-9207-9f0878a16fec",
+    "attempt": 1,
+    "maxTurns": 120,
+    "temporaryHardTurns": 240,
+    "appTurnCount": null,
+    "appTurns": [],
+    "claimedAt": "2026-10-15T18:14:40.5867293+08:00",
+    "countUnavailableReason": "Exact app turn source unavailable; provider responses are not app turns.",
+    "limitReached": false,
+    "toolProgressIds": null,
+    "progressEvidenceHashes": null,
+    "checkpointPath": null,
+    "softLimitAt": null,
+    "softLimitHandoff": null,
+    "hardStopAt": null,
+    "hardStopReason": null,
+    "lastActualProgressAt": null,
+    "turnLimitHistory": null,
+    "handoffFrom": null
+  }
+}

@@ -1,0 +1,485 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "sourcePath": "E:\\EatWhat\\美术资产",
+  "threadId": "01a07f70-c76d-72c3-8ad4-08dc6ec14538",
+  "registeredAt": "2026-09-08T13:39:01.4899996+08:00",
+  "scheduledThrough": "2026-10-15",
+  "automationId": "automation",
+  "lastSuccessfulSnapshot": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261015\\5833ee59f1564e7985d206a8828f1988\\manifest.json",
+  "jobs": [
+    {
+      "id": "ASSET-AUDIT-BASELINE",
+      "scheduledDates": [],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-08T15:21:18.9189298+08:00",
+      "token": "5790c509350a403bbfa91d2a791b8eab",
+      "startedAt": "2026-09-08T15:21:18.9694004+08:00",
+      "finishedAt": "2026-09-08T15:21:19.5153978+08:00",
+      "processId": 181808,
+      "processStartedAt": "2026-09-08T07:21:18.3881759Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art-audit\\ASSET-AUDIT-BASELINE\\5790c509350a403bbfa91d2a791b8eab\\snapshot.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art-audit\\ASSET-AUDIT-BASELINE\\5790c509350a403bbfa91d2a791b8eab\\report.md",
+      "error": null
+    },
+    {
+      "id": "ART-DAILY-20260909",
+      "scheduledDates": [
+        "2026-09-09"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-09T00:02:41.773788+08:00",
+      "token": "92e6af55a6b84b66abcba7cb9d414460",
+      "startedAt": "2026-09-09T00:03:04.3305862+08:00",
+      "finishedAt": "2026-09-09T00:03:09.5299347+08:00",
+      "processId": 73404,
+      "processStartedAt": "2026-09-08T16:03:03.663502Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260909\\92e6af55a6b84b66abcba7cb9d414460\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260909\\92e6af55a6b84b66abcba7cb9d414460\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260910",
+      "scheduledDates": [
+        "2026-09-10"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-10T03:09:15.3487876+08:00",
+      "token": "d2ecd7a9c00145dd9805c1cb5361dfde",
+      "startedAt": "2026-09-10T03:09:31.7399386+08:00",
+      "finishedAt": "2026-09-10T03:09:33.0195844+08:00",
+      "processId": 23792,
+      "processStartedAt": "2026-09-09T19:09:31.0604568Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260910\\d2ecd7a9c00145dd9805c1cb5361dfde\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260910\\d2ecd7a9c00145dd9805c1cb5361dfde\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260911",
+      "scheduledDates": [
+        "2026-09-11"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-11T00:00:16.1263142+08:00",
+      "token": "38c88c17dddf426694c3f7ab23b7144c",
+      "startedAt": "2026-09-11T00:01:22.7225116+08:00",
+      "finishedAt": "2026-09-11T00:01:23.9628596+08:00",
+      "processId": 43056,
+      "processStartedAt": "2026-09-10T16:01:22.0616737Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260911\\38c88c17dddf426694c3f7ab23b7144c\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260911\\38c88c17dddf426694c3f7ab23b7144c\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260914",
+      "scheduledDates": [
+        "2026-09-14"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-14T00:02:31.7258307+08:00",
+      "token": "bebb53a86ac842debc222a1a309ba337",
+      "startedAt": "2026-09-14T00:02:39.4837136+08:00",
+      "finishedAt": "2026-09-14T00:02:40.8221176+08:00",
+      "processId": 108100,
+      "processStartedAt": "2026-09-13T16:02:38.7991102Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260914\\bebb53a86ac842debc222a1a309ba337\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260914\\bebb53a86ac842debc222a1a309ba337\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260915",
+      "scheduledDates": [
+        "2026-09-15"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-15T00:00:57.8062427+08:00",
+      "token": "c5a25feff82b40f6bc368970b9a60b3f",
+      "startedAt": "2026-09-15T00:01:29.9929159+08:00",
+      "finishedAt": "2026-09-15T00:01:31.003029+08:00",
+      "processId": 126220,
+      "processStartedAt": "2026-09-14T16:01:29.3344965Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260915\\c5a25feff82b40f6bc368970b9a60b3f\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260915\\c5a25feff82b40f6bc368970b9a60b3f\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260916",
+      "scheduledDates": [
+        "2026-09-16"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-16T00:01:30.1060951+08:00",
+      "token": "133654ec92424df78cedb7bd8960f7b8",
+      "startedAt": "2026-09-16T00:01:49.1099345+08:00",
+      "finishedAt": "2026-09-16T00:01:51.4713031+08:00",
+      "processId": 54636,
+      "processStartedAt": "2026-09-15T16:01:48.3675293Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260916\\133654ec92424df78cedb7bd8960f7b8\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260916\\133654ec92424df78cedb7bd8960f7b8\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260917",
+      "scheduledDates": [
+        "2026-09-17"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-17T00:01:54.7248933+08:00",
+      "token": "cbb7ce78fe15421db4a870ee543f7961",
+      "startedAt": "2026-09-17T00:02:13.7488368+08:00",
+      "finishedAt": "2026-09-17T00:02:15.4726578+08:00",
+      "processId": 36112,
+      "processStartedAt": "2026-09-16T16:02:13.007825Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260917\\cbb7ce78fe15421db4a870ee543f7961\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260917\\cbb7ce78fe15421db4a870ee543f7961\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260918",
+      "scheduledDates": [
+        "2026-09-18"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-18T00:02:09.5642732+08:00",
+      "token": "bd66d18c5d1d43f8b8ff199a9bbcb0c7",
+      "startedAt": "2026-09-18T00:02:26.9162544+08:00",
+      "finishedAt": "2026-09-18T00:02:28.2589339+08:00",
+      "processId": 120044,
+      "processStartedAt": "2026-09-17T16:02:26.3338256Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260918\\bd66d18c5d1d43f8b8ff199a9bbcb0c7\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260918\\bd66d18c5d1d43f8b8ff199a9bbcb0c7\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260921",
+      "scheduledDates": [
+        "2026-09-21"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-21T00:01:36.963699+08:00",
+      "token": "17893f04f07241448e70bf89c1102bb7",
+      "startedAt": "2026-09-21T00:01:53.5899938+08:00",
+      "finishedAt": "2026-09-21T00:01:55.3232198+08:00",
+      "processId": 27400,
+      "processStartedAt": "2026-09-20T16:01:52.8778645Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260921\\17893f04f07241448e70bf89c1102bb7\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260921\\17893f04f07241448e70bf89c1102bb7\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260922",
+      "scheduledDates": [
+        "2026-09-22"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-22T00:02:13.875692+08:00",
+      "token": "191a9076955c42caaef16bacb6590499",
+      "startedAt": "2026-09-22T00:02:32.0426998+08:00",
+      "finishedAt": "2026-09-22T00:02:33.8606653+08:00",
+      "processId": 83076,
+      "processStartedAt": "2026-09-21T16:02:31.2583269Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260922\\191a9076955c42caaef16bacb6590499\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260922\\191a9076955c42caaef16bacb6590499\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260923",
+      "scheduledDates": [
+        "2026-09-23"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-23T00:01:01.2910163+08:00",
+      "token": "868e646da418435db41ad30047700b8d",
+      "startedAt": "2026-09-23T00:01:29.6911539+08:00",
+      "finishedAt": "2026-09-23T00:01:31.2140385+08:00",
+      "processId": 103476,
+      "processStartedAt": "2026-09-22T16:01:29.0297264Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260923\\868e646da418435db41ad30047700b8d\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260923\\868e646da418435db41ad30047700b8d\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260924",
+      "scheduledDates": [
+        "2026-09-24"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-24T00:00:27.4693116+08:00",
+      "token": "758f8b73178845c283fcac4c6c27ee24",
+      "startedAt": "2026-09-24T00:01:12.2445774+08:00",
+      "finishedAt": "2026-09-24T00:01:13.5566381+08:00",
+      "processId": 53756,
+      "processStartedAt": "2026-09-23T16:01:11.5309547Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260924\\758f8b73178845c283fcac4c6c27ee24\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260924\\758f8b73178845c283fcac4c6c27ee24\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260925",
+      "scheduledDates": [
+        "2026-09-25"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-25T00:00:45.5062361+08:00",
+      "token": "98063d75a49c441fade3aed635a349e1",
+      "startedAt": "2026-09-25T00:01:20.8778095+08:00",
+      "finishedAt": "2026-09-25T00:01:22.1584361+08:00",
+      "processId": 130100,
+      "processStartedAt": "2026-09-24T16:01:20.2023457Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260925\\98063d75a49c441fade3aed635a349e1\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260925\\98063d75a49c441fade3aed635a349e1\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260928",
+      "scheduledDates": [
+        "2026-09-28"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-28T00:01:44.5326145+08:00",
+      "token": "73fc3751244748c794a3e4b3ad37179c",
+      "startedAt": "2026-09-28T00:02:06.5512911+08:00",
+      "finishedAt": "2026-09-28T00:02:07.9035368+08:00",
+      "processId": 105620,
+      "processStartedAt": "2026-09-27T16:02:05.8515894Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260928\\73fc3751244748c794a3e4b3ad37179c\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260928\\73fc3751244748c794a3e4b3ad37179c\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260929",
+      "scheduledDates": [
+        "2026-09-29"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-29T00:02:04.7316948+08:00",
+      "token": "6af25b28e3bd498e893c8c649a9892d2",
+      "startedAt": "2026-09-29T00:02:25.2011961+08:00",
+      "finishedAt": "2026-09-29T00:02:26.4320024+08:00",
+      "processId": 95952,
+      "processStartedAt": "2026-09-28T16:02:24.6823961Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260929\\6af25b28e3bd498e893c8c649a9892d2\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260929\\6af25b28e3bd498e893c8c649a9892d2\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20260930",
+      "scheduledDates": [
+        "2026-09-30"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-09-30T00:00:26.5580732+08:00",
+      "token": "2836fd35b9e0430ebf1e18607bf04e19",
+      "startedAt": "2026-09-30T00:00:47.6848655+08:00",
+      "finishedAt": "2026-09-30T00:00:48.9118867+08:00",
+      "processId": 16312,
+      "processStartedAt": "2026-09-29T16:00:47.1332042Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260930\\2836fd35b9e0430ebf1e18607bf04e19\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20260930\\2836fd35b9e0430ebf1e18607bf04e19\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261001",
+      "scheduledDates": [
+        "2026-10-01"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-01T00:00:48.001554+08:00",
+      "token": "30e09a90f5af48c59fb78382c56a4d53",
+      "startedAt": "2026-10-01T00:01:06.0854828+08:00",
+      "finishedAt": "2026-10-01T00:01:07.3463961+08:00",
+      "processId": 153644,
+      "processStartedAt": "2026-09-30T16:01:05.5670079Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261001\\30e09a90f5af48c59fb78382c56a4d53\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261001\\30e09a90f5af48c59fb78382c56a4d53\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261002",
+      "scheduledDates": [
+        "2026-10-02"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-02T00:01:43.2898126+08:00",
+      "token": "4cce8cadcbce41a1b6aea099a9323189",
+      "startedAt": "2026-10-02T00:02:01.8838428+08:00",
+      "finishedAt": "2026-10-02T00:02:03.1511408+08:00",
+      "processId": 59020,
+      "processStartedAt": "2026-10-01T16:02:01.3629112Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261002\\4cce8cadcbce41a1b6aea099a9323189\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261002\\4cce8cadcbce41a1b6aea099a9323189\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261005",
+      "scheduledDates": [
+        "2026-10-05"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-05T00:01:00.282749+08:00",
+      "token": "10a938e489304e419e9a1582a1f09e0f",
+      "startedAt": "2026-10-05T00:01:12.1572887+08:00",
+      "finishedAt": "2026-10-05T00:01:13.5699329+08:00",
+      "processId": 116144,
+      "processStartedAt": "2026-10-04T16:01:11.4291288Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261005\\10a938e489304e419e9a1582a1f09e0f\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261005\\10a938e489304e419e9a1582a1f09e0f\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261006",
+      "scheduledDates": [
+        "2026-10-06"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-06T00:00:28.3959725+08:00",
+      "token": "f9c28fd9206648dc83256fb16b28d35c",
+      "startedAt": "2026-10-06T00:02:05.9160473+08:00",
+      "finishedAt": "2026-10-06T00:02:07.3584466+08:00",
+      "processId": 5964,
+      "processStartedAt": "2026-10-05T16:02:05.1633554Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261006\\f9c28fd9206648dc83256fb16b28d35c\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261006\\f9c28fd9206648dc83256fb16b28d35c\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261007",
+      "scheduledDates": [
+        "2026-10-07"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-07T00:00:48.8513193+08:00",
+      "token": "88722de1638348fbad1923f58b655a64",
+      "startedAt": "2026-10-07T00:01:18.7343333+08:00",
+      "finishedAt": "2026-10-07T00:01:20.2473331+08:00",
+      "processId": 38200,
+      "processStartedAt": "2026-10-06T16:01:18.1099842Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261007\\88722de1638348fbad1923f58b655a64\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261007\\88722de1638348fbad1923f58b655a64\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261008",
+      "scheduledDates": [
+        "2026-10-08"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-08T00:00:39.4003614+08:00",
+      "token": "f788a46b960f40a2b68430aed7d5b19d",
+      "startedAt": "2026-10-08T00:00:55.6483413+08:00",
+      "finishedAt": "2026-10-08T00:00:57.165684+08:00",
+      "processId": 139592,
+      "processStartedAt": "2026-10-07T16:00:54.9996322Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261008\\f788a46b960f40a2b68430aed7d5b19d\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261008\\f788a46b960f40a2b68430aed7d5b19d\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261009",
+      "scheduledDates": [
+        "2026-10-09"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-09T00:00:56.8043622+08:00",
+      "token": "b295cd78c38549528e0f24abe45efa41",
+      "startedAt": "2026-10-09T00:01:05.067217+08:00",
+      "finishedAt": "2026-10-09T00:01:06.5557427+08:00",
+      "processId": 140888,
+      "processStartedAt": "2026-10-08T16:01:04.4398052Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261009\\b295cd78c38549528e0f24abe45efa41\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261009\\b295cd78c38549528e0f24abe45efa41\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261012",
+      "scheduledDates": [
+        "2026-10-12"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-12T00:01:09.4324627+08:00",
+      "token": "a1045918119b462cac2a74483ae5aefa",
+      "startedAt": "2026-10-12T00:01:18.956811+08:00",
+      "finishedAt": "2026-10-12T00:01:20.860371+08:00",
+      "processId": 166432,
+      "processStartedAt": "2026-10-11T16:01:18.2878918Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261012\\a1045918119b462cac2a74483ae5aefa\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261012\\a1045918119b462cac2a74483ae5aefa\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261013",
+      "scheduledDates": [
+        "2026-10-13"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-13T00:01:56.3808171+08:00",
+      "token": "2f33abf2d51441b2880e1f18b74a7e15",
+      "startedAt": "2026-10-13T00:02:05.5413091+08:00",
+      "finishedAt": "2026-10-13T00:02:07.1640415+08:00",
+      "processId": 179436,
+      "processStartedAt": "2026-10-12T16:02:04.7406686Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261013\\2f33abf2d51441b2880e1f18b74a7e15\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261013\\2f33abf2d51441b2880e1f18b74a7e15\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261014",
+      "scheduledDates": [
+        "2026-10-14"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-14T00:00:06.122499+08:00",
+      "token": "c46ec32b99894164a21c7b54fe8448f3",
+      "startedAt": "2026-10-14T00:00:24.03569+08:00",
+      "finishedAt": "2026-10-14T00:00:25.5814428+08:00",
+      "processId": 184608,
+      "processStartedAt": "2026-10-13T16:00:23.270281Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261014\\c46ec32b99894164a21c7b54fe8448f3\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261014\\c46ec32b99894164a21c7b54fe8448f3\\report.md",
+      "error": null,
+      "deferReasons": []
+    },
+    {
+      "id": "ART-DAILY-20261015",
+      "scheduledDates": [
+        "2026-10-15"
+      ],
+      "status": "SUCCEEDED",
+      "requestedAt": "2026-10-15T00:01:37.2830651+08:00",
+      "token": "5833ee59f1564e7985d206a8828f1988",
+      "startedAt": "2026-10-15T00:01:48.6344962+08:00",
+      "finishedAt": "2026-10-15T00:01:50.2934086+08:00",
+      "processId": 176496,
+      "processStartedAt": "2026-10-14T16:01:47.9906773Z",
+      "snapshotPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261015\\5833ee59f1564e7985d206a8828f1988\\manifest.json",
+      "reportPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\art\\daily\\ART-DAILY-20261015\\5833ee59f1564e7985d206a8828f1988\\report.md",
+      "error": null,
+      "deferReasons": []
+    }
+  ]
+}

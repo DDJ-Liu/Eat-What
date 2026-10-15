@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-15T18:15:42.3113157+08:00",
+  "command": "queue.ps1 -Action DataLaneStatus -ControllerThreadId 01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+  "exception": "Unable to index into an object of type System.Management.Automation.PSObject.",
+  "location": "queue.ps1 Write-Result consoleContext assignment; normal 467, catch 476; DataLaneStatus call 1415",
+  "rootCause": "PSCustomObject return is indexed as a dictionary; catch repeats the invalid assignment",
+  "wasPreexisting": true,
+  "newTask": "AI-000246",
+  "userDecision": "修复并验证后提交合并",
+  "mode": "MANUAL",
+  "businessStateUnchangedByReproduction": true
+}

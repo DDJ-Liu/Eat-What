@@ -1,0 +1,2 @@
+# ENGINE_MCP 接管
+旧chat 01a01316-2d47-7861-9012-5ab5d3fd8458（AI流水线-引擎MCP）。AI244原生编译已完成并控制3/3，AI236气泡Play及人工视觉已通过。Unity6000.3.24f1/正确dataPath每次操作前发现核对。布局v0.3三弹层、两个气泡吃什么/汪、显隐动画和时机配置已验收。U4新终调v0.4未给，不动用户锚点。Spine Sample/output4精确白名单仅允许已批准旧3.8.75错误降警告，版本检查原规则不变，资产保留。不要重播FontSwapOnce/Build/Play；本轮不连接或操作Unity，仅继承只读READY。读workers/ENGINE_MCP.md和CORE约束。

@@ -1,0 +1,15 @@
+# CONTROL 最后接管
+
+用户本轮明确要求执行线先、主控最后的新开继承。四条执行线已经新建/READY/正式绑定及接管完成通知；旧CODE/ENGINE/DATA/ART会话已归档保留。新ID以PIPELINES和outputs/control/PIPELINE-RELOAD-20261015/registry.json为准；AIGC旧chat无可用输入读数而保留，不把未知当低量或强制重载。
+
+你作为新主控先读COMMON、CORE页首及日常约定、CONTROL_CHAT、PIPELINES映射和USER_WORK_STATUS，按任务补读不要重扫旧长史。当前没有新业务任务授权；MANUAL、245卡已结算。上一轮Git5035103已提交并合main，本轮开始本地origin/main与开发ref也相同（未联网实查）。本次只行政接管，不续旧失败、不开监管，不提交本轮文档/路由修改。
+
+旧主控将完成最后路由和ai/watch-60的目标迁移，保持PAUSED，不改已完成旧session.controllerThreadId历史。下一次用户明确启动监管应在SetMode传本新chat的ControllerThreadId。未来各固定线按正式session的控制台回传，不能投旧地址。
+
+本轮必要的最小实现变化：queue.ps1静态默认职能地址更新；现有BindArtAuditAutomation允许提供PipelineThreadId，要求显式UserDecision/Verification、有效UUID、ART worker无lease/active、无RUNNING审查/卡/预约、不与其它lane或controller复用；只更新threadId与routeHistory，原automationId正常绑定。实际正式绑定已成功，全部jobs/lastSuccessfulSnapshot/enabled保持。用解析/定向diff+真实绑定核验，没有新增任务编号/夹具/全套Final。此改动和交接文档未提交，后续提交需用户授权。
+
+保留事项：U2/U3待排布，U4 v0.4及第四SlotBlock，U5 44警告+P2场景UNVERIFIED，U6可选。AI190下一次归档的一次性保全。独立周报宿主继续，下一周报原记录到期10-21；ART午夜ACTIVE，无额外控制台日报回传。GOV04真实监管首次心跳待未来真实活动验证，不为此重启旧session。
+
+交接的工具返工诚实保留：一次list_threads limit60被参数上限50拒绝后正确读取；一次read_thread返回长命令列表，已改过滤仅final/状态；apply_patch误判reparse，经逐级属性均无reparse后使用正常文件写；一次替换CRLF锚未命中无写；第一次CODE绑定已成功但外层读了陈旧LASTEXITCODE误报，随后只读确认route11未重复绑定。这些不是生产失败/业务重试，不改旧卡史。
+
+接收动作：仅只读并回复READY / CONTROL和关键边界；不新建chat、不发回传消息、不改共享文件、不运行业务。待旧主控最终通知“接管已生效”后作为常驻主控等待用户；旧主控随后归档并把界面打开到本chat。完整交接报告会在outputs/control/PIPELINE-RELOAD-20261015/交接完成报告.md。

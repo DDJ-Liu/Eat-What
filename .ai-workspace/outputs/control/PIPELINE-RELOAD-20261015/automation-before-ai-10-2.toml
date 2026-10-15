@@ -1,0 +1,10 @@
+version = 1
+id = "ai-10-2"
+kind = "heartbeat"
+name = "AI流水线-美术资产-10分钟轮询"
+prompt = "你是 D:\\GameProject\\Eat-What 的 ART_ASSET 执行器。显式读 .ai-workspace/workers/ART_ASSET.md、.ai-workspace/WORKFLOW.md。此自动化只在 SCHEDULED 启用，其他模式不领取、不改变模式。先 Status：当前任务仍 RUNNING 就按身份恢复或只观察，不重复领取、不自行判孤儿。安全空闲先运行 .ai-workspace/Invoke-ArtAudit.ps1 处理独立待审（非 AI 编号），读取和汇报实际报告；其后仅一次 Poll -Pipeline ART_ASSET -TriggerSource SCHEDULED，只有 CLAIMED 才执行唯一编号同步/盘点任务。Complete 后先处理 artAuditHandoff；非阻碍问题记录，阻断按原协议留痕。禁止 AIGC、Unity、未授权 Force/源改动或删除；无任务且无待审使用 DONT_NOTIFY。此十分钟领取与工作日午夜审查是两个独立日程，不因切模式误停午夜审查。"
+status = "PAUSED"
+rrule = "RRULE:FREQ=MINUTELY;INTERVAL=10"
+target_thread_id = "01a07f70-c76d-72c3-8ad4-08dc6ec14538"
+created_at = 1788852810794
+updated_at = 1788852810794

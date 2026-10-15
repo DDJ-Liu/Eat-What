@@ -1,0 +1,16 @@
+{
+  "after": {
+    "executorKind": "THREAD",
+    "threadId": "01a13ed2-3056-7671-a20b-173658adc657",
+    "routeRevision": 13,
+    "routeState": "BOUND"
+  },
+  "action": "EXECUTION_PIPELINE_BOUND",
+  "before": {
+    "executorKind": "THREAD",
+    "threadId": "01a01316-2d47-7861-9012-5ab5d3fd8458",
+    "routeRevision": 12,
+    "routeState": "BOUND"
+  },
+  "pipeline": "ENGINE_MCP"
+}

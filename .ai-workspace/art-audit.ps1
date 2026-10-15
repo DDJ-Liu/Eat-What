@@ -98,8 +98,26 @@ function Invoke-ArtAuditAction {
     }
     if ($Action -eq 'BindArtAuditAutomation') {
         Assert-Value (-not [string]::IsNullOrWhiteSpace($AutomationId)) 'Actual automation ID required.'
+        if ($PipelineThreadId -and $PipelineThreadId -cne $state.threadId) {
+            Assert-Value ((Test-CodexThreadId $PipelineThreadId) -and $UserDecision -and $Verification) 'Thread rebind requires a valid thread, explicit user decision and fresh idle evidence.'
+            $q=Read-JsonFile $queuePath; $w=Read-JsonFile $workerPath; $m=Read-ModeState
+            $worker=Get-Worker $w 'ART_ASSET'
+            Assert-Value ($worker.status -eq 'IDLE' -and -not $worker.activeTaskId -and -not $worker.leaseUntil) 'ART_ASSET must be idle before rebinding.'
+            Assert-Value (@($state.jobs | Where-Object status -eq 'RUNNING').Count -eq 0 -and @($q.tasks | Where-Object { $_.pipeline -eq 'ART_ASSET' -and $_.status -eq 'RUNNING' }).Count -eq 0) 'Running audit or ART_ASSET task prevents rebinding.'
+            foreach ($reservation in @((Get-ObjectPropertyValue (Get-ObjectPropertyValue $m 'supervised') 'reservations') | Where-Object { $null -ne $_ })) {
+                $reserved=Get-Task $q $reservation.taskId
+                Assert-Value ($null -eq $reserved -or $reserved.pipeline -ne 'ART_ASSET') 'ART_ASSET reservation prevents rebinding.'
+            }
+            $forbidden=@($controllerThreads) + @([string](Get-ObjectPropertyValue (Get-ObjectPropertyValue $m 'supervised') 'controllerThreadId'))
+            foreach ($lane in @('CODE','ENGINE_MCP','DATA','ART_AIGC')) { $forbidden += [string](Get-PipelineExecutionTarget $lane).threadId }
+            Assert-Value ($forbidden -notcontains $PipelineThreadId) 'Another lane or controller owns that thread.'
+            $history=@((Get-ObjectPropertyValue $state 'routeHistory') | Where-Object { $null -ne $_ })
+            $history += [pscustomobject]@{at=Get-NowIso;before=$state.threadId;after=$PipelineThreadId;userDecision=$UserDecision;verification=$Verification}
+            Set-ObjectPropertyValue $state 'routeHistory' $history
+            $state.threadId=$PipelineThreadId
+        }
         $state.automationId=$AutomationId; Save-ArtAuditState $state
-        Write-Result @{action='ART_AUDIT_AUTOMATION_BOUND';automationId=$AutomationId}; return
+        Write-Result @{action='ART_AUDIT_AUTOMATION_BOUND';automationId=$AutomationId;threadId=$state.threadId}; return
     }
     if ($Action -eq 'RequestArtAudit') {
         if ($AuditId -eq 'ASSET-AUDIT-BASELINE') { Add-ArtAuditJob $state $AuditId @(); Save-ArtAuditState $state }

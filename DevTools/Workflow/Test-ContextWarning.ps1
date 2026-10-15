@@ -216,6 +216,58 @@ try {
     Check ($readerSource -notmatch 'create_thread|YieldSupervisionTask|ApproveResume|ResetTask' -and
         $queueSource.Contains('Invoke-ThreadContextRecordOnce') -and
         $queueSource.Contains('RecordSupervisionHeartbeatContext')) 'Context path is warning-only and lifecycle-idempotent'
+    # Run the production reply writer in an isolated scope. Only the context
+    # reader is substituted; no queue action or production runtime is loaded.
+    & {
+        $parseTokens=$null;$parseErrors=$null
+        $queueAst=[Management.Automation.Language.Parser]::ParseInput($queueSource,[ref]$parseTokens,[ref]$parseErrors)
+        Check ($parseErrors.Count -eq 0) 'Queue reply source parses'
+        foreach($name in @('Write-Result','Get-ObjectPropertyValue','Test-CodexThreadId','Assert-Value','Save-TextFile','Get-WorkflowUsagePhase')){
+            $definition=$queueAst.Find({param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name},$false)
+            . ([scriptblock]::Create($definition.Extent.Text))
+        }
+        $projectRoot=Join-Path $root 'typed-replies'
+        $workspaceRoot=Join-Path $projectRoot '.ai-workspace'
+        $fixtureReader=Join-Path $projectRoot 'DevTools/Workflow/Get-ThreadContext.ps1'
+        [void][IO.Directory]::CreateDirectory((Split-Path -Parent $fixtureReader))
+        $readerBody='param([string]$ThreadId,[string]$RuntimeRoot)' + "`n" +
+            'if(Test-Path -LiteralPath (Join-Path $RuntimeRoot ''reader-failure'')){throw ''Fixture context reader failure''}' + "`n" +
+            'Get-Content -LiteralPath (Join-Path $RuntimeRoot ''context.json'') -Raw'
+        [IO.File]::WriteAllText($fixtureReader,$readerBody,$utf8)
+        $replyState=Join-Path $workspaceRoot 'runtime'
+        $replyThread=[guid]::NewGuid().ToString()
+        $TaskId='AI-999902';$Pipeline='CODE';$Action='DataLaneStatus';$TriggerSource='MANUAL'
+        foreach($outcome in @('provider','unknown','throw')){
+            $failurePath=Join-Path $replyState 'reader-failure'
+            $sample=@{contextTokens=$null;contextSource='unknown';contextWarning='NONE';reason='Fixture unavailable';responseId=$null}
+            if($outcome -eq 'provider'){
+                $sample=@{contextTokens=175000;contextSource='provider';contextWarning='ADVISE';reason='Fixture exact input';responseId='typed-response'}
+            }
+            Save (Join-Path $replyState 'context.json') $sample
+            if($outcome -eq 'throw'){[IO.File]::WriteAllText($failurePath,'fixture',$utf8)}
+            foreach($role in @('console','owner')){
+                $ControllerThreadId=if($role -eq 'console'){$replyThread}else{''}
+                $OwnerThreadId=if($role -eq 'owner'){$replyThread}else{''}
+                foreach($shape in @('hashtable','ordered','pscustomobject')){
+                    $payload=[ordered]@{action='DATA_LANE_STATUS';pipeline='DATA';registered=$true;
+                        executionTarget=@{executorKind='THREAD';threadId=$replyThread;routeRevision=2};reservations=@();missing=$null;
+                        task=[pscustomobject]@{id=$TaskId;pipeline='CODE';execution=[pscustomobject]@{ownerThreadId=$replyThread;executionId='typed-exec'}}}
+                    if($shape -eq 'hashtable'){
+                        $table=@{};foreach($key in $payload.Keys){$table[$key]=$payload[$key]};$payload=$table
+                    } elseif($shape -eq 'pscustomobject'){$payload=[pscustomobject]$payload}
+                    $actual=Write-Result $payload | ConvertFrom-Json -DateKind String
+                    Check ($actual.action -eq 'DATA_LANE_STATUS' -and $actual.pipeline -eq 'DATA' -and $actual.registered -eq $true -and
+                        $actual.executionTarget.threadId -eq $replyThread -and $actual.executionTarget.routeRevision -eq 2 -and
+                        $actual.reservations -is [array] -and $actual.reservations.Count -eq 0 -and $null -eq $actual.missing -and
+                        $actual.task.execution.executionId -eq 'typed-exec') "Reply preserves payload: $shape/$role/$outcome"
+                    $observed=if($role -eq 'console'){$actual.consoleContext}else{
+                        @{tokens=$actual.contextTokens;source=$actual.contextSource;warning=$actual.contextWarning;reason=$actual.contextReason}}
+                    Check ($observed.tokens -eq $sample.contextTokens -and $observed.source -eq $sample.contextSource -and
+                        $observed.warning -eq $sample.contextWarning -and $observed.reason) "Reply context: $shape/$role/$outcome"
+                }
+            }
+        }
+    }
     [pscustomobject]@{status='PASS';checks=$script:checkCount;fixtureRoot=$root}|ConvertTo-Json -Compress
 }
 finally {

@@ -1,5 +1,8 @@
 # ART 日常服务入口（v2）
 
+2026-10-15用户授权继承：正式ART线程与日程目标见PIPELINES。现有queue BindArtAuditAutomation可选-PipelineThreadId；必须有UserDecision/Verification并先核新chat真实idle，正式API拒绝ART活动任务/租约/预约/正在运行审查及角色复用，保留routeHistory、jobs、lastSuccessfulSnapshot和enabled。本次只迁移线程，未额外运行日报。
+
+
 当前需求原件：[P0P1美术需求v1](inputs/art/美术需求单_P0P1_v1_20261014.md)。JSON派生条目按requirementIds覆盖1～12，旧11项保留；配置requirementsDocument进入日报需求引用。不依赖Downloads，不自动触发业务。
 
 2026-09-09：保留每日生成，取消控制台额外接收。七节规范仍沿用用户 ART车道_每日资产审查日报模板_v1_0.md。

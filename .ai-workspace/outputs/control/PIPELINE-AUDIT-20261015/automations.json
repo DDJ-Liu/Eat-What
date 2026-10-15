@@ -1,0 +1,86 @@
+[
+  {
+    "id": "ai",
+    "name": "AI监管模式补漏",
+    "status": "PAUSED",
+    "target": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+    "rrule": "RRULE:FREQ=MINUTELY;INTERVAL=15",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": true,
+    "newControllerMention": true
+  },
+  {
+    "id": "watch-60",
+    "name": "WATCH收件箱监管-60分钟",
+    "status": "PAUSED",
+    "target": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+    "rrule": "FREQ=MINUTELY;INTERVAL=60",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": true,
+    "newControllerMention": true
+  },
+  {
+    "id": "ai-10",
+    "name": "AI流水线-纯代码-10分钟轮询",
+    "status": "PAUSED",
+    "target": "01a13ed1-d7f1-7cd3-9207-9f0878a16fec",
+    "rrule": "RRULE:FREQ=MINUTELY;INTERVAL=10",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": false,
+    "newControllerMention": false
+  },
+  {
+    "id": "ai-mcp-10",
+    "name": "AI流水线-引擎MCP-10分钟轮询",
+    "status": "PAUSED",
+    "target": "01a13ed2-3056-7671-a20b-173658adc657",
+    "rrule": "RRULE:FREQ=MINUTELY;INTERVAL=10",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": false,
+    "newControllerMention": false
+  },
+  {
+    "id": "ai-10-2",
+    "name": "AI流水线-美术资产-10分钟轮询",
+    "status": "PAUSED",
+    "target": "01a13ed2-d479-7c93-94ef-223e3b5b36e9",
+    "rrule": "RRULE:FREQ=MINUTELY;INTERVAL=10",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": false,
+    "newControllerMention": false
+  },
+  {
+    "id": "ai-aigc-10",
+    "name": "AI流水线-临时美术AIGC-10分钟轮询",
+    "status": "PAUSED",
+    "target": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+    "rrule": "RRULE:FREQ=MINUTELY;INTERVAL=10",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": false,
+    "newControllerMention": false
+  },
+  {
+    "id": "automation",
+    "name": "美术资产-工作日午夜差异审查",
+    "status": "ACTIVE",
+    "target": "01a13ed2-d479-7c93-94ef-223e3b5b36e9",
+    "rrule": "RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=0;BYMINUTE=0;BYSECOND=0",
+    "schedulePreserved": true,
+    "statusPreserved": true,
+    "notificationPreserved": true,
+    "usageReportingCommand": false,
+    "newControllerMention": false
+  }
+]

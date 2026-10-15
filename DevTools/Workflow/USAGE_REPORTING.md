@@ -1,5 +1,7 @@
 # 用量日报与周报（TK-WF-03）
 
+2026-10-15 AI-000246回执兼容：`Write-Result`先将`PSCustomObject`快照转为保留原字段的有序字典，再沿用上下文写入；`DataLaneStatus -ControllerThreadId`与Owner回执均支持正常、unknown及读取异常兜底。原动作/路由字段、阈值、去重、Status体积和计费口径保持。定向覆盖在既有`Test-ContextWarning.ps1`，不需要恢复监管或运行导表。
+
 2026-10-15 AI-000245当前口径：Get-ThreadContext优先读取精确threadId原生token_usage_record.payload.usage.input_tokens（有界发现/尾读/增量缓存，30分钟有效，未来超过5分钟拒绝），次用新鲜旧provider，显式fresh UTF-8字节才作粗估；均缺则contextTokens=null/contextSource=unknown。正式队列普通回执显式传ControllerThreadId/OwnerThreadId，MANUAL Status也可提示；UsageMetrics按响应键锁定去重。ADVISE>=150K、STRONG>=200K只提醒手动重载。WATCH不作模型轮询，只消费新鲜记录；STRONG转入可产生worker或console的最小CONTEXT_HIGH，未知不冒充低量重布防；Read/Ack核session/digest/线程。单次输入不是完整窗口或任务计费，旧报告不重发。下述10-14诊断/首次实现口径保留为历史。
 
 2026-10-14实测限制：runtime provider最近仍停在10-04，GOV04重复取旧137875；精确原生10-14样本控制台190300、CODE197981已为ADVISE。当前reader无陈旧淘汰/自动provider导入，console心跳无真实采样且WATCH未完整消费console记录。不能将NONE当实时低量；本轮只留诊断，不改变模式或新派任务。见[报告](../../.ai-workspace/outputs/control/STAGE-GOV-G74-COMMIT-20261014/提交前检查与上下文提醒诊断.md)。

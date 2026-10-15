@@ -1,0 +1,146 @@
+[
+  {
+    "role": "CONTROL",
+    "threadId": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+    "current": {
+      "threadId": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+      "contextTokens": 106320,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T18:09:29.01+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_03be8b403b6c6c06016ad0a635e1108191ba00bae6fc3791bd",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "lastActivity": {
+      "threadId": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+      "contextTokens": 106320,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T18:09:29.01+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_03be8b403b6c6c06016ad0a635e1108191ba00bae6fc3791bd",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    }
+  },
+  {
+    "role": "CODE",
+    "threadId": "01a13ed1-d7f1-7cd3-9207-9f0878a16fec",
+    "current": {
+      "threadId": "01a13ed1-d7f1-7cd3-9207-9f0878a16fec",
+      "contextTokens": 62279,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:43:43.511+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0e2009186b56c5ff016ad0a04b4b6c8191a26cac187263df43",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "lastActivity": {
+      "threadId": "01a13ed1-d7f1-7cd3-9207-9f0878a16fec",
+      "contextTokens": 62279,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:43:43.511+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0e2009186b56c5ff016ad0a04b4b6c8191a26cac187263df43",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    }
+  },
+  {
+    "role": "ENGINE_MCP",
+    "threadId": "01a13ed2-3056-7671-a20b-173658adc657",
+    "current": {
+      "threadId": "01a13ed2-3056-7671-a20b-173658adc657",
+      "contextTokens": 57848,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:43:52.685+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_06956ae26c04ce49016ad0a055552c8191a155021a3e313c34",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "lastActivity": {
+      "threadId": "01a13ed2-3056-7671-a20b-173658adc657",
+      "contextTokens": 57848,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:43:52.685+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_06956ae26c04ce49016ad0a055552c8191a155021a3e313c34",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    }
+  },
+  {
+    "role": "DATA",
+    "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+    "current": {
+      "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+      "contextTokens": 65641,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:44:36.503+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0e5c10de10d9d80d016ad0a07fc3788191aa73f9357cb3a6cc",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "lastActivity": {
+      "threadId": "01a13ed2-89b4-7a72-87e5-4551dc7f8e17",
+      "contextTokens": 65641,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:44:36.503+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0e5c10de10d9d80d016ad0a07fc3788191aa73f9357cb3a6cc",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    }
+  },
+  {
+    "role": "ART_ASSET",
+    "threadId": "01a13ed2-d479-7c93-94ef-223e3b5b36e9",
+    "current": {
+      "threadId": "01a13ed2-d479-7c93-94ef-223e3b5b36e9",
+      "contextTokens": 69022,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:45:20.82+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0cb6194547963054016ad0a0ab043481918d7f39302ccf7338",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "lastActivity": {
+      "threadId": "01a13ed2-d479-7c93-94ef-223e3b5b36e9",
+      "contextTokens": 69022,
+      "contextSource": "provider",
+      "contextWarning": "NONE",
+      "observedAt": "2026-10-15T17:45:20.82+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0cb6194547963054016ad0a0ab043481918d7f39302ccf7338",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    }
+  },
+  {
+    "role": "ART_AIGC",
+    "threadId": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+    "current": {
+      "threadId": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+      "contextTokens": null,
+      "contextSource": "unknown",
+      "contextWarning": "NONE",
+      "observedAt": null,
+      "method": null,
+      "responseId": null,
+      "reason": "No fresh exact response or valid fresh-byte observation was available."
+    },
+    "lastActivity": {
+      "threadId": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+      "contextTokens": null,
+      "contextSource": "unknown",
+      "contextWarning": "NONE",
+      "observedAt": null,
+      "method": null,
+      "responseId": null,
+      "reason": "No fresh exact response or valid fresh-byte observation was available."
+    }
+  }
+]

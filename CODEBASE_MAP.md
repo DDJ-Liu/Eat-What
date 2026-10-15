@@ -1,5 +1,10 @@
 # 《是啊，吃什么》代码结构与修改导航
 
+2026-10-15接管复核与AI-000246收口：五旧chat归档及7项应用日程已独立核实，5分钟无模型用量宿主继续、15份日/周报告完整，10-21下次周报。新增回执对象兼容修复已SUCCEEDED/VERIFIED（CODE86/86、控制4/4），MANUAL、U2～U6/P2和旧session历史不变；用户授权本轮提交并合main。详情outputs/control/PIPELINE-AUDIT-20261015/审查报告.md（相对.ai-workspace）。仅定向核验，不改完整复核日期。
+
+2026-10-15管线接管定向维护（非完整复核）：固定chat路由见.ai-workspace/PIPELINES.md；queue.ps1默认职能地址和控制台保留名单已同步。art-audit.ps1既有BindArtAuditAutomation支持带决定/核验及空闲门禁的线程改绑，追加routeHistory并保留日报任务/成功基线/enabled。仅工作流管理配置，无Unity代码或资源变化。
+
+
 2026-10-15 AI-000245定向更新（不改最后完整结构复核日期）：上下文提醒路径为Get-ThreadContext原生精确线程响应有界采样→queue普通正式回执（显式OwnerThreadId/ControllerThreadId）→UsageMetrics样本去重→watch仅活动scope的新鲜阈值转入→Read-WatchInbox绑定控制台Read/Ack。Test-ContextWarning为隔离定向夹具；MANUAL Status可直接提示，不恢复监管；完整窗口/计费与无工具消息仍不可测。
 
 2026-10-14最新收口：session63adb86921c541a19134e192e330dfb0的AI231～244共14卡正式SUCCEEDED/VERIFIED，22:52:23已自动回MANUAL/COMPLETE，无待领取卡；watch-60已PAUSED，独立周报宿主和ART保持。AI236已由用户直接视觉通过；AI237/238各独立7/7，定向夹具最终15/29项通过，保留用户明确M/80及实际12/14文件；G74的AI242/243/244独立6/6、5/5、3/3通过。GOV04首次真实console心跳采样本批未发生，仍未验证，后续新监管批次首次真实心跳补核，不为此恢复或轮询本session；旧provider输入不是当前窗口。U2～U6/P2及44条配表警告仍按既有范围处理。旧失败/许可保留，未知计费null，无本轮Git提交推送。证据outputs/control/GOV-04-05-20261014/independent-review-238.json、scope-closeout.json与收口与剩余事项.md。

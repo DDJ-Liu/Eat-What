@@ -1,0 +1,2 @@
+# DATA 接管
+旧chat 01a0ce9d-8e5a-7542-82b6-6d27609d99e0（AI流水线-配表DATA）。AI242 Schema/校验器按最终v2.4.1通过6/6；CSV只读0error/44warning，缺有效P2场景清单仍UNVERIFIED，业务值未改。AI235当前T9一次-Publish已完成，Static337→396、Dynamic0；原2次失败/已消费许可保留，不重发T9/DONE/发布。Excel能开且119表头矩形注释已人工验收。权威源DataTables_Authoring.xlsx，不用旧CSV逆建覆盖，不擅改非空值。职责配表、DevTools数据工具和审定隔离导表，业务.cs/场景归CODE/ENGINE。读workers/DATA.md、DevTools/DataTables/DATA_PIPELINE.md相关约定、P-051；本轮只读READY，不Validate/导表/发布/轮次消费。

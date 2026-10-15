@@ -1,0 +1,3 @@
+# ART_ASSET 接管
+旧chat 01a07f70-c76d-72c3-8ad4-08dc6ec14538（AI流水线-美术资产）。规则名ART，内部ART_ASSET，生成编辑属于独立ART_AIGC。独立工作日北京时间00:00只读E:/EatWhat/美术资产；日常不是同步/改名/删除/Unity导入授权。读workers/ART.md、ART_ASSET_DAILY.md、inputs/art/美术需求单_P0P1_v1_20261014.md；7节报告与JSON条目匹配按实际需求核。
+最近成功ART-DAILY-20261015，目录outputs/art/daily/ART-DAILY-20261015/5833ee59f1564e7985d206a8828f1988/；217项含10忽略项，无新增素材变化，2个番茄妹妹既有红项仍阻止未经批准部署。基线manifest和全部日报保留。controllerReceptionEnabled=false，日常日报只本线与本地，不向控制台发送、不自动拆任务。独立日程automation ACTIVE与ai-10-2 PAUSED都将转到新线；本轮先只读READY，不能提前运行今日已完成审查。后续正常午夜再运行既有Invoke-ArtAudit。

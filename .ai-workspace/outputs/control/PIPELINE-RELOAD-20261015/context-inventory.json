@@ -1,0 +1,92 @@
+[
+  {
+    "role": "CONTROL",
+    "threadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+    "sample": {
+      "threadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+      "contextTokens": 185448,
+      "contextSource": "provider",
+      "contextWarning": "ADVISE",
+      "observedAt": "2026-10-15T17:00:22.097+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_08638590debbb313016ad0960afbe887d0903c1142356d0868",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "scope": "Last native activity sample, historical if older than 30 minutes; not current full context or billing"
+  },
+  {
+    "role": "CODE",
+    "threadId": "01a01316-9760-7911-a5d6-ac155907dddb",
+    "sample": {
+      "threadId": "01a01316-9760-7911-a5d6-ac155907dddb",
+      "contextTokens": 220175,
+      "contextSource": "provider",
+      "contextWarning": "STRONG",
+      "observedAt": "2026-10-15T16:25:29.021+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_00eba1af520a9b9e016ad08df07e0887d0a6ebaa655fbc48f2",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "scope": "Last native activity sample, historical if older than 30 minutes; not current full context or billing"
+  },
+  {
+    "role": "ENGINE_MCP",
+    "threadId": "01a01316-2d47-7861-9012-5ab5d3fd8458",
+    "sample": {
+      "threadId": "01a01316-2d47-7861-9012-5ab5d3fd8458",
+      "contextTokens": 227708,
+      "contextSource": "provider",
+      "contextWarning": "STRONG",
+      "observedAt": "2026-10-14T22:24:13.567+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0ee9f2046e3ed248016acf908640dc87d086244de5428cbb9c",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "scope": "Last native activity sample, historical if older than 30 minutes; not current full context or billing"
+  },
+  {
+    "role": "DATA",
+    "threadId": "01a0ce9d-8e5a-7542-82b6-6d27609d99e0",
+    "sample": {
+      "threadId": "01a0ce9d-8e5a-7542-82b6-6d27609d99e0",
+      "contextTokens": 206609,
+      "contextSource": "provider",
+      "contextWarning": "STRONG",
+      "observedAt": "2026-10-14T22:21:21.338+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_055604408c019d5b016acf8fdbc7f887d0afacd86cab1cdf61",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "scope": "Last native activity sample, historical if older than 30 minutes; not current full context or billing"
+  },
+  {
+    "role": "ART_ASSET",
+    "threadId": "01a07f70-c76d-72c3-8ad4-08dc6ec14538",
+    "sample": {
+      "threadId": "01a07f70-c76d-72c3-8ad4-08dc6ec14538",
+      "contextTokens": 190910,
+      "contextSource": "provider",
+      "contextWarning": "ADVISE",
+      "observedAt": "2026-10-15T00:02:01.44+08:00",
+      "method": "native_exact_thread_last_response_input_tokens",
+      "responseId": "resp_0224eae950be17b3016acfa7770e7487d0bbbdda24c2ed537a",
+      "reason": "One response input-token sample, not the complete live context window or task billing."
+    },
+    "scope": "Last native activity sample, historical if older than 30 minutes; not current full context or billing"
+  },
+  {
+    "role": "ART_AIGC",
+    "threadId": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+    "sample": {
+      "threadId": "01a01316-d3fa-7af3-a5e5-25fa0ed5dfb8",
+      "contextTokens": null,
+      "contextSource": "unknown",
+      "contextWarning": "NONE",
+      "observedAt": null,
+      "method": null,
+      "responseId": null,
+      "reason": "No fresh exact response or valid fresh-byte observation was available."
+    },
+    "scope": "Last native activity sample, historical if older than 30 minutes; not current full context or billing"
+  }
+]

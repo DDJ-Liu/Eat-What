@@ -1,0 +1,10 @@
+version = 1
+id = "watch-60"
+kind = "heartbeat"
+name = "WATCH收件箱监管-60分钟"
+prompt = "2026-10-14本监管批次已结束：session63adb86921c541a19134e192e330dfb0，AI231～244共14卡正式SUCCEEDED/VERIFIED，AI236人工视觉通过。最后Complete于北京时间22:52:23自动回MANUAL/COMPLETE，本WATCH已PAUSED；不得自动恢复旧session、重派或重复测试。AI237/238各控制独立7/7，GOV04首次真实console心跳采样仍未验证，留以后获授权新监管批次首次真实心跳，不为验收而重开本session。当前scope没有新人工门，独立U2～U6/P2与44项配表警告仍按USER_WORK_STATUS。收口证据outputs/control/GOV-04-05-20261014/收口与剩余事项.md。以下运行规则只在未来获授权的活动监管时适用，实时mode和用户最新指示优先。\n\n每次真实定时心跳先读实时mode与最新停止要求。Inactive/停止/退出不采样、不扫业务、不派发；按正式状态收口并暂停本WATCH，独立ART/周报宿主及旧日程不改。活动时按GOV04只调用一次app get_usage_limits，保存原始返回到本轮控制输出；不可得则null+原因，禁止重试。用本次automation_id与current_time_iso组成唯一HeartbeatId，经项目根 queue.ps1 -Action RecordSupervisionHeartbeatContext -ControllerThreadId上述控制台 -HeartbeatId该ID -UsageLimitsSamplePath实际保存路径（或-UsageLimitsUnavailableReason真实原因）记录一次console样本。不伪造fresh字节、不读完整聊天、不把账户比例或旧provider输入量当任务账单或当前完整上下文窗口。首次真实采样尚待发生，不将配置或本地夹具写成实测。\n\n然后调用 DevTools/Workflow/Read-WatchInbox.ps1 绑定上述控制台读未确认增量。EMPTY立即结束，除上述一次console采样外不复审旧任务、不作业务读取。仅有新事件时核最新mode，运行 Invoke-UsageReporting.ps1 保存并核USAGE_REPORTS_CHECKED，再独立审查相关任务/实际结果，按绑定batchId/digest和JSON审查证据正式ACK。created空或daily不发周报通知；新增weekly给实际路径。只通知新完成、失败、新weekly、需用户决定或新CONTEXT_HIGH，状态未变安静。ADVISE仅报告；STRONG在当前卡结束后建议用户重载，不自动重载、新开/归档chat、Yield或改模式。已停止的真实拒绝不重试绕过。\n\n只用固定CODE 01a01316-9760-7911-a5d6-ac155907dddb、DATA 01a0ce9d-8e5a-7542-82b6-6d27609d99e0、ENGINE 01a01316-2d47-7861-9012-5ab5d3fd8458。用户已长期授权监管Complete/Fail/Yield即时一次Prepare→Send→Record，控制Receive后独立验收→fresh idle/Reconcile→全scope Dispatch；通知不等于验收。RUNNING不重派、不重复Poll；60分钟WATCH仅兜底。scope正式完成后回MANUAL并暂停本日程。\n\n遵守四条硬上限、通用ApproveResume次数/范围、失败即停、未知计费null。无本轮Git提交推送授权，不重跑字体、旧Play或已完成验证，不代签其余人工项。AI190仅下一次归档一次性保全仍有效。所有exec使用 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，项目根直接queue，runtime只正式API。"
+status = "PAUSED"
+rrule = "FREQ=MINUTELY;INTERVAL=60"
+target_thread_id = "01a08798-8b2a-7d41-9aa8-ab44affd520a"
+created_at = 1791190537495
+updated_at = 1791989957968
