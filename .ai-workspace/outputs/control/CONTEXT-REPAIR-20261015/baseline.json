@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-15T15:03:18.1776306+08:00",
+  "head": "cccdaab833b8d76caeeef4a4177e0d923b1b0b21",
+  "mode": "MANUAL",
+  "supervisedStatus": "COMPLETE",
+  "sessionId": "63adb86921c541a19134e192e330dfb0",
+  "userWorkStatusSha": "F2E1334A6FDF7D3902ABD215E2D232BF6A3E9BB914DEA763700ED474F43F5CC5",
+  "scope": "AI-000245 only; no Git commit/push, business execution or mode changes",
+  "taskCard": ".ai-workspace/inputs/CONTEXT-REPAIR-20261015/TASK_CODE.md"
+}

@@ -35,7 +35,14 @@ try{
             if($file.Name -like '*.receipt.json'){continue}
             $b=ReadJson $file.FullName
             if($b.modeBinding -cne 'SUPERVISED' -or $b.sessionBinding -cne $s.sessionId -or
-                @($b.events|Where-Object {$_.taskId -notin $s.taskIds -and $_.taskId -notin $users}).Count -gt 0){continue}
+                @($b.events|Where-Object {
+                    -not ($(if($_.role -ceq 'console'){
+                        $_.kind -ceq 'CONTEXT_HIGH' -and -not $_.taskId -and
+                            [string]$_.threadId -ceq $s.controllerThreadId
+                    }else{
+                        $_.taskId -in $s.taskIds -or $_.taskId -in $users
+                    }))
+                }).Count -gt 0){continue}
             $keys=@($b.events|ForEach-Object key|Sort-Object)
             $digest=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes(($keys -join '|'))))
             if($digest -cne $b.eventDigest -or $b.eventCount -ne @($b.events).Count){throw 'Inbox batch content/digest mismatch.'}

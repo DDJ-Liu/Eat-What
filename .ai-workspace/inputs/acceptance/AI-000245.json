@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "taskId": "AI-000245",
+  "checks": [
+    {
+      "id": "boundedNativeFreshness",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.boundedNativeFreshness"
+    },
+    {
+      "id": "replyIntegration",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.replyIntegration"
+    },
+    {
+      "id": "notificationDedupe",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.notificationDedupe"
+    },
+    {
+      "id": "warningOnlyAndAccounting",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.warningOnlyAndAccounting"
+    },
+    {
+      "id": "targetedValidationAndLive",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.targetedValidationAndLive"
+    },
+    {
+      "id": "docsAndScope",
+      "expected": true,
+      "evidencePath": "evidence.json",
+      "valuePath": "checks.docsAndScope"
+    }
+  ]
+}

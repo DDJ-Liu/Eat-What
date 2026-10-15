@@ -206,3 +206,54 @@ function Read-TaskUsageRecords {
     }
     return @($records)
 }
+
+# Small, locked telemetry-only dedupe. The bounded tail check closes the gap
+# where a process wrote the usage row but stopped before updating this cache.
+function Invoke-ThreadContextRecordOnce {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$Key,
+        [Parameter(Mandatory)][scriptblock]$Write,
+        [string]$RuntimeRoot = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) '.ai-workspace/runtime'))
+    $mutex=[Threading.Mutex]::new($false,'Local\EatWhat_AI_Workspace_ContextSample_v1')
+    $taken=$false
+    try {
+        try{$taken=$mutex.WaitOne([TimeSpan]::FromSeconds(20))}
+        catch [Threading.AbandonedMutexException]{$taken=$true}
+        if(-not $taken){throw 'Context sample lock unavailable.'}
+        $cacheRoot=Join-Path $RuntimeRoot 'context-native-cache'
+        $cachePath=Join-Path $cacheRoot 'recorded-samples.json'
+        $keys=@()
+        if([IO.File]::Exists($cachePath)){
+            try{$keys=@([IO.File]::ReadAllText($cachePath)|ConvertFrom-Json -DateKind String)}
+            catch{$keys=@()}
+        }
+        if($Key -in $keys){return $false}
+        $monthPath=Join-Path $RuntimeRoot ("usage-{0}.jsonl" -f ([DateTimeOffset]::Now).ToString('yyyyMM'))
+        if([IO.File]::Exists($monthPath)){
+            $stream=[IO.File]::Open($monthPath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
+            try {
+                $length=$stream.Length
+                $start=[Math]::Max(0,$length-1048576)
+                [void]$stream.Seek($start,[IO.SeekOrigin]::Begin)
+                $bytes=[byte[]]::new([int]($length-$start))
+                $read=$stream.Read($bytes,0,$bytes.Length)
+                $content=[Text.Encoding]::UTF8.GetString($bytes,0,$read)
+                foreach($line in $content -split "`n"){
+                    if(-not $line.Contains($Key)){continue}
+                    try{$row=$line|ConvertFrom-Json -DateKind String}catch{continue}
+                    if($row.event -eq 'thread_context' -and [string]$row.metadata.lifecycleKey -ceq $Key){return $false}
+                }
+            } finally {$stream.Dispose()}
+        }
+        & $Write | Out-Null
+        [void][IO.Directory]::CreateDirectory($cacheRoot)
+        $next=@($keys|Select-Object -Last 4095)+@($Key)
+        $tmp="$cachePath.pending-$([guid]::NewGuid().ToString('N'))"
+        [IO.File]::WriteAllText($tmp,($next|ConvertTo-Json -Depth 3),$script:UsageUtf8NoBom)
+        [IO.File]::Move($tmp,$cachePath,$true)
+        return $true
+    } finally {
+        if($taken){[void]$mutex.ReleaseMutex()}
+        $mutex.Dispose()
+    }
+}

@@ -1,0 +1,52 @@
+{
+  "taskId": "AI-000245",
+  "executionId": "ae29fe713c794b3080c3c1d694825b07",
+  "checks": {
+    "boundedNativeFreshness": true,
+    "replyIntegration": true,
+    "notificationDedupe": true,
+    "warningOnlyAndAccounting": true,
+    "targetedValidationAndLive": true,
+    "docsAndScope": true
+  },
+  "verification": {
+    "runner": "DevTools/Workflow/Test-ContextWarning.ps1",
+    "profile": "Custom",
+    "mode": "Final",
+    "finalStatus": "VERIFY_ALL_PASSED",
+    "assertions": 49,
+    "historyPath": ".ai-workspace/runtime/verify-all/verify-all-AI-000245.jsonl",
+    "finalOutputPath": ".ai-workspace/runtime/verify-all/verify-all-AI-000245-463b86d50a1d-01.log",
+    "ordinaryStatus": {
+      "action": "STATUS",
+      "mode": "MANUAL",
+      "workerWarning": "STRONG",
+      "consoleWarning": "STRONG",
+      "utf8Bytes": 1793
+    },
+    "liveReadOnlySamples": [
+      {
+        "role": "worker",
+        "threadId": "01a01316-9760-7911-a5d6-ac155907dddb",
+        "inputTokens": 203126,
+        "warning": "STRONG",
+        "observedAt": "2026-10-15T08:07:19.002Z",
+        "responseId": "resp_00eba1af520a9b9e016ad089a8145c87d0987a3c803fba9dc6"
+      },
+      {
+        "role": "console",
+        "threadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+        "inputTokens": 219596,
+        "warning": "STRONG",
+        "observedAt": "2026-10-15T08:07:17.083Z",
+        "responseId": "resp_08638590debbb313016ad089a802a487d0a374b6058561f963"
+      }
+    ],
+    "diffCheck": "git diff --check: no whitespace errors"
+  },
+  "limits": [
+    "One response input is a proxy, not a complete live context-window measurement or task billing.",
+    "A platform message that makes no tool call cannot be intercepted by project scripts.",
+    "No real SUPERVISED heartbeat was run because the project remains MANUAL; isolated WATCH/Read/Ack fixtures passed."
+  ]
+}

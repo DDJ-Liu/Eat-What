@@ -67,7 +67,7 @@ function Task-Level($Task) {
     return 'full'
 }
 function Event($List, [string]$Kind, [string]$Id, [string]$Evidence, [string]$Key) {
-    $List.Add([pscustomobject]@{ kind=$Kind;taskId=$Id;evidencePath=$Evidence;key=$Key;observedAt=$Now.ToString('o');
+    $List.Add([pscustomobject]@{ kind=$Kind;taskId=$(if($Id){$Id}else{$null});evidencePath=$Evidence;key=$Key;observedAt=$Now.ToString('o');
         before=$null;after=$null;next='CONTROLLER_REVIEW';deliveryStatus='PENDING';lastDeliveryError=$null })
 }
 function Source-At($Object) {
@@ -121,7 +121,13 @@ function Invoke-WatchOnce {
     $prior = Read-Json $cursorPath
     $contextRows = if ($gated) { @() } else {
         @(Read-TaskUsageRecords -RuntimeRoot $StateRoot -From $Now.AddDays(-2) -To $Now.AddMinutes(1) |
-            Where-Object { $_.event -eq 'thread_context' -and $_.role -eq 'worker' })
+            Where-Object {
+                if($_.event -ne 'thread_context' -or $_.role -notin @('worker','console') -or
+                    $_.contextSource -notin @('provider','estimated')){return $false}
+                $at=[DateTimeOffset]::MinValue
+                return ([DateTimeOffset]::TryParse([string]$_.metadata.observedAt,[ref]$at) -and
+                    $at -ge $Now.AddMinutes(-30) -and $at -le $Now.AddMinutes(5))
+            })
     }
     $userStates = User-States $UserStatusPath
     $priorById = @{}
@@ -132,6 +138,41 @@ function Invoke-WatchOnce {
     }
     $taskSnapshots = [Collections.Generic.List[object]]::new()
     $events = [Collections.Generic.List[object]]::new()
+    $consoleSnapshots=[Collections.Generic.List[object]]::new()
+    $priorConsole=@{}
+    foreach($row in @($prior.consoleContexts|Where-Object {$null -ne $_})){
+        $priorConsole[[string]$row.threadId]=$row
+    }
+    if($gated){
+        foreach($row in @($prior.consoleContexts|Where-Object {$null -ne $_})){$consoleSnapshots.Add($row)}
+    } else {
+        $controller=if($mode.mode -eq 'SUPERVISED'){[string]$mode.supervised.controllerThreadId}else{$null}
+        if($controller){
+            $row=@($contextRows|Where-Object {$_.role -eq 'console' -and [string]$_.metadata.threadId -ceq $controller}|
+                Sort-Object @{Expression={[DateTimeOffset]::Parse([string]$_.recordedAt)};Descending=$true}|Select-Object -First 1)
+            if($row.Count){
+                $value=$row[0]
+                $snapshot=[pscustomobject]@{threadId=$controller;contextWarning=[string]$value.contextWarning;
+                    contextTokens=$value.contextTokens;contextSource=[string]$value.contextSource;
+                    responseId=[string]$value.metadata.responseId;lastKnownContextWarning=[string]$value.contextWarning}
+                $consoleSnapshots.Add($snapshot)
+                $priorKnown=if($priorConsole[$controller].lastKnownContextWarning){[string]$priorConsole[$controller].lastKnownContextWarning}else{[string]$priorConsole[$controller].contextWarning}
+                if($snapshot.contextWarning -eq 'STRONG' -and $priorKnown -ne 'STRONG'){
+                    $sampleId=if($snapshot.responseId){$snapshot.responseId}else{[string]$value.recordedAt}
+                    Event $events 'CONTEXT_HIGH' $null (Join-Path $StateRoot ("usage-{0}.jsonl" -f $Now.ToString('yyyyMM'))) "console/context-strong/$controller/$sampleId"
+                    $events[-1] | Add-Member -NotePropertyName role -NotePropertyValue console
+                    $events[-1] | Add-Member -NotePropertyName threadId -NotePropertyValue $controller
+                    $events[-1] | Add-Member -NotePropertyName contextTokens -NotePropertyValue $snapshot.contextTokens
+                    $events[-1] | Add-Member -NotePropertyName contextSource -NotePropertyValue $snapshot.contextSource
+                }
+            } elseif($priorConsole[$controller]){
+                $old=$priorConsole[$controller]
+                $known=if($old.lastKnownContextWarning){[string]$old.lastKnownContextWarning}else{[string]$old.contextWarning}
+                $consoleSnapshots.Add([pscustomobject]@{threadId=$controller;contextWarning='NONE';contextTokens=$null;
+                    contextSource='unknown';responseId=$null;lastKnownContextWarning=$known})
+            }
+        }
+    }
     $userScope = @($queue.tasks | Where-Object { $_.id -in $scope } | ForEach-Object {
         @($_.userRoundDependency) + @($_.userDependency) + @($_.dependsOn | Where-Object { $_ -like 'USER-*' })
     } | Where-Object { $_ -like 'USER-*' } | Select-Object -Unique)
@@ -183,10 +224,15 @@ function Invoke-WatchOnce {
             contextWarning=$(if($contextValue){[string]$contextValue.contextWarning}else{'NONE'});
             contextTokens=$(if($contextValue){$contextValue.contextTokens}else{$null});
             contextSource=$(if($contextValue){[string]$contextValue.contextSource}else{'unknown'});
+            contextResponseId=$(if($contextValue){[string]$contextValue.metadata.responseId}else{$null});
+            lastKnownContextWarning=$(if($contextValue){[string]$contextValue.contextWarning}elseif($before.lastKnownContextWarning){[string]$before.lastKnownContextWarning}else{[string]$before.contextWarning});
             userDoneCount=$(if ($before) { [int]$before.userDoneCount } else { 0 })}
         $taskSnapshots.Add($snapshot)
-        if ($snapshot.contextWarning -eq 'STRONG' -and [string]$before.contextWarning -ne 'STRONG') {
-            Event $events 'CONTEXT_HIGH' $id (Join-Path $StateRoot ("usage-{0}.jsonl" -f $Now.ToString('yyyyMM'))) "$id/context-strong/$($task.execution.executionId)"
+        $priorKnown=if($before.lastKnownContextWarning){[string]$before.lastKnownContextWarning}else{[string]$before.contextWarning}
+        if ($snapshot.contextWarning -eq 'STRONG' -and $priorKnown -ne 'STRONG') {
+            $sampleId=if($snapshot.contextResponseId){$snapshot.contextResponseId}else{[string]$contextValue.recordedAt}
+            Event $events 'CONTEXT_HIGH' $id (Join-Path $StateRoot ("usage-{0}.jsonl" -f $Now.ToString('yyyyMM'))) "$id/context-strong/$($task.execution.executionId)/$sampleId"
+            $events[-1] | Add-Member -NotePropertyName role -NotePropertyValue worker
             $events[-1] | Add-Member -NotePropertyName threadId -NotePropertyValue ([string]$task.execution.ownerThreadId)
             $events[-1] | Add-Member -NotePropertyName contextTokens -NotePropertyValue $snapshot.contextTokens
             $events[-1] | Add-Member -NotePropertyName contextSource -NotePropertyValue $snapshot.contextSource
@@ -272,7 +318,8 @@ function Invoke-WatchOnce {
         elseif($item.kind -eq 'TURN_LIMIT'){$item.next='STOP_AND_REPORT_WITH_CHECKPOINT'}
         elseif($item.kind -eq 'CONTEXT_HIGH'){$item.next='USER_RELOAD_AFTER_CURRENT_CARD'}
         if($after.failureStopped -and $item.kind -in @('TERMINAL','ERROR_INCREASED','REPAIR_BUDGET')){$item.next='READONLY_DIAGNOSIS'}
-        $eventPath = Join-Path $inbox ("{0}-{1}.json" -f $item.taskId, [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes([string]$item.key))).Substring(0,16))
+        $eventName=if($item.taskId){[string]$item.taskId}else{'CONSOLE'}
+        $eventPath = Join-Path $inbox ("{0}-{1}.json" -f $eventName, [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes([string]$item.key))).Substring(0,16))
         Save-Json $eventPath $item
         $item | Add-Member -NotePropertyName packagePath -NotePropertyValue $eventPath
         $pending.Add($item)
@@ -304,7 +351,7 @@ function Invoke-WatchOnce {
     }
     $noEventKey = "$scopeStatus|$(@($missing) -join '|')|$($Now.ToOffset([TimeSpan]::FromHours(8)).ToString('yyyy-MM-dd'))"
     $cursor = [ordered]@{schemaVersion=1;observedAt=$Now.ToString('o');scopeStatus=$scopeStatus;noEventKey=$noEventKey;
-        tasks=@($taskSnapshots);pending=@($pending);seenKeys=@($known);missingSources=@($missing);userStates=$userStates;
+        tasks=@($taskSnapshots);consoleContexts=@($consoleSnapshots);pending=@($pending);seenKeys=@($known);missingSources=@($missing);userStates=$userStates;
         userDoneCounts=$userDoneCounts
         unityHeartbeat=$unity;workerProgress=@($taskSnapshots | Where-Object {$_.id -in $scope} | Select-Object id,workerLastProgressAt,progressUnavailableReason,appTurnCount,maxTurns)
     }
@@ -347,7 +394,7 @@ function Invoke-WatchOnce {
         $batch = Read-Json $path
         $items=@($_.Group)
         if ($batch.deliveryStatus -eq 'PENDING' -and
-            @($items | Where-Object { $_.taskId -notin $scope -and $_.taskId -notin $userScope }).Count -eq 0) {
+            @($items | Where-Object { $_.role -ne 'console' -and $_.taskId -notin $scope -and $_.taskId -notin $userScope }).Count -eq 0) {
             [pscustomobject]@{path=$path;batch=$batch;items=$items}
         }
     } | Sort-Object { $_.batch.observedAt })
@@ -392,7 +439,8 @@ function Invoke-WatchOnce {
     $cursor.pending = @($pending)
     Save-Json $cursorPath $cursor
     foreach ($item in $newEvents) {
-        Write-TaskUsageRecord -TaskId $item.taskId -Lane CONTROL -Phase execute -Event 'watch_event' -Source 'workflow-watch' -Coverage 'event_detected' -Metadata @{kind=$item.kind;key=$item.key} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null
+        $usageTaskId=if($item.role -eq 'console'){'CONSOLE'}else{[string]$item.taskId}
+        Write-TaskUsageRecord -TaskId $usageTaskId -Lane CONTROL -Phase execute -Event 'watch_event' -Source 'workflow-watch' -Coverage 'event_detected' -Metadata @{kind=$item.kind;key=$item.key} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null
     }
     if ($delivered -gt 0) {
         Write-TaskUsageRecord -TaskId WATCH -Lane CONTROL -Phase execute -Event $(if($DeliveryScript){'watch_wakeup'}else{'watch_ack'}) -Source 'workflow-watch' -Coverage 'adapter_receipt' -Metadata @{count=$delivered} -RuntimeRoot $StateRoot -RecordedAt $Now | Out-Null

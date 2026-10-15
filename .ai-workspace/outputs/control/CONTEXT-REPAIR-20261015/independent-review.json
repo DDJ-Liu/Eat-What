@@ -1,0 +1,79 @@
+{
+  "taskId": "AI-000245",
+  "at": "2026-10-15T16:29:03.9815830+08:00",
+  "decision": "PASSED",
+  "contractChecks": 6,
+  "matchedChecks": 6,
+  "targetedAssertions": 49,
+  "finalRuns": 2,
+  "allFinalRunsPassed": true,
+  "validationReusedWithoutRerun": true,
+  "scope": {
+    "unexpectedPaths": [],
+    "headUnchanged": true,
+    "manualPreserved": true,
+    "userTasksUnchanged": true,
+    "codeUnchangedSinceFinal": true
+  },
+  "sourceRefs": [
+    {
+      "path": ".ai-workspace/queue.ps1",
+      "sha256": "426786C891B5F40CE34A9DCA08DE9C786F4AD58C82798D9C69E0BF62F8904806",
+      "length": 163501,
+      "changedAfterFinal": false
+    },
+    {
+      "path": ".ai-workspace/supervised.ps1",
+      "sha256": "FD112217C12FD69A5569338305C21AB1F5746CD97E642DF610396A92F5510938",
+      "length": 47924,
+      "changedAfterFinal": false
+    },
+    {
+      "path": "DevTools/Workflow/Get-ThreadContext.ps1",
+      "sha256": "8429B793318FBA12F0D14A622B552AD8ED8560AFF2E0610C90ADCF34A0BBC006",
+      "length": 10281,
+      "changedAfterFinal": false
+    },
+    {
+      "path": "DevTools/Workflow/Read-WatchInbox.ps1",
+      "sha256": "A5221EFAE12824FD1C9BDC11A333835262E7E1E6F1F636530F3038B663D1E04C",
+      "length": 5349,
+      "changedAfterFinal": false
+    },
+    {
+      "path": "DevTools/Workflow/Test-ContextWarning.ps1",
+      "sha256": "DCD810DFC4F50B4358AE91BFBC927CCF5702675F826D11C1B68132FF7C8291E5",
+      "length": 22410,
+      "changedAfterFinal": false
+    },
+    {
+      "path": "DevTools/Workflow/UsageMetrics.ps1",
+      "sha256": "678FF79668D4E98A7D81AFE2940D2D586D9F5D436ABCCD24E2BA7352A0C963C4",
+      "length": 12923,
+      "changedAfterFinal": false
+    },
+    {
+      "path": "DevTools/Workflow/watch.ps1",
+      "sha256": "04486E075E110B80D0FFCF08EE5BB352974D96CC78858198AA12FF3A4EF950D5",
+      "length": 31678,
+      "changedAfterFinal": false
+    }
+  ],
+  "independentEvidence": [
+    "acceptance-compare.json",
+    "console-status-live.json",
+    "native-crosscheck.json",
+    "validation-history.jsonl",
+    "final-validation.log"
+  ],
+  "notes": [
+    "Reviewed native parser byte boundaries, age/identity/rotation guards and bounded sampling cache.",
+    "Reviewed ordinary console/worker receipt integration and exact controller inbox acceptance; reused isolated WATCH Read/Ack test output.",
+    "CORE/CONTROL invocation convention was added after worker Complete; documentation only, original worker report retained.",
+    "Single response input is a context proxy only; full retained context and task billing remain unknown.",
+    "No real SUPERVISED heartbeat was started; MANUAL real reply tested and supervised inbox covered by isolated regression."
+  ],
+  "billingTokens": null,
+  "billingUnavailableReason": "Native context samples are not a complete task billing source.",
+  "noteRegistration": "RecordIssue after Complete was rejected because CODE had released ownership; no retry or task state change. Independent review is preserved here; original SUCCEEDED/VERIFIED stands."
+}

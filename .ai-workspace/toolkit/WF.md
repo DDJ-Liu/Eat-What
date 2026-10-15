@@ -1,5 +1,7 @@
 # 工具库 · WF
 
+2026-10-15 GOV-04后续AI-000245：Get-ThreadContext优先读精确线程原生token_usage_record.payload.usage.input_tokens，有界发现/尾读/缓存及30分钟时限；旧provider只可新鲜回退，显式fresh字节为估算，再无则null+原因。queue普通正式回执以显式ControllerThreadId/OwnerThreadId采样，MANUAL Status可承载提示；活跃监管心跳仍按heartbeatId去重。样本去重缓存由UsageMetrics管理；WATCH只在活动scope消费新鲜worker/console STRONG转入，Read-WatchInbox核绑定控制台并Ack，不自动重载/Yield/换chat。单次input不是完整窗口或任务计费；下述旧实现描述为历史，不重发旧周报。
+
 ## 下一批次通用续行（2026-10-12）
 <a id="approve-resume"></a>
 

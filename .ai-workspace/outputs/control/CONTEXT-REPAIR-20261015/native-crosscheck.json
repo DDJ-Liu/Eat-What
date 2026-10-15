@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-15T16:12:21.8817983+08:00",
+  "threadId": "01a08798-8b2a-7d41-9aa8-ab44affd520a",
+  "responseId": "resp_08638590debbb313016ad089fc1b2887d0914e2e7b51eab8c7",
+  "observedAt": "2026-10-15T08:08:57.6840000+00:00",
+  "inputTokens": 220041,
+  "exactNativeMatches": 1,
+  "nativeInputMatches": true,
+  "sourcePath": "C:\\Users\\DDJ\\.codex\\sessions\\2026\\09\\14\\rollout-2026-09-14T18-19-24-01a08798-8b2a-7d41-9aa8-ab44affd520a_01a09f6d-bc9d-78d1-942e-694a557d95e5.jsonl",
+  "scope": "bounded 1MiB tail, exact usage metadata only; not complete context or billing"
+}

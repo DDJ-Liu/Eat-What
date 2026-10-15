@@ -453,12 +453,62 @@ function Write-Result {
         $Value['contextReason'] = [string]$context.reason
         $lifecycleKey = "$($contextTask.id)|$executionId|$lifecycle"
         try {
-            $priorContext = @(Read-TaskUsageRecords -RuntimeRoot (Join-Path $workspaceRoot 'runtime') |
-                Where-Object { $_.event -eq 'thread_context' -and [string]$_.metadata.lifecycleKey -ceq $lifecycleKey })
-            if ($priorContext.Count -eq 0) {
+            Invoke-ThreadContextRecordOnce -Key $lifecycleKey -RuntimeRoot (Join-Path $workspaceRoot 'runtime') -Write {
                 Write-TaskUsageRecord -TaskId ([string]$contextTask.id) -Lane ([string]$contextTask.pipeline) -Phase $(if ($lifecycle -eq 'claim') { 'claim' } else { 'report' }) -Event 'thread_context' -InputTokens $null -OutputTokens $null -ContextTokens $context.contextTokens -ContextSource $context.contextSource -ContextWarning $context.contextWarning -Role worker -Source 'workflow-thread-context' -Coverage 'Latest associated response or explicit fresh-byte estimate; never cumulative provider tokens or account quota.' -UnavailableReason @{inputTokens='Context observation is not task input-token billing.';outputTokens='Context observation is not output-token billing.';contextTokens=[string]$context.reason} -Metadata @{threadId=$threadId;executionId=$executionId;lifecycleKey=$lifecycleKey;method=$context.method;observedAt=$context.observedAt;responseId=$context.responseId;reason=$context.reason} -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Out-Null
-            }
+            } | Out-Null
         } catch { } # A telemetry failure must not replay an already-mutated queue action.
+    }
+    # Explicitly bound ordinary commands (including MANUAL Status) are a warning
+    # outlet. Never infer a thread from the currently signed-in account.
+    if ($ControllerThreadId -and (Test-CodexThreadId $ControllerThreadId) -and $Action -ne 'RecordSupervisionHeartbeatContext') {
+        try {
+            $consoleContext = & (Join-Path $projectRoot 'DevTools/Workflow/Get-ThreadContext.ps1') -ThreadId $ControllerThreadId -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | ConvertFrom-Json -DateKind String
+            $Value['consoleContext'] = [ordered]@{threadId=$ControllerThreadId;tokens=$consoleContext.contextTokens;
+                source=$consoleContext.contextSource;warning=$consoleContext.contextWarning;reason=$consoleContext.reason}
+            $sampleKey = "CONSOLE|$ControllerThreadId|$($consoleContext.responseId)"
+            if($consoleContext.responseId){
+                Invoke-ThreadContextRecordOnce -Key $sampleKey -RuntimeRoot (Join-Path $workspaceRoot 'runtime') -Write {
+                Write-TaskUsageRecord -TaskId CONSOLE -Lane CONTROL -Phase execute -Event thread_context -Role console -ContextTokens $consoleContext.contextTokens -ContextSource $consoleContext.contextSource -ContextWarning $consoleContext.contextWarning -Source workflow-thread-context -Coverage 'One exact thread response input; warning only, not a complete context window or task billing.' -UnavailableReason @{contextTokens=[string]$consoleContext.reason} -Metadata @{threadId=$ControllerThreadId;lifecycleKey=$sampleKey;responseId=$consoleContext.responseId;observedAt=$consoleContext.observedAt;method=$consoleContext.method} -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Out-Null
+                } | Out-Null
+            }
+        } catch {
+            $Value['consoleContext'] = [ordered]@{threadId=$ControllerThreadId;tokens=$null;source='unknown';warning='NONE';reason='Context reader unavailable.'}
+        }
+    }
+    if ($OwnerThreadId -and (Test-CodexThreadId $OwnerThreadId) -and
+        -not ($contextTask -and (($Action -eq 'Poll' -and $resultAction -in @('CLAIMED','CLAIMED_RETRY')) -or
+            ($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED')))) {
+        try {
+            $owned = if($contextTask){$contextTask}elseif($TaskId){Get-Task (Read-JsonFile $queuePath) $TaskId}else{$null}
+            if($owned -and [string]$owned.execution.ownerThreadId -ceq $OwnerThreadId){
+                $workerContext = & (Join-Path $projectRoot 'DevTools/Workflow/Get-ThreadContext.ps1') -ThreadId $OwnerThreadId -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | ConvertFrom-Json -DateKind String
+                $Value['contextTokens']=$workerContext.contextTokens
+                $Value['contextSource']=[string]$workerContext.contextSource
+                $Value['contextWarning']=[string]$workerContext.contextWarning
+                $Value['contextReason']=[string]$workerContext.reason
+                $sampleKey="$($owned.id)|$($owned.execution.executionId)|response|$($workerContext.responseId)"
+                if($workerContext.responseId){
+                    Invoke-ThreadContextRecordOnce -Key $sampleKey -RuntimeRoot (Join-Path $workspaceRoot 'runtime') -Write {
+                    Write-TaskUsageRecord -TaskId ([string]$owned.id) -Lane ([string]$owned.pipeline) -Phase execute -Event thread_context -Role worker -ContextTokens $workerContext.contextTokens -ContextSource $workerContext.contextSource -ContextWarning $workerContext.contextWarning -Source workflow-thread-context -Coverage 'One exact thread response input; warning only, not task billing.' -UnavailableReason @{contextTokens=[string]$workerContext.reason} -Metadata @{threadId=$OwnerThreadId;executionId=$owned.execution.executionId;lifecycleKey=$sampleKey;responseId=$workerContext.responseId;observedAt=$workerContext.observedAt;method=$workerContext.method} -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Out-Null
+                    } | Out-Null
+                }
+            }
+        } catch {
+            $Value['contextTokens']=$null;$Value['contextSource']='unknown';$Value['contextWarning']='NONE'
+            $Value['contextReason']='Context reader unavailable.'
+        }
+    }
+    if($CompactOutput -and $resultAction -eq 'STATUS'){
+        while([Text.Encoding]::UTF8.GetByteCount(($Value|ConvertTo-Json -Depth 10 -Compress)) -gt 2046 -and
+            @($Value.queue.tasks).Count -gt 0){
+            $Value.queue.tasks=@($Value.queue.tasks|Select-Object -SkipLast 1)
+            $Value.queue.overflowCount++
+        }
+        if([Text.Encoding]::UTF8.GetByteCount(($Value|ConvertTo-Json -Depth 10 -Compress)) -gt 2046){
+            if($Value.Contains('consoleContext')){$Value.consoleContext.reason=$null}
+            if($Value.Contains('contextReason')){$Value.contextReason=$null}
+        }
+        Assert-Value ([Text.Encoding]::UTF8.GetByteCount(($Value|ConvertTo-Json -Depth 10 -Compress)) -le 2046) 'Compact Status with context exceeds 2 KiB.'
     }
     $json = $Value | ConvertTo-Json -Depth 30 -Compress:$CompactOutput
     if ($Action -in @('Poll', 'Complete', 'SupervisionCheckpoint','Fail','YieldSupervisionTask') -or (Get-ObjectPropertyValue $Value 'supervisorHandoff')) {
@@ -479,10 +529,13 @@ function Write-Result {
             handoffFrom = $(if ($null -ne $receiptTask) { Get-ObjectPropertyValue $receiptTask.execution 'handoffFrom' } else { Get-ObjectPropertyValue $Value 'handoffFrom' })
             receiptPath = $receiptPath
         }
-        if ($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED') {
+        if (Get-ObjectPropertyValue $Value 'contextWarning') {
             $compact['contextWarning'] = Get-ObjectPropertyValue $Value 'contextWarning'
             $compact['contextTokens'] = Get-ObjectPropertyValue $Value 'contextTokens'
             $compact['contextSource'] = Get-ObjectPropertyValue $Value 'contextSource'
+        }
+        if(Get-ObjectPropertyValue $Value 'consoleContext'){
+            $compact['consoleContextWarning']=$Value.consoleContext.warning
         }
         foreach ($name in @('autoHandoff', 'supervisorHandoff')) {
             $handoff = Get-ObjectPropertyValue $Value $name
@@ -514,7 +567,8 @@ function Write-Result {
         if([Text.Encoding]::UTF8.GetByteCount($json) -gt 757){
             # Full routing and messages remain in the bound receipt. Never fail a completed mutation for verbose metadata.
             $fallback=[ordered]@{action=$compact.action;taskId=$receiptTaskId;pipeline=$compact.pipeline;receiptPath=$receiptPath}
-            if($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED'){$fallback.contextWarning=$compact.contextWarning}
+            if($compact.Contains('contextWarning')){$fallback.contextWarning=$compact.contextWarning}
+            if($compact.Contains('consoleContextWarning')){$fallback.consoleContextWarning=$compact.consoleContextWarning}
             $json=$fallback|ConvertTo-Json -Compress
         }
         Assert-Value ([Text.Encoding]::UTF8.GetByteCount($json) -le 757) 'Queue compact receipt exceeds 759 UTF8 bytes including CRLF.'
@@ -1547,7 +1601,8 @@ try {
             filter=[ordered]@{taskId=$TaskId;fromTaskId=$FromTaskId;toTaskId=$ToTaskId}
             snapshotPath=$snapshotPath;fullStatus='queue.ps1 -Action Status -FullStatus'
         }
-        while ([Text.Encoding]::UTF8.GetByteCount(($response | ConvertTo-Json -Depth 10 -Compress)) -gt 2046 -and
+        $statusLimit=if($ControllerThreadId){1770}else{2046}
+        while ([Text.Encoding]::UTF8.GetByteCount(($response | ConvertTo-Json -Depth 10 -Compress)) -gt $statusLimit -and
             @($response.queue.tasks).Count -gt 0) {
             $response.queue.tasks = @($response.queue.tasks | Select-Object -SkipLast 1)
             $response.queue.overflowCount++

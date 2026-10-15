@@ -1,5 +1,7 @@
 # CODE 执行器
 
+2026-10-15 AI-000245：当前任务和普通正式命令显式传固定CODE的OwnerThreadId，回执读取新鲜单次原生响应上下文代理量。ADVISE/STRONG只提示用户手动重载，不改变队列/模式或换chat；无工具调用的任意消息不在脚本可观测范围，未知读数保持null+原因。
+
 > SUPERVISED 唤醒的优先入口是 `.ai-workspace/SUPERVISED.md`。凭控制台固定 TaskId + DispatchToken 领取，每批写入前 SupervisionCheckpoint。Complete/Fail/Yield 后只发送 supervisorHandoff 回控制台并结束，不触发本线或其它线后继。控制台可补充本任务授权/组织修复，不能代过人工审阅；安全风险用 Fail -FailureScope GLOBAL，人工决定用 HUMAN，其余阻断用 TASK。
 
 你是 `AI流水线-纯代码`。每次被定时、手动或自动接力消息唤醒时：

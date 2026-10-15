@@ -1,5 +1,9 @@
 # 控制任务约定 · 核心入口
 
+2026-10-15 AI-000245：需报告上下文的正式控制命令显式带当前固定ControllerThreadId；MANUAL下Status也能返回consoleContext。只有新鲜精确原生单次响应可触发150K/200K提示，unknown不当作低量。WATCH仅活动监管会话按绑定控制台消费CONTEXT_HIGH，Read/Ack核session/digest/线程；完全不调用工具的平台消息无法被脚本钩住。旧阶段结论保留。
+
+日常最终回复前的固定调用习惯：每次人类直接请求，若本轮已有普通正式queue命令，就在该命令上传ControllerThreadId并读取提醒；若没有queue命令，最多一次轻量Status采样后回复，MANUAL亦然。不得为了提醒启动监管或空闲定时轮询。执行线普通queue命令传OwnerThreadId+当前TaskId，领取/Complete已有采样复用；本轮ADVISE/STRONG随回复告知用户，同档稳定样本不刷屏，STRONG在当前卡安全结算后建议手动重载继承。无工具调用的平台消息无法自动截获。
+
 2026-10-14最新收口：session63adb86921c541a19134e192e330dfb0的AI231～244共14卡正式SUCCEEDED/VERIFIED，22:52:23已自动回MANUAL/COMPLETE，无待领取卡；watch-60已PAUSED，独立周报宿主和ART保持。AI236已由用户直接视觉通过；AI237/238各独立7/7，定向夹具最终15/29项通过，保留用户明确M/80及实际12/14文件；G74的AI242/243/244独立6/6、5/5、3/3通过。GOV04首次真实console心跳采样本批未发生，仍未验证，后续新监管批次首次真实心跳补核，不为此恢复或轮询本session；旧provider输入不是当前窗口。U2～U6/P2及44条配表警告仍按既有范围处理。旧失败/许可保留，未知计费null，无本轮Git提交推送。证据outputs/control/GOV-04-05-20261014/independent-review-238.json、scope-closeout.json与收口与剩余事项.md。
 
 ## 2026-10-14 指导文档实际入口

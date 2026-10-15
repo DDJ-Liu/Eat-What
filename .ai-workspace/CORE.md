@@ -1,5 +1,9 @@
 # AI 工作区 CORE
 
+2026-10-15 AI-000245修复入口：精确线程原生日志的单次响应input_tokens经30分钟有效期、有界尾读/缓存用于提醒；正式队列普通回执可显式传ControllerThreadId（控制台）或OwnerThreadId（执行线），MANUAL Status同样可返回预警。ADVISE/STRONG只建议用户手动重载；未知为null+原因，非完整窗口/任务账单。WATCH的console事件由绑定控制台Read-WatchInbox消费，停止态不轮询。下述10-14诊断保留为历史。
+
+日常回复约定：固定控制台每次处理人类直接请求，在最终回复前优先在本轮已有普通正式queue命令上传入ControllerThreadId；若本轮完全没有queue命令，至多调用一次轻量Status作提醒采样（MANUAL也适用，不启监管、不做定时空轮询）。执行器普通queue命令带OwnerThreadId和当前TaskId，领取/Complete已有采样可复用。ADVISE/STRONG随本轮回复提示用户，同一稳定档位不反复刷屏；STRONG在当前卡安全结算后建议用户手动重载继承。完全无工具调用的平台消息无法被项目脚本自动截获。
+
 2026-10-14追加核查：GOV04提醒链存在陈旧provider样本及console通知接线缺口；实际原生响应已达到ADVISE（控制台190300、CODE197981），旧NONE不能代表当前低量。本轮仅诊断留档，未修复/新派卡；详情见[提交检查与提醒诊断](outputs/control/STAGE-GOV-G74-COMMIT-20261014/提交前检查与上下文提醒诊断.md)。
 
 2026-10-14最新收口：session63adb86921c541a19134e192e330dfb0的AI231～244共14卡正式SUCCEEDED/VERIFIED，22:52:23已自动回MANUAL/COMPLETE，无待领取卡；watch-60已PAUSED，独立周报宿主和ART保持。AI236已由用户直接视觉通过；AI237/238各独立7/7，定向夹具最终15/29项通过，保留用户明确M/80及实际12/14文件；G74的AI242/243/244独立6/6、5/5、3/3通过。GOV04首次真实console心跳采样本批未发生，仍未验证，后续新监管批次首次真实心跳补核，不为此恢复或轮询本session；旧provider输入不是当前窗口。U2～U6/P2及44条配表警告仍按既有范围处理。旧失败/许可保留，未知计费null，无本轮Git提交推送。证据outputs/control/GOV-04-05-20261014/independent-review-238.json、scope-closeout.json与收口与剩余事项.md。
