@@ -43,8 +43,8 @@ namespace EatWhat.Cooking.ShortCycle
                 diagnostic = "Catalog and a read-only inventory query are required for clue binding.";
                 return false;
             }
-            CK01RecipeData recipe;
-            if (!catalog.TryGetRecipe(recipeId, out recipe, out diagnostic)) return false;
+            RecipeView recipe;
+            if (!catalog.TryGetRecipeView(recipeId, out recipe, out diagnostic)) return false;
             var blocks = targets ?? new SlotBlock[0];
             if (blocks.Length < recipe.slots.Count)
             {
@@ -60,8 +60,7 @@ namespace EatWhat.Cooking.ShortCycle
                     diagnostic = "Clue SlotBlock reference " + index + " is not connected.";
                     return false;
                 }
-                CK01RecipeSlotData slot;
-                if (!catalog.TryGetRecipeSlot(recipe.slots[index], out slot, out diagnostic)) return false;
+                var slot = recipe.slots[index];
                 ShortCycleSlotBlockBinding binding;
                 if (!ShortCycleRecipeSlotBinding.TryResolve(
                     slot,

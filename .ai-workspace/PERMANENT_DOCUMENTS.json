@@ -1,0 +1,415 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-19",
+  "source": "DOC-SLIM + authorized DOC-REVIEW M1/M2/M3/S3; original five families and one-time preservation history retained; DOC-SLIM-20261017 received design master 1.5.4 after all 34 M5 units reviewed",
+  "exactPaths": [
+    ".ai-workspace/approved-resume.ps1",
+    ".ai-workspace/ARCHIVE_PRESERVATION.md",
+    ".ai-workspace/ART_ASSET_DAILY.md",
+    ".ai-workspace/art-audit-scan.ps1",
+    ".ai-workspace/art-audit.ps1",
+    ".ai-workspace/art-daily-control.ps1",
+    ".ai-workspace/art-daily-png.cs",
+    ".ai-workspace/art-daily-report.ps1",
+    ".ai-workspace/CONTEXT_READ_PROTOCOL.md",
+    ".ai-workspace/CONTROL_CHAT.md",
+    ".ai-workspace/control-administration.ps1",
+    ".ai-workspace/CORE.md",
+    ".ai-workspace/design/README.md",
+    ".ai-workspace/DOC_MAINTENANCE.md",
+    ".ai-workspace/ENGINEERING_CONVENTIONS.md",
+    ".ai-workspace/inputs/排布指导书_ShortCycle_P0P1.md",
+    ".ai-workspace/inputs/AI开发工作流总档_设计端.md",
+    ".ai-workspace/inputs/CK01_P0P1_需求对照基准.md",
+    ".ai-workspace/inputs/CK01-B_配表Schema.md",
+    ".ai-workspace/inputs/P0-P1_开发路径规划.md",
+    ".ai-workspace/inputs/P0-P1_模块拆分追踪表.md",
+    ".ai-workspace/inputs/README.md",
+    ".ai-workspace/inputs/USER_WORK_STATUS.md",
+    ".ai-workspace/INSTRUCTIONS.md",
+    ".ai-workspace/Invoke-ArtAudit.ps1",
+    ".ai-workspace/KNOWN_PITFALLS.md",
+    ".ai-workspace/MODES.md",
+    ".ai-workspace/outputs/CK01-C/C-T5b-X_BLOCKED_ON_ART.md",
+    ".ai-workspace/outputs/control/人工处理索引.md",
+    ".ai-workspace/outputs/control/未关闭任务汇总.md",
+    ".ai-workspace/outputs/control/下一轮开发承接.md",
+    ".ai-workspace/outputs/control/Export-UnclosedTasks.ps1",
+    ".ai-workspace/PENDING_REVIEW.md",
+    ".ai-workspace/PERMANENT_DOCUMENTS.json",
+    ".ai-workspace/PIPELINES.md",
+    ".ai-workspace/queue.ps1",
+    ".ai-workspace/README.md",
+    ".ai-workspace/repair-budget.ps1",
+    ".ai-workspace/SUPERVISED.md",
+    ".ai-workspace/supervised.ps1",
+    ".ai-workspace/SUPERVISOR.md",
+    ".ai-workspace/TASK_DIGEST.md",
+    ".ai-workspace/TOOLKIT_REGISTRY.md",
+    ".ai-workspace/UNITY_SCENE_CLEANUP.md",
+    ".ai-workspace/WORKFLOW.md",
+    "项目整体阅读理解与推进基线_2026-08-14.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CODEBASE_MAP.md",
+    ".ai-workspace/archive/README.md",
+    ".ai-workspace/archive/tracking/TASK_DIGEST.md",
+    ".ai-workspace/archive/tracking/TASK_DIGEST_INDEX.json",
+    ".ai-workspace/archive/tracking/usage-backfill.json",
+    ".ai-workspace/archive/tracking/INSTRUCTIONS_ARCHIVE_INDEX.json",
+    ".ai-workspace/inputs/续行许可分模式_用户长期授权_20261019.json"
+  ],
+  "directories": [
+    ".ai-workspace/runtime",
+    ".ai-workspace/protocol",
+    ".ai-workspace/workers",
+    ".ai-workspace/toolkit",
+    ".ai-workspace/pitfalls",
+    ".ai-workspace/templates",
+    ".ai-workspace/codebase",
+    ".ai-workspace/project-status",
+    ".ai-workspace/MIG63",
+    ".ai-workspace/archive",
+    ".ai-workspace/inputs/art",
+    ".ai-workspace/outputs/art/daily",
+    ".ai-workspace/outputs/art-audit",
+    "组件说明文档",
+    "Assets",
+    "Packages",
+    "ProjectSettings",
+    "LocalPackages",
+    "DataTables",
+    ".ai-workspace/cache"
+  ],
+  "patterns": [
+    "DevTools/*/Fixtures/*",
+    "DevTools/*.md",
+    "DevTools/*.json",
+    "DevTools/*.ps1",
+    "DevTools/*.cs"
+  ],
+  "legacyInputPatterns": [
+    "排布指导书_*",
+    "排布书v*_回填_*.csv",
+    "CK01-B_配表Schema_*",
+    "CK01_P0P1_需求对照基准_*",
+    "CK01_P0P1_需求对照基准.md",
+    "P0-P1_模块拆分追踪表_*",
+    "P0-P1_开发路径规划_*",
+    "AI开发工作流总档_*",
+    "USER_WORK_STATUS.md",
+    "P2_模块拆分表_*",
+    "平行推进框架_长循环L与小游戏MG_*",
+    "派发包索引_*",
+    "派发/*/cards/*.md",
+    "追踪表_v*_常驻摘录*",
+    "ART车道_每日资产审查日报模板_*"
+  ],
+  "recordRoots": [
+    ".ai-workspace/inputs",
+    ".ai-workspace/outputs",
+    ".ai-workspace/revisions",
+    ".ai-workspace/templates",
+    "Captures",
+    "DevTools/ArtAssets/backup",
+    "DevTools/Generated/backup",
+    "DevTools/Prefabs/backup",
+    "DevTools/Scenes/backup"
+  ],
+  "referenceDocuments": [
+    ".ai-workspace/ART_ASSET_DAILY.md",
+    ".ai-workspace/codebase",
+    ".ai-workspace/CONTEXT_READ_PROTOCOL.md",
+    ".ai-workspace/CONTROL_CHAT.md",
+    ".ai-workspace/CORE.md",
+    ".ai-workspace/design/README.md",
+    ".ai-workspace/inputs/排布指导书_ShortCycle_P0P1.md",
+    ".ai-workspace/inputs/AI开发工作流总档_设计端.md",
+    ".ai-workspace/inputs/CK01-B_配表Schema.md",
+    ".ai-workspace/inputs/P0-P1_开发路径规划.md",
+    ".ai-workspace/inputs/P0-P1_模块拆分追踪表.md",
+    ".ai-workspace/inputs/README.md",
+    ".ai-workspace/inputs/USER_WORK_STATUS.md",
+    ".ai-workspace/MODES.md",
+    ".ai-workspace/outputs/control/人工处理索引.md",
+    ".ai-workspace/outputs/control/未关闭任务汇总.md",
+    ".ai-workspace/outputs/control/下一轮开发承接.md",
+    ".ai-workspace/PENDING_REVIEW.md",
+    ".ai-workspace/PIPELINES.md",
+    ".ai-workspace/pitfalls",
+    ".ai-workspace/project-status",
+    ".ai-workspace/protocol",
+    ".ai-workspace/SUPERVISED.md",
+    ".ai-workspace/toolkit",
+    ".ai-workspace/workers",
+    ".ai-workspace/WORKFLOW.md",
+    "项目整体阅读理解与推进基线_2026-08-14.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CODEBASE_MAP.md"
+  ],
+  "families": [
+    {
+      "versionRule": "numeric-components",
+      "directory": ".ai-workspace/inputs",
+      "id": "design-master",
+      "currentPaths": [
+        ".ai-workspace/inputs/AI开发工作流总档_设计端_v1_5_4.md"
+      ],
+      "pattern": "^\\.ai-workspace/inputs/AI开发工作流总档_设计端_v(?<version>\\d+(?:_\\d{1,4})+)\\.md$"
+    },
+    {
+      "versionRule": "numeric-components",
+      "directory": ".ai-workspace/inputs",
+      "id": "module-tracker",
+      "currentPaths": [
+        ".ai-workspace/inputs/P0-P1_模块拆分追踪表_v1_3_20261015.md"
+      ],
+      "pattern": "^\\.ai-workspace/inputs/P0-P1_模块拆分追踪表_v(?<version>\\d+(?:_\\d{1,4})+)(?:_\\d{8})?\\.md$",
+      "status": "CONFIRMED_CURRENT",
+      "registrationSource": "2026-10-19 user dispatch v0.2; verified on-disk referenced sources; original version evidence preserved"
+    },
+    {
+      "versionRule": "numeric-components",
+      "directory": ".ai-workspace/inputs",
+      "id": "schema",
+      "currentPaths": [
+        ".ai-workspace/inputs/CK01-B_配表Schema_v2_4_1.md"
+      ],
+      "pattern": "^\\.ai-workspace/inputs/CK01-B_配表Schema_v(?<version>\\d+(?:_\\d{1,4})+)\\.md$"
+    },
+    {
+      "versionRule": "numeric-components",
+      "directory": ".ai-workspace/inputs",
+      "id": "layout",
+      "currentPaths": [
+        ".ai-workspace/inputs/排布指导书_ShortCycle_P0P1_v0_3_1.md"
+      ],
+      "pattern": "^\\.ai-workspace/inputs/排布指导书_ShortCycle_P0P1_v(?<version>\\d+(?:_\\d{1,4})+)\\.md$"
+    },
+    {
+      "versionRule": "numeric-components",
+      "directory": ".ai-workspace/inputs",
+      "id": "development-plan",
+      "currentPaths": [
+        ".ai-workspace/inputs/P0-P1_开发路径规划_v2_3_20261014.md"
+      ],
+      "pattern": "^\\.ai-workspace/inputs/P0-P1_开发路径规划_v(?<version>\\d+(?:_\\d{1,4})+)(?:_\\d{8})?\\.md$"
+    },
+    {
+      "versionRule": "numeric-components",
+      "status": "CONFIRMED_CURRENT",
+      "registrationSource": "2026-10-19 user dispatch v0.2; verified on-disk referenced sources; original version evidence preserved",
+      "id": "p2-layout",
+      "pattern": "^\\.ai-workspace/inputs/排布指导书_ShortCycle_P2_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$",
+      "currentPaths": [
+        ".ai-workspace/inputs/排布指导书_ShortCycle_P2_v0_1_1_20261015.md"
+      ],
+      "directory": ".ai-workspace/inputs"
+    },
+    {
+      "versionRule": "numeric-components",
+      "status": "CONFIRMED_CURRENT",
+      "registrationSource": "2026-10-19 user dispatch v0.2; verified on-disk referenced sources; original version evidence preserved",
+      "id": "p2-modules",
+      "pattern": "^\\.ai-workspace/inputs/P2_模块拆分表_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$",
+      "currentPaths": [
+        ".ai-workspace/inputs/P2_模块拆分表_v1_20261015.md"
+      ],
+      "directory": ".ai-workspace/inputs"
+    },
+    {
+      "versionRule": "numeric-components",
+      "status": "AWAITING_DELIVERY",
+      "registrationSource": "AI-000259 / M3 / 2026-10-17",
+      "id": "parallel-framework",
+      "pattern": "^\\.ai-workspace/inputs/平行推进框架_长循环L与小游戏MG_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$",
+      "currentPaths": [],
+      "directory": ".ai-workspace/inputs"
+    },
+    {
+      "unitGroup": "batch",
+      "requiresClosedBatch": true,
+      "recursiveDirectories": [
+        ".ai-workspace/inputs/派发"
+      ],
+      "status": "CONFIRMED_CURRENT",
+      "versionRule": "numeric-components",
+      "registrationSource": "2026-10-19 user dispatch v0.2; verified on-disk referenced sources; original version evidence preserved",
+      "directories": [
+        ".ai-workspace/inputs",
+        ".ai-workspace/inputs/派发"
+      ],
+      "id": "dispatch-batch",
+      "pattern": "(?:^\\.ai-workspace/inputs/派发包索引_(?<batch>[^/]+?)_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$|^\\.ai-workspace/inputs/派发/(?<batch>[^/]+)/(?:[^/]+/)*cards/(?<identity>[^/]+?)(?:_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?)?\\.md$)",
+      "batchBindings": [],
+      "currentPaths": [
+        ".ai-workspace/inputs/派发包索引_脱离期批次1+3_v0_2.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/ASM-01.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/D-T1a.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/D-T1b.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/D-T2.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/SAVE-01.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/SEC-01.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/SEC-02.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/P2L-01.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/P2S-01.md",
+        ".ai-workspace/inputs/派发/DETACH-B13-20261019/cards/FILL_MIG-F02_F04_F08.md"
+      ],
+      "directory": ".ai-workspace/inputs"
+    },
+    {
+      "versionRule": "numeric-components",
+      "status": "CONFIRMED_CURRENT",
+      "registrationSource": "2026-10-19 user dispatch v0.2; verified on-disk referenced sources; original version evidence preserved",
+      "id": "resident-excerpt",
+      "pattern": "^\\.ai-workspace/inputs/追踪表_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?_常驻摘录(?:_\\d{8})?\\.md$",
+      "currentPaths": [
+        ".ai-workspace/inputs/追踪表_v1_3_常驻摘录.md"
+      ],
+      "directory": ".ai-workspace/inputs"
+    },
+    {
+      "status": "CONFIRMED_CURRENT",
+      "directory": ".ai-workspace/templates",
+      "id": "human-process",
+      "pattern": "^\\.ai-workspace/templates/人工段流程_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$",
+      "directoryVersionExceptions": [
+        ".ai-workspace/templates"
+      ],
+      "registrationSource": "AI-000259 / M3 / 2026-10-17",
+      "currentPaths": [
+        ".ai-workspace/templates/人工段流程_v2_20261014.md"
+      ],
+      "versionRule": "numeric-components"
+    },
+    {
+      "status": "CONFIRMED_CURRENT",
+      "directory": ".ai-workspace/inputs/art",
+      "id": "art-request",
+      "pattern": "^\\.ai-workspace/inputs/art/美术需求单_(?<identity>[^/]+?)_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$",
+      "directoryVersionExceptions": [
+        ".ai-workspace/inputs/art"
+      ],
+      "registrationSource": "AI-000259 / M3 / 2026-10-17",
+      "currentPaths": [
+        ".ai-workspace/inputs/art/美术需求单_P0P1_v1_20261014.md"
+      ],
+      "versionRule": "numeric-components"
+    },
+    {
+      "versionRule": "numeric-components",
+      "status": "CONFIRMED_CURRENT",
+      "registrationSource": "AI-000259 / M3 / 2026-10-17",
+      "id": "art-daily-template",
+      "pattern": "^\\.ai-workspace/inputs/ART车道_每日资产审查日报模板_v(?<version>\\d{1,4}(?:[._]\\d{1,4})*)(?:_\\d{8})?\\.md$",
+      "currentPaths": [
+        ".ai-workspace/inputs/ART车道_每日资产审查日报模板_v1_0.md"
+      ],
+      "directory": ".ai-workspace/inputs"
+    }
+  ],
+  "oneTimeRetain": [
+    {
+      "retirement": "ROOT records verified next-archive preservation before changing status to FULFILLED; not a perpetual rule. Sources retained while pending.",
+      "id": "AI-000190-next-archive",
+      "paths": [
+        ".ai-workspace/outputs/U1-R1/AI-000190"
+      ],
+      "expectedValidationJson": 7,
+      "source": ".ai-workspace/ARCHIVE_PRESERVATION.md",
+      "expectedFiles": 9,
+      "status": "FULFILLED",
+      "fulfillment": {
+        "zipBytes": 8065,
+        "taskId": "AI-000190",
+        "validationJson": 7,
+        "zipSha256": "98AABF656ABD0FED06DB3C52077C6D495D2CF733DF309ECB06D9DD1C0168CCDE",
+        "verifiedFiles": 9,
+        "zipPath": ".ai-workspace/archive/2026-10-16-preservation/AI-000190.zip",
+        "at": "2026-10-16T19:08:02.1197894+08:00",
+        "files": [
+          {
+            "bytes": 6850,
+            "sha256": "FF5CC94599755DD15DB519958BB6B2BD80099AC78287E8FFDBC242B65153EF4D",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/AI-000190-report.md"
+          },
+          {
+            "bytes": 1630,
+            "sha256": "A5C189B2C55F4AA0065B82186575FAFCCE0FF30E71A29B377C04DF8654401EA8",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/CookingProcess.scene-tool-inventory.json"
+          },
+          {
+            "bytes": 5703,
+            "sha256": "1D0977E55D06929F9D2E109A626DF961FA869E13BD5F3B358058E8AA0C05223E",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_forward-reachability-report.json"
+          },
+          {
+            "bytes": 2,
+            "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_multi-candidate-carrier-report.json"
+          },
+          {
+            "bytes": 640,
+            "sha256": "A5CD23FBE13EB553A488D38AAA90F8D6129FFA18E9F5323F83AD06F5349EE319",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_orphan-localization-warning-report.json"
+          },
+          {
+            "bytes": 418,
+            "sha256": "BE768C70D70FF57E126344EBA3FF3C0CE501BE061D9D24A53D046B356E42E83E",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_recipe-step-chain-report.json"
+          },
+          {
+            "bytes": 1695,
+            "sha256": "8D98F7F411DBF493C225629513777E6AEC011CD99E30D96CDE021943442F0C9C",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_recipe-whitelist-coverage-report.json"
+          },
+          {
+            "bytes": 2986,
+            "sha256": "6947411E423037FE940918DEEFD8319545299111DBF690C558A6175695EDB850",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_reverse-reachability-report.json"
+          },
+          {
+            "bytes": 650,
+            "sha256": "27B4A32B5ED2B91E490DBF4710E33CCC8500ED057318E693AEAD936BFDCB9BFB",
+            "originalPath": ".ai-workspace/outputs/U1-R1/AI-000190/validation/CK01-B_slot-reference-report.json"
+          }
+        ],
+        "sourceDisposition": "retained; normal reviewed archive applies thereafter"
+      }
+    }
+  ],
+  "historicalVersionIndex": [
+    ".ai-workspace/archive/2026-10-16-preservation/legacy-design-version.json"
+  ],
+  "referenceExclusions": [
+    {
+      "pattern": "^\\.ai-workspace/TASK_DIGEST(?:_INDEX\\.json|\\.md)$",
+      "reason": "Derived full task/output index; not an active dependency source"
+    },
+    {
+      "pattern": "^\\.ai-workspace/archive/(?:.*/)?README\\.md$",
+      "reason": "Historical archive index; not an active dependency source"
+    },
+    {
+      "pattern": "^\\.ai-workspace/archive/tracking/",
+      "reason": "Historical task digest/backfill are archive tracking, not active work dependencies."
+    }
+  ],
+  "placementPolicy": {
+    "active": "Current permanent rules, necessary live mechanism records, and unclosed task materials only.",
+    "archive": "Complete closed-task reports, task explanations, control-batch reports, snapshots and maintenance evidence.",
+    "historicalReferences": "Repoint maintained links to archive; archived original ledgers remain byte-identical. The stable active ledger may rotate closed history under DOC_MAINTENANCE section 16 with proof; queue and explicit live consumers determine dependency protection.",
+    "digest": ".ai-workspace/archive/tracking/TASK_DIGEST.md",
+    "reviewEvidence": ".ai-workspace/archive/2026-10-17-workspace-correction/README.md"
+  },
+  "instructionLedgerMaintenance": {
+    "activePath": ".ai-workspace/INSTRUCTIONS.md",
+    "indexPath": ".ai-workspace/archive/tracking/INSTRUCTIONS_ARCHIVE_INDEX.json",
+    "policy": ".ai-workspace/DOC_MAINTENANCE.md#严格规范",
+    "normalWrites": "append-only",
+    "maintenance": "CONTROL verified lossless rotation of eligible closed history; complete open AI/USER and live dependencies stay active",
+    "genericArchivePruneAllowed": false,
+    "preserve": "raw originals, immutable prior rotations, task/event offsets and hashes; runtime and numbering unchanged"
+  }
+}

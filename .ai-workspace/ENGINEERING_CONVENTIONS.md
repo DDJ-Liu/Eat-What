@@ -2,8 +2,8 @@
 
 > 定位：`.ai-workspace/` 常驻文档，与 KNOWN_PITFALLS.md 同级。承载跨批次的架构级工程惯例——执行器在执行任何涉及**场景搭建、交互实现、脚本/节点组织**的任务前必读本手册。
 > 效力：与当前批次需求基准同优先级；二者冲突时以较新版本为准并在任务完成摘要中上报冲突。任务指令未提及但本手册覆盖的约束**依然生效**——"指令没写"不构成绕开惯例的理由。
-> 版本：v1.5 | 2026-09-22 | 维护规则见 C5。
-> 本次按用户迁移管理交接指令专项复核：目标Unity6000.3.24f1，H通过，代码冻结解除；C1～C8与附录架构约束不变。本手册没有2022专用API签名要求，相关技术核对见KNOWN_PITFALLS的P-001/P-036/P-038。业务仍主要使用Assembly-CSharp/Assembly-CSharp-Editor；Assets中的asmdef属于Spine/Text Animator等第三方，不能把规划中的业务分层写成已实现。后续在codex/unity6-followup开发，F由主控制台接手；未重新验收全部历史场景。
+> 版本：v1.6 | 2026-10-19 | 维护规则见 C5。
+> 本次AI274仅定向核对Toolkit安全能力与既有ASM事实：Unity6000.3.24f1，Toolkit/Generated.DataTables/ShortCycle/Legacy/MiniGames.Core/LongLoop及Editor.*已落地（AI265/266独立验收）。C1～C8及附录仍沿用，新增C9认证容器/密钥规范；不代表历史场景或全项目重新验收。
 
 ---
 
@@ -65,6 +65,23 @@
 5. 一项效果至少有关闭/开启、参数弱/中/强、前后景排序、多实例、清理/重入与既有描边/阴影兼容对照。记录具体操作入口和证据，实际跑测缺失据实标待人工，不伪造视觉结论。
 6. 默认不新增正式 Build 场景，不修改共享 Renderer/URP/Quality/Graphics/Layer 设置，不复用有用户脏数据的现场进行危险切换。确需扩大配置范围时先提交精确变更清单。
 7. 后续在同一场景增量扩充具名效果组，保存既有试样、参数、手工调节和回归入口；不按任务号复制出新的平行试验场景。
+
+## C9 · 认证加密与密钥配置（2026-10-19，TK-SEC-01）
+
+- 通用能力由Toolkit.Security及共享ISaveCodec提供；无ShortCycle/Generated回边。旧DataEncryptor生产链保持，SAVE-01/SEC-02分别负责实际存储与发布切换，不在安全工具里做路径、IO或业务决策。
+- 密钥与固定IV不进入生产CSV/JSON/场景，也不输出到日志。默认混淆provider只抬高提取门槛，客户端可逆向，不是DRM；既有常量保持稳定，未经迁移方案不轮换。
+- 每次随机IV/nonce，必须认证；当前明确V2 CBC+HMAC：IV16/MAC32、独立派生子密钥、头部+IV+密文认证、固定长度MAC比较且先认证再解密。随机IV写入认证二进制容器，不作为秘密配置。禁止无认证或明文自动降级，版本未知即拒绝。
+- API引用编译、主机执行、捆绑Mono执行和实际Player/IL2CPP Build是不同证据；不得以PS7成功代签Unity或IL2CPP。当前GCM在捆绑Mono不支持，因此使用原卡批准回退；IL2CPP仍待真实Build。格式/API及证据见toolkit/SEC.md与AI274交接。
+
+2026-10-19 AI275补充C9：TK-DAT-09存储能力复用TK-SEC-01，Envelope使用分离用途子密钥与稳定规范化认证字节；只在原2保存点由应用SaveBoundary触发IO，Toolkit不引用业务。损坏/版本不符原件锁slot保留，fallback进P0不得覆盖；测试仅隔离目录，原生/Play/真实存档待后继批准。旧包07编号纠正为09，原07/08不覆盖。
+
+2026-10-20 AI282补充C9（源码候选未验收）：发布Catalog沿统一只读面按单一source选择；Editor/Development保留SO，发布密文失败不回退明文。指纹源码须在Build前独立准备并完成编译，CK01_ENCRYPTED_DATA仅单次构建参数；源SO/场景不得永久搬迁、删改或保存替换。临时Catalog与依赖审计的源码不能证明170SO实际排除，必须以后续真实BuildReport/包/Player验证。当前整组第三次离线聚合解析失败，停止回传；原生、导表/Publish、阶段②/A+C尚未授权，见AI282/REPORT。
+
+2026-10-20 AI282 POLICY续行1/attempt2：仅修既有CatalogBlob.Common原生stdout协议（单个行首BOM+Ordinal匹配及严格拒绝），22项定向/原字节回放通过；原Catalog Final4在编译元数据JToken.FromObject处遇PS包装对象自引用失败，已停止，不再修复/复验。原三次失败保持，新证据outputs/DETACH-B13-20261019/AI-000282/attempt2/REPORT.md；原生/发布仍未验。
+
+2026-10-20 AI282 POLICY续行2/attempt3：既有runner以有限原生JSON边界替代三处FromObject包装值转换，拒绝深度截断/缺失路径/错误数组和布尔；完整结果63项严格写入回读、原22协议项及Catalog Final5通过，主机/Mono234、指纹一致/双向认证已持久化。原attempt1/2失败与正式停止保留；待CONTROL独立验收，真实Build/Player/发布仍未验。证据outputs/DETACH-B13-20261019/AI-000282/attempt3/REPORT.md。
+
+2026-10-20 AI285同根修复：原282数据/加密/三菜结果保留但清理义务被CONTROL拒验。既有CatalogBuildPlan承载实际Cleanup/Recovery共用的schema2资产+meta精确归属/全量预检/真空目录删除；未知orphan.meta、folder.meta漂移、未知子目录、旧/未完成journal与重定向均拒绝且保留。42定向/3受影响API编译通过，未重跑234/305/306，无新TK或生产导入。CONTROL已独立6合同/15复核、实际guard42项通过并以精确证据正式解除原282拒验，原失败/拒验历史保留；原生Build/场景/170SO包排除仍未验。证据outputs/DETACH-B13-20261019/AI-000285/REPORT.md。
 
 ## 附录 A · 场景组织范式条目
 
@@ -163,6 +180,8 @@
 ---
 
 ### 变更记录
+
+- v1.6（2026-10-19 AI274）：新增TK-SEC-01/C9，确定共享文本/字节codec与明确V2认证回退，修正页首已落地业务程序集事实；不提高全项目核验日期。
 - v1.5（2026-09-22）：按用户H后管理交接要求补充固定引擎版本、程序集事实和新开发分支；C1～C8及附录约束未改。
 - v1.4（2026-09-09）：按用户“后续视觉效果先在独立场景测试验收”的直接指令新增 C8，固定 VisualEffectsLab 入口及 CODE→装配→运行验证→人审边界；场景尚待建，不解除既有清单/指导书审查门槛。
 - v1.3（2026-09-03）：按用户对 AI-000048 的验收决策 D12，在 C7 增加 FridgeBinder 按数据行数停用结构余量格件的唯一 `SetActive` 例外及边界。

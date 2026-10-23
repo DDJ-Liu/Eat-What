@@ -1,4 +1,4 @@
-﻿# Loaded by queue.ps1; state transitions use its mutex. Scanning runs outside it.
+# Loaded by queue.ps1; state transitions use its mutex. Scanning runs outside it.
 function Read-ArtAuditState {
     $path = Join-Path $workspaceRoot 'runtime/art-audit-state.json'
     if (Test-Path -LiteralPath $path) { return Read-JsonFile $path }
@@ -109,7 +109,7 @@ function Invoke-ArtAuditAction {
                 Assert-Value ($null -eq $reserved -or $reserved.pipeline -ne 'ART_ASSET') 'ART_ASSET reservation prevents rebinding.'
             }
             $forbidden=@($controllerThreads) + @([string](Get-ObjectPropertyValue (Get-ObjectPropertyValue $m 'supervised') 'controllerThreadId'))
-            foreach ($lane in @('CODE','ENGINE_MCP','DATA','ART_AIGC')) { $forbidden += [string](Get-PipelineExecutionTarget $lane).threadId }
+            foreach ($lane in @('CODE','ENGINE_MCP','ENGINE_CLI','DATA','ART_AIGC')) { $forbidden += [string](Get-PipelineExecutionTarget $lane).threadId }
             Assert-Value ($forbidden -notcontains $PipelineThreadId) 'Another lane or controller owns that thread.'
             $history=@((Get-ObjectPropertyValue $state 'routeHistory') | Where-Object { $null -ne $_ })
             $history += [pscustomobject]@{at=Get-NowIso;before=$state.threadId;after=$PipelineThreadId;userDecision=$UserDecision;verification=$Verification}

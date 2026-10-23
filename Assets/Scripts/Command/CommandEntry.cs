@@ -61,7 +61,7 @@ public class CommandEntry
 
     private void RebuildCache()
     {
-        var type = Type.GetType(DeclaringType);
+        var type = CommandRegistry.ResolveDeclaringType(DeclaringType);
         if (type == null)
         {
             Debug.LogWarning($"[CommandSystem] 无法找到类型: {DeclaringType}");
@@ -71,6 +71,9 @@ public class CommandEntry
         cachedMethod = type.GetMethod(MethodName,
             BindingFlags.Public | BindingFlags.NonPublic |
             BindingFlags.Static | BindingFlags.Instance |
-            BindingFlags.DeclaredOnly);
+            BindingFlags.DeclaredOnly, null, new[] { typeof(CommandContext) }, null);
+        if (cachedMethod != null && (cachedMethod.ReturnType != typeof(void) ||
+            cachedMethod.IsStatic != IsStatic || cachedMethod.GetCustomAttribute<CommandAttribute>() == null))
+            cachedMethod = null;
     }
 }

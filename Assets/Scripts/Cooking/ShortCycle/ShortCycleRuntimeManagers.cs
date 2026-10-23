@@ -23,6 +23,13 @@ namespace EatWhat.Cooking.ShortCycle
             get { return dataCatalog; }
         }
 
+        public object Phase2Owner { get; private set; }
+        internal bool TryTransferToPhase2(object owner, out string error)
+        {
+            if (owner == null || Phase2Owner != null) { error = "Inventory already has an owner or the target is missing."; return false; }
+            Phase2Owner = owner; error = null; return true;
+        }
+        internal void ReleasePhase2Owner(object owner) { if (ReferenceEquals(owner, Phase2Owner)) Phase2Owner = null; }
         public string LastCatalogDiagnostic { get; private set; }
         public int DemoFridgeCapacity { get; private set; }
 
@@ -45,6 +52,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         public bool TryRebuildFromDataCatalog(out string diagnostic)
         {
+            if (Phase2Owner != null) { diagnostic = "Inventory is owned by Phase2; rebuild is refused."; return false; }
             itemDefinitions.Clear();
             quantities.Clear();
             DemoFridgeCapacity = 0;
@@ -125,6 +133,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         public InventoryCommitResult TryCommitPlaceholderStates(IList<PlaceholderState> placeholderStates)
         {
+            if (Phase2Owner != null) return InventoryCommitResult.Failure("Inventory is owned by Phase2.");
             var requested = new Dictionary<string, int>(StringComparer.Ordinal);
             foreach (var state in placeholderStates ?? new List<PlaceholderState>())
             {

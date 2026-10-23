@@ -45,7 +45,10 @@ function Get-SupervisionLevel {
 
 function Get-SupervisionResources {
     param($Task)
-    return @(@((Get-SupervisionPolicy $Task).resourceKeys) + "lane:$($Task.pipeline)" | Select-Object -Unique)
+    $keys=@((Get-SupervisionPolicy $Task).resourceKeys)
+    # An explicit policy cannot remove the shared Editor/publication exclusion.
+    if ($Task.pipeline -in @('ENGINE_MCP','ENGINE_CLI','DATA')) { $keys+=@('unity-project','data-batch') }
+    return @($keys + "lane:$($Task.pipeline)" | Select-Object -Unique)
 }
 
 function Get-SupervisionRepairs {
@@ -257,6 +260,8 @@ function Close-SupervisedRun {
             $ModeState.supervised.stopRequested = $true
             $ModeState.supervised.reservations = @()
         }
+        Set-RetryFailureStop $QueueState $Task $ErrorKind $FailureScope
+        Set-RetryValue $Task 'continuationDisposition' (Get-RetryDisposition $QueueState $Task $ModeState)
         Clear-SupervisionWorker (Get-Worker $Workers $Task.pipeline)
     }
     Finish-SupervisionExit $ModeState $QueueState
@@ -605,7 +610,8 @@ function Invoke-SupervisionAction {
         $worker.status='BUSY'; $worker.activeTaskId=$TaskId; $worker.lastPollAt=Get-NowIso
         $worker.leaseUntil=[DateTimeOffset]::Now.AddMinutes($LeaseMinutes).ToString('o')
         Initialize-TaskExecution $t $worker
-        if ($boundedGrant) { Use-BoundedResume $t $boundedGrant }
+        if ($boundedGrant) { Use-BoundedResume $t $boundedGrant $q $m }
+        Use-RepairRetryCycle $q $t $m $Scope
         if($approvedGrant){$approvedGrant.consumedAt=Get-NowIso;$approvedGrant.executionId=$t.execution.executionId}
         if($t.workKind -ceq 'APPROVED_RESTORE' -and -not $approvedGrant){$t.approvedRestore.consumedAt=Get-NowIso;$t.approvedRestore.executionId=$t.execution.executionId}
         $s.reservations=@($s.reservations | Where-Object {$_.taskId -ne $TaskId})

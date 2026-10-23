@@ -2,12 +2,13 @@
 
 > 代码改动清单三问先查本表，再按域读取正文。旧入口 `.ai-workspace/TOOLKIT_REGISTRY.md` 保持兼容。
 
-长期 Editor 场景/滚轮/Tomato 验证探针保留在 `Assets/Editor/ProjectValidation/`，手动菜单为 `Tools/Project Validation/`；使用说明见 `DevTools/ProjectValidation/README.md`。E2 仅更名并保留 GUID，历史输出仍在 `.ai-workspace/outputs/MIG63/Validation/`。
+长期 Editor 场景/滚轮/Tomato 验证探针保留在 `Assets/Editor/ProjectValidation/`，手动菜单为 `Tools/Project Validation/`；使用说明见 `DevTools/ProjectValidation/README.md`。E2 仅更名并保留 GUID，历史输出已归档，见[迁移验证归档](../archive/2026-10-17-oversize-slim/README.md)。
 
 | ID | 名称/摘要 | 域 | 正文 |
 | --- | --- | --- | --- |
 | TK-CMD-01 | CommandManager + CommandBindingAsset Command/ | CMD | [CMD.md](CMD.md#tk-cmd-01) |
 | TK-CMD-02 | ShortCycleCommandBridge | CMD | [CMD.md](CMD.md#tk-cmd-02) |
+| TK-SEC-01 | 认证加密V2、密钥provider、二进制容器与共享ISaveCodec/EncryptedJsonCodec | SEC | [SEC.md](SEC.md#tk-sec-01) |
 | TK-DAT-01 | CK01GeneratedDataCatalog + 导表器（Editor） | DAT | [DAT.md](DAT.md#tk-dat-01) |
 | TK-DAT-02 | SerializableDictionary<K,V> DataBase/ | DAT | [DAT.md](DAT.md#tk-dat-02) |
 | TK-DAT-03 | DataEncryptor | DAT | [DAT.md](DAT.md#tk-dat-03) |
@@ -15,6 +16,8 @@
 | TK-DAT-05 | **TagFilter（拟）** | DAT | [DAT.md](DAT.md#tk-dat-05) |
 | TK-DAT-06 | **PlaceholderRule（拟）** | DAT | [DAT.md](DAT.md#tk-dat-06) |
 | TK-DAT-07 | DevTools/DataTables/Authoring/ 配表往返工具 | DAT | [DAT.md](DAT.md#tk-dat-07) |
+| TK-DAT-08 | SceneToolIdentity/SceneToolInventory（既有登记补索引） | DAT | [DAT.md](DAT.md#tk-dat-08) |
+| TK-DAT-09 | Persistence版本化Envelope/HMAC/原子Store/codec选择和应用SaveBoundary | DAT | [PST.md](PST.md#tk-dat-09) |
 | TK-DBG-01 | ShortCycleManualVerificationDriver | DBG | [DBG.md](DBG.md#tk-dbg-01) |
 | TK-DBG-02 | ShortCycleAutomatedProbe | DBG | [DBG.md](DBG.md#tk-dbg-02) |
 | TK-DBG-03 | ShortCycleLayoutAudit（Editor） | DBG | [DBG.md](DBG.md#tk-dbg-03) |
@@ -78,6 +81,7 @@
 | TK-WF-02 | DATA 车道、U1轮次与隔离/事务发布管线 | WF | [WF.md](WF.md#tk-wf-02) |
 | TK-WF-03 | DevTools/Workflow/UsageMetrics.ps1、Initialize-TaskUsage.ps1、Invoke-TaskTool.ps1、Get-UsageReport.ps1；DevTools/Verify-All.ps1 | WF | [WF.md](WF.md#tk-wf-03) |
 | TK-WF-04 | WATCH、机器验收、根修复预算及精确用量导入 | WF | [WF.md](WF.md#tk-wf-04) |
+| TK-WF-05 | GitHooks显式baseline/index/工作树Git clean与LFS真实内容只读比较；定向小仓库回归 | WF | [WF.md](WF.md#tk-wf-05) |
 
 ## 0. 条目模板与状态词
 

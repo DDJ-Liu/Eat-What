@@ -70,6 +70,16 @@ function Render-UsageBundle($Meta, $Summary, [object[]]$Items) {
     foreach ($row in @($Summary.byLanePhase)) {
         $lines.Add("| $($row.lane) | $($row.phase) | $($row.records) | $(Metric $row.inputTokens) ($($row.inputTokenCoverage)/$($row.records)) | $(Metric $row.cachedInputTokens) ($($row.cachedInputTokenCoverage)/$($row.records)) | $(Metric $row.outputTokens) ($($row.outputTokenCoverage)/$($row.records)) | $(Metric $row.reasoningOutputTokens) ($($row.reasoningOutputTokenCoverage)/$($row.records)) | $(Metric $row.toolCalls) ($($row.toolCallCoverage)/$($row.records)) | $(Metric $row.resultBytes) ($($row.resultByteCoverage)/$($row.records)) |")
     }
+    $lines.Add('')
+    $lines.Add('## 队列车道与实际工具')
+    $lines.Add('')
+    $lines.Add('setup为安装/接入，task为日常任务，verification为验证；缺失来源与指标保持null，括号为观测覆盖。')
+    $lines.Add('| 队列车道 | 实际工具 | 成本类别 | 记录 | 输入token | 输出token | 工具次数 | 返回字节 | 耗时ms |')
+    $lines.Add('|---|---|---|---:|---:|---:|---:|---:|---:|')
+    foreach($row in @($Summary.byLaneTool)){
+        $tool=if($row.actualTool){$row.actualTool}else{'null'};$category=if($row.category){$row.category}else{'null'}
+        $lines.Add("| $($row.lane) | $tool | $category | $($row.records) | $(Metric $row.inputTokens) ($($row.inputTokensCoverage)/$($row.records)) | $(Metric $row.outputTokens) ($($row.outputTokensCoverage)/$($row.records)) | $(Metric $row.toolCallCount) ($($row.toolCallCountCoverage)/$($row.records)) | $(Metric $row.toolResultBytes) ($($row.toolResultBytesCoverage)/$($row.records)) | $(Metric $row.durationMs) ($($row.durationCoverage)/$($row.records)) |")
+    }
     foreach ($listName in @('topCalls', 'topRecords', 'topTasks')) {
         $label = switch ($listName) { 'topCalls' { 'Top5 已观测单次调用' }; 'topRecords' { 'Top5 返回体记录（可能含多次调用合计）' }; 'topTasks' { 'Top5 任务返回体合计' } }
         $lines.Add('')

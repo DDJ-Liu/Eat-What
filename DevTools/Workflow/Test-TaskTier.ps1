@@ -96,6 +96,7 @@ try{
     [void][IO.Directory]::CreateDirectory($fixtureDev)
     Copy-Item -LiteralPath (Join-Path $repo '.ai-workspace/queue.ps1') -Destination $fixtureWs
     Copy-Item -LiteralPath (Join-Path $repo '.ai-workspace/repair-budget.ps1') -Destination $fixtureWs
+    Copy-Item -LiteralPath (Join-Path $repo '.ai-workspace/supervised.ps1') -Destination $fixtureWs
     Copy-Item -LiteralPath (Join-Path $repo 'DevTools/Workflow/UsageMetrics.ps1') -Destination $fixtureDev
     Copy-Item -LiteralPath (Join-Path $repo 'DevTools/Workflow/Compare-Acceptance.ps1') -Destination $fixtureDev
     SaveFixture (Join-Path $fixtureWs 'runtime/queue-state.json') @{schemaVersion=1;nextSequence=1;tasks=@()}

@@ -8,7 +8,44 @@ $runtime=Join-Path $workspace 'runtime'
 $utf8=[Text.UTF8Encoding]::new($false)
 . (Join-Path (Split-Path -Parent $PSScriptRoot) 'repair-budget.ps1')
 function Save([string]$Path,$Value){[IO.File]::WriteAllText($Path,($Value|ConvertTo-Json -Depth 30),$utf8)}
-function Q([hashtable]$Params){& (Join-Path $workspace 'queue.ps1') @Params | Out-String | ConvertFrom-Json}
+
+# Keep these legacy isolated fixtures current with GOV-05; never touches the real workspace runtime.
+function Initialize-CurrentQueueFixtureCall($Arguments,[string]$FixtureWorkspace,[string]$Repository) {
+    $tools=Join-Path (Split-Path -Parent $FixtureWorkspace) 'DevTools/Workflow'
+    [void][IO.Directory]::CreateDirectory($tools)
+    Copy-Item -LiteralPath (Join-Path $Repository 'DevTools/Workflow/UsageMetrics.ps1') -Destination (Join-Path $tools 'UsageMetrics.ps1') -Force
+    foreach($lib in @('repair-budget.ps1','approved-resume.ps1','control-administration.ps1')){
+        $dest=Join-Path $FixtureWorkspace $lib
+        if(-not(Test-Path -LiteralPath $dest)){Copy-Item -LiteralPath (Join-Path $Repository ('.ai-workspace/'+$lib)) -Destination $dest}
+    }
+    if($Arguments.Action -eq 'Enqueue' -and -not $Arguments.ContainsKey('Complexity')){$Arguments.Complexity='S'}
+    $stateFile=Join-Path $FixtureWorkspace 'runtime/queue-state.json'
+    if(Test-Path -LiteralPath $stateFile){
+        $fixtureState=Get-Content -LiteralPath $stateFile -Raw|ConvertFrom-Json -DateKind String
+        $dirty=$false
+        foreach($task in @($fixtureState.tasks)){
+            if($task.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and -not $task.complexity){
+                $task|Add-Member -NotePropertyName complexity -NotePropertyValue 'S' -Force
+                $task|Add-Member -NotePropertyName turnBudget -NotePropertyValue 40 -Force
+                $task|Add-Member -NotePropertyName tierSource -NotePropertyValue 'ISOLATED_FIXTURE' -Force
+                $dirty=$true
+            }
+        }
+        if($dirty){[IO.File]::WriteAllText($stateFile,($fixtureState|ConvertTo-Json -Depth 50),[Text.UTF8Encoding]::new($false))}
+        if($Arguments.Action -eq 'Complete'){
+            $completedTask=@($fixtureState.tasks|Where-Object id -eq $Arguments.TaskId)[0]
+            if($completedTask.complexity -and -not $Arguments.ContainsKey('IdleTurnsJson')){
+                $idle=@{};foreach($name in @('validationReruns','readbackConfirmations','toolErrorRetries','repeatFileReads')){$idle[$name]=@{count=$null;reason='Synthetic fixture has no exact app-turn classification.'}}
+                $Arguments.IdleTurnsJson=$idle|ConvertTo-Json -Depth 6 -Compress
+            }
+        }
+    }
+}
+
+
+function Q([hashtable]$Params){
+    Initialize-CurrentQueueFixtureCall $Params $workspace (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+& (Join-Path $workspace 'queue.ps1') @Params | Out-String | ConvertFrom-Json}
 function Refuse([scriptblock]$Action,[string]$Label){$failed=$false;try{& $Action|Out-Null}catch{$failed=$true};if(-not $failed){throw "Expected refusal: $Label"}}
 try {
     Copy-Item -LiteralPath (Join-Path (Split-Path -Parent $PSScriptRoot) 'queue.ps1') -Destination (Join-Path $workspace 'queue.ps1')

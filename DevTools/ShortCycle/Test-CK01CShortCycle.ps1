@@ -1,8 +1,18 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath)
+param([string]$UnityEditorPath, [switch]$CompileOnly)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$jointProbeOnly=$env:EATWHAT_JOINT_PREREQUISITES_ONLY -eq '1'
+$validationHostOnly=$env:EATWHAT_VALIDATION_HOST_ONLY -eq '1' -or $jointProbeOnly
+$catalogFeedbackOnly=$env:EATWHAT_CATALOG_FEEDBACK_ONLY -eq '1'
+function Resolve-MigratedSource {
+    param([string]$Before, [string]$After)
+    $matches = @(@($Before, $After) | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
+    if ($matches.Count -ne 1) { throw "Expected exactly one source before/after ASM migration: $Before | $After" }
+    return $matches[0]
+}
+
 $builderPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\ShortCycleSceneBuilder.cs'
 $inputAdapterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleMouseActionBinding.cs'
 $layerStackPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleInteractionLayerStack.cs'
@@ -54,8 +64,8 @@ $gridPiecePaths = @(
 $runtimeManagersPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleRuntimeManagers.cs'
 $catalogPath = Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01GeneratedDataCatalog.cs'
 $buttonPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\Button\Button_MouseInteract.cs'
-$textFitterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\Prepare\RecipeBook\Fridge\FridgeIngredientLabelTextFitter.cs'
-$fridgeCatBlinkSchedulerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\Prepare\RecipeBook\Fridge\FridgeCatBlinkScheduler.cs'
+$textFitterPath = Resolve-MigratedSource (Join-Path $repoRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs') (Join-Path $repoRoot 'Assets/Scripts/Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs')
+$fridgeCatBlinkSchedulerPath = Resolve-MigratedSource (Join-Path $repoRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeCatBlinkScheduler.cs') (Join-Path $repoRoot 'Assets/Scripts/Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeCatBlinkScheduler.cs')
 $fridgeCatRigPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatRig.cs'
 $fridgeCatTierPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatTier.cs'
 $fridgeCatEyePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatEye.cs'
@@ -73,7 +83,7 @@ $cameraFrameDrawerPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\CameraFra
 $cameraFrameMenuPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\CameraFrameGizmoMenu.cs'
 $projectSettingsPath = Join-Path $repoRoot 'ProjectSettings\ProjectSettings.asset'
 $scenePath = Join-Path $repoRoot 'Assets\Scenes\Cooking\ShortCycle_P0P1.unity'
-$globalInputManagerPath = Join-Path $repoRoot 'Assets\Scripts\Controller\InputManager.cs'
+$globalInputManagerPath = Resolve-MigratedSource (Join-Path $repoRoot 'Assets/Scripts/Controller/InputManager.cs') (Join-Path $repoRoot 'Assets/Scripts/Tools/Input/InputManager.cs')
 $inputActionsPath = Join-Path $repoRoot 'Assets\Scripts\Controller\PlayerControl.inputactions'
 $inputActionsMetaPath = $inputActionsPath + '.meta'
 
@@ -160,6 +170,7 @@ $shortCycleProductionSource = ($shortCycleCompilePaths |
 $shortCycleCoreSource = @(Get-ChildItem -LiteralPath (Join-Path $shortCycleRoot 'Core') -Filter '*.cs' -File -Recurse |
     ForEach-Object { Get-Content -Raw -LiteralPath $_.FullName }) -join "`n"
 
+if(-not $validationHostOnly -and -not $catalogFeedbackOnly){
 Assert-SourceContains $cameraViewportAnchorSource 'DefaultExecutionOrder\(10000\)' `
     'Viewport anchors must update after camera-pan coroutines in LateUpdate.'
 Assert-SourceContains $cameraViewportAnchorSource '(?s)targetCamera.*anchoredRoot.*viewportAnchor.*inwardViewportInset.*preserveInitialWorldZ.*worldPlaneZ' `
@@ -736,8 +747,11 @@ while ($cameraFrameAncestor -and $cameraFrameAncestor.StartsWith((Join-Path $rep
     if ($parent -eq $cameraFrameAncestor) { break }
     $cameraFrameAncestor = $parent
 }
-if ($cameraFrameAsmdefs.Count -ne 0) {
-    throw 'CameraFrameGizmo runtime ownership unexpectedly changed from Assembly-CSharp via an ancestor asmdef.'
+if ($cameraFrameAsmdefs.Count -gt 0) {
+    $nearest = Get-Content -LiteralPath $cameraFrameAsmdefs[0].FullName -Raw | ConvertFrom-Json
+    if ($nearest.name -ne 'Toolkit' -or @($nearest.includePlatforms).Count -ne 0) {
+        throw 'CameraFrameGizmo must belong to runtime Toolkit after ASM migration.'
+    }
 }
 Assert-SourceNotContains $cameraFrameRuntimeSource 'using\s+UnityEditor|CameraFrameGizmoMenu|EatWhat\.Cooking' `
     'The attachable CameraFrameGizmo runtime component must not depend on editor/menu/business code.'
@@ -773,6 +787,7 @@ Assert-SourceContains $cameraFrameMenuSource 'LookAt\s*\(\s*marker\.position\s*,
 Assert-SourceNotContains $cameraFrameMenuSource 'LookAtDirect\s*\(' `
     'Camera framing must not regress to the unavailable LookAtDirect API.'
 
+}
 $projectVersion = Get-Content -Raw -LiteralPath (Join-Path $repoRoot 'ProjectSettings/ProjectVersion.txt')
 $unityVersion = [regex]::Match($projectVersion, 'm_EditorVersion:\s*([^\r\n]+)').Groups[1].Value.Trim()
 if ([string]::IsNullOrWhiteSpace($unityVersion)) { throw 'Could not resolve project Unity version.' }
@@ -799,6 +814,7 @@ foreach ($requiredUnityPath in @($unityEngineFacadePath, $unityCoreModulePath, $
         throw "Required Unity $unityVersion verification dependency is missing: $requiredUnityPath"
     }
 }
+if(-not $validationHostOnly -and -not $catalogFeedbackOnly){
 $cameraFrameCompileRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('EatWhat-CameraFrameGizmo-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $cameraFrameCompileRoot | Out-Null
 try {
@@ -830,6 +846,7 @@ finally {
     }
 }
 
+}
 $sourcePaths = @(
     $unityStubsPath,
     $outlinePath,
@@ -852,6 +869,14 @@ $sourcePaths = @(
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\Localization\LocTextCatalog.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\Localization\LocTableAsset.cs'),
     $catalogPath,
+    (Join-Path $repoRoot "Assets/Scripts/DataBase/CookingData/RecipeView.cs"),
+    (Join-Path $repoRoot "Assets/Scripts/DataBase/CookingData/Phase2DataViews.cs"),
+    (Join-Path $repoRoot "Assets/Editor/DataTables/DataTableValidationCore.cs"),
+    (Join-Path $PSScriptRoot "ShortCycleRecipeBookTests.cs"),
+    (Join-Path $PSScriptRoot "ShortCyclePhase2Tests.cs"),
+    (Join-Path $PSScriptRoot "ShortCyclePersistenceTests.cs"),
+    (Join-Path $PSScriptRoot "ShortCycleIsolationAndTextTests.cs"),
+    (Join-Path $PSScriptRoot "ShortCyclePhase2TransitionTests.cs"),
     $localizedTextPath,
     $fridgeCatBlinkSchedulerPath,
     $scrollAreaPath,
@@ -859,13 +884,158 @@ $sourcePaths = @(
     $cameraFrameDrawerPath,
     $cameraFrameMenuPath,
     (Join-Path $PSScriptRoot 'ShortCycleCoreTests.cs')
-) + $shortCycleCompilePaths + $transitionCompilePaths + $layoutCompilePaths
+) + $shortCycleCompilePaths + $transitionCompilePaths + $layoutCompilePaths + @(
+    Get-ChildItem -LiteralPath (Join-Path $repoRoot "Assets/Scripts/Tools/Security"),(Join-Path $repoRoot "Assets/Scripts/Tools/Persistence") -Filter "*.cs" -File | Select-Object -ExpandProperty FullName
+)
 
-Add-Type -Path $sourcePaths
+$jsonPackage=@(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
+if($jsonPackage.Count -ne 1){throw 'Expected exactly one installed JSON package.'}
+$jsonReference=Join-Path $jsonPackage[0].FullName 'Runtime/Newtonsoft.Json.dll'
+Add-Type -Path $jsonReference
+$hostReferences=@(Get-ChildItem -LiteralPath (Join-Path $PSHOME 'ref') -File -Filter '*.dll'|ForEach-Object FullName)+@($jsonReference)
+$sourcePaths+=@(Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')
+$sourcePaths+=@('ICatalogSource.cs','ScriptableObjectSource.cs','EncryptedBlobSource.cs','CatalogBlobSerializer.cs','Build/CatalogBuildFingerprint.g.cs'|ForEach-Object{Join-Path $repoRoot ("Assets/Scripts/DataBase/CookingData/"+$_)})
+Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences
+if($catalogFeedbackOnly){
+    if($env:EATWHAT_CATALOG_FEEDBACK_TASK_ID -cne 'AI-000319'){throw 'Catalog feedback branch is bound to AI-000319.'}
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/AC-HUMAN-FEEDBACK-20261023/AI-000319'))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_CATALOG_FEEDBACK_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Current catalog feedback report root required.'}
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='CATALOG_FEEDBACK_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $behavior=[ShortCycleRecipeBookTests]::RunCatalogFeedback()
+    $value=@{taskId='AI-000319';success=$true;behavior=$behavior;cases=@([ShortCycleRecipeBookTests]::CatalogFeedbackCases);compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;boundary='Delivered production CatalogCard/GridPieceBase and existing RecipeBook fixture compiled with Unity stubs; only targeted catalog display transitions executed. Native scene rendering and serialized bindings remain ENGINE.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($jointProbeOnly){
+    $jointTaskId=$env:EATWHAT_VALIDATION_HOST_TASK_ID
+    if($jointTaskId -notmatch '^AI-[0-9]{6}$'){throw 'Exact current task ID required.'}
+    $taskRoot=Join-Path $repoRoot ('.ai-workspace/outputs/DETACH-B13-20261019/'+$jointTaskId)
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_VALIDATION_HOST_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Current task report root required.'}
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='JOINT_PREREQUISITES_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $runRoot=Join-Path $taskRoot ('isolated-saves/offline-'+[guid]::NewGuid().ToString('N'))
+    $behavior=[ShortCyclePhase2TransitionTests]::RunJointPrerequisites($runRoot,$repoRoot)
+    $value=@{taskId=$jointTaskId;success=$true;behavior=$behavior;compiledSourceCount=$sourcePaths.Count;recipeBookCases=@([ShortCyclePhase2TransitionTests]::RecipeBookCases);recipeBookRuns=@([ShortCyclePhase2TransitionTests]::RecipeBookRuns);phase2Cases=@([ShortCyclePhase2TransitionTests]::ProbeCases);phase2Runs=@([ShortCyclePhase2TransitionTests]::ProbeRuns);defaultPathReads=[UnityEngine.Application]::PersistentPathReads;nativeInvocations=0;compileBoundary='Delivered sources compiled with existing .NET Unity stubs; actual Session/Router/binders and shared production coroutines executed. Native MonoScript attachability/serialization/timing remain ENGINE.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 15),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 8;return
+}
+if($validationHostOnly){
+    $validationTaskId=if($env:EATWHAT_VALIDATION_HOST_TASK_ID){$env:EATWHAT_VALIDATION_HOST_TASK_ID}else{'AI-000287'}
+    if($validationTaskId -notmatch '^AI-[0-9]{6}$'){throw 'Exact validation task ID required.'}
+    $taskRoot=Join-Path $repoRoot ('.ai-workspace/outputs/DETACH-B13-20261019/'+$validationTaskId)
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_VALIDATION_HOST_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Current task report root required.'}
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='VALIDATION_HOST_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $makeRedirect=[Action[string,string]]{param($link,$target)
+        $base=[IO.Path]::GetFullPath((Join-Path $taskRoot 'isolated-saves')).TrimEnd('/','\')+[IO.Path]::DirectorySeparatorChar
+        if(-not $link.StartsWith($base,[StringComparison]::OrdinalIgnoreCase) -or -not $target.StartsWith($base,[StringComparison]::OrdinalIgnoreCase)){throw 'Redirect fixture escaped task roots.'}
+        New-Item -ItemType Junction -Path $link -Target $target -ErrorAction Stop|Out-Null
+    }
+    $run='offline-'+[guid]::NewGuid().ToString('N')
+    $behavior=[ShortCycleIsolationAndTextTests]::RunValidationHost($run,$makeRedirect,$validationTaskId)
+    $hostCases=@([ShortCycleIsolationAndTextTests]::PassedCases)
+    $playerDataBehavior=$null;$playerDataCases=@();$baselineSha=$null
+    if($env:EATWHAT_PLAYER_DATA_HOST_ONLY -eq '1'){
+        if($validationTaskId -cne 'AI-000316'){throw 'Player data host branch belongs only to exact AI-000316 fixture.'}
+        $baselinePath=Join-Path $taskRoot 'baseline/catalog.graph.json'
+        $blobPath=Join-Path $taskRoot 'baseline/catalog.bin'
+        if(-not(Test-Path -LiteralPath $baselinePath -PathType Leaf) -or -not(Test-Path -LiteralPath $blobPath -PathType Leaf)){throw 'Bound AI291 baseline copies are missing.'}
+        $baselineSha=(Get-FileHash -LiteralPath $baselinePath -Algorithm SHA256).Hash.ToLowerInvariant()
+        if($baselineSha -cne 'ce27e9286b49c4cd345e01d9a5dd94ddf27869526d10a904e12b35b6b60ba265' -or
+           (Get-FileHash -LiteralPath $blobPath -Algorithm SHA256).Hash -cne '722B435F983F34D048E7462A4E2E36A22C262549E858C4EFB1D43C49E3AE3011')
+            {throw 'Accepted AI291 baseline copy changed.'}
+        $playerDataBehavior=[ShortCycleIsolationAndTextTests]::RunPlayerDataHost($run,$validationTaskId,$baselinePath,$blobPath)
+        $playerDataCases=@([ShortCycleIsolationAndTextTests]::PassedCases)
+    }
+    $cancelBehavior=$null;$cancelCases=@()
+    if($env:EATWHAT_LAUNCH_CANCEL_ONLY -eq '1'){$cancelBehavior=[ShortCycleIsolationAndTextTests]::RunLauncherCancellation($run,$validationTaskId);$cancelCases=@([ShortCycleIsolationAndTextTests]::CancellationCases)}
+    $out=Join-Path $report 'api-reference';[void][IO.Directory]::CreateDirectory($out)
+    $data=Join-Path $unityRoot 'Editor/Data'
+    $baseRefs=@($unityMscorlibPath,$unityNetStandardPath,$jsonReference)
+    $engine=@(Get-ChildItem (Join-Path $data 'Managed/UnityEngine') -Filter 'UnityEngine*.dll' -File|ForEach-Object FullName)
+    $editor=@(Get-ChildItem (Join-Path $data 'Managed/UnityEngine') -Filter 'UnityEditor*.dll' -File|ForEach-Object FullName)+@($unityEditorAssemblyPath)
+    function Compile-ValidationApi($name,$sources,$refs,$defines){
+        $dll=Join-Path $out ($name+'.dll')
+        $compileArgs=@('/nologo','/noconfig','/nostdlib+','/target:library',("/out:"+$dll))+@($refs|Sort-Object -Unique|ForEach-Object{"/reference:$_"})
+        if($defines){$compileArgs+=@("/define:$defines")}
+        $lines=@(& $unityMonoPath $unityCscPath @compileArgs @sources 2>&1);$code=$LASTEXITCODE
+        [IO.File]::WriteAllLines((Join-Path $out ($name+'.log')),[string[]]$lines)
+        if($code -ne 0){throw "Actual Unity API surface compile failed: $name"}
+        return $dll
+    }
+    if($env:EATWHAT_LAUNCH_CANCEL_ONLY -eq '1'){
+        $shortCycleAssembly=Join-Path $repoRoot 'Library/ScriptAssemblies/ShortCycle.dll'
+        $toolkitAssembly=Join-Path $repoRoot 'Library/ScriptAssemblies/Toolkit.dll'
+        if(-not(Test-Path -LiteralPath $shortCycleAssembly) -or -not(Test-Path -LiteralPath $toolkitAssembly)){throw 'Existing native-compiled host dependencies missing; do not refresh Unity from CODE.'}
+        $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($shortCycleAssembly,$toolkitAssembly)) 'UNITY_EDITOR'
+        $value=@{taskId=$validationTaskId;success=$true;behavior=$behavior;cases=$hostCases;cancellation=$cancelBehavior;cancellationCases=$cancelCases;defaultPathReads=[UnityEngine.Application]::PersistentPathReads;compiled=@($launcher);dependency=@{shortCycle=$shortCycleAssembly;sha256=(Get-FileHash -LiteralPath $shortCycleAssembly -Algorithm SHA256).Hash};nativeInvocations=0;forcedEnteredEditForPendingSuccess=$false;apiBoundary='Changed Launcher compiled against real installed UnityEditor/UnityEngine and already-native-compiled unchanged ShortCycle/Toolkit dependencies. No Unity execution or unrelated module recompile.'}
+        [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 15),[Text.UTF8Encoding]::new($false))
+        $value|ConvertTo-Json -Depth 8;return
+    }
+    $toolkitSources=@(Get-ChildItem (Join-Path $repoRoot 'Assets/Scripts/Tools/Security'),(Join-Path $repoRoot 'Assets/Scripts/Tools/Persistence') -Filter '*.cs' -File|ForEach-Object FullName)
+    $toolkit=Compile-ValidationApi 'Toolkit.Validation' $toolkitSources $baseRefs ''
+    # Project declarations only; all Unity/Editor APIs below are the real installed DLLs.
+    # Actual host behavior above uses original Session/Isolation/Probe source, not this declaration shim.
+    $shim=Join-Path $out 'ProjectContract.cs'
+    $shimText='using UnityEngine;public sealed class LocTableEntry {} namespace EatWhat.Cooking.ShortCycle { public sealed class ShortCycleSessionManager:MonoBehaviour {internal bool PersistenceAwakeStarted,PersistenceEnded,PersistenceIsolationRequired;internal CK01GeneratedDataCatalog ValidationCatalog {get{return null;}}internal void RequirePersistenceIsolation(){PersistenceIsolationRequired=true;}internal void DisableIsolatedStorage(){} } public sealed class ShortCycleAutomatedProbe:MonoBehaviour {public void RunProbe(){}} }'
+    [IO.File]::WriteAllText($shim,$shimText,[Text.UTF8Encoding]::new($false))
+    $runtime=@($shim,(Join-Path $repoRoot 'Assets/Scripts/Cooking/ShortCycle/Runtime/ShortCycleSaveIsolation.cs'),(Join-Path $repoRoot 'Assets/Scripts/Cooking/ShortCycle/Debug/ShortCycleValidationBootstrap.cs'))
+    $catalogAssembly=Join-Path $repoRoot 'Library/ScriptAssemblies/Generated.DataTables.dll'
+    if(-not(Test-Path -LiteralPath $catalogAssembly -PathType Leaf)){throw 'Existing native Catalog assembly is missing; CODE cannot refresh.'}
+    $player=Compile-ValidationApi 'Validation.PlayerRelease' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'CK01_ENCRYPTED_DATA'
+    $dev=Compile-ValidationApi 'Validation.PlayerDevelopment' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'DEVELOPMENT_BUILD'
+    $authoring=Compile-ValidationApi 'Validation.EditorRuntime' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'UNITY_EDITOR'
+    $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($toolkit,$catalogAssembly,$authoring)) 'UNITY_EDITOR'
+    $value=@{taskId=$validationTaskId;success=$true;behavior=$behavior;cases=$hostCases;playerDataBehavior=$playerDataBehavior;playerDataCases=$playerDataCases;baselineSha256=$baselineSha;hostSources=$sourcePaths.Count;isolatedRunPrefix=$run;defaultPathReads=[UnityEngine.Application]::PersistentPathReads;compiled=@($toolkit,$player,$dev,$authoring,$launcher);catalogDependency=@{path=$catalogAssembly;sha256=(Get-FileHash -LiteralPath $catalogAssembly -Algorithm SHA256).Hash};nativeInvocations=0;apiBoundary='Real Unity6000.3.24f1 Engine/Editor DLLs and installed Catalog assembly; project declaration shim only for API compilation. Behavioral fixtures execute actual current Session/Catalog/host source. No native lifecycle claim.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if ($CompileOnly) { [pscustomobject]@{ action="SHORTCYCLE_COMPILED"; compiledSourceCount=$sourcePaths.Count }; return }
+$isolationRoot=if($env:EATWHAT_PERSISTENCE_REPORT_ROOT){Join-Path $env:EATWHAT_PERSISTENCE_REPORT_ROOT ('isolation-'+[guid]::NewGuid().ToString('N'))}else{Join-Path ([IO.Path]::GetTempPath()) ('EatWhat-Isolation-'+[guid]::NewGuid().ToString('N'))}
+$isolationResult=[ShortCycleIsolationAndTextTests]::Run($isolationRoot)
+$p2sRoot=Join-Path $isolationRoot "p2s"
+$p2sResult=[ShortCyclePhase2TransitionTests]::Run($p2sRoot,$repoRoot)
 $result = [EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+# Read-only schema validator supplies its existing canonical step-chain audit. No import/workbook operation.
+$chainRoot=if($env:EATWHAT_STEP_CHAIN_REPORT_ROOT){$env:EATWHAT_STEP_CHAIN_REPORT_ROOT}else{Join-Path ([IO.Path]::GetTempPath()) ('EatWhat-StepChain-'+[guid]::NewGuid().ToString('N'))}
+$powerShell=(Get-Process -Id $PID).Path
+$validationOutput=@(& $powerShell -NoProfile -File (Join-Path $repoRoot 'DevTools/DataTables/Validate-DataTables.ps1') -DataTablesRoot (Join-Path $repoRoot 'DataTables') -ReportDirectory $chainRoot -Quick -Quiet 2>&1)
+if($LASTEXITCODE -ne 0){throw ('Read-only schema validation failed: '+($validationOutput -join "`n"))}
+$chainReport=Join-Path $chainRoot 'CK01-B_recipe-step-chain-report.json'
+$recipeBookResult = [ShortCycleRecipeBookTests]::Run($repoRoot)
+$phase2Result = [ShortCyclePhase2Tests]::Run($repoRoot)
+$saveTestRoot=if($env:EATWHAT_PERSISTENCE_REPORT_ROOT){Join-Path $env:EATWHAT_PERSISTENCE_REPORT_ROOT ("shortcycle-"+[guid]::NewGuid().ToString("N"))}else{Join-Path ([IO.Path]::GetTempPath()) ("EatWhat-ShortCycleSave-"+[guid]::NewGuid().ToString("N"))}
+$saveRuntimeResult=[ShortCyclePersistenceTests]::Run($saveTestRoot)
+$expectedChains=Get-Content -LiteralPath $chainReport -Raw|ConvertFrom-Json
+foreach($chain in $expectedChains){
+    $actual=[ShortCycleRecipeBookTests]::VerifiedStepChains[[string]$chain.recipe_id]
+    if(($actual -join '|') -cne ($chain.step_ids -join '|')){throw ('Catalog DTO differs from validator chain for '+$chain.recipe_id)}
+    $rules=[ShortCyclePhase2Tests]::VerifiedStepChains[[string]$chain.recipe_id]
+    if(($rules -join '|') -cne ($chain.step_ids -join '|')){throw ('P2 rule snapshot differs from validator chain for '+$chain.recipe_id)}
+}
 [pscustomobject]@{
     success = $true
+    isolationAndText = $isolationResult
+    isolationAndTextCases = [ShortCycleIsolationAndTextTests]::PassedCases
+    phase2Transition = $p2sResult
+    phase2TransitionCases = [ShortCyclePhase2TransitionTests]::PassedCases
+    actualPostTeardownProbeCases = [ShortCyclePhase2TransitionTests]::ProbeCases
+    actualPostTeardownProbeRuns = [ShortCyclePhase2TransitionTests]::ProbeRuns
+    isolationRoot = $isolationRoot
     result = $result
+    recipeBook = $recipeBookResult
+    phase2 = $phase2Result
+    persistenceRuntime = $saveRuntimeResult
+    persistenceRuntimeCases = [ShortCyclePersistenceTests]::PassedCases
+    persistenceIsolatedRoot = $saveTestRoot
+    phase2Cases = [ShortCyclePhase2Tests]::PassedCases
+    schema8Branches = [ShortCyclePhase2Tests]::SchemaBranches
+    phase2StepChains = [ShortCyclePhase2Tests]::VerifiedStepChains
+    stepChainAudit = @{path=$chainReport;matchedRecipes=@($expectedChains).Count;stepChains=[ShortCycleRecipeBookTests]::VerifiedStepChains}
     compiledSourceCount = $sourcePaths.Count
     staticBindingAssertions = 282
 } | ConvertTo-Json -Depth 3

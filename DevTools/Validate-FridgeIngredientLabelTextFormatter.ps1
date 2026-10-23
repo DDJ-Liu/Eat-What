@@ -4,8 +4,15 @@ param()
 $ErrorActionPreference = 'Stop'
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$formatterPath = Join-Path $projectRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFormatter.cs'
-$fitterPath = Join-Path $projectRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs'
+function Resolve-MigratedSource {
+    param([string]$Before, [string]$After)
+    $matches = @(@($Before, $After) | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
+    if ($matches.Count -ne 1) { throw "Expected exactly one source before/after ASM migration: $Before | $After" }
+    return $matches[0]
+}
+
+$formatterPath = Resolve-MigratedSource (Join-Path $projectRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFormatter.cs') (Join-Path $projectRoot 'Assets/Scripts/Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFormatter.cs')
+$fitterPath = Resolve-MigratedSource (Join-Path $projectRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs') (Join-Path $projectRoot 'Assets/Scripts/Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs')
 
 if (-not (Test-Path -LiteralPath $formatterPath) -or -not (Test-Path -LiteralPath $fitterPath)) {
     throw 'Fridge ingredient label formatter or fitter source file is missing.'

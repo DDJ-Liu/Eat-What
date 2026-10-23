@@ -1,5 +1,12 @@
 # 项目开发规范
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](.ai-workspace/toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
+## 多客户端入口一致性（2026-10-17）
+
+`CLAUDE.md` 仅为 Claude Code 的指针入口；本文件 `AGENTS.md` 与 `.ai-workspace/CORE.md` 的项目/工作流规范优先，不在其它客户端入口重复维护版本、架构、管线路由或验收规则。每轮文档维护同时核对这些入口，工程事实以实际源码、资源及 Editor 为准；本次入口整理不代表全项目复核。
+
 ## 下一批次四条硬上限（2026-10-12 用户决定）
 
 从本次规则更新后的下一批次起生效；已完成字体工作不返工，旧证据与失败记录保留。本节优先于下文及历史任务卡中更重的验证、保护和专用续行要求。
@@ -7,11 +14,15 @@
 1. **验证成本 ≤ 改动规模。** 改动不超过 10 个字段时，验收上限为允许清单内的 `git diff` 加一张截图；全量路径哈希只在批次末做一次，不在任务/步骤/重试间重复。禁止把内存快照、纹理 JSON 导出作为常规验收。
 2. **保护放在提交边界。** 受保护资产只在提交前由 hook 核 SHA；任务中不做内存层保护。TMP 绑定先设 `fontSharedMaterial`，再设 `font`，以绑定顺序预防副作用。用户未保存成果仍不得覆盖；不以保护为由恢复整套内存比对。
 3. **一次性工具限制。** 标记为一次性的脚本（如 FontSwapOnce）只做离线编译和真实 Editor 单次执行，不建独立进程/冷加载测试，不进 Final。`DevTools/one-time-tools.json` 登记源码与专属 runner；已完成工具停用留存，不因规则更新重跑。
-4. **唯一通用续行。** 失败任务仅通过 `queue.ps1 -Action ApproveResume -TaskId … -Runs N -Scope …` 批准；用户决定须包含次数与范围，一轮内的幂等检查算在同一次批准内。禁止为单次续行新增入口与夹具。保留原任务、累计次数、失败史、修复预算与人工闸门；不会自动恢复监管。参数和消费语义见 [.ai-workspace/toolkit/WF.md](.ai-workspace/toolkit/WF.md#approve-resume)。
+4. **唯一通用续行（2026-10-19 用户修订）。** 失败任务仍仅通过 `queue.ps1 -Action ApproveResume -TaskId … -Runs N -Scope …` 续行。MANUAL 每次需人工批准且最多1次；AUTOMATIC 默认允许3次自主修复/重试，SUPERVISED 默认允许5次，额度用尽后再请用户批准额外次数。首次执行不计重试；保留原任务及修复链累计次数、失败史、范围、人工闸门与停止状态，不因换错误key/线程/任务编号/模式清零；一次修复及其对应原任务续行配对计数，不双扣或重复叠加许可。一次批准内的幂等检查不另扣次数。禁止为单次续行新增入口与夹具，SCHEDULED未扩大授权。原话及本次AI266修复/1次续行批准见[长期授权](.ai-workspace/inputs/续行许可分模式_用户长期授权_20261019.json)，机制状态与正式参数见[WF](.ai-workspace/toolkit/WF.md#approve-resume)。本次规则实施期间仍须正式API，不手改runtime；旧独立权限/人工门与用户停止要求保持。
+
+2026-10-21 用户G87决定：管线层失败与产品层失败分开结算，走独立REPAIR（固定CODE离线）→必要SMOKE（对应线）→原卡正式续行，不删减交付项规避。CLI磨合期修复/冒烟按pipeline-repair单列线成熟度，不计业务任务轮次/失败；历史原卡实际attempt/失败/许可不删除、不退款。实现未有独立枚举时，独立管线根用现有FEATURE技术类型，语义、关联原卡和usageCategory写在批准卡/报告/索引，不伪造repairContext或手改runtime；原卡仍唯一ApproveResume。来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。
 
 ## 固定职能流水线（2026-10-12 用户决定）
 
 后续任务按既有 CODE、ENGINE_MCP、DATA、ART_AIGC、ART_ASSET 职能分配，复用 `.ai-workspace/PIPELINES.md` 登记的固定 chat，不再默认每条任务新开 chat。只有用户明确要求另开时才创建；上下文压缩、任务编号变化或一般交接不构成新开理由。运行中任务保持当前所有权，到安全结算点再由控制台正式改绑；旧单任务 chat 归档保留，队列编号、失败/许可历史和输入输出证据不删除。此决定只改组织方式，不切换执行模式或扩大业务范围。
+
+2026-10-15 用户追加批准固定 ENGINE_CLI：共存与管理接入验收后由主控创建、正式绑定。后续已授权引擎任务优先交给该线使用 Unity 官方 CLI；ENGINE_MCP/Coplay 保留固定版本，两线与 DATA 共享工程互斥。不双跑同一业务作对比，Coplay 对比只读历史报告；未知写入或正式失败不自动换工具重试。报告明确队列车道与实际工具，额度、心跳及结算沿用既有监管入口。授权见 `.ai-workspace/archive/2026-10-17-workspace-correction/readable/.ai-workspace/inputs/UNITY-CLI-LINE-20261015/用户授权.json`；模式和业务范围不因新线而改变。
 
 ## 监管结算即时回传（2026-10-14 用户长期授权）
 
@@ -44,37 +55,31 @@
 - 未获用户明确授权，AI不得修改或删除已配置非空单元格的实际内容（含文本、数值、类型、公式与ID）；新空行、新字段空列、遗漏空格的已知配置可在任务范围内补入，不猜业务值。修复校验错误不能成为改写非空值的授权。
 - 每轮导出/导表同时对统一xlsx做整体格式标准化，修复丢失样式和合法值误红；真实错误仍标记。格式与表头注释操作必须证明全工作簿值/类型/公式不变，先备份并拒绝并发漂移。禁止用旧CSV反向重建覆盖用户人工工作簿。
 - 用户源工作簿向CSV的忠实派生导出须记录逐格来源和diff；不得用保护旧CSV非空值阻止用户自己已完成的修改，也不得反向修改源xlsx迎合旧CSV。
-- 各表头注释须包含实际字段用途和填法，不只类型/警告。后续生产配表统一在可见DATA线处理；CODE修工具，ENGINE负责实际场景验证。具体执行入口和本轮任务见 `.ai-workspace/inputs/U1-R1-20260924/授权与执行边界.md`。
+- 各表头注释须包含实际字段用途和填法，不只类型/警告。后续生产配表统一在可见DATA线处理；CODE修工具，ENGINE负责实际场景验证。具体执行入口和本轮任务见 `.ai-workspace/archive/2026-10-17-workspace-correction/readable/.ai-workspace/inputs/U1-R1-20260924/授权与执行边界.md`。
 
 ## Unity 版本与迁移
 
 Unity 版本：6000.3.24f1（E1已验收、原工作区H接棒通过；禁止用2022打开升级后目录）。
 
-### 活动迁移批次 MIG63（2026-09-21 启动）
+### MIG63 当前约束与历史入口
 
-用户已确认并启动迁移至 Unity 6000.3.24f1。执行细则见 `.ai-workspace/MIG63/迁移基线.md`，当前状态及人工节点见 `.ai-workspace/MIG63/执行台账.md`；临时限制按 `.ai-workspace/MIG63/临时项登记.md` 登记和解除。
+主工作区D:/GameProject/Eat-What使用6000.3.24f1和codex/unity6-followup；H/E2已通过，业务冻结解除，main只接验收集成。独立U6副本已按E2安全删除；E1标签37bb854与backup/pre-unity6-20260920保留，不能用2022打开升级目录。
 
-- 原工作区 `D:/GameProject/Eat-What` 使用 `codex/unity6-followup` 和6000.3.24f1；H已通过，业务代码冻结/迁移侧文件独占解除。三场景及引用Prefab的定向重序列化已独立完成；后续业务由用户指定范围后推进，main不直接开发。
-- 独立迁移副本 `D:/GameProject/Eat-What-U6` 已于2026-10-13在E2远端恢复及私有保全通过后安全删除；远端迁移分支与E1/backup标签仍保留。后续使用主工作区6000.3.24f1；恢复资料和最终Git收口见 `.ai-workspace/MIG63/E2_收束与提交.md`。
-- 用户已冻结C=65604ab并确认37bb854人工终验通过；E1时main与unity6.3-baseline指向该候选。H接棒和独立定向重序列化已通过机器回归，H后格式提交及记录已按用户最新决定集成main，标签仍固定37bb854；后续开发在codex/unity6-followup，最新入口为 `.ai-workspace/MIG63/E1H_接棒与后续项.md`。Spine两处场景已接Tomato，Renderer延迟启用保留并扩展到Sample；长期工具在 E2 保 GUID 更名后的 `Assets/Editor/ProjectValidation`，不能作为临时垃圾清理。
-- main 仅接收经过验收的集成，不直接开发；`backup/pre-unity6-20260920` 固定保留启动基线。迁移成果在 E1 前不得进入原 2022 工作区。
-- 采用手动 MIG- 台账，不启动或复制原自动队列。Spine Sample 与 HorizontalPlayerControllerTest 预研必须保留；不能通过删除或排除其编译完成迁移。
-- M4已将MCP收敛为仓库内固定Editor包；服务端来源/锁文件及恢复方式见 `DevTools/MCP/README.md`。使用前每次发现/选择实例并核对Application.dataPath与版本；共享EditorPrefs和外部客户端配置不得盲目改写，不接原自动队列。序列化操作优先MCP/审定Editor API，不手改YAML。
-- 用户于2026-09-21人工反馈后批准M1/M2拆分提交和推送，采纳N1在迁移侧跟踪TMP资源；旧Sample/output4难以溯源，Spine测试及后续参考改用已有Tomato 3.8.99，旧数据/场景仍保留。旧数据故障登记为2022已有问题，不再等待重导出阻断E1；Tomato功能回归仍为必要条件。MCP正式依赖采纳仓库内固定包/相对路径方案，M4前记录服务端版本、uv锁文件/来源许可并做6.3连接验证，不搭完整离线服务端镜像。M4已完成最小依赖收敛和连接实测，测试服务在本轮收尾停止；H重新发现目标实例。
-- 用户最新决定保留Uniform输入和已验收滚轮修复，明确属于获批交互调整；后续MIG-F01优化统一单位/手感，Mac平台阈值适配必须在Mac使用前验证，不撤销Windows签收。Windows API有意保留D3D11第一、D3D12第二、Auto=false，不误记为DX11-only。
-- 主工作区永久字体pre-commit检查保护工作树和index/LFS内容SHA；E2仅解除迁移专属冻结与phase配置。规则见 `DevTools/GitHooks/README.md`。字体漂移先保全、核对并按Editor恢复流程处理；不得跳过检查误提交，精确哈希放行须有用户批准。该检查与两项手动探针在E2后保留。
-- 原工作区H已通过并解除代码冻结；用户于2026-09-22选择首个Unity 6功能批次 F-α（MIG-F04 → MIG-F01 → A0 → A1）并要求AUTOMATIC串行执行，精确范围见`.ai-workspace/inputs/F-alpha_任务精确范围_20260922.md`。MIG-F09不并入F；F末尾仍需用户一次验收，验收后才执行E2归档与清理。长期工具在E2按功能改名并保留GUID，不作为垃圾删除。用户已授权删除旧content/p0p1-layout的本地/远端分支，从新main建立codex/unity6-followup；其余分支不自动删除。F/E2由主控制台管理，E2完整关闭时再合入main；详见 `.ai-workspace/MIG63/H后分支切换与控制台移交.md`。
+Spine Sample、HorizontalPlayerControllerTest、Tomato预研及Assets/Editor/ProjectValidation长期探针保留，不以清理或编译为由删除。Uniform输入和已验收滚轮行为保留；Mac阈值须在Mac使用前验证。Windows渲染为D3D11优先/D3D12第二/Auto=false，不误记DX11-only。
 
+Coplay固定包、版本和恢复依DevTools/MCP/README.md；CLI/MCP使用前核目标项目/版本/实例，不盲改共享EditorPrefs或外部配置，不复活旧队列。字体永久pre-commit SHA保护与手动探针保持，漂移先保全并按Editor恢复流程处理；精确哈希放行须用户批准。
+
+迁移具体许可、恢复材料与旧阶段冻结见[完整约束](.ai-workspace/MIG63/工程约束.md)、[E2收束](.ai-workspace/MIG63/E2_收束与提交.md)、[后续入口](.ai-workspace/MIG63/E1H_接棒与后续项.md)。历史F/E2授权不自动扩大当前业务；新范围按用户决定执行。
 ## Unity 工作规则
 
 When working with Unity:
 
-- Prefer Unity MCP for Unity Editor operations such as scenes, GameObjects,
-  components, prefabs, materials, ScriptableObjects, editor state, Play Mode,
-  Console inspection, and other serialized Unity assets.
+- Prefer the assigned ENGINE_CLI lane and official Unity CLI for authorized
+  Editor operations. ENGINE_MCP uses the retained Coplay MCP when explicitly
+  assigned; do not switch lanes or tools to retry a failed operation.
 
 - Do not manually edit Unity YAML scene or prefab files when the same operation
-  can be performed safely through Unity MCP.
+  can be performed safely through the assigned CLI or Unity MCP.
 
 - Source code may be edited directly when appropriate.
 
@@ -141,6 +146,9 @@ When working with Unity:
 
 完整复核需要对照源码、Build Settings、关键场景/Prefab/ScriptableObject、Resources 路径和 Git diff。只有实际完成相应核验后，才能更新文档中的“最后核验”日期；不得只改日期而不核对内容。
 
+### 文档瘦身长期规则（2026-10-16 用户决定）
+
+执行[文档瘦身规范](.ai-workspace/DOC_MAINTENANCE.md)及永久清单PERMANENT_DOCUMENTS.json。仅CLOSED_VERIFIED、CLOSED_WITHOUT_ACCEPTANCE、CLOSED_FAILED（明确关闭且已回复）、CLOSED_SUPERSEDED且无活动依赖的任务可归档；机器过人工未验仍未关闭，完整留原位，不改任务状态迎合工具。永久文档按家族匹配版本后缀，最新有效版不归档；旧版无活动依赖后归档。已关闭任务与控制批次的完整报告/说明无损保存在归档区，不能因“保留全文”长期留在活动inputs/outputs；历史证据链接改指归档，真实未关闭依赖保持。非文本冗余件可按审定清单舍弃；单任务包目标1,000,000B、硬上限10,000,000B，不拆包绕限；超过1,000,000B逐任务说明必要保留内容与已采取的精简措施。永久任务简表全文及索引位于archive/tracking，活动区仅短指针；仅供用户/CONTROL定期复盘，按批次一任务一行≤200字，未知额度写unknown，不加入执行器日常必读。先精简到硬限内、校验后再迁移；超限不进入隔离归档、不拆包或外移绕限。清理副本后自底向上移除空任务目录，保留永久/运行根目录及活动依赖，不递归删除链接目标。每批包含INSTRUCTIONS盘点：保留稳定入口及未结完整内容，已关闭历史依规范第16条完整归档并建映射后轮转；日常继续追加。runtime、编号、历史许可与错误不清零；变更前保全，校验后处理副本。
 ### 阶段归档与入口简洁化
 
 用户于2026-09-17要求阶段完成后整理AI工作区并保留任务输入/输出。当前历史入口为`.ai-workspace/archive/2026-09-17/README.md`，完整包由Git LFS管理，manifest记录原路径与SHA-256。归档先校验、后清理已核对的历史副本；不得清空活动队列编号、错误史或独立美术服务基线，不移除Unity测试探针和Lab。长期测试夹具应放在`DevTools/*/Fixtures/`，不依赖会被归档的inputs。项目入口文档直接维护当前结论，详细过程记录进入任务输出。归档不代表获得未来提交、推送或新业务触发授权；本次提交/推送/合并按用户本轮明确指令执行。

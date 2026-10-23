@@ -4,6 +4,7 @@
 
 - TK-CMD-01: [CMD.md](toolkit/CMD.md#tk-cmd-01)
 - TK-CMD-02: [CMD.md](toolkit/CMD.md#tk-cmd-02)
+- TK-SEC-01: [SEC.md](toolkit/SEC.md#tk-sec-01)
 - TK-DAT-01: [DAT.md](toolkit/DAT.md#tk-dat-01)
 - TK-DAT-02: [DAT.md](toolkit/DAT.md#tk-dat-02)
 - TK-DAT-03: [DAT.md](toolkit/DAT.md#tk-dat-03)
@@ -11,6 +12,7 @@
 - TK-DAT-05: [DAT.md](toolkit/DAT.md#tk-dat-05)
 - TK-DAT-06: [DAT.md](toolkit/DAT.md#tk-dat-06)
 - TK-DAT-07: [DAT.md](toolkit/DAT.md#tk-dat-07)
+- TK-DAT-09: [PST.md](toolkit/PST.md#tk-dat-09)
 - TK-DAT-08: [DAT.md](toolkit/DAT.md#tk-dat-08)
 - TK-DBG-01: [DBG.md](toolkit/DBG.md#tk-dbg-01)
 - TK-DBG-02: [DBG.md](toolkit/DBG.md#tk-dbg-02)
@@ -75,3 +77,8 @@
 - TK-WF-02: [WF.md](toolkit/WF.md#tk-wf-02)
 - TK-WF-03: [WF.md](toolkit/WF.md#tk-wf-03)
 - TK-WF-04: [WF.md](toolkit/WF.md#tk-wf-04)
+- TK-WF-05: [WF.md](toolkit/WF.md#tk-wf-05)
+
+2026-10-19 AI269/AI272 D-T1a/b复用TK-LAY-01：目录按GridLayout、食材按HorizontalLayout、步骤按VerticalLayout已有锚点序填内容；StepDetailModalPiece最多10行并清空旧标题/编号，StepDetailRowPiece只填文案和图标。本源码不调用ArrangeChildren、不写_TUNE Transform、不新建排布算法。步骤行/图标容量、8卡和清单实际接线与布局复核归D-T2窗口②；ENGINE-HANDOFF列精确字段。无新TK编号。
+
+2026-10-19 AI273 P2L-01复用TK-DAT-01与TK-DBG-04：Catalog只读快照及既有ShortCycle runner扩充；纯ProcessingMatcher/StepProgress留ShortCycle/Core/Phase2，不登记新工具或拟议TK-DAT-08提升。S-02、18探针保留，实际配置待办交DATA/USER-U5，P2S-HANDOFF明确未做场景/Play。

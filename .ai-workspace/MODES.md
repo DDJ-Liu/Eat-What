@@ -1,5 +1,8 @@
 # AI 工作区运行模式
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
 `runtime/mode-state.json` 是当前运行模式与自动链状态的唯一机器真相来源。任务清单、结果和错误历史仍分别保存在 `runtime/queue-state.json` 与 `INSTRUCTIONS.md`；切换模式不会清空、复制或重置任务。
 
 ## 四种模式

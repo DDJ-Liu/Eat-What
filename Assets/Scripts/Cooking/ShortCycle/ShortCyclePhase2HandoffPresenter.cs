@@ -7,7 +7,12 @@ namespace EatWhat.Cooking.ShortCycle
     {
         [SerializeField] private ShortCyclePhase2TransitionAdapter transitionAdapter = null;
         public ShortCycleDataHandoff LastHandoff { get; private set; }
-        public bool IsAvailable { get { return true; } }
+        public ShortCyclePhase2TransitionAdapter TransitionAdapter { get { return transitionAdapter; } }
+        public bool IsAvailable { get { string error; return transitionAdapter != null && transitionAdapter.CanLoad(out error); } }
+        internal void Configure(ShortCycleSessionManager session, InventoryManager inventory, ShortCyclePresentationDirector director)
+        { if (transitionAdapter != null) transitionAdapter.Configure(session, inventory, director); }
+        internal void BeginAfterCommit() { if (transitionAdapter != null) transitionAdapter.BeginAfterCommit(); }
+        internal void Teardown() { if (transitionAdapter != null) transitionAdapter.Teardown(false); }
 
         public bool TryReceive(ShortCycleDataHandoff handoff, out string error)
         {
@@ -16,8 +21,9 @@ namespace EatWhat.Cooking.ShortCycle
                 error = "Phase 2 handoff requires a recipe ID.";
                 return false;
             }
-            LastHandoff = handoff;
-            if (transitionAdapter != null) transitionAdapter.RequestTransition(handoff);
+            if (transitionAdapter == null) { error = "Phase2 transition adapter is not connected."; return false; }
+            if (!transitionAdapter.TryRequestTransition(handoff, out error)) return false;
+            LastHandoff = new ShortCycleDataHandoff(handoff.CurrentRecipeId, Phase2SceneEntry.CopyItems(handoff.PrepZoneContents));
             error = null;
             return true;
         }

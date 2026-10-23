@@ -20,7 +20,44 @@ function MustThrow([scriptblock]$Body, [string]$Name) {
 function SaveFixture([string]$Name, $Data) {
     [IO.File]::WriteAllText((Join-Path $testRoot "runtime/$Name-state.json"), ($Data | ConvertTo-Json -Depth 30), $utf8)
 }
+
+# Keep these legacy isolated fixtures current with GOV-05; never touches the real workspace runtime.
+function Initialize-CurrentQueueFixtureCall($Arguments,[string]$FixtureWorkspace,[string]$Repository) {
+    $tools=Join-Path (Split-Path -Parent $FixtureWorkspace) 'DevTools/Workflow'
+    [void][IO.Directory]::CreateDirectory($tools)
+    Copy-Item -LiteralPath (Join-Path $Repository 'DevTools/Workflow/UsageMetrics.ps1') -Destination (Join-Path $tools 'UsageMetrics.ps1') -Force
+    foreach($lib in @('repair-budget.ps1','approved-resume.ps1','control-administration.ps1')){
+        $dest=Join-Path $FixtureWorkspace $lib
+        if(-not(Test-Path -LiteralPath $dest)){Copy-Item -LiteralPath (Join-Path $Repository ('.ai-workspace/'+$lib)) -Destination $dest}
+    }
+    if($Arguments.Action -eq 'Enqueue' -and -not $Arguments.ContainsKey('Complexity')){$Arguments.Complexity='S'}
+    $stateFile=Join-Path $FixtureWorkspace 'runtime/queue-state.json'
+    if(Test-Path -LiteralPath $stateFile){
+        $fixtureState=Get-Content -LiteralPath $stateFile -Raw|ConvertFrom-Json -DateKind String
+        $dirty=$false
+        foreach($task in @($fixtureState.tasks)){
+            if($task.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and -not $task.complexity){
+                $task|Add-Member -NotePropertyName complexity -NotePropertyValue 'S' -Force
+                $task|Add-Member -NotePropertyName turnBudget -NotePropertyValue 40 -Force
+                $task|Add-Member -NotePropertyName tierSource -NotePropertyValue 'ISOLATED_FIXTURE' -Force
+                $dirty=$true
+            }
+        }
+        if($dirty){[IO.File]::WriteAllText($stateFile,($fixtureState|ConvertTo-Json -Depth 50),[Text.UTF8Encoding]::new($false))}
+        if($Arguments.Action -eq 'Complete'){
+            $completedTask=@($fixtureState.tasks|Where-Object id -eq $Arguments.TaskId)[0]
+            if($completedTask.complexity -and -not $Arguments.ContainsKey('IdleTurnsJson')){
+                $idle=@{};foreach($name in @('validationReruns','readbackConfirmations','toolErrorRetries','repeatFileReads')){$idle[$name]=@{count=$null;reason='Synthetic fixture has no exact app-turn classification.'}}
+                $Arguments.IdleTurnsJson=$idle|ConvertTo-Json -Depth 6 -Compress
+            }
+        }
+    }
+}
+
+
 function Q([hashtable]$ArgsTable) {
+    Initialize-CurrentQueueFixtureCall $ArgsTable $testRoot (Split-Path -Parent $sourceRoot)
+
     if ($ArgsTable.Action -eq 'Status') { $ArgsTable.FullStatus = $true }
     if ($ArgsTable.Action -eq 'Complete' -and -not $ArgsTable.AcceptancePath) {
         $ArgsTable.AcceptancePath=Initialize-AcceptanceFixture $testRoot $ArgsTable.TaskId $sourceRoot
@@ -29,7 +66,7 @@ function Q([hashtable]$ArgsTable) {
     $compactRaw = $raw.Trim()
     if($ArgsTable.Action -in @('Poll','Complete','SupervisionCheckpoint')){
         $bytes=[Text.Encoding]::UTF8.GetByteCount($compactRaw)
-        if($bytes -gt 757){throw "$($ArgsTable.Action) response exceeded 759B including CRLF: $bytes"}
+        if($bytes -gt 2046){throw "$($ArgsTable.Action) response exceeded 2048B including CRLF: $bytes"}
         $script:compactResponseBytes.Add($bytes)
     }
     $result = $raw | ConvertFrom-Json

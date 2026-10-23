@@ -160,7 +160,7 @@ public class CommandManager : MonoBehaviour
 
     private object ResolveInstance(CommandEntry entry)
     {
-        var type = Type.GetType(entry.DeclaringType);
+        var type = CommandRegistry.ResolveDeclaringType(entry.DeclaringType);
         if (type == null) return null;
 
         // 检查缓存

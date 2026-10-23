@@ -2,7 +2,19 @@ using System;
 
 namespace UnityEngine
 {
-    public class Object { public string name; }
+    public class Object {
+        public string name;
+        // Synthetic native-lifetime state. Existing fixture objects remain alive by default.
+        public bool ProofNativeAlive = true;
+        public static bool operator ==(Object left,Object right) {
+            bool l=ReferenceEquals(left,null)||!left.ProofNativeAlive, r=ReferenceEquals(right,null)||!right.ProofNativeAlive;
+            return l||r ? l&&r : ReferenceEquals(left,right);
+        }
+        public static bool operator !=(Object left,Object right) { return !(left==right); }
+        public override bool Equals(object other) { return ReferenceEquals(this,other); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+        public static void Destroy(Object item) { } public static void DestroyImmediate(Object item) { }
+    }
     public class ScriptableObject : Object { public static ScriptableObject CreateInstance(Type type) { return (ScriptableObject)Activator.CreateInstance(type); } public static T CreateInstance<T>() where T : ScriptableObject, new() { return new T(); } }
     public class Sprite : Object { public Texture2D texture; public static Sprite Create(Texture2D texture, Rect rect, Vector2 pivot, float pixelsPerUnit) { return new Sprite { texture = texture }; } }
     public class Texture2D : Object { public int width = 1; public int height = 1; public Texture2D(int width, int height, TextureFormat format, bool mipChain) { this.width = width; this.height = height; } public void SetPixel(int x, int y, Color color) { } public void Apply() { } }
@@ -36,7 +48,7 @@ namespace UnityEditor
         public static string[] ProofDependencies;
         public static void ResetProofFixture() {
             ProofMain.Clear(); ProofAll.Clear(); ProofGuids.Clear(); ProofFileIds.Clear();
-            ProofObjectPaths.Clear(); ProofTypes.Clear(); ProofBroken.Clear(); ProofDependencies = null;
+            ProofObjectPaths.Clear(); ProofTypes.Clear(); ProofBroken.Clear(); ProofDependencies = null; SerializedObject.ProofPptrIds.Clear(); EditorUtility.ProofDirty.Clear();
         }
         public static void StartAssetEditing() { } public static void StopAssetEditing() { } public static void SaveAssets() { }
         public static bool IsValidFolder(string path) { return true; } public static string CreateFolder(string parent, string name) { return "stub"; }
@@ -45,6 +57,7 @@ namespace UnityEditor
         public static string[] FindAssets(string filter, string[] folders) { return new string[0]; } public static string GUIDToAssetPath(string guid) { foreach (var pair in ProofGuids) if (pair.Value == guid) return pair.Key; return string.Empty; }
         public static string[] GetDependencies(string[] paths, bool recursive) { return ProofDependencies ?? paths; }
         public static Type GetMainAssetTypeAtPath(string path) { Type type; if (ProofTypes.TryGetValue(path, out type)) return type; Object main; return ProofMain.TryGetValue(path, out main) ? main.GetType() : null; }
+        public static string GetAssetPath(Object asset) { string path; return ProofObjectPaths.TryGetValue(asset,out path) ? path : string.Empty; }
         public static string AssetPathToGUID(string path) { string guid; return ProofGuids.TryGetValue(path, out guid) ? guid : string.Empty; }
         public static bool TryGetGUIDAndLocalFileIdentifier(Object asset, out string guid, out long localFileId) {
             string path;
@@ -65,14 +78,27 @@ namespace UnityEditor
         public bool NextVisible(bool enterChildren) { if (!proofBroken || proofVisited) return false; proofVisited = true; propertyType = SerializedPropertyType.ObjectReference; objectReferenceInstanceIDValue = 42; propertyPath = "broken"; return true; }
         public bool Next(bool enterChildren) { return NextVisible(enterChildren); }
     }
-    public sealed class SerializedObject
+    public sealed class SerializedObject : IDisposable
     {
+        public static readonly System.Collections.Generic.Dictionary<Object,System.Collections.Generic.Dictionary<string,int>> ProofPptrIds =
+            new System.Collections.Generic.Dictionary<Object,System.Collections.Generic.Dictionary<string,int>>();
         private readonly Object target;
         public SerializedObject(Object target) { this.target = target; }
+        public SerializedProperty FindProperty(string path) {
+            System.Collections.Generic.Dictionary<string,int> values;int id;
+            return ProofPptrIds.TryGetValue(target,out values)&&values.TryGetValue(path,out id)
+                ? new SerializedProperty { propertyType=SerializedPropertyType.ObjectReference,objectReferenceInstanceIDValue=id,propertyPath=path }
+                : null;
+        }
         public SerializedProperty GetIterator() { return new SerializedProperty { proofBroken = AssetDatabase.ProofBroken.Contains(target) }; }
+        public void Dispose() { }
     }
     public static class FileUtil { public static void ReplaceFile(string source, string destination) { } }
-    public static class EditorUtility { public static void SetDirty(Object target) { } }
+    public static class EditorUtility {
+        public static readonly System.Collections.Generic.HashSet<Object> ProofDirty = new System.Collections.Generic.HashSet<Object>();
+        public static bool IsDirty(Object target) { return ProofDirty.Contains(target); }
+        public static void SetDirty(Object target) { ProofDirty.Add(target); }
+    }
     public static class EditorApplication { public static void Exit(int exitCode) { } }
 }
 

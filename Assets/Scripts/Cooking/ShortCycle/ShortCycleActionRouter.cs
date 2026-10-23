@@ -138,13 +138,7 @@ namespace EatWhat.Cooking.ShortCycle
                 return ShortCycleActionResult.Failure("No recipe is selected.");
             }
 
-            var profile = coordinator.PlayerProfile;
-            var changed = profile.IsFavorite(recipeId)
-                ? profile.RemoveFavorite(recipeId)
-                : profile.AddFavorite(recipeId);
-            return changed
-                ? ShortCycleActionResult.Success()
-                : ShortCycleActionResult.Failure("Favorite state did not change for '" + recipeId + "'.");
+            return coordinator.TryToggleFavorite();
         }
 
         private ShortCycleActionResult HandleStartCooking(ShortCycleActionRequest request) { return ToActionResult(coordinator == null ? null : coordinator.TryStartCooking()); }

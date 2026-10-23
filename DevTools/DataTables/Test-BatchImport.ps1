@@ -245,6 +245,45 @@ $productionRoots = @(
 $productionBefore = @{}; foreach ($path in $productionRoots) { $productionBefore[$path] = Get-DataDirectorySummaryHash -Root $path }
 
 try {
+    # Extend this runner's existing temp root; resolver tests never invoke Run-DataPipeline/PlanOnly.
+    $reportRepo=Join-Path $testRoot 'report-paths'
+    $taskRoot=Join-Path $reportRepo '.ai-workspace/outputs/BATCH/AI-000266'
+    $runtimeReports=Join-Path $reportRepo '.ai-workspace/runtime/data-reports'
+    $defaultReport=Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId UNSCOPED -RunId 'R1'
+    Assert-True ($defaultReport.reportParent -ceq $runtimeReports -and -not(Test-Path -LiteralPath $reportRepo)) 'report runtime default is compatible and pure'
+    $runtimeChild=Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId UNSCOPED -ReportDirectory (Join-Path $runtimeReports 'child') -RunId R1
+    Assert-True ($runtimeChild.approvedRoot -ceq $runtimeReports) 'legal runtime report children retain the same boundary'
+    foreach($relative in @('.ai-workspace/outputs/BATCH/AI-000266','.ai-workspace/outputs/BATCH/AI-000266/attempt3/data-report')){
+        $r=Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId AI-000266 -ReportDirectory $relative -RunId R1
+        Assert-True ($r.approvedRoot -ceq $taskRoot -and $r.reportRoot.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar)) 'current task root and descendant share parent/run boundary'
+    }
+    foreach($relative in @(
+        '.ai-workspace/outputs/BATCH/AI-000267','.ai-workspace/outputs/BATCH/AI-000266-extra',
+        '.ai-workspace/outputs/BATCH/AI-0002660','.ai-workspace/outputs',
+        '.ai-workspace/outputs/control/BATCH/AI-000266','Assets/AI-000266',
+        '.ai-workspace/outputs/BATCH/AI-000266/../AI-000267',
+        '.ai-workspace/outputs/BATCH/AI-000266/attempt:stream',
+        '.ai-workspace/outputs/BATCH/AI-000266/alias.',
+        '.ai-workspace/outputs/BATCH/AI-000266/alias ',
+        '.ai-workspace/outputs/BATCH/AI-000266/CON',
+        '.ai-workspace/runtime/data-reports/alias.',
+        '.ai-workspace/runtime/data-reports/../outside',
+        '../outside/AI-000266')){
+        [void](Assert-Throws {Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId AI-000266 -ReportDirectory $relative -RunId R1} ('unsafe report path refused: '+$relative))
+    }
+    [void](Assert-Throws {Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId AI-000266x -ReportDirectory $taskRoot -RunId R1} 'report TaskId cannot be sanitized into identity')
+    [void](Assert-Throws {Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId AI-000266 -ReportDirectory $taskRoot -RunId '../escape'} 'final run cannot escape parent boundary')
+    [void][IO.Directory]::CreateDirectory((Join-Path $taskRoot 'R1'))
+    [void](Assert-Throws {Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId AI-000266 -ReportDirectory $taskRoot -RunId R1} 'report collision refuses overwrite')
+    $target=Join-Path $reportRepo 'redirect-target'
+    [void][IO.Directory]::CreateDirectory($target)
+    $junction=Join-Path $taskRoot 'redirect'
+    [void](New-Item -ItemType Junction -Path $junction -Target $target)
+    try{
+        [void](Assert-Throws {Resolve-DataReportLocation -RepositoryRoot $reportRepo -TaskId AI-000266 -ReportDirectory (Join-Path $junction 'missing/child') -RunId R2} 'report reparse ancestor refused even when leaf does not exist')
+    } finally {Remove-Item -LiteralPath $junction -Force}
+    Assert-True (Test-Path -LiteralPath $target -PathType Container) 'removing test junction preserves its target'
+
     $commonPath = Join-Path $PSScriptRoot 'DataPipeline.Common.ps1'
     $runPath = Join-Path $PSScriptRoot 'Run-DataPipeline.ps1'
     $importerPath = Join-Path $repositoryRoot 'Assets/Editor/DataTables/DataTableImportService.cs'
@@ -265,7 +304,17 @@ try {
     Assert-True (-not $runSource.Contains('Import-Csv -LiteralPath $LocalizationCsvPath')) 'runner does not substitute PowerShell CSV semantics for the project parser'
     Assert-True ($runSource.Contains('Confirm-DataBatchCompletionCredential')) 'runner requires a current-run completion credential before recording Unity APIs'
     Assert-True ($runSource.Contains('New-DataBatchIsolationDirectory') -and $runSource.Contains('isolationShortName=$isolation.shortName')) 'runner maps short physical directory to complete runId in its report'
-    Assert-True ($runSource.Contains('Get-DataBatchLogAssessment') -and $runSource.IndexOf('Get-DataBatchLogAssessment', [StringComparison]::Ordinal) -lt $runSource.IndexOf('if ($Publish)', [StringComparison]::Ordinal)) 'both batch modes use the production log gate before publication'
+    # A font permission preflight can precede import. Check actual publication calls,
+    # not the first if(Publish), and retain negative log assessment fixtures below.
+    $parseTokens=$null;$parseErrors=$null
+    $runAst=[Management.Automation.Language.Parser]::ParseInput($runSource,[ref]$parseTokens,[ref]$parseErrors)
+    $calls=@($runAst.FindAll({param($node) $node -is [Management.Automation.Language.CommandAst]},$true))
+    $logCall=@($calls|Where-Object {$_.GetCommandName() -eq 'Get-DataBatchLogAssessment'})
+    $publishCalls=@($calls|Where-Object {$_.GetCommandName() -in @('Invoke-DataPublicationTransaction','Invoke-FontPublicationTransaction')})
+    Assert-True ($parseErrors.Count -eq 0 -and $logCall.Count -eq 1 -and $publishCalls.Count -eq 2) 'production log assessment and both real publication calls exist'
+    foreach($call in $publishCalls){
+        Assert-True ($logCall[0].Extent.StartOffset -lt $call.Extent.StartOffset -and $runSource.IndexOf('if (-not $report.batchLogAssessment.allowedToProceed)',[StringComparison]::Ordinal) -lt $call.Extent.StartOffset) ('blocking log gate precedes actual '+$call.GetCommandName())
+    }
     Assert-True ($runSource.Contains("name='Unity-Import-Error-Gate'") -and $runSource.Contains('batchLogAssessment=$null')) 'runner records a structured log gate stage and finding evidence'
     Assert-True ($runSource.IndexOf('Confirm-DataBatchCompletionCredential', [StringComparison]::Ordinal) -lt $runSource.IndexOf("api=`$batchResult.executeMethod", [StringComparison]::Ordinal)) 'runner records Unity APIs only after credential verification'
     Assert-True ($commonSource.Contains("`$scopes = @('Assets', 'Packages', 'LocalPackages', 'ProjectSettings', 'DataTables')")) 'input snapshot matches the five copied project roots'

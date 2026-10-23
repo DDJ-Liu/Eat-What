@@ -11,6 +11,15 @@ namespace EatWhat.Cooking.ShortCycle
 
         public IList<string> FavoriteRecipeIds { get { return favorite_recipe_ids.AsReadOnly(); } }
 
+        public IList<string> UnlockedRecipeIds { get { return unlocked_recipe_ids.AsReadOnly(); } }
+        public PlayerProfileSnapshot GetSnapshot()
+        { return new PlayerProfileSnapshot(favorite_recipe_ids, unlocked_recipe_ids); }
+        public void ApplySnapshot(PlayerProfileSnapshot snapshot)
+        {
+            favorite_recipe_ids = PlayerProfileSnapshot.CopyIds(snapshot == null ? null : snapshot.FavoriteRecipeIds);
+            unlocked_recipe_ids = PlayerProfileSnapshot.CopyIds(snapshot == null ? null : snapshot.UnlockedRecipeIds);
+        }
+
         public bool AddFavorite(string recipeId)
         {
             if (string.IsNullOrEmpty(recipeId) || favorite_recipe_ids.Contains(recipeId)) return false;

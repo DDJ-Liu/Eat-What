@@ -1,0 +1,22 @@
+{
+  "name": "Editor.ProjectValidation",
+  "rootNamespace": "",
+  "references": [
+    "Legacy",
+    "ShortCycle",
+    "spine-unity",
+    "Toolkit",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

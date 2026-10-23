@@ -1,7 +1,15 @@
 [CmdletBinding()]
-param()
+param([switch]$CatalogBlobOnly,[switch]$CatalogCompileOnly,[string]$CatalogReportRoot)
 
 $ErrorActionPreference = 'Stop'
+if ($CatalogBlobOnly -or $CatalogCompileOnly -or $env:EATWHAT_TEST_CATALOG_BLOB_ONLY -eq '1') {
+    . (Join-Path $PSScriptRoot 'CatalogBlob.Common.ps1')
+    if (-not $CatalogReportRoot) { $CatalogReportRoot=$env:EATWHAT_CATALOG_REPORT_ROOT }
+    if (-not $CatalogReportRoot) { throw 'Catalog tests require an explicit isolated report root.' }
+    Invoke-CatalogBlobTests -ReportRoot $CatalogReportRoot -CompileOnly:$CatalogCompileOnly
+    return
+}
+
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $dataTablesRoot = Join-Path $repositoryRoot 'DataTables'
 $validator = Join-Path $PSScriptRoot 'Validate-DataTables.ps1'

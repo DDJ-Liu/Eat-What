@@ -1,5 +1,10 @@
 # 监管模式（SUPERVISED）
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](../toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
+2026-10-16现行入口校正：失败续行唯一ApproveResume，须用户明确次数/范围，保留失败/预算/人工门；详见[通用续行](../toolkit/WF.md#approve-resume)。下文带日期的RecoverSupervisionTask/ResumeApprovedTask旧许可说明仅解释历史，不发放新许可；ResetTask不用于恢复失败任务。
+
 ## 监管结算长期发送授权（2026-10-14）
 
 用户已授权本批及以后所有监管任务结算后立即回传一次，详见[原话](../inputs/监管结算即时回传_用户长期授权_20261014.json)与[完整步骤](../../DevTools/Workflow/HANDOFF.md)。Complete/Fail/Yield同轮Prepare→Send→Record，控制台Receive→独立验收→fresh idle/Reconcile/Dispatch；不是等待下一次60分钟WATCH。旧缺少发送授权条款不再适用此范围；停止、去重、拒绝不重试及人工门仍有效。
@@ -124,7 +129,7 @@
 - 每批生产写入前、长工具调用后与每次续租时，执行器调用 `SupervisionCheckpoint -Pipeline -TaskId`。收到 STOP_AT_SAFE_CHECKPOINT 后不开始新修改；现场安全才能 Yield，现场不明保留并报告，不能伪写安全证据。
 - “立即停止”也只能立即停止新动作；已开始的外部工具调用无法保证回滚或中断。不得强杀 Unity、重置运行中的队列、丢弃用户修改；必要时请求人工接管 Editor。
 - “继续监管”：Pause 后 `ResumeSupervision -Reason -UserDecision`，不重置错误次数和人工闸门。已退出则重新 SetMode（保留任务级恢复史）。结束/闸门处暂停的 heartbeat 由控制台恢复原项。
-- NEEDS_USER 的再次执行须有用户新的明确修复/重试指令；先安全退出至 MANUAL，由用户授权的控制端 ResetTask 后再入监管。supervisionRepairs 仍保留，再次失败仍按累计配额停下；不得借切模式批量清零。
+- NEEDS_USER 的再次执行须有用户新的明确修复/重试指令；按用户批准的模式及次数/范围经控制端ApproveResume续原任务，不以退出模式或ResetTask重置历史。supervisionRepairs 仍保留，再次失败仍按累计配额停下；不得借切模式批量清零。
 
 ## 控制台命令示例
 

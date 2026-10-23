@@ -160,6 +160,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         internal bool WantsActive(ShortCyclePresentationSet candidate)
         {
+            if (visibleViews.Contains(ShortCyclePhase0View.Phase2Transition)) return false;
             if (candidate != null && candidate.KeepVisualActiveAcrossSpaces) return true;
             return WantsLogicalActive(candidate);
         }
@@ -185,11 +186,12 @@ namespace EatWhat.Cooking.ShortCycle
         {
             foreach (var visualOnly in visualOnlySets ?? new ShortCyclePresentationSet[0])
                 if (visualOnly == set) return false;
-            return focused && WantsLogicalActive(set);
+            return !visibleViews.Contains(ShortCyclePhase0View.Phase2Transition) && focused && WantsLogicalActive(set);
         }
 
         internal bool WantsVisualOnly(ShortCyclePresentationSet candidate)
         {
+            if (visibleViews.Contains(ShortCyclePhase0View.Phase2Transition)) return false;
             foreach (var set in visualOnlySets ?? new ShortCyclePresentationSet[0])
                 if (set == candidate && (focused || preparingVisuals)) return true;
             return false;

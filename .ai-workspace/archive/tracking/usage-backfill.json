@@ -1,0 +1,1343 @@
+{
+  "schemaVersion": 1,
+  "taskRange": "AI-000230..AI-000249",
+  "records": [
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          2
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "da78ed10dd964b06953373e4b92919ce",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "9B0A9C89E7FB76EA643D80B8821012CA6A14E272DC356969A3682081958559B6",
+          "quote": "# AI-000230 · 固定 CODE 线用量优化",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/USAGE-OPT-20261014/AI-000230/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/USAGE-OPT-20261014/AI-000230/REPORT.md",
+          "bytes": 3139,
+          "kind": "archive",
+          "lineEnd": 1,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000230.zip",
+          "lineStart": 1
+        },
+        {
+          "sha256": "9B0A9C89E7FB76EA643D80B8821012CA6A14E272DC356969A3682081958559B6",
+          "quote": "- `Invoke-UsageReporting.ps1` 将业务门禁与周三报表解耦；未到期且已发布时不扫描用量JSONL。小型完整性索引对文件元数据变化触发旧报告元数据/SHA复核，损坏则保留原件并拒绝覆盖，恢复后可继续；跨周漏报仍补齐。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/USAGE-OPT-20261014/AI-000230/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/USAGE-OPT-20261014/AI-000230/REPORT.md",
+          "bytes": 3139,
+          "kind": "archive",
+          "lineEnd": 10,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000230.zip",
+          "lineStart": 10
+        },
+        {
+          "sha256": "9B0A9C89E7FB76EA643D80B8821012CA6A14E272DC356969A3682081958559B6",
+          "quote": "一次受影响范围 `Verify-All Custom Final`：7/7通过、35,787.677 ms，历史与七份runner原始输出见`verification/`。定向 `git diff --check` 通过。WATCH真实宿主在本卡内没有新run证明；旧宿主权限拒绝和暂停状态不被离线夹具冒充修复。模型、输入/输出token及费用缺少任务绑定provider事件，仍为null与原因，不由返回字节估算。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/USAGE-OPT-20261014/AI-000230/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/USAGE-OPT-20261014/AI-000230/REPORT.md",
+          "bytes": 3139,
+          "kind": "archive",
+          "lineEnd": 22,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000230.zip",
+          "lineStart": 22
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000230",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "git-readonly"
+      ],
+      "executionId": "866e3cda468949b0bfc5f3c74d17862f",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "8781A65997964150152A894034F4A7CF2FE23E6E8312A991F1C11E76B2073D0B",
+          "quote": "- 实际验证：既有定向夹具最新 29/29；真实 Status 1,402B、最大注意项147B、快照可读且含233任务；allowed-list `git diff --check` 退出0。三次同夹具复跑缘于通过后的局部优先级、注意状态与相同字节快照复用调整，未运行独立 Final。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000231/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000231/REPORT.md",
+          "bytes": 2008,
+          "kind": "archive",
+          "lineEnd": 12,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000231.zip",
+          "lineStart": 12
+        },
+        {
+          "sha256": "8781A65997964150152A894034F4A7CF2FE23E6E8312A991F1C11E76B2073D0B",
+          "quote": "- 待人工项：控制台独立审查新接口与真实后续宿主用量报告；本 CODE 任务不将离线夹具视为宿主上线。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000231/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000231/REPORT.md",
+          "bytes": 2008,
+          "kind": "archive",
+          "lineEnd": 13,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000231.zip",
+          "lineStart": 13
+        },
+        {
+          "sha256": "8781A65997964150152A894034F4A7CF2FE23E6E8312A991F1C11E76B2073D0B",
+          "quote": "- provider token/model 不可见，维持 null 与原因；字节不是 token 或费用。机器计量来源与完整数值见 `evidence.json`。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000231/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000231/REPORT.md",
+          "bytes": 2008,
+          "kind": "archive",
+          "lineEnd": 21,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000231.zip",
+          "lineStart": 21
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000231",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "57f4ad6a7f494ba3ad5226c5137dd301",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "EAEB40603F67DBC2E1EB8FD669554D267EBD998128EE06934596966C0EA908EE",
+          "quote": "- 七个相关 PowerShell 文件解析零错误；允许路径 `git diff --check` 退出0（仅 CRLF 提示），预声明合同7/7匹配。初次全仓 `git status` 因既有字体 LFS 临时目录权限失败，限域状态检查成功；记为非阻碍 WARNING，不碰字体。生产 AI170仍为CLOSED_SUPERSEDED、attempts=7、六条恢复记录，未执行。测试文件写入仅在系统临时隔离状态副本。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000232/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000232/REPORT.md",
+          "bytes": 2795,
+          "kind": "archive",
+          "lineEnd": 17,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000232.zip",
+          "lineStart": 17
+        },
+        {
+          "sha256": "EAEB40603F67DBC2E1EB8FD669554D267EBD998128EE06934596966C0EA908EE",
+          "quote": "修改 queue/supervised、Invoke-TaskTool/watch、三个既有隔离测试和工作流/车道接口说明；证据见 [evidence.json](evidence.json) 与 [acceptance.json](acceptance.json)。受管门禁无法替代 Codex 平台外部工具权限；真实 120 次生产交接及 WATCH 宿主长期运行仍待未来自然触发观察。未将未知 provider/model/token/费用推算成数值。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000232/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000232/REPORT.md",
+          "bytes": 2795,
+          "kind": "archive",
+          "lineEnd": 21,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000232.zip",
+          "lineStart": 21
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000232",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告未明确工具身份；不由CODE或文中未来任务推断",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {},
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": null,
+      "executionId": "b399279eacf24a5b8642b9ef088a5418",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "ACEEF84D9A609EAF7F5A2D2705144F300C7E553B834C27292548006E2DDA0D41",
+          "quote": "# AI-000233 / GOV-03 S4 只读文档复核",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000233/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000233/REPORT.md",
+          "bytes": 1906,
+          "kind": "archive",
+          "lineEnd": 1,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000233.zip",
+          "lineStart": 1
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000233",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "8483947b590941868d6896936685a8fa",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "9031629EDB84BA845F0E72D6C077DEBB6CDC6AF1210A087A7F1D4E0270CF64BF",
+          "quote": "4. 安全与验证：字体事务校对源 CSV、候选/现场 SHA、meta/GUID、既有 localFileId、字符并集和空 Dynamic；字符无新增且 Dynamic 不变时 NO_CHANGES，不写目标/manifest/备份。变化时备份到 DevTools/Fonts/backup/<round>/<runId>/，新 manifest 带 task/round/批准原件及 SHA/源 CSV/前后字数/新增码点/新 SHA，维持 STATIC_ONLY/APPROVED 提交 hook 合同。14 项隔离事务测试、真实 Unity 6/TMP DLL 构建器编译、21 源导入器静态编译、5 个 PS 解析及 scoped git diff --check 均通过。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000234/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000234/REPORT.md",
+          "bytes": 2976,
+          "kind": "archive",
+          "lineEnd": 6,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000234.zip",
+          "lineStart": 6
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000234",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "unity-batchmode"
+      ],
+      "executionId": "91249d134467446c81f281c67e9dce67",
+      "attempt": 3,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "0D0C69FBEE49B83775E82B7A6607C29F2D44A61003863738B807A389A863D9CE",
+          "quote": "结论：**SUCCEEDED；六项预声明验收均通过。** 以用户新 grant user-20261014-data-f1b-publish-1 和监管票据领取 attempt3，仅执行一次带 -Publish 的 CurrentCsvValidation 隔离 Unity 6000.3.24f1 批次。隔离 Editor 退出码 0、Runner 退出码 0、日志阻断 0。字体事务 PUBLISHED，Generated 发布 0，未改 xlsx/CSV、未做第二次生产幂等运行、未提交或推送。前两次失败与证据保留。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000235/attempt3/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000235/attempt3/REPORT.md",
+          "bytes": 2744,
+          "kind": "archive",
+          "lineEnd": 3,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000235.zip",
+          "lineStart": 3
+        },
+        {
+          "sha256": "0D0C69FBEE49B83775E82B7A6607C29F2D44A61003863738B807A389A863D9CE",
+          "quote": "待控制台独立验收后安排 AI-000236 唯一 Play/一张截图及人工可见性闸门；本线不自行领取。当前主 Editor 可能尚未重新加载磁盘发布结果，Play 与画面判断归 ENGINE。项目文档影响：字体发布使 CODEBASE_MAP 与推进基线页首“等待实际执行”的事实需要在控制端核验后更新；本领取 Scope 仅含字体和本任务输出，未改项目文档的页首核验日期。工具登记影响：未新增或运行一次性工具，FontSwapOnce 保持停用。用量字段由应用控制端采集；本线没有可信 token/费用数据，记 null。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000235/attempt3/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000235/attempt3/REPORT.md",
+          "bytes": 2744,
+          "kind": "archive",
+          "lineEnd": 9,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000235.zip",
+          "lineStart": 9
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000235",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告/证据仅标Editor动作及队列lane，未明示调用传输；不由ENGINE_MCP推断Coplay",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {},
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": null,
+      "executionId": "17ed88e35cf6462ab65d8c1e2f5b7360",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "50D7992A6B28374122F93F31D0AC9CACC0F21C27B9194C2E5878AB97ED6DCD8C",
+          "quote": "# AI-000236 发布后 Editor 验证",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000236/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000236/REPORT.md",
+          "bytes": 1309,
+          "kind": "archive",
+          "lineEnd": 1,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000236.zip",
+          "lineStart": 1
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000236",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          3
+        ],
+        "turnsBudget": [
+          2
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell7"
+      ],
+      "executionId": "54cf5167aa184c3e88a800531635d62b",
+      "attempt": 1,
+      "turnsBudget": 80,
+      "sources": [
+        {
+          "sha256": "FCA277019D0F4B8241E235AE484863E56F63CA598BC26E0CC16776975DA1BAE3",
+          "quote": "- 实际验证：隔离临时状态下 Test-ContextWarning 最终 15 项 PASS；PowerShell 解析 0 错；允许清单 git diff --check 0。定向夹具因增量变更重复运行，最后一次结果为最终证据；未执行独立 Final、全套 Workflow 或 Unity 验证。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "bytes": 3223,
+          "kind": "archive",
+          "lineEnd": 9,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000237.zip",
+          "lineStart": 9
+        },
+        {
+          "sha256": "FCA277019D0F4B8241E235AE484863E56F63CA598BC26E0CC16776975DA1BAE3",
+          "quote": "- 上下文：本线程最近精确关联 provider 响应为 137875 inputTokens（2026-10-04T19:47:08Z）；来源 provider，但这是旧的单响应输入，不代表当前完整窗口。领取发生于新接线部署前，当时读数不可补造。唯一 Complete 回执 Complete-ec77cc3b00c8.json 实际记录 contextWarning=NONE、contextTokens=137875、contextSource=provider；这里的 NONE 只针对该旧单响应样本，不能证明当前窗口低于阈值。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "bytes": 3223,
+          "kind": "archive",
+          "lineEnd": 17,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000237.zip",
+          "lineStart": 17
+        },
+        {
+          "sha256": "FCA277019D0F4B8241E235AE484863E56F63CA598BC26E0CC16776975DA1BAE3",
+          "quote": "- 轮次：实际 app turns null（宿主未提供精确计数）/ 用户固定预算 80（M）；独立 GOV-02 软限 120 未变。空转四类——验证重跑、读回确认、工具报错重试、同文件重复读——精确回合数均 null；本轮确有一次错误地使用 Windows PowerShell 5 导致解析失败，已切换规定 PS7 安全重试，定向夹具随增量修改重跑，不能伪造空转比例。Provider 响应与 app turn、工具调用分别计量，缺源不写 0。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "bytes": 3223,
+          "kind": "archive",
+          "lineEnd": 18,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000237.zip",
+          "lineStart": 18
+        },
+        {
+          "kind": "archive",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000237.zip",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000237/REPORT.md",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "sha256": "FCA277019D0F4B8241E235AE484863E56F63CA598BC26E0CC16776975DA1BAE3",
+          "bytes": 3223,
+          "lineStart": 18,
+          "lineEnd": 18,
+          "quote": "- 轮次：实际 app turns null（宿主未提供精确计数）/ 用户固定预算 80（M）；独立 GOV-02 软限 120 未变。空转四类——验证重跑、读回确认、工具报错重试、同文件重复读——精确回合数均 null；本轮确有一次错误地使用 Windows PowerShell 5 导致解析失败，已切换规定 PS7 安全重试，定向夹具随增量修改重跑，不能伪造空转比例。Provider 响应与 app turn、工具调用分别计量，缺源不写 0。"
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000237",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          1
+        ],
+        "turnsBudget": [
+          3
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "1aada0497a66459ab9b953717e6d8a4d",
+      "attempt": 1,
+      "turnsBudget": 80,
+      "sources": [
+        {
+          "sha256": "1543C83342538459F0C0C1CD24C6DC33BE9873E3A09110B7554C73F0735F7179",
+          "quote": "- 做了什么：为新入队卡强制 S/M/L 并派生 40/80/120；旧待领卡可经正式修订补级别，旧运行卡按原规划兼容。Complete 统计四类空转并以真实 app turn ID 去重；超预算只要求说明。现有日报/周报聚合增加分级覆盖、均值、超预算和缺失清单。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "bytes": 2564,
+          "kind": "archive",
+          "lineEnd": 7,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000238.zip",
+          "lineStart": 7
+        },
+        {
+          "sha256": "1543C83342538459F0C0C1CD24C6DC33BE9873E3A09110B7554C73F0735F7179",
+          "quote": "- 实际验证：定向夹具最终 29/29 PASS（隔离队列副本，不碰现网运行态）；5 个 PowerShell 文件解析 0 错误；允许清单内 `git diff --check` 退出 0。早期夹具构造问题有两次失败登记，均已按同一稳定 key 解决，未伪称首次通过。最后一次重跑仅因完成后新增正式协议描述和周报同任务去重实现。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "bytes": 2564,
+          "kind": "archive",
+          "lineEnd": 9,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000238.zip",
+          "lineStart": 9
+        },
+        {
+          "sha256": "1543C83342538459F0C0C1CD24C6DC33BE9873E3A09110B7554C73F0735F7179",
+          "quote": "- 上下文：领取回执只读到最近 provider 响应输入 137875 tokens，来源 provider，警告 NONE；并非完整实时上下文窗口或任务账单。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "bytes": 2564,
+          "kind": "archive",
+          "lineEnd": 13,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000238.zip",
+          "lineStart": 13
+        },
+        {
+          "sha256": "1543C83342538459F0C0C1CD24C6DC33BE9873E3A09110B7554C73F0735F7179",
+          "quote": "- 轮次：实际 null / 预算 80（M）· 空转 null（占比 null）· 超预算原因：不适用。queue 中 `appTurnCount=null`，四类确切 app turn ID 不可得，未以 provider 响应数或工具数填 0；Complete 将分别提交 null+原因。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/GOV-04-05-20261014/AI-000238/REPORT.md",
+          "bytes": 2564,
+          "kind": "archive",
+          "lineEnd": 14,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000238.zip",
+          "lineStart": 14
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000238",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告未明确工具身份；不由CODE或文中未来任务推断",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {},
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": null,
+      "executionId": "b0e1fedf349e4692919824b6011b5f8d",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "D5DF4C5041D4079B7AC6C17076E7E7C24CBE4D192AB3CDAA4D51CEF9A605F7EF",
+          "quote": "# AI-000239：Spine Sample/output4 旧加载错误只读诊断",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000239/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000239/REPORT.md",
+          "bytes": 4352,
+          "kind": "archive",
+          "lineEnd": 1,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000239.zip",
+          "lineStart": 1
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000239",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "attempt2仅证据复用和结算；不把attempt1离线测试计入本次实际工具",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {},
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": null,
+      "executionId": "ca23982a644a457884a7a9a136c87b9b",
+      "attempt": 2,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "E08AF5A82F43168A0BF0E83AEDCD8CCC41A0EE683E7BEC4D2171A669ACD5AB2B",
+          "quote": "- TaskId / 状态 / 验证状态：AI-000240；本轮仅进行已批准的证据复用与正式结算；原生 Unity Editor 验证为 NOT_RUN。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240/attempt2/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240/attempt2/REPORT.md",
+          "bytes": 1750,
+          "kind": "archive",
+          "lineEnd": 5,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000240.zip",
+          "lineStart": 5
+        },
+        {
+          "sha256": "E08AF5A82F43168A0BF0E83AEDCD8CCC41A0EE683E7BEC4D2171A669ACD5AB2B",
+          "quote": "- 异常：第 1 次执行的三条测试夹具计数失败及自验证预算停点均保留；本轮消耗 AI-000240 已批准的 1 次续行，不清除历史。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240/attempt2/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240/attempt2/REPORT.md",
+          "bytes": 1750,
+          "kind": "archive",
+          "lineEnd": 20,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000240.zip",
+          "lineStart": 20
+        },
+        {
+          "sha256": "E08AF5A82F43168A0BF0E83AEDCD8CCC41A0EE683E7BEC4D2171A669ACD5AB2B",
+          "quote": "- 使用量：provider/model/tokens/cost 为 null；宿主未暴露计费字段。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240/attempt2/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000240/attempt2/REPORT.md",
+          "bytes": 1750,
+          "kind": "archive",
+          "lineEnd": 21,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000240.zip",
+          "lineStart": 21
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000240",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "c7a70e39a3db4d42a533976a0fb63b89",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "2FCA1B6C30CB5AE10D85D23F6E510DEDC2BDFA11196FCC8E27678AFDDA1EE807",
+          "quote": "实际验证：仅运行指定的 Test-BatchImport.ps1 -FontTransactionOnly，最终 25/25 通过（原合同、退出后 Static 改动、TMP 退出清空 Dynamic、Static 漂移拒绝、CurrentCsv 字体专用 Publish 与 Generated 不动、回滚/陌生 Dynamic 保留）。测试使用临时夹具，unityStarted=false、productionWritten=false。额外只读核对真实隔离空 Dynamic YAML 的 glyph0 与原生产 Dynamic glyph13；三份 PowerShell 解析错误 0，定向 git diff --check 通过。未运行全套 Final、冷测试或 Unity。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000241/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000241/REPORT.md",
+          "bytes": 2699,
+          "kind": "archive",
+          "lineEnd": 9,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000241.zip",
+          "lineStart": 9
+        },
+        {
+          "sha256": "2FCA1B6C30CB5AE10D85D23F6E510DEDC2BDFA11196FCC8E27678AFDDA1EE807",
+          "quote": "文档影响：DATA 发布接口及定位发生变化，已更新上述现有文档；未做项目级完整复核，未只改页首日期。工具登记影响：仅扩充现有 DATA 工具和既有定向 runner，无新增/启用一次性工具。用量：provider/model/actualTokens/cost 为 null，当前任务无可核验逐项来源。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000241/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/OMISSIONS-20261014/AI-000241/REPORT.md",
+          "bytes": 2699,
+          "kind": "archive",
+          "lineEnd": 13,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000241.zip",
+          "lineStart": 13
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000241",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ],
+        "turnsBudget": [
+          1
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "ae7b5ec32420425389bd99e8f4db524c",
+      "attempt": 1,
+      "turnsBudget": 80,
+      "sources": [
+        {
+          "sha256": "41F5B41E72513D062E52B3018F84EDB19B5D6B0C712A69C45827467BDE530F34",
+          "quote": "一份定向回归完成：原有效/无效夹具与四类审计报告通过；G74 五组情形覆盖单候选、双候选白名单优先（tool_pan 优于 T12 行序中的 tool_bowl）、缺清单、过期清单和重复动作。双候选夹具同时证明 preset_tools 中无效旧值不触发校验。PowerShell 语法检查与允许清单 git diff --check 均通过。证据为本目录 targeted-regression.txt、evidence.json、acceptance.json。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/G74-20261014/AI-000242/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/G74-20261014/AI-000242/REPORT.md",
+          "bytes": 2575,
+          "kind": "archive",
+          "lineEnd": 7,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000242.zip",
+          "lineStart": 7
+        },
+        {
+          "sha256": "41F5B41E72513D062E52B3018F84EDB19B5D6B0C712A69C45827467BDE530F34",
+          "quote": "项目文档影响：Schema v2.4.1 使 CODEBASE_MAP 与推进基线中的 v2.4 状态、V09 说明需要更新；按本任务卡由控制台统一合并入口与追踪账本，本 DATA 票仅提交影响建议。工具登记影响：没有新增一次性工具或独立 Final。预算 M/80；本宿主未提供可信实际回合、token、费用，均记 null，不能计算可靠空转占比。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/G74-20261014/AI-000242/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/G74-20261014/AI-000242/REPORT.md",
+          "bytes": 2575,
+          "kind": "archive",
+          "lineEnd": 11,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000242.zip",
+          "lineStart": 11
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000242",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          2
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "b4f85bae63e941f59b41bce43366c811",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "0CA01E99FC36E3931F26DBCAC3FE80947F6140CC5D521C6C755CE201C877C8E7",
+          "quote": "## 验证",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/G74-20261014/AI-000243/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/G74-20261014/AI-000243/REPORT.md",
+          "bytes": 2285,
+          "kind": "archive",
+          "lineEnd": 13,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000243.zip",
+          "lineStart": 13
+        },
+        {
+          "sha256": "0CA01E99FC36E3931F26DBCAC3FE80947F6140CC5D521C6C755CE201C877C8E7",
+          "quote": "仅 5 个允许清单文件有源码/测试改动；没有 .unity/.prefab/.asset/.meta、CSV、xlsx 或 Generated 变更。新增 C# 文件的 .meta 由 ENGINE 正常导入产生，不由 CODE 手写。文档影响建议：控制台在统一合并 CODEBASE_MAP.md 时登记新的 P2 只读查询入口及后续 Editor 验证边界；本线未并发改项目入口文档。真实 app/provider token 与成本未提供，记为未知，不估算。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/G74-20261014/AI-000243/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/G74-20261014/AI-000243/REPORT.md",
+          "bytes": 2285,
+          "kind": "archive",
+          "lineEnd": 19,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000243.zip",
+          "lineStart": 19
+        },
+        {
+          "kind": "archive",
+          "originalPath": ".ai-workspace/outputs/G74-20261014/AI-000243/REPORT.md",
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000243.zip",
+          "entryPath": ".ai-workspace/outputs/G74-20261014/AI-000243/REPORT.md",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "sha256": "0CA01E99FC36E3931F26DBCAC3FE80947F6140CC5D521C6C755CE201C877C8E7",
+          "bytes": 2285,
+          "lineStart": 15,
+          "lineEnd": 15,
+          "quote": "DevTools/ShortCycle/Test-CK01CShortCycle.ps1 最终运行成功：success=true，96 个源码文件参与离线编译，282 项既有静态绑定断言通过；新增测试在 ShortCycleCoreTests.Run() 中执行。仅在测试用内存构造临时 Catalog 行，未改生产配表或序列化资源。允许清单内 git diff --check 通过；新解析器 61 行（≤120）。未运行 Unity Editor/Play/Build，不能据此宣称 Editor 集成验收。"
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000243",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告/证据仅标Editor动作及队列lane，未明示调用传输；不由ENGINE_MCP推断Coplay",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {},
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": null,
+      "executionId": "f8cb983d6e854866b006ed4df20de54e",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "C58B00C6E1FF1E5D5289E4EC623AF01AC55206C44323A0F47691C127854FB9A1",
+          "quote": "# AI-000244 · CODE-R01 Editor 编译尾步",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/G74-20261014/AI-000244/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/G74-20261014/AI-000244/REPORT.md",
+          "bytes": 1114,
+          "kind": "archive",
+          "lineEnd": 1,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000244.zip",
+          "lineStart": 1
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000244",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "ae29fe713c794b3080c3c1d694825b07",
+      "attempt": 1,
+      "turnsBudget": null,
+      "sources": [
+        {
+          "sha256": "B8C2EE3FDA065A2A8DE7420A1FABB6531DA76881888B318D6644BA29DA79F8C2",
+          "quote": "- 验证：隔离原生真实格式、149999/150000/199999/200000、追加/轮转/截断/不完整末行/多字节尾读、过期/未来、线程不匹配、去重、WATCH停止态和console Read/Ack/拒绝错误控制台等；当前源码Custom Final 49项通过。先前候选Final通过41项，前置审阅补强后按RepeatReason复跑最终49项。普通MANUAL Status实测worker和console均STRONG，JSON 1793字节；两固定chat真实只读样本见evidence.json。git diff --check无空白错误。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/CONTEXT-REPAIR-20261015/AI-000245/报告.md",
+          "entryPath": ".ai-workspace/outputs/CONTEXT-REPAIR-20261015/AI-000245/报告.md",
+          "bytes": 1999,
+          "kind": "archive",
+          "lineEnd": 6,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000245.zip",
+          "lineStart": 6
+        },
+        {
+          "sha256": "B8C2EE3FDA065A2A8DE7420A1FABB6531DA76881888B318D6644BA29DA79F8C2",
+          "quote": "- 账务/安全：只把单次输入作为提醒代理值，不把累计token、任务账单或全窗口伪装为采样；无新鲜值时null+原因。提示不触发新chat、Yield、重试或模式切换。测试RuntimeRoot和NativeRoot均隔离，未改生产业务状态；正式Status/续租/问题登记走queue API。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/CONTEXT-REPAIR-20261015/AI-000245/报告.md",
+          "entryPath": ".ai-workspace/outputs/CONTEXT-REPAIR-20261015/AI-000245/报告.md",
+          "bytes": 1999,
+          "kind": "archive",
+          "lineEnd": 7,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000245.zip",
+          "lineStart": 7
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000245",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ],
+        "turnsBudget": [
+          1
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell"
+      ],
+      "executionId": "d539a06dcb834c72afc588957b9e490d",
+      "attempt": 1,
+      "turnsBudget": 40,
+      "sources": [
+        {
+          "sha256": "E6C4EA9AF670A34DD5AB1B95BD917ACA450DC2DE90D6959CA95B964A7B01ABDA",
+          "quote": "- 实际验证：单个Custom runner、一次Final，86/86通过（原49项，加18种回执组合的36断言和一次源码解析）。真实DataLaneStatus同时带ControllerThreadId/OwnerThreadId成功；DATA路由revision=2保持。Status含两端提示1790字节（含CRLF），MANUAL与worker状态前后原文一致。允许清单diff已审、diff --check通过。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/AI-000246/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/AI-000246/REPORT.md",
+          "bytes": 2244,
+          "kind": "archive",
+          "lineEnd": 5,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000246.zip",
+          "lineStart": 5
+        },
+        {
+          "sha256": "E6C4EA9AF670A34DD5AB1B95BD917ACA450DC2DE90D6959CA95B964A7B01ABDA",
+          "quote": "- 轮次：预算40（S）；实际app turn、四类空转与计费均null，原因是未暴露精确app turn/计费来源，不拿工具调用替代。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/AI-000246/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/AI-000246/REPORT.md",
+          "bytes": 2244,
+          "kind": "archive",
+          "lineEnd": 10,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000246.zip",
+          "lineStart": 10
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000246",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告未明确工具身份；不由CODE或文中未来任务推断",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "turnsBudget": [
+          13
+        ]
+      },
+      "activityScope": "latest completed attempt",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": null,
+      "executionId": "aaf69b0dc4d545ee976ef14a68454289",
+      "attempt": 1,
+      "turnsBudget": 40,
+      "sources": [
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "本次按用户选择使用历史首样本；六角色中5条可核验，ART_AIGC缺日志。五条最早样本为35,227～35,298 input tokens，cached_input_tokens均为23,040，cache_write_input_tokens均为0。175106/135081等工作后读数未用作启动地板。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 3,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 3
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 角色 | 首样本北京时间（2026-10-15） | input_tokens | cached_input_tokens | 原生日志行 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 5,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 5
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "- 五条均核对session_meta.payload.id与payload.thread_id；字段直接来自payload.usage.input_tokens、cached_input_tokens、cache_write_input_tokens，responseId来自payload.response_id。逐角色证据在samples/，含路径、行号、字节偏移及responseId。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 16,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 16
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "- 五条已有create_thread交接投递、user消息及AGENTS指令标记。不是纯系统或无任务提示的启动基线；没有普通文件读结果进入该首样本。task_started只代表原生chat轮次，不当成正式queue业务卡。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 19,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 19
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "- 首调用明确请求COMMON.md与对应角色交接文件；文件结果在所选usage之后返回，不能把这些文件的当前字节减算成首样本token。交接后/工作后响应不替代本表。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 20,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 20
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 构成 | 可分离实际token | 证据边界 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 26,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 26
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 系统 | null | 有原生元数据与developer消息元数据，无独立token字段；不导出内容 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 28,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 28
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 工具schema | null | 工具调用名可见，不等于完整schema及其token分配 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 29,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 29
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 常驻文件 | null | AGENTS注入标记与明确文件路径可见，无逐文件token分配 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 30,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 30
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 根文档 | null | AGENTS标记存在，普通文件结果尚未回传；无独立token字段 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 31,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 31
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "| 对话 | null | user/developer及交接记录存在，无逐消息token分配 |",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 33,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 33
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "六成分不相加拟合总输入，不按UTF-8字节除4估计精确token。任务包v0.2、追踪表v1.3、v1.5.4来源归因未在本机确认，未作为事实引用。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 35,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 35
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "file-bytes.csv/json按首次明确请求清单及本次实际读取清单列15行，单位仅byte；COMMON按五角色分别列，不宜重复累加为唯一文件总量。表中的数值是测量时完整磁盘文件大小，既不是实际读取范围字节，也不是历史版本字节，更不是token。CORE仅读页首、PIPELINES仅读映射及筛选行；AGENTS仅取当前大小并注明注入文本不保证逐字节相同。未读设计原件、根文档正文或其它线程长历史。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 39,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 39
+        },
+        {
+          "sha256": "51F2AAD653BE6468195920BFBDA720A1C176DBF5020F7B0B783F125B6EFD57BC",
+          "quote": "- 轮次：S/40；实际app turn/四类空转/计费不可见，保持null，不以工具调用或provider响应代替。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/FLOOR-20261015/AI-000247/REPORT.md",
+          "bytes": 5281,
+          "kind": "archive",
+          "lineEnd": 52,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000247.zip",
+          "lineStart": 52
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000247",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ],
+        "turnsBudget": [
+          1
+        ]
+      },
+      "activityScope": "CLI installation/coexistence verification; not routine business comparison",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "unity-cli+pipeline",
+        "coplay-mcp",
+        "computer-use"
+      ],
+      "executionId": "da47ce7ef4114ff08ad51c04489893b2",
+      "attempt": 1,
+      "turnsBudget": 80,
+      "sources": [
+        {
+          "sha256": "316B2854D89B04DA15E2BC5ED1B8ABA95F481E3238B84646221F140AF5430A84",
+          "quote": "执行流水线：ENGINE_MCP（固定chat）；实际执行工具：Unity官方CLI＋Pipeline；Coplay仅初始状态与最终连通检查。computer-use只用于将现有Editor置前以完成包加载。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/COEXIST/报告.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/COEXIST/报告.md",
+          "bytes": 6768,
+          "kind": "archive",
+          "lineEnd": 3,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000248.zip",
+          "lineStart": 3
+        },
+        {
+          "kind": "archive",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/COEXIST/报告.md",
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000248.zip",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/COEXIST/报告.md",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "sha256": "316B2854D89B04DA15E2BC5ED1B8ABA95F481E3238B84646221F140AF5430A84",
+          "bytes": 6768,
+          "lineStart": 30,
+          "lineEnd": 30,
+          "quote": "真实app turn数以正式Complete回执为准，不用21次CLI或44个provider响应替代。M/80；四类空转均为null：同一app turn内混合工具与采集，缺少可独立归类的完整turn证据。模型原生字段gpt-6-astra；不由此推断账号额度或费用。实际发送给模型的完整工具schema字节/数量不可观测，保持null；当前固定ENGINE_MCP chat可见Coplay工具，不因本卡以CLI执行就声称schema已卸载。"
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000248",
+      "turnsActual": null,
+      "tokensOut": null
+    },
+    {
+      "unknownReasons": {
+        "actualTool": "报告明确已执行，来源行已登记",
+        "turnsActual": "最新报告未提供可绑定真实app turn计数；测试次数/工具调用/provider响应不替代。",
+        "tokens": "报告没有本次任务可用token总量；上下文单样本/其它任务测量不作账单，可回退既有provider观测"
+      },
+      "fieldSources": {
+        "actualTool": [
+          0
+        ],
+        "turnsBudget": [
+          1
+        ]
+      },
+      "activityScope": "CODE tooling integration; actual CLI/Editor calls zero",
+      "schemaVersion": 1,
+      "usageCoverage": {
+        "tools": "latest-execution-actual",
+        "turns": "latest-execution-app-turns",
+        "tokens": "unknown"
+      },
+      "tokensCached": null,
+      "actualTool": [
+        "powershell7"
+      ],
+      "executionId": "0fed0a2afa0542ccb0c20f06174157ed",
+      "attempt": 1,
+      "turnsBudget": 120,
+      "sources": [
+        {
+          "sha256": "33F1D058CA4CE866D34E87274003415A96B80B0DAB8D810FB5996E83DB29F185",
+          "quote": "队列车道：CODE。实际工具：PowerShell 7、文件读写与既有工作流脚本；本卡真实 Unity CLI / Editor 调用均为 0。软件集成验收 7/7 匹配；控制台独立验收与真实接管待后继。本卡保持 MANUAL，未创建或绑定 chat、未改日程、未执行 Git；ENGINE_CLI 生产车道当前尚未登记。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "bytes": 5794,
+          "kind": "archive",
+          "lineEnd": 3,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000249.zip",
+          "lineStart": 3
+        },
+        {
+          "sha256": "33F1D058CA4CE866D34E87274003415A96B80B0DAB8D810FB5996E83DB29F185",
+          "quote": "轮次：实际 unknown / 预算 120（L）。当前 execution 未获得可绑定的真实 app turn 样本，不能以工具调用、provider 响应或测试次数代替。四类空转轮次均为 null，原因同上。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "bytes": 5794,
+          "kind": "archive",
+          "lineEnd": 5,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000249.zip",
+          "lineStart": 5
+        },
+        {
+          "sha256": "33F1D058CA4CE866D34E87274003415A96B80B0DAB8D810FB5996E83DB29F185",
+          "quote": "- Get-UsageReport 与正式日报/周报渲染器显示队列车道、实际工具、setup/task/verification、已观测成本与覆盖数；不以车道猜工具，不把 provider token 强分到单次 CLI，不重发或覆盖既有报告。实际渲染器范围补充由主控确认并写入 AI249_范围补充.json。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "bytes": 5794,
+          "kind": "archive",
+          "lineEnd": 13,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000249.zip",
+          "lineStart": 13
+        },
+        {
+          "sha256": "33F1D058CA4CE866D34E87274003415A96B80B0DAB8D810FB5996E83DB29F185",
+          "quote": "自检过程发现并修复：异步流复制返回值污染 JSON、中文 fixture 未固定 UTF-8、导入器编辑返回空、fixture mode/Resume 参数缺项、预算 fixture 少复制依赖、误把任务局部 Fail 视为整个 session 已停。原失败、修复预算及证据保留，无未解决键。另一次报告草案放入非标准目录导致依赖解析失败，未修改生产状态；最终使用正式同族位置的隔离 runner 验证通过。编辑锚点失败未写目标文件。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "bytes": 5794,
+          "kind": "archive",
+          "lineEnd": 29,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000249.zip",
+          "lineStart": 29
+        },
+        {
+          "sha256": "33F1D058CA4CE866D34E87274003415A96B80B0DAB8D810FB5996E83DB29F185",
+          "quote": "2. 新 chat 首响应和最小入口后分别留样；暴露工具名/能力如实记录，完整 schema bytes/tokens 不可测时 null，不因未调用 Coplay 声称 schema 已消失。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "bytes": 5794,
+          "kind": "archive",
+          "lineEnd": 47,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000249.zip",
+          "lineStart": 47
+        },
+        {
+          "sha256": "33F1D058CA4CE866D34E87274003415A96B80B0DAB8D810FB5996E83DB29F185",
+          "quote": "4. 首次实际 SUPERVISED Complete/Fail/Yield 回传在未来真实授权 session 验证 Prepare → 一次实际 app 发送 → Record → Receive；本卡 fixture 不替代。MANUAL 当前由主控 wait 读取，不额外发送、不自行领后继。",
+          "manifestPath": ".ai-workspace/archive/2026-10-16/manifest.json",
+          "originalPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "entryPath": ".ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/INTEGRATE/AI-000249/REPORT.md",
+          "bytes": 5794,
+          "kind": "archive",
+          "lineEnd": 49,
+          "zipPath": ".ai-workspace/archive/2026-10-16/AI-000249.zip",
+          "lineStart": 49
+        }
+      ],
+      "tokensIn": null,
+      "taskId": "AI-000249",
+      "turnsActual": null,
+      "tokensOut": null
+    }
+  ],
+  "source": "Authorized AI-000259 one-time report extraction; no historical report/runtime edits"
+}

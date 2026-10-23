@@ -1,6 +1,10 @@
 # 工程坑账本索引
 
-> 任务卡只点 P 编号；从本表进入相关车道正文。旧入口 `.ai-workspace/KNOWN_PITFALLS.md` 保持兼容。
+> 任务卡只点 P 编号，再读对应车道正文；兼容入口 KNOWN_PITFALLS.md 保持。
+
+2026-10-15 A4复核：P-001～030仅保留索引，历史全文仍可追溯；近20个实有编号的全文保留在车道文件，按当前任务读取，不增加全量预读。原编号缺口和重复编号的不同问题保持，不补造或合并条目。
+
+## 近期条目（正文驻留车道文件）
 
 | 编号 | 一句话 | 车道 | 正文 |
 | --- | --- | --- | --- |
@@ -9,6 +13,27 @@
 | P-048 | Prefab源批准不自动覆盖映射外继承传播，字体与atlas材质须配对核对 | [CODE/ENGINE_MCP/控制端] | [CODE](CODE.md#p-048-prefab-scope) |
 | P-043 | 临时dirty的归属与验证收尾必须随任务建立 | [ENGINE_MCP/控制端] | [ENGINE_MCP](ENGINE.md#p-043-engine-mcp-控制端) / [设计端与控制端](DESIGN.md#p-043-engine-mcp-控制端) |
 | P-042 | 单向边界机制不能代替双向输入故障的因果证据 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-042-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-042-code-engine-mcp) |
+| P-031 | 序列化 TMP Renderer 被置 0 且报告声称“可见” | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-031-engine-mcp) |
+| P-032 | AUTOMATIC 同流水线接力向活动线程自发消息后丢失 | [全流水线] | [CODE](CODE.md#p-032-全流水线) / [ENGINE_MCP](ENGINE.md#p-032-全流水线) / [ART](ART.md#p-032-全流水线) / [设计端与控制端](DESIGN.md#p-032-全流水线) |
+| P-033 | 上下文压缩后旧指令覆盖 activeTask 并误判孤儿 | [全流水线] | [CODE](CODE.md#p-033-全流水线) / [ENGINE_MCP](ENGINE.md#p-033-全流水线) / [ART](ART.md#p-033-全流水线) / [设计端与控制端](DESIGN.md#p-033-全流水线) |
+| P-034 | 换图任务缺少视觉载体却只授权既有字段 | [控制端/ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-034-控制端-engine-mcp) / [设计端与控制端](DESIGN.md#p-034-控制端-engine-mcp) |
+| P-035 | 探针父子两级关闭导致人工段需两步激活 | [设计端/ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-035-设计端-engine-mcp) / [设计端与控制端](DESIGN.md#p-035-设计端-engine-mcp) |
+| P-036 | stub runner 通过不等于 Unity Editor API 编译通过 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-036-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-036-code-engine-mcp) |
+| P-037 | 不能仅靠完成消息维持监管任务推进 | [控制端/全流水线] | [CODE](CODE.md#p-037-控制端-全流水线) / [ENGINE_MCP](ENGINE.md#p-037-控制端-全流水线) / [ART](ART.md#p-037-控制端-全流水线) / [设计端与控制端](DESIGN.md#p-037-控制端-全流水线) |
+| P-038 | 场景组件误放 Editor 程序集导致不可挂载 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-038-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-038-code-engine-mcp) |
+| P-039 | 独立 position/localPosition 桩会掩盖坐标空间混用 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-039-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-039-code-engine-mcp) |
+| P-040 | Group生命周期全量写子件导致手调值无法保持 | [CODE] | [CODE](CODE.md#p-040-code) |
+| P-042 | 先整体中转导入再识别规划不满足美术工程导入流程 | [控制端/ART/ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-042-控制端-art-engine-mcp) / [ART](ART.md#p-042-控制端-art-engine-mcp) / [设计端与控制端](DESIGN.md#p-042-控制端-art-engine-mcp) |
+| P-041 | Sprite多Pass声明和RT字段计数不能代替实际合并绘制及预算证明 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-041-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-041-code-engine-mcp) |
+| P-044 | 0-key曲线被误当有效运动映射 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-044-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-044-code-engine-mcp) |
+| P-045 | 完成机位缓存不能替代移动中的实际到位判断 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-045-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-045-code-engine-mcp) |
+| P-046 | 空间布局必须用世界线区间与机位表定义 | [设计端/CODE/ENGINE_MCP] | [CODE](CODE.md#p-046-设计端-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-046-设计端-code-engine-mcp) / [设计端与控制端](DESIGN.md#p-046-设计端-code-engine-mcp) |
+| P-047 | 每步一任务会放大上下文、回报与验证成本 | [控制端/全流水线] | [CODE](CODE.md#p-047-控制端-全流水线) / [ENGINE_MCP](ENGINE.md#p-047-控制端-全流水线) / [ART](ART.md#p-047-控制端-全流水线) / [设计端与控制端](DESIGN.md#p-047-控制端-全流水线) |
+
+## P-001～030 历史索引
+
+| 编号 | 一句话 | 车道 | 正文 |
+| --- | --- | --- | --- |
 | P-001 | Sprite Mesh Type 通过 TextureImporterSettings 设置（2022根因，6000.3.24f1复核适用） | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-001-engine-mcp) |
 | P-002 | EditorSceneManager 使用 UnityEditor.SceneManagement 命名空间 | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-002-engine-mcp) |
 | P-003 | 反射调用不得依赖 Color32 到 Color 的隐式转换 | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-003-engine-mcp) |
@@ -39,19 +64,15 @@
 | P-028 | 跨屏 Gate 登记全空间 Renderer，退化为整组隐藏 | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-028-engine-mcp) |
 | P-029 | 序列化禁用 Renderer 架空启用集合断言 | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-029-engine-mcp) |
 | P-030 | 解散聚合类时未分配引导职责 | [设计端] | [设计端与控制端](DESIGN.md#p-030-设计端) |
-| P-031 | 序列化 TMP Renderer 被置 0 且报告声称“可见” | [ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-031-engine-mcp) |
-| P-032 | AUTOMATIC 同流水线接力向活动线程自发消息后丢失 | [全流水线] | [CODE](CODE.md#p-032-全流水线) / [ENGINE_MCP](ENGINE.md#p-032-全流水线) / [ART](ART.md#p-032-全流水线) / [设计端与控制端](DESIGN.md#p-032-全流水线) |
-| P-033 | 上下文压缩后旧指令覆盖 activeTask 并误判孤儿 | [全流水线] | [CODE](CODE.md#p-033-全流水线) / [ENGINE_MCP](ENGINE.md#p-033-全流水线) / [ART](ART.md#p-033-全流水线) / [设计端与控制端](DESIGN.md#p-033-全流水线) |
-| P-034 | 换图任务缺少视觉载体却只授权既有字段 | [控制端/ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-034-控制端-engine-mcp) / [设计端与控制端](DESIGN.md#p-034-控制端-engine-mcp) |
-| P-035 | 探针父子两级关闭导致人工段需两步激活 | [设计端/ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-035-设计端-engine-mcp) / [设计端与控制端](DESIGN.md#p-035-设计端-engine-mcp) |
-| P-036 | stub runner 通过不等于 Unity Editor API 编译通过 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-036-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-036-code-engine-mcp) |
-| P-037 | 不能仅靠完成消息维持监管任务推进 | [控制端/全流水线] | [CODE](CODE.md#p-037-控制端-全流水线) / [ENGINE_MCP](ENGINE.md#p-037-控制端-全流水线) / [ART](ART.md#p-037-控制端-全流水线) / [设计端与控制端](DESIGN.md#p-037-控制端-全流水线) |
-| P-038 | 场景组件误放 Editor 程序集导致不可挂载 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-038-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-038-code-engine-mcp) |
-| P-039 | 独立 position/localPosition 桩会掩盖坐标空间混用 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-039-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-039-code-engine-mcp) |
-| P-040 | Group生命周期全量写子件导致手调值无法保持 | [CODE] | [CODE](CODE.md#p-040-code) |
-| P-042 | 先整体中转导入再识别规划不满足美术工程导入流程 | [控制端/ART/ENGINE_MCP] | [ENGINE_MCP](ENGINE.md#p-042-控制端-art-engine-mcp) / [ART](ART.md#p-042-控制端-art-engine-mcp) / [设计端与控制端](DESIGN.md#p-042-控制端-art-engine-mcp) |
-| P-041 | Sprite多Pass声明和RT字段计数不能代替实际合并绘制及预算证明 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-041-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-041-code-engine-mcp) |
-| P-044 | 0-key曲线被误当有效运动映射 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-044-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-044-code-engine-mcp) |
-| P-045 | 完成机位缓存不能替代移动中的实际到位判断 | [CODE/ENGINE_MCP] | [CODE](CODE.md#p-045-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-045-code-engine-mcp) |
-| P-046 | 空间布局必须用世界线区间与机位表定义 | [设计端/CODE/ENGINE_MCP] | [CODE](CODE.md#p-046-设计端-code-engine-mcp) / [ENGINE_MCP](ENGINE.md#p-046-设计端-code-engine-mcp) / [设计端与控制端](DESIGN.md#p-046-设计端-code-engine-mcp) |
-| P-047 | 每步一任务会放大上下文、回报与验证成本 | [控制端/全流水线] | [CODE](CODE.md#p-047-控制端-全流水线) / [ENGINE_MCP](ENGINE.md#p-047-控制端-全流水线) / [ART](ART.md#p-047-控制端-全流水线) / [设计端与控制端](DESIGN.md#p-047-控制端-全流水线) |
+
+## 2026-10-21 CLI磨合期新增
+
+- [P-052 持久对象不适用于SaveToSerializedFileAndForget](ENGINE.md#p-052)
+- [P-053 m_Component不可按普通SerializedProperty数组删除](ENGINE.md#p-053)
+- [P-054 SceneAsset属于UnityEditor](ENGINE.md#p-054)
+- [P-055 正则词边界被传成U+0008](ENGINE.md#p-055)
+- [P-056 Unity结构体JSON自引用](ENGINE.md#p-056)
+- [P-057 capture save_path进入Assets解析并Refresh](ENGINE.md#p-057)
+- [P-058 启动后首Ready RPC返回400，根因未证](ENGINE.md#p-058)
+- [P-059 队列Save-TextFile替换失败](ENGINE.md#p-059)
+- [P-060 长上下文与连续失败并存，不据此证明因果](ENGINE.md#p-060)

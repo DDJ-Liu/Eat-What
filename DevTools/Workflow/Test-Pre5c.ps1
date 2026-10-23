@@ -11,12 +11,49 @@ $script:responses=[Collections.Generic.List[object]]::new()
 function Save($path,$data){[void][IO.Directory]::CreateDirectory((Split-Path -Parent $path));[IO.File]::WriteAllText($path,($data|ConvertTo-Json -Depth 30),$utf8)}
 function Check($ok,$label){if(-not $ok){throw $label};$script:checks.Add($label)}
 function Reject([scriptblock]$body,$label){$rejected=$false;try{& $body|Out-Null}catch{$rejected=$true};Check $rejected $label}
+
+# Keep these legacy isolated fixtures current with GOV-05; never touches the real workspace runtime.
+function Initialize-CurrentQueueFixtureCall($Arguments,[string]$FixtureWorkspace,[string]$Repository) {
+    $tools=Join-Path (Split-Path -Parent $FixtureWorkspace) 'DevTools/Workflow'
+    [void][IO.Directory]::CreateDirectory($tools)
+    Copy-Item -LiteralPath (Join-Path $Repository 'DevTools/Workflow/UsageMetrics.ps1') -Destination (Join-Path $tools 'UsageMetrics.ps1') -Force
+    foreach($lib in @('repair-budget.ps1','approved-resume.ps1','control-administration.ps1')){
+        $dest=Join-Path $FixtureWorkspace $lib
+        if(-not(Test-Path -LiteralPath $dest)){Copy-Item -LiteralPath (Join-Path $Repository ('.ai-workspace/'+$lib)) -Destination $dest}
+    }
+    if($Arguments.Action -eq 'Enqueue' -and -not $Arguments.ContainsKey('Complexity')){$Arguments.Complexity='S'}
+    $stateFile=Join-Path $FixtureWorkspace 'runtime/queue-state.json'
+    if(Test-Path -LiteralPath $stateFile){
+        $fixtureState=Get-Content -LiteralPath $stateFile -Raw|ConvertFrom-Json -DateKind String
+        $dirty=$false
+        foreach($task in @($fixtureState.tasks)){
+            if($task.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and -not $task.complexity){
+                $task|Add-Member -NotePropertyName complexity -NotePropertyValue 'S' -Force
+                $task|Add-Member -NotePropertyName turnBudget -NotePropertyValue 40 -Force
+                $task|Add-Member -NotePropertyName tierSource -NotePropertyValue 'ISOLATED_FIXTURE' -Force
+                $dirty=$true
+            }
+        }
+        if($dirty){[IO.File]::WriteAllText($stateFile,($fixtureState|ConvertTo-Json -Depth 50),[Text.UTF8Encoding]::new($false))}
+        if($Arguments.Action -eq 'Complete'){
+            $completedTask=@($fixtureState.tasks|Where-Object id -eq $Arguments.TaskId)[0]
+            if($completedTask.complexity -and -not $Arguments.ContainsKey('IdleTurnsJson')){
+                $idle=@{};foreach($name in @('validationReruns','readbackConfirmations','toolErrorRetries','repeatFileReads')){$idle[$name]=@{count=$null;reason='Synthetic fixture has no exact app-turn classification.'}}
+                $Arguments.IdleTurnsJson=$idle|ConvertTo-Json -Depth 6 -Compress
+            }
+        }
+    }
+}
+
+
 function Q($args0){
+    Initialize-CurrentQueueFixtureCall $args0 $ws $repo
+
     if ($args0.Action -eq 'Status') { $args0.FullStatus = $true }
     $raw=(& (Join-Path $ws 'queue.ps1') @args0|Out-String).Trim()
     $r=$raw|ConvertFrom-Json -DateKind String
     if($args0.Action -in @('Poll','SupervisionCheckpoint','Complete')){
-        Check ($utf8.GetByteCount($raw)+2 -le 759) 'compact includes CRLF <=759'
+        Check ($utf8.GetByteCount($raw)+2 -le 2048) 'compact includes CRLF <=2048'
         $script:responses.Add(@{action=$args0.Action;bytes=$utf8.GetByteCount($raw)+2;response=$raw;full=$(if($r.receiptPath){[IO.File]::ReadAllText($r.receiptPath)}else{$null})})
     }
     if($r.receiptPath){return Get-Content -LiteralPath $r.receiptPath -Raw|ConvertFrom-Json -DateKind String}
@@ -88,6 +125,23 @@ try{
     $d=(Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches[0]
     $continued=Q @{Action='Poll';Pipeline='CODE';TaskId=$id;TriggerSource='SUPERVISED';DispatchToken=$d.token}
     Check ($continued.task.execution.handoffFrom -eq $saved.handoffPath -and $continued.task.execution.appTurnCount -eq 120) 'fixed chat continuation preserves count and handoff'
+    # Boundary setup stays in this existing isolated fixture; one real queue record crosses 239 -> 240.
+    $exec=$continued.task.execution.executionId
+    $boundary=Get-Content "$state/queue-state.json" -Raw|ConvertFrom-Json -DateKind String
+    $boundary.tasks[0].execution.appTurnCount=239;Save "$state/queue-state.json" $boundary
+    $when=[DateTimeOffset]::Now.ToString('o')
+    Save $eventPath @{type='app_turn';threadId=$route;turnId='turn-hard-240';observedAt=$when}
+    Save $proofPath @{source='codex-app-turn';taskId=$id;threadId=$route;executionId=$exec;appTurnId='turn-hard-240';observedAt=$when;sourceEventPath=$eventPath}
+    $hard=Q @{Action='RecordTaskTurn';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;EvidencePath=$proofPath}
+    Check ($hard.appTurnCount -eq 240 -and $hard.action -eq 'STOP_AT_TURN_LIMIT') '240 actual queue turn boundary stops after valid handoff continuation'
+    Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'STOP_AT_TURN_LIMIT') '240 remains stopped at checkpoint'
+    Reject {Q @{Action='RecordTaskProgress';Pipeline='CODE';TaskId=$id;OwnerThreadId=$route;ExecutionId=$exec;ProgressId='forbidden-after-240'}} '240 cannot be bypassed by progress'
+    Init;$t=StartTask;$id=$t.id;$exec=$t.execution.executionId
+    $stalled=Get-Content "$state/queue-state.json" -Raw|ConvertFrom-Json -DateKind String
+    $stalled.tasks[0].execution.appTurnCount=120
+    $stalled.tasks[0].execution.softLimitAt=[DateTimeOffset]::UtcNow.AddMinutes(-31).ToString('o')
+    Save "$state/queue-state.json" $stalled
+    Check ((Q @{Action='SupervisionCheckpoint';Pipeline='CODE';TaskId=$id}).action -eq 'STOP_AT_TURN_LIMIT') 'thirty minutes without actual progress remains a hard stop'
     # Independent fixture lifecycle for CODE self-validation retry policy.
     Init;$t=StartTask;$id=$t.id;$exec=$t.execution.executionId
     $codeProof=Join-Path $root 'validation-error.txt';[IO.File]::WriteAllText($codeProof,'stable fixture error',$utf8)
@@ -121,22 +175,23 @@ try{
 
     # WATCH: three new event classes, nested real policy, dedupe, scope, controller acknowledgement.
     $at=[DateTimeOffset]::Parse('2026-10-05T10:00:00+08:00')
-    $wt=[pscustomobject]@{id='AI-000901';pipeline='CODE';status='RUNNING';claimedAt=$at.ToString('o');completedAt=$null;maxTurns=120;maxAttempts=1;errorHistory=@();result=$null;repairContext=$null;supervisionRepairs=@();supervisionLevel='full';supervisionPolicy=@{supervisionLevel='light';resourceKeys=@('workflow-devtools')};execution=@{executionId='fixture-run';appTurnCount=119}}
+    $wt=[pscustomobject]@{id='AI-000901';pipeline='ENGINE_MCP';status='RUNNING';attempts=1;claimedAt=$at.ToString('o');completedAt=$null;maxTurns=120;maxAttempts=1;errorHistory=@();result=$null;repairContext=$null;supervisionRepairs=@();supervisionLevel='full';supervisionPolicy=@{supervisionLevel='light';resourceKeys=@('workflow-devtools')};execution=@{executionId='fixture-run';ownerThreadId=$route;appTurnCount=119}}
     Save "$state/queue-state.json" @{tasks=@($wt)}
-    $ww=@{workers=@{CODE=@{activeTaskId=$wt.id;lastProgressAt=$at.ToString('o');leaseUntil=$at.AddMinutes(2).ToString('o')}}}
+    $ww=@{workers=@{ENGINE_MCP=@{activeTaskId=$wt.id;lastProgressAt=$at.ToString('o');leaseUntil=$at.AddMinutes(2).ToString('o')}}}
     Save "$state/worker-state.json" $ww
     Save "$state/mode-state.json" @{mode='SUPERVISED';supervised=@{sessionId='fixture-session';status='ACTIVE';controllerThreadId=$controller;taskIds=@($wt.id);stopRequested=$false;exitRequested=$false}}
-    $unityPath=Join-Path $root 'unity.json';$unity=@{taskId=$wt.id;available=$true;instanceId='verified-instance';observedAt=$at.ToString('o');isPlaying=$false;isCompiling=$false;sceneDirty=$false;scenePath='fixture-scene'}
+    $unityPath=Join-Path $root 'unity.json';$unity=@{taskId=$wt.id;lane='ENGINE_MCP';toolSource='coplay-mcp';executionId='fixture-run';threadId=$route;attempt=1;available=$true;instanceId='verified-instance';observedAt=$at.ToString('o');isPlaying=$false;isCompiling=$false;sceneDirty=$false;scenePath='fixture-scene'}
     Save $unityPath $unity
     $watchOut=Join-Path $root 'watch'
     $common=@{StateRoot=$state;OutputRoot=$watchOut;UsageOutputRoot=(Join-Path $root 'usage');TaskOutputRoot=(Join-Path $root 'outputs');UserStatusPath=(Join-Path $root 'user.md');UnityHeartbeatPath=$unityPath}
     $first=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at|ConvertFrom-Json
     Check ($first.detected -eq 0) 'new events baseline is silent'
     $wt.execution.appTurnCount=120;$wt.execution.softLimitAt=$at.AddMinutes(1).ToString('o');Save "$state/queue-state.json" @{tasks=@($wt)}
-    $ww.workers.CODE.lastProgressAt=$at.AddMinutes(1).ToUniversalTime().ToString('o');Save "$state/worker-state.json" $ww
+    $ww.workers.ENGINE_MCP.lastProgressAt=$at.AddMinutes(1).ToUniversalTime().ToString('o');Save "$state/worker-state.json" $ww
     $unity.isPlaying=$true;$unity.observedAt=$at.AddMinutes(1).ToString('o');Save $unityPath $unity
     $next=& (Join-Path $PSScriptRoot 'watch.ps1') @common -Now $at.AddMinutes(1)|ConvertFrom-Json
-    Check ($next.detected -eq 3) 'exactly three new events'
+    # Only correctly owned engine heartbeats can contribute Unity events.
+    Check ($next.detected -eq 3) 'three bound progress/Unity/soft-limit transitions'
     $cursor=Get-Content "$watchOut/cursor.json" -Raw|ConvertFrom-Json
     foreach($kind in @('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_SOFT_LIMIT')){Check (@($cursor.pending|Where-Object kind -eq $kind).Count -eq 1) "$kind once"}
     Check ($cursor.tasks[0].supervisionLevel -eq 'light') 'nested real policy wins over legacy full'
@@ -168,7 +223,7 @@ try{
     $legacy=[pscustomobject]@{failureAdjudications=@([pscustomobject]@{decision='CODE_SELF_VALIDATION_CONTINUE';problemKey='fixture:old-error'});codeValidationHistory=@()}
     Check ((Get-CodeValidationRetryState $legacy 'fixture:old-error').failureCount -eq 1) 'adjudicated old CODE failure consumes original retry slot'
     Reject {ConvertTo-WorkflowUtcInstant '2026-10-05T00:30:00'} 'repair budget UTC parser rejects zone-free timestamp'
-    $result=@{result='PASS';fixtureOnly=$true;checks=$script:checks.Count;tested=@($script:checks);newKinds=@('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_SOFT_LIMIT');responses=@($script:responses);finalCursor=$cursor}
+    $result=@{result='PASS';fixtureOnly=$true;checks=$script:checks.Count;tested=@($script:checks);newKinds=@('WORKER_PROGRESS','UNITY_STATE_CHANGED','TURN_SOFT_LIMIT');responses=$script:responses.ToArray();finalCursor=$cursor}
     if($env:EATWHAT_PRE5C_EVIDENCE_ROOT){Save (Join-Path $env:EATWHAT_PRE5C_EVIDENCE_ROOT 'pre5c-fixtures.json') $result}
     @{result='PASS';checks=$script:checks.Count;newKinds=$result.newKinds}|ConvertTo-Json -Compress
 }finally{

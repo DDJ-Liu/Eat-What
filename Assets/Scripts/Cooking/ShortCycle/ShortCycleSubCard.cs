@@ -85,23 +85,54 @@ namespace EatWhat.Cooking.ShortCycle
             out ShortCycleSlotBlockBinding binding,
             out string diagnostic)
         {
+            return TryResolveCore(slot == null ? null : slot.standard_ingredient, slot == null ? 0 : slot.required_count, ReadRequirements(slot), itemResolver, tagResolver,
+                heldCountResolver, unlockResolver, actionIcon, out binding, out diagnostic);
+        }
+
+        public static bool TryResolve(
+            RecipeSlotView slot,
+            Func<string, CK01ItemData> itemResolver,
+            Func<string, CK01TagData> tagResolver,
+            Func<string, int> heldCountResolver,
+            Func<string, bool> unlockResolver,
+            Sprite actionIcon,
+            out ShortCycleSlotBlockBinding binding,
+            out string diagnostic)
+        {
+            var requirements = new List<ShortCycleSubstituteRequirement>();
+            if (slot != null) foreach (var sub in slot.substitutes)
+                requirements.Add(new ShortCycleSubstituteRequirement(sub.anchor_index, sub.item_id, sub.required_count));
+            return TryResolveCore(slot == null ? null : slot.standard_ingredient.item_id, slot == null ? 0 : slot.standard_ingredient.required_count, requirements, itemResolver, tagResolver,
+                heldCountResolver, unlockResolver, actionIcon, out binding, out diagnostic);
+        }
+
+        private static bool TryResolveCore(
+            string standardId, int requiredCount, IList<ShortCycleSubstituteRequirement> requirements,
+            Func<string, CK01ItemData> itemResolver,
+            Func<string, CK01TagData> tagResolver,
+            Func<string, int> heldCountResolver,
+            Func<string, bool> unlockResolver,
+            Sprite actionIcon,
+            out ShortCycleSlotBlockBinding binding,
+            out string diagnostic)
+        {
             binding = null;
-            if (slot == null || itemResolver == null || tagResolver == null ||
+            if (string.IsNullOrEmpty(standardId) || itemResolver == null || tagResolver == null ||
                 heldCountResolver == null || unlockResolver == null)
             {
                 diagnostic = "Slot binding requires T2 data and all explicit resolvers.";
                 return false;
             }
 
-            var standard = itemResolver(slot.standard_ingredient);
+            var standard = itemResolver(standardId);
             if (standard == null)
             {
-                diagnostic = "T2 standard ingredient '" + slot.standard_ingredient + "' could not be resolved.";
+                diagnostic = "T2 standard ingredient '" + standardId + "' could not be resolved.";
                 return false;
             }
 
             var cards = new List<ShortCycleSubCardBinding>();
-            foreach (var requirement in ReadRequirements(slot))
+            foreach (var requirement in requirements)
             {
                 var item = itemResolver(requirement.ItemId);
                 if (item == null)
@@ -128,8 +159,8 @@ namespace EatWhat.Cooking.ShortCycle
             binding = new ShortCycleSlotBlockBinding
             {
                 StandardItem = standard,
-                StandardHeldCount = Math.Max(0, heldCountResolver(slot.standard_ingredient)),
-                StandardRequiredCount = Math.Max(1, slot.required_count),
+                StandardHeldCount = Math.Max(0, heldCountResolver(standardId)),
+                StandardRequiredCount = Math.Max(1, requiredCount),
                 ActionIcon = actionIcon,
                 Substitutes = cards.AsReadOnly()
             };

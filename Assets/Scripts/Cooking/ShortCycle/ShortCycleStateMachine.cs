@@ -317,6 +317,16 @@ namespace EatWhat.Cooking.ShortCycle
             return new ShortCycleTransitionResult { Succeeded = true, ProcessResult = processResult };
         }
 
+        public ShortCycleTransitionResult TryRestorePhase1FromHandoff()
+        {
+            if (!ReferenceEquals(currentState, phase2HandoffState))
+                return ShortCycleTransitionResult.Failure("Only a Phase2 handoff can return to Phase1.");
+            // Already-committed placeholders stay cleared; never refund or commit again on return.
+            context.current_phase = ShortCyclePhase.Phase1;
+            ChangeState(phase1State);
+            return ShortCycleTransitionResult.Success();
+        }
+
         public ShortCycleTransitionResult TryEscape()
         {
             if (!ReferenceEquals(currentState, phase0State))

@@ -23,6 +23,16 @@ namespace EatWhat.Tools.Localization
             RefreshText();
         }
 
+        /// <summary>Dynamic content retains its existing binding as the only TMP writer.
+        /// The supplied fallback is the caller's current visible value, including missing-key tokens.</summary>
+        public static void ConfigureContent(TMP_Text label, string key, string visibleFallback)
+        {
+            if (label == null) return;
+            var binding = label.GetComponent<LocalizedText>();
+            if (binding != null) binding.Configure(key, visibleFallback);
+            else label.text = visibleFallback ?? string.Empty;
+        }
+
         public void RefreshText()
         {
             var label = GetComponent<TMP_Text>();

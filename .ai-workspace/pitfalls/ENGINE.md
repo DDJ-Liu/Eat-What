@@ -1,5 +1,7 @@
 # 工程坑账本 · ENGINE_MCP
 
+2026-10-22 原生接入更新：AI303 attempt3已CONTROL独立5合同/13事实通过；18次官方CLI、共享Ready一次RPC/400重试0、298反射结构体和同fresh run三张screen/no-save原PNG均核实，Stop clean Edit/新增ConsoleError0。原305两处调用参数须用实际动作常量；原生通过不代表人工视觉通过，慢启动/旧400根因仍未证，PackageCache及native save_path/Refresh分支未改。证据[原生独立验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-303.json)，具体调用复用304与303 attempt3交接；下方带日期待验状态保留为历史。
+
 > 从 [INDEX.md](INDEX.md) 按 P 编号定位。跨车道/全流水线条目会在相关车道重复，正文语义保持一致。
 
 <a id="p-043-engine-mcp-控制端"></a>
@@ -363,3 +365,83 @@
 - 记录日期：2026-09-23。
 
 
+
+<a id="p-052"></a>
+
+## P-052 | [ENGINE_CLI/CODE/CONTROL] 持久对象不适用于SaveToSerializedFileAndForget
+
+已持久对象会被Unity拒绝，Build磁盘未更新。用已验证的非持久快照/原生保存策略；EditorBuildSettings.scenes赋值后必须回读磁盘，不以保存标记当持久化。
+
+来源：AI289 attempt2正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+
+<a id="p-053"></a>
+
+## P-053 | [ENGINE_CLI/CODE/CONTROL] m_Component不可按普通SerializedProperty数组删除
+
+DeleteArrayElementAtIndex对GameObject.m_Component被拒；managed null旧槽不可拿embedded MonoScript替代。有效组件按审定Editor API；null旧槽需精确归属和另批单字段修复，不能把本例许可当通用文本写许可。
+
+来源：AI289 attempt5正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+
+<a id="p-054"></a>
+
+## P-054 | [ENGINE_CLI/CODE/CONTROL] SceneAsset属于UnityEditor
+
+UnityEngine.SceneAsset不存在；发载荷前核真实Unity引用/命名空间，避免把首个写入载荷当类型试验。
+
+来源：AI289 attempt1正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+
+<a id="p-055"></a>
+
+## P-055 | [ENGINE_CLI/CODE/CONTROL] 正则词边界在输入中成为U+0008
+
+原AI289/a4已保存载荷在进入wrapper前含两处U+0008（UTF8 byte1481/1594），早先生成环节未证；不将其归因于ProcessStartInfo.ArgumentList。单纯往返不能修复已损坏输入或literal z语义。AI297在原CheckManagedTool之后、进程/进度start之前加入严格UTF8与转义JSON往返检查，原字符串仍经原ArgumentList传递；拒绝原生NUL/非TAB-LF-CR的C0及孤立surrogate，给零基参数/字符/UTF8字节定位，不静默改写。
+
+实际CONTROL独立4合同/76断言通过：真实收参9参数与空向量、反斜杠/引号/中文emoji/合法JSON转义全C0保持；31拒发发生在进程前。既有入口`DevTools/Workflow/Test-EngineCli.ps1 -Case PayloadBytes`，证据[独立验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-297.json)。原生SMOKE尚待，不倒改历史失败。
+
+<a id="p-056"></a>
+
+## P-056 | [ENGINE_CLI/CODE/CONTROL] Unity结构体JSON自引用
+
+Vector3.normalized会令默认JsonConvert进入派生属性环。证据使用Assets外共用`DevTools/Workflow/UnityEvidenceJson.cs`七类型显式标量converter，Bounds保留center/extents；Ignore仅其它引用环兜底，不直接序列化整个Camera/GameObject/Component。
+
+AI298 attempt2已CONTROL独立四合同/15复核、真实Unity引用165结构体+14帧/反射caller断言通过。既有`Test-EngineCli.ps1 -Case EvidenceJson`双流按字节采集；严格UTF8只允许起始BOM，完整单JSON对象拒绝尾随内容，字符串内UFEFF保留。无helper静态引用的同形eval反射载入已离线验证；可复用DLL/原样eval调用见AI298 attempt2/ENGINE-HANDOFF.json，独立证据[验收记录](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-298.json)。真实Editor/CLI/SMOKE未执行，不写原生已通过。
+
+原首轮三失败（MONO_PATH实现程序集冲突、首BOM、合并日志尾UFEFF）及CODE_STOP保留；新双流无BOM不证明旧额外BOM来自哪条流。已有165部分结果不单独构成整卡通过；最终通过是在正式续行后完整driver/caller已核。
+
+<a id="p-057"></a>
+
+## P-057 | [ENGINE_CLI/CODE/CONTROL] capture save_path进入Assets解析并Refresh
+
+绝对/工作区路径经官方ProjectPaths变为Assets前缀。2026-10-21 AI299共享wrapper CapturePng已独立5合同/16复核/181断言通过：保存意图在批准输出根内解析，原生命令强制screen/no-save，保留原始流；严格PNG/CRC/IHDR/zlib完整流/Adler32/扫描行校验先于CreateNew，拒链接/越界/覆盖/损坏流。原生包缓存及其旧save_path/Refresh分支未修改，受管截图不得误入；实际Editor链留AI303（原302未领取行政替代），离线通过不冒充原生通过。
+
+回归入口：DevTools/Workflow/Test-EngineCli.ps1 -Case CapturePng；调用例见outputs/AI289-CLI-REPAIR-20261021/AI-000299/attempt2/CALL-EXAMPLE.md。证据outputs/control/AI289-CLI-REPAIR-20261021/independent-review-299.json。原AI289 attempt7和299首轮三失败/旧原件完整保留；299根1/5不退款。
+
+<a id="p-058"></a>
+
+## P-058 | [ENGINE_CLI/CODE/CONTROL] 启动后首Ready RPC返回400，根因未证
+
+错误结束后约0.474秒host Ready仅时间相关，原400根因仍未证明。2026-10-21 AI300源码/离线已独立5合同/14复核/32断言通过：既有wrapper StartupReadyContextPath绑定正式task/run/root与新鲜健康身份，等待精确宿主日志后发送固定只读探针；15秒/61次本地读、30秒总窗、最多3次RPC，只精确启动期只读400可重试。权限/UNKNOWN/503/错目标/普通调用/写入不重试；原生仍待303（原302未领取行政替代）。
+
+回归：DevTools/Workflow/Test-EngineCli.ps1 -Case ReadyHandshake（OutputRoot用绝对路径）；调用例见outputs/AI289-CLI-REPAIR-20261021/AI-000300/CALL-EXAMPLE.md，独立证据outputs/control/AI289-CLI-REPAIR-20261021/independent-review-300.json。原289错误、300内部编译失败、CONTROL首次相对路径调用失误保留；后者路径修正后原Case通过，未修改实现迎合测试。
+
+<a id="p-059"></a>
+
+2026-10-21 AI303首次原生SMOKE复核：15秒本地Ready等待失败，宿主实测Arm后28.457秒才Ready；RPC0/HTTP4000，慢启动原因及旧400仍未知。实际普通eval原流为outer success/data/result、inner eval success/result，当前解析器取top.result形成静态接入缺陷；Capture亦未到达。原生停止恢复clean Edit/新增Error0。AI304同303根修复已派，时限与严格封装需离线独立通过再配对原303原生验证，不把调整时限或fixture当现场已修。证据outputs/control/AI289-CLI-REPAIR-20261021/independent-failure-review-303-attempt1.json。
+
+2026-10-21 AI304修复已CONTROL独立5合同/16复核/274断言通过：共享等待default45/hard60/Arm90，entry30与健康/最多3次只读400边界保持；严格默认CLI outer/data/result、target/code/diagnostics与CaptureTargetPort对接，原PNG检查字节保全。原28.457秒时序仅离线合成回归，慢启动/旧400根因未证明。原303已正式同cycle配对attempt2原生SMOKE，根仍1/5；尚不能称原生Ready/捕图修好。复用Test-EngineCli.ps1 -Case ProtocolRepair和304 CALL-EXAMPLE，不新建runner。
+
+2026-10-21 原303a2已实际通过新共享Ready一次RPC/结构体序列化/首张原生PNG；之后自身载荷DispatchAction("OpenCover")错误，真实ShortCycleActionNames.OpenCover为shortcycle.open_cover。未执行SelectRecipe也必须引用实际常量；动作显示名/常量符号名不能当wire ID，不改产品注册表迎合错误。原5合同只4过、Catalog/Browse无图，失败后停止清理，固定CODE305仅两候选参数修正/允许diff，原载荷与原图完整保留；下一原303新run仍完整三图。该错误与旧HTTP400不同，旧原因未证。
+
+## P-059 | [ENGINE_CLI/CODE/CONTROL] 队列Save-TextFile替换失败
+
+原Move-Item覆盖在受管start、底层Process.Start前失败，遗留tmp保留。采用同目录GUID临时文件完整写后File.Move覆盖；错误上抛、不预删目标、不吞错/无限重试/旧快照回写。底层锁/并发原因未证。2026-10-21 AI296交付并经CONTROL独立6合同/18断言通过；[独立复核](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-296.json)，[实际回归与报告](../outputs/AI289-CLI-REPAIR-20261021/AI-000296/REPORT.md)。原生SMOKE仍待。
+
+来源：AI289 attempt9正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+
+<a id="p-060"></a>
+
+## P-060 | [ENGINE_CLI/CODE/CONTROL] 长上下文与连续失败并存，不据此证明因果
+
+ENGINE第8轮约438K单provider input只是代理量，非完整窗口；出现多轮错误不能证明由上下文造成。用户2026-10-21明确取消本批重载前置，仍提示而不换chat/自动重载/设新门。
+
+来源：AI289 attempt8正式失败及CONTROL独立复核；本批派发2026-10-21。AI301已独立4合同/12复核/33断言通过，既有Test-EngineCli UsageClassification 12项与Test-DocumentArchive两简表case 21项验证来源SHA绑定、CLI(磨合)/类别/车道/真实工具分列、unknown及旧计数保全；见outputs/control/AI289-CLI-REPAIR-20261021/independent-review-301.json。这不证明上下文致错或原生修复；原生冒烟由AI303执行，原302未领取行政替代，旧失败不倒改。

@@ -1,5 +1,8 @@
 # DATA 隔离导表管线
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](../../.ai-workspace/toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
 ## 2026-10-14 AI-000241 退出后字体发布合同（DATA 工具；生产仍待原 AI-000235）
 
 本次隔离 Unity 进程退出并确认当前 runId/nonce、导入成功后，Runner 对 Static 目标文件作有界长度/mtime 稳定观察，再从磁盘计算发布凭据。批内 manifest/完成凭据的字体 SHA 是历史结果，不作发布 SHA。事务用批准 manifest 旧 Static SHA 保护 live 原值，用退出后的凭据核本次 Static 候选；授权发布才更新批准 manifest 和 run/round、前后字数/码点、旧新 Static SHA 审计。Dynamic 不比较或更新 SHA 发布合同，正常路径直接复制本次已清空候选，以前后 glyph 数和最终 0 验证；路径/meta/本地身份、长度/mtime 并发检查、备份与保守回滚仍保留，仅异常回滚为防覆盖陌生改动做必要字节核对。当前 T9 仅 AI-000235 携精确选项 A 文件可在 CurrentCsvValidation 下加 -Publish；此时只运行字体事务，Generated 始终不发布。无批准的 CurrentCsv -Publish 拒绝；正常 DONE 轮的 Generated→字体顺序不变。AI-000241 只跑 Test-BatchImport.ps1 -FontTransactionOnly，不运行 Unity 或生产发布；原 AI-000235 两次失败留存。
@@ -142,3 +145,11 @@ pwsh -NoProfile -File DevTools/DataTables/Run-DataPipeline.ps1 `
 | `ShortCycleFontAtlasBuilder.BuildAll()` | PRE-1 现有 public static 方法；本卡仅反射调用，不改 Builder 的 Unity6兼容修复 | 在隔离工程重建/复核 Static+Dynamic；不直接发布字体 |
 
 `-PlanOnly` 只验证门禁、快照范围、项目版本和准确 batch 命令，不启动 Unity，也不能与 `-Publish` 并用。编辑器外 `Test-BatchImport.ps1` 当前85项覆盖既有事务/进程/凭据/锁契约，以及短路径唯一/碰撞/越界/映射、AI194实际日志片段阻断、编译/异常、缺失/不可读日志、警告和零错误不误报、阻断时零发布调用；夹具只写系统临时目录。AI195没有启动 Unity；恢复后的 AI194 DATA 仍须用同一正常 DONE 入口、当前 xlsx/CSV/manifest 指纹和原稳定 ProblemKey 重跑，核真实首导日志完全无资源/编译/异常错误及新nonce，再重审实际 diff/GUID/catalog/白名单并决定是否发布，不能沿用旧131文件候选或把 P2 场景延期写成已验收。
+
+## 隔离工程的维护收尾（2026-10-18）
+
+`.batch-workspace` 是每轮临时工程：运行器创建独立目录，完成后写报告并释放锁，当前实现不会自动删除整份隔离工程。前15轮残留曾积累54,665,142,598 B；本次已按已关闭任务AI164/AI194/AI235的运行报告认领、核无活动进程并取得队列/DATA互斥后清理。完整失败日志、完成凭据、必要配置与独有差异无损保存在[维护归档](../../.ai-workspace/archive/2026-10-18-storage-audit/README.md)，runtime中的原报告/失败史不改写。
+
+后续每批按[文档瘦身规范第17条](../../.ai-workspace/DOC_MAINTENANCE.md)盘点隐藏隔离目录及字体事务备份；先保全必要证据，再清理已关闭、无活动依赖且无进程使用的副本和可重建缓存。失败未结、人工未验或当前事务恢复仍需要的材料保留；不因结束一个进程就自动删工程，也不自动续行或重新导表。保留`.batch-workspace`空运行根，运行报告中的历史isolationRoot经归档恢复映射追溯。
+
+2026-10-19 AI271 / TK-DAT-01：ReportDirectory空值保留runtime/data-reports及合法子目录；新outputs仅允许outputs/<单一批次>/<精确当前AI-xxxxxx>及子目录。Resolve-DataReportLocation按RepositoryRoot解析相对路径，parent/runRoot共边界，拒绝其它任务/前缀/dot/ADS/Windows别名/外部/控制区及reparse祖先，创建前复核/碰撞拒绝；不把runtime加入业务Scope。runId/nonce/严格完成日志保持。纯解析不创建/复制项目；本轮只有离线验证，不承诺解决Unity许可IPC。原DATA须CONTROL独立验收后按正式Scope/权限审查执行，无Publish/生产数据修改。

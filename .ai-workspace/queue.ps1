@@ -1,10 +1,10 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'RecordTaskProgress', 'RecordTaskTurn', 'CheckManagedTool', 'WriteHandoff', 'RecordCodeValidation', 'ResolveControlRejection', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'RecordSupervisionHeartbeatContext', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'ResumeCodeValidationStop', 'ResumeApprovedTask', 'ApproveResume', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
+    [ValidateSet('Status', 'ModeStatus', 'SetMode', 'BuildAutoChain', 'Maintain', 'Enqueue', 'ReviseInstruction', 'ReclassifyTask', 'UpdateDependencies', 'Poll', 'RecordIssue', 'RecordTaskProgress', 'RecordTaskTurn', 'CheckManagedTool', 'WriteHandoff', 'RecordCodeValidation', 'ResolveControlRejection', 'ResolveVerification', 'RecordHistoricalVerification', 'CloseWithoutAcceptance', 'RejectVerification', 'PendingReview', 'RenewLease', 'Complete', 'Fail', 'ResetTask', 'SupervisionStatus', 'RecordSupervisionHeartbeatContext', 'ConfigureSupervisionTask', 'ExtendSupervision', 'DispatchSupervision', 'PauseSupervision', 'ResumeSupervision', 'ExitSupervision', 'BreakSupervision', 'RecoverSupervisionTask', 'ApproveSupervisionGate', 'DeferSupervisionReviews', 'SupervisionCheckpoint', 'YieldSupervisionTask', 'BindSupervisionAutomation', 'ReconcileSupervision', 'RegisterDataLane', 'BindDataPipeline', 'RegisterExecutionPipeline', 'BindExecutionPipeline', 'SupersedeTask', 'ResumeCodeValidationStop', 'ResumeApprovedTask', 'ApproveResume', 'DataLaneStatus', 'ConsumeDataRound', 'RegisterArtAssetLane', 'BindArtAuditAutomation', 'RequestArtAudit', 'ArtAuditStatus', 'BeginArtAudit', 'CompleteArtAudit', 'FailArtAudit', 'AbandonArtAudit', 'PauseArtAudit', 'ResumeArtAudit', 'ArtDailyControlStatus', 'RecordArtDailyReview', 'ApproveArtDailyFiles')]
     [string]$Action,
 
-    [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET', 'ART')]
+    [ValidateSet('ENGINE_MCP', 'ENGINE_CLI', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET', 'ART')]
     [string]$Pipeline,
 
     [string]$Title,
@@ -66,7 +66,7 @@ param(
     [ValidateSet('FAILED','RESOLVED')][string]$ValidationResult,
     [ValidateRange(5,1440)][Nullable[int]]$HeartbeatMinutes,
     [ValidateRange(1,20)][Nullable[int]]$FailureStopLimit,
-    [ValidateSet('ENGINE_MCP', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET')]
+    [ValidateSet('ENGINE_MCP', 'ENGINE_CLI', 'CODE', 'DATA', 'ART_AIGC', 'ART_ASSET')]
     [string[]]$IdlePipelines = @(),
     [string[]]$ResourceKeys = @(),
     [ValidateSet('light', 'full')]
@@ -85,6 +85,13 @@ param(
     [Nullable[int]]$Runs,
     [string]$Scope,
     [string]$ApprovalId,
+    [switch]$RevalidateUnusedGrant,
+    [string]$RevalidationApprovalPath,
+    [string]$RevalidationApprovalSha256,
+    [string]$RevalidationEvidencePath,
+    [string]$RevalidationEvidenceSha256,
+    [ValidateSet('HUMAN','POLICY')][string]$AuthorizationSource = 'HUMAN',
+    [string]$RetryCycleId,
     [ValidateSet('TASK', 'HUMAN', 'GLOBAL')]
     [string]$FailureScope = 'TASK',
 
@@ -116,6 +123,8 @@ $modePath = Join-Path $workspaceRoot 'runtime\mode-state.json'
 $ledgerPath = Join-Path $workspaceRoot 'INSTRUCTIONS.md'
 $pendingReviewPath = Join-Path $workspaceRoot 'PENDING_REVIEW.md'
 . (Join-Path $workspaceRoot 'repair-budget.ps1')
+# Shared resume/scope helpers are also required by a first POLICY repair claim.
+. (Join-Path $workspaceRoot 'approved-resume.ps1')
 $usageLibrary = Join-Path $projectRoot 'DevTools\Workflow\UsageMetrics.ps1'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $script:workflowUsageContext = $null
@@ -211,6 +220,7 @@ function Initialize-TaskExecution($Task,$Worker) {
         Set-ObjectPropertyValue $run $field (Get-ObjectPropertyValue $prior $field)
     }
     Set-ObjectPropertyValue $run 'handoffFrom' $(if($prior -and $prior.softLimitAt){$prior.softLimitHandoff.path}else{$null})
+    if($Task.pipeline -eq 'ENGINE_CLI'){Set-ObjectPropertyValue $run 'mode' (Read-ModeState).mode}
     Set-ObjectPropertyValue $Task 'execution' $run
     [void](Sync-TaskTurnGate $Task)
     Set-ObjectPropertyValue $Worker 'activeExecutionId' $run.executionId
@@ -317,6 +327,27 @@ function Invoke-TurnHandoffAction {
     Save-JsonFile $queuePath $q
     Write-Result @{action='HANDOFF_SAVED';taskId=$TaskId;handoffPath=$path;bytes=$utf8NoBom.GetByteCount($body)}
 }
+function Assert-EngineCliExecution {
+    if ($Pipeline -ne 'ENGINE_CLI') { return }
+    $target=Get-PipelineExecutionTarget $Pipeline
+    Assert-Value ($target.routeState -ceq 'BOUND' -and $OwnerThreadId -ceq $target.threadId) 'ENGINE_CLI requires its bound visible owner.'
+    $q=Read-JsonFile $queuePath;$w=Get-Worker (Read-JsonFile $workerPath) $Pipeline;$t=Get-Task $q $TaskId
+    Assert-Value ($t -and $t.pipeline -ceq $Pipeline -and $t.status -ceq 'RUNNING' -and $w.status -ceq 'BUSY' -and $w.activeTaskId -ceq $TaskId) 'ENGINE_CLI active task ownership required.'
+    Assert-Value ($ExecutionId -and $ExecutionId -ceq $t.execution.executionId -and $ExecutionId -ceq $w.activeExecutionId -and $OwnerThreadId -ceq $t.execution.ownerThreadId) 'ENGINE_CLI execution identity differs.'
+    $liveLease=$w.leaseUntil -and [DateTimeOffset]::Parse($w.leaseUntil) -gt [DateTimeOffset]::Now
+    # Settlement closes the owned run; it never authorizes another production operation.
+    if($Action -ne 'Fail'){Assert-Value $liveLease 'ENGINE_CLI lease expired.'}
+    elseif($ErrorKind -eq 'ORPHANED_RUN'){
+        Assert-Value (-not $liveLease -and $IdlePipelines -contains $Pipeline -and -not [string]::IsNullOrWhiteSpace($Verification)) 'Orphan settlement requires expired lease and externally verified fresh idle; age alone is insufficient.'
+    }
+    if($Action -eq 'CheckManagedTool'){
+        $m=Read-ModeState
+        Assert-Value ($t.execution.mode -ceq $m.mode) 'Execution mode changed; managed writes stop.'
+        if($m.mode -eq 'SUPERVISED'){Assert-Value ($m.supervised.status -eq 'ACTIVE' -and -not $m.supervised.stopRequested -and -not $m.supervised.exitRequested -and $m.supervised.taskIds -contains $TaskId) 'Supervised writes are stopped.'}
+        $held=@($q.tasks|Where-Object {$_.status -eq 'RUNNING' -and $_.id -ne $TaskId}|ForEach-Object {Get-SupervisionResources $_})
+        Assert-Value (@(Get-SupervisionResources $t|Where-Object {$held -contains $_}).Count -eq 0) 'Conflicting Editor owner; managed writes stop.'
+    }
+}
 function Get-PipelineExecutionTarget {
     param([string]$Lane)
     if ($Lane -eq 'DATA') {
@@ -342,6 +373,15 @@ function Get-PipelineExecutionTarget {
         Assert-Value (Test-CodexThreadId $threadId) 'DATA route is bound but threadId is missing or invalid. Refusing legacy fallback.'
         Assert-Value ($null -ne $revisionValue -and [int]$revisionValue -ge 1) 'DATA route is bound but routeRevision is missing or invalid. Refusing legacy fallback.'
         return [pscustomobject][ordered]@{ executorKind='THREAD'; threadId=$threadId; routeRevision=[int]$revisionValue; routeState='BOUND' }
+    }
+    if ($Lane -eq 'ENGINE_CLI') {
+        $state=Read-JsonFile $workerPath
+        $entry=Get-ObjectPropertyValue $state.workers 'ENGINE_CLI'
+        if (-not $entry -or -not (Get-ObjectPropertyValue $entry 'threadId')) {
+            return [pscustomobject]@{executorKind='THREAD';threadId=$null;routeRevision=0;routeState='UNBOUND'}
+        }
+        Assert-Value ($entry.executorKind -ceq 'THREAD' -and (Test-CodexThreadId $entry.threadId) -and [int]$entry.routeRevision -gt 0) 'ENGINE_CLI route is incomplete; no static fallback.'
+        return [pscustomobject]@{executorKind='THREAD';threadId=$entry.threadId;routeRevision=[int]$entry.routeRevision;routeState='BOUND'}
     }
     if ($Lane -in @('CODE','ENGINE_MCP')) {
         $routeWorkers = Read-JsonFile $workerPath
@@ -396,9 +436,9 @@ function Read-JsonFile {
 
 function Save-TextFile {
     param([string]$Path, [string]$Text)
-    $temporaryPath = "$Path.tmp.$PID"
+    $temporaryPath = "$Path.tmp.$PID.$([guid]::NewGuid().ToString('N'))"
     [System.IO.File]::WriteAllText($temporaryPath, $Text, $utf8NoBom)
-    Move-Item -Force -LiteralPath $temporaryPath -Destination $Path
+    [System.IO.File]::Move($temporaryPath, $Path, $true)
 }
 
 function Save-JsonFile {
@@ -963,7 +1003,7 @@ function Get-PendingReviewSnapshot {
     } | Sort-Object pipeline, sequence | ForEach-Object { Get-PendingReviewItem $_ })
 
     $groups = @()
-    foreach ($reviewPipeline in @('CODE', 'ENGINE_MCP', 'DATA', 'ART_AIGC', 'ART_ASSET')) {
+    foreach ($reviewPipeline in @('CODE', 'ENGINE_MCP', 'ENGINE_CLI', 'DATA', 'ART_AIGC', 'ART_ASSET')) {
         $pipelineItems = @($items | Where-Object { $_.pipeline -eq $reviewPipeline })
         $groups += [pscustomobject][ordered]@{
             pipeline = $reviewPipeline
@@ -1178,7 +1218,7 @@ function Get-AutomaticHandoff {
 在 D:\GameProject\Eat-What 阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md 和对应 workers 文档，然后运行：
 使用当前宿主的 PowerShell 7（pwsh.exe），在项目根执行：& './.ai-workspace/queue.ps1' -Action Poll -Pipeline $($currentTask.pipeline) -TaskId $($currentTask.id) -TriggerSource AUTOMATIC -LeaseMinutes 30$resumeScopeArgument
 
-只有返回 CLAIMED/CLAIMED_RETRY 才执行。领取后把队列 activeTaskId 视为跨上下文压缩的权威身份：若发生 compaction，先由 Status 恢复该任务并重读其队列指令，不再次 Poll，不得让更早用户消息覆盖它；RUNNING 且租约未到期时禁止误报 ORPHANED_RUN。成功时照常调用 Complete。Complete 返回 autoHandoff.action=TRIGGER_TASK 时：若 autoHandoff.threadId 就是当前任务线程（即下一项仍属同一流水线），禁止在活动轮次中向自身调用 send_message_to_thread；应直接在当前轮按 autoHandoff.taskId、pipeline 和 AUTOMATIC 来源再 Poll 一次，领取后继续执行。若目标是其它流水线线程，才把完整 autoHandoff.message 发送到指定 threadId。返回 CHAIN_COMPLETE 时结束。遇到问题先自行诊断并尝试安全修复；修复失败后再按 WORKFLOW.md 分级。测试表现异常或测试触发失败使用 TEST_OBSERVATION/TEST_TRIGGER 记录并交给用户人工验证，不调用 Fail，也不阻止后续接力。其它非阻碍问题 RecordIssue 后继续；只有阻断问题才 Fail，Fail 后不得触发后续任务并等待用户介入。
+只有返回 CLAIMED/CLAIMED_RETRY 才执行。领取后把队列 activeTaskId 视为跨上下文压缩的权威身份：若发生 compaction，先由 Status 恢复该任务并重读其队列指令，不再次 Poll，不得让更早用户消息覆盖它；RUNNING 且租约未到期时禁止误报 ORPHANED_RUN。成功时照常调用 Complete。Complete 返回 autoHandoff.action=TRIGGER_TASK 时：若 autoHandoff.threadId 就是当前任务线程（即下一项仍属同一流水线），禁止在活动轮次中向自身调用 send_message_to_thread；应直接在当前轮按 autoHandoff.taskId、pipeline 和 AUTOMATIC 来源再 Poll 一次，领取后继续执行。若目标是其它流水线线程，才把完整 autoHandoff.message 发送到指定 threadId。返回 CHAIN_COMPLETE 时结束。遇到问题先自行诊断并尝试安全修复；修复失败后再按 WORKFLOW.md 分级。测试表现异常或测试触发失败使用 TEST_OBSERVATION/TEST_TRIGGER 记录并交给用户人工验证，不调用 Fail，也不阻止后续接力。其它非阻碍问题 RecordIssue 后继续；只有阻断问题才 Fail，Fail 后先正式结算并回传 CONTROL，由其按 continuationDisposition 独立验收后经同一 ApproveResume 及正常派发恢复；CONTROL_REPAIR_ELIGIBLE 在既有额度内使用已核政策，NEEDS_HUMAN_ADDITIONAL 才向用户追加，HARD_STOP 不得由政策解锁。执行器不得自行重启或触发后续任务。
 "@.Trim()
 
     return [pscustomobject][ordered]@{
@@ -1393,6 +1433,12 @@ try {
     }
     Assert-Value $lockTaken 'Could not acquire the AI workspace queue lock within 20 seconds.'
 
+    if ($Pipeline -eq 'ENGINE_CLI' -and $Action -in @('Poll','Enqueue')) {
+        $cliTarget=Get-PipelineExecutionTarget 'ENGINE_CLI'
+        Assert-Value ($cliTarget.routeState -ceq 'BOUND') 'Register and bind ENGINE_CLI before execution.'
+        if ($Action -eq 'Poll') { Assert-Value ($OwnerThreadId -and $OwnerThreadId -ceq $cliTarget.threadId) 'ENGINE_CLI Poll owner differs.' }
+    }
+    if ($Action -in @('Complete','Fail','RenewLease','YieldSupervisionTask','SupervisionCheckpoint','CheckManagedTool','RecordTaskProgress','RecordTaskTurn','WriteHandoff')) { Assert-EngineCliExecution }
     $now = [DateTimeOffset]::Now
     if($Action -in @('ArtDailyControlStatus','RecordArtDailyReview','ApproveArtDailyFiles')) {
         Assert-Value (Test-Path -LiteralPath $artDailyControlLibrary) 'Missing ART controller library.'
@@ -1413,7 +1459,7 @@ try {
         catch { Write-SupervisionAudit 'APPROVED_CONTINUATION_REFUSED' @{taskId=$TaskId;problemKey=$ProblemKey;reason=$_.Exception.Message;controllerThreadId=$ControllerThreadId}; throw }
         return
     }
-    if ($Action -in @('BindExecutionPipeline','SupersedeTask','ResumeCodeValidationStop')) {
+    if ($Action -in @('RegisterExecutionPipeline','BindExecutionPipeline','SupersedeTask','ResumeCodeValidationStop')) {
         . (Join-Path $workspaceRoot 'control-administration.ps1')
         Invoke-ControlAdministration
         return
@@ -1437,6 +1483,7 @@ try {
         $workers = Read-JsonFile $workerPath
         $queue = Read-JsonFile $queuePath
         $dataWorker = Get-Worker $workers 'DATA'
+        Assert-Value ($PipelineThreadId -cne [string](Get-PipelineExecutionTarget 'ENGINE_CLI').threadId) 'ENGINE_CLI already owns that thread.'
         $beforeTarget = Get-PipelineExecutionTarget 'DATA'
         if ($beforeTarget.routeState -eq 'BOUND' -and $beforeTarget.threadId -eq $PipelineThreadId) {
             Write-Result ([ordered]@{
@@ -1571,7 +1618,8 @@ try {
         $aggregate = Get-TaskStatusAggregate $statusTasks $normalizedModuleId
         if ($FullStatus) {
             Write-Result ([ordered]@{action='STATUS';mode=$modeState;queue=(Get-QueueStateWithTasks $queue $statusTasks);
-                workers=$workerState;moduleId=$normalizedModuleId;statusAggregate=$aggregate})
+                workers=$workerState;moduleId=$normalizedModuleId;statusAggregate=$aggregate;
+                rootRetry=$(if($TaskId -and $statusTasks.Count -eq 1){Get-RootRetryState $queue (Get-RepairRootTask $queue $statusTasks[0]) $modeState.mode}else{$null})})
             return
         }
         $attention = if ($TaskId -or $FromTaskId -or $ToTaskId) { @($statusTasks) } else {
@@ -1870,6 +1918,14 @@ try {
         }
         if($WorkKind -ceq 'APPROVED_RESTORE'){
             throw 'Legacy specialized restoration cards are retired. Use a normally scoped task and ApproveResume for any failed continuation.'
+        }
+        if($WorkKind -eq 'FEATURE' -and $Scope){
+            . (Join-Path $workspaceRoot 'approved-resume.ps1')
+            Set-RetryValue $task 'businessScope' (ConvertTo-ResumeScope $Scope)
+        }
+        if($WorkKind -eq 'REPAIR' -and (Get-RetryAuthority)){
+            . (Join-Path $workspaceRoot 'approved-resume.ps1')
+            Register-RepairRetryCycle $queue $root $task (Read-ModeState) $AuthorizationSource $ApprovalId $UserDecision $RetryCycleId $Scope
         }
         $queue.tasks = @($queue.tasks) + $task
         if ($requiresRepairApproval) { Use-RepairDecision $root $DiagnosisTaskId $UserDecision $newTaskId }
@@ -2487,6 +2543,11 @@ $($Instruction.Trim())
             . (Join-Path $workspaceRoot 'approved-resume.ps1')
             $boundedGrant=Assert-BoundedResume $selected $modeState $Scope
         } else { Assert-Value (-not (Test-TaskFailureStopped $selected)) 'Failure stop limit reached; explicit ApproveResume required.' }
+        # The same project key is mandatory in all modes, including MANUAL.
+        $heldResources=@($queue.tasks | Where-Object {$_.status -eq 'RUNNING' -and $_.id -ne $selected.id} | ForEach-Object { Get-SupervisionResources $_ })
+        if (@(Get-SupervisionResources $selected | Where-Object { $heldResources -contains $_ }).Count) {
+            Write-Result @{action='RESOURCE_BUSY';taskId=$selected.id;pipeline=$Pipeline}; return
+        }
         $selected.status = 'RUNNING'
         $selected.claimedAt = $now.ToString('o')
         $selected.attempts = [int]$selected.attempts + 1
@@ -2497,7 +2558,8 @@ $($Instruction.Trim())
         $worker.circuit.openUntil = $null
         $worker.circuit.reason = $null
         Initialize-TaskExecution $selected $worker
-        if ($boundedGrant) { Use-BoundedResume $selected $boundedGrant }
+        if ($boundedGrant) { Use-BoundedResume $selected $boundedGrant $queue $modeState }
+        Use-RepairRetryCycle $queue $selected $modeState $Scope
         if ($TriggerSource -eq 'AUTOMATIC') {
             $modeState.automatic.status = 'RUNNING'
             $modeState.updatedAt = $now.ToString('o')
@@ -2545,11 +2607,12 @@ $($Instruction.Trim())
         Assert-Value ($ProblemKey -and $ValidationResult -and (Test-Path -LiteralPath $EvidencePath -PathType Leaf)) 'Stable ProblemKey, result, and evidence file are required.'
         Assert-Value ($ExecutionId -and $task.execution.executionId -ceq $ExecutionId -and $OwnerThreadId -ceq $task.execution.ownerThreadId) 'CODE validation must be bound to the current visible execution.'
         $history=@($task.codeValidationHistory | Where-Object {$null -ne $_})
-        $unresolved=@($history | Select-Object -Last 1 | Where-Object {$_.result -eq 'FAILED'})
+        $activeCycle=Get-RetryValue $task.execution 'retryCycleId'
+        $unresolved=@($history | Where-Object {-not $activeCycle -or (Get-RetryValue $_ 'retryCycleId') -ceq $activeCycle -or $_.executionId -ceq $task.execution.executionId} | Select-Object -Last 1 | Where-Object {$_.result -eq 'FAILED'})
         if($ValidationResult -eq 'FAILED' -and $unresolved.Count -gt 0){
             Assert-Value ($unresolved[0].problemKey -ceq $ProblemKey) 'A different key cannot clear or disguise a continuing CODE self-validation error.'
         }
-        $history+= [pscustomobject]@{at=$now.ToString('o');attempt=$task.attempts;executionId=$task.execution.executionId;problemKey=$ProblemKey;result=$ValidationResult;evidencePath=[IO.Path]::GetFullPath($EvidencePath);evidenceSha256=(Get-FileHash -LiteralPath $EvidencePath -Algorithm SHA256).Hash}
+        $history+= [pscustomobject]@{at=$now.ToString('o');attempt=$task.attempts;executionId=$task.execution.executionId;problemKey=$ProblemKey;result=$ValidationResult;retryCycleId=(Get-RetryValue $task.execution 'retryCycleId');evidencePath=[IO.Path]::GetFullPath($EvidencePath);evidenceSha256=(Get-FileHash -LiteralPath $EvidencePath -Algorithm SHA256).Hash}
         Set-ObjectPropertyValue $task 'codeValidationHistory' $history
         $retry=Get-CodeValidationRetryState $task $ProblemKey
         if($ValidationResult -eq 'FAILED' -and $retry.exhausted){
@@ -2650,9 +2713,17 @@ $($Instruction.Trim())
             Set-ObjectPropertyValue $task 'tierSource' 'Complete-explicit-original-plan'
         }
         $verificationDisposition = Get-VerificationDisposition $task
+        $observedTools=@()
+        if(Get-Command Read-TaskUsageRecords -ErrorAction SilentlyContinue){
+            $observedTools=@(Read-TaskUsageRecords -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | Where-Object {$_.taskId -eq $TaskId -and $_.metadata.executionId -ceq $task.execution.executionId -and $_.actualTool} | ForEach-Object actualTool | Sort-Object -Unique)
+        }
+        if($Pipeline -eq 'ENGINE_CLI'){$toolLabel=if($observedTools.Count){$observedTools -join ', '}else{'null (no observed tool source)'};$Summary="队列车道：$Pipeline；实际工具：$toolLabel。 $Summary"}
         $task.status = 'SUCCEEDED'
         $task.completedAt = $now.ToString('o')
         $task.result = [pscustomobject]@{
+            queueLane = $Pipeline
+            actualTools = @($observedTools)
+            actualToolUnavailableReason = $(if(-not $observedTools.Count){'No execution-bound actual tool observed.'}else{$null})
             summary = $Summary.Trim()
             artifacts = @($Artifacts)
             verification = $Verification.Trim()
@@ -2684,6 +2755,8 @@ $($Instruction.Trim())
         if ($task.result.verificationStatus -eq 'PENDING_USER') {
             [void](Write-PendingReviewFile $queue)
         }
+        Set-RetryValue $task 'continuationDisposition' (Get-RetryDisposition $queue $task $modeState)
+        Save-JsonFile $queuePath $queue
         $supervisorHandoff = $null
         if ($modeState.mode -eq 'SUPERVISED') { $supervisorHandoff = Close-SupervisedRun $modeState $queue $workers $task 'COMPLETE' }
         Write-Result ([ordered]@{ action = 'COMPLETED'; task = $task; autoHandoff = $autoHandoff; supervisorHandoff = $supervisorHandoff; artAuditHandoff = $(if ($Pipeline -eq 'ART_ASSET') {Get-ArtAuditHandoff}) })
@@ -2699,6 +2772,10 @@ $($Instruction.Trim())
             attempt = $task.attempts
             kind = $ErrorKind
             message = $ErrorMessage.Trim()
+            stage = 'FAIL'
+            executionId = $task.execution.executionId
+            ownerThreadId = $task.execution.ownerThreadId
+            claimedAt = $task.execution.claimedAt
         }
         if ((Test-TaskFailureStopped $task) -or [int]$task.attempts -ge [int]$task.maxAttempts) {
             $task.status = 'NEEDS_USER'
@@ -2706,6 +2783,7 @@ $($Instruction.Trim())
         else {
             $task.status = 'PAUSED_CIRCUIT'
         }
+        Set-RetryFailureStop $queue $task $ErrorKind $FailureScope
         if (Get-ObjectPropertyValue $task 'resumeApproval') { . (Join-Path $workspaceRoot 'approved-resume.ps1'); Close-BoundedResumeFailure $task }
         Open-Circuit $worker $now $CooldownMinutes "$ErrorKind`: $($ErrorMessage.Trim())"
         $modeState = Read-ModeState
@@ -2726,6 +2804,8 @@ $($Instruction.Trim())
         Save-JsonFile $queuePath $queue
         Save-JsonFile $workerPath $workers
         if ($modeStateChanged) { Save-JsonFile $modePath $modeState }
+        Set-RetryValue $task 'continuationDisposition' (Get-RetryDisposition $queue $task $modeState)
+        Save-JsonFile $queuePath $queue
         $supervisorHandoff = $null
         if ($modeState.mode -eq 'SUPERVISED') { $supervisorHandoff = Close-SupervisedRun $modeState $queue $workers $task 'FAIL' }
         Write-Result ([ordered]@{ action = 'FAILED_CIRCUIT_OPEN'; task = $task; openUntil = $worker.circuit.openUntil; supervisorHandoff = $supervisorHandoff; artAuditHandoff = $(if ($Pipeline -eq 'ART_ASSET' -and $FailureScope -ne 'GLOBAL') {Get-ArtAuditHandoff}) })

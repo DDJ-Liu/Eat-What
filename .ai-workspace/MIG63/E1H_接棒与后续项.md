@@ -34,12 +34,12 @@ H已完成：原目录MCP实例路由实测；9组离线、5组业务/Lab Play�
 | ID | 事项 | 处理节点与验收 |
 | --- | --- | --- |
 | MIG-F01 | 原生统一滚轮单位、阈值与手感；Windows 已验收行为保留 | H 后小项；Mac 使用前完成阈值适配及硬件验证，FridgeScrollLab 与正式弹层链验收 |
-| MIG-F02 | CompanyName/ProductName | 正式存档/PlayerPrefs 落地前决定名称和旧路径迁移；不混进迁移兼容修复 |
+| MIG-F02 | CompanyName/ProductName（本批已完成） | 用户批准Trollemma/EatWhat，AI265已实施并独立验收；persistentDataPath相应变更，旧目录/存档未迁移删除。见DETACH-B13执行登记；不因旧表述重复设置 |
 | MIG-F03 | Claude Desktop 的宽范围 prerelease unityMCP 条目 | 用户决定本轮保全现状；之后单独核对其它客户端条目并按实际使用固定版本或移除。原配置不可溯源，不能声称已还原或其它条目未被影响；不自动修改 |
-| MIG-F04 | 无 Mouse.current 时 Tools.getMousePos 每帧空引用 | H 后独立小项，源位于 Assets/Scripts/Tools/Tools.cs；2022 已有。结合调用方决定无指针行为，同时检查 Camera.main 缺失；验证无鼠标/仅手柄/设备拔插，不只吞掉异常 |
+| MIG-F04 | Mouse/Camera空引用防护（原范围已验收） | AI146/147/152已VERIFIED，AI147真实Play且用户“147通过”；2026-10-19核当前Tools/MouseManager与6e58cb8一致及守卫顺序，复用既有范围，不重新Play。见[本轮复用审查](../outputs/control/DETACH-B13-20261019/MIG-F04-reuse-review.json) |
 | MIG-F05 | 长期工具和 Tomato 控制器去除批次名 | F 后 E2 按功能命名；Assets 内用 AssetDatabase.MoveAsset 保留 GUID，更新引用、菜单/说明/证据映射，保留 Lab/探针能力。范围 Tomato_MIG63.controller、Assets/Editor/MIG63Validation、DevTools/MIG63 |
 | MIG-F06 | 定向重序列化（机器完成） | 已在H后、业务修改前完成；原范围：ShortCycle、VisualEffectsLab、FridgeScrollLab 及其递归引用 Prefab；先由 Editor 查清范围和引用，不手改 YAML。明确排除 CookingPrepare/CookingProcess 场景，保护其 SHA。备份、语义对照、单独提交、机器回归和独立构建；发现语义变化则停止，不能直接当格式差异签收 |
-| MIG-F07 | 官方 Unity CLI/MCP 与额外 AI 模型评估 | 迁移闭合后独立批次，不为现有 Coplay 搭完整服务端离线镜像 |
+| MIG-F07 | 官方 Unity CLI/MCP 与额外 AI 模型评估 | 2026-10-16共存、ENGINE_CLI绑定及AI250 attempt3只读接管独立4/4通过，原两失败保留；后续已授权引擎任务CLI优先；不轮换双跑，不升级Coplay，MANUAL保持。[执行授权](../inputs/UNITY-CLI-LINE-20261015/用户授权.json)。第一项记录实际工具schema UTF-8字节/工具数/来源与不可观测项；2026-10-28结合FLOOR样本决定是否裁工具集，本次不裁剪。迁移闭合后独立批次，不为现有Coplay搭完整服务端离线镜像；见[读取协议](../CONTEXT_READ_PROTOCOL.md) |
 
 H 已解除业务代码冻结与迁移侧文件独占；main 禁止直接开发、字体保护、Unity 资源安全规则持续有效。F 尚未指定，不自动展开布局或功能；人工检查点为2026-09-29（H+7日），不创建自动提醒。F 验收前不删除 MIG 副本，不执行 E2。
 

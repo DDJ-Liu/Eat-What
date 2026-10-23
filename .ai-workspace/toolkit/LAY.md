@@ -29,3 +29,5 @@
 | TK-LAY-07 | **`StackedIcon`（拟）** | 四种堆叠形态按数量切换 | 拟 | 规划中 | 冰箱格件（F2-a 5.4） | T-08 | |
 | TK-LAY-08 | `FridgeCatRig` + `FridgeCatTier` `Cooking/ShortCycle/Presentation/` | 固定层 + 池化扩展层的五列 Shelf 锚点排布与按层滚动；可选按真实 Anchor 间距对齐并自动拟合纵向 Content 边界 | `SetTierCount(int)` `GetShelfAnchor(row,col)` `ScrollToTier(int)` `TierCount`；序列化 `tierScrollMapping` / `tierAlignmentTarget_TUNE` / `tierAlignmentColumn_TUNE` | 沿用·扩充 | ShortCycleFridgeBinder；CAT-T2 Prefab 接线 | AI-000063 / AI-000128 | 默认 `UniformTierIndex` 保持旧行为；`AnchorAlignedAutoBounds` 需固定 Target、Vertical/BoxCollider 接线和严格下降 Anchor，按真实世界跨度及非单位缩放求解；0/1层安全，扩展层回收为 inactive，不销毁；正式P0启用/六层实测归AI129 |
 
+
+2026-10-19 AI269/AI272 D-T1a/b复用TK-LAY-01：目录按GridLayout、食材按HorizontalLayout、步骤按VerticalLayout已有锚点序填内容；StepDetailModalPiece最多10行并清空旧标题/编号，StepDetailRowPiece只填文案和图标。本源码不调用ArrangeChildren、不写_TUNE Transform、不新建排布算法。步骤行/图标容量、8卡和清单实际接线与布局复核归D-T2窗口②；ENGINE-HANDOFF列精确字段。无新TK编号。

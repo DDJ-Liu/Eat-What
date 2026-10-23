@@ -54,7 +54,7 @@ namespace EatWhat.Cooking.ShortCycle
                 return result;
             }
 
-            // 2. Save point two remains an observable no-op boundary in CK01.
+            // 2. Keep the existing observable save point; the runtime host owns persistence.
             saveBoundary.Reach(ShortCycleSavePoint.Phase1ToPhase2, context);
             result.ExecutedSteps.Add(ShortCycleProcessStep.SaveBoundary);
 

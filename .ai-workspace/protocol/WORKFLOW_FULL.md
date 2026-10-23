@@ -1,8 +1,11 @@
 # AI 工作流协议
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](../toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
 > 2026-10-12 下一批次优先规则：执行 [AGENTS.md 四条硬上限](../../AGENTS.md#下一批次四条硬上限2026-10-12-用户决定)。≤10 字段只验允许清单 diff + 一张截图；全路径哈希每批末一次；资产 SHA 仅提交 hook，任务中无内存保护；一次性工具仅离线编译 + Editor 单次执行，不进 Final。失败续行统一 [ApproveResume](../toolkit/WF.md#approve-resume)，幂等算同一批准。下文 FONT-R 专用许可/内存保护/冷启动测试是历史，禁止按旧规则新增续行入口或夹具。当前 MANUAL/watch-60 暂停，不再做字体返工。
 
-> **H后现行规则：** 2026-09-22 用户更新分支规则：当前成果（含H后格式提交）集成main，旧content/p0p1-layout关闭并删除；从新main建立codex/unity6-followup并跟踪同名origin，后续F和E2由“AI工作流-控制台（接管）”管理，E2完整关闭时再集成main。F待用户指定，MANUAL和历史队列保持，不自动派发。E1标签仍固定37bb854，backup保持ec3aa7c；迁移分支/副本暂留。固定引擎6000.3.24f1；双工作区冻结/路由已解除，生产实例仍需路径核对。[交接与待办](MIG63/H后分支切换与控制台移交.md)为本轮入口；[设计总档v1.5](design/AI开发工作流总档_设计端_v1_5.md)供设计端同步。
+> 2026-09-22 H后安排是历史时点，完整原文见[本批页首快照](../archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/DOC-SLIM-20261016/entry-before/.ai-workspace/protocol/WORKFLOW_FULL.md)。当前入口为[CORE](../CORE.md)及[E2收束](../MIG63/E2_收束与提交.md)；固定Unity 6000.3.24f1，main只接验收集成。设计指导以[输入索引](../inputs/README.md)登记的最新有效版本为准，不从旧页首取得新业务授权。
 
 > 2026-09-15验证清理修订（用户明确）：MCP/Play自身操作产生且归属已核实的临时dirty由执行器自动恢复，不新增人工审批或仅凭dirty熔断。执行前记录恢复点及临时操作，执行后核对并清理；未知/用户已有未保存变化及实际平台拒绝仍保护。完整流程见`.ai-workspace/UNITY_SCENE_CLEANUP.md`，ENGINE_MCP必须执行并交清理证据。
 
@@ -21,7 +24,7 @@
 
 ## 1. 不变量
 
-1. `runtime/queue-state.json` 是机器状态的唯一真相来源，`INSTRUCTIONS.md` 是只追加的提交账本。
+1. `runtime/queue-state.json` 是机器状态的唯一真相来源，`INSTRUCTIONS.md` 是日常只追加的提交账本。文档维护时，依 `DOC_MAINTENANCE.md` 第16条对已关闭历史做原字节归档后轮转；稳定路径、未关闭完整内容和正常追加能力保留，历史通过归档索引追溯，不改机器状态或原历史证据。
 2. 只有控制任务可以入队或改写任务定义；执行器只能认领、记录非阻碍问题、续租、完成或报告阻断失败。
 3. 每个执行器同一时间最多持有一个任务。
 4. 任务只有在所有 `dependsOn` 任务均为 `SUCCEEDED` 时才可执行。
@@ -192,7 +195,7 @@ queue.ps1 -Action RecordIssue -Pipeline <PIPELINE> -TaskId <TASK_ID> -IssueKind 
 - 熔断期间轮询只能读取执行器状态，不读取或认领新指令。
 - 冷却结束后进入半开状态，只重试被保留的当前任务，不领取新任务。
 - 默认最多尝试 3 次。第三次失败后任务变为 `NEEDS_USER`，原始指令、历史错误和依赖信息全部保留。
-- 控制任务或用户解决问题后，可用 `ResetTask` 重新排队；不能通过新建重复任务绕过失败记录。
+- 问题解决后，仅由控制端按用户明确次数/范围通过 `ApproveResume` 续原卡；不能用ResetTask或新任务绕过失败记录。
 - `AUTOMATIC` 中失败不会因冷却到期自行重试；链进入 `WAITING_USER`。只有人工确认并重置当前节点后才能再次发送该节点 handoff。
 
 ## 7. 控制端定时维护（仅 `SCHEDULED`）

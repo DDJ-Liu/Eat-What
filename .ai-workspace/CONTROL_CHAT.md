@@ -1,41 +1,49 @@
-# 控制任务约定 · 核心入口
+# 控制台入口
 
-2026-10-15接管复核：旧主控与四旧执行线已归档，7项应用日程的目标/周期/启停/通知均核对；独立EatWhat-WATCH-PRE5b每5分钟宿主继续，日报为当日首次快照、周三汇总上一整周，下次周报10-21。MANUAL下ai/watch-60暂停，报告落盘继续但不承诺控制台自动消息通知。证据outputs/control/PIPELINE-AUDIT-20261015/。本轮用户已另行授权CODE最小兼容修复后提交并merge main；不启旧监管。
-
-2026-10-15本次授权继承：常驻主控制台改为01a13ef5-eda9-7882-b1c9-eca47a6470d9，执行线地址见PIPELINES；未来SetMode及控制命令显式传本新ControllerThreadId，已完成旧session的地址不回写。ai/watch-60迁移到新主控且仍PAUSED，独立ART及周报保持。交接范围、旧新映射与待办见outputs/control/PIPELINE-RELOAD-20261015/交接完成报告.md。
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
 
 
-2026-10-15 AI-000245：需报告上下文的正式控制命令显式带当前固定ControllerThreadId；MANUAL下Status也能返回consoleContext。只有新鲜精确原生单次响应可触发150K/200K提示，unknown不当作低量。WATCH仅活动监管会话按绑定控制台消费CONTEXT_HIGH，Read/Ack核session/digest/线程；完全不调用工具的平台消息无法被脚本钩住。旧阶段结论保留。
+2026-10-15：固定CONTROL及各车道见[PIPELINES](PIPELINES.md)，当前状态只读正式queue；默认MANUAL，不用历史页首恢复业务。接管、7日程与用量日报/周报承接已核实，AI246兼容修复已验收并集成main；证据见[接管复核](archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/审查报告.md)。
 
-日常最终回复前的固定调用习惯：每次人类直接请求，若本轮已有普通正式queue命令，就在该命令上传ControllerThreadId并读取提醒；若没有queue命令，最多一次轻量Status采样后回复，MANUAL亦然。不得为了提醒启动监管或空闲定时轮询。执行线普通queue命令传OwnerThreadId+当前TaskId，领取/Complete已有采样复用；本轮ADVISE/STRONG随回复告知用户，同档稳定样本不刷屏，STRONG在当前卡安全结算后建议手动重载继承。无工具调用的平台消息无法自动截获。
+## 接收与恢复
 
-2026-10-14最新收口：session63adb86921c541a19134e192e330dfb0的AI231～244共14卡正式SUCCEEDED/VERIFIED，22:52:23已自动回MANUAL/COMPLETE，无待领取卡；watch-60已PAUSED，独立周报宿主和ART保持。AI236已由用户直接视觉通过；AI237/238各独立7/7，定向夹具最终15/29项通过，保留用户明确M/80及实际12/14文件；G74的AI242/243/244独立6/6、5/5、3/3通过。GOV04首次真实console心跳采样本批未发生，仍未验证，后续新监管批次首次真实心跳补核，不为此恢复或轮询本session；旧provider输入不是当前窗口。U2～U6/P2及44条配表警告仍按既有范围处理。旧失败/许可保留，未知计费null，无本轮Git提交推送。证据outputs/control/GOV-04-05-20261014/independent-review-238.json、scope-closeout.json与收口与剩余事项.md。
+按[落盘+索引与常驻集v2](CONTEXT_READ_PROTOCOL.md)接收：原件先保存inputs并记来源/版本/SHA/节名；控制台只读派发包§〇/§一/§五或实际等价标题（约4KB目标），领取消息只点路径和本卡块。追踪表读统计及当前认领块，Schema/总档/指导书按角色与标题补读。inputs“常驻”是磁盘保留，不自动全文注入。已读内容不声称回收；不凭缺失版本拼造新版。
 
-## 2026-10-14 指导文档实际入口
+FLOOR-01用历史首样本，未来用户正常重载再补测，不单独唤醒五条线。初始input建议 CONTROL≤110K、CODE≤90K、其它≤60K，只提示；工作后样本不用于判断启动地板。现有150K/200K提醒与unknown边界保持。10月28日复盘输入见[落实与复核](archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/FLOOR-20261015/落实与复核.md)，不因此新建日程。
 
-人工段依据 `.ai-workspace/templates/人工段流程_v2_20261014.md`。控制台每批/波次末先读原件，再生成 `outputs/control/<批次>/人工段清单.md`，写原件版本与实际检查项/证据，固定四列“条目/结论/备注/截图”。新批次默认统一后置一次，不为每卡机器验证插入人审。既有已登记人工门不因接收模板自动批准、取消或延期；改变须真实用户决定和正式API。AI236原门与AI237/238顺序保留，G74代码/数据两卡不增加视觉门。queue不自动解析或执行模板。
+处理人类请求时，优先在本轮已有queue普通命令带ControllerThreadId；若完全没有，最终回复前至多一次轻量Status，不启监管/空轮询。未知或陈旧不能写低量；STRONG在当前卡安全结算后提示手动重载，同档位不刷屏。未来新session绑定当前CONTROL，旧已完成session绑定保持历史。
 
-美术需求依据 `.ai-workspace/inputs/art/美术需求单_P0P1_v1_20261014.md`。ART日报前直读原件；`ART_PENDING_ITEMS.json`为机器派生匹配清单，以requirementIds覆盖原件1～12，原11项定义/观测保留。族完整性、底/字两件、用途、比例与视觉不能由文件命中判通过。原件的到位触发、改名/清理/导入是待审建议，仍走原导入草案和用户授权，不自动执行。
+## 未消费grant重新核验（AI306）
 
-2026-10-14长期规则：用户已直接授权本批及以后所有监管任务结算后立即向绑定控制台回传一次。执行 Prepare→真实Send→Record，控制台Receive后独立验收并按scope派发；WATCH60分钟只兜底。授权原话见 inputs/监管结算即时回传_用户长期授权_20261014.json，完整规则见 AGENTS.md 与 DevTools/Workflow/HANDOFF.md。旧“本批无发送授权”限制被本次用户决定覆盖；旧已拒绝投递不重试。
-
-2026-10-14 旧阶段快照（当前以上页首及实时队列为准）：SUPERVISED session 63adb86921c541a19134e192e330dfb0现纳入AI231～240。AI231独立5/5、AI232独立7/7、AI233独立6/6及5条抽样均通过，AI233即时回传已实证；AI234工具已独立6/6通过并正式VERIFIED；AI235于19:29正式Fail/NEEDS_USER：唯一隔离构建成功后被两条旧Spine错误日志门拦住，生产发布0；控制3/6，用户已改选包级精确白名单，AI239只读定位4/4通过、AI240已按用户新批准仅结算1次正式VERIFIED，复用技术6/6及离线28/28，三次夹具失败史保留；原AI235同范围1次续行已执行，attempt2于20:38:08正式Fail/NEEDS_USER：Spine日志门通过（Error0），TMP退出回调在凭据生成后再次清理Dynamic，候选SHA不一致；事务在备份/生产写入前停止，生产写0，控制3/6未接受。用户明确选择DATA-F1 A：AI234 CODE扩充现有工具→AI235 DATA当前T9单次字体发布→AI236 ENGINE一次原生验证及后置人工门。此前A/B等待已解除；旧字体修复卡不恢复，四条硬上限保持。AI190已CLOSED_WITHOUT_ACCEPTANCE（SUPERSEDED）、原证据与下一次归档一次性保全保留。两卡各一次批准均已消费，AI240完成、AI235累计两失败；session ACTIVE/WAITING_USER且无ready，WATCH暂停以免无效轮询，周报独立宿主和旧worker/ai及ART不变。本轮无Git提交推送。用户追加GOV04/05已入同session的AI237/238，均M/80、固定CODE，依赖AI236并保留其人工门；排在既有链后，不提前插队。原件/用户分级修订/执行卡见inputs/GOV-04-05-20261014；上下文/分级功能尚待实现，不冒称上线。
+AI307补充（2026-10-22实际完成）：CONTROL独立5合同14项事实与334检查通过，原306拒验已正式Resolve；同一未消费289 grant已成功重新核验，仅taskFingerprint与审计变化，原人批/proof/request原件、次数与失败史保持。随后用户批准原模型一次重派，289已真实attempt10完成并CONTROL独立通过；不得再执行历史例子、重核/重签已消费grant或补306/307依赖。合法空[]管道无JSON导致GetBytes(null)，[null]另与null摘要混同；原错误归因及补正附录同时保留。历史摘要/指纹和普通claim算法未改，新增保形摘要只用于严格重核分支；详见independent-review-307.json、resolve-306.json、revalidate-289-after-307.json及AI306-null-diagnosis-correction.json。
 
 
-2026-10-14 人工验收关闭：用户明确“人工验收通过，AI226和AI229可以关闭”，两卡均SUCCEEDED/VERIFIED且人工gateApproved=true；三弹层与封面两气泡批次已关闭，AI227/228原配表导入VERIFIED保持。旧失败、已消费一次许可及执行证据保留。正式人工门经短暂MANUAL登记后已恢复AUTOMATIC，限定已完成的原批次，无新派发/运行任务。AI190仍SUCCEEDED/PENDING_USER；旧CookingProcess报告、场景清单及7份校验JSON均在outputs/U1-R1/AI-000190，旧场景仅参考、新P2接线延期。本轮仅验收落账与文档维护，无提交推送。
+依赖/验收边变动后旧grant领取被拒时，不伪Fail、不重置次数、不自动改指纹。用户另行明确批准绑定修复后，CONTROL独立验收CODE结果，再核原grant仍未用、同session/route/owner/Scope、fresh idle、无有效同车道预约及停止门；按既有ApproveResume的-RevalidateUnusedGrant显式分支提交固定SHA的人批、审查单和前后定义proof，并提交当前历史/根状态与新增依赖真实独立验收证据。所有重核在原队列锁内完成，普通claim门保持。
 
-2026-10-13 排布v0.3实施：用户已授权自动下派，AI226固定ENGINE于23:38正式领取；23:43因场景读取超时及Editor ping持续无响应正式Fail/MCP_UNAVAILABLE，写入0。当前AUTOMATIC/WAITING_USER，AI226 NEEDS_USER，待目标Editor/MCP恢复及原卡一次范围续行；无重复派发。TRAY-FIX旧问题已由AI222/223覆盖，0～1显隐能力保留；COVER-BUBBLE文案已于2026-10-14定稿：A“吃什么”、B“汪！”，DATA→ENGINE实施待自动链恢复，U2/U3/U4终值和第四槽待v0.4。E2已关闭，旧WATCH仍暂停，无提交推送。详见[本轮结果](outputs/control/LAYOUT-V03-20261013/REPORT.md)。
+新审批来源只进入unusedGrantRevalidations审计；原业务ApprovalId/UserDecision/grantId/runs/cycles/消费/失败与人工门保持。仅已验依赖的单调新增及对应说明时间允许，不因重新核验扩大范围。幂等核对不增加轮次；消耗、漂移、根/worker/累计停止、错身份或同车道其他任务预约均拒绝，未知预约不能当空闲。原预约只经ReconcileSupervision等正式入口清理。核验成功也不代表领取或业务已执行，仍须正式Dispatch/claim原卡。
 
-2026-10-13 E2最终关闭：远端main与开发分支均已核实为411257d，与本地main一致；AI219/220/221保持VERIFIED，AI221已补记用户关闭决定，无E2待办。当前MANUAL，不触发新任务。详见[MIG63收束](MIG63/E2_收束与提交.md)。
+完整精确参数/新证据schema：outputs/AI289-CLI-REPAIR-20261021/AI-000306/CONTROL-CALL-EXAMPLE.md。本卡CODE不对生产AI289调用ApproveResume/Configure/Dispatch/Poll，也不调用Unity。CONTROL独立验收前不执行例子。
 
-2026-10-13 旧卡收尾：用户明确关闭AI156/165/169，正式记录为CLOSED_WITHOUT_ACCEPTANCE（SUPERSEDED），后续由控制端持续监测并按新问题下派修复或优化；旧拒验/待验和错误史保留。AI174/195维持VERIFIED，已补记现存警告已知且接受保留。自动链已COMPLETE，当前MANUAL，无新派发。回执见[关闭结算](outputs/control/TASK-CLOSURE-20261013/settlement.json)。
+## 人工、ART与监管回传
 
-2026-10-13 当前：用户明确“验收通过。这部分的相关任务可以关闭”，AI223/225已正式ResolveVerification为VERIFIED；AI222/224原已VERIFIED，本批显隐、动画及0～1时机配置已关闭。随后只读测绘ShortCycle_P0P1当前保存态，1011对象的层级/坐标/驱动配置及可回传报告见[排布现状报告](outputs/control/P0P1-LAYOUT-CURRENT-20261013/P0P1_物件排布结构与位置现状报告.md)。设计/控制端已回写[指导书v0.3及回填表](inputs/排布指导书_ShortCycle_P0P1.md)，用户本轮指定接收为后续指导；U2/U3/U4终调仍待后续v0.4，未代签或派发。旧会话重载与Package Manager EMFILE环境记录保留；不重跑验证、不改场景，无提交推送。
-用户已验收人工配表与导表功能；USER-U1/导表人工项DONE，AI174/195/196/198 VERIFIED。字体/Excel验收完成，字体提交09cd180。剩余布局/P2/独立人工工作见[当前索引](outputs/control/人工处理索引.md)，不代签。
-旧监管session与WATCH保持暂停，独立ART不变。E2提交411257d已由用户推送并完成关闭；本轮只登记结论，不提交其它工作树变更。
+人工清单先读[人工段v2](templates/人工段流程_v2_20261014.md)，每批/波次末生成outputs/control/<批次>/人工段清单.md，记版本和实际证据，四列“条目/结论/备注/截图”。新批次默认统一后置一次；既有人工门只按用户真实决定经正式API改变。queue不自动解析模板。
+
+ART日报读[美术需求v1](inputs/art/美术需求单_P0P1_v1_20261014.md)，ART_PENDING_ITEMS.json只是派生匹配；文件命中不代表族/视觉/用途通过。导入、改名、清理仍先草案与用户授权。当前人工项以[USER状态](inputs/USER_WORK_STATUS.md)为准。
+
+SUPERVISED结算立即Prepare→一次真实Send→Record→控制Receive及独立验收；[长期授权](inputs/监管结算即时回传_用户长期授权_20261014.json)保持，UNKNOWN/拒绝/NO_RESEND不得自动重发。只有验收通过且mode/scope/fresh idle等满足，才Reconcile/Dispatch已授权后继。WATCH60分钟只兜底；独立报告宿主按既有日期生成，首次真实GOV04心跳已于2026-10-19实际完成，证据outputs/control/DETACH-B13-20261019/heartbeat-20261019T081157341Z/。
+
+原页首全部时点与结论已保存在[整理前原件](archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/FLOOR-20261015/entry-history/CONTROL_CHAT-before.md)，不据旧状态启动业务。
 
 编排依次核实际mode、任务依赖、车道所有权、资源锁和路由。状态仅通过正式queue API管理；人工验收用ResolveVerification，失败续行用ApproveResume并绑定用户次数/范围，不清失败史。
 
 GOV-05复杂度登记：新Enqueue必须给S/M/L，queue只派生40/80/120轮；正式修订API为仍QUEUED的旧卡补登记，不直接编辑runtime。按文件数/场景/Play/Build/认领条目数取最高级：S≤3文件且无场景/Play/Build且≤2条；M为4～10文件、1场景、Play或3～5条；L为>10文件、多场景、Build或>5条。仅新建需登记新TK编号的长期工具因工具升L；既有TK族脚本/夹具按文件数。明确用户原卡修订优先。已完成历史不回填未知量；运行中旧卡可按原规划来源结算。预算超额仅解释，不改变GOV-02软/硬门。周报按级别列任务数、真实轮次/预算比、空转比、超额清单和缺失覆盖。
 完整协议：[CONTROL](protocol/CONTROL_CHAT_FULL.md)、[WORKFLOW](WORKFLOW.md)、[SUPERVISED](protocol/SUPERVISED_FULL.md)。工具、坑和日程入口：[TK-WF](toolkit/WF.md)、[pitfalls](pitfalls/INDEX.md)、[PIPELINES](PIPELINES.md)。
 原入口全文与整理回执见[整理归档](archive/2026-10-12-workflow-closeout/README.md)。
+
+## 定期文档维护与用户复盘
+
+按[文档瘦身规范](DOC_MAINTENANCE.md)维护永久清单和[任务简表](TASK_DIGEST.md)。简表不加入执行器日常阅读，只供用户/CONTROL复盘；批次结算、人工关闭、续行/替代后刷新真实观测值。每批瘦身同时盘点INSTRUCTIONS，已关闭历史按第16条完整保全、建立任务/事件映射再轮转，未关闭AI及USER块完整留存。归档前核关闭语义、未关闭依赖与版本，机器过人工未验完整留原位；不得改runtime状态满足工具。
+
+已关闭任务和控制端批次的完整说明/报告在[归档索引](archive/README.md)检索；[永久任务简表全文](archive/tracking/TASK_DIGEST.md)保存在归档区，仅供用户/CONTROL复盘。活动区保留当前必要入口和未结事项，历史证据链接不等于活动依赖。
+
+AI271控制/WATCH消费：Receive后读完整失败receipt.task.continuationDisposition并复核当前mode/root/scope/fresh idle、人工/资源门。CONTROL_REPAIR_ELIGIBLE不是必须询问用户的旧WAITING_USER；先独立诊断/修复验收，必要REPAIR用现有Enqueue同根、精确CODE Scope、真实POLICY来源和RetryCycleId。根续行只用ApproveResume -AuthorizationSource POLICY -Runs 1 -RetryCycleId <root:failed-execution-or-paired-cycle> -ApprovalId <长期原件实际ID> -UserDecision <原件userQuote> -Scope <原根范围>及原Owner/Controller/idle参数。AUTO使用返回的同任务autoHandoff，SUP用原Reconcile/Dispatch；执行器不自行重启。NEEDS_HUMAN_ADDITIONAL才询问额外次数；HARD_STOP不能由政策解锁。原根仅可与最新成功且独立验证通过的REPAIR execution/cycle原子配对；失败cycle不得重用，同卡新周期首次实际claim才消费。计数取正式根视图，不沿用早先固定2/5预期。WATCH仅兜底；Status/失败Task/RESUME_APPROVED审计使用同一root/cycle/grant/source/used/reserved/remaining口径。

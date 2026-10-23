@@ -1,0 +1,25 @@
+{
+  "name": "Editor.ShortCycle",
+  "rootNamespace": "",
+  "references": [
+    "Editor.DataTables",
+    "Generated.DataTables",
+    "ShortCycle",
+    "Toolkit",
+    "Unity.InputSystem",
+    "Unity.RenderPipelines.Universal.2D.Runtime",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

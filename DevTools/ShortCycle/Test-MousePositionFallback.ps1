@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath)
+param([string]$UnityEditorPath,[string]$ProjectAssemblyDirectory)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -34,6 +34,19 @@ $sources = @(
     (Join-Path $repoRoot 'Assets\Scripts\Tools\Tools.cs'),
     (Join-Path $PSScriptRoot 'MousePositionFallbackTests.cs')
 )
+# Explicit offline split outputs can be supplied before ENGINE installs definitions.
+$explicitAssemblyDirectory = -not [string]::IsNullOrWhiteSpace($ProjectAssemblyDirectory)
+if (-not $explicitAssemblyDirectory) { $ProjectAssemblyDirectory = Join-Path $repoRoot 'Library/ScriptAssemblies' }
+$splitAssemblies = $explicitAssemblyDirectory -or (Test-Path -LiteralPath (Join-Path $repoRoot 'Assets/Scripts/Tools/Toolkit.asmdef'))
+$projectReferences = if ($splitAssemblies) {
+    @('Toolkit','Generated.DataTables','ShortCycle','Legacy') | ForEach-Object { Join-Path $ProjectAssemblyDirectory "$_.dll" }
+} else {
+    @(Join-Path $ProjectAssemblyDirectory 'Assembly-CSharp.dll')
+}
+foreach ($reference in $projectReferences) {
+    if (-not (Test-Path -LiteralPath $reference -PathType Leaf)) { throw "Required project assembly missing (compile before validation): $reference" }
+}
+
 $references = @(
     (Join-Path $framework 'mscorlib.dll'),
     (Join-Path $framework 'System.dll'),
@@ -44,9 +57,9 @@ $references = @(
 $unityEngineReferences = @(Get-ChildItem -LiteralPath $unityManaged -Filter 'UnityEngine*.dll' -File | Select-Object -ExpandProperty FullName)
 $realUnityReferences = @($references) + $unityEngineReferences + @(
     (Join-Path $repoRoot 'Library\ScriptAssemblies\Unity.InputSystem.dll'),
-    (Join-Path $repoRoot 'Library\ScriptAssemblies\UnityEngine.UI.dll'),
-    (Join-Path $repoRoot 'Library\ScriptAssemblies\Assembly-CSharp.dll')
+    (Join-Path $repoRoot 'Library\ScriptAssemblies\UnityEngine.UI.dll')
 )
+$realUnityReferences += $projectReferences
 $realUnitySources = @(
     (Join-Path $repoRoot 'Assets\Scripts\Tools\Tools.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\MouseManager.cs')

@@ -34,3 +34,7 @@
 
 ---
 
+
+2026-10-19 AI-000264：TK-CMD-01新增受限ResolveDeclaringType兼容解析，CommandEntry按void(CommandContext)/特性/实例标志核签名；CommandManager复用解析。TK-CMD-02实际23项全覆盖旧/新ID离线测试通过，默认资源中DialogSystem两条旧ID保留。候选归属TK-CMD-01→Toolkit、TK-CMD-02→ShortCycle，尚未ENGINE安装，不把预期归属写成生产已落地；无新TK。
+
+2026-10-19 AI-000265 attempt2：TK-CMD-01正式归Toolkit、TK-CMD-02归ShortCycle，原生23命令及全部旧ID/现有绑定解析通过，当前场景263项事件目标方法未缺失。Play探针在状态/输入锁序列未通过，不能把兼容解析通过视为全部动作回归通过；整体阶段尚未验收。

@@ -43,8 +43,8 @@ namespace EatWhat.Cooking.ShortCycle
             new Dictionary<ShortCyclePresentationSet, VisibilityChange>();
         private int presentationChangeDepth;
 
+        public bool Phase2TransitionActive { get; private set; }
         public int Generation { get { return generation; } }
-
         public void BeginPresentationChange()
         {
             if (presentationChangeDepth++ != 0) return;
@@ -180,6 +180,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         public void ClearSessionPresentation()
         {
+            Phase2TransitionActive = false;
             generation++;
             CancelTimedVisibility();
             presentationChangeDepth = 0;
@@ -269,12 +270,23 @@ namespace EatWhat.Cooking.ShortCycle
             foreach (var request in activationRequests)
             {
                 var persistentVisual = request.Key.KeepVisualActiveAcrossSpaces;
-                var visible = (request.Value || persistentVisual) &&
+                var visible = !Phase2TransitionActive && (request.Value || persistentVisual) &&
                     (persistentVisual || visualOnlyRequests.Contains(request.Key) ||
                         preparingRequests.Contains(request.Key) ||
                         !hasCameraRect || request.Key.IsInView(cameraRect));
                 request.Key.ApplyVisibility(visible, visible && focusRequests.Contains(request.Key));
             }
+        }
+
+        public void SetPhase2Transition(bool active)
+        {
+            OwnVisibility(); generation++; CancelTimedVisibility();
+            if (cameraPanController != null) cameraPanController.CancelPan();
+            Phase2TransitionActive = active;
+            foreach (var space in spaces ?? new ShortCycleSpace[0])
+                if (space != null) { if (active) space.ShowView(ShortCyclePhase0View.Phase2Transition); else space.HideView(ShortCyclePhase0View.Phase2Transition); }
+            if (sharedSpace != null) { if (active) sharedSpace.ShowView(ShortCyclePhase0View.Phase2Transition); else sharedSpace.HideView(ShortCyclePhase0View.Phase2Transition); }
+            MergeVisibility();
         }
 
         private void CollectVisibilityRequests()

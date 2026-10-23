@@ -17,6 +17,7 @@ param(
     [DateTimeOffset]$Now = [DateTimeOffset]::Now
 )
 $ErrorActionPreference = 'Stop'
+$explicitWatchClock=$PSBoundParameters.ContainsKey('Now')
 $utf8 = [Text.UTF8Encoding]::new($false)
 $StateRoot = [IO.Path]::GetFullPath($StateRoot)
 $OutputRoot = [IO.Path]::GetFullPath($OutputRoot)
@@ -109,8 +110,16 @@ function Invoke-WatchOnce {
     $thread = if (-not $gated -and $ThreadCursorPath) { Read-Json $ThreadCursorPath } else { $null }
     if(-not $gated -and $CollectUnity){
         $UnityHeartbeatPath=Join-Path $OutputRoot 'unity-heartbeat.json'
-        & (Join-Path $PSScriptRoot 'Get-UnityHeartbeat.ps1') -Endpoint $UnityMcpUrl -StateRoot $StateRoot -OutputPath $UnityHeartbeatPath | Out-Null
+        $engines=@($queue.tasks | Where-Object { $_.id -in $scope -and $_.status -eq 'RUNNING' -and $_.pipeline -in @('ENGINE_MCP','ENGINE_CLI') })
+        if($engines.Count -eq 1){
+            if($engines[0].pipeline -eq 'ENGINE_CLI'){
+                & (Join-Path $PSScriptRoot 'Get-UnityCliHeartbeat.ps1') -StateRoot $StateRoot -OutputPath $UnityHeartbeatPath | Out-Null
+            }else{
+                & (Join-Path $PSScriptRoot 'Get-UnityHeartbeat.ps1') -Endpoint $UnityMcpUrl -StateRoot $StateRoot -OutputPath $UnityHeartbeatPath | Out-Null
+            }
+        }else{$UnityHeartbeatPath=$null}
     }
+    if(-not $explicitWatchClock){$Now=[DateTimeOffset]::Now}
     $unity = if (-not $gated -and $UnityHeartbeatPath) { Read-Json $UnityHeartbeatPath } else { $null }
     $threadAt = Source-At $thread
     $unityAt = Source-At $unity
@@ -203,7 +212,11 @@ function Invoke-WatchOnce {
         if ($threadFingerprint -eq '|' ) { $threadFingerprint=$null }
         if ($unityFingerprint -eq '|' ) { $unityFingerprint=$null }
         # Editor/thread observations are health evidence, never synthetic task progress.
-        $unityFingerprint=if($unity -and $unity.taskId -ceq $id -and $unity.available -eq $true -and $unityAt -and ($Now-$unityAt).TotalMinutes -le $NoProgressMinutes){
+                $expectedSource=if($task.pipeline -eq 'ENGINE_CLI'){'unity-official-cli'}elseif($task.pipeline -eq 'ENGINE_MCP'){'coplay-mcp'}else{$null}
+        $unityOwned=$unity -and $expectedSource -and $unity.lane -ceq $task.pipeline -and $unity.toolSource -ceq $expectedSource -and
+            $unity.taskId -ceq $id -and $unity.executionId -ceq $task.execution.executionId -and $unity.threadId -ceq $task.execution.ownerThreadId -and
+            $unity.attempt -eq $task.attempts -and $task.status -eq 'RUNNING'
+        $unityFingerprint=if($unityOwned -and $unity.available -eq $true -and $unityAt -and ($Now-$unityAt).TotalSeconds -ge -5 -and ($Now-$unityAt).TotalSeconds -le 30){
             '{0}|{1}|{2}|{3}|{4}' -f $unity.instanceId,$unity.isPlaying,$unity.isCompiling,$unity.sceneDirty,$unity.scenePath
         }else{$null}
         $level = Task-Level $task

@@ -1,5 +1,7 @@
 # 用量日报与周报（TK-WF-03）
 
+2026-10-15 FLOOR反馈：初始input建议 CONTROL≤110K、CODE≤90K、其它≤60K，超目标只报告，不改150K/200K运行提醒。历史首响应、读入后与工作后样本分列；六类构成无独立字段则null，字节不冒充token。已发布日/周报及产出日程不变；10月28日复盘增加“首样本/阶段/实际vs目标/缓存字段/读取字节/未知覆盖”和MIG-F07工具schema字节。见[协议](../../.ai-workspace/CONTEXT_READ_PROTOCOL.md)与[落实记录](../../.ai-workspace/outputs/control/FLOOR-20261015/落实与复核.md)。
+
 2026-10-15 AI-000246回执兼容：`Write-Result`先将`PSCustomObject`快照转为保留原字段的有序字典，再沿用上下文写入；`DataLaneStatus -ControllerThreadId`与Owner回执均支持正常、unknown及读取异常兜底。原动作/路由字段、阈值、去重、Status体积和计费口径保持。定向覆盖在既有`Test-ContextWarning.ps1`，不需要恢复监管或运行导表。
 
 2026-10-15 AI-000245当前口径：Get-ThreadContext优先读取精确threadId原生token_usage_record.payload.usage.input_tokens（有界发现/尾读/增量缓存，30分钟有效，未来超过5分钟拒绝），次用新鲜旧provider，显式fresh UTF-8字节才作粗估；均缺则contextTokens=null/contextSource=unknown。正式队列普通回执显式传ControllerThreadId/OwnerThreadId，MANUAL Status也可提示；UsageMetrics按响应键锁定去重。ADVISE>=150K、STRONG>=200K只提醒手动重载。WATCH不作模型轮询，只消费新鲜记录；STRONG转入可产生worker或console的最小CONTEXT_HIGH，未知不冒充低量重布防；Read/Ack核session/digest/线程。单次输入不是完整窗口或任务计费，旧报告不重发。下述10-14诊断/首次实现口径保留为历史。
@@ -12,7 +14,7 @@
 
 USER_DONE 去重键包含持久的同一 USER 条目完成转换序号；只有实际观察到非DONE→DONE才递增。DOING→DONE→DOING→DONE 两次完成各一事件，重复读取DONE不新增事件。任务人工验收状态回到待审后再次确认也独立计轮。
 
-Import-ProviderUsage.ps1 只接受精确 task/attempt/claim-complete 时间窗的原始 provider 响应，不读取凭证或别的聊天；按 responseId 去重，单响应 usage/token/model 进入原 runtime JSONL。2026-09-28至10-04 的控制端原始事件导入240条、区间外拒绝1条；2026-10-07周报只是隔离 OutputRoot 预览，正式应出前不发布。get_usage_limits 的 usedPercent 仅账号共享配额变化，不能记作任务 token；无 normalModelSlug 时 model=null 与原因保留。
+Import-ProviderUsage.ps1 只接受精确 task/attempt/claim-settlement 时间窗（成功 Complete 或正式 Fail，见下文）的原始 provider 响应，不读取凭证或别的聊天；按 responseId 去重，单响应 usage/token/model 进入原 runtime JSONL。2026-09-28至10-04 的控制端原始事件导入240条、区间外拒绝1条；2026-10-07周报只是隔离 OutputRoot 预览，正式应出前不发布。get_usage_limits 的 usedPercent 仅账号共享配额变化，不能记作任务 token；无 normalModelSlug 时 model=null 与原因保留。
 
 GOV-04：Get-ThreadContext.ps1 对精确 threadId 仅取最新一条 provider 响应的 inputTokens，记录观测时间/responseId；该单次输入并非真正的完整存活窗口。缺精确响应时只允许传入明确 fresh UTF-8 字节作四字节每 token 粗估，仍缺则 contextTokens=null/contextSource=unknown。Poll 领取与 Complete 各在 usage JSONL 追加一次 role=worker、event=thread_context，按 executionId+生命周期去重；Complete 回执附 NONE/ADVISE(≥150K)/STRONG(≥200K)，NONE+unknown 不表示已测低量。
 
@@ -80,3 +82,32 @@ DevTools/Verify-All.ps1的Workflow profile已登记Test-UsageReporting.ps1。仅
 ## PRE-5c
 
 任务 Codex app turn 与 provider 响应分别计数；120软限、240临时硬保护跨attempt保留；120保存交接后继续，软限后30分钟无实际进度硬停。WorkCompleted须有新证据，Observation/Heartbeat不刷新计时。正式硬限待瘦身落地后实测满两周。Get-UsageReport 的 cache 比率只在已观测 inputTokens 分母上计算，缺分母为 null+原因。WATCH 可选真实 worker 进度和 Unity MCP 心跳；绑定控制台以 `Read-WatchInbox.ps1` 读/ack，空箱立即结束。宿主部署未核，不把夹具唤醒计作实机。
+
+## ENGINE_CLI计量（AI249，2026-10-16）
+
+队列车道与实际工具是独立字段：UsageMetrics.actualTool来自调用者实际ToolSource，缺失null；Get-UsageReport增加车道/实际工具/UsageCategory分表，不重写历史。setup仅记录安装/接入，task为日常任务，verification为验收，不能把接入开销混作CLI业务均值。
+
+Invoke-TaskTool新增CaptureOutput/OutputRoot/ToolSource/UsageCategory；CLI自动CaptureOutput，逐流原始byte、真实durationMs、可空exitCode/failure、stdoutPath/stderrPath及实际发出JSON含换行的summaryUtf8Bytes落盘。ToolResultBytes在此模式仅计发回的摘要，原文bytes单列，不充token；旧默认合并输出保持兼容。无进程/捕获证据时字段null；长help不回灌。使用者不得在参数或进程输出放凭证。只有成功的真实成果才可显式WorkCompleted，普通查询/心跳Observation。
+
+Provider导入仅在成功 Complete 或正式 Fail 已结算后进行；成功使用completedAt，失败使用下述权威窗口。ENGINE_CLI事件必须显式taskId/attempt/executionId与原生payload.thread_id、response_id和窗口匹配，model来自同线程同turn的context；responseId在现有日志上加导入互斥去重，不计算turn/thread累计usage，不用订阅配额推算任务成本。首次真实监管通知和新chat完整schema成本均未由隔离fixture证明。
+CLI后台心跳也记录既有usage：verification类别，最多2次只读进程（status与editor_status），无重试，单进程35秒、command --timeout 30秒。原始双流落盘，退出/失败/耗时/流字节在sampling.calls；摘要byte表示collector实际发出的UTF-8摘要，不证明WATCH消费后又送入模型。provider token未知为null。采样归因含task/attempt/execution/thread，fixture实际调用数为0且不写生产usage。真实观测使用完成时间；显式AsOf/Now保留确定性。
+
+按队列车道、actualTool和setup/task/verification分列已观测token、调用数、摘要byte、耗时及覆盖数；历史无来源仍null，不能把byte计token或缺失当0。
+
+## 正式失败用量窗口（AI251，2026-10-16）
+
+失败后优先在ApproveResume前导入本execution成本。事件仍须显式taskId/attempt/executionId，并匹配ExpectedThreadId与原生payload.thread_id；只导入[claimedAt, 正式Fail的errorHistory.at]闭区间。绝不补写completedAt，不用mtime、导入时刻或外部自报结束时间。
+
+未来Fail仅在新errorHistory条目追加stage=FAIL、executionId、ownerThreadId、claimedAt，保留原at/attempt；旧条目不回填。明确记录的历史失败可在续行后导入，但须与唯一保留executionHistory及下一execution领取时间相符；后续成功的completedAt不能延长旧失败窗口。旧无身份条目只兼容当前未换execution、NEEDS_USER/PAUSED_CIRCUIT、唯一当前attempt失败时间、task/execution领取时间一致，并且outputs/task-receipts/<taskId>/Fail-*.json有唯一匹配正式回执；缺失、多个可能窗口或已续行一律拒绝并说明。
+
+其它终止状态、控制验收拒绝、自动租约终止、取消/替代不在本补齐范围。失败记录的windowKind/source/start/end及原execution/attempt随usage保存；responseId照旧去重，input/output/cache/reasoning/model未知保留null。此导入不恢复任务、不改变失败次数、许可、人工门或业务修复预算。定向验证：Test-EngineCli.ps1 -Case FailureUsage；默认All保留原测试并包含新用例，不另建fixture。
+
+2026-10-21 G87：独立CLI修复/冒烟语义分类usageCategory=pipeline-repair，线标签CLI(磨合)，与业务账分列；实际provider响应/旧原卡失败与已消费8周期保持。当前工具枚举和简表生成器尚未原生支持该新标签，先按批准任务映射/机器报告块记账，不宣称自动日报周报已接入。正式工具改造必须独立小范围登记，不能手改历史JSONL。入口：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/执行登记.md。
+
+## G87 分类与线标记（AI301，2026-10-21）
+
+Invoke-TaskTool的UsageCategory现支持setup/task/verification/pipeline-repair；默认task及原三类行为保持。获批管线修复/冒烟在新调用中显式传pipeline-repair，ToolSource仍填写实际PowerShell/.NET/Unity CLI工具，队列车道与线名都不是工具证据。底层UsageMetrics、Import-ProviderUsage、Get-UsageReport本卡未修改，后两者继续按真实导入记录的类别分组。
+
+Get-TaskDigest增加可选ClassificationMapPath与ClassificationMapSha256。映射须是工作区.ai-workspace/inputs内的有限JSON，提供SHA固定原件；schemaVersion1、来源批准文件路径与SHA、唯一且确实存在于当前队列的taskId、usageCategory和lineLabel。来源批准原件也须在inputs且SHA匹配。无映射参数保留旧显示；有映射时追加“线标记｜用量分类”两列，索引记录映射/批准来源。lineLabel、真实lane、actualTools分开；映射的actualTool字段始终忽略，unknown不等于零或未消耗。旧usage原件不重分类，token来源优先级/范围、失败与许可记录不变。
+
+本批来源为.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/任务分类映射.json，SHA及调用示例在AI301输出；源码不硬编码批次ID。仅在明确允许的输出运行生产简表生成；CODE本卡只运行隔离fixture，未改默认archive/tracking简表或生产runtime。旧271/282/298/299 CODE_STOP的计费导入缺口继续保留，不伪造Fail/账单、不搬到success窗口，不改原289次数。新增类别不自动重导历史provider账目。

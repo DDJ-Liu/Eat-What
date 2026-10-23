@@ -13,14 +13,14 @@ function Check([bool]$Condition, [string]$Name) {
 function Invoke-Report([string]$At, [string]$Root=$output) {
     & $runner -Now ([DateTimeOffset]::Parse($At)) -RuntimeRoot $runtime -OutputRoot $Root | ConvertFrom-Json -DateKind String
 }
-function Add-Record([string]$At, [string]$Task, [long]$Calls=1, [long]$Bytes=10) {
-    Write-TaskUsageRecord -TaskId $Task -Lane CODE -Phase execute -Event fixture -ToolCallCount $Calls -ToolResultBytes $Bytes -Source fixture -Coverage 'isolated observed records' -RuntimeRoot $runtime -RecordedAt ([DateTimeOffset]::Parse($At)) | Out-Null
+function Add-Record([string]$At, [string]$Task, [long]$Calls=1, [long]$Bytes=10, [string]$Lane='CODE', [string]$Tool, [string]$Category) {
+    Write-TaskUsageRecord -TaskId $Task -Lane $Lane -Metadata @{toolSource=$Tool;usageCategory=$Category} -Phase execute -Event fixture -ToolCallCount $Calls -ToolResultBytes $Bytes -Source fixture -Coverage 'isolated observed records' -RuntimeRoot $runtime -RecordedAt ([DateTimeOffset]::Parse($At)) | Out-Null
 }
 try {
     . (Join-Path $PSScriptRoot 'UsageMetrics.ps1')
-    Add-Record '2026-09-23T00:01:00+08:00' 'FIRST' 1 10
+    Add-Record '2026-09-23T00:01:00+08:00' 'FIRST' 1 10 -Lane ENGINE_CLI -Tool unity-official-cli -Category task
     Add-Record '2026-09-27T23:59:59+08:00' 'AGGREGATE' 4 900
-    Add-Record '2026-09-28T00:00:00+08:00' 'SECOND' 1 20
+    Add-Record '2026-09-28T00:00:00+08:00' 'SECOND' 1 20 -Lane ENGINE_CLI -Tool unity-official-cli -Category setup
     Add-Record '2026-10-07T01:00:00+08:00' 'FUTURE' 1 9999
     $before = @(Get-ChildItem -LiteralPath $runtime -File | Get-FileHash)
     $early = Invoke-Report '2026-09-29T15:59:59Z'
@@ -35,6 +35,10 @@ try {
     Check ($null -eq $first.summary.byLanePhase[0].inputTokens) 'unknown provider tokens remain null'
     Check ($first.metadata.missingDates.Count -eq 5 -and $first.metadata.observedDates.Count -eq 2) 'missing dates explicit rather than fabricated zero consumption'
     Check (-not $first.metadata.isBackfill) 'on-time run identified correctly'
+    $rendered=Get-Content -LiteralPath (Join-Path $weekPath 'report.md') -Raw
+    Check ($rendered.Contains('| ENGINE_CLI | unity-official-cli | task |')) 'daily/weekly renderer shows observed queue lane, tool and task cost category'
+    Check ($rendered.Contains('| CODE | null | null |')) 'legacy unknown tool is not inferred from lane'
+    Check ($null -eq @($first.summary.byLaneTool|Where-Object actualTool -eq 'unity-official-cli')[0].inputTokens) 'tool-labelled records do not fabricate provider token allocation'
     $reportBytes=[IO.File]::ReadAllBytes((Join-Path $weekPath 'report.md'))
     $hash = (Get-FileHash -LiteralPath (Join-Path $weekPath 'report.md')).Hash
     $again = Invoke-Report '2026-09-30T10:00:00+08:00'
@@ -51,6 +55,8 @@ try {
     Check (@($catchup.created | Where-Object kind -eq weekly).Count -eq 2) 'resume creates all missed weekly reports'
     $second = Get-Content -LiteralPath (Join-Path $catchupRoot 'weekly/2026-09-28_2026-10-04/evidence.json') -Raw | ConvertFrom-Json -DateKind String
     Check ($second.summary.recordCount -eq 1 -and $second.records[0].taskId -eq 'SECOND') 'cross-month report selects correct week'
+    $setupReport=Get-Content -LiteralPath (Join-Path $catchupRoot 'weekly/2026-09-28_2026-10-04/report.md') -Raw
+    Check ($setupReport.Contains('| ENGINE_CLI | unity-official-cli | setup |') -and $second.summary.byLaneTool[0].toolCallCount -eq 1 -and $null -eq $second.summary.byLaneTool[0].durationMs) 'setup measured cost separate; unobserved duration remains null'
     $daily = Get-Content -LiteralPath (Join-Path $catchupRoot 'daily/2026-10-07/evidence.json') -Raw | ConvertFrom-Json -DateKind String
     Check ($daily.summary.recordCount -eq 0) 'future event excluded from generated snapshot'
     $late = Get-Content -LiteralPath (Join-Path $catchupRoot 'weekly/2026-09-21_2026-09-27/evidence.json') -Raw | ConvertFrom-Json -DateKind String

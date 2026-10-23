@@ -6,9 +6,20 @@ using System.Collections.Generic;
 
 namespace UnityEngine
 {
+    public enum RuntimeInitializeLoadType { SubsystemRegistration, BeforeSceneLoad }
+    [AttributeUsage(AttributeTargets.Method)] public sealed class RuntimeInitializeOnLoadMethodAttribute : Attribute
+    { public RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType type) { } }
     public class Object
     {
         public string name;
+        public bool ValidationDestroyed {get;internal set;}
+        public static void DontDestroyOnLoad(Object value) { }
+        public static void Destroy(Object value){DestroyImmediate(value);}
+        public static void DestroyImmediate(Object value)
+        {
+            var go=value as GameObject;if(go!=null){go.DestroyForValidation();return;}
+            if(value!=null){value.ValidationDestroyed=true;Resources.UnregisterObject(value);}
+        }
 
         public static T Instantiate<T>(T original) where T : Object, new()
         {
@@ -34,6 +45,7 @@ namespace UnityEngine
     public class ScriptableObject : Object
     {
         public static T CreateInstance<T>() where T : ScriptableObject, new() { return new T(); }
+        public static ScriptableObject CreateInstance(Type type){return (ScriptableObject)Activator.CreateInstance(type);}
     }
     public class Component : Object
     {
@@ -65,6 +77,7 @@ namespace UnityEngine
     {
         private readonly List<Coroutine> activeCoroutines = new List<Coroutine>();
 
+        public void StopAllCoroutines(){StoppedCoroutineCount+=activeCoroutines.Count;activeCoroutines.Clear();}
         public int StartedCoroutineCount { get; private set; }
         public int StoppedCoroutineCount { get; private set; }
         public int ActiveCoroutineCount { get { return activeCoroutines.Count; } }
@@ -114,6 +127,12 @@ namespace UnityEngine
 
             return yielded;
         }
+    }
+    public class AsyncOperation
+    {
+        public bool isDone { get; private set; }
+        public event Action<AsyncOperation> completed;
+        public void Complete() { isDone = true; var callback = completed; if (callback != null) callback(this); }
     }
     public class Coroutine
     {
@@ -241,6 +260,19 @@ namespace UnityEngine
         public Transform transform { get; private set; }
         public UnityEngine.SceneManagement.Scene scene;
 
+        public GameObject(string name) : this() { this.name=name; }
+        internal void DestroyForValidation()
+        {
+            if(ValidationDestroyed)return;ValidationDestroyed=true;
+            foreach(var component in components.ToArray())
+            {
+                component.ValidationDestroyed=true;
+                var method=component.GetType().GetMethod("OnDestroy",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                if(method!=null)method.Invoke(component,null);
+                Resources.UnregisterObject(component);
+            }
+            components.Clear();
+        }
         public GameObject()
         {
             transform = new Transform();
@@ -252,6 +284,7 @@ namespace UnityEngine
             if (component == null || components.Contains(component)) return;
             component.Attach(this);
             components.Add(component);
+            Resources.RegisterObject(component);
         }
 
         public T AddComponent<T>() where T : Component, new()
@@ -587,12 +620,20 @@ namespace UnityEngine
         public static bool runInBackground;
         public static bool isFocused = true;
         public static bool isPlaying = true;
+        public static bool isEditor; public static int QuitCalls; public static int LastQuitCode; public static void Quit(int code){QuitCalls++;LastQuitCode=code;}
         public static string dataPath = "Assets";
+        public static string streamingAssetsPath = "StreamingAssets";
+        public static int PersistentPathReads;
+        public static string persistentDataPath { get { PersistentPathReads++; throw new InvalidOperationException("Real user save path is forbidden in offline fixtures; inject an isolated store."); } }
     }
     public static class Resources
     {
         private static readonly Dictionary<string, Object> Values = new Dictionary<string, Object>();
-        public static T[] FindObjectsOfTypeAll<T>() { return new T[0]; }
+        private static readonly List<Object> Objects = new List<Object>();
+        internal static void RegisterObject(Object value) { if (!Objects.Contains(value)) Objects.Add(value); }
+        internal static void UnregisterObject(Object value){Objects.Remove(value);}
+        public static T[] FindObjectsOfTypeAll<T>()
+        { var result = new List<T>(); foreach (var value in Objects) if (value is T) result.Add((T)(object)value); return result.ToArray(); }
         public static T Load<T>(string path) where T : Object
         {
             Object value;
@@ -724,15 +765,35 @@ namespace UnityEngine.Events
 
 namespace UnityEngine.SceneManagement
 {
-    public static class SceneManager { public static Scene GetActiveScene() { return new Scene(); } }
+    public enum LoadSceneMode { Single, Additive }
+    public static class SceneUtility { public static int GetBuildIndexByScenePath(string path) { return -1; } }
+    public static class SceneManager
+    {
+        public static event Action<Scene> sceneUnloaded;
+        public static event Action<Scene,LoadSceneMode> sceneLoaded;
+        public static Scene GetActiveScene() { foreach(var value in Scenes.Values)return value;return new Scene(); }
+        public static int sceneCount {get{return Scenes.Count;}} public static Scene GetSceneAt(int index){return new List<Scene>(Scenes.Values)[index];}
+        public static Action<string,LoadSceneMode> ValidationLoad; public static void LoadScene(string path,LoadSceneMode mode){if(ValidationLoad==null)throw new InvalidOperationException("Controlled loader required.");ValidationLoad(path,mode);var callback=sceneLoaded;if(callback!=null)callback(GetSceneByPath(path),mode);}
+        public static void ValidationClear(){Scenes.Clear();}
+        public static UnityEngine.AsyncOperation LoadSceneAsync(string path, LoadSceneMode mode) { throw new InvalidOperationException("Native loading is forbidden offline; inject the controlled scene loader."); }
+        public static UnityEngine.AsyncOperation UnloadSceneAsync(Scene scene) { throw new InvalidOperationException("Native unloading is forbidden offline; inject the controlled scene lease."); }
+        private static readonly Dictionary<string, Scene> Scenes = new Dictionary<string, Scene>();
+        public static Scene GetSceneByPath(string path) { Scene value; return Scenes.TryGetValue(path, out value) ? value : new Scene(); }
+        public static void SetLoaded(Scene scene) { Scenes[scene.path] = scene; }
+        public static void RaiseUnloaded(Scene scene) { Scenes.Remove(scene.path); var callback=sceneUnloaded; if(callback!=null)callback(scene); }
+    }
     public struct Scene
     {
         public string path;
         public string name;
-        public static bool operator ==(Scene left, Scene right) { return true; }
-        public static bool operator !=(Scene left, Scene right) { return false; }
-        public override bool Equals(object value) { return value is Scene; }
-        public override int GetHashCode() { return 0; }
+        public bool isLoaded;
+        public bool isDirty; public int handle,ValidationRootCount;
+        public bool IsValid() { return !string.IsNullOrEmpty(path); }
+        public UnityEngine.GameObject[] GetRootGameObjects() { return new UnityEngine.GameObject[ValidationRootCount]; }
+        public static bool operator ==(Scene left, Scene right) { return left.path==right.path && left.name==right.name; }
+        public static bool operator !=(Scene left, Scene right) { return !(left==right); }
+        public override bool Equals(object value) { return value is Scene && this==(Scene)value; }
+        public override int GetHashCode() { return (path??string.Empty).GetHashCode(); }
     }
 }
 
@@ -1043,3 +1104,60 @@ public static class Tools
     public static UnityEngine.Sprite[] LoadSpritesFromFolder(string path) { return new UnityEngine.Sprite[0]; }
 }
 #endif
+
+namespace UnityEditor
+{
+    [AttributeUsage(AttributeTargets.Class)] public sealed class InitializeOnLoadAttribute : Attribute { }
+    public enum PlayModeStateChange { ExitingEditMode, EnteredPlayMode, ExitingPlayMode, EnteredEditMode }
+    public static class EditorApplication
+    {
+        public delegate void CallbackFunction();
+        private static bool playing,pending;
+        public static bool isCompiling,isUpdating,ValidationHoldPendingCancel;
+        public static bool isPlaying
+        {
+            get{return playing;}
+            set{if(value){if(!playing)pending=true;}else if(playing){pending=true;}else if(!ValidationHoldPendingCancel){pending=false;}}
+        }
+        public static bool isPlayingOrWillChangePlaymode {get{return playing||pending;}}
+        public static bool ValidationPending {get{return pending;}set{pending=value;}}
+        public static int EnteredEditEvents;
+        public static event Action<PlayModeStateChange> playModeStateChanged;
+        public static event CallbackFunction update;
+        public static int ValidationUpdateCount {get{return update==null?0:update.GetInvocationList().Length;}}
+        public static CallbackFunction ValidationSnapshotUpdate(){return update;}
+        public static void ValidationUpdate(){var callback=update;if(callback!=null)callback();}
+        public static void ValidationReset(){playing=false;pending=false;ValidationHoldPendingCancel=false;isCompiling=false;isUpdating=false;EnteredEditEvents=0;update=null;}
+        public static void ValidationRaise(PlayModeStateChange state)
+        {
+            if(state==PlayModeStateChange.EnteredPlayMode){playing=true;pending=false;}
+            if(state==PlayModeStateChange.ExitingPlayMode){playing=true;pending=true;}
+            if(state==PlayModeStateChange.EnteredEditMode){playing=false;pending=false;EnteredEditEvents++;}
+            var call=playModeStateChanged;if(call!=null)call(state);
+        }
+    }
+    public static class AssemblyReloadEvents
+    {public static event Action beforeAssemblyReload;public static void ValidationRaise(){var call=beforeAssemblyReload;if(call!=null)call();}}
+    public static class SessionState
+    {
+        private static readonly Dictionary<string,string> Text=new Dictionary<string,string>();
+        public static string GetString(string key,string fallback){string value;return Text.TryGetValue(key,out value)?value:fallback;}
+        public static void SetString(string key,string value){Text[key]=value;}
+        public static int GetInt(string key,int fallback){string v;int n;return Text.TryGetValue(key,out v)&&int.TryParse(v,out n)?n:fallback;} public static void SetInt(string key,int value){Text[key]=value.ToString(System.Globalization.CultureInfo.InvariantCulture);}
+        public static bool GetBool(string key,bool fallback){string value;return Text.TryGetValue(key,out value)?value=="true":fallback;}
+        public static void SetBool(string key,bool value){Text[key]=value?"true":"false";}
+    }
+}
+namespace UnityEditor.SceneManagement
+{
+    public enum NewSceneSetup { EmptyScene }
+    public enum NewSceneMode { Single }
+    public struct SceneSetup { public string path; public bool isLoaded,isActive; }
+    public static class EditorSceneManager
+    {
+        public static int Restores; public static bool ValidationThrowRestore; private static int sceneSerial;
+        public static SceneSetup[] GetSceneManagerSetup(){return new[]{new SceneSetup{path=UnityEngine.SceneManagement.SceneManager.GetActiveScene().path,isLoaded=true,isActive=true}};}
+        public static UnityEngine.SceneManagement.Scene NewScene(NewSceneSetup setup,NewSceneMode mode){UnityEngine.SceneManagement.SceneManager.ValidationClear();var scene=new UnityEngine.SceneManagement.Scene{path="",isLoaded=true,handle=++sceneSerial};UnityEngine.SceneManagement.SceneManager.SetLoaded(scene);return scene;}
+        public static void RestoreSceneManagerSetup(SceneSetup[] setup){if(ValidationThrowRestore)throw new InvalidOperationException("Synthetic RestoreSceneManagerSetup failure.");Restores++;UnityEngine.SceneManagement.SceneManager.ValidationClear();foreach(var item in setup)UnityEngine.SceneManagement.SceneManager.SetLoaded(new UnityEngine.SceneManagement.Scene{path=item.path,isLoaded=item.isLoaded});}
+    }
+}

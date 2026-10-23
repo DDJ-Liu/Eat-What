@@ -2,6 +2,8 @@
 
 > 完整一句话索引与车道正文见 [pitfalls/INDEX.md](pitfalls/INDEX.md)。本页只保留旧路径的 P 编号解析映射。
 
+2026-10-15分层复核：P-001～030只读索引；近期全文保留于车道文件，按任务点名读取。保留所有历史规则，不因“常驻”而每轮通读。
+
 - P-049: [CODE：PowerShell JSON 日期转换丢失 UTC](pitfalls/CODE.md#p-049-code-utc-json)
 - P-048: [CODE/ENGINE_MCP/控制端：Prefab源授权不覆盖映射外继承传播](pitfalls/CODE.md#p-048-prefab-scope)
 

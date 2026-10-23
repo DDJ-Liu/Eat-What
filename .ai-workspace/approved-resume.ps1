@@ -31,83 +31,362 @@ function Assert-ResumeScope($Approved,[string]$Requested) {
 }
 function Get-BoundedResume($Task) { return Get-ObjectPropertyValue $Task 'resumeApproval' }
 function Assert-BoundedResume($Task,$Mode,[string]$RequestedScope) {
-    $g = Get-BoundedResume $Task
+    $g=Get-BoundedResume $Task
     Assert-Value ($g -and -not $g.blockedReason -and $g.usedRuns -lt $g.runs) 'No remaining approved runs.'
+    if((Get-RetryValue $g 'authorizationSource') -eq 'POLICY'){
+        $authority=Get-RetryAuthority
+        Assert-Value ($authority -and $g.approvalId -ceq $authority.approvalId -and $g.userDecision -ceq $authority.userQuote -and
+            $g.sourceSha256 -ceq '541E77E1B69FCD634479F1211A024FCA9A308592CA3B29E8619C28DEC009C8C0') 'POLICY claim requires unchanged verified source authority.'
+    }
     Assert-Value ($g.mode -ceq $Mode.mode -and $g.taskId -ceq $Task.id -and $g.taskFingerprint -ceq (Get-SupervisionFingerprint $Task)) 'Resume mode or task definition changed.'
-    if ($Mode.mode -eq 'SUPERVISED') {
+    if($Mode.mode -eq 'SUPERVISED'){
         Assert-Value ($Mode.supervised.status -eq 'ACTIVE' -and -not $Mode.supervised.stopRequested -and -not $Mode.supervised.exitRequested -and $Mode.supervised.sessionId -ceq $g.sessionId -and $Mode.supervised.taskIds -contains $Task.id) 'Paused or out-of-scope supervision cannot resume.'
     }
     Assert-Value ($g.routeKey -ceq (Get-PipelineRouteKey (Get-PipelineExecutionTarget $Task.pipeline))) 'Resume route changed.'
+    if(Get-RetryValue $g 'ownerThreadId'){Assert-Value ($g.ownerThreadId -ceq $Task.execution.ownerThreadId) 'Resume owner changed.'}
     Assert-Value ($g.failureHistorySha256 -ceq (Get-ResumeDigest @($Task.errorHistory)) -and $g.expectedAttempt -eq ([int]$Task.attempts+1)) 'Resume failure history or attempt changed.'
     Assert-ResumeScope $g.scope $RequestedScope
     return $g
 }
-function Use-BoundedResume($Task,$Grant) {
-    $Grant.usedRuns = [int]$Grant.usedRuns + 1
-    $Grant.claims = @($Grant.claims) + [pscustomobject]@{at=Get-NowIso;attempt=$Task.attempts;executionId=$Task.execution.executionId}
+function Use-BoundedResume($Task,$Grant,$QueueState,$Mode) {
+    $cycleId=$null
+    if(Get-RetryValue $Grant 'cycleIds'){
+        $cycleId=$Grant.cycleIds[[int]$Grant.usedRuns]
+        $root=Get-RepairRootTask $QueueState $Task
+        $cycles=@(Get-RetryCycles $QueueState $root)
+        $cycle=@($cycles|Where-Object cycleId -ceq $cycleId)[0]
+        Assert-Value ($null -ne $cycle) 'Missing retry cycle.'
+        if($Task.id -ceq $root.id){
+            Assert-Value (@($cycle.rootExecutionIds).Count -eq 0) 'This retry cycle already executed the root.'
+            $cycle.rootExecutionIds=@($Task.execution.executionId)
+        } else {
+            Assert-Value (-not $cycle.repairTaskId -or $cycle.repairTaskId -ceq $Task.id) 'Cycle belongs to another repair.'
+            $cycle.repairTaskId=$Task.id
+        }
+        $cycle.consumed=$true;$cycle.reserved=$false
+        Set-RetryValue $root 'retryCycles' $cycles
+        Set-RetryValue $Task.execution 'retryCycleId' $cycleId
+    }
+    $Grant.usedRuns=[int]$Grant.usedRuns+1
+    $Grant.claims=@($Grant.claims)+[pscustomobject]@{at=Get-NowIso;attempt=$Task.attempts;executionId=$Task.execution.executionId;retryCycleId=$cycleId}
     Set-ObjectPropertyValue $Task.execution 'resumeApprovalId' $Grant.approvalId
+    Set-ObjectPropertyValue $Task.execution 'resumeGrantId' (Get-RetryValue $Grant 'grantId')
     Set-ObjectPropertyValue $Task.execution 'approvedScope' $Grant.scope
 }
 function Close-BoundedResumeFailure($Task) {
-    $g = Get-BoundedResume $Task
-    if (-not $g -or $Task.execution.resumeApprovalId -cne $g.approvalId) { return }
-    # Every new failure still stops. Reusing this approval never replenishes runs.
-    $g.failureHistorySha256 = Get-ResumeDigest @($Task.errorHistory)
-    $g.expectedAttempt = [int]$Task.attempts + 1
-    if ($ErrorKind -eq 'PERMISSION' -or $FailureScope -ne 'TASK') { $g.blockedReason = 'New permission/global/human stop requires a new explicit user approval.' }
-    $Task.status = 'NEEDS_USER'
+    $g=Get-BoundedResume $Task
+    if(-not $g -or $Task.execution.resumeApprovalId -cne $g.approvalId){return}
+    $g.failureHistorySha256=Get-ResumeDigest @($Task.errorHistory)
+    $g.expectedAttempt=[int]$Task.attempts+1
+    if($ErrorKind -eq 'PERMISSION' -or $FailureScope -ne 'TASK'){$g.blockedReason='New permission/global/human stop requires a new explicit user approval.'}
+    $Task.status='NEEDS_USER'
 }
-function Invoke-ApproveResume {
-    $m=Read-ModeState; $q=Read-JsonFile $queuePath; $w=Read-JsonFile $workerPath
-    $t=Get-Task $q $TaskId
-    Assert-Value ($t -and $t.status -in @('NEEDS_USER','PAUSED_CIRCUIT','QUEUED') -and -not $t.result -and @($t.errorHistory | Where-Object { $_ }).Count -gt 0) 'Only an inactive, uncompleted failed task can resume.'
-    Assert-Value ($Runs -gt 0 -and $UserDecision -and $ApprovalId -cmatch '^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$') 'Runs, actual user decision and stable user-message ApprovalId are required.'
-    $boundController = Get-ObjectPropertyValue (Get-ObjectPropertyValue $m 'supervised') 'controllerThreadId'
-    Assert-Value ($ControllerThreadId -and ($ControllerThreadId -ceq $boundController -or $controllerThreads -contains $ControllerThreadId)) 'Only the bound controller can approve continuation.'
-    if ($m.mode -eq 'SUPERVISED') {
-        Assert-Value ($m.supervised.status -eq 'ACTIVE' -and -not $m.supervised.stopRequested -and -not $m.supervised.exitRequested -and $m.supervised.taskIds -contains $TaskId) 'ResumeSupervision must precede task approval.'
-        Assert-Value (@($m.supervised.reservations | Where-Object taskId -eq $TaskId).Count -eq 0) 'Outstanding dispatch must be reconciled first.'
+# Explicit opt-in only; ordinary claim checks below are intentionally unchanged.
+function Get-UnusedGrantDigest {
+    param([AllowNull()][object]$Value)
+    # Structural comparisons only. Historical stored digests keep Get-ResumeDigest.
+    $json=ConvertTo-Json -InputObject $Value -Depth 50 -Compress
+    [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.UTF8Encoding]::new($false,$true).GetBytes($json)))
+}
+
+function Read-UnusedGrantJson([string]$Path) {
+    $bytes=[IO.File]::ReadAllBytes($Path)
+    Assert-Value ($bytes.Length -le 4MB) 'Revalidation JSON exceeds 4MiB.'
+    $text=[Text.UTF8Encoding]::new($false,$true).GetString($bytes)
+    $doc=[Text.Json.JsonDocument]::Parse($text)
+    try {
+        function TestUnusedJsonNode($Node) {
+            if($Node.ValueKind -eq [Text.Json.JsonValueKind]::Object) {
+                $keys=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+                foreach($p in $Node.EnumerateObject()){Assert-Value ($keys.Add($p.Name)) 'Duplicate revalidation JSON key.';TestUnusedJsonNode $p.Value}
+            } elseif($Node.ValueKind -eq [Text.Json.JsonValueKind]::Array) {foreach($v in $Node.EnumerateArray()){TestUnusedJsonNode $v}}
+        }
+        Assert-Value ($doc.RootElement.ValueKind -eq [Text.Json.JsonValueKind]::Object) 'Revalidation requires one JSON object.'
+        TestUnusedJsonNode $doc.RootElement
+    } finally {$doc.Dispose()}
+    return $text|ConvertFrom-Json -DateKind String
+}
+function Assert-UnusedGrantShape($Value,[string[]]$Names,[string]$Label) {
+    Assert-Value ($Value -is [pscustomobject] -and @($Value.PSObject.Properties.Name).Count -eq $Names.Count -and
+        @($Value.PSObject.Properties.Name|Where-Object{$_ -cnotin $Names}).Count -eq 0) "Unexpected $Label fields."
+}
+function Get-UnusedGrantDefinition($Task) {
+    [pscustomobject][ordered]@{id=$Task.id;pipeline=$Task.pipeline;title=$Task.title;instruction=$Task.instruction;dependsOn=@($Task.dependsOn);
+        policy=(Get-SupervisionPolicy $Task);artDailyIds=@(Get-ObjectPropertyValue $Task 'artDailyIds');artSourcePaths=@(Get-ObjectPropertyValue $Task 'artSourcePaths')}
+}
+function Get-UnusedGrantState($Task,$Root) {
+    [pscustomobject][ordered]@{
+        attempts=$Task.attempts;errorHistory=@($Task.errorHistory);resumeApprovalHistory=@(Get-ObjectPropertyValue $Task 'resumeApprovalHistory'|Where-Object{$null -ne $_})
+        executionHistory=@(Get-ObjectPropertyValue $Task 'executionHistory'|Where-Object{$null -ne $_});execution=$Task.execution
+        businessScope=Get-ObjectPropertyValue $Task 'businessScope';workKind=$Task.workKind;maxAttempts=$Task.maxAttempts
+        failureStopLimit=Get-ObjectPropertyValue $Task 'failureStopLimit';complexity=$Task.complexity;turnBudget=$Task.turnBudget
+        rootTaskId=$Root.id;retryCycles=@(Get-RetryValue $Root 'retryCycles');retryCeilings=Get-RetryValue $Root 'retryCeilings'
+        retryBusinessScope=Get-RetryValue $Root 'retryBusinessScope';retryHardStop=Get-RetryValue $Root 'retryHardStop'
     }
-    if ($m.mode -eq 'AUTOMATIC') { Assert-Value ($m.automatic.currentTaskId -ceq $TaskId) 'Only the current automatic-chain task can resume.' }
+}
+function Assert-UnusedGrantDependency($Dependency,$Row,$Mode) {
+    Assert-UnusedGrantShape $Row @('taskId','reviewPath','reviewSha256') 'dependency evidence'
+    Assert-Value ($Dependency -and $Dependency.id -ceq $Row.taskId -and $Dependency.status -ceq 'SUCCEEDED' -and
+        (Get-TaskVerificationStatus $Dependency) -ceq 'VERIFIED' -and
+        (Get-SupervisionPolicy $Dependency).gateApproved -eq $true -and
+        (Get-ObjectPropertyValue $Dependency 'supervisionGateDecision').userDecision) 'Dependency needs actual completed/verified status and formal gate approval.'
+    $reviewPath=Assert-ResumeFile @{path=$Row.reviewPath;sha256=$Row.reviewSha256}
+    $review=Read-UnusedGrantJson $reviewPath
+    Assert-Value ($review.schemaVersion -eq 1 -and $review.decision -ceq 'PASSED' -and $review.taskId -ceq $Dependency.id -and
+        $review.attempt -eq $Dependency.attempts -and $review.executionId -ceq $Dependency.execution.executionId -and
+        [DateTimeOffset]::Parse($review.reviewedAt) -ge [DateTimeOffset]::Parse($Dependency.completedAt)) 'Independent review identity or completion time differs.'
+    $completePath=Assert-ResumeFile @{path=$review.receiptPath;sha256=$review.receiptSha256}
+    $receiptDirectory=[IO.Path]::GetFullPath((Join-Path $workspaceRoot ('outputs/task-receipts/'+$Dependency.id))).TrimEnd('\','/')
+    Assert-Value ([IO.Path]::GetDirectoryName($completePath) -ieq $receiptDirectory) 'Dependency completion must be its formal task receipt.'
+    $complete=Read-UnusedGrantJson $completePath
+    Assert-Value ($complete.action -ceq 'COMPLETED' -and $complete.task.id -ceq $Dependency.id -and
+        $complete.task.attempts -eq $Dependency.attempts -and $complete.task.execution.executionId -ceq $Dependency.execution.executionId -and
+        (Get-UnusedGrantDigest $complete.task.result) -ceq (Get-UnusedGrantDigest $Dependency.result)) 'Dependency completion/result differs from current queue.'
+    $acceptance=$Dependency.result.acceptance
+    $contractPath=[IO.Path]::GetFullPath((Join-Path $workspaceRoot ('inputs/acceptance/'+$Dependency.id+'.json')))
+    Assert-Value ($acceptance.action -ceq 'ACCEPTANCE_MATCHED' -and $acceptance.taskId -ceq $Dependency.id -and
+        [IO.Path]::GetFullPath($acceptance.contractPath) -ieq $contractPath) 'Formal dependency acceptance is missing.'
+    $contract=Read-UnusedGrantJson $contractPath
+    Assert-Value ($review.contracts -is [array] -and $review.contracts.Count -gt 0 -and
+        $review.contractChecks -eq $review.contracts.Count -and $review.contracts.Count -eq @($contract.checks).Count -and
+        $review.facts -is [array] -and $review.facts.Count -gt 0 -and $review.independentFactChecks -eq $review.facts.Count) 'Independent review checks are incomplete.'
+    foreach($rows in @(@{items=$review.contracts;kind='contract'},@{items=$review.facts;kind='fact'})){
+        $ids=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        foreach($item in $rows.items){
+            Assert-Value ($item.id -is [string] -and $item.id -and $ids.Add($item.id) -and $item.passed -is [bool] -and $item.passed) 'Independent review contains duplicate or failed checks.'
+            if($rows.kind -ceq 'contract'){Assert-Value (@($contract.checks|Where-Object id -ceq $item.id).Count -eq 1) 'Independent review contract differs.'}
+        }
+    }
+    $comparator=Join-Path (Split-Path -Parent $workspaceRoot) 'DevTools/Workflow/Compare-Acceptance.ps1'
+    $current=& $comparator -TaskId $Dependency.id -ContractPath $contractPath -AcceptancePath $acceptance.acceptancePath -EvidenceRoot (Split-Path -Parent $acceptance.acceptancePath)|ConvertFrom-Json -DateKind String
+    Assert-Value ($current.action -ceq 'ACCEPTANCE_MATCHED') 'Dependency acceptance evidence drift.'
+}
+function Invoke-RevalidateUnusedGrant($Task,$Queue,$Workers,$Mode) {
+    $g=Get-BoundedResume $Task;$s=$Mode.supervised
+    Assert-Value ($Task -and $Task.status -ceq 'QUEUED' -and -not $Task.result -and $g -and -not $g.blockedReason -and
+        $g.usedRuns -eq 0 -and @($g.claims).Count -eq 0 -and $g.runs -gt 0) 'Only a wholly unused queued grant may be revalidated.'
+    Assert-Value ($Mode.mode -ceq 'SUPERVISED' -and $s.status -ceq 'ACTIVE' -and -not $s.stopRequested -and -not $s.exitRequested -and
+        $g.mode -ceq $Mode.mode -and $g.sessionId -ceq $s.sessionId -and $s.taskIds -ccontains $Task.id) 'Revalidation session is stopped or differs.'
+    Assert-Value ($ControllerThreadId -and $ControllerThreadId -ceq $s.controllerThreadId -and $ControllerThreadId -ceq $g.controllerThreadId) 'Revalidation requires the original bound controller.'
+    $target=Get-PipelineExecutionTarget $Task.pipeline
+    Assert-Value ($OwnerThreadId -and $OwnerThreadId -ceq $g.ownerThreadId -and $OwnerThreadId -ceq $Task.execution.ownerThreadId -and
+        $OwnerThreadId -ceq $target.threadId -and $g.routeKey -ceq (Get-PipelineRouteKey $target)) 'Revalidation owner or route differs.'
+    $worker=Get-Worker $Workers $Task.pipeline
+    Assert-Value ($IdlePipelines -ccontains $Task.pipeline -and $Verification -and $worker.status -ceq 'IDLE' -and -not $worker.activeTaskId -and
+        -not $worker.leaseUntil -and @($Queue.tasks|Where-Object{$_.pipeline -ceq $Task.pipeline -and $_.status -ceq 'RUNNING'}).Count -eq 0 -and
+        $worker.circuit.state -ceq 'CLOSED') 'Fresh idle with a closed circuit and no live owner is required.'
+    Assert-Value ($s.reservations -is [array]) 'Missing reservation state.'
+    foreach($reservation in $s.reservations){
+        $reservedTask=Get-Task $Queue ([string]$reservation.taskId)
+        Assert-Value ($reservation -and $reservation.taskId -and $reservedTask -and $reservedTask.pipeline) 'Unknown reservation cannot be treated as idle.'
+        Assert-Value ($reservedTask.pipeline -cne $Task.pipeline) 'This lane already has a reserved task.'
+    }
+    $turnTask=$Task|ConvertTo-Json -Depth 50|ConvertFrom-Json -DateKind String
+    Assert-Value ((Sync-TaskTurnGate $turnTask) -ceq 'CONTINUE') 'Cumulative turn stop/handoff forbids revalidation.'
+    Assert-Value ($Runs -eq $g.runs -and $ApprovalId -ceq $g.approvalId -and $UserDecision -ceq $g.userDecision -and
+        $AuthorizationSource -ceq $g.authorizationSource -and -not $PairedRepairTaskId -and -not $RetryCycleId -and
+        (Get-UnusedGrantDigest (ConvertTo-ResumeScope $Scope)) -ceq (Get-UnusedGrantDigest $g.scope)) 'Original approval, runs, source and exact scope must remain unchanged.'
+    Assert-Value ($g.failureHistorySha256 -ceq (Get-ResumeDigest @($Task.errorHistory)) -and $g.expectedAttempt -eq ([int]$Task.attempts+1)) 'Revalidation history or expected attempt differs.'
+    $root=Get-RepairRootTask $Queue $Task
+    Assert-Value (-not (Get-RetryValue $root 'retryHardStop')) 'Root hard stop forbids revalidation.'
+    Assert-Value ($root.id -ceq $g.rootTaskId -and @($g.cycleIds).Count -eq $g.runs -and @($g.cycleIds|Select-Object -Unique).Count -eq $g.runs) 'Original root/cycles differ.'
+    foreach($cycleId in $g.cycleIds){$cycle=@(Get-RetryCycles $Queue $root|Where-Object cycleId -ceq $cycleId)
+        Assert-Value ($cycle.Count -eq 1 -and -not $cycle[0].consumed -and $cycle[0].reserved -and @($cycle[0].rootExecutionIds).Count -eq 0) 'Original cycle must remain unused and reserved.'}
+    $approvalPath=Assert-ResumeFile @{path=$RevalidationApprovalPath;sha256=$RevalidationApprovalSha256}
+    $inputs=[IO.Path]::GetFullPath((Join-Path $workspaceRoot 'inputs')).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
+    Assert-Value ($approvalPath.StartsWith($inputs,[StringComparison]::OrdinalIgnoreCase)) 'Revalidation human source must be in inputs.'
+    $approval=Read-UnusedGrantJson $approvalPath
+    Assert-UnusedGrantShape $approval @('schemaVersion','approvalId','source','userQuote','reviewPath','reviewSha256','businessTaskId','grantId','oldFingerprint','newFingerprint','proofPath','proofSha256','additionalBusinessRuns','originalRuns','originalUsedRuns','authorized','preserve','runtimeManualEditsAuthorized') 'human approval'
+    Assert-Value ($approval.schemaVersion -eq 1 -and $approval.source -ceq 'direct-human-structured-reply' -and
+        $approval.approvalId -cmatch '^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$' -and $approval.approvalId -cne $g.approvalId -and $approval.userQuote -and
+        $approval.businessTaskId -ceq $Task.id -and $approval.grantId -ceq $g.grantId -and $approval.additionalBusinessRuns -eq 0 -and
+        $approval.originalRuns -eq $g.runs -and $approval.originalUsedRuns -eq 0 -and $approval.runtimeManualEditsAuthorized -is [bool] -and
+        -not $approval.runtimeManualEditsAuthorized -and $approval.authorized -is [array] -and $approval.preserve -is [array]) 'Independent human revalidation approval differs.'
+    $reviewPath=Assert-ResumeFile @{path=$approval.reviewPath;sha256=$approval.reviewSha256}
+    $proofPath=Assert-ResumeFile @{path=$approval.proofPath;sha256=$approval.proofSha256}
+    $proof=Read-UnusedGrantJson $proofPath
+    Assert-Value ($proof.taskId -ceq $Task.id -and $proof.status -ceq 'QUEUED' -and $proof.attempts -eq $Task.attempts -and
+        $proof.errorCount -eq @($Task.errorHistory).Count -and $proof.oldFingerprint -ceq $approval.oldFingerprint -and
+        $proof.newFingerprint -ceq $approval.newFingerprint -and $approval.oldFingerprint -cne $approval.newFingerprint) 'Approved before/after proof differs.'
+    foreach($definition in @($proof.oldDefinition,$proof.newDefinition)){
+        Assert-UnusedGrantShape $definition @('id','pipeline','title','instruction','dependsOn','policy','artDailyIds','artSourcePaths') 'definition'
+        Assert-UnusedGrantShape $definition.policy @('resourceKeys','reviewDependsOn','humanGateAfter','gateApproved','reason','updatedAt','supervisionLevel') 'policy'
+        foreach($edge in @('dependsOn')){Assert-Value ($definition.$edge -is [array] -and @($definition.$edge|Where-Object{$_ -isnot [string] -or -not $_}).Count -eq 0 -and @($definition.$edge|Select-Object -Unique).Count -eq $definition.$edge.Count) 'Invalid ordinary dependency list.'}
+        Assert-Value ($definition.policy.reviewDependsOn -is [array] -and @($definition.policy.reviewDependsOn|Where-Object{$_ -isnot [string] -or $_ -cnotin $definition.dependsOn}).Count -eq 0 -and @($definition.policy.reviewDependsOn|Select-Object -Unique).Count -eq $definition.policy.reviewDependsOn.Count) 'Review edges must be distinct direct dependencies.'
+    }
+    $old=$proof.oldDefinition;$new=$proof.newDefinition
+    foreach($field in @('id','pipeline','title','instruction','artDailyIds','artSourcePaths')){
+        Assert-Value ((Get-UnusedGrantDigest $old.$field) -ceq (Get-UnusedGrantDigest $new.$field)) "Unapproved definition change: $field"}
+    foreach($field in @('resourceKeys','humanGateAfter','gateApproved','supervisionLevel')){
+        Assert-Value ((Get-UnusedGrantDigest $old.policy.$field) -ceq (Get-UnusedGrantDigest $new.policy.$field)) "Unapproved policy change: $field"}
+    Assert-Value (@($old.dependsOn|Where-Object{$_ -cnotin $new.dependsOn}).Count -eq 0 -and
+        @($old.policy.reviewDependsOn|Where-Object{$_ -cnotin $new.policy.reviewDependsOn}).Count -eq 0 -and
+        (Get-UnusedGrantDigest @($new.dependsOn|Where-Object{$_ -cin $old.dependsOn})) -ceq (Get-UnusedGrantDigest $old.dependsOn) -and
+        (Get-UnusedGrantDigest @($new.policy.reviewDependsOn|Where-Object{$_ -cin $old.policy.reviewDependsOn})) -ceq (Get-UnusedGrantDigest $old.policy.reviewDependsOn)) 'Existing dependency edges or their order changed.'
+    $added=@(@($new.dependsOn|Where-Object{$_ -cnotin $old.dependsOn})+@($new.policy.reviewDependsOn|Where-Object{$_ -cnotin $old.policy.reviewDependsOn})|Sort-Object -Unique)
+    Assert-Value ($added.Count -gt 0 -and $new.policy.reason -is [string] -and $new.policy.reason -and
+        [DateTimeOffset]::Parse($new.policy.updatedAt) -ge [DateTimeOffset]::Parse($old.policy.updatedAt) -and
+        [DateTimeOffset]::Parse($new.policy.updatedAt) -le [DateTimeOffset]::UtcNow.AddSeconds(2)) 'Metadata changes require approved new dependencies and a valid update time.'
+    $oldTask=[pscustomobject]@{id=$old.id;pipeline=$old.pipeline;title=$old.title;instruction=$old.instruction;dependsOn=$old.dependsOn;supervisionPolicy=$old.policy;artDailyIds=$old.artDailyIds;artSourcePaths=$old.artSourcePaths}
+    Assert-Value ((Get-SupervisionFingerprint $oldTask) -ceq $approval.oldFingerprint -and
+        (Get-SupervisionFingerprint $Task) -ceq $approval.newFingerprint -and
+        (Get-UnusedGrantDigest (Get-UnusedGrantDefinition $Task)) -ceq (Get-UnusedGrantDigest $new)) 'Computed old/current definitions differ from the human-approved proof.'
+    $evidencePath=Assert-ResumeFile @{path=$RevalidationEvidencePath;sha256=$RevalidationEvidenceSha256}
+    $e=Read-UnusedGrantJson $evidencePath
+    Assert-UnusedGrantShape $e @('schemaVersion','taskId','grantId','sessionId','routeKey','ownerThreadId','stateBinding','dependencies') 'revalidation evidence'
+    Assert-Value ($e.schemaVersion -eq 1 -and $e.taskId -ceq $Task.id -and $e.grantId -ceq $g.grantId -and $e.sessionId -ceq $g.sessionId -and
+        $e.routeKey -ceq $g.routeKey -and $e.ownerThreadId -ceq $g.ownerThreadId -and $e.dependencies -is [array] -and
+        $e.dependencies.Count -eq $added.Count -and @($e.dependencies.taskId|Select-Object -Unique).Count -eq $added.Count -and
+        @($e.dependencies|Where-Object{$_.taskId -cnotin $added}).Count -eq 0) 'New evidence identity/dependency set differs.'
+    $state=Get-UnusedGrantState $Task $root
+    Assert-Value ((Get-UnusedGrantDigest $e.stateBinding) -ceq (Get-UnusedGrantDigest $state)) 'Task/history/root state drift since the evidence snapshot.'
+    foreach($row in $e.dependencies){Assert-UnusedGrantDependency (Get-Task $Queue $row.taskId) $row $Mode}
+    $history=@(Get-ObjectPropertyValue $Task 'unusedGrantRevalidations'|Where-Object{$null -ne $_})
+    $prior=@($history|Where-Object{$_.approvalId -ceq $approval.approvalId})
+    $identity=[ordered]@{approvalId=$approval.approvalId;grantId=$g.grantId;approvalPath=$approvalPath;approvalSha256=$RevalidationApprovalSha256;
+        evidencePath=$evidencePath;evidenceSha256=$RevalidationEvidenceSha256;proofPath=$proofPath;proofSha256=$approval.proofSha256;
+        oldFingerprint=$approval.oldFingerprint;newFingerprint=$approval.newFingerprint}
+    if($prior.Count){
+        Assert-Value ($prior.Count -eq 1 -and $g.taskFingerprint -ceq $approval.newFingerprint) 'Conflicting/replayed revalidation.'
+        foreach($field in $identity.Keys){Assert-Value ($prior[0].$field -ceq $identity[$field]) 'Revalidation identity or evidence changed.'}
+    }else{Assert-Value ($g.taskFingerprint -ceq $approval.oldFingerprint) 'Original grant fingerprint differs.'}
+    $originalGrant=$g|ConvertTo-Json -Depth 40 -Compress|ConvertFrom-Json -DateKind String
+    $originalGrant.taskFingerprint=$approval.oldFingerprint
+    Assert-Value ((Get-UnusedGrantDigest $originalGrant) -ceq (Get-UnusedGrantDigest $proof.grant)) 'Original grant/counters/claims/source history changed.'
+    if(-not $prior.Count){
+        $audit=[pscustomobject]$identity
+        foreach($pair in @(@('at',(Get-NowIso)),@('userQuote',$approval.userQuote),@('reviewPath',$reviewPath),@('reviewSha256',$approval.reviewSha256),@('stateSha256',(Get-UnusedGrantDigest $state)),@('controllerThreadId',$ControllerThreadId),@('verification',$Verification))){
+            $audit|Add-Member -NotePropertyName $pair[0] -NotePropertyValue $pair[1]}
+        $g.taskFingerprint=$approval.newFingerprint
+        Set-ObjectPropertyValue $Task 'unusedGrantRevalidations' @($history+$audit)
+        Save-JsonFile $queuePath $Queue
+        Write-SupervisionAudit 'UNUSED_GRANT_REVALIDATED' $audit
+    }
+    Write-Result @{action='UNUSED_GRANT_REVALIDATED';taskId=$Task.id;grantId=$g.grantId;approvalId=$g.approvalId;
+        revalidationApprovalId=$approval.approvalId;oldFingerprint=$approval.oldFingerprint;newFingerprint=$approval.newFingerprint;
+        reused=($prior.Count -gt 0);runs=$g.runs;usedRuns=$g.usedRuns;rootRetry=(Get-RootRetryState $Queue $root $Mode.mode)}
+}
+
+function Invoke-ApproveResume {
+    $m=Read-ModeState;$q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath
+    $t=Get-Task $q $TaskId
+    if($RevalidateUnusedGrant){Invoke-RevalidateUnusedGrant $t $q $w $m;return}
+    Assert-Value ($t -and $t.status -in @('NEEDS_USER','PAUSED_CIRCUIT','QUEUED') -and -not $t.result -and @($t.errorHistory|Where-Object {$_}).Count -gt 0) 'Only an inactive, uncompleted failed task can resume.'
+    Assert-Value ($Runs -gt 0 -and $UserDecision -and $ApprovalId -cmatch '^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$') 'Runs, actual user decision and stable user-message ApprovalId are required.'
+    if($RetryCycleId -and $RetryCycleId -cnotmatch '^[A-Za-z0-9_.:-]{1,160}$'){throw 'Invalid retry cycle identity.'}
+    $root=Get-RepairRootTask $q $t
+    Assert-RetryAuthorization $m $root $AuthorizationSource $ApprovalId $UserDecision $Runs
+    if($AuthorizationSource -eq 'POLICY'){Assert-Value ($RetryCycleId -cmatch '^[A-Za-z0-9_.:-]{1,160}$') 'POLICY needs an explicit stable RetryCycleId.'}
+    $controller=Get-ObjectPropertyValue (Get-ObjectPropertyValue $m 'supervised') 'controllerThreadId'
+    Assert-Value ($ControllerThreadId -and ($ControllerThreadId -ceq $controller -or $controllerThreads -contains $ControllerThreadId)) 'Only the bound controller can approve continuation.'
+    if($m.mode -eq 'SUPERVISED'){
+        Assert-Value ($m.supervised.status -eq 'ACTIVE' -and -not $m.supervised.stopRequested -and -not $m.supervised.exitRequested -and $m.supervised.taskIds -contains $TaskId) 'ResumeSupervision must precede task approval.'
+        Assert-Value (@($m.supervised.reservations|Where-Object taskId -eq $TaskId).Count -eq 0) 'Outstanding dispatch must be reconciled first.'
+    }
+    if($m.mode -eq 'AUTOMATIC'){Assert-Value ($m.automatic.currentTaskId -ceq $TaskId) 'Only the current automatic-chain task can resume.'}
     $worker=Get-Worker $w $t.pipeline
-    Assert-Value ($IdlePipelines -contains $t.pipeline -and $Verification -and $worker.status -ne 'BUSY' -and (-not $worker.activeTaskId -or $worker.activeTaskId -eq $TaskId) -and @($q.tasks | Where-Object { $_.pipeline -eq $t.pipeline -and $_.status -eq 'RUNNING' }).Count -eq 0) 'Fresh idle evidence and no live lane owner required.'
+    Assert-Value ($IdlePipelines -contains $t.pipeline -and $Verification -and $worker.status -ne 'BUSY' -and (-not $worker.activeTaskId -or $worker.activeTaskId -eq $TaskId) -and @($q.tasks|Where-Object {$_.pipeline -eq $t.pipeline -and $_.status -eq 'RUNNING'}).Count -eq 0) 'Fresh idle evidence and no live lane owner required.'
     Assert-Value ($OwnerThreadId -and $OwnerThreadId -ceq (Get-PipelineExecutionTarget $t.pipeline).threadId -and $OwnerThreadId -ceq $t.execution.ownerThreadId) 'Original task thread must remain bound.'
     $scopeValue=ConvertTo-ResumeScope $Scope
+    if($AuthorizationSource -eq 'POLICY'){
+        $anchor=if($t.id -cne $root.id){Get-RetryValue $t.repairContext 'repairScope'}else{Get-RetryValue $root 'retryBusinessScope'}
+        if(-not $anchor -and $t.id -ceq $root.id){$anchor=Get-RetryValue $root 'businessScope'}
+        if(-not $anchor -and $t.id -ceq $root.id){$anchor=(Get-BoundedResume $root).scope}
+        if($anchor){Assert-ResumeScope $anchor $Scope}
+        # A first typed scope is established by the bound controller against the immutable task fingerprint and recorded verification.
+    }
     $old=Get-BoundedResume $t
-    $history=@(Get-ObjectPropertyValue $t 'resumeApprovalHistory' | Where-Object { $_ })
-    Assert-Value (@($history | Where-Object approvalId -eq $ApprovalId).Count -eq 0) 'Old approval cannot be replayed.'
-    if ($old -and $old.approvalId -ceq $ApprovalId) {
+    $history=@(Get-ObjectPropertyValue $t 'resumeApprovalHistory'|Where-Object {$_})
+    if($AuthorizationSource -eq 'HUMAN'){
+        Assert-Value (@($history|Where-Object {$_.approvalId -ceq $ApprovalId -and (Get-RetryValue $_ 'authorizationSource') -ne 'POLICY'}).Count -eq 0) 'Old approval cannot be replayed.'
+    }
+    $same=$old -and $old.approvalId -ceq $ApprovalId -and
+        ($AuthorizationSource -eq 'HUMAN' -or $RetryCycleId -cin @($old.cycleIds))
+    if($same){
         Assert-Value ($old.runs -eq $Runs -and $old.userDecision -ceq $UserDecision -and (Get-ResumeDigest $old.scope) -ceq (Get-ResumeDigest $scopeValue)) 'An approval ID cannot change its runs, scope or user decision.'
         $g=Assert-BoundedResume $t $m $Scope
     } else {
         Assert-Value ($t.status -ne 'QUEUED') 'Cannot replace an already queued approval.'
-        if ($old) { Set-ObjectPropertyValue $t 'resumeApprovalHistory' @($history+$old) }
+        $cycles=@(Get-RetryCycles $q $root)
+        # Replacing a grant retires only unclaimed reservations, never consumed cycles.
+        if($old){
+            foreach($c in $cycles){if($c.cycleId -cin @($old.cycleIds) -and -not $c.consumed){$c.reserved=$false}}
+            Set-RetryValue $old 'revokedAt' (Get-NowIso)
+            Set-ObjectPropertyValue $t 'resumeApprovalHistory' @($history+$old)
+        }
+        $pair=$null
+        if($PairedRepairTaskId){
+            $card=Get-Task $q $PairedRepairTaskId
+            Assert-Value ($Runs -eq 1 -and $card -and $card.status -eq 'SUCCEEDED' -and $card.repairContext.rootTaskId -ceq $root.id -and
+                $card.repairContext.nature -eq 'REPAIR' -and $card.result.verificationStatus -eq 'VERIFIED') 'Paired repair must be independently verified for this root and one run.'
+            $latest=@($root.errorHistory|Sort-Object {[DateTimeOffset]::Parse($_.at)} -Descending|Select-Object -First 1)[0]
+            Assert-Value ([DateTimeOffset]::Parse($card.completedAt) -gt [DateTimeOffset]::Parse($latest.at)) 'Paired repair predates latest root failure.'
+            $pair=Get-RetryValue $card.repairContext 'retryCycleId'
+            $completedCycle=Get-RetryValue $card.execution 'retryCycleId'
+            if($pair){Assert-Value ($completedCycle -ceq $pair) 'Paired cycle must belong to the latest successful repair execution.'}
+            if(-not $pair){
+                # Transition from a repair already claimed under the previous schema.
+                $a=Get-RetryAuthority
+                Assert-Value ($AuthorizationSource -eq 'HUMAN' -and $a -and $ApprovalId -ceq $a.approvalId -and
+                    $a.currentApproval.rootTaskId -ceq $root.id -and $card.repairContext.userDecision.Contains($ApprovalId)) 'Legacy pairing needs the exact real approval and repair provenance.'
+                $pair='repair:'+$card.id
+                Set-RetryValue $card.repairContext 'retryCycleId' $pair
+            }
+            Assert-Value (-not $RetryCycleId -or $RetryCycleId -ceq $pair) 'Pair cycle identity differs.'
+            $RetryCycleId=$pair
+        }
+        $state=Get-RootRetryState $q $root $m.mode
+        $cycleIds=@()
+        for($i=0;$i -lt $Runs;$i++){
+            $id=if($RetryCycleId){$RetryCycleId}else{'grant:'+([guid]::NewGuid().ToString('N'))}
+            Assert-Value ($Runs -eq 1 -or -not $RetryCycleId) 'Explicit cycle identity binds one run.'
+            $existing=@($cycles|Where-Object cycleId -ceq $id)
+            if($existing.Count){
+                Assert-Value ($pair -and $existing.Count -eq 1 -and $existing[0].repairTaskId -ceq $PairedRepairTaskId -and
+                    @($existing[0].rootExecutionIds).Count -eq 0) 'Retry cycle is already used/reserved or belongs elsewhere.'
+            } else {
+                if($AuthorizationSource -eq 'POLICY'){
+                    Assert-Value (@($cycles|Where-Object consumed).Count+@($cycles|Where-Object {$_.reserved -and -not $_.consumed}).Count -lt $state.limit) 'Root retry policy exhausted; additional human approval required.'
+                }
+                $cycles+= [pscustomobject]@{cycleId=$id;consumed=$false;reserved=$true;repairTaskId=$null;rootExecutionIds=@()}
+            }
+            $cycleIds+=$id
+        }
+        if($AuthorizationSource -eq 'HUMAN'){
+            $ceil=Get-RetryValue $root 'retryCeilings'
+            if(-not $ceil){$ceil=[pscustomobject]@{};Set-RetryValue $root 'retryCeilings' $ceil}
+            Set-RetryValue $ceil $m.mode ([Math]::Max($state.limit,@($cycles|Where-Object {$_.consumed -or $_.reserved}).Count))
+            Set-RetryValue $root 'retryHardStop' $null
+        }
+        Set-RetryValue $root 'retryCycles' $cycles
+        if($t.id -cne $root.id){Set-RetryValue $t.repairContext 'retryCycleId' $cycleIds[0]}
+        if($t.id -ceq $root.id){Set-RetryValue $root 'retryBusinessScope' $scopeValue}
+        $a=Get-RetryAuthority
         $g=[pscustomobject][ordered]@{
-            schemaVersion=1;approvalId=$ApprovalId;taskId=$t.id;userDecision=$UserDecision;approvedAt=Get-NowIso
-            controllerThreadId=$ControllerThreadId;mode=$m.mode;sessionId=$(if($m.mode -eq 'SUPERVISED'){$m.supervised.sessionId}else{$null})
-            runs=[int]$Runs;usedRuns=0;scope=$scopeValue;idempotenceIncluded=$true;claims=@();blockedReason=$null
+            schemaVersion=2;approvalId=$ApprovalId;grantId=[guid]::NewGuid().ToString('N');authorizationSource=$AuthorizationSource
+            sourceSha256=$(if($a){'541E77E1B69FCD634479F1211A024FCA9A308592CA3B29E8619C28DEC009C8C0'}else{$null});taskId=$t.id;rootTaskId=$root.id;userDecision=$UserDecision;approvedAt=Get-NowIso
+            controllerThreadId=$ControllerThreadId;ownerThreadId=$OwnerThreadId;mode=$m.mode;sessionId=$(if($m.mode -eq 'SUPERVISED'){$m.supervised.sessionId}else{$null})
+            runs=[int]$Runs;usedRuns=0;cycleIds=$cycleIds;scope=$scopeValue;idempotenceIncluded=$true;claims=@();blockedReason=$null
             routeKey=Get-PipelineRouteKey (Get-PipelineExecutionTarget $t.pipeline)
             taskFingerprint=Get-SupervisionFingerprint $t;failureHistorySha256=Get-ResumeDigest @($t.errorHistory)
             expectedAttempt=([int]$t.attempts+1);verification=$Verification
         }
         Set-ObjectPropertyValue $t 'resumeApproval' $g
     }
-    # No maxAttempts, failure history, repair budget, human gate, or mode reset.
     $t.status='QUEUED';$t.claimedAt=$null
     Clear-SupervisionWorker $worker
     Save-JsonFile $queuePath $q;Save-JsonFile $workerPath $w
     $autoHandoff=$null
-    if ($m.mode -eq 'AUTOMATIC') {
-        $m.automatic.status='READY';$m.automatic.blockedTaskId=$null
-        $m.updatedAt=Get-NowIso;$m.updatedBy='CONTROL_CHAT'
-        Save-JsonFile $modePath $m
-        $autoHandoff=Get-AutomaticHandoff $m $q
+    if($m.mode -eq 'AUTOMATIC'){
+        $m.automatic.status='READY';$m.automatic.blockedTaskId=$null;$m.updatedAt=Get-NowIso;$m.updatedBy='CONTROL_CHAT'
+        Save-JsonFile $modePath $m;$autoHandoff=Get-AutomaticHandoff $m $q
     }
-    Write-SupervisionAudit 'RESUME_APPROVED' @{taskId=$TaskId;approvalId=$ApprovalId;runs=$g.runs;usedRuns=$g.usedRuns;scope=$g.scope;userDecision=$UserDecision}
-    Write-Result @{action='RESUME_APPROVED';taskId=$TaskId;approvalId=$ApprovalId;runs=$g.runs;remainingRuns=([int]$g.runs-[int]$g.usedRuns);scope=$g.scope;idempotenceIncluded=$true;autoHandoff=$autoHandoff}
+    $state=Get-RootRetryState $q $root $m.mode
+    Write-SupervisionAudit 'RESUME_APPROVED' @{taskId=$t.id;rootTaskId=$root.id;grantId=$g.grantId;authorizationSource=$g.authorizationSource;sourceApprovalId=$ApprovalId;cycles=$g.cycleIds;used=$state.used;reserved=$state.reserved;remaining=$state.remaining;scope=$g.scope;verification=$Verification}
+    Write-Result @{action='RESUME_APPROVED';taskId=$t.id;approvalId=$ApprovalId;grantId=$g.grantId;runs=$g.runs;remainingRuns=([int]$g.runs-[int]$g.usedRuns);rootRetry=$state;scope=$g.scope;idempotenceIncluded=$true;autoHandoff=$autoHandoff}
 }
 
-# Legacy proof readers below are retained for old evidence; no new grants use them.
+
 function Get-ResumeDigest($Value) {
     [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8NoBom.GetBytes(($Value | ConvertTo-Json -Depth 50 -Compress))))
 }
@@ -215,7 +494,8 @@ function Invoke-ApprovedTaskResume {
         $cold=$hostProcess -or $p.decision -ceq 'APPROVED_COLD_PROCESS_VALIDATION'
         if($cold){Set-ObjectPropertyValue $t 'approvedResumeHistory' @(@($t.approvedResumeHistory|Where-Object {$_})+$old)}
         else{Assert-Value (-not $old) 'Read-only validation continuation already issued; no repeated grant.'}
-        $root=Get-RepairRootTask $q $t;$budget=Get-RepairBudgetState $q $root
+        if($RetryCycleId -and $RetryCycleId -cnotmatch '^[A-Za-z0-9_.:-]{1,160}$'){throw 'Invalid retry cycle identity.'}
+    $root=Get-RepairRootTask $q $t;$budget=Get-RepairBudgetState $q $root
         foreach($entry in @{resumeId=[guid]::NewGuid().ToString('N');purpose=$(if($probeScene){'READONLY_PROBE_SCENE'}elseif($hostProcess){'READONLY_HOST_PROCESS'}elseif($cold){'READONLY_COLD_PROCESS'}else{'READONLY_VALIDATION'});rootTaskId=$root.id;failureHistorySha256=$p.failureHistorySha256;sessionId=$s.sessionId;routeKey=(Get-PipelineRouteKey (Get-PipelineExecutionTarget $t.pipeline));expectedAttempt=([int]$t.attempts+1);expiresAt=[DateTimeOffset]::UtcNow.AddMinutes(20).ToString('o');consumedAt=$null;executionId=$null}.GetEnumerator()){Set-ObjectPropertyValue $g $entry.Key $entry.Value}
         Assert-Value (@(Get-SupervisionBlockers $q $t $m).Count -eq 0) 'Validation prerequisites unresolved.'
         Set-ObjectPropertyValue $t 'approvedResume' $g
@@ -228,7 +508,8 @@ function Invoke-ApprovedTaskResume {
 
     if($p.decision -ceq 'APPROVED_RESTORE_RESUME'){
         Assert-Value (-not $old) 'Only one restoration retry grant is allowed.'
-        $root=Get-RepairRootTask $q $t;$budget=Get-RepairBudgetState $q $root
+        if($RetryCycleId -and $RetryCycleId -cnotmatch '^[A-Za-z0-9_.:-]{1,160}$'){throw 'Invalid retry cycle identity.'}
+    $root=Get-RepairRootTask $q $t;$budget=Get-RepairBudgetState $q $root
         foreach($entry in @{resumeId=[guid]::NewGuid().ToString('N');purpose='APPROVED_STATIC_RESTORE_RETRY';rootTaskId=$root.id;failureHistorySha256=$p.failureHistorySha256;sessionId=$s.sessionId;routeKey=(Get-PipelineRouteKey (Get-PipelineExecutionTarget $t.pipeline));expectedAttempt=2;expiresAt=[DateTimeOffset]::UtcNow.AddMinutes(20).ToString('o');consumedAt=$null;executionId=$null}.GetEnumerator()){Set-ObjectPropertyValue $g $entry.Key $entry.Value}
         Assert-Value (@(Get-SupervisionBlockers $q $t $m).Count -eq 0) 'Restoration continuation prerequisites unresolved.'
         Set-ObjectPropertyValue $t 'approvedResume' $g

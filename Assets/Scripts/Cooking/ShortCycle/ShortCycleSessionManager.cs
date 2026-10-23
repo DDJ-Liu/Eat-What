@@ -1,20 +1,12 @@
+using System.IO;
+using EatWhat.Tools.Persistence;
+using EatWhat.Tools.Security;
 using System;
 using EatWhat.Tools.Localization;
 using UnityEngine;
 
 namespace EatWhat.Cooking.ShortCycle
 {
-    public sealed class ShortCyclePhase2TransitionAdapter : MonoBehaviour
-    {
-        public event Action<ShortCycleDataHandoff> Requested;
-
-        public void RequestTransition(ShortCycleDataHandoff handoff)
-        {
-            var callback = Requested;
-            if (callback != null) callback(handoff);
-        }
-    }
-
     /// <summary>Scene owner for the pure-C# short-cycle FSM and its boundaries.</summary>
     public sealed class ShortCycleSessionManager : MonoBehaviour,
         IShortCycleCarrierQuery, IShortCycleCarrierWarningLog
@@ -28,6 +20,7 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private CK01GeneratedDataCatalog dataCatalog = null;
         [SerializeField] private ShortCycleFridgeBinder fridgeBinder = null;
         [SerializeField] private ShortCycleClueBoardBinder clueBoardBinder = null;
+        [SerializeField] private RecipeBookBinder recipeBookBinder = null;
         [SerializeField] private string defaultRecipeId = "rcp_tomato_egg";
         [SerializeField, Tooltip("G26/VERIFY-TEMP only: opt in to the default recipe entry hint while debugging.")]
         private bool useDefaultRecipeForDebug = false;
@@ -36,11 +29,46 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private ShortCycleUpstreamExitPresenter upstreamExitPresenter = null;
 
         private ObservableNoOpSaveBoundary saveBoundary;
+        private SaveBoundary persistenceBoundary;
         private ShortCycleStateMachine stateMachine;
         private ShortCycleCarrierWarning carrierWarning;
+        private PlayerProfileManager profileManager;
+        public PlayerProfileManager ProfileManager
+        { get { if (profileManager == null && playerProfile != null) profileManager = new PlayerProfileManager(playerProfile); return profileManager; } }
+        public ShortCycleActionResult TryToggleFavorite()
+        {
+            if (CurrentPhase != ShortCyclePhase.Phase0 || Context == null || !Context.HasSelectedRecipe || ProfileManager == null)
+                return ShortCycleActionResult.Failure("Favorite changes require a selected Phase0 recipe and the existing profile.");
+            ProfileManager.ToggleFavorite(Context.current_recipe_id);
+            RefreshFavoriteContent();
+            return ShortCycleActionResult.Success();
+        }
+        public void RefreshFavoriteContent()
+        { if (recipeBookBinder != null) recipeBookBinder.RefreshFavorites(id => ProfileManager != null && ProfileManager.IsFavorite(id)); }
+        public ShortCycleTransitionResult ApplyProfileSnapshot(PlayerProfileSnapshot snapshot)
+        {
+            if (CurrentPhase != ShortCyclePhase.None || ProfileManager == null)
+                return ShortCycleTransitionResult.Failure("Apply profile snapshots before a session starts.");
+            ProfileManager.ApplySnapshot(snapshot);
+            if (playerUnlockManager != null) playerUnlockManager.Configure(dataCatalog, playerProfile.UnlockedRecipeIds);
+            if (recipeBookBinder != null) recipeBookBinder.Clear();
+            return ShortCycleTransitionResult.Success();
+        }
 
         public event Action<ShortCyclePhase, ShortCyclePhase0View> StateChanged;
         public ShortCycleContext Context { get { return stateMachine == null ? null : stateMachine.Context; } }
+        public RecipeBookBinder RecipeBook { get { return recipeBookBinder; } }
+        public System.Collections.Generic.IReadOnlyList<RecipeView> GetRecipeViews()
+        {
+            var result = new System.Collections.Generic.List<RecipeView>();
+            foreach (var view in dataCatalog.EnumerateRecipesOrdered())
+                result.Add(view.WithUnlocked(IsRecipeUnlocked(view.recipe_id)));
+            return result.AsReadOnly();
+        }
+        public bool IsRecipeUnlocked(string recipeId)
+        { return new UnlockManager(dataCatalog, playerProfile == null ? new string[0] : playerProfile.UnlockedRecipeIds).IsUnlocked(recipeId); }
+
+        public InventoryManager Inventory { get { return inventoryManager; } }
         public PlayerProfile PlayerProfile { get { return playerProfile; } }
         public PlayerUnlockManager PlayerUnlockManager { get { return playerUnlockManager; } }
         public KitchenEquipmentManager KitchenEquipmentManager { get { return kitchenEquipmentManager; } }
@@ -50,9 +78,26 @@ namespace EatWhat.Cooking.ShortCycle
         public ShortCycleModalId? ActiveModal { get { return Context == null ? null : Context.active_modal; } }
         public string CurrentStateName { get { return stateMachine == null || stateMachine.CurrentState == null ? null : stateMachine.CurrentState.GetType().Name; } }
 
+        internal CK01GeneratedDataCatalog ValidationCatalog { get { return dataCatalog; } }
+        internal bool PersistenceAwakeStarted { get; private set; }
+        internal bool PersistenceEnded { get; private set; }
+        internal bool PersistenceIsolationRequired { get; private set; }
+        internal void RequirePersistenceIsolation() { PersistenceIsolationRequired = true; }
+        internal void DisableIsolatedStorage() { if (persistenceBoundary != null) persistenceBoundary.DisableStorage(); }
         private void Awake()
         {
+            if (PersistenceAwakeStarted) throw new InvalidOperationException("Session Awake cannot run twice.");
+            PersistenceAwakeStarted = true;
+            try { InitializeSession(); }
+            catch { PersistenceEnded = true; DisableIsolatedStorage(); ShortCycleSaveIsolation.ReleaseTarget(this); throw; }
+        }
+        private void InitializeSession()
+        {
             saveBoundary = new ObservableNoOpSaveBoundary();
+            persistenceBoundary = new SaveBoundary(saveBoundary, () => ProfileManager, ShortCycleSaveIsolation.Resolve(this, () => {
+                var keys = new ObfuscatedStaticKeyProvider();
+                return new JsonSaveStore(Path.Combine(Application.persistentDataPath, "saves"), SaveCodecFactory.CreateForCurrentBuild(keys), new EnvelopeAuthenticator(keys));
+            }), message => Debug.LogWarning("[SAVE-01] " + message, this));
             carrierWarning = new ShortCycleCarrierWarning(this);
             var inventoryGateway = inventoryManager == null
                 ? new UnavailableInventoryConsumptionGateway("InventoryManager is not connected to generated Items assets.")
@@ -60,10 +105,11 @@ namespace EatWhat.Cooking.ShortCycle
             var phase2Sink = phase2HandoffPresenter == null
                 ? new UnavailablePhase2HandoffSink("Phase 2 handoff presenter is not connected.")
                 : (IShortCyclePhase2HandoffSink)phase2HandoffPresenter;
-            var processor = new ShortCycleDataProcessor(inventoryGateway, saveBoundary, phase2Sink);
+            var processor = new ShortCycleDataProcessor(inventoryGateway, persistenceBoundary, phase2Sink);
             stateMachine = new ShortCycleStateMachine(
-                new ShortCycleContext(), saveBoundary, processor, upstreamExitPresenter, presentationDirector);
+                new ShortCycleContext(), persistenceBoundary, processor, upstreamExitPresenter, presentationDirector);
             stateMachine.StateChanged += HandleStateChanged;
+            if (phase2HandoffPresenter != null) phase2HandoffPresenter.Configure(this, inventoryManager, presentationDirector);
             if (actionRouter != null) actionRouter.Configure(this);
         }
 
@@ -113,8 +159,12 @@ namespace EatWhat.Cooking.ShortCycle
 
         private void OnDestroy()
         {
+            PersistenceEnded = true;
+            if (phase2HandoffPresenter != null) phase2HandoffPresenter.Teardown();
+            DisableIsolatedStorage(); ShortCycleSaveIsolation.ReleaseTarget(this);
             if (stateMachine != null) stateMachine.StateChanged -= HandleStateChanged;
             if (carrierWarning != null) carrierWarning.ResetSession();
+            if (recipeBookBinder != null) recipeBookBinder.Clear();
         }
 
         public bool TryResolveCarrier(string recipeId, string areaId, string itemId,
@@ -161,8 +211,12 @@ namespace EatWhat.Cooking.ShortCycle
 
         public ShortCycleTransitionResult BeginSession(string recipeId, ShortCycleTriggerContext triggerContext)
         {
+            if (persistenceBoundary != null) persistenceBoundary.PrepareBeforeSession(CurrentPhase == ShortCyclePhase.None);
             var result = RunBeginSessionSequence(
-                () => ValidateBeginSession(recipeId),
+                () => {
+                    var validation = ValidateBeginSession(recipeId);
+                    return validation.Succeeded ? BindRecipeBook(recipeId) : validation;
+                },
                 () => BindFridge(),
                 () => BindClueBoard(recipeId),
                 () =>
@@ -172,7 +226,7 @@ namespace EatWhat.Cooking.ShortCycle
                 },
                 () => stateMachine.TryEnter(recipeId, triggerContext),
                 message => Debug.Log(message, this),
-                true);
+                string.IsNullOrEmpty(recipeId));
             if (result.Succeeded)
                 Debug.Log("[CK01-C-SESSION] ready recipe=" + Context.current_recipe_id +
                     " phase=" + CurrentPhase + " view=" + CurrentPhase0View, this);
@@ -189,11 +243,20 @@ namespace EatWhat.Cooking.ShortCycle
             var missing = RequireStateMachine();
             if (missing != null) return missing;
 
+            RecipeView view; string diagnostic;
+            if (dataCatalog == null || !dataCatalog.TryGetRecipeView(recipeId, out view, out diagnostic))
+                return ShortCycleTransitionResult.Failure("Recipe view is unavailable: " + recipeId);
+            if (!IsRecipeUnlocked(recipeId))
+                return ShortCycleTransitionResult.Failure("Recipe is locked: " + recipeId);
+            if (recipeBookBinder == null || !recipeBookBinder.CanBindBrowse(view, out diagnostic))
+                return ShortCycleTransitionResult.Failure("Recipe browse content is not ready.");
             var selection = stateMachine.TrySelectRecipe(recipeId, isMismatchDish);
             if (!selection.Succeeded) return selection;
 
             var fridge = BindFridge();
             if (!fridge.Succeeded) return fridge;
+            recipeBookBinder.BindBrowse(view.WithUnlocked(true));
+            RefreshFavoriteContent();
             var clueBoard = BindClueBoard(recipeId);
             return clueBoard.Succeeded ? selection : clueBoard;
         }
@@ -219,8 +282,13 @@ namespace EatWhat.Cooking.ShortCycle
         public ShortCycleTransitionResult TryAdvanceToPhase2()
         {
             var missing = RequireStateMachine();
-            return missing ?? stateMachine.TryAdvanceToPhase2();
+            var result = missing ?? stateMachine.TryAdvanceToPhase2();
+            if (result.Succeeded && phase2HandoffPresenter != null) phase2HandoffPresenter.BeginAfterCommit();
+            return result;
         }
+
+        public ShortCyclePhase2TransitionAdapter Phase2Transition { get { return phase2HandoffPresenter == null ? null : phase2HandoffPresenter.TransitionAdapter; } }
+        internal void RestorePhase1AfterHandoff() { if (stateMachine != null) stateMachine.TryRestorePhase1FromHandoff(); }
 
         public ShortCycleTransitionResult TryEscape()
         {
@@ -285,6 +353,29 @@ namespace EatWhat.Cooking.ShortCycle
                 : ShortCycleTransitionResult.Failure(diagnostic);
         }
 
+        private ShortCycleTransitionResult BindRecipeBook(string recipeId)
+        {
+            if (recipeBookBinder == null)
+                return ShortCycleTransitionResult.Failure("RecipeBookBinder is not connected (D-T2 wiring required).");
+            var views = GetRecipeViews(); string diagnostic;
+            if (!recipeBookBinder.ValidateConfiguration(views.Count, out diagnostic))
+                return ShortCycleTransitionResult.Failure(diagnostic);
+            if (playerUnlockManager != null) playerUnlockManager.Configure(dataCatalog, playerProfile == null ? new string[0] : playerProfile.UnlockedRecipeIds);
+            RecipeView selected = null;
+            if (!string.IsNullOrEmpty(recipeId))
+            {
+                if (!IsRecipeUnlocked(recipeId)) return ShortCycleTransitionResult.Failure("Recipe is locked: " + recipeId);
+                if (!dataCatalog.TryGetRecipeView(recipeId, out selected, out diagnostic) ||
+                    !recipeBookBinder.CanBindBrowse(selected, out diagnostic))
+                    return ShortCycleTransitionResult.Failure(diagnostic);
+            }
+            recipeBookBinder.ConfigureSelection(actionRouter);
+            recipeBookBinder.BindCatalog(views);
+            recipeBookBinder.BindBrowse(selected);
+            RefreshFavoriteContent();
+            return ShortCycleTransitionResult.Success();
+        }
+
         private ShortCycleTransitionResult BindFridge()
         {
             string diagnostic = null;
@@ -331,8 +422,13 @@ namespace EatWhat.Cooking.ShortCycle
 
         private void HandleStateChanged(ShortCyclePhase phase, ShortCyclePhase0View phase0View)
         {
-            if (phase == ShortCyclePhase.None && carrierWarning != null)
-                carrierWarning.ResetSession();
+            if (phase == ShortCyclePhase.None)
+            {
+                if (carrierWarning != null) carrierWarning.ResetSession();
+                if (recipeBookBinder != null) recipeBookBinder.Clear();
+                string ignored;
+                if (clueBoardBinder != null) clueBoardBinder.Bind(dataCatalog, null, inventoryManager, out ignored);
+            }
             var callback = StateChanged;
             if (callback != null) callback(phase, phase0View);
         }

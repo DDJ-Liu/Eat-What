@@ -39,8 +39,17 @@ function Invoke-ControlAdministration {
         Write-Result @{action='CODE_VALIDATION_STOP_RESUMED';taskId=$TaskId;status=$t.status;attempts=$t.attempts;rawFailureCount=$failures.Count;evidencePath=$record.evidencePath}
         return
     }
+    if ($Action -eq 'RegisterExecutionPipeline') {
+        Assert-Value ($Pipeline -ceq 'ENGINE_CLI') 'Only ENGINE_CLI uses this registration; existing lanes retain their APIs.'
+        Assert-Value ($m.mode -eq 'MANUAL') 'Register ENGINE_CLI in MANUAL.'
+        if (Get-ObjectPropertyValue $w.workers 'ENGINE_CLI') { Write-Result @{action='EXECUTION_PIPELINE_ALREADY_REGISTERED';pipeline=$Pipeline}; return }
+        $newWorker=[pscustomobject]@{status='IDLE';activeTaskId=$null;activeExecutionId=$null;lastPollAt=$null;leaseUntil=$null;executorKind='THREAD';threadId=$null;routeRevision=0;routeHistory=@();circuit=[pscustomobject]@{state='CLOSED';openUntil=$null;reason=$null}}
+        Set-ObjectPropertyValue $w.workers 'ENGINE_CLI' $newWorker
+        Save-JsonFile $workerPath $w
+        Write-Result @{action='EXECUTION_PIPELINE_REGISTERED';pipeline=$Pipeline;routeState='UNBOUND'}; return
+    }
     if ($Action -eq 'BindExecutionPipeline') {
-        Assert-Value ($Pipeline -in @('CODE','ENGINE_MCP')) 'Only CODE/ENGINE_MCP; DATA keeps its existing binding API.'
+        Assert-Value ($Pipeline -in @('CODE','ENGINE_MCP','ENGINE_CLI')) 'Only CODE/ENGINE_MCP/ENGINE_CLI; DATA keeps its existing binding API.'
         Assert-Value (Test-CodexThreadId $PipelineThreadId) 'Valid visible thread UUID required.'
         $worker = Get-Worker $w $Pipeline
         Assert-Value ($worker.status -eq 'IDLE' -and -not $worker.activeTaskId -and -not $worker.leaseUntil) 'Lane must be idle with no lease.'
@@ -56,7 +65,7 @@ function Invoke-ControlAdministration {
             Assert-Value ($null -eq $current -or $current.pipeline -ne $Pipeline) 'Automatic handoff prevents binding.'
         }
         $forbidden = @($controllerThreads) + @([string](Get-ObjectPropertyValue $supervised 'controllerThreadId'))
-        foreach ($other in @('CODE','ENGINE_MCP','DATA','ART_AIGC','ART_ASSET') | Where-Object { $_ -ne $Pipeline }) {
+        foreach ($other in @('CODE','ENGINE_MCP','ENGINE_CLI','DATA','ART_AIGC','ART_ASSET') | Where-Object { $_ -ne $Pipeline }) {
             $forbidden += [string](Get-PipelineExecutionTarget $other).threadId
         }
         Assert-Value ($forbidden -notcontains $PipelineThreadId) 'Another lane or controller owns that thread.'

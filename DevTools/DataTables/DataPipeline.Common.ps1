@@ -75,6 +75,73 @@ function Assert-DataPathWithin {
     return $resolvedPath
 }
 
+function Resolve-DataReportLocation {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$RepositoryRoot,[string]$TaskId,
+        [string]$ReportDirectory,[Parameter(Mandatory)][string]$RunId)
+    $repo = [IO.Path]::GetFullPath($RepositoryRoot).TrimEnd('\','/')
+    $runtime = Join-Path $repo '.ai-workspace/runtime/data-reports'
+    if ([string]::IsNullOrWhiteSpace($ReportDirectory)) { $ReportDirectory = $runtime }
+    $rawReport = $ReportDirectory.Replace('\','/')
+    if ($rawReport.TrimStart('/').Contains('//')) { throw 'Empty DATA report path component.' }
+    foreach ($component in $rawReport.Split('/')) {
+        if (-not $component -or $component -match '^[A-Za-z]:$') { continue }
+        if ($component -in @('.','..') -or $component -match '[ .]$|[:*?<>|"\x00-\x1f]' -or
+            $component -match '^(?i:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)') { throw 'Unsafe raw DATA report component.' }
+    }
+    $parent = [IO.Path]::GetFullPath($ReportDirectory,$repo).TrimEnd('\','/')
+    $boundary = $null
+    if ($parent.Equals($runtime,[StringComparison]::OrdinalIgnoreCase) -or
+        $parent.StartsWith($runtime+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) {
+        $boundary = $runtime
+    } else {
+        if ($TaskId -cnotmatch '^AI-\d{6}$') { throw 'Task output reports require an exact formal TaskId.' }
+        $outputs = Join-Path $repo '.ai-workspace/outputs'
+        $relative = [IO.Path]::GetRelativePath($outputs,$parent).Replace('\','/')
+        $parts = $relative.Split('/')
+        $rawParts = $ReportDirectory.Replace('\','/').Split('/')
+        if ($parts.Count -lt 2 -or $parts[0] -in @('','control','.','..') -or $parts[1] -cne $TaskId -or
+            @($rawParts | Where-Object { $_ -in @('.','..') }).Count -gt 0) {
+            throw 'Report directory must belong to outputs/<batch>/<exact current TaskId>.'
+        }
+        foreach ($part in $parts) {
+            if ($part -in @('','.','..') -or $part -match '[ .]$|[:*?<>|"\x00-\x1f]' -or
+                $part -match '^(?i:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)') {
+                throw 'Report directory contains an unsafe Windows path component.'
+            }
+        }
+        $boundary = Join-Path (Join-Path $outputs $parts[0]) $TaskId
+    }
+    if (@($ReportDirectory.Replace('\','/').Split('/') | Where-Object {$_ -in @('.','..')}).Count) { throw 'Dot segments are not allowed in DATA report paths.' }
+    $relativeChild = [IO.Path]::GetRelativePath($boundary,$parent).Replace('\','/')
+    if ($relativeChild -ne '.') {
+        foreach ($part in $relativeChild.Split('/')) {
+            if ($part -in @('','.','..') -or $part -match '[ .]$|[:*?<>|"\x00-\x1f]' -or $part -match '^(?i:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)') {
+                throw 'Unsafe DATA report path component.'
+            }
+        }
+    }
+    if ($RunId -notmatch '^[A-Za-z0-9_.-]+$' -or $RunId -in @('.','..') -or $RunId -match '[ .]$|^(?i:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)') {
+        throw 'Invalid DATA report runId.'
+    }
+    $parent = Assert-DataPathWithin -Path $parent -AllowedRoot $boundary -AllowRoot
+    $run = Assert-DataPathWithin -Path (Join-Path $parent $RunId) -AllowedRoot $boundary
+    foreach ($candidate in @($boundary,$parent,$run)) {
+        $cursor = $candidate
+        while ($cursor) {
+            if ((Test-Path -LiteralPath $cursor) -and
+                ((Get-Item -LiteralPath $cursor -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw "Redirected DATA report path refused: $cursor"
+            }
+            $next = Split-Path -Parent $cursor
+            if ($next -eq $cursor) { break }
+            $cursor = $next
+        }
+    }
+    if (Test-Path -LiteralPath $run) { throw "DATA report directory collision: $run" }
+    return [pscustomobject]@{approvedRoot=$boundary;reportParent=$parent;reportRoot=$run}
+}
+
 function New-DataBatchIsolationDirectory {
     [CmdletBinding()]
     param(

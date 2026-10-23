@@ -122,13 +122,13 @@ with tempfile.TemporaryDirectory(prefix='mig63-font-') as tmp:
     git('symbolic-ref', 'HEAD', 'refs/heads/backup/test')
     check('backup remains blocked', False)
     git('symbolic-ref', 'HEAD', 'refs/heads/content/p0p1-layout')
-    check('content file-ownership freeze remains enforced', False)
+    check('E2 content path freeze is retired', True)
     git('symbolic-ref', 'HEAD', 'refs/heads/migration/unity-6.3')
     (repo / 'probe.unity').write_text('fixture only')
     git('add', 'probe.unity')
-    check('migration scene freeze remains enforced', False)
+    check('E2 migration scene freeze is retired without phase approval', True)
     git('config', 'mig63.phase', 'integrating')
-    check('approved migration phase permits scene commit', True)
+    check('legacy migration phase does not alter retired freeze policy', True)
 
     # Manifest mode protects both the static atlas and explicitly empty dynamic fallback.
     static_content = b'fixture static TMP asset\n'

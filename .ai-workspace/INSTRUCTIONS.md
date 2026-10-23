@@ -1,10 +1,12 @@
 # AI 指令账本
 
-2026-09-17 阶段已关闭：AI-000001～AI-000145，共 145 项；下一编号由现有队列 `nextSequence=146` 决定。
+本文件保留活动登记入口与未关闭内容，后续由既有 queue/监管入口正常追加。实际任务、模式、编号和失败/续行历史以 runtime 正式状态为准；历史授权不触发当前业务。
 
-完整旧账本、任务状态、input/output 与修订记录见 [阶段归档](archive/2026-09-17/README.md)，旧文本逐字保存于包内 `.ai-workspace/INSTRUCTIONS.md`。活动队列保留全部历史，未清空编号或错误史。
+- 已关闭 AI-000001～145：[原阶段归档](archive/2026-09-17/README.md)。
+- 已关闭 AI-000146～262：2026-10-18原字节归档，见[本批记录](archive/2026-10-18-instructions-slim/README.md)和[永久账本索引](archive/tracking/INSTRUCTIONS_ARCHIVE_INDEX.json)。任务/修订/监管事件按manifest中的UTF-8字节位置查询；无需日常全文读取。
+- 每批瘦身依[规范第16条](DOC_MAINTENANCE.md#严格规范)：先核关闭及活动依赖，整份原件入档并验证，保留未结完整块后轮转；不得清零队列、错误或许可史。
 
-本文件从 AI-000146 起继续由 `queue.ps1` 追加。2026-09-22 用户选择 F-α 并要求进入 AUTOMATIC；F 核心链为 MIG-F04 → MIG-F01 → A0 → A1，最终人工验收不纳入自动链。
+以下USER块按原字节留存。表内TODO是原始登记时的状态，不代表当前状态；最新结果只读[USER_WORK_STATUS.md](inputs/USER_WORK_STATUS.md)（目前U2～U6未结）。
 
 ## [USER] 伪车道（G64，不占 AI 编号、不派发）
 
@@ -19,3085 +21,1695 @@
 | USER-U5 | 白名单与分区约束复核 | USER-U1 | TODO |
 | USER-U6 | 数量与文案定稿（可选） | 无 | TODO |
 
-## 阶段维护授权
 
-用户要求：“对目前的ai工作区进行一轮整理简洁化和进行必要的归档……然后进行一次整体性的git上的提交和推送。并把目前分支的开发情况全部合并回主分支”。
+## AI-000263 | [CODE] [SC] [DETACH-B13-20261019] ASM-01 CODE程序集落地包与窗口①清单
 
-本次属于阶段整理与版本交付，不新增业务开发任务。
-
-## AI-000146 | [CODE] [MIG-F04] 无鼠标与无主相机容错实现
-
-- 序号：146
-- 提交时间：2026-09-22T12:38:24.3239850+08:00
-- 模块 ID：MIG-F04
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已审阅并授权该文件列出的本任务精确范围。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；不得在 main 开发。只执行本任务段，检查当前 Git diff，不覆盖无关用户改动。 执行“F1-CODE”全部条款。修复 Tools.getMousePos 并完成聚焦离线回归；不修改 Scene/Prefab。成功后调用 Complete，产物和验证写入任务输出目录。
-## AI-000147 | [ENGINE_MCP] [MIG-F04] Unity 6 无鼠标与无主相机 Play 验证
-
-- 序号：147
-- 提交时间：2026-09-22T12:39:15.4254858+08:00
-- 模块 ID：MIG-F04
-- 初始状态：QUEUED
-- 前置依赖：AI-000146
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已审阅并授权该文件列出的本任务精确范围。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；不得在 main 开发。只执行本任务段，检查当前 Git diff，不覆盖无关用户改动。 执行“F1-ENGINE”全部条款。只做编译、Console、临时无鼠标/无主相机 Play 验证及清理；不得保存生产场景临时变化。
-## AI-000148 | [CODE] [MIG-F01] 滚轮统一单位与 T8 参数接入
-
-- 序号：148
-- 提交时间：2026-09-22T12:39:15.8779070+08:00
-- 模块 ID：MIG-F01
-- 初始状态：QUEUED
-- 前置依赖：AI-000147
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已审阅并授权该文件列出的本任务精确范围。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；不得在 main 开发。只执行本任务段，检查当前 Git diff，不覆盖无关用户改动。 执行“F2-CODE”全部条款。改动清单、两项 T8 键语义与测试范围已经用户本轮批准；保持物理方向和单步积累契约，不批量导入生成资产。
-## AI-000149 | [ENGINE_MCP] [MIG-F01] FridgeScrollLab 统一单位机器验证
-
-- 序号：149
-- 提交时间：2026-09-22T12:39:16.3129418+08:00
-- 模块 ID：MIG-F01
-- 初始状态：QUEUED
-- 前置依赖：AI-000148
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已审阅并授权该文件列出的本任务精确范围。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；不得在 main 开发。只执行本任务段，检查当前 Git diff，不覆盖无关用户改动。 执行“F2-ENGINE”全部条款。使用 FridgeScrollLab 做机器验证，必要的 Lab 序列化修改仅可经 MCP/Editor API；Windows 环境不得虚构 Mac 硬件结论。手感留待 F 末尾人工签收，机器段完成后继续自动链。
-## AI-000150 | [CODE] [B-T11] 配表 Excel 往返与 CSV 双入口工具
-
-- 序号：150
-- 提交时间：2026-09-22T12:39:16.7395480+08:00
-- 模块 ID：B-T11
-- 初始状态：QUEUED
-- 前置依赖：AI-000149
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已审阅并授权该文件列出的本任务精确范围。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；不得在 main 开发。只执行本任务段，检查当前 Git diff，不覆盖无关用户改动。 执行“F3-CODE”全部条款。仅 DevTools/DataTables/Authoring，禁止修改 Assets 和权威 CSV 内容；两入口共用现有验证器，交付幂等工作簿往返与 G53 字形清单。
-## AI-000151 | [ENGINE_MCP] [B-T12] Unity 6 首轮导表与 catalog 回归
-
-- 序号：151
-- 提交时间：2026-09-22T12:39:17.1574544+08:00
-- 模块 ID：B-T12
-- 初始状态：QUEUED
-- 前置依赖：AI-000150
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已审阅并授权该文件列出的本任务精确范围。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；不得在 main 开发。只执行本任务段，检查当前 Git diff，不覆盖无关用户改动。 执行“F4-ENGINE”全部条款。本次是 USER-U1 前的基线首跑，不以 USER-U1 TODO 阻断；后续正式内容迭代才预检 USER-U1。执行 Import All、catalog Play、字体 SHA 恢复和生成物 diff 报告。完成后结束自动链，保留最终人工验收。
-## AI-000152 | [CODE] [MIG-F04] 无指针消费门控补修
-
-- 序号：152
-- 提交时间：2026-09-22T13:03:38.7741203+08:00
-- 模块 ID：MIG-F04
-- 初始状态：QUEUED
-- 前置依赖：AI-000147
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已批准 2026-09-22 并行审查回写；固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1，不覆盖无关改动。 执行“F1-CODE-SUPPLEMENT”全部条款：补 Tools 指针状态/相机缓存与 warning 节流，MouseManager 无指针时跳过命中、拖拽和指针采样且保持已有状态，补恢复测试；不改 Scene/Prefab。报告必须含六要素、工具登记影响和追踪表影响。
-
-> Dependency correction for AI-000148 at 2026-09-22T13:03:38.9471138+08:00: AI-000152
-> Instruction revision for AI-000148 at 2026-09-22T13:03:38.9930640+08:00
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已批准 2026-09-22 并行审查回写；固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1，不覆盖无关改动。 执行更新后“F2-CODE”全部条款。T8 使用 fridge_scroll_threshold / fridge_scroll_cooldown，删除 granularity/damping 旧契约；更新 CSV/schema enum/常量/解析/测试，保持方向映射；F4检查旧生成资产无残留。ShortCycleScrollAdapter以核验/测试为主。报告含六要素、工具登记影响和追踪表影响。
-> Instruction revision for AI-000149 at 2026-09-22T13:03:39.0724992+08:00
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已批准 2026-09-22 并行审查回写；固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1，不覆盖无关改动。 执行更新后“F2-ENGINE”全部条款。在 FridgeScrollLab 与正式P0/P1验证单格、连续多格、反向、冷却多格、分数累积、离区、Modal/层和失焦，给 threshold/cooldown 三组候选；最终手感仍 PENDING_USER。报告含六要素、工具登记影响和追踪表影响。
-> Instruction revision for AI-000150 at 2026-09-22T13:03:39.1171428+08:00
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已批准 2026-09-22 并行审查回写；固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1，不覆盖无关改动。 执行更新后“F3-CODE”全部条款。允许 Authoring/**、Validate-DataTables.ps1、Test-Authoring.ps1 和 TOOLKIT_REGISTRY；增加 -Quick、空sheet不覆盖、冻结首行、必填着色、引用着红、T14 | 提示，登记 TK-DAT-07。禁止修改Assets和权威CSV。报告含六要素、工具登记影响和追踪表影响。
-> Instruction revision for AI-000151 at 2026-09-22T13:03:39.1590583+08:00
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已批准 2026-09-22 并行审查回写；固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1，不覆盖无关改动。 执行更新后“F4-ENGINE”全部条款。本次仍为U1前基线首跑。补机器13步、prd_unknown、scene clean、PENDING_USER；字体路径和参考SHA见范围文档。预期diff限审定T8配置资产/catalog/确定性导入结果，证明旧键生成资产无残留，备份用实际任务号。报告含六要素、工具登记影响和追踪表影响。
-> Instruction revision for AI-000148 at 2026-09-22T13:05:34.7207826+08:00
-
-执行前阅读 AGENTS.md、两份项目级入口文档、.ai-workspace/WORKFLOW.md、对应 worker 文档和 .ai-workspace/inputs/F-alpha_任务精确范围_20260922.md。用户已批准 2026-09-22 并行审查回写；固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1，不覆盖无关改动。 执行更新后“F2-CODE”全部条款。T8 使用 fridge_scroll_threshold / fridge_scroll_cooldown，删除 granularity/damping 旧契约；更新 CSV/schema enum/常量/解析/测试，保持方向映射；F4检查旧生成资产无残留。ShortCycleScrollAdapter以核验/测试为主。报告含六要素、工具登记影响和追踪表影响。 明确默认值：threshold 缺失/非法用 1，cooldown 缺失/非法用 0.2；使用 invariant culture 并输出清晰诊断。
-
-> Verification resolved for AI-000151 at 2026-09-22T21:55:07.1222930+08:00: decision=VERIFIED; summary=用户确认 AI-000151 人工验收通过。; evidence=用户于 2026-09-22 在控制台明确回复：151验收通过。机器证据已完成 13/13 路由、真实导表结果、Console 0 error、scene/font clean/hash 与生成幂等验证。
-
-> Verification resolved for AI-000147 at 2026-09-22T22:09:21.1368441+08:00: decision=VERIFIED; summary=用户确认 AI-000147 人工验收通过。; evidence=用户于 2026-09-22 在控制台明确回复：147通过。无鼠标/无主相机容错及恢复机器证据被接受。
-
-> Verification rejected for AI-000149 at 2026-09-22T22:09:21.3154396+08:00: decision=REJECTED; reason=用户确认真实滚轮手感合适，但 FridgeScrollLab 执行 Push Modal Comparison 后滚轮仍正常响应，Modal 阻断人工测试未通过；正式 P1 也缺少可触发 Modal 的按钮，需要增加临时按钮后复验。
-## AI-000153 | [CODE] [MIG-F01R] Modal滚轮阻断与临时验收按钮代码
-
-- 序号：153
-- 提交时间：2026-09-22T22:12:40.7518415+08:00
-- 模块 ID：MIG-F01R
-- 初始状态：QUEUED
-- 前置依赖：AI-000149
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目入口、WORKFLOW、CODE worker 文档和 .ai-workspace/inputs/AI149_Modal修复与正式场景验收按钮_20260922.md。严格执行 AI-000153/CODE 全部条款：修正长期探针对 Modal 持续输入的遗漏，新增 Phase1 临时可见验收控件及安全开关/清理；不修改 Unity 场景 YAML、正式业务状态机或真实 Modal。更新必要测试与说明，报告六要素、工具登记影响、文档影响。
-## AI-000154 | [ENGINE_MCP] [MIG-F01R] Lab修复与正式P1 Modal验收按钮接入
-
-- 序号：154
-- 提交时间：2026-09-22T22:12:53.1593056+08:00
-- 模块 ID：MIG-F01R
-- 初始状态：QUEUED
-- 前置依赖：AI-000153
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、两份项目入口、WORKFLOW、ENGINE_MCP worker 文档和 .ai-workspace/inputs/AI149_Modal修复与正式场景验收按钮_20260922.md。严格执行 AI-000154/ENGINE_MCP 全部条款。使用 Unity 6000.3.24f1 和 MCP/Editor API 配置 FridgeScrollLab 与 ShortCycle_P0P1；新增专用零命中验收层与 Phase1 临时可见按钮，不改现有真实 Modal；验证 Modal 开启时真实生产链 dispatch/adapter/tier 不变，关闭后恢复，Console/scene/font/哈希清理完整。以 PENDING_USER 完成，不自动通过原 AI-000149，不进入 E2。
-> Instruction revision for AI-000154 at 2026-09-22T22:58:06.3134246+08:00
-
-执行前阅读 AGENTS.md、两份项目入口、WORKFLOW、ENGINE_MCP worker 文档和 .ai-workspace/inputs/AI149_Modal修复与正式场景验收按钮_20260922.md。严格执行 AI-000154/ENGINE_MCP 全部条款。使用 Unity 6000.3.24f1 和 MCP/Editor API 配置 FridgeScrollLab 与 ShortCycle_P0P1；新增专用零命中验收层与 Phase1 临时可见按钮，不改现有真实 Modal；验证 Modal 开启时真实生产链 dispatch/adapter/tier 不变，关闭后恢复，Console/scene/font/哈希清理完整。以 PENDING_USER 完成，不自动通过原 AI-000149，不进入 E2。
-
-补充授权与恢复范围：用户已在本会话明确要求“流水线自身操作产生的脏场景应由流水线自主恢复清理，不应经过人工审核”，并已批准继续；该既有授权适用于本次经基线比对确认由 AI-000154 SaveScene 新增的精确 150 条 TMP Prefab override。仅允许通过 Unity Editor API 移除报告列明的 40 条 m_sharedMaterial、50 条 m_TextWrappingMode、60 条 m_ActiveFontFeatures.Array.data[0]；必须保留基线已有的 30 条 m_sharedMaterial、全部业务配置和本轮验收层/按钮接线。清理后复跑静态审计、场景/字体哈希、Console、focused diff 与正式 P1 验证；若安全门仍拒绝，保留现场并报告平台拒绝。
-## AI-000155 | [CODE] [FIX-T5] 子视图机位与视野判定代码
-
-- 序号：155
-- 提交时间：2026-09-22T23:09:51.5593728+08:00
-- 模块 ID：FIX-T5
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、项目整体阅读理解与推进基线_2026-08-14.md、CODEBASE_MAP.md、.ai-workspace/WORKFLOW.md、.ai-workspace/workers/CODE.md、.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4、.ai-workspace/TOOLKIT_REGISTRY.md，以及 .ai-workspace/inputs/控制台输入_FIX-T5空间结构修复派发_20260923.md 和 .ai-workspace/inputs/排布指导书_ShortCycle_P0P1.md。用户已在当前窗口明确要求按该文档整体理解和修复；本任务属于 F-α 之外的独立开发链，不加入 F-α 自动链，不修改或关闭 AI149/AI154，不成为 F-α 验收前置。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；先核对当前 Git diff，保留 F-α 及用户其它未提交改动；禁止修改 .unity/.prefab/.asset/.meta。
-
-代码改动清单（用户已随 2026-09-23 派发文档审阅）：
-| 文件 | 处置 | 改动要点 | 归属层 | 工具层三问结论 |
-| --- | --- | --- | --- | --- |
-| Assets/Scripts/Cooking/ShortCycle/Runtime/ShortCyclePresentationDirector.cs | 修改 | viewTable 子视图机位调度；目标槽不同才 Pan，持锁与 generation 完成后激活；按相机视野合并 Set 可见性；相同 Traveler 锚点不搬运 | Presentation orchestration | 复用 TK-MOT-06；属于现有短循环呈现合同；不建平行调度器 |
-| Assets/Scripts/Cooking/ShortCycle/Presentation/ShortCycleSpace.cs | 扩充 | ShortCycleViewSetEntry 增 cameraSlot；提供视图槽解析与 Renderer bounds 并集工具 | Presentation data | 复用 TK-MOT-06；包围盒算法可在现组件内复用；无新全局工具 |
-| Assets/Scripts/Cooking/ShortCycle/Presentation/ShortCyclePresentationSet.cs | 扩充 | 缓存世界包围盒、子 Transform/Renderer 变化脏标记、IsInView(cameraRect)；overflowRenderers 仍只作强制例外 | Presentation set | 复用 TK-MOT-06；收敛到现 Set；不新增平行可见性组件 |
-| Assets/Scripts/Cooking/ShortCycle/ShortCycleCameraPanController.cs | 修改 | 3 槽扩为 P1/P0Left/P0Center/Right 四槽，保持 PanTo、返向、曲线、输入锁合同 | Runtime motion | TK-MOT-06 扩充；可复用四槽接口；完成后更新原登记而非另建工具 |
-| Assets/Scripts/Cooking/ShortCycle/ShortCycleStateMachine.cs 及现有 ActionRegistry/Router（仅必要最小范围） | 修改/核验 | ④保留；open_clue_board 仅 Browse 允许；close/ESC 从④回 Browse；④不请求换机位；Core 不引用 UnityEngine | Core | 复用既有状态机/动作注册；不新增输入入口；TK-INT-03 保持唯一链 |
-| Assets/Scripts/Cooking/ShortCycle/Presentation/ShortCycleTravelingElement.cs | 修改（仅需要时） | 两锚点世界位置相同的 SnapTo/MoveTo 成为空操作并保持取消/生命周期合同 | Presentation motion | 复用 TK-MOT-06；不删除 G26 保护对象；无新工具 |
-| Assets/Scripts/Tools/Debug/CameraFrameGizmo.cs、Assets/Editor/ShortCycle/CameraFrameGizmo.cs、Assets/Editor/ShortCycle/CameraFrameGizmoMenu.cs | 修改 | 四机位框、P0-Left 对齐菜单、Editor 复核表；runtime 数据组件不引用 UnityEditor | Debug tooling | 扩充 TK-DBG-06；Editor/runtime 程序集边界保持；更新同一登记 |
-| DevTools/ShortCycle/ShortCycleCoreTests.cs、Test-CK01CShortCycle.ps1、必要 UnityStubs.cs | 扩充 | ③→①有 Pan；①↔④无 Pan；四区视野判定；同锚点无搬运；旧返向/锁/生命周期回归 | Verification | 复用 TK-DBG-04；不得弱化 G26；登记原工具影响 |
-| CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md、.ai-workspace/TOOLKIT_REGISTRY.md | 更新 | 实际入口、调用链、验证方式、完成度和工具登记 | Documentation | 维护现有入口；不创建重复总览 |
-
-严格执行派发文档 §2 FIX-T5a。坐标合同以 G68 为准：半屏宽 12.8，P1=-25.6、P0Left=-12.8、P0Center=0、Right=25.6。Cover/Catalog 目标 P0Center；Browse/ClueBoardShell 目标 P0Left。子视图换槽走现有 0.45s Pan/输入锁/generation；同槽视图不得产生 PanStarted。视野显隐按相机世界矩形与 Set Renderer bounds 相交；无 Renderer/无可用相机时给确定性安全行为和诊断，不得通过 Find 或新全局入口兜底。
-
-验收：Test-CK01CShortCycle runner exit 0；Host 序列表覆盖 ③→①含 Pan、①→④/④→①无 Pan；视野用例覆盖线索板在 P0Left/P1 内、P0Center 外，右页在 P0Center 内、P0Left 外；保留 CAM-T2b 返向/输入锁回归；Core using UnityEngine=0；生产代码 .Find(=0；Editor 复核表可判定四 Marker/API；git diff --check。报告六要素（做了什么/产物/实际验证/待人工项/文档影响/工具登记影响），成功后 VERIFIED，不设置 F-α 依赖，也不触发 T5b 或任何 Unity 场景写入。
-## AI-000156 | [ENGINE_MCP] [FIX-T5] 正式场景四区空间重排与④命中区接入
-
-- 序号：156
-- 提交时间：2026-09-22T23:10:41.3661118+08:00
-- 模块 ID：FIX-T5
-- 初始状态：QUEUED
-- 前置依赖：AI-000155
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-执行前阅读 AGENTS.md、项目整体阅读理解与推进基线_2026-08-14.md、CODEBASE_MAP.md、.ai-workspace/WORKFLOW.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4、.ai-workspace/UNITY_SCENE_CLEANUP.md、.ai-workspace/TOOLKIT_REGISTRY.md，以及 .ai-workspace/inputs/控制台输入_FIX-T5空间结构修复派发_20260923.md 和稳定入口 .ai-workspace/inputs/排布指导书_ShortCycle_P0P1.md。用户在当前窗口明确授权按该文档整体修复。此任务是 F-α 之外的独立链；AI154 是单向场景资源前置，用于保证前一轮 ShortCycle_P0P1 写入与精确清理先闭合，F-α 不依赖本任务，本任务不得改变 AI149/AI154 验收结论。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；只用 Unity MCP/审定 Editor API，禁止手改 YAML。
-
-代码改动清单：本任务原则上不新增或改写运行时代码；若 AI-000155 产物在 Unity 实际编译中暴露 API/程序集问题，只允许对其已审文件做最小兼容修复并记录，禁止扩大架构。场景交互继续复用 TK-INT-03；镜头复用 TK-MOT-06；机位框复用 TK-DBG-06；审计复用现有 ShortCycleLayoutAudit/TK-DBG-04。三问结论：已有工具均可满足，不新建第二套输入、镜头、布局或审计系统；完成后更新原登记影响。
-
-用户授权表（当前窗口对同名派发文档的直接执行授权）：
-| 目标 | 动作 | 精确范围 | 备份 | 保持不变 |
-| --- | --- | --- | --- | --- |
-| Assets/Scenes/Cooking/ShortCycle_P0P1.unity（领取时记录 SHA） | 修改字段/新建对象/保存 | CameraAndStageMarkers 新建 CamMarker_Phase0_Left_TUNE x=-12.8；Phase1 marker x=-25.6、Phase0 Center x=0、Right x=25.6（y/z沿用）。Shared/ClueBoard_Group 根 x=-19.2，两个 ClueBoardAnchor x=-19.2。Spaces/Phase0_RecipeBook 根 x +=12.8。Spaces/Phase1_Kitchen 根调整使猫/格架/滚动区中心进入[-38.4,-25.6]，初值-32；Tray_Group跨[-38.4,-12.8]，初值中心-25.6。viewTable绑定 Cover/Catalog=P0Center、Browse/ClueBoardShell=P0Left；Director/CameraPan/Gizmo绑四Marker。新建 Shared/ClueBoard_Group/ClueBoard_HitArea，BoxCollider2D + Button_MouseInteract + MouseActionBinding(shortcycle.open_clue_board) + StateGatedInteraction，无视觉Renderer/UGUI，登记 ClueBoard Set；Browse_Group/OpenClueBoard_Button 取消动作绑定并标 _Unused。复核 overflowRenderers，仅保留真实跨区件。 | DevTools/Scenes/backup/FIX-T5b_ShortCycle_P0P1.unity 及 meta，记录 SHA/GUID | 对象 GUID、Set 登记结构、13 StateGate、全部缩放/旋转/描边/_TUNE 参数；只做审定平移与接线 |
-
-领取预检：AI154 必须为 SUCCEEDED 且正式场景 diff 已清除其 150 条非预期 TMP override；若不满足，保持 BLOCKED_DEPENDENCY/记录资源冲突，不重写、覆盖或吸收 AI154 现场。备份后按派发文档 §3 FIX-T5b 施工。不得新增承载交互的 UGUI；ClueBoard_HitArea 必须在现有功能树且无视觉件；旧粉色对象只解除动作并标 _Unused，不删除资产。右半页真实放在 [0,12.8]，线索板固定，不用 Traveler 搬运补偿。只移动列明根节点，子件相对位置不变。
-
-Play 验收：⓪(0)→1→③(0，无Pan)→R→①(-12.8，Pan+锁；线索板左半、书左页右半、右页不可见)→真实点击 ClueBoard_HitArea→④(无Pan、左页压暗/不可交互)→Esc→①→Space→P1(-25.6，Pan；猫左半、线索板右半)→Backspace→①→Esc→③→Esc→⓪→Esc退出。提供 Cover/Catalog/Browse/Kitchen 四机位和④截图；PanStarted 计数仅③→①、①→P1、P1→①、①→③各1；平移中 Locked，完成释放；LayoutAudit 断言四 Marker 精确 x 和两 ClueBoardAnchor 相等；启用集合均属具名功能容器；Tight Sprite 度量、实际/目标来源分离；Missing=0、Console Error/Exception/Assert=0、退出场景 clean、字体/meta/GUID与无关 diff 不变。以 SUCCEEDED + PENDING_USER 完成，人工路径写清；不得把 FIX-T5 结果作为 F-α 通过条件，也不进入 E2。报告六要素和工具登记影响。
-
-> Dependency correction for AI-000156 at 2026-09-22T23:10:52.0890013+08:00: AI-000155, AI-000154
-## AI-000157 | [CODE] [PRE-5] 真实用量记录、返回体规则与统一验证入口
-
-- 序号：157
-- 提交时间：2026-09-23T02:11:21.1453847+08:00
-- 模块 ID：PRE-5
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-代码/脚本改动清单（控制台根据用户本包授权审定）：
-|文件|处置|改动要点|归属层|工具三问|
-|---|---|---|---|---|
-|.ai-workspace/queue.ps1、supervised.ps1；DevTools/Workflow/任务用量脚本及tests|扩充|生命周期计量钩子、真实来源/缺失口径、日报§8与周报|Workflow|沿用现调度/TK-WF-01；新增计量能力，无第二队列|
-|DevTools/Verify-All.ps1|新建|统一可选择验证profile，一次收口|Verification|复用TK-DBG-04和现runner，默认只跑受影响范围|
-|.ai-workspace/workers/CODE.md、ENGINE_MCP.md、CONTROL_CHAT.md及报告模板|修改|返回体六规则、验证两次上限、任务粒度P-047|Workflow docs|复用现worker协议；不改身份/授权/错误史|
-完成源文档PRE-5全部要求。不改任何.cs/Assets；可与只读ENGINE并行。runtime/usage-YYYYMM.jsonl 按task/lane/model/phase记录 input/output tokens、工具计数、response bytes及真实source/coverage；不可获取写null与原因，不向队列领取返回全历史巨大JSON，不硬编码容量百分比。PRE本包已入队各任务生成开始/尚未可观测标记，不能造执行用量。日报本日/本周分车道阶段、Top5返回体与任务；2026-09-30首周报由既有监管习惯消费，不自行建日程。队列兼容已有PS7票据、lease/人工门/资源锁，离线fixture测试不得更改线上runtime。Verify-All聚合现runner与静态哨兵并支持Task/profile；静态测试无重复全仓扫描；中途增量编译。所有规则写入原入口，后续PRE-3负责拆分。验收含真实或显式缺失记录、失败退出码传播、wrapper可用、队列针对性回归；不因拿不到provider token无限阻断，标注覆盖限制。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.3060564+08:00: {"policy":{"resourceKeys":["workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.2724467+08:00"},"taskId":"AI-000157"}
-## AI-000158 | [ENGINE_MCP] [PRE-4] DIAG-T3 托盘三态与封面气泡只读取证
-
-- 序号：158
-- 提交时间：2026-09-23T02:11:21.3343171+08:00
-- 模块 ID：PRE-4
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-严格执行源文档PRE-4。仅只读Editor审计+临时Play验证，任何资产/源码/场景均不保存修改。重新发现MCP实例并核对Application.dataPath=D:/GameProject/Eat-What、版本6000.3.24f1，记录scene clean与hash/字体基线。限定 Shared/Tray_Group及实际Tray控制引用、Phase0 Cover_Group的Bubble子树，批处理审计写JSON；工具只回路径/计数/<=20异常；截图不内联；Console按tag；稳定Play间隔>=2s、最多30轮。核实TrayPresentation/Controller/三preset、Key.H真实调用与三态根transform；不以有H代码代替Play，不强套三选一若现场有第四根因须实报。源码已只读确认ManualVerificationDriver.HandleKeyPressed仍有Key.H，待验证实际接线。泡泡核查activeSelf/Renderer/Set/Cover行/TMP key/T9缺项/sprite qipaoA/B。两条分别判定未开发/缺陷/配置缺失并给后续修复建议，不直接修。结束恢复原Edit/场景/输入临时状态、scene/hash不变、Console取证。G26探针保留，不新增UGUI或视觉对象。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.3986402+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.3809448+08:00"},"taskId":"AI-000158"}
-## AI-000159 | [CODE] [PRE-3] 核心入口与按需索引、文档归档和报告瘦身
-
-- 序号：159
-- 提交时间：2026-09-23T02:11:21.4374612+08:00
-- 模块 ID：PRE-3
-- 初始状态：QUEUED
-- 前置依赖：AI-000157
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-代码/脚本改动清单（控制台根据用户本包授权审定）：
-|文件|处置|改动要点|归属层|工具三问|
-|---|---|---|---|---|
-|.ai-workspace/CORE.md、README.md、WORKFLOW.md、SUPERVISED.md、CONTROL_CHAT.md、INSTRUCTIONS.md|新建/整理|核心<=10KB、协议入口和活动账本索引|Workflow docs|复用TK-WF-01归档，队列仍唯一状态源|
-|.ai-workspace/pitfalls/*、toolkit/*及旧KNOWN_PITFALLS.md/TOOLKIT_REGISTRY.md|拆分/兼容索引|P编号按车道、TK按域，保留全部链接|Knowledge docs|已有P/TK不重编不丢失，旧路径可解析|
-|AGENTS.md、CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md、.ai-workspace/inputs/README.md、报告模板|修改|按需读取口径、G64/G67～71/常驻白名单、当前实际状态|Project docs|原入口维护；不伪造验收|
-执行源PRE-3。根文档先冻结文件清单/UTF8 bytes；同集合降幅>=50%，CORE<=10240bytes；详细规则移到按需文档，过程归档manifest/hashes，不能删规则/状态/输入输出来达标。INSTRUCTIONS活跃追加期间避免覆盖：若归档采用任务完成前后锁和内容hash核对/增量保留；线上runtime/队列不归档不写。常驻inputs全部保留；用户指导书v0.3明确等待AI156实际报告，不生成坐标版。v1.5.2/v2.2原件已投放，保留其与当前队列冲突的执行覆盖；未提供追踪表v1.2.3不冒称已同步，M1-B4-R3结构变更状态可写本包增量。所有P/TK/G编号索引可解析、旧路径兼容、示例任务必读清单及脚本查链接；G26/审批/停点/租约/恢复上限不得丢失。更新读取规则需覆盖AGENTS中的两项目入口要求，保留页首核验/模块索引必要阅读。PRE-5各项规则原样语义迁移；新task卡不再全读大文档。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.5134512+08:00: {"policy":{"resourceKeys":["workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.4941940+08:00"},"taskId":"AI-000159"}
-## AI-000160 | [CODE] [PRE-2a] DATA车道、隔离导表管线和U1轮次契约
-
-- 序号：160
-- 提交时间：2026-09-23T02:11:21.5438498+08:00
-- 模块 ID：PRE-2a
-- 初始状态：QUEUED
-- 前置依赖：AI-000159
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-代码/脚本改动清单（控制台根据用户本包授权审定）：
-|文件|处置|改动要点|归属层|工具三问|
-|---|---|---|---|---|
-|.ai-workspace/workers/DATA.md、CONTROL_CHAT.md、WORKFLOW.md、SUPERVISED.md及toolkit域|新建/扩充|DATA职责路由、U1轮次、TK-WF-02|Workflow|复用队列和TK-DAT-01/07；不造第二队列|
-|.ai-workspace/queue.ps1、supervised.ps1及tests|扩充|DATA注册/路由/锁/生命周期兼容API|Workflow|沿用现四线身份/资源规则，测试用隔离fixture|
-|DevTools/DataTables/Run-DataPipeline.ps1及一页README、DevTools/DataTables/Authoring相关最小导出钩子|新建/扩充|Quick校验→隔离batch→diff/catalog→字形→报告；用户轮次事件|DevTools|复用TK-DAT-01/07，等待PRE-2b真实入口|
-执行源PRE-2a，禁止.cs/Unity/序列化资源写入。除文档需落DATA的真实调度支持；提供RegisterDataLane或等价受控API、Worker状态/ValidateSet/待验索引/锁/dispatch与回报支持，运行代码不写在线状态。DATA允许由控制台独立子代理执行（不新建用户可见任务线程）；dispatch显式executor kind而非空thread伪成功，不抢CODE/ENGINE；claim token/lease/停止门与现车道相同。控制端在完成后调用注册API再重分类预留首跑。实现临界区发布契约供ENGINE共享，实际Unity读写与源码编译采用保守锁，不能只声明短锁却允许自动刷新撞运行验证。隔离batch路径与原源hash对比见执行边界；快照/发布备份/冲突检测/退出码/相对LocalPackages完整，全部失败即停。入口全名 EatWhat.DataTables.DataTableImportService.ImportAllBatch（PRE-2b实现）。每轮U1导出事件有轮次/CSV摘要/DONE门与幂等任务生成，通过控制端消费事件，export脚本不能擅自调用队列控制动作；本包首跑用现CSV不假造USER-U1完成。策略规定CSV与生成物同提交、字体单独保护，不自动commit。离线测试验证锁冲突/半发布/失败传播/去重/未DONE不领取，真实batch首跑留后置。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.6493318+08:00: {"policy":{"resourceKeys":["workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.6210271+08:00"},"taskId":"AI-000160"}
-## AI-000161 | [CODE] [PRE-1] 静态主字体与动态回退生成及引用预览工具
-
-- 序号：161
-- 提交时间：2026-09-23T02:11:21.6817084+08:00
-- 模块 ID：PRE-1
-- 初始状态：QUEUED
-- 前置依赖：AI-000156, AI-000160
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-代码/脚本改动清单（控制台根据用户本包授权审定）：
-|文件|处置|改动要点|归属层|工具三问|
-|---|---|---|---|---|
-|Assets/Editor/Fonts/ShortCycleFontAtlasBuilder.cs|新建|基线216∪T9字集、Static/DynamicFallback、menu/batch|Editor tooling|复用TK-LOC-03/TK-DAT-01，TMP原API|
-|Assets/Editor/Fonts/ShortCycleFontSwapTool.cs|新建|只读预览/manifest→执行m_fontAsset|Editor tooling|沿用Unity SerializedObject/PrefabAPI，不扫写未授权资源|
-|DevTools/GitHooks/check-mig63-font.sh、test-font-guard.py、README.md；DevTools/Fonts/相关验证|修改/扩充|静态保护迁移、动态提交前空缓存检查|DevTools|复用现字体guard，不建立旁路跳过|
-|Assets/Editor/ShortCycle/ShortCycleLayoutAudit.cs、DevTools/Verify-All.ps1对应profile|扩充|Spaces内TMP主字体断言和回归|Verification|复用TK-DBG-04/现LayoutAudit|
-执行PRE-1代码目标，不操作Unity不写.asset/.meta。实际新字体路径 Assets/Font/Heavy/ShortCycle_Heavy_Static.asset 与 ShortCycle_Heavy_DynamicFallback.asset；旧字体保持历史。Static→DynamicFallback→现SourceHan，global fallback=0。基线216先从旧资产真实字符Unicode集合读取得快照，与T9用实际CSV解析器联合，不硬编码中文字符串。幂等构建无增字不重写图集，Static运行/构建不变；动态可在Editor明确清空再提交，保留asset/meta稳定GUID及链引用，不能把被引用的动态字体整个忽略导致clone丢失。guard迁移在Static未创建时保留旧保护有效，创建后按审定构建manifest精确SHA切换，工作树/index/LFS均保护、不盲目自动认可漂移；不得修改.git hooks/config或跳过。字体工具支持指定scene/prefab白名单与只读预览，m_fontAsset之外的材质变化不得暗改；报告兼容/限制。真实Unity6 DLL编译核验、最小fake/guard测试、Verify-All受影响profile；Editor API复核表。字体产物/232TMP切换由后置ENGINE执行，不能因此反向阻断CODE。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.7555839+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.7287006+08:00"},"taskId":"AI-000161"}
-## AI-000162 | [ENGINE_MCP] [PRE-1] 双字体资产生成、正式场景引用迁移和画面回归
-
-- 序号：162
-- 提交时间：2026-09-23T02:11:21.7758168+08:00
-- 模块 ID：PRE-1
-- 初始状态：QUEUED
-- 前置依赖：AI-000161
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-执行PRE-1 ENGINE；源码/工具由前置提供，不自建另一套。必须先预览实际232 TMP（数量是基准），取字形216及T9并集，输出目标对象路径/GUID/字段/材质兼容性manifest。
-用户授权表：
-|目标|动作|精确范围|备份|保持|
-|---|---|---|---|---|
-|Assets/Font/Heavy/ShortCycle_Heavy_Static.asset与ShortCycle_Heavy_DynamicFallback.asset及新meta|Editor新建/生成|Static字集216∪T9，DynamicFallback可清空；Static→Dynamic→SourceHan|DevTools/Fonts/backup/PRE-1/旧字体asset/meta及新建清单|旧WithFallback/source字体/global fallback0|
-|Assets/Scenes/Cooking/ShortCycle_P0P1.unity|Editor字段修改/保存|预览manifest中实际TMP m_fontAsset换Static|DevTools/Fonts/backup/PRE-1/scene及meta|文本/材质/排序/transform/业务/Modal及获批140wrap|
-|Assets/Prefabs/Cooking/ShortCycle/内由正式scene实际引用且TMP使用旧Heavy的Prefab（执行前manifest列精确路径）|Editor字段修改|仅m_fontAsset，先预览后精确清单|DevTools/Fonts/backup/PRE-1/按原路径备份|GUID及全部非font字段|
-|前置新Editor源码的.meta|Editor导入生成|只新增缺失meta|同输出manifest|既有meta不变|
-相关Prefab若不在上表子树仅登记，不扩大写入。若需要材质/atlas绑定联动才能正常显示，报告具体最小范围、差异和可审阅方案，不能暗改保持项。Play全视图中文/Static SHA不变/动态清空/构建验证；构建不改Build列表，输出到忽略目录。LayoutAudit断言Spaces全部TMP用Static；保护脚本最终基线manifest更新有证据，不触.git配置。本任务本质字体，不扩展新视效，不改描边/泡泡。MCP返回摘要，Play间隔>=2秒最多30次/阶段，批量操作先单样例机器验证再执行审定清单；人工验收后置，完成PENDING_USER，报告字体与材质视觉风险。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.8473872+08:00: {"policy":{"resourceKeys":["unity-project","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.8275227+08:00"},"taskId":"AI-000162"}
-## AI-000163 | [CODE] [PRE-2b] 无UI批导表Editor入口与两种回归用例
-
-- 序号：163
-- 提交时间：2026-09-23T02:11:21.8709906+08:00
-- 模块 ID：PRE-2b
-- 初始状态：QUEUED
-- 前置依赖：AI-000162, AI-000160
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-代码/脚本改动清单（控制台根据用户本包授权审定）：
-|文件|处置|改动要点|归属层|工具三问|
-|---|---|---|---|---|
-|Assets/Editor/DataTables/DataTableImportService.cs|扩充|ImportAllBatch静态入口，无UI，验证失败Exit(1)|Editor|复用TK-DAT-01 ImportAll，不另写导表器|
-|DevTools/DataTables/Test-BatchImport.ps1、Run-DataPipeline.ps1必要接入|新建/扩充|当前CSV幂等和隔离一次真改动两用例、报告退出码|DevTools|沿用PRE-2a DATA链与TK-DAT-07|
-执行源PRE-2b CODE范围，先核对namespace EatWhat.DataTables。成功正常退出0，异常失败日志[DATA]与可诊断文件并非零退出；不写UI，不吞例外。接PRE-1重建字体入口，真实无变化时不改字节。CODE只能实现并做编辑器外验证，禁止启动Unity或修改Assets序列化文件；后置DATA在隔离副本首跑。测试必须无改动diff0及隔离源一次真实改动仅预期生成项变化，生产CSV/字体无改写。给真实Unity6 Editor API复核表、可执行命令与最小输入输出清单。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:21.9604903+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:21.9341805+08:00"},"taskId":"AI-000163"}
-## AI-000164 | [CODE] [PRE-2b] DATA首跑：隔离batch导表幂等与真实变更验证（待DATA路由注册）
-
-- 序号：164
-- 提交时间：2026-09-23T02:11:21.9876907+08:00
-- 模块 ID：PRE-2b
-- 初始状态：QUEUED
-- 前置依赖：AI-000163
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-此卡暂登记CODE仅因当前队列尚未支持DATA；控制端必须在PRE-2a完成后、此卡具备领取条件前调用正式ReclassifyTask转DATA并配置执行路由。未转DATA不可领取，不能以CODE名义启动Unity。执行源PRE-2b实际首跑，使用PRE-2a隔离管线，固定Unity6000.3.24f1，在源交互式Editor保持可响应时运行batch；由必要只读MCP响应证据确认，无需操纵其场景。当前CSV无变更生成物diff=0；隔离副本一次真实CSV变更生成diff仅预期，不发布该测试变化；数据catalog合同回归、新字形清单、Static无增字SHA不变。用户授权真实产物仅Assets/Generated/DataTables/**和PRE-1审定Static更新；元数据GUID保持；发布前DevTools/Generated/backup/<TaskId>/与font备份，主源/目标哈希漂移即停止、短临界锁、失败不半发布。当前首跑如diff0不得为证明而重写生产资产。禁止修改Prefab源或手改YAML、关闭/杀用户Editor，禁止提交字体缓存/擅自commit。报告代码与生成物路径、两用例结果/退出码/Editor响应证据及U1一页操作说明。
-
-> SUPERVISED POLICY at 2026-09-23T02:11:22.0590549+08:00: {"policy":{"resourceKeys":["data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"PRE包明确允许独立DevTools与只读Unity并行；Assets源码与Editor操作保留unity-project，共享工作流文件串行。","updatedAt":"2026-09-23T02:11:22.0320416+08:00"},"taskId":"AI-000164"}
-> Instruction revision for AI-000156 at 2026-09-23T02:11:22.1253950+08:00
-
-执行前阅读 AGENTS.md、项目整体阅读理解与推进基线_2026-08-14.md、CODEBASE_MAP.md、.ai-workspace/WORKFLOW.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4、.ai-workspace/UNITY_SCENE_CLEANUP.md、.ai-workspace/TOOLKIT_REGISTRY.md，以及 .ai-workspace/inputs/控制台输入_FIX-T5空间结构修复派发_20260923.md 和稳定入口 .ai-workspace/inputs/排布指导书_ShortCycle_P0P1.md。用户在当前窗口明确授权按该文档整体修复。此任务是 F-α 之外的独立链；AI154 是单向场景资源前置，用于保证前一轮 ShortCycle_P0P1 写入与精确清理先闭合，F-α 不依赖本任务，本任务不得改变 AI149/AI154 验收结论。固定 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1；只用 Unity MCP/审定 Editor API，禁止手改 YAML。
-
-代码改动清单：本任务原则上不新增或改写运行时代码；若 AI-000155 产物在 Unity 实际编译中暴露 API/程序集问题，只允许对其已审文件做最小兼容修复并记录，禁止扩大架构。场景交互继续复用 TK-INT-03；镜头复用 TK-MOT-06；机位框复用 TK-DBG-06；审计复用现有 ShortCycleLayoutAudit/TK-DBG-04。三问结论：已有工具均可满足，不新建第二套输入、镜头、布局或审计系统；完成后更新原登记影响。
-
-用户授权表（当前窗口对同名派发文档的直接执行授权）：
-| 目标 | 动作 | 精确范围 | 备份 | 保持不变 |
-| --- | --- | --- | --- | --- |
-| Assets/Scenes/Cooking/ShortCycle_P0P1.unity（领取时记录 SHA） | 修改字段/新建对象/保存 | CameraAndStageMarkers 新建 CamMarker_Phase0_Left_TUNE x=-12.8；Phase1 marker x=-25.6、Phase0 Center x=0、Right x=25.6（y/z沿用）。Shared/ClueBoard_Group 根 x=-19.2，两个 ClueBoardAnchor x=-19.2。Spaces/Phase0_RecipeBook 根 x +=12.8。Spaces/Phase1_Kitchen 根调整使猫/格架/滚动区中心进入[-38.4,-25.6]，初值-32；Tray_Group跨[-38.4,-12.8]，初值中心-25.6。viewTable绑定 Cover/Catalog=P0Center、Browse/ClueBoardShell=P0Left；Director/CameraPan/Gizmo绑四Marker。新建 Shared/ClueBoard_Group/ClueBoard_HitArea，BoxCollider2D + Button_MouseInteract + MouseActionBinding(shortcycle.open_clue_board) + StateGatedInteraction，无视觉Renderer/UGUI，登记 ClueBoard Set；Browse_Group/OpenClueBoard_Button 取消动作绑定并标 _Unused。复核 overflowRenderers，仅保留真实跨区件。 | DevTools/Scenes/backup/FIX-T5b_ShortCycle_P0P1.unity 及 meta，记录 SHA/GUID | 对象 GUID、Set 登记结构、13 StateGate、全部缩放/旋转/描边/_TUNE 参数；只做审定平移与接线 |
-
-领取预检：AI154 必须为 SUCCEEDED 且正式场景 diff 已清除其 150 条非预期 TMP override；若不满足，保持 BLOCKED_DEPENDENCY/记录资源冲突，不重写、覆盖或吸收 AI154 现场。备份后按派发文档 §3 FIX-T5b 施工。不得新增承载交互的 UGUI；ClueBoard_HitArea 必须在现有功能树且无视觉件；旧粉色对象只解除动作并标 _Unused，不删除资产。右半页真实放在 [0,12.8]，线索板固定，不用 Traveler 搬运补偿。只移动列明根节点，子件相对位置不变。
-
-Play 验收：⓪(0)→1→③(0，无Pan)→R→①(-12.8，Pan+锁；线索板左半、书左页右半、右页不可见)→真实点击 ClueBoard_HitArea→④(无Pan、左页压暗/不可交互)→Esc→①→Space→P1(-25.6，Pan；猫左半、线索板右半)→Backspace→①→Esc→③→Esc→⓪→Esc退出。提供 Cover/Catalog/Browse/Kitchen 四机位和④截图；PanStarted 计数仅③→①、①→P1、P1→①、①→③各1；平移中 Locked，完成释放；LayoutAudit 断言四 Marker 精确 x 和两 ClueBoardAnchor 相等；启用集合均属具名功能容器；Tight Sprite 度量、实际/目标来源分离；Missing=0、Console Error/Exception/Assert=0、退出场景 clean、字体/meta/GUID与无关 diff 不变。以 SUCCEEDED + PENDING_USER 完成，人工路径写清；不得把 FIX-T5 结果作为 F-α 通过条件，也不进入 E2。报告六要素和工具登记影响。
-2026-09-23 PRE包执行覆盖（当前用户明确恢复监管）：必读 .ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md。AI154已经SUCCEEDED/PENDING_USER；领取基线包括用户明确接受的140条m_TextWrappingMode和30条原材质override，旧指令要求清除150条不意味着再清理这140条。不能修改Prefab源或手改YAML。指导书v0.3有意未出，不阻塞本任务；使用稳定v0.2+已审G68/G69增量，报告必须追加实际世界坐标/Renderer bounds/四Marker/ClueBoard两anchor/滚轮区域坐标表、截图路径与SHA，供设计端重算指导书§三。PRE-4只读诊断结论可供避坑，不实施其额外业务修复。MCP遍历/日志输出文件，返回计数/路径/前20异常；限定Hierarchy路径/深度，截图不内联；批量平移/接线先脚本再一次执行；Play轮询间隔>=2秒、每阶段上限30次。六要素报告只给结果/证据路径，不复述任务卡。F-α已成功任务不重跑，AI149/154人工结果不代签。本任务完成仍PENDING_USER。
-
-> Dependency correction for AI-000156 at 2026-09-23T02:11:22.2070389+08:00: AI-000155, AI-000154, AI-000157, AI-000158
-
-> SUPERVISED START at 2026-09-23T02:12:45.1661998+08:00: {"sessionId":"329249a01bf244b580936c0b39044000","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000157","AI-000158","AI-000156","AI-000159","AI-000160","AI-000161","AI-000162","AI-000163","AI-000164"],"heartbeatAutomationId":"ai","createdAt":"2026-09-23T02:12:45.1587786+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-
-> SUPERVISED USER_DEFERRED_HUMAN_REVIEWS at 2026-09-23T02:12:45.2287493+08:00: {"enabled":true,"at":"2026-09-23T02:12:45.2257859+08:00","userDecision":"沿用本会话用户明确要求：把所有需要人工审查的任务全部后置，不要干扰开发任务推进。本轮用户重新下发U1前置包并要求切换监管；指导书v0.3等待FIX-T5b实测报告。人工结果仍不代签。","scope":"CURRENT_SUPERVISED_CHAIN_AND_EXTENSIONS"}
-
-> SUPERVISED AUTOMATION_BOUND at 2026-09-23T02:12:45.4037260+08:00: {"automationId":"ai"}
-
-> DATA lane registered at 2026-09-23T03:52:41.7865922+08:00: executorKind=CONTROL_SUBAGENT; no user-visible thread assigned.
-
-> Pipeline reclassification for AI-000164 at 2026-09-23T03:52:41.8820518+08:00: CODE -> DATA
-> Instruction revision for AI-000163 at 2026-09-23T03:52:41.9881071+08:00
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-代码/脚本改动清单（控制台根据用户本包授权审定）：
-|文件|处置|改动要点|归属层|工具三问|
-|---|---|---|---|---|
-|Assets/Editor/DataTables/DataTableImportService.cs|扩充|ImportAllBatch静态入口，无UI，验证失败Exit(1)|Editor|复用TK-DAT-01 ImportAll，不另写导表器|
-|DevTools/DataTables/Test-BatchImport.ps1、Run-DataPipeline.ps1必要接入|新建/扩充|当前CSV幂等和隔离一次真改动两用例、报告退出码|DevTools|沿用PRE-2a DATA链与TK-DAT-07|
-执行源PRE-2b CODE范围，先核对namespace EatWhat.DataTables。成功正常退出0，异常失败日志[DATA]与可诊断文件并非零退出；不写UI，不吞例外。接PRE-1重建字体入口，真实无变化时不改字节。CODE只能实现并做编辑器外验证，禁止启动Unity或修改Assets序列化文件；后置DATA在隔离副本首跑。测试必须无改动diff0及隔离源一次真实改动仅预期生成项变化，生产CSV/字体无改写。给真实Unity6 Editor API复核表、可执行命令与最小输入输出清单。
-
-2026-09-23 控制端首跑前源码审查补充（原任务范围内必要修复）：必读 .ai-workspace/outputs/control/U1-PRE-20260923/DATA接力审查与首跑前修正.md；把事务回退保护、源/目标漂移校验、无用户轮次的隔离验证模式、Unity版本与隔离目录/资源锁一致性一并纳入原Run-DataPipeline及Common/tests改动，先修复再交付给DATA，不运行生产发布。AI160成功历史保留。
-> Instruction revision for AI-000164 at 2026-09-23T03:52:42.0431500+08:00
-
-必读：AGENTS.md；项目两份入口文档的当前专项与本模块入口；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/inputs/控制台输入_U1前置任务包PRE-1~5派发_20260923.md 对应节；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4。CORE.md 尚未生成时读 .ai-workspace/SUPERVISED.md 与本worker；生成后改读CORE及索引指向的必要节。PowerShell7 同宿主领取/续租/结算；不自行更改任务定义/模式或触发后继，Complete/Fail回传控制台。只执行本卡目标；已有未提交改动、AI154认可140条wrap/基线30条材质/Modal接线均保留。报告六要素+影响块简短，证据落 .ai-workspace/outputs/U1-PRE/<TaskId>/，返回路径/计数/最多20条异常；工具与项目文档按实际影响维护，不能伪记全仓复核日期。不提交推送。
-此卡暂登记CODE仅因当前队列尚未支持DATA；控制端必须在PRE-2a完成后、此卡具备领取条件前调用正式ReclassifyTask转DATA并配置执行路由。未转DATA不可领取，不能以CODE名义启动Unity。执行源PRE-2b实际首跑，使用PRE-2a隔离管线，固定Unity6000.3.24f1，在源交互式Editor保持可响应时运行batch；由必要只读MCP响应证据确认，无需操纵其场景。当前CSV无变更生成物diff=0；隔离副本一次真实CSV变更生成diff仅预期，不发布该测试变化；数据catalog合同回归、新字形清单、Static无增字SHA不变。用户授权真实产物仅Assets/Generated/DataTables/**和PRE-1审定Static更新；元数据GUID保持；发布前DevTools/Generated/backup/<TaskId>/与font备份，主源/目标哈希漂移即停止、短临界锁、失败不半发布。当前首跑如diff0不得为证明而重写生产资产。禁止修改Prefab源或手改YAML、关闭/杀用户Editor，禁止提交字体缓存/擅自commit。报告代码与生成物路径、两用例结果/退出码/Editor响应证据及U1一页操作说明。
-
-2026-09-23 控制端接力覆盖：本卡已通过正式API从CODE转DATA，executorKind=CONTROL_SUBAGENT；此前暂存CODE段落作废。必读 .ai-workspace/outputs/control/U1-PRE-20260923/DATA接力审查与首跑前修正.md。仅用AI163完成后的显式验证模式执行当前CSV首跑，不伪造USER-U1 DONE；保持源Editor响应，持有unity-project与物理发布锁，现批两用例不发布测试修改。
-
-> SUPERVISED POLICY at 2026-09-23T03:52:42.1252759+08:00: {"policy":{"resourceKeys":["data-batch","generated-assets","font-assets","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"DATA隔离快照/导表及生成物发布与现CODE/ENGINE共享输入输出，保守持有unity-project并配合物理data-publication.lock；独立CONTROL_SUBAGENT路由。","updatedAt":"2026-09-23T03:52:42.0982528+08:00"},"taskId":"AI-000164"}
-## AI-000165 | [ENGINE_MCP] [FIX-T5-G69-R1] ④左页保留压暗与板外返回的场景修复验证
-
-- 序号：165
-- 提交时间：2026-09-23T04:07:01.3346198+08:00
-- 模块 ID：FIX-T5-G69-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000156
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# FIX-T5 · ④左页保留压暗与返回行为补漏
-
-控制端于2026-09-23依据已批准G69安排必要修复；不重跑或重置AI156。原证据：AI156报告、04_ClueBoardShell.png（控制端已查看）和源码ShortCycleSpace.WantsActive。截图右半为背景，Browse Set被禁用；这是“左半页保留并压暗”的未达项，不能只留作偏好判断。原机位/命中/Pan验证与PENDING_USER记录保留。
-
-必读：CORE.md、workers/ENGINE_MCP.md、SUPERVISED及完整协议相关节；项目入口页首/ShortCycle模块；inputs/控制台输入_FIX-T5空间结构修复派发_20260923.md G69/§3；inputs/U1-PRE_执行边界与接力_20260923.md；TK-INT-03、TK-MOT-06、TK-DBG-04、G26/UNITY_SCENE_CLEANUP。
-
-目标只有一个：①→④→①符合G69：保留并压暗屏内书左页，书页不可交互；线索板正常展开，Escape和线索板外真实点击均可返回；无额外Pan，无点击穿透。
-
-先发现MCP并核对D:/GameProject/Eat-What与6000.3.24f1，记录保存点、hash和现场。读取实际viewTable/structureSets、Book_Base/Pages/Browse Set、渲染可见/交互门控/退出动作链；不能根据截图直接决定参数。优先复用现有表现/遮罩和状态门控能力修正配置，分开可见性与交互权限，不能为压暗把书页隐藏，也不能用禁用整个对象替代禁止交互。
-
-精确授权：仅通过Unity Editor/MCP改Assets/Scenes/Cooking/ShortCycle_P0P1.unity内Phase0_RecipeBook的④显示配置、相关共享Set登记/既有颜色遮罩字段，以及无视觉的外围关闭命中接线；必要的临时探针按G26登记并清理。先备份场景/meta到DevTools/Scenes/backup/<TaskId>/，记录拟改对象路径与字段/前后值。保持四Marker世界x、线索板锚点/板面、字体与TMP/材质override、全部已有业务/Modal、已验收滚轮和资产GUID；不修改Prefab源、不手写YAML、不改运行时.cs、不添加新Shader/RendererFeature。若实际实现缺少所需代码或视效能力，给最小代码清单/根因与安全现场，由控制端补CODE依赖；不能静默放弃必需效果并宣告成功。若必须新建视效组件，遵守统一VisualEffectsLab先验规则。
-
-机器验收：同相机同配置对照①/④截图与hash、书页Renderer仍可见且变暗的明确证据；④书页点击无动作，线索板内容正常；板外点击返回一次、同次点击不穿透到Browse控件，Esc同理；①↔④ PanStarted增量0；完整Cover/Catalog/Browse/Kitchen返回路径回归；Console新增错误0，最终Edit/clean、临时资产恢复。真实人工构图/暗度审查后置，Complete须PENDING_USER，不代签。
-
-每批写入前SupervisionCheckpoint，使用当前PowerShell7票据；真实平台拒绝按原文留证，不换通道绕过。场景临时脏变化按归属自主恢复；报告六要素加证据路径，不回大层级/图片base64。不提交推送，完成回传控制台。
-
-> SUPERVISED POLICY at 2026-09-23T04:07:01.4396135+08:00: {"taskId":"AI-000165","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI156截图实证未满足获批G69；范围内场景修复，与字体/源码/导表保持Unity互斥。","updatedAt":"2026-09-23T04:07:01.4102627+08:00"}}
-
-> SUPERVISED POLICY at 2026-09-23T04:07:23.3952398+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI156截图实证未满足获批G69；范围内场景修复，与字体/源码/导表保持Unity互斥。","updatedAt":"2026-09-23T04:07:23.3493896+08:00"},"taskId":"AI-000165"}
-
-> SUPERVISED EXTEND at 2026-09-23T04:07:23.4806015+08:00: {"taskIds":["AI-000165"],"reason":"用户已授权FIX-T5 G69与监管范围内必要修复；AI156截图实证左页隐藏不满足保留压暗，新增独立场景补漏，不重跑成功前置或延后字体开发。"}
-
-> SUPERVISED POLICY at 2026-09-23T05:13:53.5902219+08:00: {"taskId":"AI-000162","policy":{"resourceKeys":["unity-project","font-assets"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"字体生成/预览已交付，但171项材质不兼容导致正式迁移和Play/Build未完成；用户原范围仅m_fontAsset。记录真实材质授权与最终验收停止线，人工后置继续独立代码/导表/场景修复；不得把PENDING_USER当字体迁移完成。","updatedAt":"2026-09-23T05:13:53.5469503+08:00"}}
-## AI-000166 | [CODE] [PRE-2b-PROCESS-R1] 修复DATA进程等待、完成凭据与快照验证
-
-- 序号：166
-- 提交时间：2026-09-23T05:58:10.2090746+08:00
-- 模块 ID：PRE-2b-PROCESS-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000163
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-2b 修复：真实进程生命周期与完成凭据
-
-## 代码改动清单
-
-| 文件 | 处置 | 要点 | 归属层 | 工具层三问 |
-| --- | --- | --- | --- | --- |
-| DevTools/DataTables/DataPipeline.Common.ps1 | 修改 | 显式等待本次GUI进程、真实退出码、进程归属与锁持有期；输入快照范围与实际副本一致 | 工作流工具 | 复用 TK-WF-02，不建平行运行器；通用DATA执行职责；登记原接口变化 |
-| DevTools/DataTables/Run-DataPipeline.ps1 | 修改 | 当前run完成凭据校验、未运行/失败不记0或API已执行、原始报告留存、超时停止语义 | 工作流工具 | 复用 TK-WF-02；复用原门禁/资源/发布事务 |
-| Assets/Editor/DataTables/DataTableImportService.cs | 必要时扩充 | 为既有 ImportAllBatch 输出可核验的本次导表+字体完成凭据，复用项目CSV解析输出字形需求 | Editor导表 | 复用 TK-DAT-01；不增新业务导表器 |
-| DevTools/DataTables/Test-BatchImport.ps1、StaticCompile/UnityStubs.cs、Test-CK01BImportContracts.ps1 | 按需扩充 | 真实Windows GUI子进程等待/非零/缺凭据/锁持续与失败结果测试，保留既有回归 | 测试工具 | 复用 TK-WF-02/TK-DAT-01；fixture只写临时目录 |
-| DevTools/DataTables/DATA_PIPELINE.md、CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md、.ai-workspace/toolkit/WF.md、.ai-workspace/toolkit/DAT.md | 修改相关节 | 真实运行边界、输入快照、失败分类与恢复条件 | 文档 | 原入口更新，不另建平行规则 |
-
-此为用户已授权 U1 PRE-2b 监管范围内必要修复，由控制台落实精确源码范围；不代签人工验收、不扩大字体材质审批，不重跑/重置已成功AI163。
-
-## 根因与唯一目标
-
-AI164真实首跑发现 Invoke-DataBatchCommand 直接 & GUI Unity.exe 后把预设LASTEXITCODE=0当成功；隔离进程仍活着就释放锁，复制来的catalog/零diff被当作真实验证。原错误和未可信runner报告保留。目标是让DATA运行器只在本次实际batch已结束并证明导表+字体完成后报告成功，全程保持锁。
-
-必读：.ai-workspace/CORE.md；.ai-workspace/workers/CODE.md；.ai-workspace/SUPERVISED.md 与 protocol/SUPERVISED_FULL.md 恢复/控制台委托节；.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md；.ai-workspace/outputs/U1-PRE/AI-000164/AI-000164_PRE-2b_首跑阻断与修复接力.md 及其原始证据；DevTools/DataTables/DATA_PIPELINE.md；两项目文档页首/数据专项；TK-WF-02、TK-DAT-01；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4（保持既有Editor/运行时边界）。
-
-## 实现与验收
-
-1. 使用本次创建的明确Process句柄，隐藏窗口，等待真实退出并取该句柄ExitCode；不从默认LASTEXITCODE或已有catalog推定成功。锁从输入快照前持有到进程退出和校验完成。超时/取消/异常需可诊断，不能留下进程仍运行而释放锁；只能清理有PID/StartTime/exe/projectPath归属证据的本次测试进程，不能动用户Editor或许可服务。
-2. 成功须实际exit0 + 本次run唯一且新鲜的完成凭据 + 实际字体构建结果；失败/尚未运行的真实退出码保持null，脚本自己的退出码另列。缺标记、旧标记、假0均失败；不能在未调用时写API已执行。若原有新日志标记已足够，优先小改；需要结构化凭据则在唯一批入口补齐，不新建运行器。
-3. 新增真实 Windows GUI 延迟退出非零的离线子进程测试，另验证成功、缺凭据、锁在子进程运行期间不可再次独占，退出后正确释放。不用立即返回脚本fixture替代GUI路径。测试仅临时隔离fixture，不启动真实Unity，不生产故障注入。
-4. 输入摘要对齐实际复制完整Assets等范围（或有证据的完整最小依赖闭包），不能文档宣称只复制Importer却实际全Assets。核对Fonts Builder依赖/manifest输入是否存在于隔离副本；不复制活动Library、不更改GUID。照保守资源声明持有unity-project。
-5. 字形报告239对238差异须核对项目CSV解析语义（头/说明行、转义/换行、Unicode码点），统一可解释的实际输出，不强凑数量、不以脚本Import-Csv计数假称Builder事实。
-6. 维持CurrentCsvValidation禁止Publish/不写USER-U1 DONE；字体材质审批未获回复，不触碰场景、Prefab、生产字体或生成资产；不修改任何Unity序列化资源，不手写YAML。Unity许可连接拒绝是原始运行时证据，保留供DATA重验；不得改许可/系统设置或换通道绕过限制。
-7. 跑有意义的窄回归及一次DataTables收口验证；对GUI等待缺陷有真实失败再通过的证据，保留45事务/36DATA语义。报告仍注明真实Unity首跑未完成，由原AI164在修复成功后恢复，不能由CODE执行真实Unity。
-8. PowerShell7正常权限，不使用ExecutionPolicy Bypass；每批写入前SupervisionCheckpoint，按需续租。报告六要素+文档/工具影响，证据 .ai-workspace/outputs/U1-PRE/<TaskId>/，不可得provider用量null。不提交推送。
-
-> SUPERVISED POLICY at 2026-09-23T05:58:10.3251592+08:00: {"taskId":"AI-000166","policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI164实证运行器提前成功，范围内CODE修复既有DATA工具及必要Editor完成凭据；保持Unity互斥。","updatedAt":"2026-09-23T05:58:10.2879438+08:00"}}
-
-> Dependency correction for AI-000164 at 2026-09-23T05:58:10.4453748+08:00: AI-000163, AI-000166
-
-> SUPERVISED EXTEND at 2026-09-23T05:58:10.4919891+08:00: {"taskIds":["AI-000166"],"reason":"用户已授权U1监管必要修复：AI164真实GUI进程未等待导致误报成功，新增跨CODE修复依赖；保留164失败/原始证据与恢复额度，不重跑163。"}
-
-> SUPERVISED RECOVERY at 2026-09-23T07:04:30.1849882+08:00: {"taskId":"AI-000164","record":{"at":"2026-09-23T07:04:30.1521390+08:00","problemKey":"data_batch_gui_process_not_awaited","plan":"AI166 implemented owned ProcessStartInfo/Process explicit WaitForExit and actual nullable process exit code, retained lock through completion, required new runId/nonce credential emitted only after import+font build, aligned full input snapshots and project CSV glyph semantics. Resume current-CSV isolation-only cases under corrected runner; preserve old false-success evidence, no publication/USER-U1 changes.","evidence":"AI166 SUCCEEDED/VERIFIED; inspected actual WaitForExit/ExitCode and credential validation source, real Windows GUI delay/23 exit/missing-stale credential/lock cases included in65 checks; verify-all-AI-000166 final6/6 passed at07:01. Current CODE/ENGINE idle, DATA agent completed, mainEditor42880 responds, prior batch98412 absent, AI165scene97CD unchanged. Real Unity/license validation still pending.","sessionId":"329249a01bf244b580936c0b39044000"}}
-
-> SUPERVISED RECOVERY at 2026-09-23T17:42:17.4868655+08:00: {"taskId":"AI-000164","record":{"at":"2026-09-23T17:42:17.4608078+08:00","problemKey":"provider_usage_limit_interruption","plan":"Provider availability has returned and user explicitly requests resume. Replace expired DATA execution with a fresh authorized internal DATA agent and new queue ticket; preserve attempts1/2 and all evidence. Reopen only the existing Unity6000.3.24f1 main workspace and established local MCP as needed, verify dataPath/version and scene safety, then execute corrected AI166 runner in a fresh attempt-3 isolation for two current-CSV validation cases. No publication, USER-U1 completion, material migration, or successful prerequisite rerun.","evidence":"2026-09-23 new real thread snapshots: CODE/ENGINE completed; old DATA turn 01a0cb5d-8054-7413-b378-e7dd5c56cfdc failed with usage limit. Original agent absent. attempt-2 has claim and git status only; no new batch project/report. DATA recovery child executes PS7 successfully. At17:39:53 Get-Process shows no Unity or old pwsh, old PIDs42880/98412 absent; publication lock exclusive open succeeds; scene97CD unchanged. Evidence: usage-resume-workers.json and AI164/attempt-3/preflight. Platform ordinaryUsageAllowed=true. User explicitly requested recovery today.","sessionId":"329249a01bf244b580936c0b39044000"}}
-
-> SUPERVISED PauseSupervision at 2026-09-23T18:01:46.0179997+08:00: {"userDecision":"","reason":"当前scope仅余人工/启动条款边界：AI164 NEEDS_USER（Unity Editor Software Terms，两个batch未开始）；AI162材质草案未批准。依既有人工阻断停派发约定暂停，保留现场和错误，待真实用户处理后恢复。"}
-
-> SUPERVISED ExitSupervision at 2026-09-23T18:12:15.6797368+08:00: {"reason":"用户于2026-09-23明确：再进行一次重试，刚才mcp没有正确连接。 依SUPERVISED_FULL人工重试协议安全退出后单项Reset，保留所有恢复史。","userDecision":""}
-
-> SUPERVISED START at 2026-09-23T18:12:55.0708973+08:00: {"sessionId":"dec23c073f8f411a8ac6c6e898828ac7","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000164","AI-000157","AI-000158","AI-000156","AI-000159","AI-000160","AI-000161","AI-000162","AI-000163","AI-000165","AI-000166"],"heartbeatAutomationId":"ai","createdAt":"2026-09-23T18:12:55.0646756+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-
-> SUPERVISED USER_DEFERRED_HUMAN_REVIEWS at 2026-09-23T18:12:55.1276474+08:00: {"enabled":true,"at":"2026-09-23T18:12:55.1252269+08:00","userDecision":"沿用本会话用户明确要求：把所有需要人工审查的任务全部后置，不要干扰开发任务推进。本次用户明确要求AI164重试；不代签原人工结果或字体草案。","scope":"CURRENT_SUPERVISED_CHAIN_AND_EXTENSIONS"}
-
-> SUPERVISED AUTOMATION_BOUND at 2026-09-23T18:12:55.2655307+08:00: {"automationId":"ai"}
-
-> SUPERVISED RECOVERY at 2026-09-23T18:35:42.9717008+08:00: {"record":{"at":"2026-09-23T18:35:42.9408888+08:00","problemKey":"batch_host_license_ipc_initialization_failed","plan":"Use the supported exec_command require_escalated approval path for the exact guarded PS7 CurrentCsvValidation batch command, running under normal host context instead of the restricted process context which empirically cannot resolve LocalLow. Keep the existing AI166 runner, isolated fresh workspace, current run nonce, owned process wait and full publication lock; no source code or security/licensing configuration changes. Preserve working main Editor/current scene, do not operate stale Terms window, no Publish or USER-U1 DONE. New output host-context-recovery-20260923; never overwrite prior attempts. If actual launch permission is denied, preserve the refusal and stop with HUMAN scope, no alternate bypass. If same licensing fault survives approved host launch, preserve stable ProblemKey and stop rather than repeating without new evidence.","evidence":"18:29 heartbeat actual wait_threads CODE/ENGINE idle and DATA child completed. Previous owned batch141152 absent; publication lock can open exclusively. User retry main MCP healthy; 5722 production files unchanged. At18:34:05 restricted host SHGetKnownFolderPath(LocalLow) failed 0x80070002; at18:34:24 the SAME read-only probe via supported require_escalated succeeded 0x00000000 at C:/Users/DDJ/AppData/LocalLow. This proves host visibility differs, not that Unity batch is already fixed. No platform denial occurred. Read-only probe permission does not authorize a later launch automatically; executor must request supported launch escalation separately.","sessionId":"dec23c073f8f411a8ac6c6e898828ac7"},"taskId":"AI-000164"}
-
-> SUPERVISED PauseSupervision at 2026-09-23T19:00:57.5244918+08:00: {"reason":"AI164已正式SUCCEEDED/VERIFIED；本scope11项均已结算，8 VERIFIED/3 PENDING_USER，无ready/recoveryReady/handoffGaps。AI162字体迁移材料增量审批仍未通过，既有AI154/156/165人审及AI149拒绝保留；按人工停止线暂停原监管，等待用户决定，未代签或重跑。","userDecision":""}
-
-> SUPERVISED ExitSupervision at 2026-09-23T21:21:18.5846255+08:00: {"reason":"本轮用户明确保持监管并关闭Modal任务；现无运行任务，仅暂转MANUAL满足旧REJECTED任务行政关闭API，随后立即新建本轮监管scope；不Reset、不清错误史。","userDecision":""}
-
-> Verification resolved for AI-000154 at 2026-09-23T21:21:18.6755568+08:00: decision=VERIFIED; summary=用户正式人工验收Modal通过，关闭本功能验收。; evidence=2026-09-23本控制台用户原话：modal功能的验收是通过的，没有问题。功能相关任务可以进行关闭。见inputs/U1-PRE_人工反馈与字体批准_20260923.md；不延伸为本轮布局或字体验收。
-
-> Closed without acceptance for AI-000149 at 2026-09-23T21:21:18.8726156+08:00: {"at":"2026-09-23T21:21:18.8726156+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"旧Modal拒绝已由AI153修复、AI154正式接入且本轮人工验收通过；旧AI149按被修复任务覆盖关闭，accepted=false保留原REJECTED与错误历史，不伪称旧测试当时通过。","userDecision":"2026-09-23用户：modal功能的验收是通过的，没有问题。功能相关任务可以进行关闭。滚轮手感此前已认可。","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"REJECTED","accepted":false,"archivedIssues":[{"at":"2026-09-22T14:26:11.6369168+08:00","attempt":1,"kind":"TEST_TRIGGER","message":"既有 MIG63WheelProbe 首次自动运行在 stage=1 触发 TargetParameterCountException：AI-000148 已把 MouseManager.OnScroll 改为 OnScroll(Vector2)，探针仍 Invoke(manager,null)。失败前仅完成阈值/冷却只读断言，无产品写入；已调用其既有 Restore 清理入口恢复 ShortCycle_P0P1 clean，随后改用本任务 Unity execute_code 只读/运行时临时探针直接传入世界坐标继续。需后续 CODE 修正 MIG63WheelProbe 的反射实参数。"},{"at":"2026-09-22T14:45:31.326398+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"机器注入已覆盖 FridgeScrollLab 与 ShortCycle_P0P1 的单步、连续多步、反向、冷却积压、分数累积、离区、Modal/层切换和失焦；最终物理滚轮手感仍需用户在 Windows 实机比较三组候选（1.25/0.25、1.0/0.20、0.75/0.12），并在 Mac 使用前另做平台阈值验证。"}]}
-
-> Verification rejected for AI-000156 at 2026-09-23T21:21:18.9672943+08:00: decision=REJECTED; reason=2026-09-23用户实测：返回箭头仍固定书下而非镜头左下；板与书大空隙，要求全左页+右页30–40%；进入P1线索板闪隐；P1猫/板/GO/托盘/返回明显错位。本轮FIX-T5-R1a/b独立修复，保留旧机器证据，不能整场回滚破坏已验收Modal。
-
-> SUPERVISED USER_GATE_APPROVED at 2026-09-23T21:21:19.1145294+08:00: {"userDecision":"2026-09-23用户明确批准PRE-1字体材质草案全部范围：171逐项CSV映射、Static GUID9b07c6c50dde09d4b8719754c27ddc96与配对material、3新材质/meta和Materials目录、5具名Prefab各2TMP、CoverTitle统一Static、DevTools/Fonts/backup/<任务ID>/备份回退；保持项/停止线原草案，不含Git提交推送，manifest PENDING_REVIEW。原文与CSV SHA见inputs/U1-PRE_人工反馈与字体批准_20260923.md。此闸门仅授权后续PRE-1b/c，AI162仍PENDING_USER，不代签新字体最终画面；PRE-1c另保留最终人审。","taskId":"AI-000162"}
-## AI-000167 | [CODE] [PRE-1b] 已批准字体材质配对迁移工具与回退干跑
-
-- 序号：167
-- 提交时间：2026-09-23T21:21:19.1741346+08:00
-- 模块 ID：PRE-1b
-- 初始状态：QUEUED
-- 前置依赖：AI-000155, AI-000161
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1b [CODE] 字体配对迁移工具扩充
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-串行位：已成功FIX-T5a/原PRE1工具之后；本卡只实现工具与干跑，不进行正式场景或Prefab迁移、不控制Editor。
-
-代码改动清单（三问依据TK-LOC-03，复用已有工具而非另建字体体系）：
-| 文件 | 处置 | 改动/归属/复用判断 |
-|---|---|---|
-| Assets/Editor/Fonts/ShortCycleFontSwapTool.cs | 扩充 | Editor层；读取批准CSV及授权旁证，真实身份去重，3材质副本、全量预检、配对写入、事务/回退及非目标指纹；复用现Preview/Execute兼容审计 |
-| DevTools/Fonts/Test-FontSwap.ps1 | 新建 | 编辑器外runner；复用Fonts编译入口与fixture，不启动Unity，检查171去重/漂移、材质参数与回退幂等 |
-| DevTools/Fonts/内最小测试夹具及必要Fonts runner/Verify-All配置 | 扩充 | 仅本任务测试接入；复用TK-DBG-04/TK-LOC-03，不镜像实现断言 |
-| CODEBASE_MAP.md/项目基线、toolkit/LOC.md及INDEX | 更新相关节 | 新API/安全边界文档；保留完整复核日期 |
-
-读TK-LOC-03、G70、P-001/P-036/P-038及Fonts相关坑，现Preview/Execute真实源码和调用点、批准草案/171CSV。受批准字段/备份路径逐条以共同输入为准。清单按asset+真实对象+组件序号锁定，重复行/不存在/源不匹配/不兼容必须先输出，不用宽搜索扩scope。CoverTitle源字体例外仅批准该对象。
-先全量预检font/material/atlas匹配再任何业务引用写入；executeAllowed只能从真实全量结果计算，不信任外部布尔。复制三旧material全部风格，仅换四atlas项；不修改旧材质/字体。处理Prefab传播、实例override重叠及回滚顺序，不能将同一对象重写后误判源漂移。执行/回退幂等，未知非目标差异停写，事务记录批次、身份、 before/after及新增资产归属；失败不得只丢日志返回成功。
-验收：Test-FontSwap.ps1 exit0，171原始条目和真实去重计数；漂移列逐项原因；材质风格保留/四atlas参数、预检拒绝零写入、部分失败回退/重复回退、非目标指纹验证。真实DLL编译，Fonts profile一次Final。交付可由ENGINE运行的只读Editor API复核入口/表，真实Editor复核在PRE-1c的正式写入之前，CODE报告不得伪记Editor通过。生产迁移0条。SOURCE有问题按真实Fail，不用静态测试冒充171真实对象校验。
-
-> SUPERVISED POLICY at 2026-09-23T21:21:19.3060120+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"2026-09-23用户保持监管并授权本轮修复/字体精确迁移/迁移收尾；统一Unity资源互斥，布局与字体最终人工后置保留，不伪造验收。","updatedAt":"2026-09-23T21:21:19.2838372+08:00"},"taskId":"AI-000167"}
-## AI-000168 | [CODE] [FIX-T5-R1a] 镜头视口锚定与线索板持续显示逻辑
-
-- 序号：168
-- 提交时间：2026-09-23T21:21:19.3320398+08:00
-- 模块 ID：FIX-T5-R1a
-- 初始状态：QUEUED
-- 前置依赖：AI-000155, AI-000167
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# FIX-T5-R1a [CODE] 镜头锚定与线索板持续显示
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-一个目标：修复空间切换后固定控件和共享结构的表现归属；几何重配由R1b执行。
-
-代码改动清单：
-| 文件 | 处置 | 改动/归属/工具层三问 |
-|---|---|---|
-| Assets/Scripts/Tools/Layout/CameraViewportAnchor.cs（若目录契约要求可放Tools，报告实际路径） | 新建 | 通用Tools；TK-MOT-04只跟虚拟机中心不合需求，TK-DBG-01已有ViewportToWorldPoint；显式camera/viewport/深度或平面/内边距，最小无业务依赖工具 |
-| Assets/Scripts/Cooking/ShortCycle/Presentation/ShortCycleSpace.cs、ShortCyclePresentationSet.cs及Runtime/ShortCyclePresentationDirector.cs | 最小修改 | TK-MOT-06+TK-DBG-05；显式持续共享结构视觉，与focus/互动分离；默认行为兼容，不让所有Shared/Modal常亮 |
-| DevTools/ShortCycle/ShortCycleCoreTests.cs、UnityStubs.cs、Test-CK01CShortCycle.ps1及必要锚点测试 | 扩充 | TK-DBG-04；真实相机/父变换几何与切换时序断言；不弱化现有测试 |
-| Assets/Editor/ShortCycle/ShortCycleLayoutAudit.cs | 必要扩充 | TK-DBG-03；只读实测布局/viewport/启用集合，不能与写入共用target当actual |
-| 组件说明文档/镜头视口锚定_配置与复用说明.md及索引、两项目入口相关节、toolkit | 新建/更新 | 说明camera/viewport/深度/时序/启停、按钮状态门控、配置点和限制；登记新工具空闲编号 |
-
-读C1/C2/C4/C6、G26/G68/G69及TK-INT-01/02/03/17/18，TK-MOT-04/06，TK-LAY-02/08。先检查真实类/调用点；禁止推翻架构、改MouseManager已验收Modal/滚轮方向、改FridgeCatRig、硬编码本轮世界X。
-锚定视觉+Collider所在对象同移；在CameraPan更新后保持camera-relative，无一帧拖尾，支持初次enable/再进入、aspect和ortho变化、父transform非原点。不在每帧Find/相机查找；保持Z/scale与按钮状态可见规则。bounds缓存/IsInView不得被跟相机按钮污染造成书或整个厨房的缩放偏移；必要排除锚定控件bounds，解释依据。
-持续线索板：核实WantsActive/LeaveSpace/MergeVisibility/Traveler/ApplyVisibility的实际因果；只明确指定物理板结构，不放开无焦点业务交互；中途/取消/反向/重复跨P0-P1不得出现Deactivate->Activate。后台交互仍受层栈、焦点、Modal及过渡锁拦截。保护AI165④保留书页压暗和板外返回。
-测试：移动/zoom/aspect/父变换锚点位置、重复enable、跨空间过渡逐阶段可见与focusfalse、Modal不穿透。ShortCycle profile必要回归；CODE不改scene/Prefab/meta或调用Unity。交付R1b明确Inspector字段和建议锚点（参考既有左下角安全距离，不把故障位置当目标）。
-
-> SUPERVISED POLICY at 2026-09-23T21:21:19.4522740+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"2026-09-23用户保持监管并授权本轮修复/字体精确迁移/迁移收尾；统一Unity资源互斥，布局与字体最终人工后置保留，不伪造验收。","updatedAt":"2026-09-23T21:21:19.4318097+08:00"},"taskId":"AI-000168"}
-## AI-000169 | [ENGINE_MCP] [FIX-T5-R1b] 连续空间构图、返回键锚定与P1画面恢复
-
-- 序号：169
-- 提交时间：2026-09-23T21:21:19.4757014+08:00
-- 模块 ID：FIX-T5-R1b
-- 初始状态：QUEUED
-- 前置依赖：AI-000168
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# FIX-T5-R1b [ENGINE_MCP] 连续空间构图与P1恢复
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-目标场景仅 Assets/Scenes/Cooking/ShortCycle_P0P1.unity；依赖R1a。修复用户四项反馈，用EditorAPI配置真实组件/Transform/marker/Traveler/Set引用，禁止手改YAML、整场覆盖旧备份、Prefab源或新平行视觉层。
-读稳定 inputs/排布指导书_ShortCycle_P0P1.md 与最新人工反馈增量；指导书v0.3未出不阻断。C1/C2/C4/C6、G26/G68/G69；TK-MOT-06、TK-INT-17/18、TK-LAY-02/08、TK-DBG-03/05/06。
-写前核对主MCP实例dataPath/version、Git/scene dirty基线，备份scene+meta至DevTools/Scenes/backup/<TaskID>/。只读比较 DevTools/Scenes/backup/FIX-T5b_ShortCycle_P0P1.unity、AI154保留备份和AI156四区报告，提取旧P1相机相对位置/比例；不能重放旧scene而丢Modal/AI165/数据/字体工具等后续成果。
-修复范围：
-- Escape_Button_TUNE与Phase1_Kitchen/Return_Button_TUNE配置R1a通用视口锚定，保留Sprite/Collider/MouseInteract/Keyboard/ActionBinding/StateGate。跨Cover/Catalog/Browse/ClueBoardShell/P1确认该出现时固定镜头左下角、该隐藏时不可命中；pan中仍随相机，不能只在arrival设置一次。允许必要Anchor宿主但禁止更名171CSV对象路径和组件序号。
-- 物理冰箱—板—书紧密连续；按tight sprite.vertices可见区和Renderer世界实测缩小板书间隙。调整worldplacement与marker，使Browse左页全部+右页30–40%（全书约65–70%，用户约70%），主页面较居中。证据明确比例测量基准、world/viewport bounds、场景对照，不能靠sprite.rect代替可见边缘、挤压拉伸美术或凭一个截图目测凑数。
-- ClueBoard物理视觉常在，focus/交互按状态独立；从P0进入/退出P1逐帧记录activeInHierarchy/Renderer.enabled与相机视窗交叠，不能过渡消失后闪回。场景外正常裁切不算关闭。保留④压暗/板外返回。
-- P1依旧完整猫视觉跟同一滚动根，恢复猫手/泡泡、板、GO、托盘和返回按钮到重构前相机相对构图；查父级位移重复叠加、world/local、Traveler/marker/滚动根/布局运行驱动竞争，不只改Edit坐标。必要调整阶段目的地，避免启动脚本再覆写。滚轮方向/手感/上下边界/Modal已通过，必须回归保护。
-保持font映射171路径/组件序号、全局字体/材质、140wrap及获准30材质基线、所有非目标业务/Prefab/正式Build列表、Lab/探针。发现未知Userdirty或范围外必需修改先留证报告，不清空用户变更。
-固定排布验收六项齐全：启用Renderer/TMP归属具名容器、tight vertices度量、写入审计独立、Scene点选/旧物清理/Console/Missing/dirty/冻结hash/Git独立证据、数据驱动数目与catalog一致、截图留人工不能代签。给五视图和过渡采样、宽高比原16:9与另一代表比例、重复进退、整猫边界滚动、Modal开关/焦点回归。
-最终Edit/clean、Console无新增错，交实际world/viewport/marker表供设计重算v0.3；SUCCEEDED+PENDING_USER。AI156保留原拒绝并关联本修复，AI165不擅自代签。新探针有G26归属，不做全项目_TUNE审查。
-
-> SUPERVISED POLICY at 2026-09-23T21:21:19.5992907+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"2026-09-23用户保持监管并授权本轮修复/字体精确迁移/迁移收尾；统一Unity资源互斥，布局与字体最终人工后置保留，不伪造验收。","updatedAt":"2026-09-23T21:21:19.5601114+08:00"},"taskId":"AI-000169"}
-## AI-000170 | [ENGINE_MCP] [PRE-1c] 批准171项字体材质迁移、样例回退和机器验收
-
-- 序号：170
-- 提交时间：2026-09-23T21:21:19.6433212+08:00
-- 模块 ID：PRE-1c
-- 初始状态：QUEUED
-- 前置依赖：AI-000162, AI-000169, AI-000167
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1c [ENGINE_MCP] 已批准字体材质迁移执行
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖PRE-1b与本轮空间修复：避免布局修改同一scene并污染非目标指纹。读取明确批准及原逐项草案CSV，不再以“材质尚未批准/5Prefab禁止修改”阻断批准范围。仍必须遵守真实平台审批。
-写入范围仅171映射：ShortCycle scene161、CatalogCard/FridgeSlot/IngredientCard/Sticker/TraySlot各2TMP、3新material及meta、AssetDatabase生成Materials目录；Static GUID9b07c6c50dde09d4b8719754c27ddc96，CoverTitle也统一。代码问题交控制端CODE返修，不绕过预检。禁止手改YAML。
-先运行PRE-1b交付的真实EditorAPI只读复核及dryrun，核对当前对象身份/去重计数171；实例/Prefab传播重复及任何漂移逐条报告，不拓scope。批准CSV原SHA及真实授权必须留证。若已有同名材质核对归属/内容而非覆盖未知成果。
-备份到DevTools/Fonts/backup/<TaskID>/六份scene/prefab+meta、旧新字体/材质指纹、非目标序列化字段和新增清单。单样例任选1条FromSourceHan → 验证font/material/atlas/风格与非目标字段 → 回退基线并确认相同（回退包含测试新增资产归属） → 全量按审定清单分批执行，每批SupervisionCheckpoint、scope、备份和停止检查，保留失败现场/事务而非半写假通过。
-材质copy旧Shader/颜色/outline/underlay，只有_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static；配对m_fontAsset+m_sharedMaterial。5Prefab源可改这两字段，其他Prefab源仍禁改；30材质override映射内按本授权，其他保留，140wrap保留。
-机器验收：171重预览（漂移解释）、Scene/Prefab全atlas匹配、非目标字段前后一致、Console无新增Error/Exception、五视图中文/标题截图、Play与Build前后StaticSHA不变、DynamicFallback清空、Edit clean。Build列表不改、manifest始终PENDING_REVIEW；若已知旧warning明确基线，不称全Console历史0。CoverTitle同镜头前后单列截图和宽度/换行测量，人工后置。
-保留旧fonts/materials、fallback全局、布局/Transform/文案/字号/颜色/sorting/交互、滚轮/Modal、所有无关override。范围外必改先差异停该项。SUCCEEDED + PENDING_USER，不ApproveGate，不Git提交/推送或字体guard哈希放行。机器通过不能等同最终字体人工签收。
-
-> SUPERVISED POLICY at 2026-09-23T21:21:19.7645831+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","generated-assets"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"2026-09-23用户保持监管并授权本轮修复/字体精确迁移/迁移收尾；统一Unity资源互斥，布局与字体最终人工后置保留，不伪造验收。","updatedAt":"2026-09-23T21:21:19.7051049+08:00"},"taskId":"AI-000170"}
-## AI-000171 | [CODE] [MIG-E2a] 迁移证据归档恢复核验与长期工具功能命名准备
-
-- 序号：171
-- 提交时间：2026-09-23T21:21:19.8121416+08:00
-- 模块 ID：MIG-E2a
-- 初始状态：QUEUED
-- 前置依赖：AI-000154, AI-000170
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# MIG-E2a [CODE] 迁移证据归档与长期工具改名准备
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-前置：本轮两类修复的机器执行完成，避免备份活动文件竞争。F-α已按真实用户结论关闭，FIX-T5和PRE1仍有独立人审，不伪称E2完成。
-
-代码改动清单：
-| 文件 | 处置 | 归属与复用三问 |
-|---|---|---|
-| Assets/Editor/MIG63Validation/MIG63ValidationSession.cs | 功能名调整准备 | Editor通用回归；复用现会话/恢复/字体保护，拟ProjectValidationSession；本卡不移动Assets文件或meta |
-| 同目录MIG63WheelProbe.cs/MIG63TomatoProbe.cs/MIG63SpineSceneProbe.cs | 类/菜单及引用功能名调整准备 | 复用TK-DBG-09/TK-DBG-08既有滚轮/双Spine/保存场景回归，不减断言；拟WheelInputRegressionProbe/TomatoAnimationRegressionProbe/SpineSavedSceneRegressionProbe |
-| DevTools/MIG63/README.md及查实引用它的脚本/文档 | 功能目录迁移 | 拟DevTools/ProjectValidation；使用原工具，不另建平行验证器；记录旧路径恢复映射 |
-| DevTools/Workflow/Archive-Stage.ps1（仅确有需要）及MIG63归档脚本/manifest | 扩充/新建 | 复用TK-WF归档机制，SHA/原路径/版本/restore验证，不清空活动队列或输入 |
-| MIG63台账/临时项/E1H接力、AGENTS、两项目文档、toolkit | 当前结论维护 | 旧事实进archive，保留全部失败史和验收真实性 |
-
-必读MIG63/迁移基线.md§8/E2、执行台账页首、临时项登记各项、E1H后续F01–10及H后分支接力、Archive-Stage既有归档实现；只读检查独立副本D:/GameProject/Eat-What-U6及异盘备份，不写副本/系统配置。
-交付1：原工程和独立迁移侧M0–M4/C/E1/H/F输入输出、批准/错误/恢复记录完整清单，形成 .ai-workspace/archive/MIG63_<实际日期>/ 可恢复包与manifest(SHA256/原路径/当前替代路径)，实际读回解包抽验或全量核验。复用已有包避免复制巨大缓存；列明未持久化和活跃排除项。原始唯一副本/未推送证据保持；活跃U1 inputs/runtime/INSTRUCTIONS/队列历史、字体新任务backup与独立ART基线不删除，不把“归档成功”写成已推送。
-交付2：F05长期工具功能命名的源码/菜单/调用方准备与精准Editor移交表。四Editor脚本目标目录 Assets/Editor/ProjectValidation/；类名上述对应，若非static且Unity绑定敏感先保护映射/解释。Tomato_MIG63.controller目标同目录Tomato_Reference.controller，保GUID。本卡只修改C#文本/DevTools文档，不移动或修改Assets序列化/meta；下一ENGINE用AssetDatabase移动。保留所有功能/历史证据引用可追溯，源码预先引用新目标时必须明确待ENGINE恢复验证，不引入编译中断。
-交付3：逐项临时项解除/保留原因及最终清理候选：MIG专属进程/Hub条目/clone/本地phase保护（字体guard长期保留）、包与远端持久化情况。主Editor/MCP/Claude共享配置/许可/2022安装不操作。Spine Examples/Tomato/Lab/探针/backup分支及tags保留；历史SourceHan/TMP备份不冒删。最终删除副本须归档已获准推送并远端可验证、无未知或独有成果；本任务无Git授权，只交具体待执行清单与验证，不强行达到“目录已删除”。
-完成Code编译/受影响runner、归档恢复检查及diff，回报现阶段E2尚余ENGINE资产迁移与最终持久化/安全清理边界。不新建空任务占号，不创建用户提醒日程，不提前清除保护钩子。后续无关Mac/产品命名/客户端/MCP评估以具名延期项接管，不阻断已通过F、不谎称已实现。
-
-> SUPERVISED POLICY at 2026-09-23T21:21:19.9304433+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools","migration-archive"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"2026-09-23用户保持监管并授权本轮修复/字体精确迁移/迁移收尾；统一Unity资源互斥，布局与字体最终人工后置保留，不伪造验收。","updatedAt":"2026-09-23T21:21:19.8775194+08:00"},"taskId":"AI-000171"}
-## AI-000172 | [ENGINE_MCP] [MIG-E2b] 长期验证资产保GUID更名与迁移收尾复验
-
-- 序号：172
-- 提交时间：2026-09-23T21:21:19.9810863+08:00
-- 模块 ID：MIG-E2b
-- 初始状态：QUEUED
-- 前置依赖：AI-000171
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# MIG-E2b [ENGINE_MCP] 长期验证资产保GUID更名与收尾复验
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖MIG-E2a。执行已审定的F05功能更名，不删除验证能力。读E2a精确移交/当前MIG63临时项、G26与清理协议。
-允许Assets改动表：通过AssetDatabase.MoveAsset将 Assets/Editor/MIG63Validation/ 四脚本及其meta保GUID移动为 Assets/Editor/ProjectValidation/ 下 E2a已实现对应功能名；将 Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller 移为同目录 Tomato_Reference.controller（若有冲突/独有引用先核对）。只做批准资产更名和Editor生成目录/meta，保持对象身份、动画状态/参数/曲线、引用语义。旧空Editor目录仅确认已空且无引用后由AssetDatabase删除目录meta，未知项保留。不得文字修改YAML或手工改GUID。
-写前备份目标+meta与入引用资源指纹；先只读GUID/引用/内存与保存状态。执行后编译，EditorAPI复核两保存Spine场景引用同GUID、菜单/四探针入口工作，滚轮/Modal、Tomato双路径、两保存场景（含重复进退）相关探针各一次，保护正式scene/字体StaticSHA、Dynamic清空、Console/引用/退出Editclean；不重新要求用户手感验收、不重做本轮已完成PRE1 Build，除非这次验证发现实际问题。相关截图只存档。
-E2a源码若有缺陷交CODE修复，不直接扩大运行时脚本或业务范围；没有改业务功能的前提以机器复验结算。本卡不删D:/GameProject/Eat-What-U6、不碰Hub/共享服务/EditorPrefs/字体guard或Git。输出保GUID/引用前后表、实际工具菜单与使用文档、归档增量证据清单，回传控制台执行E2最终持久化/安全清理条件核对。只有实际最终条件全部满足，控制台才可关E2；本卡SUCCEEDED不等于迁移生命周期已全部结束。
-
-> SUPERVISED POLICY at 2026-09-23T21:21:20.0847904+08:00: {"policy":{"resourceKeys":["unity-project","migration-archive"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"2026-09-23用户保持监管并授权本轮修复/字体精确迁移/迁移收尾；统一Unity资源互斥，布局与字体最终人工后置保留，不伪造验收。","updatedAt":"2026-09-23T21:21:20.0353113+08:00"},"taskId":"AI-000172"}
-
-> SUPERVISED START at 2026-09-23T21:21:20.2897898+08:00: {"sessionId":"8c12e025cc374865a99cca4042cda1ac","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000167","AI-000168","AI-000169","AI-000170","AI-000171","AI-000172"],"heartbeatAutomationId":"ai","createdAt":"2026-09-23T21:21:20.2892854+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-
-> SUPERVISED USER_DEFERRED_HUMAN_REVIEWS at 2026-09-23T21:21:20.3315841+08:00: {"enabled":true,"at":"2026-09-23T21:21:20.3286888+08:00","userDecision":"沿用用户明确要求：把所有需要人工审查的任务全部后置，不要干扰开发任务推进。本轮保持监管模式；PRE-1c明确SUCCEEDED+PENDING_USER。后置不解除归档持久化/副本删除安全条件，不代签字体画面。","scope":"CURRENT_SUPERVISED_CHAIN_AND_EXTENSIONS"}
-
-> SUPERVISED AUTOMATION_BOUND at 2026-09-23T21:21:20.5045478+08:00: {"automationId":"ai"}
-## AI-000173 | [CODE] [PRE-1b-R1] 补齐批准迁移的单样例、逐批执行及恢复入口
-
-- 序号：173
-- 提交时间：2026-09-23T21:57:38.1481746+08:00
-- 模块 ID：PRE-1b-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000167, AI-000168
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1b-R1 [CODE] 补齐样例与逐批迁移的受控入口
-2026-09-23控制端接力审查。AI167的离线测试及零生产写入事实保留，不重跑整个成功任务、不Reset；本卡是用户已批准PRE-1b/c范围内必要的接续修正。控制端实读ExecuteApprovedMigration(string taskId,...transactionPath)：每次重预览全部171项，直接ApplyLiveEntries(plan.entries,false)全量执行，未提供样例/批次选择与恢复入口；PRE-1c要求“任选1条FromSourceHan→回退基线→全量分批、每批检查点”，因此必须先补API，不让ENGINE用反射调用private、修改已批准CSV/伪造executeAllowed/复制另一套裸写实现绕过工具。
-同轮发现DevTools/Verify-All.ps1调用runner强制-ExecutionPolicy Bypass，与SUPERVISED完整协议“使用既有正常执行权限、不降低ExecutionPolicy”不符。既有测试结果不伪写失败，不抹除原命令/报告；本卡把本次迁移验证入口恢复常规PS7执行，真实权限拒绝走正式审批，不能换通道绕过。
-
-必读CORE、CODE worker、SUPERVISED完整协议、inputs/U1-PRE_人工反馈与字体批准_20260923.md、原PRE-1b/1c任务卡、AI167报告及Fonts真实源码/调用点。TK-LOC-03、G70、P-001/P-036/P-038及对应字体/序列化坑。生产写入前SupervisionCheckpoint，普通PS7固定路径，输出outputs/U1-PRE-R1/<TaskID>/。不操作Editor、不写Unity序列化资源/meta、不提交推送；保留所有旧输出/错误。
-
-代码改动清单与工具层三问：
-| 文件 | 处置 | 归属/依据/改动 |
-|---|---|---|
-| Assets/Editor/Fonts/ShortCycleFontSwapTool.cs | 扩充 | 复用TK-LOC-03/AI167事务，不另建架构；全量真实预检后，对批准身份显式选择样例/批次，返回后可做下一批监管检查；累计事务与恢复、全量收尾校验 |
-| DevTools/Fonts/FontSwapDryRunHarness.cs、Test-FontSwap.ps1及必要Fonts测试入口 | 扩充 | 同一生产核心有意义验证样例/分批/回退/漂移拒绝，不能只测外观字符串 |
-| DevTools/Verify-All.ps1 | 最小修改 | TK-WF统一验证器：只移除强制-ExecutionPolicy Bypass，保留PS7选取、exitcode传播、计量、最多两次Final规则；不改系统/用户策略 |
-| DevTools/Fonts/README.md、项目导航/基线/LOC工具登记必要段 | 更新 | 写出ENGINE调用顺序与返回状态；不覆盖历史实际命令，不改完整复核日期 |
-
-验收约束：
-1. 批准CSV固定原SHA/171条、6资源/3材质/CoverTitle限定不变。外部选择项只允许来自当次真实完整预检与真实唯一身份；空集、超范围、伪造身份、重复、未知before/after或非目标漂移均拒绝零写入。executeAllowed仍由完整真实状态推导。
-2. 单样例选一个FromSourceHan真实TMP；若源Prefab传播会涉及多个真实组件，必须揭示并选不扩散的独立实例，不能把一源多实例改写称单条。业务引用只1项，完整171审计其余未变化；样例事务回退至原基线并验证，允许重复回退。新材质归属/引用回退和未知资产保护沿用原事务安全规则。
-3. 完整迁移前建立经全量预检/备份的固定计划。逐批API可由ENGINE在两调用间执行scope/停止/备份检查。先后批次识别此前本事务已完成的批准after状态，不把已完成批次误报源漂移；也不能把外部漂移当已完成。断点重入、失败恢复/回退以真实事务证据为准，不覆盖样例或旧批日志。
-4. 每批重新核对剩余/已完成/非目标指纹以及输入快照，日志明确planned/applied/rolledback/completed；只在所有批准行最终覆盖且验证通过时标全量完成。禁止部分迁移宣称成功；跨批风险需全范围回退或保全并准确失败。
-5. Test-FontSwap覆盖：单样例只1→回退，至少两批→全量，已应用批恢复不重复，非法/重复选择零写入，批间未触碰项或既成项漂移拦截，批失败后回退幂等。真实Unity6/TMP DLL编译；常规PS7执行Fonts profile最终验证一次（必要第二次有新原因），runner exit0和准确生产Writes=0。失败保留原史。实际Editor复核仍由AI170执行，不冒充Unity验证。
-6. 交付ENGINE无需反射/私有API/改CSV的精确公共API用法和checkpoint顺序，说明样例、回退、分批、复验各自的证据路径与停止状态。
-
-Complete/Fail回传原supervisorHandoff，禁止自行派发下一任务。
-
-> SUPERVISED POLICY at 2026-09-23T21:57:38.3303645+08:00: {"taskId":"AI-000173","policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准PRE1c单样例回退和逐批执行；接力源码实证现公开API只能全量。本卡补必需工具能力，普通PS7验证，不消除任何原停止线。","updatedAt":"2026-09-23T21:57:38.2951969+08:00"}}
-
-> Dependency correction for AI-000169 at 2026-09-23T21:57:38.4763259+08:00: AI-000168, AI-000173
-
-> Dependency correction for AI-000170 at 2026-09-23T21:57:38.6082736+08:00: AI-000162, AI-000169, AI-000167, AI-000173
-
-> SUPERVISED EXTEND at 2026-09-23T21:57:38.6898872+08:00: {"reason":"用户授权监管下对PRE1b/c必要能力缺口的源码实证修正，原成功/拒绝/恢复史不改。","taskIds":["AI-000173"]}
-
-> Dependency correction for AI-000173 at 2026-09-23T21:58:27.7334291+08:00: AI-000167
-
-> Dependency correction for AI-000168 at 2026-09-23T21:58:27.8894231+08:00: AI-000155, AI-000167, AI-000173
-
-> SUPERVISED RECONCILE at 2026-09-23T21:58:28.0135813+08:00: {"inspection":[],"repairs":["REVOKED_STALE_DISPATCH:AI-000168"],"evidence":"沿本轮已证实的两线程结束态，无消息已投递；AI168仅生成预约未发送，依赖正式更新使旧指纹失效，撤销旧票据后按修正前置派发。CODE idle cursor2c89ff01-7183-4bab-92b5-a493ac01f207:3；ENGINE notLoaded completed cursor5b319c13-7ab5-45a6-b129-62adf96f7533:1。"}
-> Instruction revision for AI-000170 at 2026-09-23T22:00:59.9198183+08:00
-
-# PRE-1c [ENGINE_MCP] 已批准字体材质迁移执行
-
-接力增量：正式迁移另依赖AI173（PRE-1b-R1）。AI167原工具仅全量执行，不能用它冒充单样例/分批；按AI173公开API先完整预检→单样例→回退验证→逐批checkpoint/写入→全量收尾。禁止反射私有方法、改批准CSV或手工伪造事务来补工具缺口。AI167/173报告各自的离线验证不替代本卡真实Editor验证。
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖PRE-1b与本轮空间修复：避免布局修改同一scene并污染非目标指纹。读取明确批准及原逐项草案CSV，不再以“材质尚未批准/5Prefab禁止修改”阻断批准范围。仍必须遵守真实平台审批。
-写入范围仅171映射：ShortCycle scene161、CatalogCard/FridgeSlot/IngredientCard/Sticker/TraySlot各2TMP、3新material及meta、AssetDatabase生成Materials目录；Static GUID9b07c6c50dde09d4b8719754c27ddc96，CoverTitle也统一。代码问题交控制端CODE返修，不绕过预检。禁止手改YAML。
-先运行PRE-1b交付的真实EditorAPI只读复核及dryrun，核对当前对象身份/去重计数171；实例/Prefab传播重复及任何漂移逐条报告，不拓scope。批准CSV原SHA及真实授权必须留证。若已有同名材质核对归属/内容而非覆盖未知成果。
-备份到DevTools/Fonts/backup/<TaskID>/六份scene/prefab+meta、旧新字体/材质指纹、非目标序列化字段和新增清单。单样例任选1条FromSourceHan → 验证font/material/atlas/风格与非目标字段 → 回退基线并确认相同（回退包含测试新增资产归属） → 全量按审定清单分批执行，每批SupervisionCheckpoint、scope、备份和停止检查，保留失败现场/事务而非半写假通过。
-材质copy旧Shader/颜色/outline/underlay，只有_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static；配对m_fontAsset+m_sharedMaterial。5Prefab源可改这两字段，其他Prefab源仍禁改；30材质override映射内按本授权，其他保留，140wrap保留。
-机器验收：171重预览（漂移解释）、Scene/Prefab全atlas匹配、非目标字段前后一致、Console无新增Error/Exception、五视图中文/标题截图、Play与Build前后StaticSHA不变、DynamicFallback清空、Edit clean。Build列表不改、manifest始终PENDING_REVIEW；若已知旧warning明确基线，不称全Console历史0。CoverTitle同镜头前后单列截图和宽度/换行测量，人工后置。
-保留旧fonts/materials、fallback全局、布局/Transform/文案/字号/颜色/sorting/交互、滚轮/Modal、所有无关override。范围外必改先差异停该项。SUCCEEDED + PENDING_USER，不ApproveGate，不Git提交/推送或字体guard哈希放行。机器通过不能等同最终字体人工签收。
-## AI-000174 | [CODE] [DATA-VIS-1] 建立可见 DATA 正式执行路由与长期配表分工
-
-- 序号：174
-- 提交时间：2026-09-23T22:16:27.4945844+08:00
-- 模块 ID：DATA-VIS-1
-- 初始状态：QUEUED
-- 前置依赖：AI-000173, AI-000168
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-# DATA-VIS-1 [CODE] 可见 DATA 正式路由与工作流接通
-用户来源：.ai-workspace/inputs/DATA-VISIBLE_外显配表线授权与接力_20260923.md。新可见任务已创建，threadId=01a0ce9d-8e5a-7542-82b6-6d27609d99e0，host=local，工作区D:/GameProject/Eat-What。本卡只做队列/工作流代码；不跑配表，不启动Unity，不手改runtime、不操作应用创建/绑定。实际绑定和首次派发由控制台在本卡成功后完成。
-
-## 代码改动清单与工具层判断
-复用 .ai-workspace/toolkit/WF.md 的 TK-WF-02（同一队列/轮次/隔离导表）和 TK-WF-03（计量/验证），不新建平行调度器。现有能力足够支撑导表，缺口仅是正式绑定/查询及所有路由返回、协议一致性；在原模块扩充。
-| 文件 | 处置 | 改动要点 / 归属 |
-| --- | --- | --- |
-| .ai-workspace/queue.ps1 | 扩充 | 正式控制绑定/状态查询API；Get-PipelineExecutionTarget、RegisterDataLane、ConsumeDataRound、各模式hand-off统一读取真实绑定；状态原子保存/审计，旧worker兼容 |
-| .ai-workspace/supervised.ps1 | 必要修改 | 派发/预约/令牌/状态查询随绑定一致；不改变其它车道的停止/租约/恢复/资源语义 |
-| .ai-workspace/tests/Test-DataLane.ps1 及既有模式/监管路由测试 | 扩充 | 临时工作区回归绑定、互斥、旧票据、停止、消费及生命周期；不得用生产runtime造夹具 |
-| .ai-workspace/workers/DATA.md、CODE.md、ENGINE_MCP.md | 更新相关段 | 后续配表处理统一可见DATA；CODE保留工具/源码，ENGINE保留接线/验证，不代跑导表 |
-| .ai-workspace/CONTROL_CHAT.md、SUPERVISED.md、WORKFLOW.md、protocol/对应FULL文档、templates/SUPERVISED_HEARTBEAT.md、PIPELINES.md | 更新受影响段 | 按真实executorKind/threadId投递/核查/回传，消除当前规则中强制内部子代理的冲突；历史明确保留 |
-| DevTools/DataTables/DATA_PIPELINE.md、.ai-workspace/toolkit/WF.md、CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md | 更新相关段 | 可见入口及部署绑定步骤、长期分工与当前完成边界；不改整体验证日期 |
-| DevTools/Workflow/Invoke-TaskTool.ps1 | 必要最小修正 | 本卡拟使用的计量包装仍强制ExecutionPolicy Bypass，移除该参数并保留正常PS7/exitcode/返回体计量，相关既有回归复核；不改系统策略 |
-
-## 入口、保持项
-先读 .ai-workspace/CORE.md、.ai-workspace/workers/CODE.md、.ai-workspace/protocol/SUPERVISED_FULL.md、.ai-workspace/protocol/CONTROL_CHAT_FULL.md 的配表拆分/监管节、用户新授权、DATA worker与操作说明、项目文档页首/数据/工作流节、P-019/P-032/P-033/P-037/P-047、TK-WF-02/03。检查Git、真实队列源码/调用点与已有测试。
-普通PowerShell7固定 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。每批修改前SupervisionCheckpoint；共用队列脚本的变更必须在完整候选脚本解析/窄验证后原子替换，避免其它执行器读取半写文件。不手工改任何生产runtime，不重置任务/已有绑定/历史，不改原模式或自动化。其它活跃任务的文档改动先重读再小段合并，不能覆盖他人内容。
-
-## 必须实现
-1. 新增明确的控制API（建议 BindDataPipeline -PipelineThreadId 与 DataLaneStatus，若名称不同报告精确用法）。复用已有PipelineThreadId参数与队列锁，绑定可查询、幂等、有前后值/时间/真实UserDecision/Verification记录。有效目标须非空合法线程ID，不得等于CODE/ENGINE/ART/控制台。不把format校验冒充应用可达；可达和真实闲置由控制台工具核实后提供证据。
-2. 注册旧worker保持兼容，不丢lease/circuit/errorHistory。绑定只允许DATA idle、无RUNNING/activeTaskId/BUSY和未消费预约；冲突或不明确归属零状态写入。重复同绑定幂等；替换已有绑定必须明确新授权并在安全状态，旧票据不得跨路由消费。绑定后 route缺失/无效不得静默退回子代理/其它线，Fail closed并报告。
-3. 消除当前3处以上硬编码：Get-PipelineExecutionTarget(DATA)、RegisterDataLane返回、ConsumeDataRound返回，以及全仓实际调用到的 MANUAL/AUTOMATIC/SUPERVISED 派发/回报/状态；只保留迁移前旧worker的明确兼容分支。正式绑定后所有DATA返回executorKind=THREAD、精确新threadId，已成功AI164记录不重写。
-4. token/租约/停止/过期/资源/恢复上限不削弱；route改变导致票据不能误投/误领。DATA仍同一队列单并发，与CODE/ENGINE真正共享的data-batch/generated-assets/font-assets及物理发布锁保持。工作流源码扩充不绕过权限或让DATA获得其它pipeline执行资格。
-5. 配表需求继续按用户内容轮次→DATA→必要ENGINE拆分。真实USER-U1 DONE/CSV哈希/幂等消费不变；所有新配表处理任务统一Pipeline DATA并投可见线，直接给DATA无票据的新需求回控制台编排。CODE只修工具/schema/业务源码，ENGINE只接线/验证；不得在本卡伪造DONE/发布/重跑AI164。
-6. 不新增定时领取日程、不恢复旧四条、不改ART服务。生产绑定留给控制台，CODE只交API/回归/操作说明。
-
-## 验证和交付
-在临时fixture实跑：旧注册兼容；绑定/读回/重复；非法目标及BUSY/RUNNING/有效预约拒绝且状态不变；绑定前旧票据失效或拒绝绑定；绑定后SUPERVISED实际Poll→Checkpoint→Complete→正确supervisorHandoff；AUTOMATIC后继及MANUAL路由；Pause/Exit和令牌/租约保持；DONE消费精确DATA线程/幂等与非DONE/漂移拒绝；DATA单线与资源冲突阻止重复领取。覆盖应调用真实生产函数/队列接口，不只断言源码字符串。
-只运行受影响DataLane/监管/模式/用量回归，最终一次汇总，必要第二次记录新原因；不为路由变更重跑Unitybatch。若现测试在活跃队列下把其它任务合法变化误判污染，使用夹具专属断言并说明，不锁死/回滚生产状态。
-输出 .ai-workspace/outputs/DATA-VISIBLE/<TaskID>/，六要素报告写精确API、绑定前置、安全停止、测试结果、尚未真实绑定的边界、路由/文档变更。Complete后原样发supervisorHandoff到控制台，不向DATA直接派发，不自签真实可见线首次验收。无Git提交/推送。
-
-> SUPERVISED POLICY at 2026-09-23T22:16:27.6893908+08:00: {"policy":{"resourceKeys":["workflow-devtools","workflow-router"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户明确追加外显DATA线；本CODE卡仅工作流脚本/临时夹具/文档，无Assets/Editor/CSV/生成物写入，故可与ENGINE业务并行；CODE单线等待原173/168完成。","updatedAt":"2026-09-23T22:16:27.6434870+08:00"},"taskId":"AI-000174"}
-## AI-000175 | [DATA] [DATA-VIS-2] 可见配表线首次票据领取、只读核验与控制台回报
-
-- 序号：175
-- 提交时间：2026-09-23T22:16:27.7591784+08:00
-- 模块 ID：DATA-VIS-2
-- 初始状态：QUEUED
-- 前置依赖：AI-000174
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-# DATA-VIS-2 [DATA] 外显配表线首次领取与回传验证
-来源：.ai-workspace/inputs/DATA-VISIBLE_外显配表线授权与接力_20260923.md。固定可见执行任务 01a0ce9d-8e5a-7542-82b6-6d27609d99e0（AI流水线-配表DATA），工作区D:/GameProject/Eat-What。本卡是明确授权的路由只读验收，不是USER-U1内容轮次，不启动Unitybatch、不发布、不写DONE、不重跑AI164。
-
-先读 .ai-workspace/CORE.md、.ai-workspace/workers/DATA.md、.ai-workspace/SUPERVISED.md、DevTools/DataTables/DATA_PIPELINE.md、新授权以及前置DATA-VIS-1报告的实际API。以控制台传来的本TaskId/DispatchToken用正常PS7 Poll一次，仅在CLAIMED后工作；activeTask权威，不重领。检查点/续租/停止/Complete/Fail均走队列，runtime不直接写。
-
-验收目标：证明这一新可见任务从正式DATA路由取得真实票据并领取本任务，执行只读检查，返回控制台，且既有配表源/生成物/字体/用户轮次无本卡写入。
-1. 正式绑定状态须THREAD且threadId精确匹配本任务，数据worker activeTaskId等于本卡，pipeline DATA、当前session正确。若还为CONTROL_SUBAGENT或目标不对，停止报告控制台，不能借内部代理完成。
-2. SupervisionCheckpoint实际继续后只读核对DATA_PIPELINE的导表入口、锁、真实DONE前提与AI164结果可达，不运行导表、不新造fake生产轮次，不人为占/改许可。
-3. 输出可见线程/任务号/session/领取及检查点回执，记录当前CSV/生成目录/字体/USER_WORK_STATUS与data-rounds前后哈希（只针对本轮稳定受保护范围，持有本卡声明资源）；核实本轮无生产改写。任何差异先核归属，不回滚别人改动，不把外部变化虚称自身零变化证明。
-4. 六要素简报写 .ai-workspace/outputs/DATA-VISIBLE/<TaskID>/；记录实际工具返回体/阶段，provider token/model未知null+原因。Complete后把supervisorHandoff完整原样发送控制台 01a08798-8b2a-7d41-9aa8-ab44affd520a 并结束。控制台核实收到和队列SUCCEEDED后才认定路由接通完成。
-5. 后续所有配表处理只在本可见线按票据执行，直接内容要求先转控制台编排，USER-U1内容审核仍由用户负责。没有任务时待命，不主动Poll或创建日程；本轮无人工视觉验收要求、无Git授权。
-
-> SUPERVISED POLICY at 2026-09-23T22:16:27.8381123+08:00: {"policy":{"resourceKeys":["workflow-router","unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"首次可见DATA只读验收不运行batch，但生产输入/生成物/字体哈希核对期间保守互斥；必须先正式绑定新THREAD才投递，禁止内部代理代做。","updatedAt":"2026-09-23T22:16:27.8180416+08:00"},"taskId":"AI-000175"}
-
-> SUPERVISED EXTEND at 2026-09-23T22:16:27.9378172+08:00: {"taskIds":["AI-000174","AI-000175"],"reason":"用户新增建立外显DATA流水线并统一后续配表职责；沿用当前监管，不改原链依赖与结果。"}
-> Instruction revision for AI-000169 at 2026-09-23T22:45:06.6321283+08:00
-
-# FIX-T5-R1b [ENGINE_MCP] 连续空间构图与P1恢复
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-目标场景仅 Assets/Scenes/Cooking/ShortCycle_P0P1.unity；依赖R1a。修复用户四项反馈，用EditorAPI配置真实组件/Transform/marker/Traveler/Set引用，禁止手改YAML、整场覆盖旧备份、Prefab源或新平行视觉层。
-读稳定 inputs/排布指导书_ShortCycle_P0P1.md 与最新人工反馈增量；指导书v0.3未出不阻断。C1/C2/C4/C6、G26/G68/G69；TK-MOT-06、TK-INT-17/18、TK-LAY-02/08、TK-DBG-03/05/06。
-写前核对主MCP实例dataPath/version、Git/scene dirty基线，备份scene+meta至DevTools/Scenes/backup/<TaskID>/。只读比较 DevTools/Scenes/backup/FIX-T5b_ShortCycle_P0P1.unity、AI154保留备份和AI156四区报告，提取旧P1相机相对位置/比例；不能重放旧scene而丢Modal/AI165/数据/字体工具等后续成果。
-修复范围：
-- Escape_Button_TUNE与Phase1_Kitchen/Return_Button_TUNE配置R1a通用视口锚定，保留Sprite/Collider/MouseInteract/Keyboard/ActionBinding/StateGate。跨Cover/Catalog/Browse/ClueBoardShell/P1确认该出现时固定镜头左下角、该隐藏时不可命中；pan中仍随相机，不能只在arrival设置一次。允许必要Anchor宿主但禁止更名171CSV对象路径和组件序号。
-- 物理冰箱—板—书紧密连续；按tight sprite.vertices可见区和Renderer世界实测缩小板书间隙。调整worldplacement与marker，使Browse左页全部+右页30–40%（全书约65–70%，用户约70%），主页面较居中。证据明确比例测量基准、world/viewport bounds、场景对照，不能靠sprite.rect代替可见边缘、挤压拉伸美术或凭一个截图目测凑数。
-- ClueBoard物理视觉常在，focus/交互按状态独立；从P0进入/退出P1逐帧记录activeInHierarchy/Renderer.enabled与相机视窗交叠，不能过渡消失后闪回。场景外正常裁切不算关闭。保留④压暗/板外返回。
-- P1依旧完整猫视觉跟同一滚动根，恢复猫手/泡泡、板、GO、托盘和返回按钮到重构前相机相对构图；查父级位移重复叠加、world/local、Traveler/marker/滚动根/布局运行驱动竞争，不只改Edit坐标。必要调整阶段目的地，避免启动脚本再覆写。滚轮方向/手感/上下边界/Modal已通过，必须回归保护。
-保持font映射171路径/组件序号、全局字体/材质、140wrap及获准30材质基线、所有非目标业务/Prefab/正式Build列表、Lab/探针。发现未知Userdirty或范围外必需修改先留证报告，不清空用户变更。
-固定排布验收六项齐全：启用Renderer/TMP归属具名容器、tight vertices度量、写入审计独立、Scene点选/旧物清理/Console/Missing/dirty/冻结hash/Git独立证据、数据驱动数目与catalog一致、截图留人工不能代签。给五视图和过渡采样、宽高比原16:9与另一代表比例、重复进退、整猫边界滚动、Modal开关/焦点回归。
-最终Edit/clean、Console无新增错，交实际world/viewport/marker表供设计重算v0.3；SUCCEEDED+PENDING_USER。AI156保留原拒绝并关联本修复，AI165不擅自代签。新探针有G26归属，不做全项目_TUNE审查。
-
-## AI168完成后的必读接力（2026-09-23）
-
-AI168已SUCCEEDED/VERIFIED，ShortCycle唯一Final 3/3 runner通过；不是正式场景视觉验收。执行前读取 `.ai-workspace/outputs/U1-PRE-R1/AI-000168/AI-000168_R1b_接线移交.md`、同目录 `AI-000168_FIX-T5-R1a_完成报告.md`、`verification-summary.json`，以及 `组件说明文档/镜头视口锚定_配置与复用说明.md`；按实际源码复核，不凭报告写入。
-
-- 新类为 `EatWhat.Tools.Layout.CameraViewportAnchor`，路径 `Assets/Scripts/Tools/Layout/CameraViewportAnchor.cs`。两个现有按钮显式配置Target Camera和Anchored Root；viewport=(0,0)、inset=(0.04,0.06)仅为调参起点，依据tight bounds与安全区/宽高比实测。保留Z/scale/门控，视觉和Collider同移。
-- 只给真实Shared/ClueBoard_Group的PresentationSet开启 `keepVisualActiveAcrossSpaces`。保持WantsLogicalActive焦点/StateGate原语义，不给Modal或全部Shared开启；过渡输入锁、AI165压暗与板外返回回归仍必须验证。
-- 审计应读得fixT5ViewportAnchors=2、fixT5ViewportAnchorInvalid=0、fixT5CluePersistentVisual=True；这些是检查目标，不能填入结果代替实测。真实世界与视口几何表仍独立测量。
-- AI168新增脚本与Layout目录若缺meta，可由Unity正常导入生成必需meta并记录GUID；禁止手写meta、更改既有GUID或因此扩大业务资产范围。备份/字体171路径与组件序号/140wrap及30材质保持项不变。
-> Instruction revision for AI-000170 at 2026-09-23T23:39:41.3173666+08:00
-
-# PRE-1c [ENGINE_MCP] 已批准字体材质迁移执行
-
-## AI169完成后的基线接力（2026-09-23）
-
-AI169已SUCCEEDED/PENDING_USER，最终Edit/clean、Console Error=0。先读`outputs/U1-PRE-R1/AI-000169/AI-000169_FIX-T5-R1b_完成报告.md`、`verification-summary.json`、`geometry.csv`；控制台已核场景/scene meta与7张PNG哈希一致。当前scene SHA为`233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB`，是字体迁移前已保存布局成果，不还原AI169以前的场景。仍由你重新发现核对Editor实际状态并建立本任务备份。
-
-保护P0Left=-9.6、两返回键CameraViewportAnchor=(0.06,0.08)、唯一ClueBoard持续视觉与P1恢复布局。171映射是否漂移仍须真实Editor预检。AI169清理了SaveScene新增40材质/60fontFeature override与40 Renderer材质漂移，保留140wrap/30材质基线；本卡不能把范围外序列化漂移当作用户批准的字体变化。
-
-已知旧诊断`fixT5FourMarkers=False`来自LayoutAudit仍硬编码P0Left=-12.8，和本轮获准构图不一致；此非字体迁移失败、不要求场景回退旧坐标。已纳入AI171长期验证工具维护、AI172复验；本卡如引用该字段须标明已知诊断偏差，不能写成整个LayoutAudit全绿或静默改断言。其余真实异常照常检查。
-
-接力增量：正式迁移另依赖AI173（PRE-1b-R1）。AI167原工具仅全量执行，不能用它冒充单样例/分批；按AI173公开API先完整预检→单样例→回退验证→逐批checkpoint/写入→全量收尾。禁止反射私有方法、改批准CSV或手工伪造事务来补工具缺口。AI167/173报告各自的离线验证不替代本卡真实Editor验证。
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖PRE-1b与本轮空间修复：避免布局修改同一scene并污染非目标指纹。读取明确批准及原逐项草案CSV，不再以“材质尚未批准/5Prefab禁止修改”阻断批准范围。仍必须遵守真实平台审批。
-写入范围仅171映射：ShortCycle scene161、CatalogCard/FridgeSlot/IngredientCard/Sticker/TraySlot各2TMP、3新material及meta、AssetDatabase生成Materials目录；Static GUID9b07c6c50dde09d4b8719754c27ddc96，CoverTitle也统一。代码问题交控制端CODE返修，不绕过预检。禁止手改YAML。
-先运行PRE-1b交付的真实EditorAPI只读复核及dryrun，核对当前对象身份/去重计数171；实例/Prefab传播重复及任何漂移逐条报告，不拓scope。批准CSV原SHA及真实授权必须留证。若已有同名材质核对归属/内容而非覆盖未知成果。
-备份到DevTools/Fonts/backup/<TaskID>/六份scene/prefab+meta、旧新字体/材质指纹、非目标序列化字段和新增清单。单样例任选1条FromSourceHan → 验证font/material/atlas/风格与非目标字段 → 回退基线并确认相同（回退包含测试新增资产归属） → 全量按审定清单分批执行，每批SupervisionCheckpoint、scope、备份和停止检查，保留失败现场/事务而非半写假通过。
-材质copy旧Shader/颜色/outline/underlay，只有_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static；配对m_fontAsset+m_sharedMaterial。5Prefab源可改这两字段，其他Prefab源仍禁改；30材质override映射内按本授权，其他保留，140wrap保留。
-机器验收：171重预览（漂移解释）、Scene/Prefab全atlas匹配、非目标字段前后一致、Console无新增Error/Exception、五视图中文/标题截图、Play与Build前后StaticSHA不变、DynamicFallback清空、Edit clean。Build列表不改、manifest始终PENDING_REVIEW；若已知旧warning明确基线，不称全Console历史0。CoverTitle同镜头前后单列截图和宽度/换行测量，人工后置。
-保留旧fonts/materials、fallback全局、布局/Transform/文案/字号/颜色/sorting/交互、滚轮/Modal、所有无关override。范围外必改先差异停该项。SUCCEEDED + PENDING_USER，不ApproveGate，不Git提交/推送或字体guard哈希放行。机器通过不能等同最终字体人工签收。
-> Instruction revision for AI-000171 at 2026-09-23T23:39:41.4302199+08:00
-
-# MIG-E2a [CODE] 迁移证据归档与长期工具改名准备
-
-## AI169接力补充：长期布局审计的过时基线
-
-本轮源码审查发现`Assets/Editor/ShortCycle/ShortCycleLayoutAudit.cs`的`fourMarkerPositionsValid`仍硬编码P0Left=-12.8，故最新布局误报False。将此明确的验证工具维护并入本卡：读取AI169报告/geometry.csv与当前实际场景，核实P0Left=-9.6，更新这一过时预期及解释，保留P1=-25.6/Center=0/Right=25.6和其余有效断言；不得取消整项检查或将任意当前位置作为期望值。若正式布局在此之前有新的获准变化，按真实新证据解释，不盲写-9.6。仅C#和说明维护，不移动业务对象/修改YAML；使用受影响的现有编译/验证入口，AI172以真实Editor只读审计核对。将这项加入源码改动清单及Editor移交，修复前后的假阳性证据保留。
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-前置：本轮两类修复的机器执行完成，避免备份活动文件竞争。F-α已按真实用户结论关闭，FIX-T5和PRE1仍有独立人审，不伪称E2完成。
-
-代码改动清单：
-| 文件 | 处置 | 归属与复用三问 |
-|---|---|---|
-| Assets/Editor/MIG63Validation/MIG63ValidationSession.cs | 功能名调整准备 | Editor通用回归；复用现会话/恢复/字体保护，拟ProjectValidationSession；本卡不移动Assets文件或meta |
-| 同目录MIG63WheelProbe.cs/MIG63TomatoProbe.cs/MIG63SpineSceneProbe.cs | 类/菜单及引用功能名调整准备 | 复用TK-DBG-09/TK-DBG-08既有滚轮/双Spine/保存场景回归，不减断言；拟WheelInputRegressionProbe/TomatoAnimationRegressionProbe/SpineSavedSceneRegressionProbe |
-| DevTools/MIG63/README.md及查实引用它的脚本/文档 | 功能目录迁移 | 拟DevTools/ProjectValidation；使用原工具，不另建平行验证器；记录旧路径恢复映射 |
-| DevTools/Workflow/Archive-Stage.ps1（仅确有需要）及MIG63归档脚本/manifest | 扩充/新建 | 复用TK-WF归档机制，SHA/原路径/版本/restore验证，不清空活动队列或输入 |
-| MIG63台账/临时项/E1H接力、AGENTS、两项目文档、toolkit | 当前结论维护 | 旧事实进archive，保留全部失败史和验收真实性 |
-
-必读MIG63/迁移基线.md§8/E2、执行台账页首、临时项登记各项、E1H后续F01–10及H后分支接力、Archive-Stage既有归档实现；只读检查独立副本D:/GameProject/Eat-What-U6及异盘备份，不写副本/系统配置。
-交付1：原工程和独立迁移侧M0–M4/C/E1/H/F输入输出、批准/错误/恢复记录完整清单，形成 .ai-workspace/archive/MIG63_<实际日期>/ 可恢复包与manifest(SHA256/原路径/当前替代路径)，实际读回解包抽验或全量核验。复用已有包避免复制巨大缓存；列明未持久化和活跃排除项。原始唯一副本/未推送证据保持；活跃U1 inputs/runtime/INSTRUCTIONS/队列历史、字体新任务backup与独立ART基线不删除，不把“归档成功”写成已推送。
-交付2：F05长期工具功能命名的源码/菜单/调用方准备与精准Editor移交表。四Editor脚本目标目录 Assets/Editor/ProjectValidation/；类名上述对应，若非static且Unity绑定敏感先保护映射/解释。Tomato_MIG63.controller目标同目录Tomato_Reference.controller，保GUID。本卡只修改C#文本/DevTools文档，不移动或修改Assets序列化/meta；下一ENGINE用AssetDatabase移动。保留所有功能/历史证据引用可追溯，源码预先引用新目标时必须明确待ENGINE恢复验证，不引入编译中断。
-交付3：逐项临时项解除/保留原因及最终清理候选：MIG专属进程/Hub条目/clone/本地phase保护（字体guard长期保留）、包与远端持久化情况。主Editor/MCP/Claude共享配置/许可/2022安装不操作。Spine Examples/Tomato/Lab/探针/backup分支及tags保留；历史SourceHan/TMP备份不冒删。最终删除副本须归档已获准推送并远端可验证、无未知或独有成果；本任务无Git授权，只交具体待执行清单与验证，不强行达到“目录已删除”。
-完成Code编译/受影响runner、归档恢复检查及diff，回报现阶段E2尚余ENGINE资产迁移与最终持久化/安全清理边界。不新建空任务占号，不创建用户提醒日程，不提前清除保护钩子。后续无关Mac/产品命名/客户端/MCP评估以具名延期项接管，不阻断已通过F、不谎称已实现。
-> Instruction revision for AI-000172 at 2026-09-23T23:39:41.4861717+08:00
-
-# MIG-E2b [ENGINE_MCP] 长期验证资产保GUID更名与收尾复验
-
-接力补充：AI171同时修正ShortCycleLayoutAudit中AI169后过时的P0Left=-12.8预期（AI169实际=-9.6）。完成编译后以真实Editor只读核对marker数值和`fixT5FourMarkers=True`，其它布局/字体审计独立保留。不要为迁就旧断言回滚AI169布局；若真实布局变化与移交不符，留证按CODE/ENGINE职责修正。此复验不触发额外场景保存或重复PRE1 Build。
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖MIG-E2a。执行已审定的F05功能更名，不删除验证能力。读E2a精确移交/当前MIG63临时项、G26与清理协议。
-允许Assets改动表：通过AssetDatabase.MoveAsset将 Assets/Editor/MIG63Validation/ 四脚本及其meta保GUID移动为 Assets/Editor/ProjectValidation/ 下 E2a已实现对应功能名；将 Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller 移为同目录 Tomato_Reference.controller（若有冲突/独有引用先核对）。只做批准资产更名和Editor生成目录/meta，保持对象身份、动画状态/参数/曲线、引用语义。旧空Editor目录仅确认已空且无引用后由AssetDatabase删除目录meta，未知项保留。不得文字修改YAML或手工改GUID。
-写前备份目标+meta与入引用资源指纹；先只读GUID/引用/内存与保存状态。执行后编译，EditorAPI复核两保存Spine场景引用同GUID、菜单/四探针入口工作，滚轮/Modal、Tomato双路径、两保存场景（含重复进退）相关探针各一次，保护正式scene/字体StaticSHA、Dynamic清空、Console/引用/退出Editclean；不重新要求用户手感验收、不重做本轮已完成PRE1 Build，除非这次验证发现实际问题。相关截图只存档。
-E2a源码若有缺陷交CODE修复，不直接扩大运行时脚本或业务范围；没有改业务功能的前提以机器复验结算。本卡不删D:/GameProject/Eat-What-U6、不碰Hub/共享服务/EditorPrefs/字体guard或Git。输出保GUID/引用前后表、实际工具菜单与使用文档、归档增量证据清单，回传控制台执行E2最终持久化/安全清理条件核对。只有实际最终条件全部满足，控制台才可关E2；本卡SUCCEEDED不等于迁移生命周期已全部结束。
-## AI-000176 | [CODE] [PRE-1c-PREFAB-R1] 修正批准字体映射的Prefab源与实例身份及事务覆盖
-
-- 序号：176
-- 提交时间：2026-09-23T23:54:18.6571243+08:00
-- 模块 ID：PRE-1c-PREFAB-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000167, AI-000173, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1c-PREFAB-R1 [CODE] 批准映射的Prefab源/实例身份与事务修正
-
-本卡是用户已批准PRE-1b/c范围内的必要修复，不扩大171行、3材质、5Prefab、CoverTitle或Git授权。AI170真实Editor预检失败，尚无生产写入；原任务保留失败，待本卡成功后由控制台Recover。不要依赖失败AI170或重跑已成功AI167/173。
-
-先读CORE、CODE worker、SUPERVISED、用户`inputs/U1-PRE_人工反馈与字体批准_20260923.md`、PRE-1c任务卡、AI167/173报告与公开API、TK-LOC-03/G70及字体/序列化相关坑。失败证据为`outputs/U1-PRE-R1/AI-000170/AI-000170_PRE-1c_预检失败报告.md`、`approved-plan-before.json`、`verification-summary.json`。按真实源码和当前CSV/scene/Prefab只读核实，不能凭旧离线夹具判生产通过。
-
-已核事实：raw=171、有效计划entries=63、executeAllowed=false，CatalogCard/IngredientCard/Sticker/TraySlot各BadgeLabel/NameLabel共8组CANONICAL_CONFLICT；源行FromLegacyShortCycle、场景行FromSourceHan/FromHeavy，before材质也不同。`GetCanonicalIdentity`当前仅依赖`GetPropertyModifications(text)`的字体/材质override判断后映射源身份，没有用完整批准目标语义排除错误折叠。63不是已批准将171业务对象删减为63。
-
-## 改动清单与工具选择
-
-| 文件 | 处置及原因 |
-| --- | --- |
-| Assets/Editor/Fonts/ShortCycleFontSwapTool.cs | 扩充TK-LOC-03现有预检/身份分类/真实Prefab override检测、固定事务/批次验证与恢复；复用原框架，不新建迁移器 |
-| DevTools/Fonts/FontSwapDryRunHarness.cs、Test-FontSwap.ps1及必要既有Fonts测试 | 增加源与实例不同材质、继承传播/身份稳定/样例回退的回归；真实Unity6/TMP DLL编译 |
-| DevTools/Fonts/README.md、LOC登记、项目文档相关节 | 写明新分类/计数/调用约束与尚待Editor复验边界，不更新完整复核日期 |
-
-## 必须满足
-
-1. 不改批准CSV内容/哈希（EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B）或批准旁证，不将171各行目标统一成源的材质，不删CANONICAL_CONFLICT、不伪置executeAllowed。区分真实写入对象/继承关系与相同字体值；只有before、批准after、继承/override和传播范围均等价时才可合并；不同目标的获准场景实例必须保留其独立写入身份和原风格。
-2. 源/实例共享关系在font/material配对写入后可能变化。固定事务计划的身份不能因新增override、源传播或已完成批次而漂移。明确每条原始批准行由哪个写入项覆盖、顺序及源传播影响；全171行before/after审计不可仅检查选中的canonical代表。源或实例写入影响未批准对象时停止并列精确差异，不扩大权限。
-3. 保留单FromSourceHan样例只改一个真实TMP→回退完整基线；样例不得通过修改Prefab源顺带改变多实例。分批、重复恢复零重复写、批间剩余/已完成项校验、非目标指纹、外部漂移拒绝、失败回退与新资产归属安全均保持。可选择实例先于源等有证据的顺序；不把未知继承变化当作本事务完成，不强迫ENGINE使用反射/private或手写事务。
-4. 回退须恢复原字体/材质及其继承/override结构，重复回退幂等；不遗留获准字段以外的override，不碰布局、140wrap、未在映射内材质/Renderer/全局fallback等。若现API无法精确恢复继承，修正并增加有意义验证后才交付。
-5. 测试至少覆盖：同源但不同before/after的实例不折叠；真正等价继承可去重或明确选择保守独立计划；真实同一写入位置互斥目标仍拒绝；单样例不扩散及幂等回退；多批源/实例传播、断点恢复、未知before/after和非目标漂移拒绝；所有171批准行无遗漏的覆盖计数。测试调用生产分类/事务核心，不只看源码字符串；旧功能回归不能减断言。
-
-固定工作区D:/GameProject/Eat-What，所有queue/runner用exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，禁止嵌套powershell.exe或ExecutionPolicy Bypass。只在票据CLAIMED后执行；每批写入前SupervisionCheckpoint，必要时续租。CODE不调用Unity Editor、不修改任何生产scene/prefab/font/material/meta，不执行正式迁移或配表；C#引起自动导入须持有unity-project，不能去锁抢并行。
-
-先窄回归，再一次Fonts Final（必要第二次写明新原因）。交付真实源码/DLL编译和夹具结果、每行身份与预期计数变化解释、ENGINE公开API移交及新预检要求，生产写入0。实际Editor全量预检/样例/分批/Play/Build仍留给AI170，离线通过不冒充迁移成功。输出outputs/U1-PRE-R1/<TaskID>/；Complete/Fail原样回传控制台，不自行派发后继，不Git。
-
-> SUPERVISED POLICY at 2026-09-23T23:54:18.8252788+08:00: {"taskId":"AI-000176","policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI170已批准迁移真实预检失败，CODE必要修复Prefab源/实例身份及传播事务；保留Unity互斥，不执行生产迁移，独立DATA175按原顺序等待/运行。","updatedAt":"2026-09-23T23:54:18.8009052+08:00"}}
-
-> Dependency correction for AI-000170 at 2026-09-23T23:54:19.0013351+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176
-
-> SUPERVISED EXTEND at 2026-09-23T23:54:19.0556128+08:00: {"taskIds":["AI-000176"],"reason":"原已批准PRE-1b/c的必要代码修复纳入当前监管；依赖成功前置，不反向依赖失败AI170。"}
-> Instruction revision for AI-000170 at 2026-09-23T23:55:13.9479504+08:00
-
-# PRE-1c [ENGINE_MCP] 已批准字体材质迁移执行
-
-## 首轮预检失败后的恢复约束
-
-AI170首轮正式Preview得到raw=171、有效计划entries=63、8组CANONICAL_CONFLICT、executeAllowed=false，未Begin/写生产/创建材质。旧`approved-plan-before.json`、失败报告及错误史原样保留。CODE修复任务AI176已加入依赖；只有其真实成功、控制台审核并正式Recover/新票据后才恢复，不自动Reset或重用旧票据。恢复采用新的attempt子目录与新事务路径，重新核Editor/批准CSV/布局/三材质和全部171行；必须解释去重数与源/实例覆盖及传播，不机械要求unique=171或把63写成已完成。继续单FromSourceHan样例→真实回退→分批全量。旧CANONICAL_CONFLICT不得通过改CSV、删检查或手造executeAllowed绕过。
-
-所有队列操作必须让exec_command的shell参数精确为`C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe`，在其内直接`& ./.ai-workspace/queue.ps1 ...`；禁止外层PS7内再启动`powershell.exe`，首轮领取宿主错误已入issueHistory。
-
-## AI169完成后的基线接力（2026-09-23）
-
-AI169已SUCCEEDED/PENDING_USER，最终Edit/clean、Console Error=0。先读`outputs/U1-PRE-R1/AI-000169/AI-000169_FIX-T5-R1b_完成报告.md`、`verification-summary.json`、`geometry.csv`；控制台已核场景/scene meta与7张PNG哈希一致。当前scene SHA为`233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB`，是字体迁移前已保存布局成果，不还原AI169以前的场景。仍由你重新发现核对Editor实际状态并建立本任务备份。
-
-保护P0Left=-9.6、两返回键CameraViewportAnchor=(0.06,0.08)、唯一ClueBoard持续视觉与P1恢复布局。171映射是否漂移仍须真实Editor预检。AI169清理了SaveScene新增40材质/60fontFeature override与40 Renderer材质漂移，保留140wrap/30材质基线；本卡不能把范围外序列化漂移当作用户批准的字体变化。
-
-已知旧诊断`fixT5FourMarkers=False`来自LayoutAudit仍硬编码P0Left=-12.8，和本轮获准构图不一致；此非字体迁移失败、不要求场景回退旧坐标。已纳入AI171长期验证工具维护、AI172复验；本卡如引用该字段须标明已知诊断偏差，不能写成整个LayoutAudit全绿或静默改断言。其余真实异常照常检查。
-
-接力增量：正式迁移另依赖AI173（PRE-1b-R1）。AI167原工具仅全量执行，不能用它冒充单样例/分批；按AI173公开API先完整预检→单样例→回退验证→逐批checkpoint/写入→全量收尾。禁止反射私有方法、改批准CSV或手工伪造事务来补工具缺口。AI167/173报告各自的离线验证不替代本卡真实Editor验证。
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖PRE-1b与本轮空间修复：避免布局修改同一scene并污染非目标指纹。读取明确批准及原逐项草案CSV，不再以“材质尚未批准/5Prefab禁止修改”阻断批准范围。仍必须遵守真实平台审批。
-写入范围仅171映射：ShortCycle scene161、CatalogCard/FridgeSlot/IngredientCard/Sticker/TraySlot各2TMP、3新material及meta、AssetDatabase生成Materials目录；Static GUID9b07c6c50dde09d4b8719754c27ddc96，CoverTitle也统一。代码问题交控制端CODE返修，不绕过预检。禁止手改YAML。
-先运行PRE-1b交付的真实EditorAPI只读复核及dryrun，核对当前对象身份/去重计数171；实例/Prefab传播重复及任何漂移逐条报告，不拓scope。批准CSV原SHA及真实授权必须留证。若已有同名材质核对归属/内容而非覆盖未知成果。
-备份到DevTools/Fonts/backup/<TaskID>/六份scene/prefab+meta、旧新字体/材质指纹、非目标序列化字段和新增清单。单样例任选1条FromSourceHan → 验证font/material/atlas/风格与非目标字段 → 回退基线并确认相同（回退包含测试新增资产归属） → 全量按审定清单分批执行，每批SupervisionCheckpoint、scope、备份和停止检查，保留失败现场/事务而非半写假通过。
-材质copy旧Shader/颜色/outline/underlay，只有_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static；配对m_fontAsset+m_sharedMaterial。5Prefab源可改这两字段，其他Prefab源仍禁改；30材质override映射内按本授权，其他保留，140wrap保留。
-机器验收：171重预览（漂移解释）、Scene/Prefab全atlas匹配、非目标字段前后一致、Console无新增Error/Exception、五视图中文/标题截图、Play与Build前后StaticSHA不变、DynamicFallback清空、Edit clean。Build列表不改、manifest始终PENDING_REVIEW；若已知旧warning明确基线，不称全Console历史0。CoverTitle同镜头前后单列截图和宽度/换行测量，人工后置。
-保留旧fonts/materials、fallback全局、布局/Transform/文案/字号/颜色/sorting/交互、滚轮/Modal、所有无关override。范围外必改先差异停该项。SUCCEEDED + PENDING_USER，不ApproveGate，不Git提交/推送或字体guard哈希放行。机器通过不能等同最终字体人工签收。
-> Instruction revision for AI-000175 at 2026-09-23T23:55:14.0554136+08:00
-
-# DATA-VIS-2 [DATA] 外显配表线首次领取与回传验证
-
-队列宿主必须显式指定：exec_command的shell=`C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe`，在此宿主直接`& ./.ai-workspace/queue.ps1 ...`。不得在外层PS7再嵌套`powershell.exe`；AI170已实证该旧宿主导致有效票据的指纹误拒绝。本卡仍仅一次有效票据Poll，不自行重领。
-来源：.ai-workspace/inputs/DATA-VISIBLE_外显配表线授权与接力_20260923.md。固定可见执行任务 01a0ce9d-8e5a-7542-82b6-6d27609d99e0（AI流水线-配表DATA），工作区D:/GameProject/Eat-What。本卡是明确授权的路由只读验收，不是USER-U1内容轮次，不启动Unitybatch、不发布、不写DONE、不重跑AI164。
-
-先读 .ai-workspace/CORE.md、.ai-workspace/workers/DATA.md、.ai-workspace/SUPERVISED.md、DevTools/DataTables/DATA_PIPELINE.md、新授权以及前置DATA-VIS-1报告的实际API。以控制台传来的本TaskId/DispatchToken用正常PS7 Poll一次，仅在CLAIMED后工作；activeTask权威，不重领。检查点/续租/停止/Complete/Fail均走队列，runtime不直接写。
-
-验收目标：证明这一新可见任务从正式DATA路由取得真实票据并领取本任务，执行只读检查，返回控制台，且既有配表源/生成物/字体/用户轮次无本卡写入。
-1. 正式绑定状态须THREAD且threadId精确匹配本任务，数据worker activeTaskId等于本卡，pipeline DATA、当前session正确。若还为CONTROL_SUBAGENT或目标不对，停止报告控制台，不能借内部代理完成。
-2. SupervisionCheckpoint实际继续后只读核对DATA_PIPELINE的导表入口、锁、真实DONE前提与AI164结果可达，不运行导表、不新造fake生产轮次，不人为占/改许可。
-3. 输出可见线程/任务号/session/领取及检查点回执，记录当前CSV/生成目录/字体/USER_WORK_STATUS与data-rounds前后哈希（只针对本轮稳定受保护范围，持有本卡声明资源）；核实本轮无生产改写。任何差异先核归属，不回滚别人改动，不把外部变化虚称自身零变化证明。
-4. 六要素简报写 .ai-workspace/outputs/DATA-VISIBLE/<TaskID>/；记录实际工具返回体/阶段，provider token/model未知null+原因。Complete后把supervisorHandoff完整原样发送控制台 01a08798-8b2a-7d41-9aa8-ab44affd520a 并结束。控制台核实收到和队列SUCCEEDED后才认定路由接通完成。
-5. 后续所有配表处理只在本可见线按票据执行，直接内容要求先转控制台编排，USER-U1内容审核仍由用户负责。没有任务时待命，不主动Poll或创建日程；本轮无人工视觉验收要求、无Git授权。
-> Instruction revision for AI-000170 at 2026-09-24T00:53:45.8348115+08:00
-
-# PRE-1c [ENGINE_MCP] 已批准字体材质迁移执行
-
-## AI176成功后的第一次正式恢复（2026-09-24）
-
-先读`outputs/U1-PRE-R1/AI-000176/AI-000176_PRE-1c-PREFAB-R1_修复报告.md`与`verification-summary.json`。控制台核对3份源码哈希、两次有理由Fonts Final各2/2通过、场景及批准CSV哈希不变；该结果只允许恢复真实Editor验证，不代表生产预检通过。恢复输出使用`outputs/U1-PRE-R1/AI-000170/attempt-2-prefab-r1/`，样例与全量使用不同新事务路径；旧预检、事务、失败与宿主恢复史保留，不覆盖。
-
-新事务schema=3，固定每条批准行的写入身份及Prefab关系，仅before/after/继承结构等价才可去重；场景实例目标不同时先写实例再写Prefab源，回退相反。必须核实raw/逐行覆盖=171、真实uniqueEntryCount及覆盖关系、未批准传播检查、全部reasons和executeAllowed。不得沿用旧63或强置unique=171。单样例须明确只写1个真实FromSourceHan TMP、不经源传播扩大；真实回退核对字体/材质、override结构及非目标字段，完成后才另起全量事务。批次按公开API与实例优先规则选择；所有171行的已完成/待办状态、未知漂移和非目标指纹继续检查，不能直接编辑事务/反射private或改批准CSV。若出现新预检阻断，留真实差异和零/部分写入证据回报，不重复同方案盲试。
-
-## 首轮预检失败后的恢复约束
-
-AI170首轮正式Preview得到raw=171、有效计划entries=63、8组CANONICAL_CONFLICT、executeAllowed=false，未Begin/写生产/创建材质。旧`approved-plan-before.json`、失败报告及错误史原样保留。CODE修复任务AI176已加入依赖；只有其真实成功、控制台审核并正式Recover/新票据后才恢复，不自动Reset或重用旧票据。恢复采用新的attempt子目录与新事务路径，重新核Editor/批准CSV/布局/三材质和全部171行；必须解释去重数与源/实例覆盖及传播，不机械要求unique=171或把63写成已完成。继续单FromSourceHan样例→真实回退→分批全量。旧CANONICAL_CONFLICT不得通过改CSV、删检查或手造executeAllowed绕过。
-
-所有队列操作必须让exec_command的shell参数精确为`C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe`，在其内直接`& ./.ai-workspace/queue.ps1 ...`；禁止外层PS7内再启动`powershell.exe`，首轮领取宿主错误已入issueHistory。
-
-## AI169完成后的基线接力（2026-09-23）
-
-AI169已SUCCEEDED/PENDING_USER，最终Edit/clean、Console Error=0。先读`outputs/U1-PRE-R1/AI-000169/AI-000169_FIX-T5-R1b_完成报告.md`、`verification-summary.json`、`geometry.csv`；控制台已核场景/scene meta与7张PNG哈希一致。当前scene SHA为`233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB`，是字体迁移前已保存布局成果，不还原AI169以前的场景。仍由你重新发现核对Editor实际状态并建立本任务备份。
-
-保护P0Left=-9.6、两返回键CameraViewportAnchor=(0.06,0.08)、唯一ClueBoard持续视觉与P1恢复布局。171映射是否漂移仍须真实Editor预检。AI169清理了SaveScene新增40材质/60fontFeature override与40 Renderer材质漂移，保留140wrap/30材质基线；本卡不能把范围外序列化漂移当作用户批准的字体变化。
-
-已知旧诊断`fixT5FourMarkers=False`来自LayoutAudit仍硬编码P0Left=-12.8，和本轮获准构图不一致；此非字体迁移失败、不要求场景回退旧坐标。已纳入AI171长期验证工具维护、AI172复验；本卡如引用该字段须标明已知诊断偏差，不能写成整个LayoutAudit全绿或静默改断言。其余真实异常照常检查。
-
-接力增量：正式迁移另依赖AI173（PRE-1b-R1）。AI167原工具仅全量执行，不能用它冒充单样例/分批；按AI173公开API先完整预检→单样例→回退验证→逐批checkpoint/写入→全量收尾。禁止反射私有方法、改批准CSV或手工伪造事务来补工具缺口。AI167/173报告各自的离线验证不替代本卡真实Editor验证。
-共同执行约束：领取 CORE.md、当前任务卡及对应 worker；按 SUPERVISED.md 使用同一 PowerShell 7 宿主和真实 TaskId/DispatchToken，生产写入批次前 SupervisionCheckpoint。目标 D:/GameProject/Eat-What、codex/unity6-followup、Unity 6000.3.24f1。读 inputs/U1-PRE_人工反馈与字体批准_20260923.md；最新用户授权优先于旧待批准文本。保留所有已有修改、错误/恢复史，不 Reset 成功任务，不提交/推送，不手改 Unity YAML/meta。输出 outputs/U1-PRE-R1/<TaskId>/，六要素报告、真实工具计量，不估算 provider token；Complete/Fail 后回传 supervisorHandoff 并结束，由控制台派下一棒。人工审查后置但不代签。
-依赖PRE-1b与本轮空间修复：避免布局修改同一scene并污染非目标指纹。读取明确批准及原逐项草案CSV，不再以“材质尚未批准/5Prefab禁止修改”阻断批准范围。仍必须遵守真实平台审批。
-写入范围仅171映射：ShortCycle scene161、CatalogCard/FridgeSlot/IngredientCard/Sticker/TraySlot各2TMP、3新material及meta、AssetDatabase生成Materials目录；Static GUID9b07c6c50dde09d4b8719754c27ddc96，CoverTitle也统一。代码问题交控制端CODE返修，不绕过预检。禁止手改YAML。
-先运行PRE-1b及AI176交付的真实EditorAPI只读复核及dryrun，核对171原始批准行和逐行覆盖，真实去重计数由Editor输出并解释；实例/Prefab传播重复及任何漂移逐条报告，不拓scope。批准CSV原SHA及真实授权必须留证。若已有同名材质核对归属/内容而非覆盖未知成果。
-备份到DevTools/Fonts/backup/<TaskID>/六份scene/prefab+meta、旧新字体/材质指纹、非目标序列化字段和新增清单。单样例任选1条FromSourceHan → 验证font/material/atlas/风格与非目标字段 → 回退基线并确认相同（回退包含测试新增资产归属） → 全量按审定清单分批执行，每批SupervisionCheckpoint、scope、备份和停止检查，保留失败现场/事务而非半写假通过。
-材质copy旧Shader/颜色/outline/underlay，只有_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static；配对m_fontAsset+m_sharedMaterial。5Prefab源可改这两字段，其他Prefab源仍禁改；30材质override映射内按本授权，其他保留，140wrap保留。
-机器验收：171重预览（漂移解释）、Scene/Prefab全atlas匹配、非目标字段前后一致、Console无新增Error/Exception、五视图中文/标题截图、Play与Build前后StaticSHA不变、DynamicFallback清空、Edit clean。Build列表不改、manifest始终PENDING_REVIEW；若已知旧warning明确基线，不称全Console历史0。CoverTitle同镜头前后单列截图和宽度/换行测量，人工后置。
-保留旧fonts/materials、fallback全局、布局/Transform/文案/字号/颜色/sorting/交互、滚轮/Modal、所有无关override。范围外必改先差异停该项。SUCCEEDED + PENDING_USER，不ApproveGate，不Git提交/推送或字体guard哈希放行。机器通过不能等同最终字体人工签收。
-
-> SUPERVISED RECOVERY at 2026-09-24T00:54:21.7469122+08:00: {"record":{"at":"2026-09-24T00:54:21.7094305+08:00","problemKey":"VERIFICATION","plan":"采用AI176已验证的新身份/override判定：只有before/after/继承等价才归并，schema3固定全171行审计、不同目标实例优先于源、未批准传播拒绝及override结构回退。新attempt-2-prefab-r1目录和新样例/全量事务重新真实Editor预检；实际executeAllowed后单FromSourceHan样例回退，再逐批全量。保留原VERIFICATION问题键与失败史，不改CSV、不重用旧63项计划。","evidence":"AI176 SUCCEEDED/VERIFIED；实际verify-all-AI-000176.jsonl两次有理由Final各2/2通过，真实Unity6/TMP DLL编译。控制台源码及scene/CSV哈希核对全通过见ai176-source-baseline-check.json；源码ResolveCanonicalIdentity/传播防护/实例优先/回退及夹具已核。本轮ENGINE实际idle/completed，见ai176-complete-app-evidence.json。真实Editor新计数/写入仍待执行，不宣称已迁移。","sessionId":"8c12e025cc374865a99cca4042cda1ac"},"taskId":"AI-000170"}
-
-> SUPERVISED PauseSupervision at 2026-09-24T01:08:44.3094112+08:00: {"userDecision":"","reason":"AI170 attempt2真实Editor预检发现FridgeScrollLab范围外60项继承字体传播；当前171行批准未涵盖该Lab。全scope无独立可执行任务，保留失败与恢复史，暂停等待精确增量方案的用户决定，不消耗盲重试额度。"}
-## AI-000177 | [CODE] [PRE-1c-LAB60] Lab60批准增量的字体迁移工具与双场景事务
-
-- 序号：177
-- 提交时间：2026-09-24T09:31:16.7514223+08:00
-- 模块 ID：PRE-1c-LAB60
-- 初始状态：QUEUED
-- 前置依赖：AI-000176, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1c-LAB60 [CODE] 批准补充映射与双场景迁移事务
-
-目标：扩充现有TK-LOC-03，使原171行及用户新增批准的Lab60行在同一受控迁移事务内完整覆盖，公开API可供AI170执行预检、单样例/回退和分批迁移。本任务仅源码、离线干跑；生产资源迁移0。
-
-## 必要入口
-
-先读 `.ai-workspace/CORE.md`、`.ai-workspace/workers/CODE.md`、`.ai-workspace/SUPERVISED.md`、`.ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md`；原批准见 `.ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md`。项目文档页首及Fonts模块、`.ai-workspace/toolkit/LOC.md` TK-LOC-03、`.ai-workspace/pitfalls/CODE.md` P-036/P-047、`.ai-workspace/ENGINEERING_CONVENTIONS.md` C1～C4相关边界按需读取。已成功AI176报告为 `.ai-workspace/outputs/U1-PRE-R1/AI-000176/AI-000176_PRE-1c-PREFAB-R1_修复报告.md`。新阻断真实计划在 `.ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-2-prefab-r1/approved-plan.json`；精确草案、CSV及只读资产交叉核对在 `.ai-workspace/outputs/control/U1-PRE-R1-20260923/` 的 PRE1_Lab60_增量迁移审批草案.md、PRE1_Lab60_增量迁移草案.csv、ai170-lab-scope-inspection.json。
-
-## 代码改动清单
-
-| 文件 | 处置 | 改动要点/归属层 | 工具层三问结论 |
-| --- | --- | --- | --- |
-| Assets/Editor/Fonts/ShortCycleFontSwapTool.cs | 扩充 | Editor字体工具；独立补充映射及批准绑定，231行/7资源事务、备份、预检、传播守卫、公开执行/恢复 | TK-LOC-03已有；在原入口扩充；不新增平行迁移器 |
-| DevTools/Fonts/FontSwapDryRunHarness.cs、DevTools/Fonts/Test-FontSwap.ps1及必要既有Fonts夹具 | 扩充 | 离线回归；双场景、原/补输入哈希和覆盖、回退、未批准传播拒绝 | 复用现有runner及真实Unity6/TMP DLL，不新建测试框架 |
-| DevTools/Fonts/README.md、.ai-workspace/toolkit/LOC.md、CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md | 修改相关段 | 接口、覆盖计数、恢复调用及尚待Editor验证 | 维护现有入口，不改完整复核日期 |
-
-## 实施与验收
-
-1. 原CSV SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B、补充CSV SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579 原样绑定。补表列与原表不同，按实际列解析、核身份和before/after；历史PENDING_USER由真实批准旁证覆盖，不写回CSV。若内部需要归一化，必须从两个不可变输入生成且逐行可溯源，不复制成可任意编辑的第三批准源。
-2. 允许范围精确为原6资源+Assets/Scenes/ToolTests/FridgeScrollLab.unity的60项。总raw/row coverage=231，unique由真实对象决定；不能仅删除171常量或关闭未批准传播检查。原171模式若保留，不得默认吸收Lab；不带增量授权/哈希不符/多一行/缺一行/未知路径/源对象或before引用不符均拒绝。新材质仍仅原3份。
-3. 固定事务覆盖全部批准行/来源/源关系/override结构及两场景和5Prefab的文件与非目标指纹，备份7资源及meta。保留AI176身份等价合并、实例先于源、逆序回退、逐批未完成/已完成状态检查。两场景暂开与恢复的Editor生命周期安全需真实源码支持；不得保存或覆盖其它已脏场景。单样例只写1个真实FromSourceHan TMP，源传播不可扩散样例。
-4. 原60项fontInherited=true、materialOverridden=true、材质SourceHan GUID53ffd732c8bc2034f93d5a714c25eda2/fileID -5877652104868683785。回退恢复继承和对应material override，不仅写回相同数值。保留不属于本事务的新资产/改动，回退幂等且失败留证，旧事务版本明确兼容或安全拒绝，不复用AI170旧事务。
-5. 有意义回归：231覆盖与去重追溯；增量缺授权/哈希及路径漂移拒绝；批准60之外传播仍拒绝；两场景+源传播的实例优先/分批恢复；样例1对象且完全回退；第二场景写入中失败后全事务回退、重复回退、非目标/外部漂移拒绝；原171输入未变；7资产+meta进入备份且恢复完整。不降低已有断言，不以只搜源码代替事务核心验证。
-6. 正常PowerShell7运行窄回归后一次Fonts Final；必要第二次说明新原因。编译使用真实6000.3.24f1/TMP DLL。报告真实runner exit、覆盖和材质参数断言；交付ENGINE可直接调用的公开API/参数、计划计数解释、两个场景备份/重入/回退与旧事务处置，禁止反射private、伪造executeAllowed或手改事务。
-
-固定工程D:/GameProject/Eat-What；exec_command显式shell为 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，直接调用queue，不嵌套Windows5、不降低ExecutionPolicy。依赖AI176/AI169（均已成功），不得反依赖失败AI170。持有unity-project/font-assets/workflow-devtools，领取真实票据后每批写入前checkpoint、长任务续租。CODE不调用Unity Editor、不写scene/prefab/asset/material/meta、字体manifest、CSV或生产备份，不执行正式迁移/配表。已有修改全部保留，不Git。
-
-产物 `.ai-workspace/outputs/U1-PRE-R1/<TaskID>/`，源码SHA/测试/交接与真实可观测用量落盘，provider不可得写null原因。报告六要素，说明纯工具通过不等于Editor/画面通过；无需新增人工门。Complete/Fail返回supervisorHandoff原样发回控制台并结束。AI170只在控制台审核本任务后正式Recover，既有失败与恢复历史保留。
-
-> SUPERVISED POLICY at 2026-09-24T09:32:59.1011027+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准Lab60增量；修改既有Editor字体工具，需共享Unity/字体/工作流测试资源锁。","updatedAt":"2026-09-24T09:32:58.9876509+08:00"},"taskId":"AI-000177"}
-> Instruction revision for AI-000170 at 2026-09-24T09:32:59.2336059+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## 当前批准、依赖与恢复
-2026-09-24用户已批准Lab60精确增量并继续监管。先读 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md、.ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md。原171行批准有效，本次新增60行只限FridgeScrollLab指定标签；不是全工程迁移或最终人工签收。
-新增CODE前置AI177（PRE-1c-LAB60），在AI176基础上补充映射/231行覆盖/7资源事务备份/回退。只有AI177真实SUCCEEDED且控制台审核、正式Recover/新票据后才能执行；不Reset/重用旧票据或旧事务。执行前读AI177实际报告和公开API移交，其离线结果不能代签Editor预检。
-使用新输出 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-3-lab60/，样例与全量分别新事务/新备份；后续恢复继续另开attempt，不覆盖旧输出。
-
-## 已核历史
-AI170 attempt1的8组CANONICAL_CONFLICT已由AI176修复。attempt2真实Editor为171行/141写入项/30源覆盖行，executeAllowed=false原因是60条UNAPPROVED_PREFAB_PROPAGATION；两轮均未Begin、未生产写入、未创建三份材质。现在补充批准后须重新真实预检，不沿用63/141/171作为新unique数。
-保留两条错误、四条issue及第1条恢复；当前ProblemKey=pre1_unapproved_fridgeslot_lab_propagation，原VERIFICATION恢复史不改。旧目录 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-2-prefab-r1/、.ai-workspace/outputs/U1-PRE-R1/AI-000170/approved-plan-before.json 和失败报告均保留。
-历史PS7内误套Windows5的票据指纹问题已解决，绝不复用此启动方式。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，其内直接 & ./.ai-workspace/queue.ps1；不嵌套powershell.exe、不降低ExecutionPolicy。
-
-## 必读与目标
-.ai-workspace/CORE.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/SUPERVISED.md、.ai-workspace/UNITY_SCENE_CLEANUP.md；.ai-workspace/toolkit/LOC.md TK-LOC-03及字体/Editor坑；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4：现有世界Sprite/MouseInteract架构、层级与资源引用保持。读CODEBASE_MAP.md和项目整体阅读理解与推进基线_2026-08-14.md页首/Fonts/空间模块。工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1；每次MCP使用前发现选择实例并核Application.dataPath/version、Editor/脏场景/编译/Console。
-
-## 用户授权表
-| 路径 | 允许范围 | 备份及保持 |
-| --- | --- | --- |
-| Assets/Scenes/Cooking/ShortCycle_P0P1.unity | 原CSV按对象路径+组件序号锁定的161个TMP，配对m_fontAsset/m_sharedMaterial | 原171 CSV SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B不改；scene/meta进入新事务备份 |
-| Assets/Prefabs/Cooking/ShortCycle/GridPieces/CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab | 各2个TMP相同两字段，仅原批准10行 | 五Prefab/meta备份，其它Prefab源不写 |
-| Assets/Scenes/ToolTests/FridgeScrollLab.unity | Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30下BadgeLabel/NameLabel组件0，共60，字体+配对材质及必要override | 补充CSV SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579；Lab/meta备份，原font继承和material override完整回退 |
-| Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta | 原已批准3份材质；AssetDatabase建立Materials目录，复制对应原材质风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static | 字体/材质指纹、新资产清单归属；同名未知资产不覆盖；Lab复用FromSourceHan，不新增第4份 |
-
-两个原始输入具体路径见上述批准文件；独立解析并绑定批准，不改CSV内历史PROPOSED_ONLY/PENDING_USER。总raw及逐行coverage=231（171+60），uniqueEntryCount由真实Editor输出并解释每行源/实例覆盖。Static GUID=9b07c6c50dde09d4b8719754c27ddc96；CoverTitle可切Static但需单列字形/宽度/换行对照。Lab原font GUID75909fc3d0fa2c94baa5706654d37655继承，material GUID53ffd732c8bc2034f93d5a714c25eda2/fileID -5877652104868683785是override，配对改至Static+FromSourceHan。原140wrap保留，30材质override仅映射内可变。
-7资源及meta、旧新字体材质指纹、非目标字段、原override结构和新增资产清单统一在DevTools/Fonts/backup/AI-000170/本恢复批次由公开API备份；不覆盖任何旧事务/备份。
-
-## 真实执行顺序
-1. 只读预检所有231行/7资产、批准哈希、before/after、实际身份/源关系、未批准传播、非目标指纹，输出完整reasons和executeAllowed。只有真实通过才Begin；不反射private/伪造executeAllowed/手改事务或YAML。任何新增其它场景/对象/字段受影响，列差异停止；不可依据本增量再拓范围。
-2. 单FromSourceHan样例明确只改1个真实TMP，不靠Prefab源扩散。验证字体、材质atlas和旧风格/非目标字段，执行公开Rollback，再实核引用及继承/override结构、7资源/新增资产归属，确认完整回到保存基线；然后另起全量事务。
-3. 全量使用公开BeginApprovedMigration/ApplyApprovedBatch/FinalizeApprovedMigration及AI177批准补充映射入口。按真实计划要求实例先于Prefab源，每批前checkpoint、scope/备份/停止检查，批后全行待办/已完成/非目标/外部漂移检查；批次恢复幂等，失败留现场与日志并按公开API可靠回退，不部分写入后假报成功。
-4. 所有暂开场景恢复原Editor布局/活动场景，不能覆盖用户未知未保存成果；流水线自身可归属的临时dirty按清理规范自主恢复，不以MarkSceneClean掩盖。
-
-## 机器验收与保持
-231行重预览与覆盖/去重解释；两个场景和五Prefab atlas配对、原风格和非目标字段/override一致；新Console Error/Exception=0，最终Edit clean。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行测量保留；Lab额外文字可见、双向滚轮与上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，manifest始终PENDING_REVIEW，不改Build列表。旧warning与当前新增异常区分记录，不称全部历史Console为0。
-保护AI169保存布局：P0Left=-9.6、Escape/Return viewport=(.06,.08)、唯一ClueBoard持续视觉、P1构图。读 .ai-workspace/outputs/U1-PRE-R1/AI-000169/AI-000169_FIX-T5-R1b_完成报告.md、verification-summary.json、geometry.csv。当前迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，执行前重读，漂移解释不盲还原。
-LayoutAudit旧fixT5FourMarkers仍以-12.8误报，已交AI171修源码/AI172实测；本卡不回滚布局、不静默取消有效断言，不将此已知诊断写成全绿。
-保留旧字体/材质、全局fallback、所有布局/Transform/文本/字号/颜色/sorting/Renderer/交互/滚轮/Modal和无关override。字体工具代码问题交控制端CODE修复，不绕过检查。任何实际平台拒绝留批准及原文，不能误称用户未批、不能换通道绕过。
-六要素报告、真实工具/返回体/阶段计量落本attempt，provider不可得null原因；成功SUCCEEDED+PENDING_USER，不代签字体或构图人审、不放行字体guard哈希、不Git提交/推送/合并、不清理迁移副本。Complete/Fail原样handoff回控制台后结束，后继AI171→AI172由控制台派发。
-
-> Dependency correction for AI-000170 at 2026-09-24T09:32:59.4014933+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177
-
-> SUPERVISED EXTEND at 2026-09-24T09:32:59.4693710+08:00: {"reason":"用户批准Lab60增量草案并继续监管；单一CODE修复前置纳入当前session，不复跑成功任务。","taskIds":["AI-000177"]}
-
-> SUPERVISED ResumeSupervision at 2026-09-24T09:34:02.5160757+08:00: {"userDecision":"批准 Lab60 增量草案并继续监管？","reason":"Lab60精确范围已获用户批准，AI177前置及AI170新指令/依赖已落队；先工具后正式迁移。"}
-> Instruction revision for AI-000170 at 2026-09-24T09:58:15.5281392+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## AI177完成后的正式恢复接力（2026-09-24）
-
-AI177已SUCCEEDED/VERIFIED；控制台核3源码、2原始CSV、2场景及5Prefab共12哈希全匹配，三新材质仍不存在。真实verify-all-AI-000177.jsonl只有一次Fonts Final、两runner exit0；编译真实Unity6/TMP DLL，231合成覆盖与第二场景失败回退通过。证据 `.ai-workspace/outputs/control/U1-PRE-R1-20260923/ai177-source-baseline-check.json`；报告 `.ai-workspace/outputs/U1-PRE-R1/AI-000177/AI-000177_PRE-1c-LAB60_完成报告.md`。不重跑CODE前置；只恢复当前AI170的真实Editor段。
-
-必须调用AI177新增公开重载：`PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath)`；`BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)`。两个supplemental参数分别是 `.ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv` 和 `.ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md`。原无补表重载只保留171模式，不能误调后又将已批准Lab60报未批准。schema4、raw/row coverage231、approvedAssetPaths7，真实unique和executeAllowed仍待Editor证明。
-
-使用attempt-3-lab60中的独立sample/full事务路径。源码CreateBackup当前按taskId复用DevTools/Fonts/backup/AI-000170，已有资源只允许相同SHA复用、不同则拒绝，不提供任意backupRoot。每次Begin前先检查已有备份归属；全量Begin前将样例的7资源/meta与backup-manifest按精确清单保全到本任务独立样例快照，保存其SHA和与全量事务的对应关系，再允许更新当前manifest；不得无留档覆盖旧manifest、递归复制父目录到自身子目录、覆盖历史资源或用反射/private改备份路径。样例完整回退后若7资源基线不一致，停止并交回，不盲重建备份。
-
-## 当前批准、依赖与恢复
-2026-09-24用户已批准Lab60精确增量并继续监管。先读 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md、.ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md。原171行批准有效，本次新增60行只限FridgeScrollLab指定标签；不是全工程迁移或最终人工签收。
-新增CODE前置AI177（PRE-1c-LAB60），在AI176基础上补充映射/231行覆盖/7资源事务备份/回退。只有AI177真实SUCCEEDED且控制台审核、正式Recover/新票据后才能执行；不Reset/重用旧票据或旧事务。执行前读AI177实际报告和公开API移交，其离线结果不能代签Editor预检。
-使用新输出 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-3-lab60/，样例与全量分别新事务/新备份；后续恢复继续另开attempt，不覆盖旧输出。
-
-## 已核历史
-AI170 attempt1的8组CANONICAL_CONFLICT已由AI176修复。attempt2真实Editor为171行/141写入项/30源覆盖行，executeAllowed=false原因是60条UNAPPROVED_PREFAB_PROPAGATION；两轮均未Begin、未生产写入、未创建三份材质。现在补充批准后须重新真实预检，不沿用63/141/171作为新unique数。
-保留两条错误、四条issue及第1条恢复；当前ProblemKey=pre1_unapproved_fridgeslot_lab_propagation，原VERIFICATION恢复史不改。旧目录 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-2-prefab-r1/、.ai-workspace/outputs/U1-PRE-R1/AI-000170/approved-plan-before.json 和失败报告均保留。
-历史PS7内误套Windows5的票据指纹问题已解决，绝不复用此启动方式。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，其内直接 & ./.ai-workspace/queue.ps1；不嵌套powershell.exe、不降低ExecutionPolicy。
-
-## 必读与目标
-.ai-workspace/CORE.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/SUPERVISED.md、.ai-workspace/UNITY_SCENE_CLEANUP.md；.ai-workspace/toolkit/LOC.md TK-LOC-03及字体/Editor坑；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4：现有世界Sprite/MouseInteract架构、层级与资源引用保持。读CODEBASE_MAP.md和项目整体阅读理解与推进基线_2026-08-14.md页首/Fonts/空间模块。工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1；每次MCP使用前发现选择实例并核Application.dataPath/version、Editor/脏场景/编译/Console。
-
-## 用户授权表
-| 路径 | 允许范围 | 备份及保持 |
-| --- | --- | --- |
-| Assets/Scenes/Cooking/ShortCycle_P0P1.unity | 原CSV按对象路径+组件序号锁定的161个TMP，配对m_fontAsset/m_sharedMaterial | 原171 CSV SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B不改；scene/meta进入新事务备份 |
-| Assets/Prefabs/Cooking/ShortCycle/GridPieces/CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab | 各2个TMP相同两字段，仅原批准10行 | 五Prefab/meta备份，其它Prefab源不写 |
-| Assets/Scenes/ToolTests/FridgeScrollLab.unity | Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30下BadgeLabel/NameLabel组件0，共60，字体+配对材质及必要override | 补充CSV SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579；Lab/meta备份，原font继承和material override完整回退 |
-| Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta | 原已批准3份材质；AssetDatabase建立Materials目录，复制对应原材质风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static | 字体/材质指纹、新资产清单归属；同名未知资产不覆盖；Lab复用FromSourceHan，不新增第4份 |
-
-两个原始输入具体路径见上述批准文件；独立解析并绑定批准，不改CSV内历史PROPOSED_ONLY/PENDING_USER。总raw及逐行coverage=231（171+60），uniqueEntryCount由真实Editor输出并解释每行源/实例覆盖。Static GUID=9b07c6c50dde09d4b8719754c27ddc96；CoverTitle可切Static但需单列字形/宽度/换行对照。Lab原font GUID75909fc3d0fa2c94baa5706654d37655继承，material GUID53ffd732c8bc2034f93d5a714c25eda2/fileID -5877652104868683785是override，配对改至Static+FromSourceHan。原140wrap保留，30材质override仅映射内可变。
-7资源及meta、旧新字体材质指纹、非目标字段、原override结构和新增资产清单统一在DevTools/Fonts/backup/AI-000170/本恢复批次由公开API备份；不覆盖任何旧事务/备份。
-
-## 真实执行顺序
-1. 只读预检所有231行/7资产、批准哈希、before/after、实际身份/源关系、未批准传播、非目标指纹，输出完整reasons和executeAllowed。只有真实通过才Begin；不反射private/伪造executeAllowed/手改事务或YAML。任何新增其它场景/对象/字段受影响，列差异停止；不可依据本增量再拓范围。
-2. 单FromSourceHan样例明确只改1个真实TMP，不靠Prefab源扩散。验证字体、材质atlas和旧风格/非目标字段，执行公开Rollback，再实核引用及继承/override结构、7资源/新增资产归属，确认完整回到保存基线；然后另起全量事务。
-3. 全量使用公开BeginApprovedMigration/ApplyApprovedBatch/FinalizeApprovedMigration及AI177批准补充映射入口。按真实计划要求实例先于Prefab源，每批前checkpoint、scope/备份/停止检查，批后全行待办/已完成/非目标/外部漂移检查；批次恢复幂等，失败留现场与日志并按公开API可靠回退，不部分写入后假报成功。
-4. 所有暂开场景恢复原Editor布局/活动场景，不能覆盖用户未知未保存成果；流水线自身可归属的临时dirty按清理规范自主恢复，不以MarkSceneClean掩盖。
-
-## 机器验收与保持
-231行重预览与覆盖/去重解释；两个场景和五Prefab atlas配对、原风格和非目标字段/override一致；新Console Error/Exception=0，最终Edit clean。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行测量保留；Lab额外文字可见、双向滚轮与上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，manifest始终PENDING_REVIEW，不改Build列表。旧warning与当前新增异常区分记录，不称全部历史Console为0。
-保护AI169保存布局：P0Left=-9.6、Escape/Return viewport=(.06,.08)、唯一ClueBoard持续视觉、P1构图。读 .ai-workspace/outputs/U1-PRE-R1/AI-000169/AI-000169_FIX-T5-R1b_完成报告.md、verification-summary.json、geometry.csv。当前迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，执行前重读，漂移解释不盲还原。
-LayoutAudit旧fixT5FourMarkers仍以-12.8误报，已交AI171修源码/AI172实测；本卡不回滚布局、不静默取消有效断言，不将此已知诊断写成全绿。
-保留旧字体/材质、全局fallback、所有布局/Transform/文本/字号/颜色/sorting/Renderer/交互/滚轮/Modal和无关override。字体工具代码问题交控制端CODE修复，不绕过检查。任何实际平台拒绝留批准及原文，不能误称用户未批、不能换通道绕过。
-六要素报告、真实工具/返回体/阶段计量落本attempt，provider不可得null原因；成功SUCCEEDED+PENDING_USER，不代签字体或构图人审、不放行字体guard哈希、不Git提交/推送/合并、不清理迁移副本。Complete/Fail原样handoff回控制台后结束，后继AI171→AI172由控制台派发。
-
-> SUPERVISED RECOVERY at 2026-09-24T09:58:15.9264873+08:00: {"record":{"at":"2026-09-24T09:58:15.8958316+08:00","problemKey":"pre1_unapproved_fridgeslot_lab_propagation","plan":"用户已批准精确Lab60；采用AI177新增双映射/双批准公开重载及schema4，固定231行/7资源、双场景生命周期恢复和备份，仍拒绝增量外传播。新attempt-3-lab60独立样例与全量事务，先真实Editor预检，再单FromSourceHan完整回退后分批；按公开API保全每次备份manifest，不覆盖旧证据。","evidence":"AI177 SUCCEEDED/VERIFIED；实际唯一Fonts Final记录2/2 runner exit0，真实Unity6/TMP DLL与合成231行/7资源/第二场景失败回退通过。控制台核预检重载、补表双哈希/精确源关系、范围外传播及场景恢复/备份核心；3源码+2CSV+2场景+5Prefab共12哈希全匹配、3目标材质不存在，证据ai177-source-baseline-check.json。ENGINE本轮真实idle；用户Lab60批准见inputs/U1-PRE_Lab60_增量批准与接力_20260924.md。保留两条错误/原VERIFICATION恢复，不Reset，真实Editor预检和迁移未代签。","sessionId":"8c12e025cc374865a99cca4042cda1ac"},"taskId":"AI-000170"}
-## AI-000178 | [CODE] [PRE-1c-FINGERPRINT-R1] 非目标指纹跨Prefab与场景重载稳定性修复
-
-- 序号：178
-- 提交时间：2026-09-24T10:13:14.2824763+08:00
-- 模块 ID：PRE-1c-FINGERPRINT-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000177, AI-000176, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1c-FINGERPRINT-R1 [CODE] 非目标字段指纹跨加载稳定性修复
-
-目标：修复 TK-LOC-03 非目标指纹将 Unity 瞬态引用子 FileID 纳入比较的问题，同时继续拒绝真正的非目标字段或对象引用漂移。此任务是已批准字体迁移的必要源码修复，仅工具与离线验证；不执行生产迁移。
-
-## 入口与已证事实
-
-先读 CORE.md、workers/CODE.md、SUPERVISED.md、toolkit/LOC.md 的 TK-LOC-03、pitfalls/CODE.md P-036/P-047/P-048，项目两份文档页首及 Fonts 模块。批准边界见 inputs/U1-PRE_人工反馈与字体批准_20260923.md 和 inputs/U1-PRE_Lab60_增量批准与接力_20260924.md。AI177 完成报告及当前实际源码为接口事实，不重跑成功前置。
-
-AI170 attempt3 真实 Editor 预检 schema4：raw/rows=231、unique=201、批准资产7、executeAllowed=true、reasons=0，3材质计划 ready。公开 Begin 在创建备份/事务前报 NON_TARGET_FINGERPRINT_DRIFT。连续两计划的70个指纹变化集中于五Prefab各2标签和Lab60；引用没变。只读最小复现：连续两次 LoadPrefabContents，162项中变化只有 m_GameObject.m_FileID 和 m_renderer.m_FileID。完整证据在 `.ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-3-lab60/` 的 fingerprint-drift-evidence.json、两个计划、verification-summary.json 和阻断报告。
-
-控制台已读源码：ComputeNonTargetFingerprint 使用 iterator.Next(true) 递归所有节点；ObjectReference 本体经 StablePropertyValue/GlobalIdFor，但仍继续纳入瞬态子属性。GlobalIdFor 对非 persistent 对象返回空串，简单取消子节点后可能让不同场景/Prefab内容对象引用都变成空串，必须一起核查并保留引用身份保护，不能仅消掉误报。
-
-## 改动清单与实施要求
-
-| 文件 | 动作与边界 |
-| --- | --- |
-| Assets/Editor/Fonts/ShortCycleFontSwapTool.cs | 在现有指纹核心修复对象引用的稳定表达及遍历策略；复用既有工具，不新建平行迁移器 |
-| DevTools/Fonts/FontSwapDryRunHarness.cs、Test-FontSwap.ps1及必要既有夹具 | 通过生产共用的指纹归一化核心验证稳定性及真实漂移拒绝，真实Unity6/TMP DLL编译 |
-| DevTools/Fonts/README.md、toolkit/LOC.md、CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md | 同步指纹契约、诊断/公开验收入口及仍待Editor验证的状态；不改完整复核日期 |
-
-1. 对象引用作为原子值比较，不再递归记录其瞬态子 FileID。保留全部非目标字段、数组/嵌套数据；不可全局忽略名称含 FileID 的真实整数、整组 renderer 或所有对象引用。
-2. 持久化资源引用保留 GUID/稳定 localFileID 或有效 GlobalObjectId。场景对象、加载的 Prefab 内容引用必须有可解释且跨卸载/重载稳定的身份，区分同源Prefab不同实例、同名兄弟、同类型多个组件及引用变换；不能把非persistent一律空串。可优先有效 GlobalObjectId 并核真正稳定性，必要时使用明确归属的保存资产及结构身份；不能靠瞬态 instanceID。无法可靠解析或缺失引用应明确拒绝并说明，不能吞异常退为空值冒充通过。
-3. 只排除已批准 m_fontAsset/m_sharedMaterial 两字段及其表达，已有 override、全231行固定覆盖、源传播、文件SHA、批准输入校验仍保留。避免更改原字体/材质身份 helper 对其它调用的语义造成回归；检查全部使用处再改。旧计划不能直接复用为新算法指纹，交付明确的重预览/旧事务策略，不篡改旧证据。
-4. 回归必须验证：同一语义引用临时ID不同仍同指纹；不同资源/场景实例/组件引用产生不同指纹并拦截；null与有效/无法解析引用的处置；普通 m_FileID 整数、文本、颜色、字号、数组或嵌套非目标值变化仍拒绝；两个目标引用变化被准确排除。测试调用生产共用计算核心，不只赋值字符串或搜源码。保留原171模式、Lab60增量231/7资产、部分失败回退及幂等回退相关回归，不删有效断言。
-5. 正常PS7窄回归后一次Fonts Final，额外最终验证需记录原因；真实6000.3.24f1/TMP DLL编译。若离线无法真实模拟SerializedProperty，明确差距并交ENGINE公开只读诊断入口/精确操作，覆盖连续两次Prefab加载和暂开Lab后关闭/重开；禁止以离线夹具声称真实Editor已通过。
-6. 交接要求后续ENGINE先真实只读重复231行预览，逐行指纹一致且真实引用身份非空/有效；再 Begin、单 FromSourceHan TMP 写入/完整回退、全量分批及既有验收。不得通过反射private、修改计划/事务、伪造executeAllowed、关检查恢复。新输出 attempt-4-fingerprint-r1，旧attempt3保留。可以在原工具增加范围受限的公开只读诊断以便上述验收，不新增生产写入路径。
-
-## 执行与结算
-
-依赖AI177/AI176/AI169（均成功），不反依赖失败AI170。持有unity-project/font-assets/workflow-devtools；正式领取后按检查点/租约执行。AI170保持PAUSED_CIRCUIT，当前稳定ProblemKey=pre1_non_target_fingerprint_transient_fileid，三条错误/五条issue/总两次恢复保留，CODE任务成功后由控制台审核再正式Recover；不Reset、不改问题键清额度。
-
-固定 D:/GameProject/Eat-What；exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，直接调用queue.ps1，不嵌套Windows5或降低ExecutionPolicy。CODE不操作Unity Editor、不写scene/prefab/asset/material/meta、CSV、批准旁证、生产备份或manifest，不做Git提交推送。保留原140wrap/已批材质和空间布局，不扩大231行批准范围。
-
-产物 `.ai-workspace/outputs/U1-PRE-R1/<TaskID>/`，实际源码SHA/runner记录/公开移交、工具返回体和阶段用量落盘；provider token/model不可得null+原因。报告六要素，Complete/Fail返回的supervisorHandoff原样回控制台并结束，不自行恢复AI170。
-
-> SUPERVISED POLICY at 2026-09-24T10:14:16.1064100+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI170真实Editor已证明非目标指纹纳入瞬态FileID；必要CODE修复，保留引用身份保护与所有非目标守卫，不新增生产写入范围。","updatedAt":"2026-09-24T10:14:16.0430338+08:00"},"taskId":"AI-000178"}
-
-> Dependency correction for AI-000170 at 2026-09-24T10:14:16.3742496+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177, AI-000178
-
-> SUPERVISED EXTEND at 2026-09-24T10:14:16.4327845+08:00: {"taskIds":["AI-000178"],"reason":"已授权字体迁移必要修复：跨加载非目标指纹误报，由CODE修复生产共用指纹核心及引用身份保护；原AI170保留三条错误和两次恢复，成功审核后才恢复。"}
-> Instruction revision for AI-000170 at 2026-09-24T10:14:18.0981097+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## 当前停止与后续恢复约束（2026-09-24 10:05后，优先于下方历史接力）
-
-AI170 attempt3已真实FAIL/TASK、PAUSED_CIRCUIT；schema4实际预检raw/rows=231、unique=201、7资产、executeAllowed=true、reasons=0，但Begin因NON_TARGET_FINGERPRINT_DRIFT在备份/事务前拒绝，生产写入0。两计划70指纹变化；Prefab最小只读复现仅m_GameObject.m_FileID与m_renderer.m_FileID瞬态值改变。证据为attempt-3-lab60/fingerprint-drift-evidence.json及阻断报告，控制台ai170-attempt3-baseline-check.json复核12哈希全一致、三目标材质及备份/事务不存在。
-
-新依赖AI178 PRE-1c-FINGERPRINT-R1 CODE修复，卡inputs/U1-PRE-R1-20260923/PRE-1c-FINGERPRINT-R1_CODE.md。等待实际SUCCEEDED、控制台核源码/回归/公开移交后才正式Recover；目前未恢复。三条错误、五条issue、两次恢复全部保留；当前稳定ProblemKey=pre1_non_target_fingerprint_transient_fileid，旧问题键记录不改、不Reset。用户Lab60与原字体批准仍有效。
-
-后续恢复采用新attempt-4-fingerprint-r1目录及新sample/full事务，先正常Refresh/Compile确认AI178实际程序集。按双批准重载连续两次真实只读231行预览，包含Prefab卸载/重载及临时Lab关闭/重开，逐行对比非目标指纹，确认真实对象引用身份有效且未退化为空串，unique及reasons实测不硬填201。若不稳定或真漂移仍停止，不以删除指纹/过滤整组非目标字段绕过。通过后才Begin→单FromSourceHan真实TMP→完整回退→全量分批及原机器验收。下方attempt-3接力为历史：新执行一律使用attempt-4，不覆盖旧计划/证据。现有备份manifest保全规则、7资产/meta、Static/Dynamic、Lab/五视图/CoverTitle和非目标保持条款全部继续有效。
-
-## AI177完成后的正式恢复接力（2026-09-24）
-
-AI177已SUCCEEDED/VERIFIED；控制台核3源码、2原始CSV、2场景及5Prefab共12哈希全匹配，三新材质仍不存在。真实verify-all-AI-000177.jsonl只有一次Fonts Final、两runner exit0；编译真实Unity6/TMP DLL，231合成覆盖与第二场景失败回退通过。证据 `.ai-workspace/outputs/control/U1-PRE-R1-20260923/ai177-source-baseline-check.json`；报告 `.ai-workspace/outputs/U1-PRE-R1/AI-000177/AI-000177_PRE-1c-LAB60_完成报告.md`。不重跑CODE前置；只恢复当前AI170的真实Editor段。
-
-必须调用AI177新增公开重载：`PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath)`；`BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)`。两个supplemental参数分别是 `.ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv` 和 `.ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md`。原无补表重载只保留171模式，不能误调后又将已批准Lab60报未批准。schema4、raw/row coverage231、approvedAssetPaths7，真实unique和executeAllowed仍待Editor证明。
-
-使用attempt-3-lab60中的独立sample/full事务路径。源码CreateBackup当前按taskId复用DevTools/Fonts/backup/AI-000170，已有资源只允许相同SHA复用、不同则拒绝，不提供任意backupRoot。每次Begin前先检查已有备份归属；全量Begin前将样例的7资源/meta与backup-manifest按精确清单保全到本任务独立样例快照，保存其SHA和与全量事务的对应关系，再允许更新当前manifest；不得无留档覆盖旧manifest、递归复制父目录到自身子目录、覆盖历史资源或用反射/private改备份路径。样例完整回退后若7资源基线不一致，停止并交回，不盲重建备份。
-
-## 当前批准、依赖与恢复
-2026-09-24用户已批准Lab60精确增量并继续监管。先读 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md、.ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md。原171行批准有效，本次新增60行只限FridgeScrollLab指定标签；不是全工程迁移或最终人工签收。
-新增CODE前置AI177（PRE-1c-LAB60），在AI176基础上补充映射/231行覆盖/7资源事务备份/回退。只有AI177真实SUCCEEDED且控制台审核、正式Recover/新票据后才能执行；不Reset/重用旧票据或旧事务。执行前读AI177实际报告和公开API移交，其离线结果不能代签Editor预检。
-使用新输出 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-3-lab60/，样例与全量分别新事务/新备份；后续恢复继续另开attempt，不覆盖旧输出。
-
-## 已核历史
-AI170 attempt1的8组CANONICAL_CONFLICT已由AI176修复。attempt2真实Editor为171行/141写入项/30源覆盖行，executeAllowed=false原因是60条UNAPPROVED_PREFAB_PROPAGATION；两轮均未Begin、未生产写入、未创建三份材质。现在补充批准后须重新真实预检，不沿用63/141/171作为新unique数。
-保留两条错误、四条issue及第1条恢复；当前ProblemKey=pre1_unapproved_fridgeslot_lab_propagation，原VERIFICATION恢复史不改。旧目录 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-2-prefab-r1/、.ai-workspace/outputs/U1-PRE-R1/AI-000170/approved-plan-before.json 和失败报告均保留。
-历史PS7内误套Windows5的票据指纹问题已解决，绝不复用此启动方式。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，其内直接 & ./.ai-workspace/queue.ps1；不嵌套powershell.exe、不降低ExecutionPolicy。
-
-## 必读与目标
-.ai-workspace/CORE.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/SUPERVISED.md、.ai-workspace/UNITY_SCENE_CLEANUP.md；.ai-workspace/toolkit/LOC.md TK-LOC-03及字体/Editor坑；.ai-workspace/ENGINEERING_CONVENTIONS.md C1～C4：现有世界Sprite/MouseInteract架构、层级与资源引用保持。读CODEBASE_MAP.md和项目整体阅读理解与推进基线_2026-08-14.md页首/Fonts/空间模块。工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1；每次MCP使用前发现选择实例并核Application.dataPath/version、Editor/脏场景/编译/Console。
-
-## 用户授权表
-| 路径 | 允许范围 | 备份及保持 |
-| --- | --- | --- |
-| Assets/Scenes/Cooking/ShortCycle_P0P1.unity | 原CSV按对象路径+组件序号锁定的161个TMP，配对m_fontAsset/m_sharedMaterial | 原171 CSV SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B不改；scene/meta进入新事务备份 |
-| Assets/Prefabs/Cooking/ShortCycle/GridPieces/CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab | 各2个TMP相同两字段，仅原批准10行 | 五Prefab/meta备份，其它Prefab源不写 |
-| Assets/Scenes/ToolTests/FridgeScrollLab.unity | Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30下BadgeLabel/NameLabel组件0，共60，字体+配对材质及必要override | 补充CSV SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579；Lab/meta备份，原font继承和material override完整回退 |
-| Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta | 原已批准3份材质；AssetDatabase建立Materials目录，复制对应原材质风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static | 字体/材质指纹、新资产清单归属；同名未知资产不覆盖；Lab复用FromSourceHan，不新增第4份 |
-
-两个原始输入具体路径见上述批准文件；独立解析并绑定批准，不改CSV内历史PROPOSED_ONLY/PENDING_USER。总raw及逐行coverage=231（171+60），uniqueEntryCount由真实Editor输出并解释每行源/实例覆盖。Static GUID=9b07c6c50dde09d4b8719754c27ddc96；CoverTitle可切Static但需单列字形/宽度/换行对照。Lab原font GUID75909fc3d0fa2c94baa5706654d37655继承，material GUID53ffd732c8bc2034f93d5a714c25eda2/fileID -5877652104868683785是override，配对改至Static+FromSourceHan。原140wrap保留，30材质override仅映射内可变。
-7资源及meta、旧新字体材质指纹、非目标字段、原override结构和新增资产清单统一在DevTools/Fonts/backup/AI-000170/本恢复批次由公开API备份；不覆盖任何旧事务/备份。
-
-## 真实执行顺序
-1. 只读预检所有231行/7资产、批准哈希、before/after、实际身份/源关系、未批准传播、非目标指纹，输出完整reasons和executeAllowed。只有真实通过才Begin；不反射private/伪造executeAllowed/手改事务或YAML。任何新增其它场景/对象/字段受影响，列差异停止；不可依据本增量再拓范围。
-2. 单FromSourceHan样例明确只改1个真实TMP，不靠Prefab源扩散。验证字体、材质atlas和旧风格/非目标字段，执行公开Rollback，再实核引用及继承/override结构、7资源/新增资产归属，确认完整回到保存基线；然后另起全量事务。
-3. 全量使用公开BeginApprovedMigration/ApplyApprovedBatch/FinalizeApprovedMigration及AI177批准补充映射入口。按真实计划要求实例先于Prefab源，每批前checkpoint、scope/备份/停止检查，批后全行待办/已完成/非目标/外部漂移检查；批次恢复幂等，失败留现场与日志并按公开API可靠回退，不部分写入后假报成功。
-4. 所有暂开场景恢复原Editor布局/活动场景，不能覆盖用户未知未保存成果；流水线自身可归属的临时dirty按清理规范自主恢复，不以MarkSceneClean掩盖。
-
-## 机器验收与保持
-231行重预览与覆盖/去重解释；两个场景和五Prefab atlas配对、原风格和非目标字段/override一致；新Console Error/Exception=0，最终Edit clean。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行测量保留；Lab额外文字可见、双向滚轮与上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，manifest始终PENDING_REVIEW，不改Build列表。旧warning与当前新增异常区分记录，不称全部历史Console为0。
-保护AI169保存布局：P0Left=-9.6、Escape/Return viewport=(.06,.08)、唯一ClueBoard持续视觉、P1构图。读 .ai-workspace/outputs/U1-PRE-R1/AI-000169/AI-000169_FIX-T5-R1b_完成报告.md、verification-summary.json、geometry.csv。当前迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，执行前重读，漂移解释不盲还原。
-LayoutAudit旧fixT5FourMarkers仍以-12.8误报，已交AI171修源码/AI172实测；本卡不回滚布局、不静默取消有效断言，不将此已知诊断写成全绿。
-保留旧字体/材质、全局fallback、所有布局/Transform/文本/字号/颜色/sorting/Renderer/交互/滚轮/Modal和无关override。字体工具代码问题交控制端CODE修复，不绕过检查。任何实际平台拒绝留批准及原文，不能误称用户未批、不能换通道绕过。
-六要素报告、真实工具/返回体/阶段计量落本attempt，provider不可得null原因；成功SUCCEEDED+PENDING_USER，不代签字体或构图人审、不放行字体guard哈希、不Git提交/推送/合并、不清理迁移副本。Complete/Fail原样handoff回控制台后结束，后继AI171→AI172由控制台派发。
-> Instruction revision for AI-000170 at 2026-09-24T10:38:12.7412715+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## AI178完成后的正式恢复接力（2026-09-24）
-
-AI178已SUCCEEDED/VERIFIED（CODE范围）；控制台核唯一Fonts Final两runner exit0、真实Unity6/TMP DLL149504字节、3源码及9批准/生产输入共12哈希一致、三新材质和备份不存在。已核生产共用归一化核心、引用原子遍历、持久/本地结构身份、缺失引用拒绝、schema5/v2兼容门及双轮只读诊断；实际SerializedProperty仍待本卡验收，不以离线成功代签。报告/公开移交位于 .ai-workspace/outputs/U1-PRE-R1/AI-000178/，控制端证据 ai178-source-baseline-check.json。
-
-本卡优先于AI178 ENGINE-handoff.md的示例启动命令：复用当前主Editor并通过MCP调用公开C# API；不得在已打开的D:/GameProject/Eat-What上再起batchmode，不停止当前Editor或共享MCP服务。不得照示例自动“保存用户工作”。以下场景关闭/重开仅在逐场景确认clean、保存恢复点/内存修改归属和当前加载布局后执行；未知用户dirty不保存、不丢弃。
-
-## 原失败与新执行目录
-
-原AI170三条错误/五条issue/总两次恢复保留，不Reset：attempt1归并冲突已修；attempt2未批准Lab60传播已由用户精确批准和AI177扩充解决；attempt3真实schema4预检231行/201写入项/7资产、executeAllowed=true，但Begin因瞬态FileID非目标指纹漂移在备份/事务前拒绝，生产写入0。当前稳定ProblemKey=pre1_non_target_fingerprint_transient_fileid。旧目录和计划/报告全部保留。
-
-只有正式Recover/新票据后执行；当前卡不自行授权领取。新输出 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-4-fingerprint-r1/，sample/full均为新事务路径。新计划/事务schemaVersion=5、nonTargetFingerprintVersion=2；旧schema1～4不可续跑，不能改旧计划/事务版本绕过。真实unique由Editor给出并解释，不能用合成231或旧201代签。
-
-## 必读、宿主与边界
-
-先读 .ai-workspace/CORE.md、workers/ENGINE_MCP.md、SUPERVISED.md、UNITY_SCENE_CLEANUP.md、toolkit/LOC.md TK-LOC-03及字体/Editor坑；ENGINEERING_CONVENTIONS.md C1～C4。读两份项目文档页首及Fonts/空间模块。本卡与AI178的ENGINE-handoff.md共同使用，冲突以本卡的主Editor/场景保护及用户授权为准。
-
-工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1。每次MCP使用前发现/选择实例并核Application.dataPath/version、Edit/Play/Compile、各loaded场景dirty和Console。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe；其内直接 & ./.ai-workspace/queue.ps1，不嵌套Windows5或降低ExecutionPolicy。先正常Refresh/Compile确认AI178实际程序集，不把旧DLL缺成员重报为本根因。
-
-## 真实批准与范围
-
-原批准旁证 .ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md，映射 .ai-workspace/outputs/control/U1-PRE-20260923/PRE1_字体材质迁移逐项草案.csv，SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B。
-Lab60旁证 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md，映射 .ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv，SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579。
-两CSV保持原样，历史PROPOSED_ONLY/PENDING_USER不是缺批准；批准不代表平台回执或最终人审。
-
-- Assets/Scenes/Cooking/ShortCycle_P0P1.unity：原CSV路径+组件序号锁定161 TMP。
-- Assets/Prefabs/Cooking/ShortCycle/GridPieces/下 CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab：各2 TMP。
-- Assets/Scenes/ToolTests/FridgeScrollLab.unity：Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30各BadgeLabel/NameLabel组件0，共60 TMP。font原继承、material原override，回退必须还原结构。
-- 总raw/逐行coverage231，7资源及meta备份；只改m_fontAsset与配对m_sharedMaterial及必要override。Static GUID9b07c6c50dde09d4b8719754c27ddc96；CoverTitle唯一源字体例外继续有效，单列字形/宽度/换行对比。
-- 新资产仅 Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta；Materials目录由AssetDatabase创建。复制原Shader/颜色/描边/Underlay风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static。Lab复用FromSourceHan，不加第4份；同名未知资产不覆盖。
-- 保留140wrap，旧30材质override仅映射内可变；其它Prefab/字段/文本/字号/颜色/Transform/布局/Renderer/sorting/交互/Build列表/全局fallback不变。批准范围外传播停止，不扩大工程迁移。
-
-## 真实执行顺序
-
-1. 记录加载场景、活动场景、dirty、保存恢复点、scene/meta及目标字体/材质SHA，保留CoverTitle迁移前同镜头证据。使用公开双映射重载 PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath) 生成全新schema5计划。真实检查231覆盖/7资源、身份/源传播/三材质/非目标指纹/理由和executeAllowed。
-2. 公开 DiagnoseApprovedNonTargetFingerprints(planPath, diagnosticPath) 要求两个批准场景均未loaded。先核所有要关闭的精确场景为clean且无用户未保存成果，再用Editor API暂开本任务拥有的空场景（需要时），仅关闭这两个目标场景，保留其它加载场景。记录原加载布局，try/finally恢复原活动场景和加载状态，清理仅属于本任务的临时空场景。不能SaveScene未知dirty或用MarkSceneClean掩盖。
-3. 调用上述公开诊断：五Prefab两次独立加载/卸载、两场景打开关闭两轮；success/stableAcrossReloads/referencesValid=true，rowCount231、approvedAssetCount7、unstableRowCount0，两轮逐行指纹与引用身份一致。引用身份必须有效且非空，不得把不同实例都归空串；核NULL/PERSISTENT/LOCAL_GAME_OBJECT/LOCAL_COMPONENT值与真实对象对应。对照本轮新计划逐行指纹；若不同解释并停止，不手改计划或删断言。核CSV/7资源/meta/SHA未变、Console无新增Error/Exception，并恢复主Editor原布局。恢复后Begin仍会再核现场。
-4. 只读诊断通过后，检查点CONTINUE才用公开 BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)。单FromSourceHan样例明确只改1个真实TMP（approvedRowIdentities.Length==1，不靠Prefab源扩散）。核字体/material/atlas、旧风格及非目标字段；公开RollbackApprovedMigration完整回退，并实核7资源/meta/原引用/继承和override结构、新增资产归属回到保存基线。
-5. CreateBackup按taskId复用DevTools/Fonts/backup/AI-000170；原资源仅同SHA复用，不提供任意backupRoot。全量Begin前将样例的7资源/meta、backup-manifest及字体材质指纹/新资产清单按精确清单保全到独立样例快照，记录SHA和事务对应关系，再更新当前manifest；不得无留档覆盖旧manifest/旧资源、递归复制父目录到自身子目录、反射private换路径。回退后不一致停止。
-6. 独立全量事务用公开Begin/ApplyApprovedBatch/FinalizeApprovedMigration。实例先于Prefab源，每批checkpoint、scope/备份/停止检查，批后全231行待办/已完成/非目标/外部漂移检查。失败留现场与日志，只有公开API可靠回退；不得伪造executeAllowed、改CSV、手写事务或手改YAML。范围/引用真实变化仍必须拦截。
-
-## 机器验收与保持
-
-完成231行实际引用/atlas配对重审、去重解释、非目标与override一致性。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行对照，Lab文字可见/双向滚轮/上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，字体manifest始终PENDING_REVIEW，不改Build列表。旧warning与本轮新错误分开记录；最终单目标正常场景Edit clean、Console无新增Error/Exception。所有临时资源/场景恢复按清理规范，不覆盖未知用户修改。
-
-保护AI169布局：P0Left=-9.6，Escape/Return viewport(.06,.08)，唯一ClueBoard持续视觉及P1构图；AI169报告/verification-summary/geometry.csv为保存结果。迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，实际执行重读；漂移不盲还原。LayoutAudit旧-12.8断言误报已交AI171修源码/172复验，不回滚布局或误报整个审计全绿。
-
-实际平台拒绝保留原文和已有批准，不反复索要同一批准、不换通道绕过。源码问题交控制端CODE，不在ENGINE临时改工具。六要素报告、真实可观测工具/返回体/阶段用量落本attempt；provider不可得null原因。成功SUCCEEDED+PENDING_USER，不代签字体/构图，不放行font guard哈希，不Git提交/推送/合并，不清迁移副本或处理配表。Complete/Fail原样handoff回控制台并结束，后继171/172由控制台派发。
-
-> SUPERVISED RECOVERY at 2026-09-24T10:38:13.1786989+08:00: {"record":{"at":"2026-09-24T10:38:13.1436368+08:00","problemKey":"pre1_non_target_fingerprint_transient_fileid","plan":"采用AI178已验证的指纹v2：对象引用原子遍历，持久GlobalObjectId和本地资产/兄弟路径/组件槽位稳定身份，缺失引用拒绝；全新schema5计划和attempt4，先现主Editor公开双轮重载诊断，逐行231指纹/引用真实稳定后才Begin、单样例完整回退与全量分批。原目标/非目标/传播/文件守卫保留，不复用旧计划。","evidence":"AI178已SUCCEEDED；实际唯一Fonts Final两runner exit0，真实Unity6/TMP DLL编译149504字节；控制台读生产归一化/对象原子遍历/稳定身份及guard核心，7新增守卫与原171/Lab60/回退测试通过。3源码及9输入/生产资源共12SHA匹配，3目标材质及备份不存在，见ai178-source-baseline-check.json。ENGINE本轮真实idle，读回APP证据ai178-complete-app-evidence.json；真实Editor稳定性仍待验证，不代签。","sessionId":"8c12e025cc374865a99cca4042cda1ac"},"taskId":"AI-000170"}
-## AI-000179 | [CODE] [PRE-1c-PREFAB-REFERENCE-R1] PRE-1c内部Prefab引用稳定身份兼容修复
-
-- 序号：179
-- 提交时间：2026-09-24T11:04:24.4952815+08:00
-- 模块 ID：PRE-1c-PREFAB-REFERENCE-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000178, AI-000177, AI-000176, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1c-PREFAB-REFERENCE-R1 [CODE] 内部 Prefab 引用的稳定指纹兼容修复
-
-目标：修复 AI170 attempt4 在真实 Unity 6000.3.24f1 读取 m_PrefabInstance 时的 UNRESOLVED_OBJECT_REFERENCE，保留全部真实非目标字段及引用漂移检查。仅现有工具源码、测试与说明；不执行生产迁移，也不重跑成功前置。
-
-## 必读与事实
-
-读取 CORE.md、workers/CODE.md、SUPERVISED.md、toolkit/LOC.md TK-LOC-03、pitfalls/CODE.md P-036/P-047/P-048，两份项目文档页首及 Fonts 模块。原171与Lab60批准仍有效，精确范围见 inputs/U1-PRE_人工反馈与字体批准_20260923.md 和 inputs/U1-PRE_Lab60_增量批准与接力_20260924.md。先核实际 Git 与源码，不覆盖并行/用户改动。
-
-AI178已SUCCEEDED/VERIFIED（CODE范围），schema5/nonTargetFingerprintVersion2。真实AI170 attempt4在 Preview / ReadApprovedBindings / ComputeNonTargetFingerprint / DescribeObjectReference 处报：
-UNRESOLVED_OBJECT_REFERENCE|unsupported_nonpersistent_type|m_PrefabInstance|UnityEngine.Object
-已加载目标场景及按任务卡暂关两目标场景两种状态都在计划、备份和事务创建前拒绝；ENGINE恢复单独ShortCycle_P0P1活动场景、Edit clean、Console0。控制台复核12源码/输入/生产哈希及两场景meta全一致，三材质和备份均不存在，生产写入0。
-
-证据目录 outputs/control/U1-PRE-R1-20260923：
-- ai170-attempt4-execution-evidence.json：真实执行工具与原失败，attempt4未产出独立报告，不能用旧attempt1的verification-summary冒充。
-- ai170-attempt4-controller-probe.json：控制台发现/核实MCP路径版本和现有clean场景后，只读枚举对象引用，不加载/关闭/保存场景、不改字段。
-- ai170-attempt4-baseline-check.json：本轮磁盘与Git状态。
-
-只读探针在当前整场景232个TMP中发现191个该内部引用（不是新增批准范围）：EditorUtility.IsPersistent(value)=false，但 GlobalObjectId.GetGlobalObjectIdSlow(value) 可返回有效保存身份，例如 reference=GlobalObjectId_V1-2-7a0c3d3c3003f5449819f0e57a50a528-1661337093-0；对应owner末尾targetPrefabId为1661337093。另两实例内部引用targetObjectId分别1935786674、1306828876。此证据证明当前一轮可读，不证明跨重载稳定。不得把232/191作为迁移计数，仍231批准行/7资源。
-
-当前代码只在IsPersistent分支取GlobalObjectId；非persistent仅接受GameObject或Component，从而拒绝Unity内部PrefabInstance对象。检查整个描述/归一化/所有调用链，不仅消除一条异常。
-
-## 改动与验收
-
-允许改现有 Assets/Editor/Fonts/ShortCycleFontSwapTool.cs、DevTools/Fonts/FontSwapDryRunHarness.cs、Test-FontSwap.ps1及必要既有夹具；同步 DevTools/Fonts/README.md、toolkit/LOC.md、两份项目文档相关说明。不得修改批准CSV、生产scene/prefab/asset/material/meta、生产备份或manifest、队列实现/runtime。不新增平行迁移器。
-
-1. 为合法内部Prefab引用提供可解释稳定身份。可对非persistent但具有真实已保存GlobalObjectId的对象先做严格有效性及归属核验，再保留现有层级/组件结构fallback；具体设计以完整源码核实为准。仅TryParse成功不等于有效，必须拒绝零/缺失GUID、无有效类型/目标、与拥有资产或Prefab实例关系不符等身份。不能使用瞬态instanceID、非persistent一律空串、全局忽略FileID或直接跳过m_PrefabInstance。
-2. 核对m_PrefabInstance、m_CorrespondingSourceObject、m_PrefabAsset及普通对象引用的边界。无支持证据的未知Unity内部类型、无可靠身份的引用应明确失败关闭，不能吞异常变null。不同保存资源、同源不同实例、同名兄弟、多个同类型组件和真实Prefab归属变更仍须不同指纹。不要无依据放宽所有UnityEngine.Object。
-3. 回归调用生产共用身份/指纹核心，包含当前真实内部引用形态：同一有效保存身份临时ID不同一致；不同Prefab实例/源关系/资产GUID不同；零/伪有效ID及归属不符拒绝；null/缺失/未知类型保护。保留原对象原子遍历、普通m_FileID整数/文本/颜色/字号/数组/嵌套变化拒绝、两目标字段精确排除、171与Lab60/231/7资源/源传播/完整及幂等回退的有效断言。增加公共诊断可观测字段须限于真实引用身份与归属，不关闭检查。
-4. 身份契约变化时明确计划/事务版本及旧计划失效策略；不得继续旧schema计划或手改事务。离线不能模拟真实SerializedProperty时如实交接，不用夹具代签Editor。正常PS7窄测后一次Fonts Final，额外Final需理由；实际Unity6/TMP DLL编译；生产写入0。
-5. ENGINE移交必须使用现主Editor/MCP公开API，禁止在已打开的主工程再启动batch、不停止共享Editor/MCP、不自动保存用户工作。后继先核现有加载/活动/dirty/恢复点，仅clean目标场景可按归属暂关，必要时任务所有的空场景，try/finally恢复原布局；未知用户dirty不得保存/丢弃。双映射真实231行预览后，通过公开DiagnoseApprovedNonTargetFingerprints真实两次重载，每轮覆盖231行/7资源，逐行指纹一致、引用有效非空且0不稳定，再Begin/单FromSourceHan完整回退/全量分批。unique数由Editor实测，不硬填201。
-6. 新ENGINE输出 attempt-5-prefab-reference-r1，独立样例/全量事务，旧失败目录不覆盖；7资源/meta精确备份保全、样例后备份manifest归档及原Play/Build/Static SHA/Dynamic清空/五视图/CoverTitle/Lab滚轮/clean/Console条款不变。新增工具不能绕过反射private、executeAllowed、CSV、批准边界或平台许可。
-
-## 编排与恢复预算
-
-依赖AI178/177/176/169（均成功），不得依赖失败AI170。独占unity-project/font-assets/workflow-devtools。正式领取后按检查点/续租执行，Complete/Fail的supervisorHandoff原样回控制台，不自行恢复170。
-
-AI170本轮Fail漏传ProblemKey，正式记录为EXECUTION；原pre1_non_target_fingerprint_transient_fileid及其它全部错误/恢复记录原样保留。控制台将本次内部Prefab引用兼容缺口与已有指纹稳定身份修复保守合并计数：该根因家族已有1次控制台恢复，总恢复3次；待本任务实际成功审核后方可考虑第2次家族恢复/总第4次。保留当前队列原key，禁止以改key/Reset/新建迁移任务清预算。后继若同类失败须显式稳定ProblemKey并由控制台连同EXECUTION别名合并核账，家族3次/总6次上限不变。本任务不改队列API来重写错误。
-
-固定工作区D:/GameProject/Eat-What；exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，直接queue.ps1，不嵌套Windows5/降低ExecutionPolicy。CODE不操作Unity Editor，不提交推送；保留140wrap、空间布局、所有非目标字段和原231行批准范围。报告六要素、源码SHA、实际runner和公开移交落 outputs/U1-PRE-R1/<TaskID>/；实际工具/返回体及阶段计量，provider token/model不可得null+原因。
-
-> SUPERVISED POLICY at 2026-09-24T11:04:54.9843274+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"已授权字体迁移的必要内部Prefab引用指纹修复；Assets源码可能触发Unity重载，保持共享Unity/字体/工具互斥","updatedAt":"2026-09-24T11:04:54.9249840+08:00"},"taskId":"AI-000179"}
-
-> Dependency correction for AI-000170 at 2026-09-24T11:04:55.2349080+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177, AI-000178, AI-000179
-
-> SUPERVISED EXTEND at 2026-09-24T11:04:55.3177259+08:00: {"reason":"监管范围内PRE-1c必要兼容修复；不增加迁移资产范围，不清错误或预算","taskIds":["AI-000179"]}
-> Instruction revision for AI-000170 at 2026-09-24T11:05:46.9379166+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## AI179修复等待与后继恢复约束（2026-09-24）
-
-AI170 attempt4已真实失败并恢复安全现场：Preview因m_PrefabInstance的UnityEngine.Object内部引用被DescribeObjectReference拒绝，未产计划/Begin/备份/生产写入。控制台独立只读核对有效保存GlobalObjectId，12原哈希+2场景meta一致。已新增AI179必要CODE修复作为依赖；保持PAUSED_CIRCUIT，等AI179真实成功及控制台核源码/测试/公开移交后才正式Recover，不能凭此卡重领。后继以AI179确认的实际schema/指纹版本创建全新计划，不续用旧schema1～5计划或旧事务。具体证据和卡见PRE-1c-PREFAB-REFERENCE-R1_CODE.md。
-
-AI178已SUCCEEDED/VERIFIED（CODE范围）；控制台核唯一Fonts Final两runner exit0、真实Unity6/TMP DLL149504字节、3源码及9批准/生产输入共12哈希一致、三新材质和备份不存在。已核生产共用归一化核心、引用原子遍历、持久/本地结构身份、缺失引用拒绝、schema5/v2兼容门及双轮只读诊断；实际SerializedProperty仍待本卡验收，不以离线成功代签。报告/公开移交位于 .ai-workspace/outputs/U1-PRE-R1/AI-000178/，控制端证据 ai178-source-baseline-check.json。
-
-本卡优先于AI178 ENGINE-handoff.md的示例启动命令：复用当前主Editor并通过MCP调用公开C# API；不得在已打开的D:/GameProject/Eat-What上再起batchmode，不停止当前Editor或共享MCP服务。不得照示例自动“保存用户工作”。以下场景关闭/重开仅在逐场景确认clean、保存恢复点/内存修改归属和当前加载布局后执行；未知用户dirty不保存、不丢弃。
-
-## 原失败与新执行目录
-
-原AI170四条错误/六条issue/总三次恢复保留，不Reset：attempt1归并冲突已修；attempt2未批准Lab60传播已由用户精确批准和AI177扩充解决；attempt3真实schema4预检231行/201写入项/7资产、executeAllowed=true，但Begin因瞬态FileID非目标指纹漂移在备份/事务前拒绝，生产写入0。本次Fail遗漏ProblemKey，当前正式key=EXECUTION；原pre1_non_target_fingerprint_transient_fileid恢复与本次内部Prefab引用缺口按同一稳定身份根因家族保守累计：家族已1次、总3次；下次恢复至多家族第2/总第4次。不得换key/Reset清预算，所有原始历史保留。同类后续Fail显式用pre1_non_target_fingerprint_transient_fileid，控制台仍合并EXECUTION别名核账。旧目录和计划/报告全部保留。
-
-只有正式Recover/新票据后执行；当前卡不自行授权领取。新输出 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-5-prefab-reference-r1/，sample/full均为新事务路径。新计划/事务使用AI179最终交付的实际版本；本轮旧schema1～5计划全部弃用并保留证据，不可续跑，不能改旧计划/事务版本绕过。真实unique由Editor给出并解释，不能用合成231或旧201代签。
-
-## 必读、宿主与边界
-
-先读 .ai-workspace/CORE.md、workers/ENGINE_MCP.md、SUPERVISED.md、UNITY_SCENE_CLEANUP.md、toolkit/LOC.md TK-LOC-03及字体/Editor坑；ENGINEERING_CONVENTIONS.md C1～C4。读两份项目文档页首及Fonts/空间模块。本卡与AI178的ENGINE-handoff.md共同使用，冲突以本卡的主Editor/场景保护及用户授权为准。
-
-工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1。每次MCP使用前发现/选择实例并核Application.dataPath/version、Edit/Play/Compile、各loaded场景dirty和Console。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe；其内直接 & ./.ai-workspace/queue.ps1，不嵌套Windows5或降低ExecutionPolicy。先正常Refresh/Compile确认AI179实际程序集，不把旧DLL缺成员重报为本根因。
-
-## 真实批准与范围
-
-原批准旁证 .ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md，映射 .ai-workspace/outputs/control/U1-PRE-20260923/PRE1_字体材质迁移逐项草案.csv，SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B。
-Lab60旁证 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md，映射 .ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv，SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579。
-两CSV保持原样，历史PROPOSED_ONLY/PENDING_USER不是缺批准；批准不代表平台回执或最终人审。
-
-- Assets/Scenes/Cooking/ShortCycle_P0P1.unity：原CSV路径+组件序号锁定161 TMP。
-- Assets/Prefabs/Cooking/ShortCycle/GridPieces/下 CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab：各2 TMP。
-- Assets/Scenes/ToolTests/FridgeScrollLab.unity：Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30各BadgeLabel/NameLabel组件0，共60 TMP。font原继承、material原override，回退必须还原结构。
-- 总raw/逐行coverage231，7资源及meta备份；只改m_fontAsset与配对m_sharedMaterial及必要override。Static GUID9b07c6c50dde09d4b8719754c27ddc96；CoverTitle唯一源字体例外继续有效，单列字形/宽度/换行对比。
-- 新资产仅 Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta；Materials目录由AssetDatabase创建。复制原Shader/颜色/描边/Underlay风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static。Lab复用FromSourceHan，不加第4份；同名未知资产不覆盖。
-- 保留140wrap，旧30材质override仅映射内可变；其它Prefab/字段/文本/字号/颜色/Transform/布局/Renderer/sorting/交互/Build列表/全局fallback不变。批准范围外传播停止，不扩大工程迁移。
-
-## 真实执行顺序
-
-1. 记录加载场景、活动场景、dirty、保存恢复点、scene/meta及目标字体/材质SHA，保留CoverTitle迁移前同镜头证据。使用公开双映射重载 PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath) 生成AI179实际版本的全新计划。真实检查231覆盖/7资源、身份/源传播/三材质/非目标指纹/理由和executeAllowed。
-2. 公开 DiagnoseApprovedNonTargetFingerprints(planPath, diagnosticPath) 要求两个批准场景均未loaded。先核所有要关闭的精确场景为clean且无用户未保存成果，再用Editor API暂开本任务拥有的空场景（需要时），仅关闭这两个目标场景，保留其它加载场景。记录原加载布局，try/finally恢复原活动场景和加载状态，清理仅属于本任务的临时空场景。不能SaveScene未知dirty或用MarkSceneClean掩盖。
-3. 调用上述公开诊断：五Prefab两次独立加载/卸载、两场景打开关闭两轮；success/stableAcrossReloads/referencesValid=true，rowCount231、approvedAssetCount7、unstableRowCount0，两轮逐行指纹与引用身份一致。引用身份必须有效且非空，不得把不同实例都归空串；核NULL、持久资源、本地对象/组件及新增内部Prefab引用身份与真实对象/保存资产/实例归属对应；不得空身份或忽略内部关系。对照本轮新计划逐行指纹；若不同解释并停止，不手改计划或删断言。核CSV/7资源/meta/SHA未变、Console无新增Error/Exception，并恢复主Editor原布局。恢复后Begin仍会再核现场。
-4. 只读诊断通过后，检查点CONTINUE才用公开 BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)。单FromSourceHan样例明确只改1个真实TMP（approvedRowIdentities.Length==1，不靠Prefab源扩散）。核字体/material/atlas、旧风格及非目标字段；公开RollbackApprovedMigration完整回退，并实核7资源/meta/原引用/继承和override结构、新增资产归属回到保存基线。
-5. CreateBackup按taskId复用DevTools/Fonts/backup/AI-000170；原资源仅同SHA复用，不提供任意backupRoot。全量Begin前将样例的7资源/meta、backup-manifest及字体材质指纹/新资产清单按精确清单保全到独立样例快照，记录SHA和事务对应关系，再更新当前manifest；不得无留档覆盖旧manifest/旧资源、递归复制父目录到自身子目录、反射private换路径。回退后不一致停止。
-6. 独立全量事务用公开Begin/ApplyApprovedBatch/FinalizeApprovedMigration。实例先于Prefab源，每批checkpoint、scope/备份/停止检查，批后全231行待办/已完成/非目标/外部漂移检查。失败留现场与日志，只有公开API可靠回退；不得伪造executeAllowed、改CSV、手写事务或手改YAML。范围/引用真实变化仍必须拦截。
-
-## 机器验收与保持
-
-完成231行实际引用/atlas配对重审、去重解释、非目标与override一致性。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行对照，Lab文字可见/双向滚轮/上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，字体manifest始终PENDING_REVIEW，不改Build列表。旧warning与本轮新错误分开记录；最终单目标正常场景Edit clean、Console无新增Error/Exception。所有临时资源/场景恢复按清理规范，不覆盖未知用户修改。
-
-保护AI169布局：P0Left=-9.6，Escape/Return viewport(.06,.08)，唯一ClueBoard持续视觉及P1构图；AI169报告/verification-summary/geometry.csv为保存结果。迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，实际执行重读；漂移不盲还原。LayoutAudit旧-12.8断言误报已交AI171修源码/172复验，不回滚布局或误报整个审计全绿。
-
-实际平台拒绝保留原文和已有批准，不反复索要同一批准、不换通道绕过。源码问题交控制端CODE，不在ENGINE临时改工具。六要素报告、真实可观测工具/返回体/阶段用量落本attempt；provider不可得null原因。成功SUCCEEDED+PENDING_USER，不代签字体/构图，不放行font guard哈希，不Git提交/推送/合并，不清迁移副本或处理配表。Complete/Fail原样handoff回控制台并结束，后继171/172由控制台派发。
-> Instruction revision for AI-000170 at 2026-09-24T11:26:25.5815341+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## AI179完成后的正式恢复接力（2026-09-24）
-
-AI179已SUCCEEDED/VERIFIED（CODE范围），控制台核唯一Fonts Final两runner exit0、实际Unity6/TMP DLL153088字节；源码与报告哈希、批准CSV/生产场景/Prefab和两场景meta共18项一致，三新材质与备份不存在。已核生产共用内部Prefab引用身份核心：仅m_PrefabInstance内部对象接受type2保存身份，reference/owner/拥有资产GUID匹配、reference.targetObjectId等于owner.targetPrefabId、reference.targetPrefabId为0；普通persistent引用合法性、本地结构身份、缺失/未知拒绝和真实字段漂移检查保持。新计划/事务schema6、nonTargetFingerprintVersion3，未知内部对象不置空或跳过，Editor跨重载结果仍待本卡实际验证。
-
-公开API与诊断接力见 .ai-workspace/outputs/U1-PRE-R1/AI-000179/ENGINE-handoff.md，报告/实际Final和控制台源码/哈希证据见同目录及 outputs/control/U1-PRE-R1-20260923/ai179-source-baseline-check.json、ai179-complete-source-review.json。成功前置不重跑。
-
-本卡及AI179移交替代旧AI178移交启动示例：复用当前主Editor并通过MCP调用公开C# API；不得在已打开的D:/GameProject/Eat-What上再起batchmode，不停止当前Editor或共享MCP服务，不自动保存用户工作。场景关闭/重开仅在逐场景确认clean、保存恢复点/内存修改归属和当前加载布局后执行；未知用户dirty不保存、不丢弃。
-
-## 原失败与新执行目录
-
-原AI170四条错误/六条issue/总三次恢复保留，不Reset：attempt1归并冲突已修；attempt2未批准Lab60传播已由用户精确批准和AI177扩充解决；attempt3真实schema4预检231行/201写入项/7资产、executeAllowed=true，但Begin因瞬态FileID非目标指纹漂移在备份/事务前拒绝，生产写入0。attempt4在Preview遇到m_PrefabInstance内部引用不支持，未生成计划或事务/备份/生产写入；该次Fail遗漏ProblemKey，当前正式key=EXECUTION；原pre1_non_target_fingerprint_transient_fileid恢复与本次内部Prefab引用缺口按同一稳定身份根因家族保守累计：家族已1次、总3次；下次恢复至多家族第2/总第4次。不得换key/Reset清预算，所有原始历史保留。同类后续Fail显式用pre1_non_target_fingerprint_transient_fileid，控制台仍合并EXECUTION别名核账。旧目录和计划/报告全部保留。
-
-只有正式Recover/新票据后执行；当前卡不自行授权领取。新输出 .ai-workspace/outputs/U1-PRE-R1/AI-000170/attempt-5-prefab-reference-r1/，sample/full均为新事务路径。新计划/事务必须schemaVersion=6、nonTargetFingerprintVersion=3；本轮旧schema1～5计划全部弃用并保留证据，不可续跑，不能改旧计划/事务版本绕过。真实unique由Editor给出并解释，不能用合成231或旧201代签。
-
-## 必读、宿主与边界
-
-先读 .ai-workspace/CORE.md、workers/ENGINE_MCP.md、SUPERVISED.md、UNITY_SCENE_CLEANUP.md、toolkit/LOC.md TK-LOC-03及字体/Editor坑；ENGINEERING_CONVENTIONS.md C1～C4。读两份项目文档页首及Fonts/空间模块。本卡与AI179的ENGINE-handoff.md共同使用，冲突以本卡的主Editor/场景保护及用户授权为准。
-
-工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1。每次MCP使用前发现/选择实例并核Application.dataPath/version、Edit/Play/Compile、各loaded场景dirty和Console。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe；其内直接 & ./.ai-workspace/queue.ps1，不嵌套Windows5或降低ExecutionPolicy。先正常Refresh/Compile确认AI179实际程序集，不把旧DLL缺成员重报为本根因。
-
-## 真实批准与范围
-
-原批准旁证 .ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md，映射 .ai-workspace/outputs/control/U1-PRE-20260923/PRE1_字体材质迁移逐项草案.csv，SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B。
-Lab60旁证 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md，映射 .ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv，SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579。
-两CSV保持原样，历史PROPOSED_ONLY/PENDING_USER不是缺批准；批准不代表平台回执或最终人审。
-
-- Assets/Scenes/Cooking/ShortCycle_P0P1.unity：原CSV路径+组件序号锁定161 TMP。
-- Assets/Prefabs/Cooking/ShortCycle/GridPieces/下 CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab：各2 TMP。
-- Assets/Scenes/ToolTests/FridgeScrollLab.unity：Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30各BadgeLabel/NameLabel组件0，共60 TMP。font原继承、material原override，回退必须还原结构。
-- 总raw/逐行coverage231，7资源及meta备份；只改m_fontAsset与配对m_sharedMaterial及必要override。Static GUID9b07c6c50dde09d4b8719754c27ddc96；CoverTitle唯一源字体例外继续有效，单列字形/宽度/换行对比。
-- 新资产仅 Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta；Materials目录由AssetDatabase创建。复制原Shader/颜色/描边/Underlay风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static。Lab复用FromSourceHan，不加第4份；同名未知资产不覆盖。
-- 保留140wrap，旧30材质override仅映射内可变；其它Prefab/字段/文本/字号/颜色/Transform/布局/Renderer/sorting/交互/Build列表/全局fallback不变。批准范围外传播停止，不扩大工程迁移。
-
-## 真实执行顺序
-
-1. 记录加载场景、活动场景、dirty、保存恢复点、scene/meta及目标字体/材质SHA，保留CoverTitle迁移前同镜头证据。使用公开双映射重载 PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath) 生成schema6/v3全新计划。真实检查231覆盖/7资源、身份/源传播/三材质/非目标指纹/理由和executeAllowed。
-2. 公开 DiagnoseApprovedNonTargetFingerprints(planPath, diagnosticPath) 要求两个批准场景均未loaded。先核所有要关闭的精确场景为clean且无用户未保存成果，再用Editor API暂开本任务拥有的空场景（需要时），仅关闭这两个目标场景，保留其它加载场景。记录原加载布局，try/finally恢复原活动场景和加载状态，清理仅属于本任务的临时空场景。不能SaveScene未知dirty或用MarkSceneClean掩盖。
-3. 调用上述公开诊断：五Prefab两次独立加载/卸载、两场景打开关闭两轮；success/stableAcrossReloads/referencesValid=true，rowCount231、approvedAssetCount7、unstableRowCount0，两轮逐行指纹与引用身份一致。引用身份必须有效且非空，不得把不同实例都归空串；核NULL/PERSISTENT/LOCAL_GAME_OBJECT/LOCAL_COMPONENT/UNITY_INTERNAL_PREFAB_INSTANCE与真实对象/保存资产/实例归属对应；内部Prefab reference/owner皆type2、同保存资产GUID，reference.targetObjectId=owner.targetPrefabId且reference.targetPrefabId=0，不得空身份或忽略关系。对照本轮新计划逐行指纹；若不同解释并停止，不手改计划或删断言。核CSV/7资源/meta/SHA未变、Console无新增Error/Exception，并恢复主Editor原布局。恢复后Begin仍会再核现场。
-4. 只读诊断通过后，检查点CONTINUE才用公开 BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)。单FromSourceHan样例明确只改1个真实TMP（approvedRowIdentities.Length==1，不靠Prefab源扩散）。核字体/material/atlas、旧风格及非目标字段；公开RollbackApprovedMigration完整回退，并实核7资源/meta/原引用/继承和override结构、新增资产归属回到保存基线。
-5. CreateBackup按taskId复用DevTools/Fonts/backup/AI-000170；原资源仅同SHA复用，不提供任意backupRoot。全量Begin前将样例的7资源/meta、backup-manifest及字体材质指纹/新资产清单按精确清单保全到独立样例快照，记录SHA和事务对应关系，再更新当前manifest；不得无留档覆盖旧manifest/旧资源、递归复制父目录到自身子目录、反射private换路径。回退后不一致停止。
-6. 独立全量事务用公开Begin/ApplyApprovedBatch/FinalizeApprovedMigration。实例先于Prefab源，每批checkpoint、scope/备份/停止检查，批后全231行待办/已完成/非目标/外部漂移检查。失败留现场与日志，只有公开API可靠回退；不得伪造executeAllowed、改CSV、手写事务或手改YAML。范围/引用真实变化仍必须拦截。
-
-## 机器验收与保持
-
-完成231行实际引用/atlas配对重审、去重解释、非目标与override一致性。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行对照，Lab文字可见/双向滚轮/上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，字体manifest始终PENDING_REVIEW，不改Build列表。旧warning与本轮新错误分开记录；最终单目标正常场景Edit clean、Console无新增Error/Exception。所有临时资源/场景恢复按清理规范，不覆盖未知用户修改。
-
-保护AI169布局：P0Left=-9.6，Escape/Return viewport(.06,.08)，唯一ClueBoard持续视觉及P1构图；AI169报告/verification-summary/geometry.csv为保存结果。迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，实际执行重读；漂移不盲还原。LayoutAudit旧-12.8断言误报已交AI171修源码/172复验，不回滚布局或误报整个审计全绿。
-
-实际平台拒绝保留原文和已有批准，不反复索要同一批准、不换通道绕过。源码问题交控制端CODE，不在ENGINE临时改工具。六要素报告、真实可观测工具/返回体/阶段用量落本attempt；provider不可得null原因。成功SUCCEEDED+PENDING_USER，不代签字体/构图，不放行font guard哈希，不Git提交/推送/合并，不清迁移副本或处理配表。Complete/Fail原样handoff回控制台并结束，后继171/172由控制台派发。
-
-> SUPERVISED RECOVERY at 2026-09-24T11:26:26.0693473+08:00: {"taskId":"AI-000170","record":{"at":"2026-09-24T11:26:26.0406668+08:00","problemKey":"EXECUTION","plan":"采用AI179新schema6/指纹v3：对m_PrefabInstance内部引用使用已保存GlobalObjectId并严格校验reference/owner类型、GUID、拥有资产与targetPrefabId关系，其它引用和真实字段漂移保持拒绝。全新attempt5计划/事务，先现主Editor两轮231行/7资源重载诊断，真实稳定后样例完整回退及公开API分批。EXECUTION与原指纹身份key合并预算，本次家族第2/总第4；不Reset不改历史。","evidence":"AI179 SUCCEEDED/VERIFIED；控制台读实际生产身份/归一化/对象原子遍历/守卫与夹具，唯一Fonts Final两runner exit0、Unity6/TMP DLL153088字节，内部身份/归属/无效ID/未知引用及原171/Lab60/7资源/回退回归通过。源码文档和输入/生产共18SHA一致、三材质及备份不存在，见ai179-source-baseline-check.json、ai179-complete-source-review.json；三线本轮实际idle见ai179-complete-app-evidence.json。真实Editor诊断尚待执行，不代签。预算独立保守合并已核family1/total3，原4错误/6issue不变。","sessionId":"8c12e025cc374865a99cca4042cda1ac"}}
-## AI-000180 | [CODE] [PRE-1c-MATERIAL-RESOLUTION-R1] PRE-1c TMP加载材质与批准磁盘引用一致性修复
-
-- 序号：180
-- 提交时间：2026-09-24T11:44:11.4303493+08:00
-- 模块 ID：PRE-1c-MATERIAL-RESOLUTION-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000179, AI-000177, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-# PRE-1c-MATERIAL-RESOLUTION-R1 [CODE] TMP加载材质解析与批准磁盘引用的一致性修复
-
-目标：修复AI170 attempt5中TMP自动材质归一化与批准前态核验的冲突，仍拒绝真正的范围/字段/资源漂移。本任务只修改原字体迁移工具与回归，不迁移、不改批准CSV，不在Editor执行任何业务。
-
-## 入口与实际证据
-
-读CORE、SUPERVISED、workers/CODE、TK-LOC-03、P-036/P-047/P-048、两份项目文档页首/Fonts模块，inputs/U1-PRE_人工反馈与字体批准_20260923.md和U1-PRE_Lab60_增量批准与接力_20260924.md，AI179源码与报告。不重跑成功前置。
-
-AI170 attempt5真实schema6/v3预览，两种合法加载状态结果一致：raw231/rows191/unique161，executeAllowed=false，40条SOURCE_DRIFT/MATERIAL_GLOBAL_ID及1条覆盖不足；未进入诊断/Begin、事务、备份或生产写入。40项为ShortCycle_P0P1的TraySlot_01_TUNE～20_TUNE各NameLabel/BadgeLabel。批准期望SourceHan材质GlobalObjectId_V1-3-53ffd732c8bc2034f93d5a714c25eda2-12569091968840867831-0；运行Editor读到WithFallback默认材质GlobalObjectId_V1-3-75909fc3d0fa2c94baa5706654d37655-9052723641695353799-0。磁盘原引用和两CSV不变。
-
-证据：
-- outputs/U1-PRE-R1/AI-000170/attempt-5-prefab-reference-r1/：两个真实预览及阻断报告。
-- outputs/control/U1-PRE-R1-20260923/ai170-attempt5-controller-material-probe.json：控制台重发现精确MCP实例、路径/Unity6000.3.24f1后只读当前loaded场景，40项全部是上述默认材质。4样例的font GUID=75909...，expectedMaterial可解析但其_MainTex与font atlas不同；actualMaterial恰等于font.material，property.prefabOverride=false、所读覆盖列表没有这两个目标字段。没有保存/刷新/加载/赋值调用。
-- ai170-attempt5-owner-probe.json：TraySlot01两TMP为真实Prefab实例，owner targetPrefabId=1485991313，source存在。不能因GetPropertyModifications结果空而认为非Prefab。
-- ai170-attempt5-baseline-check.json：14源码/批准/生产/meta哈希一致，三目标材质和备份不存在。
-- 实际安装包 Library/PackageCache/com.unity.ugui@b996e7548785/Runtime/TMP/TextMeshPro.cs 的LoadFontAsset约980～986行：当材质_MainTex与font.atlasTexture不匹配时改m_sharedMaterial=font.material；Awake/OnValidate等调用链需核实。只读该包，不修改PackageCache/Library或TMP生命周期。此为实证方向，不能直接把所有差异标可接受。
-
-TraySlot.prefab磁盘两TMP原font为75909...、material为SourceHan(fileID -5877652104868683785，对应无符号GlobalObjectId 12569091968840867831)；场景/Prefab/批准三者实际逐项身份须复核。signed本地fileID与GlobalObjectId unsigned表达不能截断或用long失败后置空。
-
-## 允许修改
-
-Assets/Editor/Fonts/ShortCycleFontSwapTool.cs、DevTools/Fonts/FontSwapDryRunHarness.cs、Test-FontSwap.ps1及必要既有夹具；对应Fonts README、TK-LOC-03及两份项目文档。仍用现工具/公开API，不新迁移器。CODE不操作Unity/MCP，不写scene/prefab/asset/material/meta、CSV/批准旁证、生产备份/manifest；不改runtime/队列实现、不Git。
-
-## 必要实现与停止条件
-
-1. 明确区分批准CSV前态、真实磁盘序列化引用/继承或override、Editor加载后的有效引用，不能拿CSV值直接充当观察值，也不能直接把当前effective材质填入批准原件。用现有真实资产身份、保存源/实例关系、字段与文件SHA建立逐行证据，覆盖全231行/7资源，检查相同对象/组件槽位。若需读取Unity YAML只能严格只读解析并绑定准确文档fileID/引用/GUID/父Prefab与override，禁止正则模糊匹配同名对象、禁止写YAML；优先可靠Editor API公开证据。没有可靠来源时明确拒绝，不能猜。
-2. 只有磁盘前态精确匹配原批准、font前态匹配、期望材质存在且其atlas确与font不匹配、effective恰为该font默认材质，并且源/实例/显式override结构、保存SHA均一致时，才可记录受限TMP加载归一化。不得接受任意material mismatch、未知覆盖、真实磁盘变化、错误font、第三方材质、缺失资产或范围外对象；必要可限定到实际证明的精确40条，并在后继诊断逐条实证。未证明条件必须失败关闭，不为了计数231忽略理由。
-3. 授权目标和材质风格仍取原批准映射及真实已审旧材质，不得因effective为WithFallback而把FromSourceHan替换成FromLegacy/Heavy风格或新建第4份。配对写font+material后两者atlas应一致，不能靠暂禁TMP生命周期/重写缓存/隐藏对象规避检查。
-4. 同一前态双视图须贯穿Preview、Begin的二次现场核验、固定事务、批前/批后行覆盖、去重与源传播、非目标指纹以及完整/幂等回退。实际materialOverride与显式保存override须分清，不因加载后值不同虚构原override。回退必须恢复精确保存引用/继承与override、非目标及7资源/meta/SHA；加载后TMP合法解析状态单独解释，不能保存归一化结果覆盖已批准磁盘基线。现有样例/全量备份manifest保全及失败现场保持。分析现有所有调用点，不能只修改Preview让Begin或回退再次无条件失败。
-5. 如果可靠还原或证明原磁盘/内存关系做不到，交可审阅精确差异与已排除方案并Fail/TASK；不得降低SOURCE_DRIFT/全行覆盖/原批准守卫或自行扩大批准。此任务不授权改变非目标样式、字体atlas、Renderer、布局、140wrap等。
-6. 回归使用生产共用核心：批准raw与effective不同但全部约束成立时可解释；真实raw/文件SHA漂移、错误默认材质/atlas条件、显式override变化、其它对象/缺失/无符号ID等拒绝。样例回退、分批继承传播与全量失败恢复须覆盖受归一化行的前后状态；保留原171、Lab60/231/7资源、内部Prefab引用v3稳定身份、原普通字段/引用漂移等有效断言。版本/旧计划失效策略明确，不能续跑attempt1～5旧计划。
-7. 正常PS7窄测后一次Fonts Final，额外Final说明理由；Unity6/TMP真实DLL编译。离线不能模拟真实TMP生命周期需明确告知，不以夹具代签Editor。公开诊断应输出全231批准行的raw/effective/normalizationReason和归属证据，供后继真实Editor读回；不能只报告总数。
-8. 后继仍现主Editor/MCP，不起主工程batch、不停共享Editor、不保存未知dirty。恢复后新attempt-6-material-resolution-r1，新schema实际预览→两轮全231行/7资源真实重载诊断→样例完整回退→公开分批。原5视图/CoverTitle/Lab滚轮/Static SHA/Dynamic清空/Console/Edit clean/Play-Build与manifest PENDING_REVIEW、不Git保持。若新增真实范围变化，停止提交精确差异，不修改两个CSV规避。
-
-## 编排与产物
-
-依赖179/177/169成功项，不反依赖失败170。资源unity-project/font-assets/workflow-devtools。AI170保留PAUSED_CIRCUIT、5错误/6issue/4恢复，当前稳定ProblemKey=pre1_unity6_tmp_material_resolution_drift，尚无本key恢复；此根因有独立材质解析实证，不是给原指纹key换名。原指纹家族两次恢复（含EXECUTION）照旧计数，全任务总4/上限6继续累计。CODE完成后控制台核源/测试/公开移交才决定Recover原170，不能自行恢复或另建迁移任务。
-
-固定D:/GameProject/Eat-What，exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe；直接queue.ps1，不Windows5/降低ExecutionPolicy。按检查点/租约执行。输出outputs/U1-PRE-R1/<TaskID>/，六要素报告、源码SHA、真实runner及公开移交，provider token/model不可得null+原因。Complete/Fail的handoff原样回控制台并结束。
-
-> SUPERVISED POLICY at 2026-09-24T11:47:47.3750606+08:00: {"taskId":"AI-000180","policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI170 attempt5真实材质解析漂移，CODE修同一迁移工具及回归，持共享Unity/字体锁。","updatedAt":"2026-09-24T11:47:47.3144504+08:00"}}
-
-> Dependency correction for AI-000170 at 2026-09-24T11:47:47.6663700+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177, AI-000178, AI-000179, AI-000180
-
-> SUPERVISED EXTEND at 2026-09-24T11:47:47.7305554+08:00: {"taskIds":["AI-000180"],"reason":"已授权PRE-1c范围内必要材质解析工具修复；原批准、停止条件和总恢复额度不变。"}
-> Instruction revision for AI-000170 at 2026-09-24T11:48:49.3302649+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## AI180工具修复等待点（2026-09-24）
-
-AI179已SUCCEEDED/VERIFIED（CODE范围），其严格内部Prefab保存身份修复保留，不重跑成功前置。AI170 attempt5真实schema6/v3预览已越过旧内部引用错误，但raw231/rows191/unique161、executeAllowed=false：40个TraySlot_01_TUNE～20_TUNE的NameLabel/BadgeLabel出现SOURCE_DRIFT/MATERIAL_GLOBAL_ID，另1条覆盖不足。加载及合法临时卸载两种状态均失败，未诊断/Begin/事务/备份/生产写入；已恢复单ShortCycle Edit clean/Console0。
-
-控制台只读观察：40项当前m_sharedMaterial都是WithFallback默认材质；已核样例的批准SourceHan材质存在但atlas与当前font不同，TMP LoadFontAsset确有此时回落font.material的逻辑。样例为真实Prefab实例，不能由所读override为空推断独立对象。磁盘原引用/批准CSV/生产哈希保持。此为工具修复依据，不代表允许忽略材质漂移或真实Editor迁移成功。
-
-新增依赖AI180 PRE-1c-MATERIAL-RESOLUTION-R1。170保持PAUSED_CIRCUIT，只有180实际成功，控制台核源码、生产共用回归/真实DLL与公开移交后才决定正式Recover。尚未获得恢复票据时不得执行本卡或自行领取。证据位于outputs/U1-PRE-R1/AI-000170/attempt-5-prefab-reference-r1/及outputs/control/U1-PRE-R1-20260923/ai170-attempt5-*.json；180卡PRE-1c-MATERIAL-RESOLUTION-R1_CODE.md。
-
-## 历史、恢复预算与后继方案
-
-AI170五条错误、六条issue、总四次恢复全部保留；当前稳定ProblemKey=pre1_unity6_tmp_material_resolution_drift，本key尚无恢复。此为有独立证据的材质加载解析问题，原pre1_non_target_fingerprint_transient_fileid与EXECUTION别名仍合并稳定身份家族两次恢复（上限3）；全任务总4/上限6继续累计。不得Reset、改key重置或另建迁移任务清预算。attempt1～5目录、计划及失败记录全部保留。
-
-正式恢复后使用独立attempt-6-material-resolution-r1和新sample/full事务，版本按180实际交付，不预填schema/unique。必须由真实Editor观察批准前态、磁盘序列化引用/继承或override、加载后有效引用三者及归属/SHA，逐231行输出证据与normalizationReason。不能拿批准CSV充观察、将所有mismatch接受、改CSV、虚构override或伪造executeAllowed。只有180已实现并经现场证实的精确归一化条件可解释；未知/真实资源或非目标变化仍停止。
-
-保持原FromSourceHan等批准材质风格来源和三份目标材质，不因effective为默认材质改风格或增第4份。双轮重载诊断必须覆盖231行/7资产，引用稳定且有效、0异常；通过才Begin→单真实TMP→完整回退（磁盘引用、override结构、7资源/meta/SHA及独立解释的加载状态）→全量分批。样例回退无法还原精确保存基线时停止，不保存加载归一化覆盖旧基线。所有公开API按180实际移交调用，不用反射private、手写事务或YAML写入绕过。
-
-复用现主Editor/MCP；禁止已打开主工程再起batch、不停止共享Editor/MCP、不自动保存未知用户工作。以下既有执行及机器验收条款继续有效。
-## 必读、宿主与边界
-
-先读 .ai-workspace/CORE.md、workers/ENGINE_MCP.md、SUPERVISED.md、UNITY_SCENE_CLEANUP.md、toolkit/LOC.md TK-LOC-03及字体/Editor坑；ENGINEERING_CONVENTIONS.md C1～C4。读两份项目文档页首及Fonts/空间模块。本卡与AI180实际完成后交付的ENGINE-handoff.md共同使用，冲突以本卡的主Editor/场景保护及用户授权为准。
-
-工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1。每次MCP使用前发现/选择实例并核Application.dataPath/version、Edit/Play/Compile、各loaded场景dirty和Console。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe；其内直接 & ./.ai-workspace/queue.ps1，不嵌套Windows5或降低ExecutionPolicy。先正常Refresh/Compile确认AI180实际程序集，不把旧DLL缺成员重报为本根因。
-
-## 真实批准与范围
-
-原批准旁证 .ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md，映射 .ai-workspace/outputs/control/U1-PRE-20260923/PRE1_字体材质迁移逐项草案.csv，SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B。
-Lab60旁证 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md，映射 .ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv，SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579。
-两CSV保持原样，历史PROPOSED_ONLY/PENDING_USER不是缺批准；批准不代表平台回执或最终人审。
-
-- Assets/Scenes/Cooking/ShortCycle_P0P1.unity：原CSV路径+组件序号锁定161 TMP。
-- Assets/Prefabs/Cooking/ShortCycle/GridPieces/下 CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab：各2 TMP。
-- Assets/Scenes/ToolTests/FridgeScrollLab.unity：Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30各BadgeLabel/NameLabel组件0，共60 TMP。font原继承、material原override，回退必须还原结构。
-- 总raw/逐行coverage231，7资源及meta备份；只改m_fontAsset与配对m_sharedMaterial及必要override。Static GUID9b07c6c50dde09d4b8719754c27ddc96；CoverTitle唯一源字体例外继续有效，单列字形/宽度/换行对比。
-- 新资产仅 Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta；Materials目录由AssetDatabase创建。复制原Shader/颜色/描边/Underlay风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static。Lab复用FromSourceHan，不加第4份；同名未知资产不覆盖。
-- 保留140wrap，旧30材质override仅映射内可变；其它Prefab/字段/文本/字号/颜色/Transform/布局/Renderer/sorting/交互/Build列表/全局fallback不变。批准范围外传播停止，不扩大工程迁移。
-
-## 真实执行顺序
-
-1. 记录加载场景、活动场景、dirty、保存恢复点、scene/meta及目标字体/材质SHA，保留CoverTitle迁移前同镜头证据。使用公开双映射重载 PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath) 生成AI180实际版本的全新计划（原schema1～6及attempt1～5旧计划/事务不得续用）。真实检查231覆盖/7资源、身份/源传播/三材质/非目标指纹/理由和executeAllowed。
-2. 公开 DiagnoseApprovedNonTargetFingerprints(planPath, diagnosticPath) 要求两个批准场景均未loaded。先核所有要关闭的精确场景为clean且无用户未保存成果，再用Editor API暂开本任务拥有的空场景（需要时），仅关闭这两个目标场景，保留其它加载场景。记录原加载布局，try/finally恢复原活动场景和加载状态，清理仅属于本任务的临时空场景。不能SaveScene未知dirty或用MarkSceneClean掩盖。
-3. 调用上述公开诊断：五Prefab两次独立加载/卸载、两场景打开关闭两轮；success/stableAcrossReloads/referencesValid=true，rowCount231、approvedAssetCount7、unstableRowCount0，两轮逐行指纹与引用身份一致。引用身份必须有效且非空，不得把不同实例都归空串；核NULL/PERSISTENT/LOCAL_GAME_OBJECT/LOCAL_COMPONENT/UNITY_INTERNAL_PREFAB_INSTANCE与真实对象/保存资产/实例归属对应；内部Prefab reference/owner皆type2、同保存资产GUID，reference.targetObjectId=owner.targetPrefabId且reference.targetPrefabId=0，不得空身份或忽略关系。对照本轮新计划逐行指纹；若不同解释并停止，不手改计划或删断言。核CSV/7资源/meta/SHA未变、Console无新增Error/Exception，并恢复主Editor原布局。恢复后Begin仍会再核现场。
-4. 只读诊断通过后，检查点CONTINUE才用公开 BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)。单FromSourceHan样例明确只改1个真实TMP（approvedRowIdentities.Length==1，不靠Prefab源扩散）。核字体/material/atlas、旧风格及非目标字段；公开RollbackApprovedMigration完整回退，并实核7资源/meta/原引用/继承和override结构、新增资产归属回到保存基线。
-5. CreateBackup按taskId复用DevTools/Fonts/backup/AI-000170；原资源仅同SHA复用，不提供任意backupRoot。全量Begin前将样例的7资源/meta、backup-manifest及字体材质指纹/新资产清单按精确清单保全到独立样例快照，记录SHA和事务对应关系，再更新当前manifest；不得无留档覆盖旧manifest/旧资源、递归复制父目录到自身子目录、反射private换路径。回退后不一致停止。
-6. 独立全量事务用公开Begin/ApplyApprovedBatch/FinalizeApprovedMigration。实例先于Prefab源，每批checkpoint、scope/备份/停止检查，批后全231行待办/已完成/非目标/外部漂移检查。失败留现场与日志，只有公开API可靠回退；不得伪造executeAllowed、改CSV、手写事务或手改YAML。范围/引用真实变化仍必须拦截。
-
-## 机器验收与保持
-
-完成231行实际引用/atlas配对重审、去重解释、非目标与override一致性。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行对照，Lab文字可见/双向滚轮/上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，字体manifest始终PENDING_REVIEW，不改Build列表。旧warning与本轮新错误分开记录；最终单目标正常场景Edit clean、Console无新增Error/Exception。所有临时资源/场景恢复按清理规范，不覆盖未知用户修改。
-
-保护AI169布局：P0Left=-9.6，Escape/Return viewport(.06,.08)，唯一ClueBoard持续视觉及P1构图；AI169报告/verification-summary/geometry.csv为保存结果。迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，实际执行重读；漂移不盲还原。LayoutAudit旧-12.8断言误报已交AI171修源码/172复验，不回滚布局或误报整个审计全绿。
-
-实际平台拒绝保留原文和已有批准，不反复索要同一批准、不换通道绕过。源码问题交控制端CODE，不在ENGINE临时改工具。六要素报告、真实可观测工具/返回体/阶段用量落本attempt；provider不可得null原因。成功SUCCEEDED+PENDING_USER，不代签字体/构图，不放行font guard哈希，不Git提交/推送/合并，不清迁移副本或处理配表。Complete/Fail原样handoff回控制台并结束，后继171/172由控制台派发。
-> Instruction revision for AI-000170 at 2026-09-24T12:15:22.5432703+08:00
-
-# PRE-1c [ENGINE_MCP] 231行批准字体材质迁移执行
-
-## AI180完成后的正式恢复接力（2026-09-24）
-
-AI180已SUCCEEDED/VERIFIED（CODE范围）。控制台核实际唯一Fonts Final 2/2 runner exit0、真实Unity6/TMP编译路径和生产共用分类/逐行引用/诊断/事务核心；3源码及11批准/生产/meta SHA共14项全匹配，3目标材质和DevTools/Fonts/backup/AI-000170不存在。CODE报告的DLL产物161792字节为其编译结果，不代表已装载进Editor；须正常Refresh/Compile确认实际新程序集，不重跑成功CODE前置。证据ai180-source-baseline-check.json及AI180报告/ENGINE-handoff.md。
-
-本轮采用schema7、nonTargetFingerprintVersion3、diagnostic schema2。批准CSV只给期望，raw引用从精确保存组件文档fileID/源继承或精确override观察；effective单独记录，signed YAML fileID与unsigned GlobalObjectId无损规范化。仅锁定的40个TraySlot_01_TUNE～20_TUNE各NameLabel/BadgeLabel在完整证据成立时可记录TMP_LOAD_FONT_ATLAS_MISMATCH_DEFAULT_MATERIAL；其它未知/真实漂移仍拦截，来源风格仍按原批准。
-
-## 原失败、预算及新目录
-
-attempt5两种加载状态raw231/rows191/unique161、40条MATERIAL_GLOBAL_ID及1覆盖不足、executeAllowed=false，未诊断/Begin/备份/事务/生产写入，旧目录与报告全部保留。AI170共5错误/6issue，正式恢复前总4次恢复；当前稳定ProblemKey=pre1_unity6_tmp_material_resolution_drift原0次，此次候选为本key第1/全任务第5。原指纹稳定身份家族（pre1_non_target_fingerprint_transient_fileid及EXECUTION别名）仍计2次，家族3/全任务6上限不变，不Reset/改key/新迁移任务清预算。
-
-只有正式Recover和本轮新票据CLAIMED后执行。输出attempt-6-material-resolution-r1，新sample/full事务；旧schema1～6/attempt1～5不续用，真实unique、reasons和executeAllowed由Editor生成，不硬填201或合成231unique。
-
-## 真实材质双视图验收（新增必查）
-
-1. 同时传原171映射/旁证及Lab60映射/旁证。schema7计划raw/rows231、7资源、reasons空、executeAllowed=true；先观察实际计数和每行身份，不补改计划。
-2. 公开DiagnoseApprovedNonTargetFingerprints(planPath, diagnosticPath)使用diagnostic schema2；两轮各231行、稳定且引用有效非空、0异常，逐行读rawFontGuid/rawMaterialGlobalId/effectiveMaterialGlobalId/materialNormalizationReason/savedReferenceOwnerIdentity/AssetPath/Sha256/Proven，并对照新计划及批准前态。40个限定行归一化理由须精确对应，其余191行应无该理由；差异停止留证，不强填数或删理由。
-3. 修正AI180原移交一句笔误：这40行raw font是WithFallback GUID75909fc3d0fa2c94baa5706654d37655，raw material才是SourceHan GlobalObjectId_V1-3-53ffd732c8bc2034f93d5a714c25eda2-12569091968840867831-0；effective是该font默认材质GlobalObjectId_V1-3-75909fc3d0fa2c94baa5706654d37655-9052723641695353799-0。不是把raw font改为SourceHan。主CSV原SHA保持。
-4. 实测源Prefab身份、无显式材质override、保存文件SHA与批准前态/原计划一致、旧材质存在且atlas与font不符、effective恰为font.default。不得把比较两次同一当前SHA当作与基线相同的独立证明；核保存的迁移前7资产/meta SHA。加载后的覆盖观察仍须与保存继承结构核对，不因默认化虚构override。
-5. 通过双轮只读诊断后才Begin→单FromSourceHan真实TMP（单批准行）→公开完整回退→7资源/meta/SHA、继承/override及非目标字段检查→新全量事务分批。样例应覆盖可解释归一化路径时优先限定TraySlot单行，须先确认非源传播、不会写入其它行。无法可靠恢复时停止，不保存加载归一化覆盖旧磁盘，保留现场和事务。
-6. 原material风格取SourceHan等已批准来源，不采用effective默认风格、不新增第4材质。失败按真实原因显式ProblemKey；同类材质解析用pre1_unity6_tmp_material_resolution_drift，指纹身份类继续计原家族。不要把移交纠正或CSV历史状态误报为缺用户批准。
-
-保持主Editor复用、MCP发现核路径/版本、clean/恢复点/归属保护；不得已打开主工程起batch、不停止共享MCP、不保存/丢弃未知用户工作。以下既有机器验收与批准范围继续有效。
-## 必读、宿主与边界
-
-先读 .ai-workspace/CORE.md、workers/ENGINE_MCP.md、SUPERVISED.md、UNITY_SCENE_CLEANUP.md、toolkit/LOC.md TK-LOC-03及字体/Editor坑；ENGINEERING_CONVENTIONS.md C1～C4。读两份项目文档页首及Fonts/空间模块。本卡与AI180的ENGINE-handoff.md（控制台已纠正源字体说明）共同使用，冲突以本卡的主Editor/场景保护及用户授权为准。
-
-工作区D:/GameProject/Eat-What，codex/unity6-followup，6000.3.24f1。每次MCP使用前发现/选择实例并核Application.dataPath/version、Edit/Play/Compile、各loaded场景dirty和Console。exec_command显式shell=C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe；其内直接 & ./.ai-workspace/queue.ps1，不嵌套Windows5或降低ExecutionPolicy。先正常Refresh/Compile确认AI180实际程序集，不把旧DLL缺成员重报为本根因。
-
-## 真实批准与范围
-
-原批准旁证 .ai-workspace/inputs/U1-PRE_人工反馈与字体批准_20260923.md，映射 .ai-workspace/outputs/control/U1-PRE-20260923/PRE1_字体材质迁移逐项草案.csv，SHA EB0CED01C1BBB0050DCF30BAA3D5354E9F2C7326C3DF97375DE87467D8FE347B。
-Lab60旁证 .ai-workspace/inputs/U1-PRE_Lab60_增量批准与接力_20260924.md，映射 .ai-workspace/outputs/control/U1-PRE-R1-20260923/PRE1_Lab60_增量迁移草案.csv，SHA E8AA50B24E3ACA11E55D21F752EB92CD801B83960F443DF12E199DBC1B33A579。
-两CSV保持原样，历史PROPOSED_ONLY/PENDING_USER不是缺批准；批准不代表平台回执或最终人审。
-
-- Assets/Scenes/Cooking/ShortCycle_P0P1.unity：原CSV路径+组件序号锁定161 TMP。
-- Assets/Prefabs/Cooking/ShortCycle/GridPieces/下 CatalogCard.prefab、FridgeSlot.prefab、IngredientCard.prefab、Sticker.prefab、TraySlot.prefab：各2 TMP。
-- Assets/Scenes/ToolTests/FridgeScrollLab.unity：Spaces/FridgeScrollModule/FridgeCat_Group/SlotPool/FridgeSlot_01～30各BadgeLabel/NameLabel组件0，共60 TMP。font原继承、material原override，回退必须还原结构。
-- 总raw/逐行coverage231，7资源及meta备份；只改m_fontAsset与配对m_sharedMaterial及必要override。Static GUID9b07c6c50dde09d4b8719754c27ddc96；CoverTitle唯一源字体例外继续有效，单列字形/宽度/换行对比。
-- 新资产仅 Assets/Font/Heavy/Materials/ShortCycle_Static_FromSourceHan.mat、ShortCycle_Static_FromLegacyShortCycle.mat、ShortCycle_Static_FromHeavy.mat及meta；Materials目录由AssetDatabase创建。复制原Shader/颜色/描边/Underlay风格，仅_MainTex/_TextureWidth/_TextureHeight/_GradientScale取Static。Lab复用FromSourceHan，不加第4份；同名未知资产不覆盖。
-- 保留140wrap，旧30材质override仅映射内可变；其它Prefab/字段/文本/字号/颜色/Transform/布局/Renderer/sorting/交互/Build列表/全局fallback不变。批准范围外传播停止，不扩大工程迁移。
-
-## 真实执行顺序
-
-1. 记录加载场景、活动场景、dirty、保存恢复点、scene/meta及目标字体/材质SHA，保留CoverTitle迁移前同镜头证据。使用公开双映射重载 PreviewApprovedMigration(baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath) 生成schema7/nonTargetFingerprintVersion3全新计划（旧schema1～6及attempt1～5计划/事务不得续用）。真实检查231覆盖/7资源、身份/源传播/三材质/非目标指纹/理由和executeAllowed。
-2. 公开 DiagnoseApprovedNonTargetFingerprints(planPath, diagnosticPath) 要求两个批准场景均未loaded。先核所有要关闭的精确场景为clean且无用户未保存成果，再用Editor API暂开本任务拥有的空场景（需要时），仅关闭这两个目标场景，保留其它加载场景。记录原加载布局，try/finally恢复原活动场景和加载状态，清理仅属于本任务的临时空场景。不能SaveScene未知dirty或用MarkSceneClean掩盖。
-3. 调用上述公开诊断：五Prefab两次独立加载/卸载、两场景打开关闭两轮；success/stableAcrossReloads/referencesValid=true，rowCount231、approvedAssetCount7、unstableRowCount0，两轮逐行指纹与引用身份一致。引用身份必须有效且非空，不得把不同实例都归空串；核NULL/PERSISTENT/LOCAL_GAME_OBJECT/LOCAL_COMPONENT/UNITY_INTERNAL_PREFAB_INSTANCE与真实对象/保存资产/实例归属对应；内部Prefab reference/owner皆type2、同保存资产GUID，reference.targetObjectId=owner.targetPrefabId且reference.targetPrefabId=0，不得空身份或忽略关系。对照本轮新计划逐行指纹；若不同解释并停止，不手改计划或删断言。核CSV/7资源/meta/SHA未变、Console无新增Error/Exception，并恢复主Editor原布局。恢复后Begin仍会再核现场。
-4. 只读诊断通过后，检查点CONTINUE才用公开 BeginApprovedMigration(taskId, baseMapping, baseEvidence, supplementalMapping, supplementalEvidence, planPath, transactionPath)。单FromSourceHan样例明确只改1个真实TMP（approvedRowIdentities.Length==1，不靠Prefab源扩散）。核字体/material/atlas、旧风格及非目标字段；公开RollbackApprovedMigration完整回退，并实核7资源/meta/原引用/继承和override结构、新增资产归属回到保存基线。
-5. CreateBackup按taskId复用DevTools/Fonts/backup/AI-000170；原资源仅同SHA复用，不提供任意backupRoot。全量Begin前将样例的7资源/meta、backup-manifest及字体材质指纹/新资产清单按精确清单保全到独立样例快照，记录SHA和事务对应关系，再更新当前manifest；不得无留档覆盖旧manifest/旧资源、递归复制父目录到自身子目录、反射private换路径。回退后不一致停止。
-6. 独立全量事务用公开Begin/ApplyApprovedBatch/FinalizeApprovedMigration。实例先于Prefab源，每批checkpoint、scope/备份/停止检查，批后全231行待办/已完成/非目标/外部漂移检查。失败留现场与日志，只有公开API可靠回退；不得伪造executeAllowed、改CSV、手写事务或手改YAML。范围/引用真实变化仍必须拦截。
-
-## 机器验收与保持
-
-完成231行实际引用/atlas配对重审、去重解释、非目标与override一致性。原ShortCycle五视图中文/标题截图、CoverTitle同镜头前后字形/宽度/换行对照，Lab文字可见/双向滚轮/上下界真实验证。Play与Build前后Static SHA不变，DynamicFallback清空，字体manifest始终PENDING_REVIEW，不改Build列表。旧warning与本轮新错误分开记录；最终单目标正常场景Edit clean、Console无新增Error/Exception。所有临时资源/场景恢复按清理规范，不覆盖未知用户修改。
-
-保护AI169布局：P0Left=-9.6，Escape/Return viewport(.06,.08)，唯一ClueBoard持续视觉及P1构图；AI169报告/verification-summary/geometry.csv为保存结果。迁移前ShortCycle SHA233113A72258444BD69C6FD014424435C4D15DD4D1EA9C01A8CF61F13E71BECB、Lab SHA4086672BB61AB57B8D32913922A80BD4708E56A1FF96C8D7CD644EB2857CC02D，实际执行重读；漂移不盲还原。LayoutAudit旧-12.8断言误报已交AI171修源码/172复验，不回滚布局或误报整个审计全绿。
-
-实际平台拒绝保留原文和已有批准，不反复索要同一批准、不换通道绕过。源码问题交控制端CODE，不在ENGINE临时改工具。六要素报告、真实可观测工具/返回体/阶段用量落本attempt；provider不可得null原因。成功SUCCEEDED+PENDING_USER，不代签字体/构图，不放行font guard哈希，不Git提交/推送/合并，不清迁移副本或处理配表。Complete/Fail原样handoff回控制台并结束，后继171/172由控制台派发。
-
-> SUPERVISED RECOVERY at 2026-09-24T12:16:27.3135270+08:00: {"record":{"at":"2026-09-24T12:16:27.2733109+08:00","problemKey":"pre1_unity6_tmp_material_resolution_drift","plan":"采用AI180 schema7材质双视图：严格保存raw引用/源继承override及加载effective，限锁定40TraySlot在完整atlas/default/身份/前态证明下解释TMP归一化；原风格/漂移守卫保持。新attempt6与schema7/v3计划、diagnostic2，两轮真实231行/7资产通过后单真实TMP完整回退再分批；不同于attempt5直接把effective当批准before。当前材质key首修/任务总第5，旧指纹家族2次照计，不Reset。","evidence":"AI180 SUCCEEDED/VERIFIED，控制台已核生产分类/保存引用/诊断/事务与共享回归，唯一Fonts Final 2/2 runner exit0，真实DLL编译；3源码及11输入/生产/meta共14SHA全匹配，三新材质和真实DevTools/Fonts/backup/AI-000170均不存在。见ai180-source-baseline-check.json、ai180-complete-source-review.json。ENGINE本轮真实idle/completed见ai180-before-recovery-app-evidence.json。任务卡已纠正raw font为WithFallback/material为SourceHan的移交笔误，尚未代签Editor/迁移。","sessionId":"8c12e025cc374865a99cca4042cda1ac"},"taskId":"AI-000170"}
-## AI-000181 | [CODE] [PRE-1c-SAVED-STATE-R1] PRE-1c-SAVED-STATE-R1 批准观察态与真实保存状态统一修复
-
-- 序号：181
-- 提交时间：2026-09-24T12:33:37.1560689+08:00
-- 模块 ID：PRE-1c-SAVED-STATE-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000180, AI-000179, AI-000177, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-.ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c-SAVED-STATE-R1_CODE.md
-
-> SUPERVISED POLICY at 2026-09-24T12:34:47.8134055+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"同一字体迁移工具源码与真实DLL编译修复，共享Unity与字体资源；不执行生产迁移","updatedAt":"2026-09-24T12:34:47.7533844+08:00"},"taskId":"AI-000181"}
-
-> Dependency correction for AI-000170 at 2026-09-24T12:34:48.1269442+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177, AI-000178, AI-000179, AI-000180, AI-000181
-> Instruction revision for AI-000170 at 2026-09-24T12:34:48.2074265+08:00
-
-.ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c_ENGINE.md
-
-> SUPERVISED EXTEND at 2026-09-24T12:35:10.6605703+08:00: {"taskIds":["AI-000181"],"reason":"原授权字体迁移必要修复：attempt6实证磁盘无override与内存派生override混淆，以及8源的原批准加载观察态；新增CODE修复而不恢复/替代AI170，不扩大231对象7资源范围"}
-## AI-000182 | [CODE] [PRE-1c-TRANSACTION-CONTRACT-R1] PRE-1c-TRANSACTION-CONTRACT-R1 诊断三态与事务阶段SHA/回退契约收口
-
-- 序号：182
-- 提交时间：2026-09-24T13:11:50.8101353+08:00
-- 模块 ID：PRE-1c-TRANSACTION-CONTRACT-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000181, AI-000179, AI-000177, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-.ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c-TRANSACTION-CONTRACT-R1_CODE.md
-
-> SUPERVISED POLICY at 2026-09-24T13:12:29.3956777+08:00: {"policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI181控制台真实只读诊断及源码契约审查发现三态映射和阶段SHA/回退入口两处缺陷；仅原工具CODE修复","updatedAt":"2026-09-24T13:12:29.3387405+08:00"},"taskId":"AI-000182"}
-
-> Dependency correction for AI-000170 at 2026-09-24T13:12:29.7149158+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177, AI-000178, AI-000179, AI-000180, AI-000181, AI-000182
-
-> SUPERVISED EXTEND at 2026-09-24T13:12:29.7948936+08:00: {"reason":"当前批准字体迁移的必要原工具修复；AI170最后一次恢复尚不消费","taskIds":["AI-000182"]}
-> Instruction revision for AI-000170 at 2026-09-24T13:13:30.2311658+08:00
-
-.ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c_ENGINE.md
-
-> SUPERVISED BreakSupervision at 2026-09-24T13:44:19.5715576+08:00: {"userDecision":"","reason":"AI182后只读真实231预览/诊断已过，但生产GetBatchAllowedFilePaths放行既有meta，公开内存反例接受未知meta而测试窄白名单拒绝；无法证明安全回退归属。按AI182卡契约仍失败停止条件与SUPERVISED_FULL已失败无安全方案规则停止自动推进。零Begin/生产写入；AI170仍6错误6issue5恢复，最后1次未消费，不新建无限修复链。证据ai182-controller-readonly-evidence.json及contract-check.json。"}
-> Instruction revision for AI-000170 at 2026-09-24T13:48:01.8912168+08:00
-
-.ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c_ENGINE.md
-## AI-000183 | [CODE] PRE-1c-META-GUARD-R1 生产元数据白名单与回退归属修复
-
-- 序号：183
-- 提交时间：2026-09-24T16:22:06.1495740+08:00
-- 模块 ID：无
-- 初始状态：QUEUED
-- 前置依赖：AI-000182, AI-000181, AI-000179, AI-000177, AI-000169
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-用户明确继续修复并恢复监管。必读 .ai-workspace/inputs/U1-PRE_META保护修复与恢复监管_20260924.md 和 .ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c-META-GUARD-R1_CODE.md 全文；按卡修同一字体工具生产白名单/既有meta不变/新建材质归属/阶段和回退共同核心及真实回归。仅CODE源/测试/文档，不Unity/MCP、不生产迁移、不改CSV/YAML/runtime、不Git。保持231行/7资产/3材质及全部非目标保护。一次真实Fonts Final+DLL+公开只读API移交，Complete/Fail原样handoff后结束；不自行恢复170，不重跑182。所有queue调用显式PS7宿主，无嵌套Windows5。
-
-> SUPERVISED POLICY at 2026-09-24T16:22:51.4226932+08:00: {"taskId":"AI-000183","policy":{"resourceKeys":["unity-project","font-assets","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原工具源修改会触发导入；用户授权元数据保护修复，保留共享锁","updatedAt":"2026-09-24T16:22:51.3597200+08:00"}}
-
-> Dependency correction for AI-000170 at 2026-09-24T16:22:51.7881071+08:00: AI-000162, AI-000169, AI-000167, AI-000173, AI-000176, AI-000177, AI-000178, AI-000179, AI-000180, AI-000181, AI-000182, AI-000183
-
-> SUPERVISED EXTEND at 2026-09-24T16:22:51.8847765+08:00: {"reason":"用户2026-09-24明确继续修复并恢复监管；新增原工具meta保护补丁，原170不Recover/Reset且保留最后恢复预算","taskIds":["AI-000183"]}
-
-> SUPERVISED ResumeSupervision at 2026-09-24T16:22:51.9148490+08:00: {"reason":"用户明确解除AI182控制审查停止，继续已交付边界修复；生产迁移仍等补丁和真实安全核验","userDecision":"继续修复并恢复监管"}
-> Instruction revision for AI-000170 at 2026-09-24T16:24:00.7010085+08:00
-
-先完整读取 .ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c_ENGINE.md；本次用户明确继续修复并恢复监管已留授权输入。AI170继续PAUSED_CIRCUIT等AI183实际成功及控制台公开生产策略反例、新版231行/7资产Preview和双轮逐行诊断安全核验；当前不得Poll/Begin/Recover。既有6错误6issue5恢复完整保留。控制台最后一次正式Recover+新票据后才attempt-7新sample/full事务，先单FromSourceHan完整回退再全量，旧schema1～9和旧事务不续用；原所有批准/非目标/人审/平台/NoGit边界按卡不变。
-> Instruction revision for AI-000170 at 2026-09-24T16:58:44.5775502+08:00
-
-完整必读 .ai-workspace/inputs/U1-PRE-R1-20260923/PRE-1c_ENGINE.md 与AI183完成报告。用户已明确继续，AI183源码/唯一Fonts Final/真实DLL/19SHA及控制台主Editor公开策略反例、schema10真实231行/7资产Preview和双轮逐行20字段0异常全部核实；证据ai183-controller-*.json。仅新正式票据CLAIMED后执行attempt-7-saved-state-r1，新schema10/v3计划和独立sample/full事务，旧1～9及控制台计划/旧事务不续用。先真实单FromSourceHan完整公开回退验证14资源meta/保存override/非目标与新资产归属，再全量分批及卡列全部验收。原170总第6最后一次恢复，原错误/issue/别名计数保留；同类材质Fail显式pre1_unity6_tmp_material_resolution_drift。既有meta不可变，未知内容不覆盖；不用private反射/手写YAML/造executeAllowed。PS7显式宿主，现主Editor精确实例/clean/归属/恢复点/try-finally规则、全部批准/人审/平台/NoGit边界保持。
-
-> SUPERVISED RECOVERY at 2026-09-24T17:03:07.2433017+08:00: {"taskId":"AI-000170","record":{"at":"2026-09-24T17:03:07.1835850+08:00","problemKey":"VERIFICATION","plan":"AI183 schema10/v3以生产共用StageMutationRule和APPLYING契约取代宽泛addWithMeta；既有7资源meta不可变，仅精确缺失新材质及目录创建获准。生产策略公开纯内存反例全部拒绝；新版真实231行Preview和两轮逐行对计划0异常、冻结基线19项一致。新attempt-7-saved-state-r1，新计划/样例/全量事务，先单FromSourceHan真实写入及完整公开回退验证14资源meta原SHA和override，再分批全量；不续旧计划、不Reset。保留原key VERIFICATION，仅attempt6别名归材质家族，本次材质家族第2/总第6最后恢复。","evidence":"AI183 SUCCEEDED/VERIFIED；唯一Fonts Final priorFinalRuns0、两runner exit0，真实Unity6/TMP编译DLL208896；源码3SHA匹配。实际主Editor6000.3.24f1/D:/GameProject/Eat-What/Assets：生产共用策略拒绝meta变更/删除、日志篡改、后续材质meta、同名创建；schema10/v3 Preview raw/rows231 unique201 assets7 executeAllowed=true reasons0，schema4两轮各231 stable/referencesValid=true，20字段逐行对计划0异常。14资源meta+2CSV+3源码19SHA一致，三材质/备份不存在，单ShortCycle Edit clean Console0。证据outputs/control/U1-PRE-R1-20260923/ai183-controller-readonly-evidence.json、ai183-controller-contract-check.json、ai183-controller-baseline-check.json、ai183-final-idle-evidence.json、ai170-meta-guard-budget-check.json。此为只读准入，不代签实际样例回退/全量/人审。","sessionId":"8c12e025cc374865a99cca4042cda1ac"}}
-
-> SUPERVISED ExitSupervision at 2026-09-24T17:30:06.5360379+08:00: {"userDecision":"","reason":"用户明确：回到手动模式，先诊断失败原因并定位汇报，后续处理另行决定。本轮只读诊断，不修代码、不恢复或重试迁移，不清历史或预算。"}
-## AI-000184 | [DATA] [U1-R1-CHECK] 首轮人工工作簿隔离导出与问题清单
-
-- 序号：184
-- 提交时间：2026-09-24T23:11:54.6850781+08:00
-- 模块 ID：U1-R1-CHECK
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-R1-CHECK_DATA.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000184/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:54.8836189+08:00: {"taskId":"AI-000184","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:54.8458052+08:00"}}
-## AI-000185 | [CODE] [U1-CONTENT-GUARD] 非空配表内容保护与写入边界
-
-- 序号：185
-- 提交时间：2026-09-24T23:11:54.9522436+08:00
-- 模块 ID：U1-CONTENT-GUARD
-- 初始状态：QUEUED
-- 前置依赖：AI-000184
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-CONTENT-GUARD_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000185/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:55.0742735+08:00: {"taskId":"AI-000185","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:55.0474491+08:00"}}
-## AI-000186 | [CODE] [U1-FORMAT] 导表时合表整体格式规范化
-
-- 序号：186
-- 提交时间：2026-09-24T23:11:55.1223961+08:00
-- 模块 ID：U1-FORMAT
-- 初始状态：QUEUED
-- 前置依赖：AI-000185
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-FORMAT_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000186/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:55.2459398+08:00: {"taskId":"AI-000186","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:55.2098650+08:00"}}
-## AI-000187 | [CODE] [U1-STEP-REF] standard_ingredients 多值与食材成品引用核验
-
-- 序号：187
-- 提交时间：2026-09-24T23:11:55.2911882+08:00
-- 模块 ID：U1-STEP-REF
-- 初始状态：QUEUED
-- 前置依赖：AI-000186
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-STEP-REF_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000187/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:55.4345921+08:00: {"taskId":"AI-000187","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:55.3946953+08:00"}}
-## AI-000188 | [CODE] [U1-SCENE-TOOLS] 区域厨具改由场景实际配置识别
-
-- 序号：188
-- 提交时间：2026-09-24T23:11:55.4842588+08:00
-- 模块 ID：U1-SCENE-TOOLS
-- 初始状态：QUEUED
-- 前置依赖：AI-000187
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-SCENE-TOOLS_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000188/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:55.6174584+08:00: {"taskId":"AI-000188","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:55.5915046+08:00"}}
-## AI-000189 | [CODE] [U1-HEADER-DOC] 统一合表所有表头补齐字段解释
-
-- 序号：189
-- 提交时间：2026-09-24T23:11:55.6641701+08:00
-- 模块 ID：U1-HEADER-DOC
-- 初始状态：QUEUED
-- 前置依赖：AI-000188
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-HEADER-DOC_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000189/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:55.8082063+08:00: {"taskId":"AI-000189","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:55.7708367+08:00"}}
-## AI-000190 | [ENGINE_MCP] [U1-SCENE-VERIFY] 真实厨房区域厨具清单与运行验证
-
-- 序号：190
-- 提交时间：2026-09-24T23:11:55.8524353+08:00
-- 模块 ID：U1-SCENE-VERIFY
-- 初始状态：QUEUED
-- 前置依赖：AI-000189
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-SCENE-VERIFY_ENGINE_MCP.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000190/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:55.9923054+08:00: {"taskId":"AI-000190","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:55.9565506+08:00"}}
-## AI-000191 | [DATA] [U1-R1-EXPORT] 首轮合表格式注释修复与忠实导出
-
-- 序号：191
-- 提交时间：2026-09-24T23:11:56.0386519+08:00
-- 模块 ID：U1-R1-EXPORT
-- 初始状态：QUEUED
-- 前置依赖：AI-000190
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-R1-EXPORT_DATA.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000191/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-
-> SUPERVISED POLICY at 2026-09-24T23:11:56.1815641+08:00: {"taskId":"AI-000191","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮配表链严格串行；保护同工程源码刷新/场景/数据源和旧字体失败现场；DATA另持发布物理锁。","updatedAt":"2026-09-24T23:11:56.1460027+08:00"}}
-
-> SUPERVISED START at 2026-09-24T23:11:56.3861356+08:00: {"sessionId":"c48bf37ed38c421580c9f08263792872","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000184","AI-000185","AI-000186","AI-000187","AI-000188","AI-000189","AI-000190","AI-000191"],"heartbeatAutomationId":"ai","createdAt":"2026-09-24T23:11:56.3858123+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-> Instruction revision for AI-000185 at 2026-09-24T23:33:16.3031723+08:00
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-CONTENT-GUARD_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000185/。完成后supervisorHandoff原样回控制台，不自行领取下一项。
-AI184已真实完成检查但数据仍INVALID。必读 .ai-workspace/inputs/U1-R1-20260924/AI184_检查实证与后续接力.md 与 outputs/U1-R1/AI-000184/AI-000184_U1-R1_检查报告.md；重点纳入LF/CRLF单格派生变化保护，原3格内容问题不代改。控制台已核22SHA/原样handoff，不重跑成功初查。
-## AI-000192 | [CODE] [U1-CONTENT-GUARD-R1] Authoring部分发布回退与并发内容保护修复
-
-- 序号：192
-- 提交时间：2026-09-24T23:59:38.1727478+08:00
-- 模块 ID：U1-CONTENT-GUARD-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000185
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读inputs/U1-R1-20260924/U1-CONTENT-GUARD-R1_CODE.md、授权与执行边界.md、AI184_检查实证与后续接力.md。根据控制台真实二文件部分失败复现，修同一生产Authoring核心发布/回退契约和调用该核心的隔离回归；不只修Reverse参数。原AI185代码与6/6成功记录保留，不Reset。只源码/工具/隔离fixture，不Unity/MCP、生产xlsx/CSV/旧字体现场。显式指定PS7 shell直接queue，正式票据只领一次；输出outputs/U1-R1/AI-000192/，完成原样handoff后结束。
-
-> SUPERVISED POLICY at 2026-09-24T23:59:38.3311189+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"在格式化和生产导表前修共享发布/回退保护；与本批全部任务串行，禁止改生产配表。","updatedAt":"2026-09-24T23:59:38.3056068+08:00"},"taskId":"AI-000192"}
-
-> Dependency correction for AI-000186 at 2026-09-24T23:59:38.4496815+08:00: AI-000185, AI-000192
-
-> SUPERVISED EXTEND at 2026-09-24T23:59:38.5249760+08:00: {"taskIds":["AI-000192"],"reason":"用户新配表保护任务内有独立真实工具缺陷，增加一次有实证的必要修复，不涉及旧字体恢复预算。"}
-> Instruction revision for AI-000186 at 2026-10-03T23:36:58.4086069+08:00
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-FORMAT_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000186/。完成后supervisorHandoff原样回控制台，不自行领取下一项。 2026-10-03补充：任务卡已追加控制台真实隔离Workbook发布并发覆盖反例，必须先补齐同一格式发布核心源漂移/晚备份冲突窗口再完成原格式目标，生产配表仍零写；核outputs/control/U1-R1-20260924/resume-20261003/。原AI192成功不Reset不重跑。
-> Instruction revision for AI-000186 at 2026-10-04T00:01:35.7941153+08:00
-
-必读任务卡 .ai-workspace/inputs/U1-R1-20260924/U1-FORMAT_CODE.md 及同目录授权与执行边界.md，按原文完成唯一目标。全部生产配表交DATA，CODE只工具/源码/隔离回归，ENGINE只实际场景核验。旧AI170/171/172延后，保留失败现场与恢复史，不Reset/Recover。只用正式票据领取，显式PS7 shell，不嵌套Windows5。所有错误警告在DATA可见线说明。报告目录 .ai-workspace/outputs/U1-R1/AI-000186/。完成后supervisorHandoff原样回控制台，不自行领取下一项。 2026-10-03补充：任务卡已追加控制台真实隔离Workbook发布并发覆盖反例，必须先补齐同一格式发布核心源漂移/晚备份冲突窗口再完成原格式目标，生产配表仍零写；核outputs/control/U1-R1-20260924/resume-20261003/。原AI192成功不Reset不重跑。 2026-10-04平台容量恢复：必读任务卡最新段及heartbeat-20261003-2354/证据，Common已有本任务未验证草稿，先核差异/解析/针对性保护回归再续接，不重复追加补丁；保留provider_model_capacity错误与恢复史。
-
-> SUPERVISED RECOVERY at 2026-10-04T00:01:36.2410996+08:00: {"taskId":"AI-000186","record":{"at":"2026-10-04T00:01:36.2177763+08:00","problemKey":"provider_model_capacity","plan":"Same configured executor availability is now proven by completed read-only probe and fresh idle; preserve known CODE-owned Common draft SHA CA9EABE8A646EE39C4B8B87CF51128B5F45621CD8D75FDC830AA66E6B0D91F56 and production baseline. On new claim inspect landed diff, parse and run targeted source/staging/backup concurrency plus rollback contracts before continuing original format goal; do not replay applied patches, no model switch, no reset. Updated original card specifies exact interrupted-state resume and final validation.","evidence":"heartbeat-20261003-2354/probe-idle-app.json: idle/completed after capacity error; after-probe-snapshot.json:15 production SHA unchanged and saved Common draft owned by two app patch calls, unvalidated; probe-turn-summary.json records patch calls before read-only message arrival. Latest queue PAUSED_CIRCUIT/provider_model_capacity, first error, no prior recovery; original issues and task ID retained.","sessionId":"c48bf37ed38c421580c9f08263792872"}}
-## AI-000193 | [CODE] [U1-HEADER-PRESERVE-R1] 表头注释未知备注保留与兼容条目归属修复
-
-- 序号：193
-- 提交时间：2026-10-04T02:56:00.4169394+08:00
-- 模块 ID：U1-HEADER-PRESERVE-R1
-- 初始状态：QUEUED
-- 前置依赖：AI-000189
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-必读 .ai-workspace/inputs/U1-R1-20260924/U1-HEADER-PRESERVE-R1_CODE.md、同目录授权与执行边界.md及原U1-HEADER-DOC_CODE.md。控制台真实隔离复现旧工具正文未知增补和无法关联thread的legacy备注被静默删除；修同一公开更新器和备注保护审计并真实回归，不只改测试。只工具源码/隔离夹具，生产xlsx/CSV/Unity资源0写。保留189成功与两次Final，不Reset/Recover；本任务是保护修复而非DATA-R1。固定PS7、正式票据、checkpoint/续租/计量与结算，实际平台拒绝留证不绕过。报告归本任务ID输出目录，完成后按正式协议交接。
-
-> SUPERVISED POLICY at 2026-10-04T02:56:38.0910558+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI189后控制台实证未知备注丢失，CODE同一注释更新器安全修复；生产只读，保持共享资源串行。","updatedAt":"2026-10-04T02:56:38.0353186+08:00"},"taskId":"AI-000193"}
-
-> Dependency correction for AI-000190 at 2026-10-04T02:56:38.2264558+08:00: AI-000189, AI-000193
-
-> SUPERVISED EXTEND at 2026-10-04T02:56:38.2960621+08:00: {"taskIds":["AI-000193"],"reason":"本批明确要求未知用户备注不丢；AI189后公开API隔离实证两种备注被静默删除，新增唯一同核心保护修复后再接190。保留原成功/错误/恢复史；不是DATA-R1。"}
-> Instruction revision for AI-000190 at 2026-10-04T03:23:32.1068771+08:00
-
-必读 .ai-workspace/inputs/U1-R1-20260924/U1-SCENE-VERIFY_ENGINE_MCP.md，含2026-10-04控制核验接力、AI188实际场景/PARTIAL边界和AI193备注保护核验证据。只在正式票据CLAIMED后核现主Unity6000.3.24f1与D:/GameProject/Eat-What/Assets，保护AI170冻结失败现场，不恢复字体、不猜映射、不保存未知dirty。完成真实厨具区域清单与必要最小运行验证；只身份明确且可隔离差异的配置，不以preset_tools授予可用性。191和正式DATA-R1留后续。固定PS7、当前队列API、共享锁/checkpoint/计量；实际权限拒绝留证，不绕过。
-
-> SUPERVISED PauseSupervision at 2026-10-04T03:52:43.1640882+08:00: {"userDecision":"","reason":"用户已要求本批出现人工阻断时暂停。AI190真实清单UNVERIFIED：2区域ID空、4工具身份缺失且旧名称/数据矛盾，必须用户确认业务映射；191不得以空清单发布。保留190检查SUCCEEDED/PENDING_USER、191 QUEUED未领取、186待验及旧170七失败六恢复，原ai随后暂停。"}
-> Instruction revision for AI-000191 at 2026-10-04T19:34:03.7694695+08:00
-
-执行 .ai-workspace/inputs/U1-R1-20260924/U1-R1-EXPORT_DATA.md 当前版本；必读同目录 P2新场景延期与继续配表_20261004.md 用户原话及 组件说明文档/P2新场景_配表与接线指导.md。用户已修正AI184三格，按当前源重新冻结/备份、全格内容与结构/备注审计、完整静态校验；现有数据模式保留scene UNVERIFIED/isFullyVerified=false。CookingProcess只作参考，新P2实际场景配置/验证延期，不写回旧映射；其余数据/权限/漂移错误仍阻断。更新结构化P2指导及p2-validation-scope.json，实际EXPORTED后交控制台，仍不得DONE/Consume或发布Unity生成物。原DATA可见THREAD routeRevision1，原保护/共享锁/票据/计量/旧字体停止线保持。
-
-> SUPERVISED ResumeSupervision at 2026-10-04T19:34:33.2463191+08:00: {"reason":"用户2026-10-04明确先留存新P2指导并继续当前配表；已修订AI191和正式DATA-R1范围，旧CookingProcess不再要求映射，本次未代签AI190或恢复旧字体。","userDecision":"关于AI184的配置问题，我已经统一进行了修复，然后对于AI190提到的场景对应配置的问题，这部分应当被适当放行。cookingProcess的scene文件是旧有遗留场景。后续p2的实际场景会做另行开发、新开scene进行从头开发而非继承老场景。遗留场景应当作为新场景开发时的参考对照。也因此，配表中关于p2的部分，应当先被记录并进行结构化的指导说明文档留存，而非尝试对原场景的写回映射。在这部分的数据处理上先按我前面给你解释的进行推进，等到进入了实际的p2新正式场景开发后，再尝试推进数据的实际配置和检查"}
-
-> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-10-04T19:58:34.7591554+08:00: {"at":"2026-10-04T19:58:34.7380687+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000184","AI-000185","AI-000186","AI-000187","AI-000188","AI-000189","AI-000190","AI-000191","AI-000192","AI-000193"],"pendingUserTaskIds":["AI-000186","AI-000190","AI-000191"]}
-
-## AI-000194 | [DATA] [DATA-R1] USER-U1 round pipeline
-
-- 用户轮次：USER-U1-R1 / USER-U1
-- CSV摘要：650DB8C4A9AF131AF5AC7DCA386E2F80D5A0CDDA57B0B0F7EAFA04B1F6F9DD04
-- 初始状态：QUEUED
-
-> Instruction revision for AI-000194 at 2026-10-04T20:14:45.3382211+08:00
-
-Read .ai-workspace/CORE.md, workers/DATA.md, inputs/U1-R1-20260924/授权与执行边界.md, P2新场景延期与继续配表_20261004.md, and .ai-workspace/inputs/U1-R1-20260924/DATA-R1_正式导表接力.md in full. Execute actual ConsumeDataRound task AI-000194 / DATA-R1 for USER-U1-R1 using .ai-workspace/runtime/data-rounds/USER-U1-R1.json (manifest SHA 28D4D0BEC9DC328435D7724CBAA0E0002D52051AE85B15855BB59FC6039B8541). Only reviewed data generated assets may publish; no font/scene/Prefab/material publishing. Keep P2 scene UNVERIFIED and deferred by user. Preserve all errors, backups, old AI170 stop, and Excel pending review. Use PS7 explicit shell and actual DispatchToken; check exact runner schema and protected current source/CSV before normal DONE round pipeline.
-
-> Dependency correction for AI-000194 at 2026-10-04T20:14:45.4742062+08:00: AI-000191
-
-> SUPERVISED POLICY at 2026-10-04T20:14:45.5828912+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Approved formal DATA-R1 isolation/import/publication shares protected source and Editor resource boundary; font key protects old failure assets and does not authorize font writes.","updatedAt":"2026-10-04T20:14:45.5479640+08:00"},"taskId":"AI-000194"}
-
-> SUPERVISED START at 2026-10-04T20:15:34.3403784+08:00: {"sessionId":"6a51799298a043ba911d7c95145de615","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000194","AI-000184","AI-000185","AI-000186","AI-000187","AI-000188","AI-000189","AI-000190","AI-000191","AI-000192","AI-000193"],"heartbeatAutomationId":"ai","createdAt":"2026-10-04T20:15:34.3345401+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-
-> SUPERVISED EXTEND at 2026-10-04T20:15:34.4175031+08:00: {"taskIds":["AI-000194"],"reason":"Bind unique actual ConsumeDataRound result; idempotent extension after formal API mode continuation."}
-## AI-000195 | [CODE] [U1-DATA-BATCH-GUARD] 隔离导表路径与资源导入错误发布门修复
-
-- 序号：195
-- 提交时间：2026-10-04T20:56:50.0633029+08:00
-- 模块 ID：U1-DATA-BATCH-GUARD
-- 初始状态：QUEUED
-- 前置依赖：AI-000191
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md, inputs/U1-R1-20260924/授权与执行边界.md, and inputs/U1-R1-20260924/U1-DATA-BATCH-GUARD_CODE.md in full. Repair the existing DataPipeline isolation path risk and missing import-error publication gate using AI194 original logs and controller 260-280 character path evidence. Root cause remains unproven. CODE only source/tools/editor-external isolated fixtures, no Unity Editor/batch or production xlsx/CSV/generated/font/scene/Prefab/material writes. One meaningful DataTables Final; deliver API/report changes and DATA194 follow-up. Preserve AI194 failure/stable key/budget; no new round/Consume/Reset/Recover. Actual Unity validation belongs resumed AI194 DATA.
-
-> Dependency correction for AI-000194 at 2026-10-04T20:57:10.5489954+08:00: AI-000191, AI-000195
-
-> SUPERVISED POLICY at 2026-10-04T20:57:10.6825462+08:00: {"taskId":"AI-000195","policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Task-scoped source/tools and editor-external isolated fixtures only; shared resources protect paused DATA and old font assets, no Unity/production publication authorization.","updatedAt":"2026-10-04T20:57:10.6427889+08:00"}}
-
-> SUPERVISED EXTEND at 2026-10-04T20:57:10.7477441+08:00: {"reason":"Necessary cross-lane tool repair within approved DATA-R1 scope per SUPERVISED_FULL 68-69; AI194 retains stable ProblemKey and recovery budget.","taskIds":["AI-000195"]}
-
-> SUPERVISED RECOVERY at 2026-10-04T21:26:38.0600896+08:00: {"record":{"at":"2026-10-04T21:26:38.0351159+08:00","problemKey":"unity-packagecache:com.unity.2d.tooling-first-import","plan":"AI195 has replaced full runId physical isolation names with unique b-8hex directories and added same-runner fail-closed import/compile/exception log publication gate. Resume original DATA194 with unchanged DONE source, a fresh short isolated Unity run and fresh nonce; first validate without publishing, then independently revalidate and review new generated diff before approved data-only publication. Preserve old attempts/errors and source locks; do not use old candidate or change packages/system policies.","evidence":"Controller heartbeat-20261004-2122/ai195-controller-verification.json verifies 4 delivery SHA matches, five protected production hashes unchanged, both full prior error logs rejected (28 matching lines each, 11 unique resource issues), actual production runner gate before Publish. Targeted 85 checks pass including final source; Custom Final1/1 pass. DataTables Final failed solely legacy zero V02/V03 warning assertion with current known 8/1 warnings; original TEST_OBSERVATION/PENDING_USER retained, no false full-suite pass or scene approval. Fresh three-lane idle evidence saved.","sessionId":"6a51799298a043ba911d7c95145de615"},"taskId":"AI-000194"}
-
-> SUPERVISED PauseSupervision at 2026-10-04T21:45:47.0659398+08:00: {"userDecision":"","reason":"AI194 attempt2已Fail且三线实证idle；旧Spine 3.8.75加载错误仍真实存在，空引用保护不能修复骨骼数据。当前正式DATA-R1错误阻止发布规则下，没有已验证且不改变旧资产/不豁免错误的安全方案。暂停待用户审定针对已登记遗留资产的有限发布例外或另行修复范围；保留2错误/1恢复及全部旧停止线。"}
-## AI-000196 | [CODE] [U1-DATA-SPINE-EXCEPTION] 获批Spine遗留加载错误有限例外及导入空引用修复
-
-- 序号：196
-- 提交时间：2026-10-04T22:20:14.7530313+08:00
-- 模块 ID：U1-DATA-SPINE-EXCEPTION
-- 初始状态：QUEUED
-- 前置依赖：AI-000195
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md and inputs/U1-R1-20260924/U1-DATA-SPINE-EXCEPTION_CODE.md in full. User explicitly approved the preceding bounded proposal via 批准; read Spine遗留错误有限例外_用户批准_20261004.md and exact approved asset fingerprints. Repair Initialize null handling plus reliable structured error attribution and same-run Unity-generated dependency evidence/gates in existing runner. NullReference remains blocking. Scope only actual AI194/USER-U1-R1; other errors/default modes remain strict. Source/tools/editor-external fixtures only; no Unity/MCP or production assets. Preserve original DATA194 failure/history/budget; no Recover/Consume/Reset/new DATA round. One meaningful final validation and truthful pending real Unity proof. Controller independently reads completion, no retry of denied cross-thread return.
-
-> SUPERVISED POLICY at 2026-10-04T22:20:50.4784534+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准原DATA-R1限定Spine遗留错误方案；同一源码及共享导入资源串行独占，仍禁止CODE生产资产写入。","updatedAt":"2026-10-04T22:20:50.4194211+08:00"},"taskId":"AI-000196"}
-
-> Dependency correction for AI-000194 at 2026-10-04T22:20:50.6338416+08:00: AI-000191, AI-000195, AI-000196
-
-> SUPERVISED EXTEND at 2026-10-04T22:20:50.7115754+08:00: {"reason":"用户2026-10-04直接批准Sample/output4限定例外与空引用修复，AI196为原194必要CODE修复，不是新DATA轮次。","taskIds":["AI-000196"]}
-
-> SUPERVISED ResumeSupervision at 2026-10-04T22:20:50.7515249+08:00: {"reason":"用户已批准具体受控方案，先执行CODE修复并核验，再按原ID预算恢复DATA194。","userDecision":"批准"}
-## AI-000197 | [CODE] [U1-DATA-PUBLISH-PROOF] 绑定已验依赖候选并修复目录发布漂移与回退保护
-
-- 序号：197
-- 提交时间：2026-10-04T23:15:27.7899253+08:00
-- 模块 ID：U1-DATA-PUBLISH-PROOF
-- 初始状态：QUEUED
-- 前置依赖：AI-000196
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md and inputs/U1-R1-20260924/U1-DATA-PUBLISH-PROOF_CODE.md in full. Controller reproduced with real shared proof verifier and publisher: staged content changed after verified proof still returns PUBLISHED in pure isolation. Repair same production runner/transaction by binding original verified candidate through incoming/promotion and ownership-safe rollback; do not resample drift as approval. Check adjacent source/target/backup windows and logPath variable overwrite. Preserve AI196 success and tests. Source/tools/offline fixtures only, no Unity/MCP or production data/assets. Keep original AI194 PAUSED_CIRCUIT, errors and recovery budget; do not Recover/Consume/Reset. One meaningful Final and protected hashes. Finish in original CODE thread for controller reading; no retry of denied cross-thread returns.
-
-> SUPERVISED POLICY at 2026-10-04T23:15:47.6469678+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Same production batch publication core. Necessary proof/candidate binding repair after controller isolated reproduction. Source/tools only; no asset write permission.","updatedAt":"2026-10-04T23:15:47.5900017+08:00"},"taskId":"AI-000197"}
-
-> Dependency correction for AI-000194 at 2026-10-04T23:15:47.8320253+08:00: AI-000191, AI-000195, AI-000196, AI-000197
-
-> SUPERVISED EXTEND at 2026-10-04T23:15:47.9166638+08:00: {"reason":"Necessary authorized original DATA-R1 publication protection repair, not a new DATA round.","taskIds":["AI-000197"]}
-
-> SUPERVISED RECOVERY at 2026-10-05T00:02:01.8110410+08:00: {"record":{"at":"2026-10-05T00:02:01.7535215+08:00","problemKey":"spine-legacy:animationreferenceasset.initialize-null","plan":"Implemented AI196 null guard, failure-point asset identity and USER-U1-R1-only approved legacy gate plus fresh Unity dependency closure; AI197 now binds verified candidate SHA through publisher/incoming/NO_CHANGES and ownership-safe rollback. Controller independently reproduced old post-proof stage drift: now rejected with live bytes intact. Resume same DONE round using fresh no-Publish Unity, review new proof/catalog/GUID/diff, then a separate fresh Publish run only if all gates pass; never reuse old candidates.","evidence":"AI197 SUCCEEDED/VERIFIED attempts1; actual Common/Runner/tests read; unique Custom Final2/2 =33+116 checks, 4 final SHA matched. Controller isolated public verifier/publisher retest blocked staged drift, target unchanged, no backup; whole input13AA32C4..., xlsxA46C9735..., CSV650DB8C4..., generated2D20C216..., 8 approved assets unchanged. fresh CODE+DATA idle in app, ENGINE notLoaded excluded; Reconcile no repairs/inspection; full scope only194 recoveryReady. Evidence outputs/control/U1-R1-20260924/heartbeat-20261004-2353/.","sessionId":"6a51799298a043ba911d7c95145de615"},"taskId":"AI-000194"}
-## AI-000198 | [CODE] [U1-DATA-NATIVE-ROOT-PROOF] 修复生成共享Texture2D/Sprite的完整依赖证明合同
-
-- 序号：198
-- 提交时间：2026-10-05T00:28:08.2050206+08:00
-- 模块 ID：U1-DATA-NATIVE-ROOT-PROOF
-- 初始状态：QUEUED
-- 前置依赖：AI-000197
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-Read .ai-workspace/CORE.md, SUPERVISED.md, workers/CODE.md and inputs/U1-R1-20260924/U1-DATA-NATIVE-ROOT-PROOF_CODE.md in full. Actual AI194 attempt3 Unity rejected the importer-created Texture2D+Sprite shared asset because proof requires every .asset root to be ScriptableObject. Repair the same production proof contract narrowly; retain all roots, real recursive Unity dependencies, subasset identity/broken reference checks, nonce/source/candidate and AI197 publication binding. Source/tools/offline fixtures only; no Unity/MCP/batch or production data/resource writes. Keep original AI194 paused with 3 errors/2 recoveries and current key; no Recover/Reset/Consume. One meaningful Final testing actual production behavior and protected hashes; real Unity remains DATA. Report only in original CODE thread and queue, controller reads independently; no retry of denied cross-thread returns.
-
-> SUPERVISED POLICY at 2026-10-05T00:29:25.7779802+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Serialize same production proof source repair with original DATA pipeline and preserve shared data/generated/font resource locks; source-only CODE boundary in task card.","updatedAt":"2026-10-05T00:29:25.7235495+08:00"},"taskId":"AI-000198"}
-
-> Dependency correction for AI-000194 at 2026-10-05T00:29:25.9535937+08:00: AI-000191, AI-000195, AI-000196, AI-000197, AI-000198
-
-> SUPERVISED EXTEND at 2026-10-05T00:29:26.0325992+08:00: {"taskIds":["AI-000198"],"reason":"User-authorized necessary tool repair for original DATA-R1 native shared asset proof, no skipped roots or reduced gates; no new DATA round and no reset of original194 history."}
-## AI-000199 | [CODE] [U1-DATA-SIGNED-ID-PROOF] 修复原生根证明有符号localFileId合同
-
-- 序号：199
-- 提交时间：2026-10-05T01:13:08.8890552+08:00
-- 模块 ID：U1-DATA-SIGNED-ID-PROOF
-- 初始状态：QUEUED
-- 前置依赖：AI-000198
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-读取 .ai-workspace/inputs/U1-R1-20260924/U1-DATA-SIGNED-ID-PROOF_CODE.md；修同一生产C#/PS证明器错误拒绝实际负localFileId，保留全部身份/依赖/发布保护。仅源码离线夹具，无Unity或生产资源写入。原AI194不恢复；完成只留原CODE可见线和queue，控制台独立读取。
-
-> SUPERVISED POLICY at 2026-10-05T01:13:32.1210534+08:00: {"policy":{"resourceKeys":["unity-project","data-source","data-authoring","workflow-devtools","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"同一生产证明器实际负localFileId误拒，CODE必要源码与隔离夹具修复；生产资源保护和串行占用保持。","updatedAt":"2026-10-05T01:13:32.0594577+08:00"},"taskId":"AI-000199"}
-
-> Dependency correction for AI-000194 at 2026-10-05T01:13:32.3241592+08:00: AI-000191, AI-000195, AI-000196, AI-000197, AI-000198, AI-000199
-
-> SUPERVISED EXTEND at 2026-10-05T01:13:32.3934142+08:00: {"reason":"用户当前DATA-R1范围内必要同证明器修复，保留旧scope和失败恢复史。","taskIds":["AI-000199"]}
-
-> SUPERVISED RECOVERY at 2026-10-05T01:46:28.3290595+08:00: {"record":{"at":"2026-10-05T01:46:28.2641525+08:00","problemKey":"data-proof:placeholder-texture-root-type","plan":"基于AI198精确注册Texture2D+Sprite完整主子资产证明和AI199有符号Int64身份修复，解决本次placeholder-texture-root-type合同缺陷。保留全部根/catalog/实际Unity递归依赖、GUID/meta/破损引用和受影响Spine排除。真实Sprite -6724980738021171820不改值，零/类型/溢出/重复/归属错误仍拒绝。以审定新输入2F8563B0...从原USER-U1-R1 DONE入口先无Publish新Unity验证，全部门通过并审新diff后再独立新Publish；不复用旧候选。保留AI197固定候选哈希贯穿发布、原错误及既有恢复史。","evidence":"2026-10-05 01:40控制实读AI199最终生产C#/PS与测试；唯一Custom Final3/3共185项。独立重做01:08原生产核心反例，正数与真实负Sprite ID均接受且JSON Int64不丢失；缺证和非法身份反例仍拒绝。源码3SHA匹配，Runner不变；只读虚拟还原两处比较符后Assets摘要等于198基线，确认整体input差异仅授权源码；生成目录/xlsx/14CSV/双场景/8旧Spine无漂移。证据heartbeat-20261005-0138/。fresh CODE/DATA idle，ENGINE notLoaded排除；Reconcile repairs=[]/needsInspection=[]，全scope仅194 recoveryReady。实际Unity尚待本次DATA执行，旧195/196/198观察不代签。","sessionId":"6a51799298a043ba911d7c95145de615"},"taskId":"AI-000194"}
-
-> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-10-05T02:04:00.0564351+08:00: {"at":"2026-10-05T02:04:00.0235006+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000194","AI-000184","AI-000185","AI-000186","AI-000187","AI-000188","AI-000189","AI-000190","AI-000191","AI-000192","AI-000193","AI-000195","AI-000196","AI-000197","AI-000198","AI-000199"],"pendingUserTaskIds":["AI-000186","AI-000190","AI-000191","AI-000195","AI-000196","AI-000198"]}
-## AI-000200 | [CODE] [PRE-5b] 监管瘦身与计量补全（六项工作流工具合同）
-
-- 序号：200
-- 提交时间：2026-10-05T02:30:44.8811754+08:00
-- 模块 ID：PRE-5b
-- 初始状态：QUEUED
-- 前置依赖：AI-000194
-- 允许越过：True
-- 最大尝试次数：3
-
-### 指令
-
-用户新批PRE-5b：AUTOMATIC，六项合为一个工作流工具目标。完整读取 .ai-workspace/inputs/PRE-5b_监管瘦身与计量补全_20261005.md 并逐项实现验证。无.cs/Unity/生产资源写入；PS工具/测试/文档；旧AI170与F/P2停线保留。原CODE可见线交付，控制台独立读取，不调用跨线程回传。始终显式PowerShell7正常策略，不PS5或Bypass。
-
-> Verification resolved for AI-000200 at 2026-10-05T04:05:52.2883550+08:00: decision=VERIFIED; summary=控制台完成原文档TEST_OBSERVATION的针对性机器复核；仅确认CODE工具交付，PRE-5b真实唤醒与实时源接入仍未完成。; evidence=Compare-Acceptance先行7/7差异0；最新Workflow Final 2026-10-05 03:55:50为11/11；CORE5613B、入口缩减59.91%、原文及失败历史保全。独立Top5字节与双份SHA全匹配，五生产范围及xlsx不变。证据.ai-workspace/outputs/control/PRE-5b-20261005/PRE-5b_控制台验收.md、acceptance-final-control.json、compact-independent-check.json、production-final.json。此决议只解除原文档测试观察，不宣称WATCH端到端/正式未来周报验收；不解除其它旧任务待验。
-
-> Historical verification recorded for AI-000200 at 2026-10-05T16:47:21.6025318+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户正式验收 PRE-5b 已交付工具；即时唤醒/采集缺口转 PRE-5c，本批补做真实运行。; evidence=.ai-workspace/inputs/控制台输入_PRE-5b验收_FONT-R字体迁移重做_PRE-5c_20261005.md SHA256=2563AAE71F237BF05061DBBD39B4F3DB9B9FA61601CEA2C1D59111A8A4705622; userDecision=工具层的验收结论见文档；整体进入监管模式并做一轮实际运行测试。
-
-> Superseded AI-000170 : {"at":"2026-10-05T16:47:21.8301674+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"NEEDS_USER","accepted":false,"reason":"FONT-R 链替换旧字体/E2卡；E2仅在 FONT-R4 人工验收后重新准入。","userDecision":"用户文档：AI170/171/172 CLOSED_SUPERSEDED，FONT-R代替，不再续跑。","verification":".ai-workspace/inputs/控制台输入_PRE-5b验收_FONT-R字体迁移重做_PRE-5c_20261005.md；bootstrap12项+Workflow Final11/11"}
-
-> Superseded AI-000171 : {"at":"2026-10-05T16:47:21.9505539+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"FONT-R 链替换旧字体/E2卡；E2仅在 FONT-R4 人工验收后重新准入。","userDecision":"用户文档：AI170/171/172 CLOSED_SUPERSEDED，FONT-R代替，不再续跑。","verification":".ai-workspace/inputs/控制台输入_PRE-5b验收_FONT-R字体迁移重做_PRE-5c_20261005.md；bootstrap12项+Workflow Final11/11"}
-
-> Superseded AI-000172 : {"at":"2026-10-05T16:47:22.0644116+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"FONT-R 链替换旧字体/E2卡；E2仅在 FONT-R4 人工验收后重新准入。","userDecision":"用户文档：AI170/171/172 CLOSED_SUPERSEDED，FONT-R代替，不再续跑。","verification":".ai-workspace/inputs/控制台输入_PRE-5b验收_FONT-R字体迁移重做_PRE-5c_20261005.md；bootstrap12项+Workflow Final11/11"}
-## AI-000201 | [CODE] [PRE5C-FONTR] PRE-5c
-
-- 序号：201
-- 提交时间：2026-10-05T16:54:27.1971564+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/PRE5c_CODE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:27.3598449+08:00: {"policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.3264102+08:00","supervisionLevel":"light"},"taskId":"AI-000201"}
-## AI-000202 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R0-PRE
-
-- 序号：202
-- 提交时间：2026-10-05T16:54:27.4068733+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R0-PRE_ENGINE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:27.5032034+08:00: {"policy":{"resourceKeys":["font-readonly-inventory"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.4824905+08:00","supervisionLevel":"full"},"taskId":"AI-000202"}
-## AI-000203 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R0
-
-- 序号：203
-- 提交时间：2026-10-05T16:54:27.5563814+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000202, AI-000201
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R0_ENGINE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:27.6482570+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.6197956+08:00","supervisionLevel":"full"},"taskId":"AI-000203"}
-## AI-000204 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R1
-
-- 序号：204
-- 提交时间：2026-10-05T16:54:27.6944030+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000203
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R1_ENGINE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:27.8065438+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.7776630+08:00","supervisionLevel":"full"},"taskId":"AI-000204"}
-## AI-000205 | [CODE] [PRE5C-FONTR] FONT-R2
-
-- 序号：205
-- 提交时间：2026-10-05T16:54:27.8490504+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000204
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R2_CODE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:27.9838478+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:27.9430629+08:00","supervisionLevel":"light"},"taskId":"AI-000205"}
-## AI-000206 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R2-COMPILE
-
-- 序号：206
-- 提交时间：2026-10-05T16:54:28.0295951+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000205
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R2-COMPILE_ENGINE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:28.1516219+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:28.1098762+08:00","supervisionLevel":"full"},"taskId":"AI-000206"}
-## AI-000207 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R3
-
-- 序号：207
-- 提交时间：2026-10-05T16:54:28.2039134+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000206
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3_ENGINE.md；先读COMMON.md及用户原件全部文本。
-
-> SUPERVISED POLICY at 2026-10-05T16:54:28.3359324+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户新批串行依赖；FONT-R一次失败即停，待用户确认精确恢复清单及最终视觉签收。","updatedAt":"2026-10-05T16:54:28.3065373+08:00","supervisionLevel":"full"},"taskId":"AI-000207"}
-
-> SUPERVISED START at 2026-10-05T16:56:09.4757817+08:00: {"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000201","AI-000202","AI-000203","AI-000204","AI-000205","AI-000206","AI-000207"],"heartbeatAutomationId":"ai","createdAt":"2026-10-05T16:56:09.4693866+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":15,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-
-> SUPERVISED AUTOMATION_BOUND at 2026-10-05T16:56:57.3200153+08:00: {"automationId":"watch-60"}
-
-> SUPERVISED AUTOMATION_BOUND at 2026-10-05T17:14:07.3280747+08:00: {"heartbeatMinutes":60,"automationId":"watch-60"}
-
-> Verification resolved for AI-000202 at 2026-10-05T17:26:01.5359193+08:00: decision=VERIFIED; summary=用户确认AI202只读清单，并以直接文件复制覆盖原草案Git方法；不表示恢复或视觉完成。; evidence=用户2026-10-05明确批准AI202两场景精确源；覆盖旧恢复方法为6e58cb8已核blob直接复制，不建index/tree/ref；零引用后删除3材质及空Materials/meta；R0由用户提交后才开R1，不含视觉签收。详见inputs/FONT-R-PRE5c-20261005/FONT-R0_用户批准与执行修订_20261005.md；Compare-Acceptance 5/5，两个源blob及完整SHA由控制台独立核验，source-blobs-verified.json。
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-05T17:26:01.8544104+08:00: {"userDecision":"用户2026-10-05明确批准AI202两场景精确源；覆盖旧恢复方法为6e58cb8已核blob直接复制，不建index/tree/ref；零引用后删除3材质及空Materials/meta；R0由用户提交后才开R1，不含视觉签收。详见inputs/FONT-R-PRE5c-20261005/FONT-R0_用户批准与执行修订_20261005.md","taskId":"AI-000202"}
-
-> SUPERVISED POLICY at 2026-10-05T17:26:01.9584645+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户指定R0复制到位后由用户提交；在实际恢复提交核验前保留人工gate，FONT-R1不得领取。","updatedAt":"2026-10-05T17:26:01.9202606+08:00","supervisionLevel":"full"},"taskId":"AI-000203"}
-> Instruction revision for AI-000203 at 2026-10-05T17:26:02.0443618+08:00
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R0_ENGINE.md；先读COMMON、用户原件全文及FONT-R0_用户批准与执行修订_20261005.md。仅两场景指定blob直接复制；核SHA/零引用/Console/clean后删三材质及空Materials/meta；CODEBASE_MAP修订。无index/tree/ref/AI暂存提交；完成等待用户提交后才开R1。
-> Instruction revision for AI-000204 at 2026-10-05T17:26:02.1110572+08:00
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R1_ENGINE.md；先读COMMON、用户原件全文及FONT-R0_用户批准与执行修订_20261005.md。用户恢复提交实际核验、USER-FONT-R0-COMMIT DONE、AI203 gate批准后才领取，不代用户提交R0。
-
-> SUPERVISED PauseSupervision at 2026-10-05T17:28:50.9072973+08:00: {"reason":"AI201首个实质验证失败，NEEDS_USER/HUMAN stop，ProblemKey workflow:app-turn-json-timezone-loss；按用户一次失败即停暂停本批。AI202新批准有效，AI203依赖未满足，不派发恢复；待用户对只读诊断给出修复决定。","userDecision":""}
-
-> User-adjudicated CODE stop AI-000201 : {"at":"2026-10-05T17:40:26.8367882+08:00","decision":"CODE_SELF_VALIDATION_CONTINUE","errorIndex":0,"errorKind":"EXECUTION","errorMessage":"首次实质验证失败：RecordTaskTurn拒绝当前线程真实app turn；ConvertFrom-Json将UTC时间转DateTime后经string丢失时区，实际readonly对照false/true。按COMMON R-ST停止，不修复/Recover；未跑Workflow Final、未部署WATCH。证据 .ai-workspace/outputs/FONT-R-PRE5c/AI-000201/AI-000201_停止报告.md","problemKey":"workflow:app-turn-json-timezone-loss","userDecision":"用户2026-10-05直接Resume AI-000201并判定此次停止为误触发，保留草稿继续原PRE5c；R-ST三档修订：CODE交付前自验证在120回合/同错重试≤2次内迭代，ENGINE/DATA生产写入与控制台验收失败一次即停。原文inputs/FONT-R-PRE5c-20261005/AI201_继续执行与RST三档修订_20261005.md。","verification":"本轮fresh wait_threads：CODE原线程01a10b39-5faf-7a11-8a93-65396938a23e idle/completed；worker IDLE/CLOSED无lease/RUNNING；用户明确判误停并Resume；控制bootstrap18项+既有管理12项通过、Parser0，原错误及源码/状态已保全。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai201-resume-20261005\\user-decision.json","previousStatus":"NEEDS_USER","previousExecution":{"executionId":"f9077ac3d1c8445f815bdaea7915ac5b","ownerThreadId":"01a10b39-5faf-7a11-8a93-65396938a23e","attempt":1,"maxTurns":120,"appTurnCount":null,"appTurns":[],"toolProgressIds":["adopt-existing-claim","ce669e8500154af598f85c0928ce6768/start","ce669e8500154af598f85c0928ce6768/finish"],"claimedAt":"2026-10-05T16:57:48.4349737+08:00","countUnavailableReason":"Exact app turn source unavailable; provider responses are not app turns.","limitReached":false,"checkpointPath":null}}
-> Instruction revision for AI-000201 at 2026-10-05T17:40:27.1412005+08:00
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/PRE5c_CODE.md；必读COMMON、原件全文及AI201_继续执行与RST三档修订_20261005.md。用户判旧停止为误触发，原草稿/历史保留，原201继续；全仓JSON日期保真/DateTimeOffset UTC及五模块回归，三档停止规则、120回合/同错重试≤2次、Workflow Final/Top5/acceptance/P-049/TK-WF-03/04。WATCH受限查询权限不处理，部署审批等完成版。
-
-> SUPERVISED ResumeSupervision at 2026-10-05T17:40:27.2146478+08:00: {"reason":"用户明确Resume原AI201并修订RST三档；仅原201先继续，FONT-R生产/用户提交/视觉gate保持。","userDecision":"用户2026-10-05直接Resume AI-000201并判定此次停止为误触发，保留草稿继续原PRE5c；R-ST三档修订：CODE交付前自验证在120回合/同错重试≤2次内迭代，ENGINE/DATA生产写入与控制台验收失败一次即停。原文inputs/FONT-R-PRE5c-20261005/AI201_继续执行与RST三档修订_20261005.md。"}
-
-> SUPERVISED PauseSupervision at 2026-10-05T18:26:31.9405624+08:00: {"userDecision":"","reason":"用户选择保留18:12—18:13字体和正式场景新增变化，先只读对账；FONT-R0恢复/删除及后继暂停，AI201成功史保留。"}
-
-> SUPERVISED BreakSupervision at 2026-10-05T18:33:43.8650819+08:00: {"userDecision":"","reason":"CONTROL_ACCEPTANCE_FAILED AI-000201 workflow:turn-limit-handoff-clears-stop；隔离真实核心证明累计120回合换线程后limitReached=false，Checkpoint CONTINUE且RecordTaskProgress可写。按用户R-ST控制验收首败即停，不自修/重置/派发；证据outputs/control/FONT-R-PRE5c-20261005/ai201-review-20261005/turn-limit-handoff-result.json。另保留两处用户选择先只读对账的资源变化。"}
-
-> Verification rejected for AI-000201 at 2026-10-05T18:57:42.3034918+08:00: decision=REJECTED; reason=保留旧控制验收失败及新用户软限修订；只阻断AI201，独立链可继续。
-
-> SUPERVISED PauseSupervision at 2026-10-05T18:57:42.5493150+08:00: {"reason":"按用户最新决定整理取消的203/204与新R2链，随后正式Resume同一session。","userDecision":""}
-
-> Superseded AI-000203 : {"at":"2026-10-05T18:57:42.6112783+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"用户取消FONT-R0恢复与R1空保存/恢复提交；确认当前工作树新基线，从R2继续。","userDecision":"用户2026-10-05：恢复监管，AI201保持任务级阻断；批准AI201最小修复；120软限、软限后30分钟无进度或临时240才硬停；取消AI203/204；提交确认工作树后FONT-R从R2继续。","verification":"inputs/FONT-R-PRE5c-20261005/监管软限与FONT-R新基线_20261005.md"}
-
-> Superseded AI-000204 : {"at":"2026-10-05T18:57:42.7593042+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"用户取消FONT-R0恢复与R1空保存/恢复提交；确认当前工作树新基线，从R2继续。","userDecision":"用户2026-10-05：恢复监管，AI201保持任务级阻断；批准AI201最小修复；120软限、软限后30分钟无进度或临时240才硬停；取消AI203/204；提交确认工作树后FONT-R从R2继续。","verification":"inputs/FONT-R-PRE5c-20261005/监管软限与FONT-R新基线_20261005.md"}
-
-> Dependency correction for AI-000205 at 2026-10-05T18:57:42.9123691+08:00: none
-## AI-000208 | [CODE] PRE-5c AI201受控修复：累计软限、任务拒验隔离与正式证据路径
-
-- 序号：208
-- 提交时间：2026-10-05T19:06:00.3557372+08:00
-- 模块 ID：无
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/PRE5c-TURN-SOFT-REPAIR_CODE.md 和COMMON；仅PowerShell/协议，修复AI201控制拒验，交付后独立核验。
-
-> SUPERVISED POLICY at 2026-10-05T19:06:31.4797403+08:00: {"policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准AI201最小修复；独立任务级阻断，不阻FONT-R，完成后独立复核。","updatedAt":"2026-10-05T19:06:31.4203636+08:00","supervisionLevel":"light"},"taskId":"AI-000208"}
-
-> SUPERVISED EXTEND at 2026-10-05T19:06:31.5946036+08:00: {"taskIds":["AI-000208"],"reason":"用户本轮明确批准AI201草案1~3及软限/任务拒验修复；实际Enqueue返回208，预算归原201。"}
-> Instruction revision for AI-000205 at 2026-10-05T19:06:31.6655320+08:00
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R2_CODE.md、COMMON和最新用户决定；用户确认当前工作树提交为新基线，取消203/204，直接R2；只源码和离线夹具，复用三材质并实现幂等，不启动Unity。
-> Instruction revision for AI-000207 at 2026-10-05T19:06:31.7341666+08:00
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3_ENGINE.md、COMMON和最新用户决定；取消203/204，沿当前确认基线执行R3幂等迁移，三现有材质保留并重调UpdateShaderRatios；Static唯一精确保护，视觉gate保留。
-
-> SUPERVISED POLICY at 2026-10-05T19:06:31.8087599+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前工作树新基线后直接R2，CODE交付前同键重试<=2；AI201不作为依赖。","updatedAt":"2026-10-05T19:06:31.7702091+08:00","supervisionLevel":"light"},"taskId":"AI-000205"}
-
-> SUPERVISED ResumeSupervision at 2026-10-05T19:08:15.9013738+08:00: {"reason":"用户最新明确解除全局CIRCUIT；当前确认工作树已正常提交ee27ac2，取消203/204，从205 R2继续，201只保留任务级REJECTED，208已登记修复。","userDecision":"恢复监管；AI201保持任务级阻断，其余链不受影响；FONT-R取消203/204，提交当前工作树后从R2继续；120软限及240临时保护按最新卡修复。"}
-
-> SUPERVISED POLICY at 2026-10-05T19:10:19.9400879+08:00: {"taskId":"AI-000207","policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户取消203/204而保留R4用户视觉签收；当前基线幂等R3三材质复用，Static唯一保护。","updatedAt":"2026-10-05T19:10:19.9028404+08:00","supervisionLevel":"full"}}
-
-> SUPERVISED PauseSupervision at 2026-10-05T19:44:15.9949993+08:00: {"reason":"用户最新要求先定位修复AI205完成回传断点，再继续后续工作流；临时维护暂停派发，不重置任务或记全局CIRCUIT。","userDecision":""}
-
-> SUPERVISED ResumeSupervision at 2026-10-05T19:58:07.2409998+08:00: {"reason":"回传27项及Workflow Final15/15已通过；恢复同session仅作AI205一次实际回传，然后独立核验再派后继。","userDecision":"AI205任务完成，但是没有进行回传，首先定位调整后的工作流的结构执行问题，并尝试修复，修复完成后再继续后续的工作流任务"}
-> Control rejection resolved AI-000201 : {"at":"2026-10-05T20:39:58.7590447+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"workflow:turn-limit-handoff-clears-stop","repairTaskId":"AI-000208","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","userDecision":"用户2026-10-05批准AI201最小修复并要求完成后独立复核；120软限交接继续，30分钟无进度或临时240硬停；控制拒验任务级。","verification":"AI208生产源码21SHA一致、机器验收10/10、第三次Workflow Final17/17；独立真实队列核心交接/漂移拒绝/累计121/240硬停通过；7摘要全文对照一致。保留旧拒验与失败史，WATCH部署与人工gate不代签。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai208-review-20261005\\controller-review-decision.json","evidenceSha256":"4C30BB99614F97C87FD3072EF20491929EB3993104948BB4B604F450D21BD53E","rejectedResultSha256":"B0E8899D1142C56315517170EFCD41FFE915648B66E1AD415932934679260DEB","repairResultSha256":"A3623BFC9F04FF52648341BEDD82407C2E12DEABC580B5788177C3458B8C6051"}
-## AI-000209 | [CODE] [PRE5C-FONTR] FONT-R3 已批准Shader修复只读诊断登记
-
-- 序号：209
-- 提交时间：2026-10-05T23:45:10.3034252+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000206
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-SHADER-DIAGNOSIS_CODE.md、AI207_Shader修复批准_20261005.md及COMMON。仅只读核现物和既有诊断，满足正式同根修复入口；不改源码/生产资产/运行Unity。
-
-> SUPERVISED POLICY at 2026-10-05T23:45:33.7987090+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准原207最小Shader修复；只读登记同根诊断为正式REPAIR入口前置，无生产操作。","updatedAt":"2026-10-05T23:45:33.7286492+08:00","supervisionLevel":"light"},"taskId":"AI-000209"}
-
-> SUPERVISED EXTEND at 2026-10-05T23:45:33.9327712+08:00: {"taskIds":["AI-000209"],"reason":"用户批准同根修复，登记必需只读诊断，保留207原失败。"}
-## AI-000210 | [CODE] [PRE5C-FONTR] FONT-R3 精确Shader合同修复
-
-- 序号：210
-- 提交时间：2026-10-06T00:03:23.4346211+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000206, AI-000209
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-SHADER-REPAIR_CODE.md、AI207_Shader修复批准_20261005.md、COMMON及同根AI209诊断。只FontSwapOnce/必要离线夹具/文档，保持三材质Shader/GUID与Static；现场异Shader组合及严格反例，一次Fonts Final；不启动Unity/写序列化资产/恢复207。
-
-> SUPERVISED POLICY at 2026-10-06T00:03:48.7081330+08:00: {"taskId":"AI-000210","policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准AI207同根最小Shader修复；AI209诊断独立核验通过，CODE只源码/离线夹具，完成后控制独立核验。","updatedAt":"2026-10-06T00:03:48.6284968+08:00","supervisionLevel":"light"}}
-
-> SUPERVISED EXTEND at 2026-10-06T00:03:48.8196483+08:00: {"taskIds":["AI-000210"],"reason":"用户批准同根修复，正式REPAIR root207/diagnosis209，原207不提前恢复。"}
-## AI-000211 | [ENGINE_MCP] [PRE5C-FONTR] FONT-R3 Shader修复真实编译与只读预检
-
-- 序号：211
-- 提交时间：2026-10-06T00:25:36.9325379+08:00
-- 模块 ID：PRE5C-FONTR
-- 初始状态：QUEUED
-- 前置依赖：AI-000210
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-SHADER-PREFLIGHT_ENGINE.md、COMMON及用户批准。AI210已控制8/8/七源码SHA与3399资源保护核验；仅同工程Unity6000.3.24f1本版真实编译和一次Run(true)，不运行Run(false)/Play/Build、不写生产、不恢复207。
-
-> SUPERVISED POLICY at 2026-10-06T00:29:39.9917064+08:00: {"taskId":"AI-000211","policy":{"resourceKeys":["unity-editor","font-assets","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准原207修复；AI210独立核验通过，211仅真实编译和一次只读预检，独占Unity/字体/场景资源。","updatedAt":"2026-10-06T00:29:39.9313458+08:00","supervisionLevel":"full"}}
-
-> SUPERVISED EXTEND at 2026-10-06T00:29:40.1106393+08:00: {"reason":"同根207获批修复后真实编译/只读预检；独立验收后才准原207正式续行。","taskIds":["AI-000211"]}
-
-> SUPERVISED APPROVED_CONTINUATION at 2026-10-06T01:32:15.5060220+08:00: {"rawFailureCount":1,"record":{"repairId":"3c72b75d78604f85b1a638d1cd121fe3","at":"2026-10-06T01:32:15.4265987+08:00","problemKey":"font-r3:existing-material-shader-contract-mismatch","plan":"AI210 precise Standard source/target with Mobile Static atlas contract; preserve three material Shader/GUID, Static bytes and R4. Actual source4A68E5FD4B0B90A0F93309C2305ACEA8DA828F0960323411BB9726CA532562D5 passed AI211 real Unity preflight. One continuation paired to repair210, all original failures and counters retained.","evidence":"Independent 210/211 acceptance and 3399 fingerprints; real source-bound compilation and single Run(true)=171; Workflow Final18/18 and 39 core cases. Fresh original207 READY/idle, ENGINE route5; Reconcile no repairs/inspection. Evidence .ai-workspace/outputs/control/FONT-R-PRE5c-20261005/ai211-review-20261006/","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","repairTaskId":"AI-000210","decision":"USER_APPROVED_CONTINUATION","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai211-review-20261006\\resume-proof.json","evidenceSha256":"61308F910FC7C71E33B5DDCF92530D6D292196DEE4B8D1C302F88C1F676D2ADB"},"attempts":1,"budgetUsed":1,"taskId":"AI-000207"}
-## AI-000212 | [CODE] [FONT-R] FONT-R3 新生产ratio失败只读诊断
-
-- 序号：212
-- 提交时间：2026-10-06T02:00:07.0875711+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：AI-000210
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-RATIO-DIAGNOSIS_CODE.md、AI207_StaticRatio修复恢复批准_20261006.md、COMMON和控制ai207-attempt2-review。仅最新同根只读诊断与现物核对，不修改源码/生产资产，不Unity、不恢复207。
-
-> SUPERVISED POLICY at 2026-10-06T02:00:29.9330435+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户新批准Static ratio最小修复；本卡仅最新错误后的同根只读诊断登记，不写生产或运行Unity。","updatedAt":"2026-10-06T02:00:29.8669517+08:00","supervisionLevel":"light"},"taskId":"AI-000212"}
-
-> SUPERVISED EXTEND at 2026-10-06T02:03:51.8025271+08:00: {"reason":"用户批准本次Static ratio最小修复；加入同根最新失败后的只读诊断前置，保留207错误和预算。","taskIds":["AI-000212"]}
-## AI-000213 | [CODE] [FONT-R] Static原生材质副作用保护修复
-
-- 序号：213
-- 提交时间：2026-10-06T03:13:51.2587316+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：AI-000212
-- 允许越过：False
-- 最大尝试次数：3
-
-### 指令
-
-执行 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-STATIC-GUARD-REPAIR_CODE.md；授权 AI207_StaticRatio修复恢复批准_20261006.md，AI212诊断已控制独立5/5及39引用/3399SHA通过。仅源码/离线夹具/文档，不Unity/生产写入/Static恢复；原207第二修复slot，保留失败史。
-
-> SUPERVISED POLICY at 2026-10-06T03:14:12.5416494+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准第二slot最小Static保护源码修复，AI212最新同根诊断独立核验已通过，仅CODE源码与离线夹具。","updatedAt":"2026-10-06T03:14:12.4783333+08:00","supervisionLevel":"light"},"taskId":"AI-000213"}
-
-> SUPERVISED EXTEND at 2026-10-06T03:14:12.6747095+08:00: {"taskIds":["AI-000213"],"reason":"纳入用户批准的原207同根第二张必要REPAIR，诊断212与精确用户原话绑定，保留失败与额度。"}
-## AI-000214 | [ENGINE_MCP] [FONT-R] Static保护真实Unity隔离验证
-
-- 序号：214
-- 提交时间：2026-10-06T04:20:50.6835619+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：AI-000213
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-R3-NATIVE-GUARD-VALIDATION_ENGINE.md 并严格执行；AI213控制9/9及源码/3399资源已核。本任务同根READONLY_DIAGNOSIS，仅真实Unity独占临时夹具的加载/渲染/Bind/保存正反例，不恢复或写既有生产资源，不Run(true/false)或续207；9项预定义验收。
-
-> SUPERVISED POLICY at 2026-10-06T04:21:15.7428495+08:00: {"taskId":"AI-000214","policy":{"resourceKeys":["unity-editor","font-assets","font-source"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI213已独立核验；用户批准范围内真实原生隔离验证，仅任务自有临时资产，3399既有生产资源不写，原207不恢复。","updatedAt":"2026-10-06T04:21:15.6887339+08:00","supervisionLevel":"full"}}
-
-> SUPERVISED EXTEND at 2026-10-06T04:21:15.8596363+08:00: {"reason":"加入已批准修复的必要真实Unity隔离验收，不新增修复slot或替代原207。","taskIds":["AI-000214"]}
-
-> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-06T10:01:10.7344578+08:00: {"rawFailureCount":1,"taskId":"AI-000214","attempts":1,"rootTaskId":"AI-000207","budgetUsed":2,"grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai214-user-cleanup-resume-20261006\\resume-proof.json","evidenceSha256":"B5329B3E2B302486517CA55025C99C926E1F7C039EEE0E22E77650DF8A887B07","expectedAttempt":2,"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","failureHistorySha256":"C4F8BBC534C67648A5AE485C75A6BD8F80C79912F31301F6446B484BB1F82739","routeKey":"THREAD|01a10dba-6240-7be0-b2fb-0a6209f51284|6","expiresAt":"2026-10-06T02:21:10.6712404+00:00","purpose":"READONLY_VALIDATION","consumedAt":null,"executionId":null,"rootTaskId":"AI-000207","resumeId":"0e4742cf84234d24b6b70896ccc6f504"}}
-
-> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-07T00:54:05.5360738+08:00: {"taskId":"AI-000214","rawFailureCount":2,"attempts":2,"grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai214-cold-process-approved-20261007\\resume-proof.json","evidenceSha256":"A7D98EC88C607DD95E404A23AEDC1718ACAD176600927E73ED8352A7A031962E","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","consumedAt":null,"expiresAt":"2026-10-06T17:14:05.4641232+00:00","routeKey":"THREAD|01a10dba-6240-7be0-b2fb-0a6209f51284|6","rootTaskId":"AI-000207","purpose":"READONLY_COLD_PROCESS","expectedAttempt":3,"executionId":null,"resumeId":"8a0f909c0da1467bbb212ba292218fa0","failureHistorySha256":"E5A35D456696CCDEA92033F72E7E2275A38BD42BC633F2E09AE4541D971AD29C"},"budgetUsed":2,"rootTaskId":"AI-000207"}
-
-> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-07T11:03:04.2356683+08:00: {"rawFailureCount":3,"attempts":3,"rootTaskId":"AI-000207","budgetUsed":2,"taskId":"AI-000214","grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai214-host-repair-20261007\\resume-proof.json","evidenceSha256":"6607925C30D580072DEEFE2DFBC5D02E6D92D4A511AC7B565E16DFCB64BCC8A0","expectedAttempt":4,"resumeId":"2edc6350f8bf4757a802262089524dd1","consumedAt":null,"failureHistorySha256":"EDAD5CE54BA40586BA87914FC9728623C78D2999CFB4394B4F20FB0D0C719173","expiresAt":"2026-10-07T03:23:04.1686715+00:00","routeKey":"THREAD|01a10dba-6240-7be0-b2fb-0a6209f51284|6","executionId":null,"purpose":"READONLY_HOST_PROCESS","rootTaskId":"AI-000207","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1"}}
-## AI-000215 | [ENGINE_MCP] [FONT-R] 冷首载快照差异取证
-
-- 序号：215
-- 提交时间：2026-10-08T15:38:39.5154856+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-COLD-SNAPSHOT-DIAG_ENGINE.md
-
-> SUPERVISED POLICY at 2026-10-08T15:43:51.8791138+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","font-source"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"新增额度批准后的隔离只读取证；原顺序两快照，禁止主工程写，单次诊断，合同AI-000215.json","updatedAt":"2026-10-08T15:43:51.7946413+08:00","supervisionLevel":"light"},"taskId":"AI-000215"}
-
-> SUPERVISED EXTEND at 2026-10-08T15:43:52.7129577+08:00: {"reason":"用户新增一次修复额度并继续；先将同根只读诊断215纳入原会话，不恢复214，不消耗第三修复卡额度。","taskIds":["AI-000215"]}
-## AI-000216 | [CODE] [FONT-R] 冷首载快照一致性最小修复
-
-- 序号：216
-- 提交时间：2026-10-08T16:07:28.6353087+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：AI-000215
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-COLD-SNAPSHOT-REPAIR_CODE.md
-
-> SUPERVISED POLICY at 2026-10-08T16:07:59.7905800+08:00: {"policy":{"resourceKeys":["font-source","documentation"],"reviewDependsOn":["AI-000215"],"humanGateAfter":false,"gateApproved":false,"reason":"唯一第三REPAIR：AI215六项诊断及控制32原始引用/两快照/3399/PDB独立核验通过，最小采样顺序修复，尚未原生验证。","updatedAt":"2026-10-08T16:07:59.7268117+08:00","supervisionLevel":"light"},"taskId":"AI-000216"}
-
-> SUPERVISED EXTEND at 2026-10-08T16:08:00.6305468+08:00: {"reason":"用户唯一第三修复额度已由同根AI215诊断及UserDecision正式消费给AI216；旧史/旧许可保留。","taskIds":["AI-000216"]}
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-08T16:13:03.3137354+08:00: {"taskId":"AI-000215","userDecision":"用户2026-10-08直接指示：新增一次修复额度，继续尝试修复。另外，我需要你维护一个这次字体相关问题的修复路径报告。此决定批准原待决方案：先隔离记录两次内存快照差异，再依实证完成唯一第三次定向修复。AI215六项诊断合同及32份证据已由控制独立核验，通过此项技术诊断到修复的依赖；不代表人工视觉R4或原207生产验收。授权原件inputs/FONT-R-PRE5c-20261005/冷首载定向修复第三额度批准_20261008.md。"}
-## AI-000217 | [ENGINE_MCP] [FONT-R] 第三修复完整原生隔离验证
-
-- 序号：217
-- 提交时间：2026-10-08T16:35:50.9608320+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：AI-000216
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-COLD-SNAPSHOT-NATIVE_ENGINE.md
-
-> SUPERVISED POLICY at 2026-10-08T16:35:51.1650947+08:00: {"taskId":"AI-000217","policy":{"resourceKeys":["unity-editor","font-assets","font-source"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"新源码CA4已独立通过AI216九项CODE合同；按现有用户第三次修复批准做单次全新独立Unity九项验证。DependsOn为机器依赖，不新增人工复核边或R4签收。","updatedAt":"2026-10-08T16:35:51.1176672+08:00","supervisionLevel":"full"}}
-
-> SUPERVISED EXTEND at 2026-10-08T16:35:51.2285920+08:00: {"reason":"用户已批准第三定向修复及新实现单次原生验证，AI216独立验收通过。","taskIds":["AI-000217"]}
-
-> SUPERVISED APPROVED_VALIDATION_CONTINUATION at 2026-10-09T15:36:34.0973062+08:00: {"budgetUsed":3,"rawFailureCount":1,"attempts":1,"taskId":"AI-000217","rootTaskId":"AI-000207","grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai217-probe-resume-20261009\\resume-proof.json","evidenceSha256":"3D5023A080DD8B9D42AD2EFC9CAE05234F7940F532304D045C1E897A983EFFFB","expectedAttempt":2,"purpose":"READONLY_PROBE_SCENE","failureHistorySha256":"941D4EA307F0733A37DE290F54A1870635F36819FD559C242A9201CFEF93A1C2","expiresAt":"2026-10-09T07:56:34.0220254+00:00","resumeId":"27e37ca42c08466a9ab407124514861c","rootTaskId":"AI-000207","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","consumedAt":null,"routeKey":"THREAD|01a11a9d-890b-7421-990f-f11276655300|8","executionId":null}}
-## AI-000218 | [ENGINE_MCP] [FONT-R] 已批准Static恢复与主工程只读预检
-
-- 序号：218
-- 提交时间：2026-10-09T16:24:34.3229514+08:00
-- 模块 ID：FONT-R
-- 初始状态：QUEUED
-- 前置依赖：AI-000216, AI-000217
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-.ai-workspace/inputs/FONT-R-PRE5c-20261005/FONT-STATIC-RESTORE-PREFLIGHT_ENGINE.md
-
-> SUPERVISED POLICY at 2026-10-09T16:24:43.4722125+08:00: {"policy":{"resourceKeys":["unity-editor","font-assets","font-source","shortcycle-scenes"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原216与217独立验收已通过，现有用户授权一次Static恢复并形成恢复后只读预检；机器依赖，不代签R4。","updatedAt":"2026-10-09T16:24:43.4279103+08:00","supervisionLevel":"full"},"taskId":"AI-000218"}
-
-> SUPERVISED EXTEND at 2026-10-09T16:24:43.5293646+08:00: {"reason":"用户最新要求实际触发获批后继；同根207既有修复的恢复及预检，不新增第四REPAIR。","taskIds":["AI-000218"]}
-
-> SUPERVISED APPROVED_RESTORE_CONTINUATION at 2026-10-09T17:07:05.1722728+08:00: {"budgetUsed":3,"taskId":"AI-000218","grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai218-cached-handles-resume-20261009\\resume-proof.json","evidenceSha256":"CD876579240F388EA03A3BFC0A3621A0E5D137962DCF7C4C70D4F182704734F9","executionId":null,"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","resumeId":"ee5125e4cacc4686927a021e12daee9e","routeKey":"THREAD|01a11fc1-904f-71f2-a94e-2580e523cdf8|9","expectedAttempt":2,"purpose":"APPROVED_STATIC_RESTORE_RETRY","consumedAt":null,"expiresAt":"2026-10-09T09:27:05.1205484+00:00","failureHistorySha256":"017BBF838F91FCF7809BA96B632A1B6AA2309FEE405E1837AAEEFDDF9B31FDCD","rootTaskId":"AI-000207"},"rawFailureCount":1,"attempts":1,"rootTaskId":"AI-000207"}
-
-> SUPERVISED APPROVED_CONTINUATION at 2026-10-09T17:26:02.3009351+08:00: {"attempts":2,"taskId":"AI-000207","rawFailureCount":2,"budgetUsed":3,"record":{"repairId":"3df4ff0a03dd4cf59ab26ab5a3320294","at":"2026-10-09T17:26:02.2426398+08:00","problemKey":"font-r3:static-embedded-material-ratio-drift","plan":"已批准Static E877恢复完成，按216第三slot正式续原207完整11项；不重复Run(true)，Run(false)自身完整保护、一次Build与成功后的幂等；新生产失败即停；R4人工、PENDING_USER不代签、不提交。","evidence":"215诊断/216修复独立VERIFIED；218同卡新真实恢复+唯一Run(true)=171已独立12/12，3176引用匹配、3399新基线、CA4 PE/PDB/现场dirty与OTF保护明确。原207 fresh READY idle，原全部错误/许可/预算保留。","sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","repairTaskId":"AI-000216","decision":"USER_APPROVED_CONTINUATION","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai218-cached-handles-resume-20261009\\root207-resume-proof.json","evidenceSha256":"532F799CA1BB063FC45E0CFAAED07B15C7FC7F21F4419408F79D96AA77D419BA"}}
-
-> SUPERVISED ResumeSupervision at 2026-10-09T17:57:45.6708354+08:00: {"reason":"用户明确批准恢复同session，原207仅补一次未执行的幂等及原剩余验收；仍须正式同卡新许可，不复用旧票。","userDecision":"批准恢复监管，继续剩余工作"}
-
-> SUPERVISED APPROVED_CONTINUATION_REFUSED at 2026-10-09T18:12:44.3998915+08:00: {"controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","problemKey":"font-r3:idempotence-production-permission-rejected","reason":"Only the exact unexecuted permission interruption may continue.","taskId":"AI-000207"}
-
-> SUPERVISED APPROVED_IDEMPOTENCE_CONTINUATION at 2026-10-09T18:13:45.1622979+08:00: {"attempts":3,"rawFailureCount":3,"taskId":"AI-000207","recoveryCount":2,"budgetUsed":3,"grant":{"evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\FONT-R-PRE5c-20261005\\ai207-idempotence-resume-20261009\\resume-proof.json","evidenceSha256":"9444EEDD5259F61764A4482EDE64DD6569E1BE0131B2E56BD27529889C0C64C4","routeKey":"THREAD|01a10c14-6e78-7831-a7ab-5f603271dfbe|10","consumedAt":null,"rootTaskId":"AI-000207","expectedAttempt":4,"resumeId":"f5ab1488bf9d480098fd418d3f13d9eb","expiresAt":"2026-10-09T10:33:45.0925219+00:00","purpose":"APPROVED_IDEMPOTENCE_REMAINDER","executionId":null,"sessionId":"ac24e3535dcc45c08c6b80ba3beff5c1","failureHistorySha256":"14FFB96C7F77694D5E33F950E3634166E969CAB0B9E84D661321727CFD73617D"}}
-
-> Verification resolved for AI-000207 at 2026-10-09T20:58:13.0244099+08:00: decision=VERIFIED; summary=用户人工视觉验收通过，FONT-R4已签收。; evidence=2026-10-09主控制台用户直接原话：人工视觉验收通过。对应AI207 attempt4五视图/CoverTitle的R4；机器11/11独立PASSED证据保持。原话与边界见 .ai-workspace/outputs/control/FONT-R-PRE5c-20261005/r4-user-acceptance-20261009/user-acceptance.json；旧观察/失败/许可保留，不外推F/P2/Excel验收或提交/E2执行。
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-09T20:58:13.3807136+08:00: {"userDecision":"人工视觉验收通过","taskId":"AI-000207"}
-
-> SUPERVISED ExitSupervision at 2026-10-09T21:32:24.2849268+08:00: {"userDecision":"按你提出的合理处理进行操作，切回手动模式","reason":"用户确认本轮无运行或可派发任务，字体R4已通过；退出监管并保留AI214旧失败、全部待办和证据。"}
-
-> Verification resolved for AI-000186 at 2026-10-12T18:14:32.8365618+08:00: decision=VERIFIED; summary=用户Excel人工检查通过；表头注释矩形修正已完成，相关人工验收通过。; evidence=用户2026-10-12直接确认Excel人工检查通过，并明确表头注释恢复矩形后可标记相关验收通过；本轮119注释原生Excel矩形及截图通过、共享发布内容/结构差异0。证据 outputs/control/WORKBOOK-REPAIR-20261012/comment-shapes/ACCEPTANCE.md、excel-final-validation.json、final-preview.png、publish-result.json。原AI186共享漂移门修复及两轮Final6/6既有证据保留，本轮不重跑；P2延期/46警告保持。
-
-> Verification resolved for AI-000191 at 2026-10-12T18:14:33.0562254+08:00: decision=VERIFIED; summary=用户Excel人工检查通过；表头注释矩形修正已完成，相关人工验收通过。; evidence=用户2026-10-12直接确认Excel人工检查通过，并明确表头注释恢复矩形后可标记相关验收通过；本轮119注释原生Excel矩形及截图通过、共享发布内容/结构差异0。证据 outputs/control/WORKBOOK-REPAIR-20261012/comment-shapes/ACCEPTANCE.md、excel-final-validation.json、final-preview.png、publish-result.json。原AI186共享漂移门修复及两轮Final6/6既有证据保留，本轮不重跑；P2延期/46警告保持。
-
-> Superseded AI-000214 : {"at":"2026-10-12T18:33:11.5379092+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"NEEDS_USER","accepted":false,"reason":"AI214旧冷首载验证已被AI217 attempt2同源码CA4完整原生9/9验证覆盖，后续AI218恢复12/12、AI207原11/11及用户R4人工验收均已通过。按用户明确要求关闭旧任务，保留四次失败、许可、累计及根修复预算；本卡不改写为验收成功。","userDecision":"用户2026-10-12：现在字体和Excel都已验收通过；授权字体相关Git提交，同时关闭214任务并完整检查字体修复。","verification":".ai-workspace/outputs/control/FONT-R-PRE5c-20261005/ai217-probe-resume-20261009/independent-review.json；AI207正式VERIFIED与R4用户通过；本轮收尾目录outputs/control/FONT-R-CLOSEOUT-20261012。"}
-
-> Verification resolved for AI-000162 at 2026-10-12T18:33:46.8879152+08:00: decision=VERIFIED; summary=双字体资产后续171配对、全视图Play/Build与CoverTitle人工验收已由AI207及用户R4通过，解除旧PRE1预览阶段待验。; evidence=AI207 attempt4控制独立原11/11 PASSED及正式VERIFIED；用户2026-10-09人工视觉验收通过，2026-10-12再次确认字体验收通过。原AI162 executeAllowed=false预览结果保留为迁移前事实，后续通过不改写当时结果。
-## AI-000219 | [CODE] [E2-20261012] E2迁移证据归档与恢复验证
-
-- 序号：219
-- 提交时间：2026-10-12T19:33:09.8723820+08:00
-- 模块 ID：E2-20261012
-- 初始状态：QUEUED
-- 前置依赖：AI-000207
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-# E2 自动执行授权与边界（2026-10-12）
-
-用户本轮原话：“你先自动推进E2的相关工作，这部分内容进入自动触发模式执行。推进的同时我进行相关的收尾和人工检查验收”。
-承接前一轮已完成字体提交09cd180、AI214 CLOSED_SUPERSEDED、AI162/207 VERIFIED及Excel验收；原每个新子任务使用新可见chat要求保持。本次仅建立E2当前可自动执行段219→220；不恢复旧171/172、不恢复旧监管session、不纳入其它8条待验事项。用户要求AUTOMATIC成功后自动触发后继，按MODES正式autoHandoff执行，平台实际拒绝不得绕过。
-
-先读CORE、各车道与任务卡、MODES；本文件的新决定覆盖旧手动状态，不更改历史。所有exec固定PS7：C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。cwd D:/GameProject/Eat-What。runtime只正式queue API，Status先存本地只输出摘要；不打印整队列/纹理JSON/巨型逐文件清单。计费tokens缺失写null，不以工具输出估算代账单。
-
-本段边界：
-- 用户并行人工检查；不改xlsx/CSV/生成配表/业务场景内容，不覆盖或提交现有Excel/工作流未提交改动，不清除任何未知dirty，不全局SaveAssets。
-- 字体已验收，不再运行FontSwapOnce/Run(true/false)、不恢复Static、不Play/Build重验字体、不建冷加载进程/内存快照/纹理JSON；受保护资产SHA只在实际提交前hook检查。本批不新建测试框架/续行入口，失败若获新批准仅用ApproveResume(task,runs=N,scope)。
-- 相称验证：定向路径/引用/GUID/编译/Console及一张必要Editor截图；不为≤10字段小改动跑全套Final。迁移归档按实际源范围单次采样，批末一次包/恢复校验；不附带3399生产全路径hash循环。
-- 允许读取迁移副本D:/GameProject/Eat-What-U6与既有迁移证据/备份；新增归档和证据仅在主项目内。本段不删除副本、不删除源证据/备份，不移除Hub、不改共享许可/EditorPrefs/Claude配置或系统Editor，不删除Spine Examples/Tomato/Labs/探针/backup/tag。
-- 沿2026-09-23精确E2边界，本段没有新增Git提交/推送/合并授权。完成可review的归档、更名和精确Git清单后再收口；远端已有状态只读核对，未持久化真实缺口标明，不把本地zip当远端可恢复。本次字体Git授权已经完成，不扩张到其它未提交工作。
-- 受限操作正常平台审查；新真实失败立即正式记录并停止本链，不换API/通道规避。普通参数错误/环境查询问题按非阻碍问题记录；用户并行编辑导致暂不能操作Editor是协调等待，不假写验收成功。
-- 最后只报告本自动段成果及E2剩余条件；E2整体归档/远端/清理/最终main集成未完成前不能宣称E2关闭。既有F/P2/布局人工项不代签。
-
-# AI-000219 · E2迁移归档与恢复验证（CODE）
-
-只在正式AUTOMATIC接力、Poll返回CLAIMED后执行。先读.ai-workspace/inputs/E2-20261012/授权与边界.md、.ai-workspace/workers/CODE.md、.ai-workspace/MIG63/迁移基线.md的归档/清理节、.ai-workspace/MIG63/临时项登记.md、.ai-workspace/MIG63/E1H_接棒与后续项.md、.ai-workspace/MIG63/H后分支切换与控制台移交.md，及DevTools/Workflow/Archive-Stage.ps1。P/TK按CORE索引读归档、引用保护、输出预算相关条目。
-
-目标：实际完成本地迁移证据归档和恢复验证，交后继220可用的精确更名清单及安全条件。不是字体修复卡，不占旧根预算。
-1. 只读清点主工程与迁移副本的分支、tracked/untracked/ignored独有成果、证据范围/总量；保护本轮人类并行文件。源主范围 .ai-workspace/outputs/MIG63、.ai-workspace/MIG63；副本对应MIG63证据、既有备份位置依台账逐一实查，不全仓打包Library/Temp/Build缓存/.git。不擅读无关个人目录。
-2. 在.ai-workspace/archive/E2-20261012/保存可恢复包、manifest和README。明确纳入/未纳入及原因；原路径、字节数和包内容完整性绑定。必要快照/独有成果进入包或明确保留路径；不能因ignored漏掉独有文件。既有Archive-Stage默认范围若会吞入活动runtime/活跃input/output，则只借其校验方法，不运行无选择的Create/Prune。允许本任务简短执行脚本，不开发通用归档框架/新夹具。
-3. 在本卡输出restore-check目录实际恢复并核对归档内容；做一次批末完整性校验。只读核可达的既有远端分支/提交/LFS状态，未获准新推送不push；缺少新包远端持久化是下一阶段条件，诚实登记，不谎称E2已完成。
-4. 核本卡更名范围实际源码/引用，交rename-plan.json给220：Assets/Editor/MIG63Validation → Assets/Editor/ProjectValidation（4脚本文件改为SceneValidationSession.cs、ScrollWheelProbe.cs、TomatoAnimationProbe.cs、SpineSceneProbe.cs，类名/菜单/实际调用同步）；DevTools/MIG63 → DevTools/ProjectValidation；Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller → 同目录TomatoPreview.controller。不存在/目标冲突/有范围外实际引用就记录准确处理，不猜路径。不实际修改Assets/meta或操作Unity。
-5. 输出迁移专属hook/config可解除候选和保留项清单，本卡不修改.git/hooks/config，不清理副本/备份，不触碰字体。保留main/font/LFS保护，Claude按原用户决定保留。同步本卡输出文档即可，避免与220抢写根文档。
-
-输出.ai-workspace/outputs/E2-20261012/AI-000219/REPORT.md、evidence.json、acceptance.json、rename-plan.json、inventory.json、恢复报告。contract .ai-workspace/inputs/acceptance/AI-000219.json，5项预声明：inventoryScoped、archiveCreatedAndRestored、userWorkPreserved、renamePlanGrounded、remainingConditionsHonest。checks须对应原始产物，不只手写true。交付时证据包含包/恢复路径与实际结果；远端未持久化不算此本地归档合同失败。
-成功Complete时附AcceptancePath和Artifacts，完整保存receipt/messagePath；返回autoHandoff=TRIGGER_TASK后按目标threadId原文发送一次220接力，当前用户自动触发要求是发送接力的直接任务授权，必要时只读主控制台核原话。不可自行认为报告完就结束不触发后继；平台真拒绝则保留原文告知，不换通道。20分钟前续租；不自行Enqueue/Bind/SetMode。
-## AI-000220 | [ENGINE_MCP] [E2-20261012] E2长期工具功能更名与引用收口
-
-- 序号：220
-- 提交时间：2026-10-12T19:33:10.0069788+08:00
-- 模块 ID：E2-20261012
-- 初始状态：QUEUED
-- 前置依赖：AI-000219
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-# E2 自动执行授权与边界（2026-10-12）
-
-用户本轮原话：“你先自动推进E2的相关工作，这部分内容进入自动触发模式执行。推进的同时我进行相关的收尾和人工检查验收”。
-承接前一轮已完成字体提交09cd180、AI214 CLOSED_SUPERSEDED、AI162/207 VERIFIED及Excel验收；原每个新子任务使用新可见chat要求保持。本次仅建立E2当前可自动执行段219→220；不恢复旧171/172、不恢复旧监管session、不纳入其它8条待验事项。用户要求AUTOMATIC成功后自动触发后继，按MODES正式autoHandoff执行，平台实际拒绝不得绕过。
-
-先读CORE、各车道与任务卡、MODES；本文件的新决定覆盖旧手动状态，不更改历史。所有exec固定PS7：C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。cwd D:/GameProject/Eat-What。runtime只正式queue API，Status先存本地只输出摘要；不打印整队列/纹理JSON/巨型逐文件清单。计费tokens缺失写null，不以工具输出估算代账单。
-
-本段边界：
-- 用户并行人工检查；不改xlsx/CSV/生成配表/业务场景内容，不覆盖或提交现有Excel/工作流未提交改动，不清除任何未知dirty，不全局SaveAssets。
-- 字体已验收，不再运行FontSwapOnce/Run(true/false)、不恢复Static、不Play/Build重验字体、不建冷加载进程/内存快照/纹理JSON；受保护资产SHA只在实际提交前hook检查。本批不新建测试框架/续行入口，失败若获新批准仅用ApproveResume(task,runs=N,scope)。
-- 相称验证：定向路径/引用/GUID/编译/Console及一张必要Editor截图；不为≤10字段小改动跑全套Final。迁移归档按实际源范围单次采样，批末一次包/恢复校验；不附带3399生产全路径hash循环。
-- 允许读取迁移副本D:/GameProject/Eat-What-U6与既有迁移证据/备份；新增归档和证据仅在主项目内。本段不删除副本、不删除源证据/备份，不移除Hub、不改共享许可/EditorPrefs/Claude配置或系统Editor，不删除Spine Examples/Tomato/Labs/探针/backup/tag。
-- 沿2026-09-23精确E2边界，本段没有新增Git提交/推送/合并授权。完成可review的归档、更名和精确Git清单后再收口；远端已有状态只读核对，未持久化真实缺口标明，不把本地zip当远端可恢复。本次字体Git授权已经完成，不扩张到其它未提交工作。
-- 受限操作正常平台审查；新真实失败立即正式记录并停止本链，不换API/通道规避。普通参数错误/环境查询问题按非阻碍问题记录；用户并行编辑导致暂不能操作Editor是协调等待，不假写验收成功。
-- 最后只报告本自动段成果及E2剩余条件；E2整体归档/远端/清理/最终main集成未完成前不能宣称E2关闭。既有F/P2/布局人工项不代签。
-
-# AI-000220 · E2长期工具保GUID更名与引用收口（ENGINE_MCP）
-
-依赖219成功；只在正式AUTOMATIC接力Poll CLAIMED后执行。先读.ai-workspace/inputs/E2-20261012/授权与边界.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/UNITY_SCENE_CLEANUP.md、219的REPORT/rename-plan/恢复报告、DevTools/MIG63/README及4个实际工具源文件/引用；已移动时按rename-plan读新路径，不猜。
-目标：完成授权长期工具按功能更名，保留原能力/GUID并交付E2可审查状态。本卡允许为本次Editor工具更名同步必要C#类名/直接调用/菜单字符串与文档路径，不改业务逻辑，不借此做字体/布局/Excel返工。
-
-批准路径动作与恢复点：
-- Assets/Editor/MIG63Validation/目录 → Assets/Editor/ProjectValidation/；其MIG63ValidationSession.cs→SceneValidationSession.cs、MIG63WheelProbe.cs→ScrollWheelProbe.cs、MIG63TomatoProbe.cs→TomatoAnimationProbe.cs、MIG63SpineSceneProbe.cs→SpineSceneProbe.cs，各自meta随Editor移动保GUID。C#类名/直接引用/菜单按对应功能同步，函数行为不变。
-- Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller → Assets/Scripts/Spine_Package/Avatars/Tomato/TomatoPreview.controller，保GUID与动画配置/绑定；不改场景Prefab。
-- DevTools/MIG63/README.md及目录 → DevTools/ProjectValidation/README.md；长期导航/使用说明和直接路径引用同步（历史证据原件不回写）。
-- 恢复点：.ai-workspace/outputs/E2-20261012/AI-000220/backup-before/。只备份本次源文件/meta及将改的直接引用文件，记录相对路径；保存前核未知并行漂移。目标已存在时不覆盖。
-先发现MCP实例，核6000.3.24f1和D:/GameProject/Eat-What/Assets。用户可能正在人工检查：若Play/编译/用户未保存变化影响此更名，先做只读与文档并报告协调点；不全局保存、不切场景、不清用户dirty。移动Unity资产使用AssetDatabase.MoveAsset及必要批次控制，禁止手改YAML/meta。只改必要源引用；保证file/class对应与原公开功能，不新建一次性测试工程或新冷Unity进程。
-
-验证只做本更名所需：实际前后GUID对应、直接引用指向、Editor编译通过/Console新增Error0、菜单功能入口仍存在、1张Editor可见结果截图。不为改名重新全套Play/Build，不运行FontSwapOnce或长期探针里的场景变更/保存动作。如持久资源变化超出计划，保全并停止。批末清理确属本卡的临时对象/脚本（若有），旧证据与备份保留。
-
-原地更新DevTools/ProjectValidation/README、CODEBASE_MAP、项目基线、MIG63执行台账/临时项及工具索引的定位与E2真实阶段，保留其它并行文档段落和历史。提交E2候选路径/差异清单、保留/清理候选、下一阶段Git/远端持久化条件。此段不stage/commit/push/merge，不删迁移副本/备份/Spine Examples，不修改.git hook/config/Hub/共享配置；具体处置在归档已持久化与reviewable清单后再落实，不能因更名成功就写E2_COMPLETE。可自动完成部分必须完成，不因尚有条件性清理就漏做更名。
-
-输出.ai-workspace/outputs/E2-20261012/AI-000220/REPORT.md、evidence.json、acceptance.json和引用/GUID/编译/screenshot证明。contract .ai-workspace/inputs/acceptance/AI-000220.json，5项：functionalMovesVerified、guidsAndReferencesPreserved、editorCompilationPassed、userStatePreserved、documentationAndRemainingUpdated。事实需有原始证据。成功Complete附AcceptancePath，保存回执；CHAIN_COMPLETE结束，最终明确“本自动段完成、E2整体待持久化与剩余条件”。不自动代签人工，不恢复watch日程，不另开新链。20分钟前续租；新真实生产失败只一次，官方Fail后停止，不换API重试。
-
-> Verification resolved for AI-000174 at 2026-10-12T19:42:06.4375066+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
-
-> Verification resolved for AI-000195 at 2026-10-12T19:42:06.7240285+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
-
-> Verification resolved for AI-000196 at 2026-10-12T19:42:06.8587112+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
-
-> Verification resolved for AI-000198 at 2026-10-12T19:42:06.9663794+08:00: decision=VERIFIED; summary=用户2026-10-12明确确认人工配表及导表相关功能验收通过并要求关闭。; evidence=用户原话与范围：outputs/control/WORKSPACE-CLOSEOUT-20261012/用户验收与整理决定.md。接受已交付配表/导表功能；保留原技术测试观察、警告和失败历史，不声称旧文档比例/CRLF/零警告断言重新执行通过，不包含P2场景与布局验收。
-> Instruction revision for AI-000220 at 2026-10-12T19:46:40.6749293+08:00
-
-# E2 自动执行授权与边界（2026-10-12）
-
-用户本轮原话：“你先自动推进E2的相关工作，这部分内容进入自动触发模式执行。推进的同时我进行相关的收尾和人工检查验收”。
-承接前一轮已完成字体提交09cd180、AI214 CLOSED_SUPERSEDED、AI162/207 VERIFIED及Excel验收；用户后续明确改回固定职能chat；原每任务新开chat要求已撤销。本次仅建立E2当前可自动执行段219→220；AI219保持原运行所有权至结算，220已改绑固定ENGINE，CODE随后回原固定线；不恢复旧171/172、不恢复旧监管session、不纳入其它8条待验事项。用户要求AUTOMATIC成功后自动触发后继，按MODES正式autoHandoff执行，平台实际拒绝不得绕过。
-
-先读CORE、各车道与任务卡、MODES；本文件的新决定覆盖旧手动状态，不更改历史。所有exec固定PS7：C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。cwd D:/GameProject/Eat-What。runtime只正式queue API，Status先存本地只输出摘要；不打印整队列/纹理JSON/巨型逐文件清单。计费tokens缺失写null，不以工具输出估算代账单。
-
-本段边界：
-- 用户并行人工检查；不改xlsx/CSV/生成配表/业务场景内容，不覆盖或提交现有Excel/工作流未提交改动，不清除任何未知dirty，不全局SaveAssets。
-- 字体已验收，不再运行FontSwapOnce/Run(true/false)、不恢复Static、不Play/Build重验字体、不建冷加载进程/内存快照/纹理JSON；受保护资产SHA只在实际提交前hook检查。本批不新建测试框架/续行入口，失败若获新批准仅用ApproveResume(task,runs=N,scope)。
-- 相称验证：定向路径/引用/GUID/编译/Console及一张必要Editor截图；不为≤10字段小改动跑全套Final。迁移归档按实际源范围单次采样，批末一次包/恢复校验；不附带3399生产全路径hash循环。
-- 允许读取迁移副本D:/GameProject/Eat-What-U6与既有迁移证据/备份；新增归档和证据仅在主项目内。本段不删除副本、不删除源证据/备份，不移除Hub、不改共享许可/EditorPrefs/Claude配置或系统Editor，不删除Spine Examples/Tomato/Labs/探针/backup/tag。
-- 沿2026-09-23精确E2边界，本段没有新增Git提交/推送/合并授权。完成可review的归档、更名和精确Git清单后再收口；远端已有状态只读核对，未持久化真实缺口标明，不把本地zip当远端可恢复。本次字体Git授权已经完成，不扩张到其它未提交工作。
-- 受限操作正常平台审查；新真实失败立即正式记录并停止本链，不换API/通道规避。普通参数错误/环境查询问题按非阻碍问题记录；用户并行编辑导致暂不能操作Editor是协调等待，不假写验收成功。
-- 最后只报告本自动段成果及E2剩余条件；E2整体归档/远端/清理/最终main集成未完成前不能宣称E2关闭。既有F/P2/布局人工项不代签。
-
-# AI-000220 · E2长期工具保GUID更名与引用收口（ENGINE_MCP）
-
-依赖219成功；只在正式AUTOMATIC接力Poll CLAIMED后执行。先读.ai-workspace/inputs/E2-20261012/授权与边界.md、.ai-workspace/workers/ENGINE_MCP.md、.ai-workspace/UNITY_SCENE_CLEANUP.md、219的REPORT/rename-plan/恢复报告、DevTools/MIG63/README及4个实际工具源文件/引用；已移动时按rename-plan读新路径，不猜。
-目标：完成授权长期工具按功能更名，保留原能力/GUID并交付E2可审查状态。本卡允许为本次Editor工具更名同步必要C#类名/直接调用/菜单字符串与文档路径，不改业务逻辑，不借此做字体/布局/Excel返工。
-
-批准路径动作与恢复点：
-- Assets/Editor/MIG63Validation/目录 → Assets/Editor/ProjectValidation/；其MIG63ValidationSession.cs→SceneValidationSession.cs、MIG63WheelProbe.cs→ScrollWheelProbe.cs、MIG63TomatoProbe.cs→TomatoAnimationProbe.cs、MIG63SpineSceneProbe.cs→SpineSceneProbe.cs，各自meta随Editor移动保GUID。C#类名/直接引用/菜单按对应功能同步，函数行为不变。
-- Assets/Scripts/Spine_Package/Avatars/Tomato/Tomato_MIG63.controller → Assets/Scripts/Spine_Package/Avatars/Tomato/TomatoPreview.controller，保GUID与动画配置/绑定；不改场景Prefab。
-- DevTools/MIG63/README.md及目录 → DevTools/ProjectValidation/README.md；长期导航/使用说明和直接路径引用同步（历史证据原件不回写）。
-- 恢复点：.ai-workspace/outputs/E2-20261012/AI-000220/backup-before/。只备份本次源文件/meta及将改的直接引用文件，记录相对路径；保存前核未知并行漂移。目标已存在时不覆盖。
-先发现MCP实例，核6000.3.24f1和D:/GameProject/Eat-What/Assets。用户可能正在人工检查：若Play/编译/用户未保存变化影响此更名，先做只读与文档并报告协调点；不全局保存、不切场景、不清用户dirty。移动Unity资产使用AssetDatabase.MoveAsset及必要批次控制，禁止手改YAML/meta。只改必要源引用；保证file/class对应与原公开功能，不新建一次性测试工程或新冷Unity进程。
-
-验证只做本更名所需：实际前后GUID对应、直接引用指向、Editor编译通过/Console新增Error0、菜单功能入口仍存在、1张Editor可见结果截图。不为改名重新全套Play/Build，不运行FontSwapOnce或长期探针里的场景变更/保存动作。如持久资源变化超出计划，保全并停止。批末清理确属本卡的临时对象/脚本（若有），旧证据与备份保留。
-
-原地更新DevTools/ProjectValidation/README、CODEBASE_MAP、项目基线、MIG63执行台账/临时项及工具索引的定位与E2真实阶段，保留其它并行文档段落和历史。提交E2候选路径/差异清单、保留/清理候选、下一阶段Git/远端持久化条件。此段不stage/commit/push/merge，不删迁移副本/备份/Spine Examples，不修改.git hook/config/Hub/共享配置；具体处置在归档已持久化与reviewable清单后再落实，不能因更名成功就写E2_COMPLETE。可自动完成部分必须完成，不因尚有条件性清理就漏做更名。
-
-输出.ai-workspace/outputs/E2-20261012/AI-000220/REPORT.md、evidence.json、acceptance.json和引用/GUID/编译/screenshot证明。contract .ai-workspace/inputs/acceptance/AI-000220.json，5项：functionalMovesVerified、guidsAndReferencesPreserved、editorCompilationPassed、userStatePreserved、documentationAndRemainingUpdated。事实需有原始证据。成功Complete附AcceptancePath，保存回执；CHAIN_COMPLETE结束，最终明确“本自动段完成、E2整体待持久化与剩余条件”。不自动代签人工，不恢复watch日程，不另开新链。20分钟前续租；新真实生产失败只一次，官方Fail后停止，不换API重试。
-## AI-000221 | [CODE] [E2-20261013] E2远端恢复、私有保全与迁移配置解除
-
-- 序号：221
-- 提交时间：2026-10-13T14:13:52.7319334+08:00
-- 模块 ID：E2-20261013
-- 初始状态：QUEUED
-- 前置依赖：AI-000220
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/E2-20261013/E2_CLOSE_CODE.md；合同 .ai-workspace/inputs/acceptance/AI-000221.json。固定CODE，无新chat。用户已推送并明确继续E2；限本卡六项目标，不删除clone/Hub、不提交推送、控制台最终收口。
-## AI-000222 | [CODE] [UI-VIS] ShortCycle全状态显隐归属与动画开始时机修复
-
-- 序号：222
-- 提交时间：2026-10-13T15:32:53.7939717+08:00
-- 模块 ID：UI-VIS
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/VISIBILITY-20261013/CODE.md；用户已明确授权全状态显隐与动画统一通查修复，保留新锚点。
-## AI-000223 | [ENGINE_MCP] [UI-VIS] ShortCycle显隐动画全路径场景修复与统一验收
-
-- 序号：223
-- 提交时间：2026-10-13T15:33:24.7971356+08:00
-- 模块 ID：UI-VIS
-- 初始状态：QUEUED
-- 前置依赖：AI-000222
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/VISIBILITY-20261013/ENGINE.md；读取AI-000222交接，保留用户已调整锚点；最终仅PENDING_USER待一次验收。
-## AI-000224 | [CODE] [UI-VIS-TIMING] [UI-VIS] 按用户调整显示规则并新增可配置显隐进度
-
-- 序号：224
-- 提交时间：2026-10-13T19:56:53.8977915+08:00
-- 模块 ID：UI-VIS-TIMING
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/VISIBILITY-TIMING-20261013/CODE.md；用户授权3任务内新增功能，本批限定CODE→ENGINE两任务。旧AI223仍待人工，不重做字体/Excel。
-## AI-000225 | [ENGINE_MCP] [UI-VIS-TIMING] [UI-VIS] 线索板限定状态、冰箱食谱本连续显示与时机配置验收
-
-- 序号：225
-- 提交时间：2026-10-13T19:56:54.0337926+08:00
-- 模块 ID：UI-VIS-TIMING
-- 初始状态：QUEUED
-- 前置依赖：AI-000224
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/VISIBILITY-TIMING-20261013/ENGINE.md；只本卡显示规则与新timing，保留用户锚点，禁止全局SaveAssets及旧字体操作。
-
-> Verification resolved for AI-000223 at 2026-10-13T22:47:29.2884280+08:00: decision=VERIFIED; summary=用户人工验收通过，本批显示与动画工作关闭。; evidence=用户本轮直接明确：验收通过。这部分的相关任务可以关闭。原文及范围见outputs/control/P0P1-LAYOUT-CURRENT-20261013/user-acceptance.json；保留原机器证据、会话重载和Package Manager EMFILE历史，不声称环境问题已修复。
-
-> Verification resolved for AI-000225 at 2026-10-13T22:47:29.5598633+08:00: decision=VERIFIED; summary=用户人工验收通过，本批显示与动画工作关闭。; evidence=用户本轮直接明确：验收通过。这部分的相关任务可以关闭。原文及范围见outputs/control/P0P1-LAYOUT-CURRENT-20261013/user-acceptance.json；保留原机器证据、会话重载和Package Manager EMFILE历史，不声称环境问题已修复。
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-13T23:05:16.6071000+08:00: {"userDecision":"用户明确授权关闭本卡人工门并以持续监测/新派优化替代旧验收待办，非声称旧布局无缺陷。原话：AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","taskId":"AI-000169"}
-
-> Closed without acceptance for AI-000156 at 2026-10-13T23:05:16.6844798+08:00: {"at":"2026-10-13T23:05:16.6844798+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"用户明确关闭旧布局/压暗/构图待验卡，后续改由控制端监测并按新问题独立下派持续修复或优化；原执行、拒验/待验及错误记录保留，关闭不记为旧技术或视觉缺陷全部修复。","userDecision":"AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"REJECTED","accepted":false,"archivedIssues":[{"at":"2026-09-23T03:59:57.1686361+08:00","attempt":1,"kind":"TEST_OBSERVATION","message":"ShortCycleLayoutAudit 的 FIX-T5 新断言均为 True，目标 Heavy TMP 为 208/208 Renderer 已启用、缺失 0、禁用 0；但总 kTakeoverValid 仍因既有 CoverTitle 使用 Heavy SDF 而为 False。该字体范围属于 PRE-1，AI-000156 未修改字体资产，需人工按既有 PRE-1 边界复核，不阻断本任务。"},{"at":"2026-09-23T04:00:05.7742406+08:00","attempt":1,"kind":"TEST_OBSERVATION","message":"④ ClueBoardShell 运行截图与状态/命中验证均通过：真实 ClueBoard_HitArea 唯一命中，Browse Set 与旧按钮已禁用，Esc 返回与相机槽正确；但截图右半区表现为空暗背景，而非可明确辨识的书页变暗效果。该纯视觉判断交由用户查看 04_ClueBoardShell.png 人工确认，不再自动改场景。"},{"at":"2026-09-23T04:00:18.0124791+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"请在 Unity 6000.3.24f1 打开 ShortCycle_P0P1，按 Cover→OpenCover→SelectRecipe→点击线索板→Esc→StartCooking→Return→Esc→Esc 路径人工复核：四区构图、P0Left/P1 平滑移动、④遮罩/变暗观感、线索板区域只触发一次且不穿透、Esc 返回栈、Kitchen 冰箱/托盘/线索板同时可见。对照 01_Cover.png 至 05_Kitchen.png；自动证据 PanStarted 精确 4 次、Console 0 Error/Exception/Assert、场景 clean。"}]}
-
-> Closed without acceptance for AI-000165 at 2026-10-13T23:05:16.8444247+08:00: {"at":"2026-10-13T23:05:16.8444247+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"用户明确关闭旧布局/压暗/构图待验卡，后续改由控制端监测并按新问题独立下派持续修复或优化；原执行、拒验/待验及错误记录保留，关闭不记为旧技术或视觉缺陷全部修复。","userDecision":"AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"PENDING_USER","accepted":false,"archivedIssues":[{"at":"2026-09-23T06:29:30.7391943+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"需用户人工复核 01_Browse.png 与 04_ClueBoardShell.png 的压暗强度、构图和视觉观感；机器验证已确认同机位、书页仍可见、交互不穿透。"}]}
-
-> Closed without acceptance for AI-000169 at 2026-10-13T23:05:16.9602174+08:00: {"at":"2026-10-13T23:05:16.9602174+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"用户明确关闭旧布局/压暗/构图待验卡，后续改由控制端监测并按新问题独立下派持续修复或优化；原执行、拒验/待验及错误记录保留，关闭不记为旧技术或视觉缺陷全部修复。","userDecision":"AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"PENDING_USER","accepted":false,"archivedIssues":[{"at":"2026-09-23T23:36:04.2625068+08:00","attempt":1,"kind":"MANUAL_VERIFICATION","message":"机器验证已完成；仍需用户人工确认 16:9/4:3 Browse 与 P1 构图、全书约66.88%和右页约33.76%的观感、猫/板/托盘比例及ClueBoard压暗强度。证据见 .ai-workspace/outputs/U1-PRE-R1/AI-000169/screenshots/ 与完成报告；不得由机器代签。"}]}
-
-> Historical verification recorded for AI-000174 at 2026-10-13T23:05:17.0702017+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户确认现存警告已知、接受并可保留；本卡维持验收关闭，不再挂人工待处理。; evidence=用户本轮明确接受本卡原TEST_OBSERVATION警告；保留原断言/警告文本与历史，不修改业务配置迎合旧断言，不重跑测试或声称警告消失。决定与范围见outputs/control/TASK-CLOSURE-20261013/before-and-decision.json。; userDecision=AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容
-
-> Historical verification recorded for AI-000195 at 2026-10-13T23:05:17.1958071+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户确认现存警告已知、接受并可保留；本卡维持验收关闭，不再挂人工待处理。; evidence=用户本轮明确接受本卡原TEST_OBSERVATION警告；保留原断言/警告文本与历史，不修改业务配置迎合旧断言，不重跑测试或声称警告消失。决定与范围见outputs/control/TASK-CLOSURE-20261013/before-and-decision.json。; userDecision=AI156、165、169任务可以直接关闭，AI174、195也可以关闭，前者我通过控制端进行监测和持续性的修复或优化任务下派，后者为我已知且接受的可保留警告内容
-
-> Historical verification recorded for AI-000221 at 2026-10-13T23:24:20.0159544+08:00: decision=VERIFIED; previous=VERIFIED; acceptedAt=not provided; summary=用户完成E2远端main推送，控制只读核实与411257d一致；E2整体关闭，AI219/220/221保持VERIFIED，无E2剩余人工或机器待办。; evidence=本轮git ls-remote成功确认origin/main及origin/codex/unity6-followup均为411257ddf5afda4ca578865dd8eb37a9621a7288，与本地main和已验收E2收尾提交相同。原归档恢复/私有保全/长期工具更名/配置解除/迁移副本清理证据继续有效；不重跑或改写旧验收。依据outputs/control/E2-FINAL-CLOSURE-20261013/remote-and-closure.json。; userDecision=E2的远端推送完成，你核实一下后可以整体进行相关任务的关闭
-## AI-000226 | [ENGINE_MCP] [LAYOUT-V03] 三弹层视口锚定与指导书待办核对
-
-- 序号：226
-- 提交时间：2026-10-13T23:34:26.9480084+08:00
-- 模块 ID：LAYOUT-V03
-- 初始状态：QUEUED
-- 前置依赖：AI-000225
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/LAYOUT-V03-20261013/ENGINE.md；用户明确授权场景改动及自动模式。仅LAY-01，气泡文字等待用户，旧Tray不重复返工。
-
-> SUPERVISED RESUME_APPROVED at 2026-10-14T00:26:49.4006326+08:00: {"approvalId":"USER-20261014-AI226-ONCE-COVER-BUBBLE","scope":{"paths":[".ai-workspace/outputs/LAYOUT-V03-20261013/AI-000226","组件说明文档/ShortCycle状态显隐与镜头切换_配置说明.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity"],"operations":["configure-modal-anchors","idempotence-check","play-validation","read-console","save-scene","update-configuration-doc","write-evidence"]},"taskId":"AI-000226","userDecision":"Unity/MCP已恢复，批准AI226在原三弹层范围内续行一次，完成后继续推进“吃什么”和“汪！”两个气泡的配表与场景接线，保持自动模式，做到需要我验收时再汇报。进行下一轮任务汇报时同时告知我AI190的目前状态和进度","runs":1,"usedRuns":0}
-## AI-000227 | [DATA] [COVER-BUBBLE-SOURCE] 两个封面气泡文案源与忠实导出
-
-- 序号：227
-- 提交时间：2026-10-14T00:32:08.7466325+08:00
-- 模块 ID：COVER-BUBBLE-SOURCE
-- 初始状态：QUEUED
-- 前置依赖：AI-000226
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/LAYOUT-V03-20261013/COVER-BUBBLE-SOURCE_DATA.md；仅两个已批准气泡文案，固定DATA，源xlsx与忠实CSV、新USER-U1-R2 EXPORTED；不Unity/字体/发布生成物。授权和最终人工边界见同目录AI226续行与气泡自动链批准_20261014.md。
-
-> SUPERVISED POLICY at 2026-10-14T00:54:08.8931169+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"原任务卡及用户授权要求最终人工视觉验收；Complete未登记MANUAL_VERIFICATION而默认机器VERIFIED。保留6/6机器成功，补上未批准人工gate；不重跑或伪造新失败。","updatedAt":"2026-10-14T00:54:08.8183927+08:00","supervisionLevel":"full"},"taskId":"AI-000226"}
-
-## AI-000228 | [DATA] [DATA-R2] USER-U1 round pipeline
-
-- 用户轮次：USER-U1-R2 / USER-U1
-- CSV摘要：ECA0AE9CF87481A7543E702A4696F6BAC966B8A3254B7FECE5D65C53B7253E47
-- 初始状态：QUEUED
-
-> Instruction revision for AI-000228 at 2026-10-14T01:09:16.4764848+08:00
-
-执行 .ai-workspace/inputs/LAYOUT-V03-20261013/COVER-BUBBLE-IMPORT_DATA.md。绑定本卡真实USER-U1-R2 DONE及AI227源/CSV交付，仅现有公开CSV解析、LocTableAsset.ReplaceEntries和AssetDatabase.SaveAssetIfDirty单Localization资产导入。禁止默认Run-DataPipeline/ImportAll/FontBuilder/全局SaveAssets/额外进程/字体返工。输出LAYOUT-V03-20261014/本TaskId。用户授权自动DATA→ENGINE接力，真实失败一次停。
-
-> Dependency correction for AI-000228 at 2026-10-14T01:09:16.5694039+08:00: AI-000227
-
-> SUPERVISED POLICY at 2026-10-14T01:09:16.6874960+08:00: {"policy":{"resourceKeys":["data-batch","generated-assets","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户只批准本地化两条记录；固定DATA通过既有公开解析/替换/定向保存入口单资产导入，不接旧字体batch。","updatedAt":"2026-10-14T01:09:16.6432260+08:00","supervisionLevel":"full"},"taskId":"AI-000228"}
-## AI-000229 | [ENGINE_MCP] [COVER-BUBBLE] 封面两个气泡本地化文字与场景显隐接线
-
-- 序号：229
-- 提交时间：2026-10-14T01:09:51.4132197+08:00
-- 模块 ID：COVER-BUBBLE
-- 初始状态：QUEUED
-- 前置依赖：AI-000228
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行 .ai-workspace/inputs/LAYOUT-V03-20261013/COVER-BUBBLE_ENGINE.md，仅P0现有Bubble_01_AIGC/Bubble_02_AIGC添加或复用TMP+LocalizedText和必要既有Set登记；实际DATA两key成功后接线吃什么/汪！。保留既有排版和AI226三锚点。相称Play/1图，Complete前正式RecordIssue MANUAL_VERIFICATION，三弹层+气泡合并待人工验收。当前固定ENGINE，用户授权自动完整handoff，无新chat/提交/字体返工。
-
-> SUPERVISED POLICY at 2026-10-14T01:09:51.8266776+08:00: {"taskId":"AI-000229","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"原用户要求自动推进至人工视觉验收；明确保留最终三弹层/两气泡人工gate，不能由机器代签。","updatedAt":"2026-10-14T01:09:51.6933940+08:00","supervisionLevel":"full"}}
-
-> Verification resolved for AI-000229 at 2026-10-14T08:45:23.0045759+08:00: decision=VERIFIED; summary=用户明确人工验收通过，AI229封面两气泡接线完成关闭。; evidence=2026-10-14主控制台直接用户原话：人工验收通过，AI226和AI229可以关闭。两泡与三弹层合并验收；详见outputs/control/LAYOUT-V03-20261014/human-acceptance/user-decision.json。
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-14T08:45:23.3821057+08:00: {"userDecision":"人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知","taskId":"AI-000226"}
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-14T08:45:23.4862387+08:00: {"userDecision":"人工验收通过，AI226和AI229可以关闭。AI190旧场景相关任务如果有相关文档留存，对我进行告知","taskId":"AI-000229"}
-## AI-000230 | [CODE] [USAGE-OPT] 状态摘要、验证复用与停止轮询降耗，保留周报持续生成
-
-- 序号：230
-- 提交时间：2026-10-14T16:04:45.5286642+08:00
-- 模块 ID：USAGE-OPT
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-用户已授权本轮优化，阅读并执行 .ai-workspace/inputs/USAGE-OPT-20261014/任务与授权.md。固定CODE线，四条硬上限，不做字体/Unity/提交。全部六项合同通过后正式Complete；缺失用量保持null。
-
-> Closed without acceptance for AI-000190 at 2026-10-14T16:55:17.9683063+08:00: {"at":"2026-10-14T16:55:17.9683063+08:00","decision":"CLOSED_WITHOUT_ACCEPTANCE","reasonKind":"SUPERSEDED","reason":"旧CookingProcess仅作参考，区域/厨具身份接线由新P2任务接替；保留原PENDING_USER结论、清单JSON及探针证据；不作人工通过。现有已完成卡正式接口为CLOSED_WITHOUT_ACCEPTANCE/SUPERSEDED。","userDecision":"用户2026-10-14要求按已提供遗漏派发文档执行；原件第0项明确关闭AI190为被替代、保留旧证据且非人工通过。","source":"USER_AUTHORIZED_ADMINISTRATIVE_CLOSURE","previousVerificationStatus":"PENDING_USER","accepted":false,"archivedIssues":[{"at":"2026-10-04T03:42:30.5642392+08:00","attempt":1,"kind":"TEST_OBSERVATION","message":"Minimal CookingProcess Play Mode advanced from frame 1627/time 11.95075 to frame 3258/time 19.71072 with timeScale=1 and no new Error/Exception/Assert; real inventory remained empty because scene identities are unconfigured. Full cooking interaction and visual availability cannot be accepted from this probe. After DATA/product confirms exact area/tool identities and ENGINE connects them, manually enter CookingProcess, inspect each room and tool availability, move/disable representative tools, check Container interaction and Console, then regenerate the saved-scene manifest; current exported manifest must not be used as a fully verified inventory."}]}
-## AI-000231 | [CODE] [OMISSIONS-20261014] [GOV-01] 控制端遗漏增量处置
-
-- 序号：231
-- 提交时间：2026-10-14T16:55:18.1526025+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行任务卡.ai-workspace/inputs/OMISSIONS-20261014/GOV-01.md；输出.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/。固定CODE/SUPERVISED。本批用户授权和原件见同目录，保留AI230已有改动。
-
-> SUPERVISED POLICY at 2026-10-14T16:55:18.3104353+08:00: {"taskId":"AI-000231","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅现有DevTools及只读文档审查，固定CODE串行；不操作Unity或生产资源，正式失败即停。","updatedAt":"2026-10-14T16:55:18.2797407+08:00","supervisionLevel":"light"}}
-## AI-000232 | [CODE] [OMISSIONS-20261014] [GOV-02] 控制端遗漏增量处置
-
-- 序号：232
-- 提交时间：2026-10-14T16:55:18.3578032+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行任务卡.ai-workspace/inputs/OMISSIONS-20261014/GOV-02.md；输出.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/。固定CODE/SUPERVISED。本批用户授权和原件见同目录，保留AI230已有改动。
-
-> SUPERVISED POLICY at 2026-10-14T16:55:18.4882670+08:00: {"taskId":"AI-000232","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅现有DevTools及只读文档审查，固定CODE串行；不操作Unity或生产资源，正式失败即停。","updatedAt":"2026-10-14T16:55:18.4457555+08:00","supervisionLevel":"light"}}
-## AI-000233 | [CODE] [OMISSIONS-20261014] [GOV-03] 控制端遗漏增量处置
-
-- 序号：233
-- 提交时间：2026-10-14T16:55:18.5306130+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行任务卡.ai-workspace/inputs/OMISSIONS-20261014/GOV-03.md；输出.ai-workspace/outputs/OMISSIONS-20261014/<TaskId>/。固定CODE/SUPERVISED。本批用户授权和原件见同目录，保留AI230已有改动。
-
-> SUPERVISED POLICY at 2026-10-14T16:55:18.6594222+08:00: {"taskId":"AI-000233","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅现有DevTools及只读文档审查，固定CODE串行；不操作Unity或生产资源，正式失败即停。","updatedAt":"2026-10-14T16:55:18.6245722+08:00","supervisionLevel":"light"}}
-
-> SUPERVISED START at 2026-10-14T16:55:41.1530822+08:00: {"sessionId":"63adb86921c541a19134e192e330dfb0","status":"ACTIVE","controllerThreadId":"01a08798-8b2a-7d41-9aa8-ab44affd520a","taskIds":["AI-000231","AI-000232","AI-000233"],"heartbeatAutomationId":"watch-60","createdAt":"2026-10-14T16:55:41.1464166+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
-## AI-000234 | [CODE] [OMISSIONS-20261014] [DATA-F1_CODE] 选项A导表字体联动
-
-- 序号：234
-- 提交时间：2026-10-14T17:50:10.2074981+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行-F1_选项A授权.md。用户直接选A授权一次实际发布验证。固定职能chat/SUPERVISED，旧字体卡不恢复。只按本卡范围、四条硬上限和依赖执行。
-
-> SUPERVISED POLICY at 2026-10-14T17:50:10.5103402+08:00: {"taskId":"AI-000234","policy":{"resourceKeys":["unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户选A的CODE→DATA→ENGINE依赖链；源码导入/生成物与字体独占共享资源，DATA使用既有物理发布锁；末卡人工视觉门，失败一次即停。","updatedAt":"2026-10-14T17:50:10.4275906+08:00","supervisionLevel":"full"}}
-## AI-000235 | [DATA] [OMISSIONS-20261014] [DATA-F1_DATA] 选项A导表字体联动
-
-- 序号：235
-- 提交时间：2026-10-14T17:50:10.5628177+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：AI-000234
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行-F1_选项A授权.md。用户直接选A授权一次实际发布验证。固定职能chat/SUPERVISED，旧字体卡不恢复。只按本卡范围、四条硬上限和依赖执行。
-
-> SUPERVISED POLICY at 2026-10-14T17:50:10.7056892+08:00: {"taskId":"AI-000235","policy":{"resourceKeys":["unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户选A的CODE→DATA→ENGINE依赖链；源码导入/生成物与字体独占共享资源，DATA使用既有物理发布锁；末卡人工视觉门，失败一次即停。","updatedAt":"2026-10-14T17:50:10.6718952+08:00","supervisionLevel":"full"}}
-## AI-000236 | [ENGINE_MCP] [OMISSIONS-20261014] [DATA-F1_ENGINE] 选项A导表字体联动
-
-- 序号：236
-- 提交时间：2026-10-14T17:50:10.7509879+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：AI-000235
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行-F1_选项A授权.md。用户直接选A授权一次实际发布验证。固定职能chat/SUPERVISED，旧字体卡不恢复。只按本卡范围、四条硬上限和依赖执行。
-
-> SUPERVISED POLICY at 2026-10-14T17:50:10.8697597+08:00: {"taskId":"AI-000236","policy":{"resourceKeys":["unity-project","data-batch","generated-assets","font-assets"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户选A的CODE→DATA→ENGINE依赖链；源码导入/生成物与字体独占共享资源，DATA使用既有物理发布锁；末卡人工视觉门，失败一次即停。","updatedAt":"2026-10-14T17:50:10.8368421+08:00","supervisionLevel":"full"}}
-
-> SUPERVISED EXTEND at 2026-10-14T17:50:38.2820252+08:00: {"taskIds":["AI-000234","AI-000235","AI-000236"],"reason":"用户本轮直接选择A，明确授权导表联动静态字体重建与一次实际发布验证；依赖CODE工具→DATA发布→ENGINE验收，沿用当前监管并保持旧字体任务关闭。"}
-> Instruction revision for AI-000233 at 2026-10-14T18:25:04.2944215+08:00
-
-执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/GOV-03.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000233/。固定CODE职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
-> Instruction revision for AI-000234 at 2026-10-14T18:25:04.4727195+08:00
-
-执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_CODE.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000234/。固定CODE职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
-> Instruction revision for AI-000235 at 2026-10-14T18:25:04.5648563+08:00
-
-执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_DATA.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000235/。固定DATA职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
-> Instruction revision for AI-000236 at 2026-10-14T18:25:04.6554564+08:00
-
-执行任务卡 .ai-workspace/inputs/OMISSIONS-20261014/DATA-F1_ENGINE.md；输出 .ai-workspace/outputs/OMISSIONS-20261014/AI-000236/。固定ENGINE_MCP职能chat/SUPERVISED。原件、DATA-F1选择A及本批边界见同目录，保留AI230～232成果，不重复返工。用户已长期授权所有监管任务结算即时回传：先读 .ai-workspace/inputs/监管结算即时回传_用户长期授权_20261014.json，Complete/Fail/Yield后依DevTools/Workflow/HANDOFF.md立即Prepare→一次真实Send→Record，控制台Receive后独立验收；不等WATCH、不自行派后继，停止与去重门禁保留。四条硬上限、原次数/范围/错误史/人工门不变。
-## AI-000237 | [CODE] [GOV-04-05-20261014] GOV-04 上下文量监测与用户重载预警
-
-- 序号：237
-- 提交时间：2026-10-14T18:39:24.5893546+08:00
-- 模块 ID：GOV-04-05-20261014
-- 初始状态：QUEUED
-- 前置依赖：AI-000236
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行任务卡 .ai-workspace/inputs/GOV-04-05-20261014/GOV-04_CODE.md，原件及复杂度修订_用户决定.json同目录；complexity=M，turnBudget=80，既有TK-WF-03/04扩充。用户要求排在现有已下派任务之后，因此依赖AI-000236并保留其人工门；不提前执行。固定CODE/SUPERVISED，不新chat，不扩大业务；保留AI230～233既有成果。输出.ai-workspace/outputs/GOV-04-05-20261014/<TaskId>/。Complete/Fail/Yield同轮按长期授权立即回传一次，控制台独立验收，不等WATCH。缺失真实用量null；estimated仅限明确标注的上下文量级，禁止当实际tokens/账单。四条硬上限及无Git提交推送保持。
-
-> SUPERVISED POLICY at 2026-10-14T18:39:24.8079494+08:00: {"taskId":"AI-000237","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户追加GOV04/05在现有链后，依赖AI236并保留其人工门；纯工作流治理，无Unity/业务资产，固定CODE串行；已签收改动不返工。","updatedAt":"2026-10-14T18:39:24.7554094+08:00","supervisionLevel":"light"}}
-## AI-000238 | [CODE] [GOV-04-05-20261014] GOV-05 复杂度分级与轮次预算
-
-- 序号：238
-- 提交时间：2026-10-14T18:39:24.8689592+08:00
-- 模块 ID：GOV-04-05-20261014
-- 初始状态：QUEUED
-- 前置依赖：AI-000236
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-执行任务卡 .ai-workspace/inputs/GOV-04-05-20261014/GOV-05_CODE.md，原件及复杂度修订_用户决定.json同目录；complexity=M，turnBudget=80，既有TK-WF-03/04扩充。用户要求排在现有已下派任务之后，因此依赖AI-000236并保留其人工门；不提前执行。固定CODE/SUPERVISED，不新chat，不扩大业务；保留AI230～233既有成果。输出.ai-workspace/outputs/GOV-04-05-20261014/<TaskId>/。Complete/Fail/Yield同轮按长期授权立即回传一次，控制台独立验收，不等WATCH。缺失真实用量null；estimated仅限明确标注的上下文量级，禁止当实际tokens/账单。四条硬上限及无Git提交推送保持。
-
-> SUPERVISED POLICY at 2026-10-14T18:39:24.9996320+08:00: {"taskId":"AI-000238","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户追加GOV04/05在现有链后，依赖AI236并保留其人工门；纯工作流治理，无Unity/业务资产，固定CODE串行；已签收改动不返工。","updatedAt":"2026-10-14T18:39:24.9702110+08:00","supervisionLevel":"light"}}
-
-> SUPERVISED EXTEND at 2026-10-14T18:39:25.1314079+08:00: {"reason":"用户2026-10-14明确要求读GOV04/05文档并下派，维持监管且排在已下派任务之后；用户修订两卡为M/80，保留现有231～236与236人工门。","taskIds":["AI-000237","AI-000238"]}
-
-> Verification resolved for AI-000234 at 2026-10-14T19:15:03.5240908+08:00: decision=VERIFIED; summary=控制独立CODE合同6/6通过；两项旧测试观察已按当前源码/政策核实，原失败保留。; evidence=控制证据 outputs/control/OMISSIONS-20261014/ai234-independent-review.json、ai234-compare.json、ai234-app-test-results.json。核实际app编译/14项事务输出及源实现；非人工视觉签收，AI235/236仍待原生验证。
-## AI-000239 | [CODE] [OMISSIONS-20261014] Spine已知旧资产白名单只读定位
-
-- 序号：239
-- 提交时间：2026-10-14T19:40:51.2957342+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-按 .ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-DIAG_CODE.md 做紧凑只读定位；先读用户最新Spine旧资产日志白名单_用户决定_20261014.json。复用现有原始日志/8指纹，禁止Unity/测试重跑及生产修改；交付四项合同后立即结算回传。
-
-> SUPERVISED POLICY at 2026-10-14T19:41:47.5318839+08:00: {"taskId":"AI-000239","policy":{"resourceKeys":["documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户指定包内精确白名单；原235失败后的正式只读定位复用既有证据，为同根修复提供依据，不重试生产。","updatedAt":"2026-10-14T19:41:47.4754933+08:00","supervisionLevel":"light"}}
-
-> SUPERVISED EXTEND at 2026-10-14T19:41:47.6666193+08:00: {"reason":"用户最新直接要求Spine包内Sample/output4白名单处理，加入原235同根定位，后续同根修复沿固定CODE。","taskIds":["AI-000239"]}
-## AI-000240 | [CODE] [OMISSIONS-20261014] Spine两旧资产精确日志白名单修复
-
-- 序号：240
-- 提交时间：2026-10-14T19:52:55.9889519+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/OMISSIONS-20261014/SPINE-LEGACY-REPAIR_CODE.md 及原AI239报告。实施用户已授权两个旧资产精确报错白名单，保留资产与版本拒绝。预声明6检查，比例验证，不运行Unity/生产发布/全量Final。用户长期授权结算即时回传。
-
-> SUPERVISED POLICY at 2026-10-14T19:52:56.2134524+08:00: {"policy":{"resourceKeys":["spine-source","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前用户直接授权包级精确白名单，M80按实际文件数规划；不改变原AI235次数与后置人工门。","updatedAt":"2026-10-14T19:52:56.1627528+08:00","supervisionLevel":"light"},"taskId":"AI-000240"}
-
-> SUPERVISED EXTEND at 2026-10-14T19:52:56.2748279+08:00: {"taskIds":["AI-000240"],"reason":"AI239已独立4/4；按用户新决定安排原235根首次修复，无新根或生产重跑。"}
-
-> SUPERVISED RESUME_APPROVED at 2026-10-14T20:24:11.8600049+08:00: {"usedRuns":0,"userDecision":"用户直接回复：两个任务都进行明确的批准续行。明确承接：AI240原卡1次，仅完成结算，复用现有结果，不重跑测试、不改源码；AI235随后原范围续行1次含幂等。批准原件 inputs/OMISSIONS-20261014/AI240_AI235_各一次续行批准_20261014.json。","taskId":"AI-000240","runs":1,"approvalId":"user-20261014-resume-240-settlement-1","scope":{"paths":[".ai-workspace/outputs/OMISSIONS-20261014/AI-000240"],"operations":["idempotence-check","reuse-evidence","settlement"]}}
-
-> SUPERVISED RESUME_APPROVED at 2026-10-14T20:29:11.2238569+08:00: {"runs":1,"taskId":"AI-000235","approvalId":"user-20261014-resume-235-release-1","userDecision":"用户直接回复：两个任务都进行明确的批准续行。明确承接：AI240仅结算1次已正式VERIFIED；AI235原卡1次，原范围字体发布及同轮幂等验证（原卡规定复用no-op证据，不第二次生产写入）。批准原件inputs/OMISSIONS-20261014/AI240_AI235_各一次续行批准_20261014.json。","scope":{"paths":[".ai-workspace/outputs/OMISSIONS-20261014/AI-000235","Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset","Assets/Font/Heavy/ShortCycle_Heavy_Static.asset","DevTools/DataTables/.batch-workspace","DevTools/Fonts/backup","DevTools/Fonts/ShortCycleFontBuildManifest.json"],"operations":["backup","idempotence-check","isolated-data-font-build","preflight-read","publish-fonts","release-cached-handles","reuse-evidence","settlement","update-font-manifest"]},"usedRuns":0}
-## AI-000241 | [DATA] [OMISSIONS-20261014] [DATA-F1b] 退出后字体发布合同 S/40
-
-- 序号：241
-- 提交时间：2026-10-14T21:06:47.5707156+08:00
-- 模块 ID：OMISSIONS-20261014
-- 初始状态：QUEUED
-- 前置依赖：AI-000234, AI-000240
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-用户明确指定DATA-F1b新合同卡，读.ai-workspace/inputs/OMISSIONS-20261014/DATA-F1b_DATA.md及同目录最新授权。固定DATA，S/40，不碰.cs/生产资源/Unity；只改DevTools与P-051，五项预声明验收。原235 attempt2已正式Fail且一次许可已消费，保留其历史和原链；本卡是用户指定合同修订，不续领/替代原235，验收后才由控制按新授权ApproveResume原235一次。用户长期授权结算即时回传。
-
-> SUPERVISED POLICY at 2026-10-14T21:06:47.8643429+08:00: {"taskId":"AI-000241","policy":{"resourceKeys":["workflow-devtools","documentation","data-batch","font-assets"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户明确新增DATA-F1b合同变更S40，仅DevTools离线小卡；原235失败保留，不授权生产执行。","updatedAt":"2026-10-14T21:06:47.7888705+08:00","supervisionLevel":"light"}}
-
-> SUPERVISED EXTEND at 2026-10-14T21:06:47.9836199+08:00: {"reason":"用户三步安排：先DATA-F1b合同修订独立验收，再原235仅一次发布及236验证；不提前领取旧卡。","taskIds":["AI-000241"]}
-
-> SUPERVISED RESUME_APPROVED at 2026-10-14T21:26:12.4048413+08:00: {"runs":1,"taskId":"AI-000235","userDecision":"用户2026-10-14三步明确批准：DATA-F1b修订合同完成后，ApproveResume DATA-F1一次，加-Publish；Static337→396、两气泡进静态集、Dynamic0glyph、更新保护基线并审计，随后AI236 Play。原话inputs/OMISSIONS-20261014/DATA-F1b_合同修订与单次发布授权_20261014.md。AI241已SUCCEEDED/VERIFIED，控制独立5/5。","approvalId":"user-20261014-data-f1b-publish-1","usedRuns":0,"scope":{"paths":[".ai-workspace/outputs/OMISSIONS-20261014/AI-000235","Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset","Assets/Font/Heavy/ShortCycle_Heavy_Static.asset","DevTools/DataTables/.batch-workspace","DevTools/Fonts/backup","DevTools/Fonts/ShortCycleFontBuildManifest.json"],"operations":["backup","idempotence-check","isolated-data-font-build","post-exit-credential","preflight-read","publish-fonts","release-cached-handles","reuse-evidence","settlement","update-font-manifest","update-protection-baseline"]}}
-## AI-000242 | [DATA] [G74-20261014] G74 DATA-V1 Schema v2.4.1校验差异
-
-- 序号：242
-- 提交时间：2026-10-14T22:05:50.6207062+08:00
-- 模块 ID：G74-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/G74-20261014/DATA-V1_DATA.md，用户修订和最终Schema优先。预声明合同 inputs/acceptance/<TaskId>.json；只在本票CLAIMED后执行。
-
-> SUPERVISED POLICY at 2026-10-14T22:05:50.9530354+08:00: {"taskId":"AI-000242","policy":{"resourceKeys":["g74-schema-validator"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户G74两卡明确下派；独立数据校验与CODE实现，ENGINE仅编译收口；无UI/场景人工门。","updatedAt":"2026-10-14T22:05:50.8799648+08:00","supervisionLevel":"light"}}
-## AI-000243 | [CODE] [G74-20261014] G74 CODE-R01承载物解析与去抖warning
-
-- 序号：243
-- 提交时间：2026-10-14T22:05:50.9970941+08:00
-- 模块 ID：G74-20261014
-- 初始状态：QUEUED
-- 前置依赖：无
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/G74-20261014/CODE-R01_CODE.md，用户修订和最终Schema优先。预声明合同 inputs/acceptance/<TaskId>.json；只在本票CLAIMED后执行。
-
-> SUPERVISED POLICY at 2026-10-14T22:05:51.1300124+08:00: {"taskId":"AI-000243","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户G74两卡明确下派；独立数据校验与CODE实现，ENGINE仅编译收口；无UI/场景人工门。","updatedAt":"2026-10-14T22:05:51.0965451+08:00","supervisionLevel":"light"}}
-## AI-000244 | [ENGINE_MCP] [G74-20261014] G74 CODE-R01 Editor编译收口
-
-- 序号：244
-- 提交时间：2026-10-14T22:05:51.1875646+08:00
-- 模块 ID：G74-20261014
-- 初始状态：QUEUED
-- 前置依赖：AI-000243
-- 允许越过：False
-- 最大尝试次数：1
-
-### 指令
-
-读取 .ai-workspace/inputs/G74-20261014/CODE-R01_ENGINE.md，用户修订和最终Schema优先。预声明合同 inputs/acceptance/<TaskId>.json；只在本票CLAIMED后执行。
-
-> SUPERVISED POLICY at 2026-10-14T22:05:51.3199497+08:00: {"taskId":"AI-000244","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户G74两卡明确下派；独立数据校验与CODE实现，ENGINE仅编译收口；无UI/场景人工门。","updatedAt":"2026-10-14T22:05:51.2679927+08:00","supervisionLevel":"light"}}
-
-> SUPERVISED EXTEND at 2026-10-14T22:05:51.4239152+08:00: {"taskIds":["AI-000242","AI-000243","AI-000244"],"reason":"用户2026-10-14追加G74文档读取与两卡认领，保留原scope和236人工门，独立两卡及ENGINE编译后继。"}
-
-> Verification resolved for AI-000236 at 2026-10-14T22:16:37.6032482+08:00: decision=VERIFIED; summary=用户确认本次截图人工视觉验收通过，允许AI237/238继续。; evidence=用户原话：AI237／238可以继续，人工对截图视觉的验证通过；原件.ai-workspace/inputs/GOV-04-05-20261014/AI236视觉验收与GOV继续_用户决定_20261014.json；原机器7/7及原截图保持，无新Unity调用。
-
-> SUPERVISED USER_GATE_APPROVED at 2026-10-14T22:16:37.9427908+08:00: {"taskId":"AI-000236","userDecision":"AI237／238可以继续，人工对截图视觉的验证通过；原件.ai-workspace/inputs/GOV-04-05-20261014/AI236视觉验收与GOV继续_用户决定_20261014.json"}
-
-> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-10-14T22:52:23.7555077+08:00: {"at":"2026-10-14T22:52:23.6882873+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000231","AI-000232","AI-000233","AI-000234","AI-000235","AI-000236","AI-000237","AI-000238","AI-000239","AI-000240","AI-000241","AI-000242","AI-000243","AI-000244"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
-## AI-000245 | [CODE] [GOV04-FIX] 修复上下文采样新鲜度与控制台/执行线提醒接线
-
-- 序号：245
-- 提交时间：2026-10-15T14:57:40.9747459+08:00
-- 模块 ID：GOV04-FIX
+- 序号：263
+- 提交时间：2026-10-19T02:26:23.5867377+08:00
+- 模块 ID：SC
 - 初始状态：QUEUED
-- 前置依赖：AI-000237
+- 前置依赖：AI-000243, AI-000244
 - 允许越过：False
 - 最大尝试次数：1
 - 复杂度/轮次预算：L / 120
 
 ### 指令
 
-# GOV04 后续：上下文真实采样与提醒接线修复
+本卡是原 ASM-01 的 CODE 交付阶段，原卡完整目标仍保留，完成本阶段不代表 E-1/ASM-01 已落地。用户已明确接收派发包并进入监管，依赖AI243/244的CODE-R01已关闭。阅读 CORE、workers/CODE、SUPERVISED/HANDOFF 的执行/回传节、CODEBASE_MAP/项目基线页首及相关模块、toolkit/INDEX与本卡对应P项；不通读整个派发包或历史报告。原卡：.ai-workspace/inputs/派发/DETACH-B13-20261019/cards/ASM-01.md；本轮优先执行边界：同目录上级的执行登记.md（ASM首次范围段）。总档v1.5.4优先于原包旧路由。固定CODE独占+unity-project互斥。
+交付一个完整可审查的程序集落地包：1) 据现有源码/asmdef/asmref/Editor引用核对七类程序集，标明真实路径、现有反向依赖、第三方边界及不能在不改既有.cs下成立的点；2) 在本任务outputs/staged中生成可实施的asmdef/asmref候选与明确的新接口草案，按实际覆盖关系选择最小方案，未定项显式阻止投放，不伪造已安装；3) 进行相称离线JSON/引用图/候选范围验证，提供引擎落地和后继DATA一次幂等所需的实际输入清单与验证命令草案；4) 完整精确列出窗口①Legacy源→目标、GUID、备份与保持项，并核实卡中“人为引编译错误仍可Play”的可行性及验收口径冲突，形成可供用户决定的最小选项；5) 交付简短报告、evidence.json与acceptance.json。正文不复述全卡。
+允许本任务outputs中的源码/配置候选与说明，无生产写入：不向Assets/DevTools投放，不改已有.cs/namespace，不改.meta，不做文件移动，不开Editor/Play/导表，不提交/推送，不调整_TUNE。图分析用于准备经审批的真实落地，并非用静态通过代替后继Editor/Play验收；不在主工程注入编译错误。已有脏文件完整保留。既有.cs与新接口的冲突要列清，不自行扩大业务范围。原用户窗口①保留，本阶段机器过后等待CONTROL精确清单审查及窗口授权，ENGINE_CLI承接移动和Editor验证，DATA承接幂等；其余CODE卡待整个E-1落地后才入队。
+本卡complexity L/120沿原卡。验收预声明：.ai-workspace/inputs/acceptance/本TaskId.json，领取后用实际TaskId定位。输出根 .ai-workspace/outputs/DETACH-B13-20261019/本TaskId。六项基于实际产物：dependencyAuditComplete、candidateBundleValidated、window1ManifestReady、limitationsExplicit均true，existingCsWrites=0，productionAssetWrites=0；证据保留真实分析明细、候选校验与diff核对，不把结论布尔自填当验证。若目标内准备工作真实失败按Fail，不将需求待审判为运行失败。完成只Complete这个CODE交付，待人工事项写明，HumanGateAfter已登记；不声称ASM整体成功、不自行领取后继。
+SUPERVISED凭本次TaskId/DispatchToken/OwnerThreadId领取一次；每批写入前SupervisionCheckpoint，长任务及时RenewLease。Complete/Fail/Yield按长期授权即时Prepare→读取完整messagePath→一次实际app send到当前CONTROL 01a13ef5-eda9-7882-b1c9-eca47a6470d9→Record后结束。未知计费unknown，失败恢复只能用户明确次数范围ApproveResume，保持历史与四条硬上限。
 
-用户新授权（2026-10-15）：把这个问题进行一下修复。承接已交付的提交前诊断。本次仅修复已明确的上下文提醒缺口，保持 MANUAL，不启动监管/其它规划、Unity、字体、配表、Git提交或推送。复用固定 CODE chat。
+> SUPERVISED POLICY at 2026-10-19T02:26:42.9121019+08:00: {"taskId":"AI-000263","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"原ASM-01窗口①：CODE落地包完成不代表E-1完工，具体Legacy移动与MIG-F02参数保留用户审批；独占CODE及工程","updatedAt":"2026-10-19T02:26:42.8329070+08:00","supervisionLevel":"full"}}
 
-## 代码改动清单 / 工具层三问
+> SUPERVISED START at 2026-10-19T02:26:43.6258014+08:00: {"sessionId":"beefe968cb5e48e0bea0b8b47260abd9","status":"ACTIVE","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","taskIds":["AI-000263"],"heartbeatAutomationId":"watch-60","createdAt":"2026-10-19T02:26:43.6173781+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
 
-归属既有 TK-WF-03/04；能力有现行入口，优先扩充现有函数/夹具，不新增 TK 或专用续行入口。预计涉及 >10 文件（含必要文档），按 L / 120 轮登记，预算仅提示。
+> SUPERVISED AUTOMATION_BOUND at 2026-10-19T02:27:17.6066658+08:00: {"automationId":"watch-60","heartbeatMinutes":60}
+## AI-000264 | [CODE] [SC] [DETACH-B13-20261019] ASM-01 窗口①兼容实施与可安装包
 
-| 文件 | 处置 | 改动要点 / 层 |
-| --- | --- | --- |
-| DevTools/Workflow/Get-ThreadContext.ps1 | 修改 | 精确线程原生 usage 有界增量采集、有效期与来源；工具层 |
-| DevTools/Workflow/UsageMetrics.ps1 | 必要时扩充 | 最小 context 记录及去重，不伪造计费记录；工具层 |
-| .ai-workspace/queue.ps1 | 修改 | 普通正式命令回执的 worker/console 提示出口，MANUAL 也可按显式线程采样 |
-| .ai-workspace/supervised.ps1 | 修改 | 复用采样路径，既有心跳入口保留模式/去重门 |
-| DevTools/Workflow/watch.ps1 | 修改 | console/worker 的 CONTEXT_HIGH 消费与去重，停止态仍不做业务轮询 |
-| DevTools/Workflow/Test-ContextWarning.ps1 | 扩充 | 在既有夹具测真实格式解析与出口，不另建 Final 工具 |
-| .ai-workspace/CORE.md、.ai-workspace/CONTROL_CHAT.md、.ai-workspace/workers/CODE.md | 修改 | 正确采样调用及真实回执提醒习惯；历史原结论保留为历史 |
-| .ai-workspace/toolkit/WF.md、DevTools/Workflow/USAGE_REPORTING.md | 修改 | 入口/口径/限制与维护说明 |
-| CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md | 定向更新 | 当前问题及真实验证范围，不改完整复核日期 |
-
-以上13个既有文件为允许范围；产物仅 .ai-workspace/outputs/CONTEXT-REPAIR-20261015/<TaskId>/。如必要增加其它生产文件，先说明原因由控制台决定，不扩无关内容。
-
-## 必读
-.ai-workspace/CORE.md、.ai-workspace/workers/CODE.md、.ai-workspace/toolkit/WF.md 的 TK-WF-03/04、.ai-workspace/protocol/WORKFLOW_FULL.md 对应领取/验证/结算节、两项目文档页首与工作流模块，以及 .ai-workspace/outputs/control/STAGE-GOV-G74-COMMIT-20261014/提交前检查与上下文提醒诊断.md。旧 AI237/238 已验收，不重跑或改史。本卡为验收后新发现的集成缺口修复，不对旧成功卡伪造 failure key 或创建恢复许可；正式队列按 FEATURE 独立后续目标记录，出处始终绑定上述诊断。
-
-## 一个交付目标 / 验收
-
-1. boundedNativeFreshness：从当前用户 Codex 原生会话日志读取精确 threadId 的最近一条单次响应 input_tokens 元数据，有界发现/尾读/增量与缓存；不输出聊天正文、全日志或全账户usage，不导入伪任务账单。验证线程不匹配、轮转/追加/文件截断/不完整末行、缺权限、陈旧/未来/损坏时间情况。样本显式时限，旧 provider 不能压过 fresh，不能把未知显示成已测低量；保持 provider/estimated/unknown 分离。压缩后新的较小样本能替代旧高样本。
-2. replyIntegration：将正式命令回执连接到 worker 与 console 的真实采样/阈值提示，显式 ControllerThreadId/OwnerThreadId 绑定，MANUAL 不需要恢复 SUPERVISED。不只 Poll/Complete 或靠60分钟WATCH；常规 Status 可承载控制台提示。最终普通回复流程遵守正确调用，明确无法钩住完全不调用工具的任意平台消息，不冒称已修改应用。输出仍 <=2KiB，细节落盘。
-3. notificationDedupe：阈值 ADVISE>=150000，STRONG>=200000，worker/console 提醒都有可消费出口；WATCH能处理 role=console（无需伪造 taskId），按线程/样本/跨阈值去重，新低样本可重新布防。停止/完成状态不新增业务扫描或模型轮询。
-4. warningOnlyAndAccounting：只提示手动重载继承，不自动重开/换chat/Yield/改模式/重试；单次input不是总账单或完整窗口；未知null+reason，保留历史/预算/人工项/周报独立持续运行，不重发旧周报。
-5. targetedValidationAndLive：一次受影响 Test-ContextWarning 的 Custom Final（CODE自测失败按现有规则记录），覆盖 149999/150000/199999/200000、stale/fresh、真实格式、普通回执、console事件、重复采样与未知。至少对固定 CODE 和本控制台01a08798-8b2a-7d41-9aa8-ab44affd520a做真实只读样本取证；真实当前值不保证越阈值，阈值用夹具+实际调用两类区分。不得为测试改真实runtime业务状态，隔离RuntimeRoot不能访问或污染真实 usage/cache。
-6. docsAndScope：按实际接线修正入口文档；交付报告六要素和独立最小证据。不得重新输出旧大JSON/纹理或跑全仓hash/Unity/完整Workflow域。
-
-所有exec固定PS7 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe，项目根执行正式queue，runtime业务状态仅正式API。只领控制台下发TaskId，TriggerSource MANUAL；一张卡一次执行。Complete后停止，不自动领取后继；MANUAL不冒用旧监管SENT授权，控制台独立读取即可。本卡人工事项不新增视觉门，技术独立核验由控制台执行。源/回执实际模型计费缺失保留null。
-## AI-000246 | [CODE] [GOV-04] 回执上下文写入兼容对象类型
-
-- 序号：246
-- 提交时间：2026-10-15T18:13:35.5884042+08:00
-- 模块 ID：GOV-04
+- 序号：264
+- 提交时间：2026-10-19T13:27:39.6120234+08:00
+- 模块 ID：SC
 - 初始状态：QUEUED
-- 前置依赖：无
+- 前置依赖：AI-000263
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+ASM-01窗口①已获用户明确批准。交付可安装的程序集拆分兼容代码和候选包，承接AI263准备成果，不重跑准备卡。范围：Assets/Scripts/Command/{CommandRegistry,CommandEntry,CommandManager}.cs的必要最小修改，限制发现已审自有程序集并兼容现有保存的旧命令ID/类型名；不能扫描任意第三方或改用户配置。Assets/Scripts/Cooking/ShortCycle/ShortCycleAutomatedProbe.cs仅对齐G68/E-06固定线索板与可追踪检查点，G26保留，不引入新产品行为。四个runner可按审查单修改路径/默认DLL定位，迁移前后均有清晰可用路径，不无声跳过验证。测试可在这些既有runner或本任务output加入必要定向用例，不建新长期工具。
+读取AI263的REPORT、candidate-manifest、window1-manifest、limitations、engine-data-handoff、documentation-impact；仅按需补依赖明细。原42个Legacy和1个InputManager移动已批准，但只由ENGINE_CLI执行。CODE不得移动生产源码/meta，不向Assets安装asmdef/asmref/新MG0接口，不开Editor。将AI263候选复制为本任务staged派生包，记录原manifest身份；根据实际兼容修订核定10asmdef/11asmref及MG0接口。MG0接口签名由实现层按G84（计时秒、stub quality=1、取消无成功回调、单次完成、Teardown后无回调）和P2现行指导书收敛，不做正式小游戏或改变产品流程；新接口由ENGINE在安装阶段投放。
+验证必须包含实际拆分后的程序集编译（使用精确映射和当前Unity/package引用，不以合并Roslyn零诊断冒充），命令9项发现/旧ID兼容及最小失败路径；已批准隔离编译输入人为使LongLoop失败，再证独立Toolkit/Generated/ShortCycle编译成功，恢复隔离输入。不得在主工程引入错误；不用复制Unity Library或整项目冷加载。空LongLoop需要的仅隔离测试源留output，不投放生产。runner定向验证；不跑字体重建或一次性工具。产物/证据和CODEBASE_MAP/toolkit对应变更说明准确区分“兼容代码已改、程序集待ENGINE落地”。
+交接ENGINE需给精确安装manifest、staged完整文件、允许的移动清单、当前源版本及新.cs允许差异、最低原生验证清单；不能继续沿AI263整个源码SHA断言已批准修改的源完全不变；GUID不变仍必须验证。不重复审计全项目，不把生产Editor/Play宣称通过。合同：commandCompatibilityPassed、fixedBoardProbeAligned、runnerPathsCompatible、splitAssemblyCompilationPassed、isolationExperimentPassed、handoffBundleReady=true；unauthorizedProductionWrites=0、productionMoves=0。
+
+共同规则：用户批准原件 inputs/派发/DETACH-B13-20261019/窗口①用户批准.json；本批执行登记与窗口①控制审查为范围依据。CORE→本线worker→SUPERVISED/HANDOFF→本卡涉及源码与P/TK，按标题读取，不加载AI263整份审计/全量diff。固定分支codex/unity6-followup，保留所有已有变更；不提交推送。旧失败/许可/次数保留，任何正式失败只按新ApproveResume续行。每批写前Checkpoint，长任务续租；Complete/Fail/Yield后立即Prepare→一次实际Send→Record回当前CONTROL。OwnerThreadId、ExecutionId随领取回执显式传递。输出 .ai-workspace/outputs/DETACH-B13-20261019/<TaskId>/，预声明 inputs/acceptance/<TaskId>.json，evidence.json与acceptance.json须来自实际证据。报告标明原逻辑卡ASM-01阶段；原建议总预算120的阶段累计不因分线清零，未知轮次/token保持unknown。证据目标1MB/硬上限10MB，超过1MB说明必要性；只保存任务范围diff、一次必要基线，不复制整份13MB工作区diff，不重复全路径SHA。大原生/机器审计必要时无损压缩后引用，不丢失败史；任何未结原件不擅自删除。
+## AI-000265 | [ENGINE_CLI] [SC] [DETACH-B13-20261019] ASM-01 引擎落地与MIG-F02身份配置
+
+- 序号：265
+- 提交时间：2026-10-19T13:27:39.9870172+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000264
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+ASM-01窗口①正式落地 + MIG-F02，同一引擎阶段，依赖本批CODE兼容实施成功并经CONTROL独立验收。使用当前PIPELINES固定ENGINE_CLI与Unity官方CLI；领取前从正式前置result定位CODE安装包，不使用AI263未更新候选直接安装。不切Coplay。先核唯一项目/6000.3.24f1/Editor PID和心跳、已保存/未保存状态；实际调用经Invoke-TaskTool；未知dirty、目标歧义或新失败停止，不覆盖用户未保存成果。
+用户已批准42对Legacy移动+1对InputManager，具体路径/GUID见AI263 window1-manifest与本轮授权。先保全当前字节至任务专属备份，再逐文件AssetDatabase.MoveAsset；不搬整个目录、不删除Legacy、保留GUID和G26/ProjectValidation/Spine预研。同一受控导入批次安装CODE交付的asmdef/asmref及MG0接口，目录经Editor建立、新meta交Unity生成；不人工改YAML。按CODE交付manifest核当前源漂移，允许AI264已获批准的真实修改；不能按旧SHA拒绝合法前置成果。生产新功能只到程序集分层和最小接口。
+MIG-F02通过Editor PlayerSettings.companyName设为精确“Trollemma”，productName设为精确“EatWhat”；记录修改前后真实persistentDataPath，ProjectSettings这部分diff只允许这两个字段。备份当前值DefaultCompany/Button Project；不迁移/删除旧路径存档，不把新身份当保存系统完成。
+原生验证：编译0 Error；七类归属按实际Assembly输出核定（空LongLoop不伪报DLL）；43个移动GUID无差异；命令9项发现及已保存命令/事件解析正常；ShortCycle现有探针按已批准固定线索板口径运行、CookingProcess仍Build index1且可加载无运行错误；保留Build列表、_TUNE、字体/第三方和其它用户成果。临时场景变化按UNITY_SCENE_CLEANUP归属恢复，不用MarkSceneClean掩盖。不要重复做CODE隔离错误实验，正式工程必须0Error后Play。若确需额外序列化字段修订先记录精确对象/字段差异交CONTROL，不未经审查批量重绑；已批准移动过程的正常导入元数据变化应具体留证，不自动判未知失败。
+同步实际程序集/路径及MIG-F02工程事实到现有CODEBASE_MAP相关模块、toolkit对应条目和项目状态受影响节，页首只说明本次核验范围；不提高完整全项目核验日期。交DATA一份ENGINE落地后的Generated/currentCSV真实基线与包输入，不发布生成物、不重建字体。合同：editorCompileErrors=0,movedSourceCount=43,movedGuidMismatchCount=0,candidateInstallComplete/commandCompatibilityPassed/shortCycleProbePassed/companyIdentityCorrect=true,cookingProcessRuntimeErrors=0,settingsChangedFieldCount=2,unexpectedSerializedChanges=0。ASM整体还需DATA幂等，人工A+C保留。
+
+共同规则：用户批准原件 inputs/派发/DETACH-B13-20261019/窗口①用户批准.json；本批执行登记与窗口①控制审查为范围依据。CORE→本线worker→SUPERVISED/HANDOFF→本卡涉及源码与P/TK，按标题读取，不加载AI263整份审计/全量diff。固定分支codex/unity6-followup，保留所有已有变更；不提交推送。旧失败/许可/次数保留，任何正式失败只按新ApproveResume续行。每批写前Checkpoint，长任务续租；Complete/Fail/Yield后立即Prepare→一次实际Send→Record回当前CONTROL。OwnerThreadId、ExecutionId随领取回执显式传递。输出 .ai-workspace/outputs/DETACH-B13-20261019/<TaskId>/，预声明 inputs/acceptance/<TaskId>.json，evidence.json与acceptance.json须来自实际证据。报告标明原逻辑卡ASM-01阶段；原建议总预算120的阶段累计不因分线清零，未知轮次/token保持unknown。证据目标1MB/硬上限10MB，超过1MB说明必要性；只保存任务范围diff、一次必要基线，不复制整份13MB工作区diff，不重复全路径SHA。大原生/机器审计必要时无损压缩后引用，不丢失败史；任何未结原件不擅自删除。
+## AI-000266 | [DATA] [SC] [DETACH-B13-20261019] ASM-01 落地后一次导表幂等验证
+
+- 序号：266
+- 提交时间：2026-10-19T13:27:40.1346839+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000265
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+ASM-01落地后的唯一一次DATA幂等验证，依赖本批ENGINE阶段成功且CONTROL独立验收。当前固定DATA以PIPELINES/runtime正式绑定为准，旧workers页中2026-09 threadId已过时，不重新绑定或使用旧thread。先读CORE、DATA worker、DevTools/DataTables/DATA_PIPELINE及CurrentCsvValidation节。
+沿ENGINE落地后交付的基线与实际current CSV/schema，在unity-project/data-batch互斥和既有data-publication.lock内，使用现有Run-DataPipeline.ps1 -CurrentCsvValidation -ValidationSource本任务明确标识 -TaskId实际号 -UnityPath当前6000.3.24f1。只一次真实隔离运行，不带-Publish、不消费旧DONE轮次、不改人工xlsx/CSV、生产Generated或字体；本卡并非新一轮导出/格式维护，不碰未授权非空内容。允许现有工具必须的隔离生成，副本不得复制Library/Temp/Logs/obj/.git。旧字体批准不适用。
+核当前nonce/run/退出码/严格日志/dependencyProof及候选Generated与ENGINE后置基线一致；若程序集序列化名称确有预期外差异，报告原差异，不发布、不再跑一遍制造零差异。失败按正式Fail，原任务留存，续行要用户批准。运行后按既有工具流程释放锁，保留完整报告与必要恢复证据，避免再次积累整项目副本；未结输出不擅自删除。
+合同：batchExitCode=0,currentRunIdentityVerified=true,generatedIdempotent=true,productionValueChanges=0,publishInvocations=0,realImportRuns=1。若通过报告“ASM-01 DATA幂等阶段通过”，由CONTROL综合CODE/ENGINE/DATA决定E-1已落地并安排后继；不得自动领取新任务或宣称A+C人工验收已过。
+
+共同规则：用户批准原件 inputs/派发/DETACH-B13-20261019/窗口①用户批准.json；本批执行登记与窗口①控制审查为范围依据。CORE→本线worker→SUPERVISED/HANDOFF→本卡涉及源码与P/TK，按标题读取，不加载AI263整份审计/全量diff。固定分支codex/unity6-followup，保留所有已有变更；不提交推送。旧失败/许可/次数保留，任何正式失败只按新ApproveResume续行。每批写前Checkpoint，长任务续租；Complete/Fail/Yield后立即Prepare→一次实际Send→Record回当前CONTROL。OwnerThreadId、ExecutionId随领取回执显式传递。输出 .ai-workspace/outputs/DETACH-B13-20261019/<TaskId>/，预声明 inputs/acceptance/<TaskId>.json，evidence.json与acceptance.json须来自实际证据。报告标明原逻辑卡ASM-01阶段；原建议总预算120的阶段累计不因分线清零，未知轮次/token保持unknown。证据目标1MB/硬上限10MB，超过1MB说明必要性；只保存任务范围diff、一次必要基线，不复制整份13MB工作区diff，不重复全路径SHA。大原生/机器审计必要时无损压缩后引用，不丢失败史；任何未结原件不擅自删除。
+
+> SUPERVISED POLICY at 2026-10-19T13:27:40.3611471+08:00: {"taskId":"AI-000264","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准窗口①和必要兼容修订；按CODE→ENGINE_CLI→DATA依赖串行，保留窗口②/A+C与真实失败门","updatedAt":"2026-10-19T13:27:40.3057300+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED POLICY at 2026-10-19T13:27:40.4772152+08:00: {"taskId":"AI-000265","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准窗口①和必要兼容修订；按CODE→ENGINE_CLI→DATA依赖串行，保留窗口②/A+C与真实失败门","updatedAt":"2026-10-19T13:27:40.4262027+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED POLICY at 2026-10-19T13:27:40.6135001+08:00: {"taskId":"AI-000266","policy":{"resourceKeys":["unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准窗口①和必要兼容修订；按CODE→ENGINE_CLI→DATA依赖串行，保留窗口②/A+C与真实失败门","updatedAt":"2026-10-19T13:27:40.5589161+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T13:27:40.7732461+08:00: {"reason":"用户明确按推荐范围批准并继续；CompanyName=Trollemma/ProductName=EatWhat；授权原件inputs/派发/DETACH-B13-20261019/窗口①用户批准.json","taskIds":["AI-000264","AI-000265","AI-000266"]}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-19T13:27:40.9026813+08:00: {"userDecision":"用户原话：按推荐范围批准并继续；MIG-F02值：Trollemma/EatWhat。完整问题与范围见窗口①控制审查.md，批准原件inputs/派发/DETACH-B13-20261019/窗口①用户批准.json。","taskId":"AI-000263"}
+> Instruction revision for AI-000265 at 2026-10-19T13:49:12.1094924+08:00
+
+ASM-01窗口①正式落地 + MIG-F02，同一引擎阶段，依赖本批CODE兼容实施成功并经CONTROL独立验收。使用当前PIPELINES固定ENGINE_CLI与Unity官方CLI；领取前从正式前置result定位CODE安装包，不使用AI263未更新候选直接安装。不切Coplay。先核唯一项目/6000.3.24f1/Editor PID和心跳、已保存/未保存状态；实际调用经Invoke-TaskTool；未知dirty、目标歧义或新失败停止，不覆盖用户未保存成果。
+用户已批准42对Legacy移动+1对InputManager，具体路径/GUID见AI263 window1-manifest与本轮授权。先保全当前字节至任务专属备份，再逐文件AssetDatabase.MoveAsset；不搬整个目录、不删除Legacy、保留GUID和G26/ProjectValidation/Spine预研。同一受控导入批次安装CODE交付的asmdef/asmref及MG0接口，目录经Editor建立、新meta交Unity生成；不人工改YAML。按CODE交付manifest核当前源漂移，允许AI264已获批准的真实修改；不能按旧SHA拒绝合法前置成果。生产新功能只到程序集分层和最小接口。
+MIG-F02通过Editor PlayerSettings.companyName设为精确“Trollemma”，productName设为精确“EatWhat”；记录修改前后真实persistentDataPath，ProjectSettings这部分diff只允许这两个字段。备份当前值DefaultCompany/Button Project；不迁移/删除旧路径存档，不把新身份当保存系统完成。
+原生验证：编译0 Error；七类归属按实际Assembly输出核定（空LongLoop不伪报DLL）；43个移动GUID无差异；实际23项ShortCycle命令发现及已保存命令/事件解析正常（AI264依据源码修正AI263的9项误记）；ShortCycle现有探针按已批准固定线索板口径运行、CookingProcess仍Build index1且可加载无运行错误；保留Build列表、_TUNE、字体/第三方和其它用户成果。临时场景变化按UNITY_SCENE_CLEANUP归属恢复，不用MarkSceneClean掩盖。不要重复做CODE隔离错误实验，正式工程必须0Error后Play。若确需额外序列化字段修订先记录精确对象/字段差异交CONTROL，不未经审查批量重绑；已批准移动过程的正常导入元数据变化应具体留证，不自动判未知失败。
+同步实际程序集/路径及MIG-F02工程事实到现有CODEBASE_MAP相关模块、toolkit对应条目和项目状态受影响节，页首只说明本次核验范围；不提高完整全项目核验日期。交DATA一份ENGINE落地后的Generated/currentCSV真实基线与包输入，不发布生成物、不重建字体。合同：editorCompileErrors=0,movedSourceCount=43,movedGuidMismatchCount=0,candidateInstallComplete/commandCompatibilityPassed/shortCycleProbePassed/companyIdentityCorrect=true,cookingProcessRuntimeErrors=0,settingsChangedFieldCount=2,unexpectedSerializedChanges=0。ASM整体还需DATA幂等，人工A+C保留。
+
+共同规则：用户批准原件 inputs/派发/DETACH-B13-20261019/窗口①用户批准.json；本批执行登记与窗口①控制审查为范围依据。CORE→本线worker→SUPERVISED/HANDOFF→本卡涉及源码与P/TK，按标题读取，不加载AI263整份审计/全量diff。固定分支codex/unity6-followup，保留所有已有变更；不提交推送。旧失败/许可/次数保留，任何正式失败只按新ApproveResume续行。每批写前Checkpoint，长任务续租；Complete/Fail/Yield后立即Prepare→一次实际Send→Record回当前CONTROL。OwnerThreadId、ExecutionId随领取回执显式传递。输出 .ai-workspace/outputs/DETACH-B13-20261019/<TaskId>/，预声明 inputs/acceptance/<TaskId>.json，evidence.json与acceptance.json须来自实际证据。报告标明原逻辑卡ASM-01阶段；原建议总预算120的阶段累计不因分线清零，未知轮次/token保持unknown。证据目标1MB/硬上限10MB，超过1MB说明必要性；只保存任务范围diff、一次必要基线，不复制整份13MB工作区diff，不重复全路径SHA。大原生/机器审计必要时无损压缩后引用，不丢失败史；任何未结原件不擅自删除。
+
+CONTROL交接核定：AI264独立预声明8/8及产物10/10复核通过，证据outputs/control/DETACH-B13-20261019/independent-review-264.json。安装源唯一为outputs/DETACH-B13-20261019/AI-000264/install-manifest.json及其window1-manifest.json，先读ENGINE-HANDOFF.md。全部23个命令、2个旧Dialog ID按现有源码/证据核验；不要只测旧误记9项。
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T14:50:16.5175564+08:00: {"taskId":"AI-000265","runs":1,"usedRuns":0,"approvalId":"call_d55addde997849c98aaefb8136d7896c:0","userDecision":"批准原范围续行 1 次；原问题范围为应用已准备目录顺序补丁并离线核验，再完成43项移动、22项安装、Trollemma/EatWhat及既定验证。原话与范围落盘inputs/派发/DETACH-B13-20261019/AI265_续行1_用户批准.json。","scope":{"paths":[".ai-workspace/outputs/control/DETACH-B13-20261019/AI265-folder-order.patch",".ai-workspace/outputs/DETACH-B13-20261019/AI-000264",".ai-workspace/outputs/DETACH-B13-20261019/AI-000265",".ai-workspace/toolkit","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor","Assets/Generated/DataTables","Assets/Scripts","CODEBASE_MAP.md","ProjectSettings/ProjectSettings.asset"],"operations":["apply-reviewed-folder-order-patch","AssetDatabase-CreateFolder","capture-evidence","idempotence-check","install-AI264-22-files","offline-script-compile","PlayerSettings-companyName-productName","read-only-preflight","restore-owned-temporary-test-state","update-affected-documents","verify-native-compile-and-play","window1-43-approved-AssetDatabase-MoveAsset"]}}
+## AI-000267 | [CODE] [SC] [DETACH-B13-20261019] AI265探针失败只读诊断
+
+- 序号：267
+- 提交时间：2026-10-19T15:13:13.0312837+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000264
 - 允许越过：False
 - 最大尝试次数：1
 - 复杂度/轮次预算：S / 40
 
 ### 指令
 
-用户于2026-10-15检查管线继承后明确选择“修复并验证后提交合并”，授权固定CODE线最小修复。本卡MANUAL；保持模式和全部日程，不触发旧监管；是已完成AI245之后新发现的回执兼容问题，不恢复旧任务/失败预算。
-目标仅两项：1）queue.ps1 Write-Result支持字典与PSCustomObject回执追加上下文，实际 DataLaneStatus -ControllerThreadId 不再报Unable to index into PSObject，原动作/路由完整。2）正常/unknown异常分支与OwnerThreadId相关写入保持一致，原阈值/去重/Status体积/业务和计费语义不变；用现有Test-ContextWarning补必要回归并单次定向验证。
-已定位第467/476行均用$Value['consoleContext']，DataLaneStatus第1415行传PSCustomObject；失败catch再次同样下标写入。优先复用已有Set-ObjectPropertyValue或等价最小统一类型处理，检查邻近Owner写入，不重构。源码/流程以实际为准。
-允许生产文件仅.ai-workspace/queue.ps1、DevTools/Workflow/Test-ContextWarning.ps1、DevTools/Workflow/USAGE_REPORTING.md；inputs/acceptance本卡合同只读；证据写.ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/AI-000246。已有queue静态路由和art-audit修改属于交接成果，保留。控制台同步维护其它文档，勿改CORE/PIPELINES/CODEBASE_MAP/基线。
-先读CORE最小入口、本CODE规则和TK-WF-03/04及AI245相关代码，不通扫历史。固定PS7 C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe。精确TaskId、OwnerThreadId、TriggerSource MANUAL只Poll一次。按S/40，两项认领、最多三生产文件、无Unity/Play/Build。保持用户所有未提交成果。禁止Git提交/推送/merge（由控制台收尾），不发其它chat、不建立日程/新工具/全套Final、不做全量资产哈希。
-复用已有Test-ContextWarning单个Custom runner一次，必要只补真实类型差异回归，不造常规内存/纹理验收。真实DataLaneStatus只读回读、Status小摘要为必要冒烟；不重绑DATA、不跑导表。失败按现有规则留证据，不绕闸。Complete合同见inputs/acceptance/AI-000246.json，需typedReplies=true、compatibilityAndScope=true真实证据。最终返回源码改动、验证、Complete状态和证据路径，由控制台wait读取，无需消息回传。用户授权Git只属于控制台，不把本卡成功称已提交。
+原AI-000265 attempt2的正式同根READONLY_DIAGNOSIS前置。用户已批准探针最小修复及原ENGINE补验1次，原件inputs/派发/DETACH-B13-20261019/AI265_探针修复及补验1次_用户批准.json。此卡只验证诊断与形成可执行最小修复方案，不修改生产源码/资源，不控制Editor，不重跑安装/探针/测试，不领取后继。CONTROL已独立复核的报告：outputs/control/DETACH-B13-20261019/AI265第二次失败复核与补验方案.md和independent-failure-review-265-attempt2.json；仅按报告相关路径读当前代码/场景字段与AI265 attempt2/probe-result.json，避免重审安装包或全仓。
+只核两项：1. probe选菜后立即发OpenClueBoard/Close/Start，镜头P0Center→P0Left输入锁，以及连续ESC缺少镜头等待；2. probe.clueBoardLayer与当前Phase0.spaceLayer/baseLayer同fileID1530143313，旧弹出基础层断言和未到达Phase1仍PASS的8/11/12检查不符当前实际架构。查实则将精确源码入口/场景字段、修复边界与可复用离线验证方案写入诊断报告；有差异如实纠正，不迎合控制结论。修复方案只针对现有ShortCycleAutomatedProbe.cs和相关说明：有界事件/状态等待、真实View+基础层保留断言、到达/返回前置条件；不改业务输入锁/状态机/场景，不新增长期工具/专属夹具；保留13检查点及显式输入锁负向验证。
+正式根任务AI265、最新失败key ASM01-SHORTCYCLE-PROBE-INPUT-LOCK-SEQUENCE，旧两失败、1/1消费和预算保持。complexity S/40，两项只读认领；不消耗ENGINE补验授权，不把CODE诊断记作原生验证。输出outputs/DETACH-B13-20261019/<TaskId>/，预声明inputs/acceptance/<TaskId>.json；合同checks.diagnosisVerified/repairPlanBounded=true, productionWrites/editorCalls=0。读取CORE→worker/SUPERVISED/HANDOFF及点名P/TK，按标题补读，不通读所有历史。PowerShell7、固定OwnerThreadId、领取一次且仅CLAIMED执行；生产写0仍保留正式结算/证据。Complete/Fail后即刻Prepare→一次实际app Send→Record回绑定CONTROL，禁止自己派后继。报告六要素，费用unknown不估算，证据目标1MB/硬限10MB，无新Git提交推送。
+
+> SUPERVISED POLICY at 2026-10-19T15:13:13.5559551+08:00: {"taskId":"AI-000267","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"已获批最小探针修复的同根只读诊断前置；保留原AI265和一次补验额度，CODE只读不调用Editor","updatedAt":"2026-10-19T15:13:13.4828336+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T15:13:13.6648520+08:00: {"taskIds":["AI-000267"],"reason":"用户已批准探针修复并补验1次；正式同根只读诊断是修复卡必要前置，无新增业务"}
+## AI-000268 | [CODE] [SC] [DETACH-B13-20261019] AI265探针时序与真实前置条件最小修复
+
+- 序号：268
+- 提交时间：2026-10-19T15:21:07.7746409+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000267
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原AI265探针失败的同根最小REPAIR，承接正式AI267只读诊断和CONTROL独立核验；用户已明确“批准探针修复并补验1次”，原件AI265_探针修复及补验1次_用户批准.json。本卡只做CODE修复，ENGINE那1次补验仍由CONTROL在本卡通过后正式ApproveResume发放；不得触发Editor/Play或消耗其额度。
+实施只改Assets/Scripts/Cooking/ShortCycle/ShortCycleAutomatedProbe.cs及现有toolkit/DBG相关说明、必要既有验证入口；不改业务ActionDispatcher、InputGate、StateMachine、PresentationDirector，不改scene/prefab/asset/meta接线和既有字段名字/值，不重做43移动22安装身份设置。基于实际诊断做到：
+1. 选菜后和分层ESC之间，等待当前镜头到达目标、停止移动且输入解锁再发后继动作；有界超时明确记失败，不能用固定任意睡眠、强行清锁或降级断言。保留StartCooking后立即Return应被锁拦截的负向验证，不在这一刻提前等解锁；该Return必须明确ErrorCode.Locked，不能把其它失败当输入锁有效。
+2. 线索板打开/关闭真实核action成功、Context.phase0_view=ClueBoardShell/RecipeBrowse和当前Phase0基础层保留；不再把场景fileID1530143313基础层当临时层弹出。保留旧序列化字段避免重新接线；13检查点标签准确反映实际含义，不能靠当前层已在顶来假定动作已成功。
+3. Phase1/返回未实际到达时，第8、10、11、12项及板稳定/状态保留等后继断言不能误记PASS；第10项不能仅凭当前仍在Phase0而通过；缺引用也不能默认为通过。镜头等待读取真实位置/IsPanning/输入锁，采样固定板世界位置；保留13检查点和失败细节，方便原生一次验证定位。
+离线仅当前已安装程序集的相称编译和必要定向时序/断言复核，复用现有工具，不造Unity替身、专属续行入口或新夹具，不重复全套Final/故障隔离/全路径哈希。离线通过不声称Play通过。额外产品逻辑缺陷/接线变动如发现只报告精确差异，不扩大业务。新编译自验证问题沿CODE RecordCodeValidation记录预算，不隐瞒失败。
+产物包含最小源码diff、离线编译证据、13检查点对应说明、给原AI265的仅补验交接（禁止再执行install.cs）。CONTROL验收通过后，ENGINE仅核当前已安装基线/编译/Console、ShortCycle现有探针1次、CookingProcess原定运行与自有临时清理；DATA AI266依赖保持。原两失败、已消费许可和根修复预算不清零，人工A+C/窗口2保留，无Git提交推送。
+读取CORE/本线worker/SUPERVISED/HANDOFF及相关P/TK，诊断从AI267正式result定位，不通读全量历史。原task root265、problemKey ASM01-SHORTCYCLE-PROBE-INPUT-LOCK-SEQUENCE。复杂度M/80：虽主改1个源码，但包含3类认领修订与离线核验；不重置原ASM累计。输出outputs/DETACH-B13-20261019/<TaskId>/，预声明inputs/acceptance/<TaskId>.json；checks.boundedInputWaits/viewLayerAssertionsAligned/phasePrerequisitesEnforced/retained13CheckpointContract/offlineCompilationPassed=true，productionSceneWrites/businessRuntimeChanges/editorCalls=0。每批源码写前Checkpoint、PowerShell7、Owner/ExecutionId显式，Complete/Fail后立即Prepare→一次实际Send→Record回控制台后停止。报告六要素，unknown成本不估算，证据目标1MB硬上限10MB；只保存必要diff，不复制全工作区或重复前置包。
+
+> SUPERVISED POLICY at 2026-10-19T15:21:08.2219125+08:00: {"taskId":"AI-000268","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准最小探针修复和仅补验；诊断267已独立4/4合同及6项review通过，无新增人工门","updatedAt":"2026-10-19T15:21:08.1672641+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T15:21:08.3141898+08:00: {"taskIds":["AI-000268"],"reason":"同一人类授权的同根CODE最小修复，保留AI265原失败和补验1次上限"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T15:34:08.9314251+08:00: {"approvalId":"call_055b3d501257487fbbc77d6aa3e8f851:0","scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000265",".ai-workspace/toolkit/DBG.md","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scenes/CookingProcess.unity","Assets/Scripts/Cooking/ShortCycle/ShortCycleAutomatedProbe.cs","CODEBASE_MAP.md","ProjectSettings/EditorBuildSettings.asset","ProjectSettings/ProjectSettings.asset"],"operations":["capture-evidence","CookingProcess-existing-runtime-validation-once","idempotence-check","read-only-installed-baseline-and-editor-preflight","restore-owned-temporary-test-state","ShortCycle-probe-once","update-affected-documents","verify-native-compile-and-console"]},"runs":1,"taskId":"AI-000265","usedRuns":0,"userDecision":"批准探针修复并补验 1 次。AI268修复经CONTROL独立合同8/8、产物10/10通过；原AI265仅核现已安装基线/编译Console、ShortCycle探针1次、CookingProcess原定运行1次及自有临时状态恢复，不重做43移动/22安装/身份设置。原话见inputs/派发/DETACH-B13-20261019/AI265_探针修复及补验1次_用户批准.json。"}
+
+> Verification resolved for AI-000265 at 2026-10-19T15:52:59.8553742+08:00: decision=VERIFIED; summary=CONTROL针对性复核：用户批准的探针修复及单次补验已完成，原attempt2 TEST_OBSERVATION已由attempt3实际13/13通过消解；不代表窗口②或A+C人工批准。; evidence=依据protocol/WORKFLOW_FULL.md测试问题复核条款。原合同10/10与CONTROL独立13/13通过；原始CLI探针、CookingProcess实际Play约29秒、增量Console零错误和临时状态清理证据见outputs/control/DETACH-B13-20261019/independent-contract-265.json及independent-review-265.json，原件outputs/DETACH-B13-20261019/AI-000265/attempt3/。原失败、issueHistory和许可保持，人工窗口②/A+C仍未批准。
+## AI-000269 | [CODE] [SC] D-T1a 食谱本数据绑定与最小解锁：源码及离线交付
+
+- 序号：269
+- 提交时间：2026-10-19T15:59:27.4303403+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000266
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+批次DETACH-B13-20261019，D-T1a源码与离线交付阶段；用户已明确下发整个派发包并启动监管，原卡cards/D-T1a.md标注用户2026-10-15已通过。complexity L/预算120，FEATURE，非原AI265续行。前置AI266成功且CONTROL独立验收；本次先登记依赖等待，不在前置完成前执行。USER-U1权威状态DONE。固定CODE，不新开chat、不执行Unity/导表/生产发布。
+
+读取CORE、workers/CODE、项目两入口页首及shortcycle/data相关模块、原卡cards/D-T1a.md全文、Schema稳定入口的§四/§八与T1/T2/T4/T6/T13相关条目、总档v1.5.4相关G18/G65/G75/G78/框架Binder边界和工具三问。先核源码及已有TK-LAY/MouseInteractive/LocService/数据接口，避免同名重复实现。受影响路径核定后在报告写精确清单。
+
+落实原卡的RecipeBookBinder、只读RecipeView、Catalog只读枚举/TryGet接口、最小UnlockManager、目录卡/食材清单/便签/当前菜签内容绑定、Session生命周期及ClueBoard数据复用；保留FSM唯一订阅、Binder只填内容、不启停容器、不改Set显隐、不改_TUNE Transform。未解锁点击不进①，PlaceholderRule按原卡最小内联不提升长期工具。无存档流程，本轮profile解锁集合恒空；不要抢做D-T1b/SAVE/P2。
+
+程序集/实际路径说明：AI263 dependency-audit及AI265安装后事实显示Catalog实际为Assets/Scripts/DataBase/CookingData/CK01GeneratedDataCatalog.cs，所属Generated.DataTables，通过asmref归属；ShortCycle依赖Generated，不能反向引用。原卡把RecipeView画在ShortCycle/Content只是逻辑路径，需要在既有Generated数据层定义纯只读DTO供ShortCycle引用（同名公共面保持），不得为照搬路径引入Generated→ShortCycle回边或第二数据源。实际类为CatalogCard.cs、ShortCycleSessionManager.cs、Content/ShortCycleClueBoardBinder.cs；先查原实现再最小修改，不平行建同职能类。源码相关新增/修改限Assets/Scripts/Cooking/ShortCycle、Assets/Scripts/DataBase/CookingData及必要既有DevTools/ShortCycle离线runner/夹具、项目定位/TK复用文档、本任务outputs。不改Unity场景/prefab/asset/meta、生产xlsx/CSV/Generated资产/字体、程序集引用方向或其它业务；禁止恢复无关dirty。
+
+CODE需完成可运行源码和相称离线runner：真实CSV/fixture核枚举数量与排序、三菜切换所用key/slots/tags映射、解锁默认及拒绝选择、生命周期Clear/重绑、只读Catalog唯一数据源与无反向程序集依赖；扩充现有ShortCycleAutomatedProbe的原卡3断言并保留原13项，不能再弱化实际阶段/镜头等待/基础层检查。新断言真实Play由后续ENGINE验收，不把离线通过写成Play通过。按既有Verify-All Custom受影响runner执行一次最终验证；内部失败按RecordCodeValidation登记，正式Fail后不自续行。无必要不得扩大为全仓/全路径hash/快照。
+
+已预拆的后继ENGINE阶段为同包D-T2（cards/D-T2.md）：依赖D-T1a/b交付并经窗口②明确批准后，由固定ENGINE_CLI完成接线、原13+新增探针真实验证和Console/布局保护；节点A+C人工验收保持，CODE不代过。交付列精确组件接线/序列化字段清单和实际场景路径Assets/Scenes/Cooking/ShortCycle_P0P1.unity，供窗口②审查。本CODE阶段完成不等于D-T1a整卡人工/运行验收完成。缺图/key只报告并登记DATA/ART后继，不擅自导入或改生产值。
+
+输出.ai-workspace/outputs/DETACH-B13-20261019/AI-000269，含简短REPORT.md、实际变更清单、离线证据evidence.json、acceptance.json和ENGINE-HANDOFF.json。合同inputs/acceptance/AI-000269.json，checks须有可独立追溯产物和运行证据，不只写true。任务包目标1MB、硬10MB，完整文本保留。必要文档随实际更新且不改全项目复核日期；无新增长期工具则只登记复用。每批生产源码写前SupervisionCheckpoint；失效/未知写入/失败按正式规则停。结算即时Prepare→一次真实send绑定CONTROL→Record，禁止执行器领取后继；原历史失败/许可/计数不清零。
+
+> SUPERVISED POLICY at 2026-10-19T15:59:42.4724710+08:00: {"taskId":"AI-000269","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已下发同一批次D-T1a；仅提前登记依赖等待，AI266完成及CONTROL独立验收后派发。CODE源码离线交付，不代窗口②/D-T2/A+C人工与原生验收；与DATA同unity-project/data-batch互斥。","updatedAt":"2026-10-19T15:59:42.3936491+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T15:59:55.4617625+08:00: {"taskIds":["AI-000269"],"reason":"同一用户已授权DETACH-B13批次的下一卡D-T1a，提前登记依赖等待以避免ASM子链完成误收整个批次；仅AI266独立验收后派发。窗口②及A+C保持，未扩大业务范围。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T16:40:42.3658566+08:00: {"usedRuns":0,"userDecision":"批准原范围续行 1 次；固定DATA通过正常沙箱权限升级审查运行同一隔离CurrentCsvValidation，不发布、不修改ACL/认证/许可配置或生产数据。来源inputs/派发/DETACH-B13-20261019/AI266_续行1_用户批准.json。","approvalId":"call_336e18fc5544443490ce837d82812eaf:0","taskId":"AI-000266","scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000266","DevTools/DataTables/.batch-workspace"],"operations":["capture-evidence","cleanup-owned-process-and-release-lock","CurrentCsvValidation-isolated-existing-pipeline-once","idempotence-check","read-only-preflight"]},"runs":1}
+## AI-000270 | [CODE] [SC] [DETACH-B13-20261019] AI266报告目录与分模式续行只读诊断
+
+- 序号：270
+- 提交时间：2026-10-19T17:00:06.8094530+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000265
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+原AI-000266 attempt2同根READONLY_DIAGNOSIS。用户已直接批准本次报告目录最小修复及原DATA续行1次，并明确长期MANUAL1/AUTOMATIC3/SUPERVISED5；原话inputs/续行许可分模式_用户长期授权_20261019.json。此卡只读核实并交付可执行修复方案，不实施源码/文档规则修改，不调用Unity/导表/PlanOnly全项目复制/发布，不消费原DATA续行。允许写自己的任务报告与正式队列结算。
+两项认领：(1) 核outputs/control/DETACH-B13-20261019/AI266第二次失败修复与续行方案.md及independent-failure-review-266-attempt2.json、AI266-report-guard-reproduction.json；对Run-DataPipeline.ps1/DataPipeline.Common.ps1/Test-BatchImport.ps1提最小方案：保留runtime默认，支持严格当前TaskId所属outputs/<批次>/<TaskId>及子目录；parent/runId共用边界；拒绝其它任务、前缀伪装、越界/reparse，保持唯一run/nonce/碰撞合同。(2) 只读梳理现有approved-resume.ps1/repair-budget.ps1/queue.ps1/supervised.ps1和既有模式回归：将长期1/3/5授权落地到真实领取/修复预算/失败停止、控制调度、AUDIT及文档。首次执行不算重试；当前AI266已消费1次，不能抹去，明确本次再1次与默认5不重复叠加；同轮修复+对应根续行只计一个周期；错误key/新修复卡/线程/模式变化不能清零。同一ApproveResume入口，区分人类单次/长期策略来源，不编造新批准；到上限才人工追加。SCHEDULED不扩大；平台真实拒绝、未知写入、用户stop/exit、业务人工门及120/240保护仍有效。旧根修复limit2和CODE自验证limit2不能意外抵消新政策；说明内部验证和根重试的合理边界，不做无限重试。
+产出精确修改清单、计数语义、最小API兼容方案和既有离线用例矩阵，建议一次REPAIR内完成并按文件数给L/120预算；如两目标需要分开明确依赖。不新增一次性入口/专用夹具，不触发旧任务/旧session。输入按CORE→CODE worker/SUPERVISED/HANDOFF及点名节读取，不全仓扫描或通读历史。当前诊断complexity S/40，两项只读认领，MaxAttempts1过渡。原task266/key=data_report_directory_scope_conflict，原两次失败、旧1/1许可、AI265已验收与AI269依赖等待保持；窗口②/A+C不变。输出outputs/DETACH-B13-20261019/<TaskId>/，合同inputs/acceptance/<TaskId>.json：diagnosisVerified/repairPlanBounded=true, productionWrites/editorCalls=0。Complete/Fail立即Prepare→一次实际app send→Record回绑定CONTROL，勿自行派后继；unknown用量不估算，报告目标1MB硬限10MB，无提交推送。
+
+> SUPERVISED POLICY at 2026-10-19T17:00:26.0718619+08:00: {"taskId":"AI-000270","policy":{"resourceKeys":["workflow","documentation","data-batch","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户批准报告路径修复及长期模式重试机制；同根只读诊断前置，禁止CODE运行Unity/导表","updatedAt":"2026-10-19T17:00:25.9906154+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T17:00:26.3638177+08:00: {"reason":"当前用户批准原AI266修复与续行并调整长期1/3/5，加入同根必要只读诊断","taskIds":["AI-000270"]}
+## AI-000271 | [CODE] [SC] [DETACH-B13-20261019] AI266报告路径及分模式1-3-5续行机制修复
+
+- 序号：271
+- 提交时间：2026-10-19T17:19:36.3414181+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000270
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+本卡为原AI-000266同根REPAIR，承接AI270只读诊断和CONTROL独立4项合同/8项复核；依据用户call_37410ba043344e9f81b4ce3ef3472a18:0现有批准，不再索取同意。权威原话inputs/续行许可分模式_用户长期授权_20261019.json。一次L/120目标：报告目录与MANUAL1/AUTOMATIC3/SUPERVISED5真实续行机制一致落地，离线验证后交CONTROL；原DATA attempt3仍须CONTROL正式ApproveResume并固定DATA执行，CODE不触发Unity或导表。
+实施基线是outputs/DETACH-B13-20261019/AI-000270/REPAIR_PLAN.md（含末尾过渡绑定与cwd补充），只按目标节补读；32项矩阵test-matrix.json是待执行用例，不是通过证据。CONTROL复核outputs/control/DETACH-B13-20261019/independent-review-270.json。诊断的字段名/API可选参数是建议，可简化为兼容现有实现的最小方案，但不能省真实计数/领取/失败/控制调度链。不要复制一套队列或新增长期runner。
+允许文件：DevTools/DataTables/Run-DataPipeline.ps1、DataPipeline.Common.ps1、Test-BatchImport.ps1、DATA_PIPELINE.md；.ai-workspace/approved-resume.ps1、repair-budget.ps1、queue.ps1、supervised.ps1，以及control-administration.ps1仅确有影响时最小适配；既有DevTools/Workflow/Test-ApprovedResume.ps1、Test-Pre5c.ps1和.ai-workspace/tests/Test-RepairBudget.ps1、Test-WorkflowModes.ps1、Test-SupervisedMode.ps1。文档只同步AGENTS/CORE/WORKFLOW/SUPERVISED/CONTROL/MODES及相关protocol、workers CODE/DATA、TK-WF/DAT，按实际影响补CODEBASE_MAP及项目基线对应条款，CLAUDE仅核指针。用户原话原件和历史不改写；本任务输出与正式queue/usage/handoff可写，runtime仅正式API。保留当前未提交改动；不切分支、提交/推送，不修改Assets/ProjectSettings/DataTables生产内容。
+路径：保留runtime默认/合法子目录，新增严格当前TaskId的outputs/<单一批次>/<精确AI-xxxxxx>及子目录；相对路径按RepositoryRoot解析。parent/runRoot同一边界，TaskId不清洗伪造，拒绝其它任务、前缀、dot/ADS/Windows别名、外部/控制区与reparse祖先；纯解析不创建，创建前核重定向/碰撞。原唯一run/nonce及严格完成日志合同不变，不能扩大整个outputs或将runtime加入DATA Scope。
+政策：首次根执行不计重试，诊断0；同周期CODE修复和对应原根续行只扣一次，第一次实际claim消费，修复失败也消耗。root家族跨key/卡/线程/mode保留，旧claims/repair/recovery只按确证关系去重，不猜配或退款。AI266当前已消费1；本AI271修复与原attempt3配同cycle2，合计2/默认5，余3，不算成7或双扣成3。此卡在旧字段下领取的过渡绑定，须在原根ApproveResume以正式repairContext、真实人类批准和PairedRepairTaskId原子登记，不让运行中卡重Poll、不手改runtime、不重置历史。
+仍用唯一ApproveResume入口；MANUAL每次人批Runs1（2拒绝）；AUTOMATIC默认3、SUPERVISED默认5，额度内CONTROL可引用已核长期政策自主发下一周期，明确HUMAN/POLICY来源，不编造新用户批准；默认耗尽后才人类追加，稳定ID幂等、同批预留/领取不超额、不叠加。SCHEDULED和旧完成/停止session不扩大。grant仍绑定mode/session/route/owner/fingerprint/失败史/expectedAttempt/精确各线scope；不能把CODE修复权限合并给DATA。原代码maxAttempts/failureStopLimit、root limit2、监管3/6不能提前拦住合法政策周期；未获合法周期依然停止。CODE局部验证2次上限只控制同周期内部自验证，耗尽正式停止；原记录保留，新有效根周期可继续，禁止换key清零或无限内部重试。
+失败先正式结算/立即回传，结构化给CONTROL“范围内有余量可修复续行”或“需人类追加/硬停”；不能仅因为旧WAITING_USER就把可续行当人工停点。控制协议/WATCH消费条款必须可执行，AUTOMATIC返回正常同任务后继而非新任务；执行器不能擅自绕过CONTROL再启动。人类业务门、用户stop/exit、GLOBAL/未知写入、真实平台拒绝、120/240回合与工具安全边界不放宽。正常提权审批仍真实走平台。实际scope及配对阶段必须分开核，额度不是新业务授权。
+验证只扩既有测试、临时隔离state，按32项矩阵落实真实queue claim/Fail/Approve/Dispatch证据，包括manual1/2、auto前三/第四、supervised前五/第六、额外批准、重复/并发/配对/历史迁移、模式变动和硬停。每条用例对应证据，不只断言常量。运行一次受影响Custom集合，失败修正后只重跑必要项，不全量Final/停用字体工具/全仓哈希。禁止Unity/PlanOnly复制/导表/发布。真实业务原AI266仅在本卡独立通过后执行，不拿合成测试冒充。
+合同inputs/acceptance/<TaskId>.json：reportPathOwnershipVerified/runtimeReportCompatibility/modeRetryLimitsVerified/rootCycleAccountingVerified/approvalIdempotenceVerified/lifecycleAndStopsVerified/legacyCompatibilityVerified/offlineRegressionPassed/documentationAligned=true；editorCalls/productionDataWrites=0。证据须附实际改变文件清单、既有runner真实回执、AI266过渡配对可用的精确正式命令/参数及预期计数，不能预写成功。范围复杂度L/120，累计120/240不清零；每批源码写前SupervisionCheckpoint，实际自验证问题按正式RecordCodeValidation，核原类调用关系后最小改动。Complete/Fail即时Prepare→一次实际app Send→Record到绑定CONTROL并停止，不自派后继。费用unknown不估，完整文本报告目标1MB硬10MB；不复制大源码/隔离工程包。
+
+> SUPERVISED POLICY at 2026-10-19T17:19:59.8099684+08:00: {"taskId":"AI-000271","policy":{"resourceKeys":["workflow","documentation","data-batch","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已批准报告路径和长期1/3/5机制修复；AI270独立验收4合同/8复核通过，CODE仅源码及隔离离线测试","updatedAt":"2026-10-19T17:19:59.7326054+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T17:20:00.0762558+08:00: {"reason":"原AI266同根修复承接AI270，使用已有明确人类批准，原DATA本次1次未发放","taskIds":["AI-000271"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T18:08:04.9886639+08:00: {"reserved":0,"taskId":"AI-000271","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","authorizationSource":"POLICY","remaining":2,"grantId":"2f1c7243a18f4a3f94af0ae396851a59","verification":"CONTROL independent-failure-review-271.json 8/8 confirms local validation stop, original root two consumed cycles of five and three remaining; fresh app CODE idle/completed cursor05743119-ec27-4c2c-af67-4f452fba193b:156. User standing POLICY source exact. Same CODE task scoped offline repair only; no DATA/Unity. Candidate cycle reservation accounting issue is bounded and must be fixed; formal claim branch imports approved-resume before scope check.","used":3,"cycles":["AI266:CODE271:retry3"],"scope":{"paths":[".ai-workspace/approved-resume.ps1",".ai-workspace/CONTROL_CHAT.md",".ai-workspace/CORE.md",".ai-workspace/MODES.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000271",".ai-workspace/protocol/CONTROL_CHAT_FULL.md",".ai-workspace/protocol/SUPERVISED_FULL.md",".ai-workspace/protocol/WORKFLOW_FULL.md",".ai-workspace/queue.ps1",".ai-workspace/repair-budget.ps1",".ai-workspace/SUPERVISED.md",".ai-workspace/supervised.ps1",".ai-workspace/tests/Test-RepairBudget.ps1",".ai-workspace/tests/Test-SupervisedMode.ps1",".ai-workspace/tests/Test-WorkflowModes.ps1",".ai-workspace/toolkit/DAT.md",".ai-workspace/toolkit/WF.md",".ai-workspace/workers/CODE.md",".ai-workspace/workers/DATA.md",".ai-workspace/WORKFLOW.md","项目整体阅读理解与推进基线_2026-08-14.md","AGENTS.md","CODEBASE_MAP.md","DevTools/DataTables/DATA_PIPELINE.md","DevTools/DataTables/DataPipeline.Common.ps1","DevTools/DataTables/Run-DataPipeline.ps1","DevTools/DataTables/Test-BatchImport.ps1","DevTools/Workflow/Test-ApprovedResume.ps1","DevTools/Workflow/Test-Pre5c.ps1"],"operations":["capture-evidence","documentation-update","idempotence-check","isolated-offline-regression","source-repair"]},"rootTaskId":"AI-000266"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T18:35:53.2017022+08:00: {"reserved":0,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","rootTaskId":"AI-000266","verification":"CONTROL independently accepted AI271 attempt2 execution 83da88badb7e43798d4bd5c5d56f586e: 11 contracts, 32 cases/126 original assertion labels, six regression receipts, 22 source hashes, exact AI266 attempt3 pure report path. Review outputs/control/DETACH-B13-20261019/independent-review-271-attempt2.json. Fresh app wait_threads DATA idle/completed cursor 9b7e6353-95ca-49e0-a544-01da04fb9d4b:7; live SUPERVISED ACTIVE beefe968cb5e48e0bea0b8b47260abd9 no stop/exit. Latest successful cycle AI266:CODE271:retry3 pairing remains used3/5 remaining2; original read-only scope and manual gates unchanged.","cycles":["AI266:CODE271:retry3"],"taskId":"AI-000266","authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000266","DevTools/DataTables/.batch-workspace"],"operations":["capture-evidence","cleanup-owned-process-and-release-lock","CurrentCsvValidation-isolated-existing-pipeline-once","idempotence-check","read-only-preflight"]},"remaining":2,"used":3,"grantId":"e4bc89c8a0de4884a3429fdf07b044cc"}
+## AI-000272 | [CODE] [SC] D-T1b 步骤详情数据驱动与收藏内存态（源码/离线）
+
+- 序号：272
+- 提交时间：2026-10-19T18:50:18.7088434+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000269
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+批次DETACH-B13-20261019，用户已明确下发批次1+3并启动监管；原卡cards/D-T1b.md全文为依据。本卡D-T1b源码与离线阶段，FEATURE，固定CODE，不新chat；按用户明确complexity M/80保留，实际规模与预算差异留账。依赖AI269源码阶段成功且CONTROL独立验收后才能派发；预先登记只依赖等待。真实场景/Play及新增探针由原包D-T2窗口②处理，不把CODE阶段完成当整卡人工验收完成。
+
+领取后只读CORE、workers/CODE、项目两入口页首及ShortCycle/data相关模块；原卡D-T1b、AI269最新REPORT与ENGINE-HANDOFF/实际变更清单；Schema稳定入口§四、T1/T3/T4/T工具相关节及现行动作23项。必须以AI269实际源码为起点，核RecipeView实际位置、Catalog只读接口、StepDetailModal及收藏星标组件、现有toggle_favorite命令/行为，避免平行系统。
+
+原卡范围：在AI269只读RecipeView/既有Catalog数据层扩充按T3 first_step_id→next链序的steps，含display_text_key与standard_ingredients/tools图标；复用现有数据及校验器链序清单，不写生产表值、不建第二数据源。⑤步骤行无标题无编号、≤10，复用TK-LAY Vertical；内容绑定沿既有架构，未接场景字段写入精确ENGINE-HANDOFF。最小内存PlayerProfileManager及PlayerProfile收藏/解锁集合，ToggleFavorite、GetSnapshot/ApplySnapshot；无落盘、无加密，ISaveBoundary只是SAVE-01后继边界。与AI269最小UnlockManager对接保持T1默认解锁并集；不得抢实现SAVE-01/D-T2。收藏切换同步星标，三菜步骤与三次切换离线验证。若现有23动作全集没有可用收藏动作，按原卡停止并报设计端，禁止新加动作绕过。Profile只提供能力，FSM/Director仍为唯一决策/订阅边界。
+
+允许源码Assets/Scripts/Cooking/ShortCycle、Assets/Scripts/DataBase/CookingData及必要既有DevTools/ShortCycle离线runner/夹具、相关项目/TK文档和本任务outputs。RecipeView保持在Generated数据层可用的纯DTO位置，不引入Generated→ShortCycle回边。不改场景/prefab/asset/meta、_TUNE Transform/显隐、生产xlsx/CSV/Generated资产/字体、ProjectSettings/程序集方向，不恢复无关dirty、不执行Unity/导表/Publish/提交推送。
+
+扩充现有探针新增⑤页行数与收藏一致性2断言，保留AI269全部既有13+新增3项，不弱化探针前提/等待/基础层；真实Play留D-T2。相称既有离线runner验证三菜链序/key/图标映射、收藏×3、快照隔离与Apply/clear、唯一数据源、无磁盘持久化/反向程序集、全探针保留及新增；通过现有Verify-All Custom一次最终验证，不为每小步建任务/入口或全仓hash。
+
+输出.ai-workspace/outputs/DETACH-B13-20261019/AI-000272：简短REPORT.md、实际变更清单、evidence.json/acceptance.json、ENGINE-HANDOFF.json及SAVE-HANDOFF.json（接口/字段及未实施持久化边界）。合同inputs/acceptance/AI-000272.json，检查须对应真实证据，不只写true。项目定位/TK复用随实际更新，不提升全项目核验日期。完整文本目标1MB硬10MB，超1MB说明必要性。每批源码写前SupervisionCheckpoint；内部失败按RecordCodeValidation，正式失败先结算立即Prepare→一次实际Send→Record回CONTROL，执行器不自行续行或领后继。窗口②与A+C保持，模式与用户停止优先，续行按既有1/3/5正式入口，失败历史不清零。
+
+> SUPERVISED POLICY at 2026-10-19T18:50:19.1200502+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Same user-authorized DETACH batch D-T1b source/offline stage; dependsOn AI269 and independent CONTROL acceptance. Original M80 retained. D-T2 windowII and A+C remain separate manual gates.","updatedAt":"2026-10-19T18:50:19.0513405+08:00","supervisionLevel":"full"},"taskId":"AI-000272"}
+
+> SUPERVISED EXTEND at 2026-10-19T18:50:19.2160639+08:00: {"taskIds":["AI-000272"],"reason":"User-approved batch1+3 next D-T1b card, only dependency waiting behind AI269; prevent premature subchain closeout. No new business scope or human-gate waiver."}
+## AI-000273 | [CODE] [SC] P2L-01 加工匹配、分区限制与步骤推进（纯逻辑）
+
+- 序号：273
+- 提交时间：2026-10-19T19:24:35.6951314+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000266, AI-000243, AI-000244, AI-000272
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原批次DETACH-B13-20261019 P2L-01源码与纯逻辑阶段，用户已下发批次1+3；原卡cards/P2L-01.md全文为依据。固定CODE、FEATURE、用户原定complexity M/80保持，真实规模/预算差异留账。正式依赖AI266（ASM DATA已独立通过）、AI243/244（CODE-R01源码/Editor已VERIFIED）、AI272（复用D-T1b步骤链且保持批次顺序）。只预先登记等待，须所有依赖成功且CONTROL独立验收才派发。
+
+读取CORE/CODE worker、项目两入口页首和shortcycle/data模块、原卡P2L-01、Schema稳定入口当前v2.4.1§四/§八及T1/T3/T7/T8/T14相关条目、总档v1.5.4相关G40/G74/G81～85和工具三问。先核AI272交付/真实源码、现有Content/ShortCycleCarrierResolver、DataBase/CookingData/CK01DataModels.cs的全局RecipeWhitelist/AreaConstraint/UnknownProductResolver和Catalog只读API；已有AreaConstraint纯模型不能同名重复新建或为照搬逻辑路径破坏S-02调用。具体实现按最小兼容扩展和明确命名，原ASM引用方向保持。
+
+实现原卡：纯C# ProcessingMatcher按输入多重集、工具supported_actions、可用carrier、recipe whitelist顺序匹配；多候选取白名单首条，不能新增priority或读取preset_tools；当前分区无命中即拒绝，不遍历其它分区（X5/G83）。加工无命中走既有Catalog解析的unknown_product_item，禁止硬编码替换实际配置ID；不明物体不触发步骤完成。分区allowed_actions/allowed_carriers检查返回明确拒绝码，复用既有AreaConstraint语义；StepProgress保留none/dynamic/permanent、备菜区变更触发链序计算、动态回退、折叠永久完成和队尾FinalDishReady事件。Core零UnityEngine类型/命名空间、无场景/表现，输入纯只读快照，不直接读取ScriptableObject或Unity现场。Catalog适配侧扩充/复用TryGetProcessingRecords(ids)/TryGetStepChain，复用AI272链序，不另建数据源或重复算法。
+
+允许源码Assets/Scripts/Cooking/ShortCycle、Assets/Scripts/DataBase/CookingData、必要既有DevTools/ShortCycle离线runner/夹具、相关项目/TK文档、本任务outputs。优先扩充既有ShortCycle测试入口，不因原卡逻辑Tests路径新建平行长期工具；本卡ProcessingMatcher只留Core，TK-DAT-08提升留未授权批次2。不改场景/prefab/asset/meta/Transform、生产xlsx/CSV/Generated资产/字体、程序集依赖方向，不Unity/Play/导表/Publish/提交推送，不恢复无关dirty。
+
+真实现有CSV/demo与纯夹具对照：三菜标准与替代路径、多重集重复数、白名单外回退、白名单首条、分区拒绝/不跨区、工具/载具限制、unknown不触发、链序与校验器一致、折叠永久及动态回退、FinalDishReady只在满足队尾条件时产生。覆盖Schema§八六分支，每项给可追溯断言；保留既有S-02和D-T1a/b测试，原18项探针不弱化，本卡无新Play声明。用既有Verify-All Custom相称一次最终验证，内部失败正式RecordCodeValidation，正式失败先停并回传CONTROL。
+
+配表只读回填两项：T7是否含tool_hand；demo三菜白名单记录是否含stp_输入。逐表/字段/行证据写DATA-FOLLOWUPS.json并指向USER-U5，区分observed/unknown；不擅增行改值、不声称Schema v2.5或U5已经批准。未完成U5不被本纯逻辑验收代过；发现实现规则与已确认Schema冲突时保全并报CONTROL。
+
+输出.ai-workspace/outputs/DETACH-B13-20261019/AI-000273：简短REPORT.md、changed-files.json、evidence.json/acceptance.json、真实离线日志、DATA-FOLLOWUPS.json、P2S-HANDOFF.json（接口/事件/适配边界及未做场景内容）。8项合同inputs/acceptance/AI-000273.json。更新实际定位/工具复用与风险，不能提高全项目复核日期或把逻辑阶段当P2S场景完成。包目标1MB硬10MB，超1MB说明必要性。每批源码写前Checkpoint；结算立即Prepare→一次真实Send→Record，执行器不自行续行/领取后继；窗口②和A+C、U2～U6等人工门保持。
+
+> SUPERVISED POLICY at 2026-10-19T19:24:36.1284337+08:00: {"taskId":"AI-000273","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Original batch P2L-01 pure logic only, explicit M80; CODE-R01 and ASM accepted; reuse pending D-T1b chain. No USER-U5/windowII/A+C waiver.","updatedAt":"2026-10-19T19:24:36.0483857+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T19:24:36.2675996+08:00: {"reason":"Original authorized batch successor only dependency waiting; preserve order and avoid premature subchain completion. No dispatch until independent AI272 acceptance.","taskIds":["AI-000273"]}
+## AI-000274 | [CODE] [SC] SEC-01 通用认证加密与共享存档编解码接口（源码/离线）
+
+- 序号：274
+- 提交时间：2026-10-19T19:55:34.9752330+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000266, AI-000272, AI-000273
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原批次DETACH-B13-20261019 SEC-01源码/离线阶段，用户已下发批次1+3。以cards/SEC-01.md全文及SAVE-01.md接口要求为依据；固定CODE、FEATURE、module SC，用户原卡明确complexity M/80保持，虽新TK-SEC-01通常按GOV-05需L，记录用户原卡覆盖与真实规模，不隐藏超预算。正式dependsOn AI266/AI272/AI273（ASM落地、profile快照与既定单线顺序）；预先登记等待，CONTROL独立验收前不领取。
+
+先读CORE/CODE worker、项目入口页首和tools/data/shortcycle相关索引、G76/G77、TK三问、既有Toolkit.asmdef及实际JSON/加密源码。已初查ISaveCodec/AesGcmCipher/IKeyProvider/EncryptedJsonCodec未实现，旧Assets/Scripts/DataBase/DataEncryptor.cs使用JsonUtility，不能把旧数据加密代码当已满足G77，也不能重写现有生产读取。本卡先在Tools/Persistence确定唯一通用ISaveCodec接口（以可供SAVE-01现有JSON文本/字节编解码替换为边界），交付接口源码、EncryptedJsonCodec与SAVE-HANDOFF，避免为了加密引入JsonElement/System.Text.Json或新的序列化依赖。PlainJsonCodec/SaveEnvelope/实际存储及SaveBoundary宿主在SAVE-01实现；如既有JSON依赖与原卡不符，写明真实事实与最小兼容接口，不凭卡中[核]直接加包。
+
+完成原卡安全能力：Tools/Security的IKeyProvider、拆分常量运行时组合的ObfuscatedStaticKeyProvider、认证加解密、版本化EncryptedBlob；Toolkit不引用ShortCycle/Generated/上游业务。优先AES-256-GCM，核Unity6000.3.24f1实际reference和目标runtime能力，不将PS7/.NET主机成功冒充Mono/IL2CPP可用。不可用时按原卡明确允许的AES-CBC+HMAC-SHA256回退实现，独立子密钥、随机IV、先认证再解密、恒定时间MAC比较；不得无认证降级。GCM每次安全随机12B nonce/16Btag；CBC回退按真实IV/MAC长度使用单独明确版本，不把16BIV/32BMAC挤入GCM12/16格式，不静默误读版本。容器严格检查magic/version/长度与截断，认证覆盖必要头部，异常不泄露部分明文。无第三方密码库、反射、动态加载；密钥不进CSV/JSON/场景，禁止输出实际密钥。客户端内置密钥仅提高提取门槛，不声称DRM。
+
+允许Assets/Scripts/Tools/Security、Tools/Persistence/ISaveCodec与EncryptedJsonCodec、必要既有DevTools离线统一Verify-All Custom接入及明确所属Security夹具/runner、相关工具/工程/项目文档和本任务outputs；不修改Toolkit.asmdef引用方向、Unity场景/prefab/asset/meta、Packages/ProjectSettings、生产CSV/xlsx/Generated/字体、旧DataEncryptor生产链或实际用户存档。只源码/隔离临时测试，不Unity/Play/Build/导表/Publish/提交推送。不写persistentDataPath，不接入实际SaveBoundary，不提前做SEC-02发布切换。
+
+相称离线验证：空/非空/UTF8往返；错误key、单字节篡改（头/nonce或IV/tag或MAC/cipher）、截断/错误magic/version拒绝；安全随机nonce/IV多次不复用；容器确定字段长度与跨平台顺序；共享ISaveCodec替换；无上游依赖/无密钥资产。用实际Unity引用离线编译并记录目标/引用，主机加密执行注明主机与算法；有条件核官方原始文档，不把参考API存在当运行支持。IL2CPP Windows x64 Development Build单测场景留ENGINE-HANDOFF为待真实Build验证，CODE阶段不能代签；窗口②与A+C保持。不得新增单次重试入口/平行Final，Final重复按现有规则说明原因，稳定错误key及正式失败回传保持。
+
+登记TK-SEC-01和相关工程惯例（密钥与IV不进生产CSV/JSON/场景），记录与现有Toolkit和SAVE-01/SEC-02的实际边界；保留原18探针与P2L实现，不提高全项目完整核验日期。输出.ai-workspace/outputs/DETACH-B13-20261019/AI-000274的REPORT.md、changed-files.json、evidence/acceptance、实际测试日志、RUNTIME-COMPATIBILITY.json、SAVE-HANDOFF.json（确定接口和示例）、ENGINE-HANDOFF.json（native/IL2CPP未验/计划）、工具三问。8项预声明合同inputs/acceptance/AI-000274.json，仅验CODE阶段。包目标1MB/硬10MB，超1MB说明必要性。每批源码写前Checkpoint；Complete/Fail/Yield立即Prepare→一次真实Send→Record回绑定CONTROL，执行器不自行重试/领取后继。
+
+> SUPERVISED POLICY at 2026-10-19T19:55:52.8468996+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Original SEC-01 CODE source/offline phase only; native IL2CPP acceptance deferred to ENGINE; existing window2 and A+C remain.","updatedAt":"2026-10-19T19:55:52.7710771+08:00","supervisionLevel":"full"},"taskId":"AI-000274"}
+
+> SUPERVISED EXTEND at 2026-10-19T19:55:53.1337460+08:00: {"reason":"Original user-authorized DETACH batch1+3 SEC-01 CODE source/offline; follows AI273. Pre-register dependency waiting; native/IL2CPP/window2 human gates not waived, no dispatch now.","taskIds":["AI-000274"]}
+## AI-000275 | [CODE] [SC] SAVE-01 版本化存档与保存边界（源码/隔离离线）
+
+- 序号：275
+- 提交时间：2026-10-19T20:14:34.1558635+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000266, AI-000272, AI-000274
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原批次DETACH-B13-20261019 SAVE-01源码/离线阶段，原卡cards/SAVE-01.md与G76/G77为依据。固定CODE、FEATURE、module SC；用户原卡M80覆盖新TK通常L建议，真实规模/预算差异留账。dependsOn AI266/AI272/AI274（ASM/MIG-F02和profile已通过、共享codec由SEC确定）。仅登记等待，AI274成功且CONTROL独立验收后派发。
+
+先读CORE/CODE worker、项目入口页首及实际相关模块、原卡、AI272 SAVE-HANDOFF、AI274 REPORT/RUNTIME-COMPATIBILITY/SAVE-HANDOFF与实际ISaveCodec。当前已核packages-lock包含com.unity.nuget.newtonsoft-json，manifest未直接列出；须核实际已安装版本/程序集可用性，不能只凭锁文件宣称可引用。沿用工程既有JSON库，不下载新依赖、不改Packages。若用Newtonsoft，其JToken等应合理映射原卡payload分节而非强行混入System.Text.Json.JsonElement；外部JSON字段与语义保持，不引第二套JSON库。仅引用当前Toolkit可见依赖，发现程序集需额外引用/安全边界冲突须先报告而非修改asmdef或放宽引用方向。
+
+实现SaveEnvelope（format_version/schema_version/created_utc/payload/hmac）、JsonSaveStore、PlainJsonCodec及唯一ShortCycle Runtime SaveBoundary宿主接入。原共享ISaveCodec精确复用AI274，不重建同名或改为不兼容接口；EncryptedJsonCodec在发布构建注入，Editor/Development明文按原编译条件；原认证算法/版本与key provider沿用SEC。记录schema版本来源为当前已确认版本，不臆定v2.5。Envelope分节首节player_profile，快照复用AI272的既有owner/不可变复制接口。Toolkit.Persistence不引用ShortCycle、场景/Transform或业务Manager；不写PlayerPrefs。
+
+实际保存边界使用现有ISaveBoundary.Reach(ShortCycleSavePoint,ShortCycleContext)：存档点1进P0成功后、存档点2 P1→P2处理后；恢复仅BeginSession前/None阶段。保留现有ObservableNoOpSaveBoundary的观察契约/既有测试与18探针，不加每帧/收藏即时写盘等新保存点，不把纯Core拉入Unity/IO。Runtime宿主获取Application.persistentDataPath并注入store根路径，不能硬编码用户目录或旧DefaultCompany/Button Project；生产目标仍Trollemma/EatWhat下saves/<slot>.json。可测试路径注入只在隔离夹具使用，本轮不得触碰真实用户存档目录。
+
+JsonSaveStore做受限slot/根内路径、原子临时写+安全替换、失败诊断。损坏、未知format/schema、校验失败时不抛出阻止进游戏，退默认profile并一次warning；读失败不修改/删除原文件，随后的自动保存不得无声覆盖唯一损坏原件（明确保留原件或停止该slot写入并诊断），不迁移旧目录。hmac须有真实完整性语义与稳定被认证字节定义，不能空字段/普通hash冒充HMAC；复用SEC安全能力，不重复维护密钥。首次无文件属于正常默认，不伪报损坏；保留未知payload节/版本策略在文档写清，不猜业务值。
+
+允许Tools/Persistence源码、必要最小Tools/Security复用扩展（不削弱AI274）、ShortCycle Runtime及Session/既有契约的最小宿主集成、既有DevTools离线统一验证与所属Persistence夹具、相关项目/TK/工程文档、本任务outputs。禁止改生产场景/prefab/asset/meta/ProjectSettings/Packages/程序集方向、CSV/xlsx/Generated/字体和用户真实存档；不Unity/Play/Build/导表/Publish/提交推送。场景接线/原生编译/收藏跨会话与损坏文件Play验证交ENGINE后续窗口②，源码接入不声称已实际可玩。
+
+隔离临时目录进行真实文件IO定向验证：写读往返/多次幂等、profile复制恢复、slot越界拒绝、原子替换保留旧文件的失败路径、损坏及版本不符diagnostic且原件完整、缺文件默认、只warning一次、恢复在BeginSession前、两个现有保存点各一次、Plain/Encrypted codec条件与可替换、无新增写盘入口。测试不触达persistentDataPath，继承安全与ShortCycle原测试，遵守验证成本与Final重复规则；先准确核已有runner再扩充，正式失败按稳定key结算回传，不自行重启。
+
+登记TK-DAT-07 Persistence及真实Toolkit边界/编解码/HMAC/版本/回退说明，相关项目文档定向维护，不提高全项目完整复核日期。输出.ai-workspace/outputs/DETACH-B13-20261019/AI-000275：REPORT.md、changed-files.json、evidence/acceptance、真实离线日志、SAVE-FORMAT.json与ENGINE-HANDOFF.json（运行路径、两保存点、原生/Play待验、受损样本保护与清理）。8项合同inputs/acceptance/AI-000275.json仅验CODE阶段。包目标1MB硬10MB；每批写前Checkpoint，结算立即Prepare→一次真实Send→Record；窗口②/A+C/U2～U6保持，不自行派后继。
+
+> SUPERVISED POLICY at 2026-10-19T20:14:34.5680952+08:00: {"taskId":"AI-000275","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Original SAVE-01 source and isolated offline file IO only; actual user save/Editor/Play/window2 and A+C not authorized by this phase.","updatedAt":"2026-10-19T20:14:34.4947905+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T20:14:34.7002087+08:00: {"taskIds":["AI-000275"],"reason":"Continue original DETACH batch1+3 after SEC codec independent acceptance, dependency waiting only; original native/human gates retained."}
+## AI-000276 | [CODE] [WF] MIG-F08 文本资产 Git 规范化保护比较
+
+- 序号：276
+- 提交时间：2026-10-19T20:50:00.5181316+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000266, AI-000275
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+原批次 DETACH-B13-20261019 MIG-F08，固定 CODE/DevTools，FEATURE，S/40 按用户原卡执行；实际文件数/新工具登记与预算差异如实解释。依赖 AI266（E-1已通过）与AI275（同线串行及文档写入顺序）。本卡尚仅登记等待，不提前领取。
+
+先读CORE/CODE worker、项目入口页首相关模块、cards/FILL_MIG-F02_F04_F08.md、MIG63/H后分支切换与控制台移交.md的MIG-F08条目，以及实际 DevTools/GitHooks/{README.md,check-mig63-font.sh,test-font-guard.py}、MIG63/pre-commit.sh、.gitattributes与相关现有保护工具。E2已解除临时迁移冻结，现行pre-commit只有永久字体与main/backup保护；不能恢复旧冻结或凭空给所有业务文本加禁止修改门。先定位仍有效的文本比较消费者；不存在时交付本卡所需的显式基线/显式路径只读比较入口及使用说明，禁止把新比较默认全仓启用。既有GitHooks工具族最小扩充，不造新队列/保护架构。
+
+比较明确基线提交中的blob、index和按当前.gitattributes及Git clean规则规范化后的工作树内容，逐项给出基线/index/工作树身份及比较结果。不能只查HEAD/index漏检未暂存变化，也不能只删除CR字符假装Git规则。LF/CRLF且语义相同应等价；真实字段变化、仅未暂存变化、缺失路径、无法读取/未合并必须失败关闭并给出原因。读参数路径限定仓库内明确路径，未知/失败不能报通过；不写原仓库index/object/config/hooks或改行尾。原始SHA保留为同机备份完整性证据，与文本规范化身份分列。基线身份必须来自明确既存commit，不能以当前工作树更新基线迎合通过。
+
+LFS及字体继续使用真实内容OID/SHA，不把LFS指针blob当字体字节，也不将字体或manifest的-text改成文本规范化；保留STATIC_ONLY已批准清单、真实静态字节、工作树/index双检、main/backup保护和旧许可。不要重建字体/改批准SHA/改本地hook或git配置；本轮只修改可审阅的受版本管理工具与文档。若一般文本比较无现有消费者，报告此事实和显式调用点，不声称生产hook自动安装生效。
+
+验证只用小型隔离临时Git仓库及同一提交的两个clone（可为夹具创建本地提交，无网络/原项目提交），真实设置不同换行检出，直接调用交付的比较入口。覆盖等价行尾、真实字段变化、未暂存变化、缺失/不可读、基线/index/工作树三方与LFS真实内容；原font-guard定向回归保留。禁止克隆整个Unity工程/全仓归一化/全仓SHA、Unity/Play/Build/导表/Publish。遵守现有Verify-All的定向与缓存复用机制，不为小工具重跑不相关业务Final。
+
+允许 DevTools/GitHooks 下最小实现/既有或必要定向夹具、现有验证登记接入（确有必要）、相关README/MIG63/工具索引定向更新及本卡outputs。禁止修改生产Assets/Packages/ProjectSettings/字体/CSV/xlsx/Generated、用户存档、.git或运行时队列数据；不提交/推送/切分支。不覆盖其他工作成果。具体新TK编号先查现有登记，不能复用已占用编号；原卡S40与实际规模差异留账。
+
+输出.ai-workspace/outputs/DETACH-B13-20261019/AI-000276：REPORT.md、changed-files.json、evidence.json、acceptance.json、实际双clone/保护回归日志及调用说明（真实入口/基线身份/规则/生产安装状态）。合同inputs/acceptance/AI-000276.json为5个事实布尔量及productionAssetIndexConfigHookWrites=0。包目标1MB硬10MB；每批写前Checkpoint。真实失败按稳定key结算回传，不自行重启；1/3/5只由CONTROL经正式ApproveResume组织。结算立即Prepare→一次实际Send→Record，窗口②/A+C保留，不派后继。
+
+> SUPERVISED POLICY at 2026-10-19T20:50:00.9403218+08:00: {"policy":{"resourceKeys":["workflow-devtools","documentation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Original MIG-F08 tool/source and isolated fixture scope only; no production hook installation, asset or project Git metadata writes; preserve window2 and A+C.","updatedAt":"2026-10-19T20:50:00.8804802+08:00","supervisionLevel":"full"},"taskId":"AI-000276"}
+
+> SUPERVISED EXTEND at 2026-10-19T20:50:24.6535313+08:00: {"taskIds":["AI-000276"],"reason":"User-authorized DETACH B1+3 MIG-F08 original card, source/tool phase; wait for AI275 acceptance before same fixed CODE dispatch. MIG-F04 reuses accepted AI146/147/152 scope."}
+
+> Verification rejected for AI-000275 at 2026-10-19T21:27:47.1276563+08:00: decision=REJECTED; reason=Independent isolated counterexample: finite JSON1e-30 and1e100 save successfully then fail own authenticated read and block the slot; repair before accepting source phase.
+## AI-000277 | [CODE] [SC] SAVE-01 数字规范化与认证往返修复
+
+- 序号：277
+- 提交时间：2026-10-19T21:29:16.3281707+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI277是原AI275同根REPAIR，稳定key SAVE01_NUMERIC_CANONICAL_ROUNDTRIP。用户2026-10-19长期SUPERVISED5周期政策来源inputs/续行许可分模式_用户长期授权_20261019.json；本次首个修复周期AI275:CODE277:retry1，首次实际claim计1/5，原275成功报告/自验失败和CONTROL拒验完整保留。M80按最小实现及必要文档实际规模登记，不新建业务根、不重跑原275整个实现。用户原窗口②/A+C、真实存档/Unity禁止保持。领取必须原固定CODE/同session，按派发提供的Scope传Poll/Checkpoint，不二次Poll。
+
+先读CORE/CODE worker、原AI275 REPORT/SAVE-FORMAT/changed-files及CONTROL的outputs/control/DETACH-B13-20261019/independent-review-275.json、AI275-numeric-roundtrip-review.json。原2758合同自报通过、26源码/文档SHA和3runner真实日志已核，但CONTROL使用交付的Persistence-release.exe、合成测试key和控制输出隔离目录实测：finite double1.25写读通过；1e-30和1e100均Write=true而TryRead=false，slot被blocked。根因候选是SaveEnvelope.Parse的FloatParseHandling.Decimal，对签名阶段接受的double范围发生下溢/溢出；请对源码和实际捆绑Mono确认，不重新跑整个业务诊断。
+
+目标：所有被成功写入的当前合法Envelope，重新解析后保持数值语义和稳定认证字节，可经Plain/Encrypted两codec读回；不允许Write成功后把自身文件变坏。最小修正数字规范化/解析一致性，支持当前通用JSON声明和未来未知节；必须覆盖1e-30/1e100及普通double、decimal高精度、大整数和整型/浮点边界。不能只把Decimal换Double造成decimal/大整数静默精度损失，也不能关闭HMAC、删unknown节、把数字无声改字符串/零或在fixture忽略失败。若存在明确不支持的输入，必须在原文件被改动前明确诊断拒绝写入，文档定义范围；不得将支持限制伪报为成功往返。现有可读存档兼容、profile字符串数组、UTC/版本、坏件保留、原子写/漂移门、原两点/只warning一次、密钥标签/原V2包/codec接口不变，不能自动迁移真实用户文件。
+
+只准最小修改已审批Scope中的SaveEnvelope/JsonSaveStore/EnvelopeAuthenticator与既有Persistence fixture/runner、对应PST说明和必要项目定位页首，实际不需要的文件不碰。优先复用原测试组补数字反例，不新增专用续行入口或另一套JSON库。CONTROL原275证据和合成坏件不改删；实际修复前把本卡触及源码起点保存在AI277输出，并记录before/after SHA及差异。
+
+验收：针对既有Persistence runner真实主机及捆绑Mono(release/UNITY_EDITOR/DEVELOPMENT_BUILD)隔离IO，逐值比较语义/类型边界、二次进程或新store读回和HMAC；Plain与V2Encrypted均覆盖。加入精度边界和NaN/Infinity拒绝、既有文件不变反例；使用合成key，真实用户路径禁用。已有原子失败/损坏保留/共享codec/AI274包等回归保持；仅重跑真实受影响Persistence及必要ShortCycle相关组，不重复SEC或全域Final/全仓哈希。不Unity/Play/Build/生产数据/安装/存档接触/提交推送。
+
+交付outputs/DETACH-B13-20261019/AI-000277中的REPORT、changed-files、evidence/acceptance、数字行为矩阵(输入类型/值、写结果、读结果、读回语义、是否拒绝前保留原件)、真实日志、对原275合同补充映射、ENGINE交接限制。6合同见inputs/acceptance/AI-000277.json。目标1MB硬10MB，超1MB说明必要性并尽量精简。完成立即Prepare→一次实际Send→Record给CONTROL；CONTROL独立复核后才能ResolveControlRejection原275，不能自行改原结果/领取AI276。新失败正式结算，CONTROL经ApproveResume按剩余额度处理，不自行重试业务或换key。
+
+> SUPERVISED POLICY at 2026-10-19T21:30:01.9919447+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Same-root AI275 control rejection; one POLICY repair cycle, minimal numeric canonicalization and isolated tests only; no real user save or Editor.","updatedAt":"2026-10-19T21:30:01.9044698+08:00","supervisionLevel":"full"},"taskId":"AI-000277"}
+
+> SUPERVISED EXTEND at 2026-10-19T21:30:02.2337046+08:00: {"reason":"Same-root minimal repair for independently rejected AI275 within existing SUPERVISED default5 policy; AI276 remains dependent on rejection resolution.","taskIds":["AI-000277"]}
+> Control rejection resolved AI-000275 : {"at":"2026-10-19T21:53:26.5581984+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"SAVE01_NUMERIC_CANONICAL_ROUNDTRIP","repairTaskId":"AI-000277","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","userDecision":"批准本次修复和续行，另外，对相关的续行许可次数限制进行放宽：手动模式时，每次需要人工续行不变，上限保持为1；自动模式时，允许3次的重复修复尝试后，再进行人工询问和额外次数的批准；监管模式下则默认允许5次自主重复尝试","verification":"6 declared contracts and 15 independent checks passed; original tiny/large plus precise decimal/BigInteger in both codecs, fresh-store authenticated reads; original rejection retained; native verification remains pending.","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\DETACH-B13-20261019\\AI275-control-rejection-resolution.json","evidenceSha256":"9715255D2B255A2668CF4B6242B3489BF61E03F389D5629A34A8DADDB8CA4B39","rejectedResultSha256":"070F5A83414B3BDFEAD30A878706335FCC607DCAB6C41C281085EF55A55BE6AB","repairResultSha256":"1B544647C460121A04C5FD2E4CAD92A708C5295A4A6D017B445CD5EE6FCFDEFF"}
+## AI-000278 | [ENGINE_CLI] [SC] 窗口② D-T2/SEC02/P2S 只读核查与精确审批包
+
+- 序号：278
+- 提交时间：2026-10-19T21:58:29.7916718+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000266, AI-000269, AI-000272, AI-000273, AI-000274, AI-000275, AI-000276, AI-000277
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原批次 DETACH-B13-20261019 的窗口②只读准备，固定 ENGINE_CLI，FEATURE/M80（4组相关核查和审阅材料）。dependsOn AI266/269/272/273/274/275/276/277；只有前置结算且CONTROL独立通过后领取。此卡产物用于原D-T2/SEC-02/P2S-01的精确人工窗口审批，HumanGateAfter=true；准备成功不批准窗口、不等于12逻辑卡完成。
+
+先读CORE/ENGINE_CLI worker、项目入口页首和相关模块、原cards/{D-T2,SEC-02,P2S-01}.md；P2原件inputs/排布指导书_ShortCycle_P2_v0_1_1_20261015.md只读§二矩阵/§三对象树；D-T1a/b、P2L、SEC01、SAVE01/277的ENGINE-HANDOFF及control/DETACH-B13-20261019/{D-T2-content-followups,P2L-data-followups}.json按相关条读取。原D-T2卡场景路径漏了Cooking，实际为Assets/Scenes/Cooking/ShortCycle_P0P1.unity；此处校正不授权写场景。
+
+四组交付：
+1. 原生身份与安全基线：通过已登记Unity官方CLI、既有Invoke-TaskTool包装器先核唯一D:/GameProject/Eat-What / 6000.3.24f1 / PID/port和新鲜editor_status。status与editor_status每项最多一次、保持30s/35s上限；随后仅使用已存在且明确只读的场景/组件/Console查询。记录当前scene、dirty/Play/compile状态、实际Console Error。不得Refresh/Compile/Import/Play/OpenScene/Save/修改设置/执行自建脚本；不要以诊断名义生成或安装Editor工具。只读入口不足时用现有场景文件只读定位，明确磁盘与内存观测差异及unknown，不冒充已查询。未知写入/平台拒绝/错目标正式停止，不换MCP。
+2. D-T2精确绑定清单：逐目标CatalogCard×8、Title、DishPhoto_TUNE、IngredientList、StickerNotes、CurrentRecipeTab、StepDetail容器、FlipAnchor_L/R列实际层级/组件/字段/当前引用/拟引用及GUID或子资产身份、允许修改项、保持Transform/_TUNE/Sorting/字体/Tag/Layer不变项、备份/回退和验收方法。需新增组件与仅改字段要分开，原卡不明确授权的组件增补列入审批差异，不提前执行。核原18条探针实际定义及新增5条尚未Play事实、LayoutAudit及3份可见区v2现有入口。9空图形字段/5文件名未命中须针对性核GUID/子资产，不把命名未命中写成缺资产；×字形只报可观测情况，字体修改归DATA。输出审批清单，不导入美术、不改CSV。
+3. P2S精确范围：对照P2指导书§二/三，列新Assets/Scenes/ShortCycle_P2.unity空壳对象树、Cam_P2(0,0,-10)正交7.2、Managers与七组空容器/DebugAndReferences、P0P1 viewTable增行与Build末尾index2。核当前Build路径/index和P2路径是否已存在，不能覆盖用户同名工作；保留旧CookingProcess。列现有Phase2TransitionAdapter/Handoff/KitchenInventory入口、原18探针后追加2条、Teardown回退与既有23动作预留/MG0核查，不加波次C内容或私增动作。这里只列候选，不新建场景/代码/Build项。
+4. SEC02与原生补验边界：核实际Mono/IL2CPP安装与构建后端配置、现有Generated SO路径/Resources引用/构建消费者、StreamingAssets/data/catalog.bin与Assets/Editor/Build目标现状。给方案A具体候选写路径/临时生成物/恢复策略与CODE→DATA→ENGINE职责，SEC01真实GCM Mono不支持，V2 CBC+HMAC回退需列给窗口审批，不能悄悄改原卡GCM要求。以既有生成SO真实范围拟排除策略；只有候选，不导表/Publish/Build/修改production加载。列原生SEC/SAVE所需隔离存档注入与两个保存点验证，禁止读写真实用户存档、不得通过直接Play误触真实持久化。
+
+输出仅本卡outputs/DETACH-B13-20261019/AI-000278：REPORT.md、window2-review.md（用户可审阅的精确路径/对象/差异/动作/回退/成本/人工保留项）、window2-scope.json、target-and-observations.json、evidence.json、acceptance.json及短原始查询日志。4项合同inputs/acceptance/AI-000278.json；必要unknown逐条列原因，未知不写通过。productionWrites=0为硬界限，package目标1MB硬10MB。现有读取/身份查询按Observation，不假称生产进展。无新增运行时工具/新TK、无全仓哈希/内存转储、无真实业务执行。必要工程状态无法确认则正式Fail并完整回传，CONTROL按根策略组织，不执行器自重试。Complete时只表示审批准备完成，HumanGateAfter保持未批准；立即Prepare→一次Send→Record绑定CONTROL后停止，不自行下发后继。
+
+> SUPERVISED POLICY at 2026-10-19T21:58:30.2219309+08:00: {"taskId":"AI-000278","policy":{"resourceKeys":["unity-project","documentation","read-only"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"Authorized batch1+3 windowII prerequisite review only; no scene/code/Build/data writes. Actual window approval remains a hard human gate.","updatedAt":"2026-10-19T21:58:30.1652087+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-19T21:58:30.3754167+08:00: {"taskIds":["AI-000278"],"reason":"Continue original12logicalcards by preparing concrete windowII review after source chain; AI276 alone does not complete batch."}
+
+> SUPERVISED APPROVED_CONTINUATION_REFUSED at 2026-10-19T22:09:09.3281585+08:00: {"controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","problemKey":"","reason":"Original task thread must remain bound.","taskId":"AI-000276"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T22:09:56.4761521+08:00: {"cycles":["AI276:retry1"],"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":0,"authorizationSource":"POLICY","verification":"Fresh app revision165 CODE idle; formal attempt1 failure independently verified5checks; explicit per-clone core.eol/autocrlf before first real checkout; no production mutations. Independent-failure-review-276.json; original scope, first policy cycle,0of5 consumed before claim.","remaining":4,"reserved":1,"rootTaskId":"AI-000276","scope":{"paths":[".ai-workspace/MIG63/H后分支切换与控制台移交.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000276",".ai-workspace/TOOLKIT_REGISTRY.md",".ai-workspace/toolkit/INDEX.md",".ai-workspace/toolkit/WF.md","DevTools/GitHooks/compare-git-content.py","DevTools/GitHooks/README.md","DevTools/GitHooks/test-git-content.py","DevTools/GitHooks/Test-GitContent.ps1"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-repair"]},"grantId":"f75fd89fea4e41fca8bee2c9cb63fe18","taskId":"AI-000276"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T22:21:33.5505208+08:00: {"taskId":"AI-000276","scope":{"paths":[".ai-workspace/MIG63/H后分支切换与控制台移交.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000276",".ai-workspace/TOOLKIT_REGISTRY.md",".ai-workspace/toolkit/INDEX.md",".ai-workspace/toolkit/WF.md","DevTools/GitHooks/compare-git-content.py","DevTools/GitHooks/README.md","DevTools/GitHooks/test-git-content.py","DevTools/GitHooks/Test-GitContent.ps1"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-repair"]},"remaining":3,"authorizationSource":"POLICY","grantId":"1fd438e58e8348f4bfdf378d9331aa0b","reserved":1,"rootTaskId":"AI-000276","used":1,"verification":"Fresh app revision166 CODE idle completed01a15480-242e-71a1-91b8-cef73751d6ab; independent failure review7checks confirmsEOLfix/unchangedprotectedSHA/log and currenttwo safe.directory keys. Minimal validated indexed-config classification, original scope, no global config/env/production mutations. Root used1of5, newcycle retry2.","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["AI276:retry2"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T22:31:14.0895434+08:00: {"rootTaskId":"AI-000276","remaining":2,"verification":"Fresh CODE idle revision167 completed01a1548a-9eee-7f41-af52-a28f6f8c3c62; independent failure review7checks confirmslocalized GBK JSON versus strict UTF8 consumer. Minimal locale-independent lossless emit/targeted Unicode regression, originalscope. Root used2of5 beforeclaim, no platform or business human gate bypass.","cycles":["AI276:retry3"],"reserved":1,"grantId":"32081b38e05c498cbe04ba064444aa89","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","authorizationSource":"POLICY","taskId":"AI-000276","used":2,"scope":{"paths":[".ai-workspace/MIG63/H后分支切换与控制台移交.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000276",".ai-workspace/TOOLKIT_REGISTRY.md",".ai-workspace/toolkit/INDEX.md",".ai-workspace/toolkit/WF.md","DevTools/GitHooks/compare-git-content.py","DevTools/GitHooks/README.md","DevTools/GitHooks/test-git-content.py","DevTools/GitHooks/Test-GitContent.ps1"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-repair"]}}
+
+> SUPERVISED APPROVED_CONTINUATION_REFUSED at 2026-10-19T22:43:47.9261467+08:00: {"problemKey":"","taskId":"AI-000276","reason":"Requested path exceeds approved scope.","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-19T23:35:57.6874579+08:00: {"rootTaskId":"AI-000276","reserved":1,"sourceApprovalId":"call_3d3fb0c5a62447dfba9402fcbdb6a825:0","grantId":"0992d7f1d2e1428f98b1ade56fa151f2","authorizationSource":"HUMAN","used":3,"scope":{"paths":[".ai-workspace/MIG63/H后分支切换与控制台移交.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000276",".ai-workspace/TOOLKIT_REGISTRY.md",".ai-workspace/toolkit/INDEX.md",".ai-workspace/toolkit/WF.md","DevTools/GitHooks/compare-git-content.py","DevTools/GitHooks/README.md","DevTools/GitHooks/test-font-guard.py","DevTools/GitHooks/test-git-content.py","DevTools/GitHooks/Test-GitContent.ps1"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-repair"]},"cycles":["AI276:retry4"],"remaining":1,"taskId":"AI-000276","verification":"User explicitly approved one existing-fixture path addition and one continuation within current limit5. Exact authority AI276_范围调整_用户批准_20261019.json. CONTROL independent-failure-review-276-attempt4.json 8/8; current source SHA still matches prepared patch. Fresh CODE idle app revision168 completed turn01a15493-a8d9-7810-b859-19d861b3b5c2; snapshot code-idle-276-retry4-approved.json. ACTIVE same session, no stop/exit. AI278 and window2 human gate remain blocked."}
+
+> Verification rejected for AI-000278 at 2026-10-20T00:20:47.1045939+08:00: decision=REJECTED; reason=CONTROL核场景8卡已有16个TagPoint及TMP/LocalizedText，审批包按Prefab缺失误提新增，接线合同不成立；保留原件，修正只读审批包后独立复核，窗口②未批准。
+## AI-000279 | [ENGINE_CLI] [SC] 窗口②审批包场景新增节点映射修正（磁盘只读）
+
+- 序号：279
+- 提交时间：2026-10-20T00:21:46.1472654+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI279：原AI278的同根只读审批包修复，固定ENGINE_CLI，REPAIR/M80，稳定key WINDOW2_SCENE_ADDED_TAG_BINDINGS，cycle AI278:ENGINE279:retry1。原278成功但CONTROL拒验，旧结果/审批包/查询日志完整保留；本卡不能重新领取278或批准窗口②。长期SUPERVISED5授权来源inputs/续行许可分模式_用户长期授权_20261019.json，首次实际领取计同根第1周期，不重置历史。按AI279_SCOPE.json原样传Poll及Checkpoint。
+
+只做磁盘只读核查与新输出包修订，生产写入0、额外Unity CLI/MCP调用0。不重新身份心跳、不Refresh/Compile/Import/Play/场景开存/Build/导表/Publish/实际存档、不改源码/资源/输入/原278输出。已有278时刻的只读观测可引用但必须保留原时间，不能冒充当前。只写本卡outputs/DETACH-B13-20261019/AI-000279。原窗口②、A+C、USER-U5等门保持。
+
+先读CORE/本线规范和CONTROL独立证据outputs/control/DETACH-B13-20261019/{independent-review-278,AI278-existing-card-tags-review,AI278-visible-v2-source-recovery}.json，再按需读原278三份主审批文档及相关事实JSON。CONTROL已核8个CatalogCard scene instance每卡都有TagPoint_01/02，16个场景新增子节点均登记在PrefabInstance.m_AddedGameObjects，具有SpriteRenderer和Label上的TMP/LocalizedText。原文“旧Prefab只有Icon/Badge/Placeholder/Name，不能声称已有2标签点”把Prefab缺失混同场景实例缺失，会误导新增，须实质修正。
+
+修复交付：
+1. 逐8卡核场景新增子节点、stripped Transform和m_AddedGameObjects，给现有16个tagIcons和tagLabels准确scene fileID/脚本GUID/当前引用与推荐复用映射；核源CatalogCard真实字段类型。保持所有原Transform/_TUNE/排序/字体/Tag/Layer。不得只用名字/Prefab树断言缺失。对favorite以及Ingredient/Sticker等已经提到的Prefab实例，同样补核scene-added children，防止同类遗漏；没有证据时标unknown，不编造新增需求。
+2. 更正完整window2-review.md、window2-scope.json、D-T2-approval-bindings.json（新卡输出内保存完整替代版，不原地覆盖278）；所有对象表/unknown/审批项同步，不残留误提16个新标签。确需新增组件/步骤行等保持候选，现有可复用与缺失新建分开。未定geometry不假称可直接生产执行，先形成明确有依据的候选/待设计项，不以本修复获得扩权。
+3. 将CONTROL找回三份v2的archive entry/SHA、560/459/202行、现有只读collector/evaluator入口接入审批包。历史Unity2022结果只作来源/结构参考；当前Unity6已有用户布局/字体为基线，不执行旧写入脚本/全量归档提取/全仓哈希，不复原旧布局。不伪报已做本轮v2回归。
+4. 保留原278已核P2 enum缺口、Build index2候选、SEC02 GCM→V2显式变更、170SO/1原生占位区分、pre-Awake隔离存档前置、缺失IL2CPP模块、9空/5MissingSprite真实子资产等边界。全部仍仅审批准备。
+
+4组验收合同见inputs/acceptance/AI-000279.json。输出REPORT、上述3份完整更正稿、scene-added-object-evidence.json（必要fileID引用，不复制整个场景）、evidence/acceptance及correction-map.json（原278被更正项与仍成立项，绑定原拒验证据SHA）。验证成本限定为相关磁盘对象映射/文档一致性，不新造工具/测试或全项目保护；目标1MB硬10MB。正式失败先结算回传，CONTROL决定续行；不能执行器自行重试。Complete立即Prepare→一次实际Send→Record给绑定CONTROL。CONTROL独立复核后才ResolveControlRejection原278，原HumanGateAfter仍不批准，不派生产后继。
+
+> SUPERVISED POLICY at 2026-10-20T00:22:00.2281588+08:00: {"taskId":"AI-000279","policy":{"resourceKeys":["unity-project","documentation","read-only"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"同根278审批包修正，仅磁盘只读和新卡报告输出；保留278窗口②人工门，不执行生产阶段。","updatedAt":"2026-10-20T00:22:00.1330133+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-20T00:22:00.5106971+08:00: {"reason":"原278独立拒验后的范围内审批材料修复；不批准原278窗口②。","taskIds":["AI-000279"]}
+> Control rejection resolved AI-000278 : {"at":"2026-10-20T00:38:46.2713849+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"WINDOW2_SCENE_ADDED_TAG_BINDINGS","repairTaskId":"AI-000279","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","userDecision":"批准本次修复和续行，另外，对相关的续行许可次数限制进行放宽：手动模式时，每次需要人工续行不变，上限保持为1；自动模式时，允许3次的重复修复尝试后，再进行人工询问和额外次数的批准；监管模式下则默认允许5次自主重复尝试","verification":"4合同/14独立复核通过，16组准确场景标签/LocalizedText映射、15相关实例、02选择组件复用、三份历史v2来源及原件完整；0生产写入/0额外Unity，人工窗口保持未批准。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\DETACH-B13-20261019\\AI278-control-rejection-resolution.json","evidenceSha256":"59BFDCD62A07C31966F101FE3F9100770632CB1836EEDFE95175CEF954522C39","rejectedResultSha256":"60F17E3F58581B0A65CC68C751D55361F16FA678A230A8EF61C4391B05A5484E","repairResultSha256":"BC4678FB24D87EB23D994F888AC3083EF1733B957F9F300AA16DB0F66672FA6C"}
+## AI-000280 | [CODE] [SC] D-T2/SAVE 隔离存档与动态文本前置（源码）
+
+- 序号：280
+- 提交时间：2026-10-20T00:44:03.6442073+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000275, AI-000277, AI-000279
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000280 / D-T2/SAVE 隔离存档与动态文本前置（源码）
+
+用户已直接批准窗口②阶段①及算法调整，原话/ID/SHA见inputs/派发/DETACH-B13-20261019/窗口②阶段①用户批准.json（call_a8f7addab9304ac69c44dc698807bff9:0）。只批准源码/离线与只读布局候选，生产场景、导表/Publish、原生Compile/Play/Build和A+C仍未批准。原AI278 HumanGateAfter=true、gateApproved=false保持，后继卡根据本次独立阶段①批准安排，不能把父级机器解拒验当阶段②许可。不提交推送，不复原用户dirty，不写真实存档。先CORE、对应worker、项目两入口页首及本卡相关模块；AI279修正版只按相关条读取，避免重读全部历史。固定chat复用。每批写前正式Checkpoint；FEATURE首次不计重试，正式失败先Fail回传，CONTROL根据真实1/3/5根余量决定ApproveResume，不执行器自重启。Complete/Fail/Yield立即Prepare→一次真实app发送→Record给绑定CONTROL，只有CONTROL独立验收才推进依赖。输出完整文本目标1MB硬10MB，超1MB说明必要性；原失败/许可/验收证据保留。定向测试与改动相称，不重复全域Final/全仓哈希或创建一次性续行入口。原生/视觉/阶段②未验如实记录。
+
+本卡M80，FEATURE，仅源码/离线。先核SessionManager.Awake当前构造JsonSaveStore(Path.Combine(Application.persistentDataPath,"saves"))与Runtime/SaveBoundary的PrepareBeforeSession和原两个保存点；读AI275/277必要接口和AI279 localizationOwnershipReview，不重跑旧数字全矩阵/安装。
+
+一、提供显式、可作用于正确目标Session、在Awake初始构造前生效的验收存档隔离入口。默认生产路径和版本/codec/key/两保存点不变；离线与后续ENGINE验收必须明确注入本卡/后续任务输出下绝对隔离目录或受控storeFactory，未授权不得触摸真实用户目录。不能通过Awake后反射替换私有字段；不能依靠一个未验证的组件执行顺序声明安全。防止跨场景/跨用例泄漏、晚注入、重复/冲突注入、异常后未清理；交付准确pre-Awake安装与释放顺序，适用于正常Editor未来场景加载和隔离原生harness，不提前运行。若需要新辅助C#，只在ShortCycle/Runtime并明确ownership和销毁/恢复路径，复用JsonSaveStore构造注入，不新增另一套持久化系统或真实路径探测。
+二、核RecipeBookBinder、ShortCycleGridPieceBase、Ingredient/Sticker/CurrentRecipeTab的动态TMP写入与现有LocalizedText.RefreshAll/Configure。保留既有组件和本地化key/fallback语义；内容更新走明确唯一writer，优先复用Configure，避免后续RefreshAll将新菜内容覆盖回旧值。16个tagLabels本来就是LocalizedText[]，不改成TMP。保持Inspector既有序列化字段兼容，不能无声删禁组件/删除用户配置；空/切菜/锁卡/收藏/clear与本地化刷新行为须一致。先追调用顺序，局部合理最小改动，不重构Toolkit或全项目本地化。
+三、用已有ShortCycle/Persistence受影响runner及fixtures完成真实离线编译/行为验证：早注入生效且默认路径factory未被调用、晚/重复/错目标拒绝与释放、两个保存点/首次None恢复/坏件保护保持；已接LocalizedText与无该组件fallback、换菜再RefreshAll/clear不回旧文案。使用合成key及控制隔离临时根，不读写/枚举用户存档，不把stub通过当真实Awake/Play验证。保留原18探针，运行成本与真实改动相称。
+交付REPORT、changed-files/evidence/acceptance、真实离线日志与ENGINE-HANDOFF.json，后者给隔离入口安装/复原、文本writer与实际接线变化、原生仍待验证项；指出本卡未修改任何生产引用。更新实际受影响项目/TK定位，复用TK-DAT-09/现LOC，不仅改日期。
+
+精确允许范围见AI280_SCOPE.json；领取及Checkpoint带Scope。验收合同inputs/acceptance/AI-000280.json，只能以真实证据填值。全部输出到.ai-workspace/outputs/DETACH-B13-20261019/AI-000280，每项合同必须能回到实际文件/日志。
+
+> SUPERVISED POLICY at 2026-10-20T00:44:04.1306365+08:00: {"taskId":"AI-000280","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户call_a8f7addab9304ac69c44dc698807bff9:0明确批准阶段①；仅源码离线或只读候选，原278阶段②生产gate不批准。","updatedAt":"2026-10-20T00:44:04.0776879+08:00","supervisionLevel":"full"}}
+## AI-000281 | [CODE] [SC] P2S-01 过渡交接与返回（源码/离线）
+
+- 序号：281
+- 提交时间：2026-10-20T00:44:04.2547600+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000280, AI-000273, AI-000279
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000281 / P2S-01 过渡交接与返回（源码/离线）
+
+用户已直接批准窗口②阶段①及算法调整，原话/ID/SHA见inputs/派发/DETACH-B13-20261019/窗口②阶段①用户批准.json（call_a8f7addab9304ac69c44dc698807bff9:0）。只批准源码/离线与只读布局候选，生产场景、导表/Publish、原生Compile/Play/Build和A+C仍未批准。原AI278 HumanGateAfter=true、gateApproved=false保持，后继卡根据本次独立阶段①批准安排，不能把父级机器解拒验当阶段②许可。不提交推送，不复原用户dirty，不写真实存档。先CORE、对应worker、项目两入口页首及本卡相关模块；AI279修正版只按相关条读取，避免重读全部历史。固定chat复用。每批写前正式Checkpoint；FEATURE首次不计重试，正式失败先Fail回传，CONTROL根据真实1/3/5根余量决定ApproveResume，不执行器自重启。Complete/Fail/Yield立即Prepare→一次真实app发送→Record给绑定CONTROL，只有CONTROL独立验收才推进依赖。输出完整文本目标1MB硬10MB，超1MB说明必要性；原失败/许可/验收证据保留。定向测试与改动相称，不重复全域Final/全仓哈希或创建一次性续行入口。原生/视觉/阶段②未验如实记录。
+
+原cards/P2S-01.md的CODE阶段，沿用用户原M80，实际规模差异留账，不冒称整逻辑卡完成。AI280须CONTROL独立验收后才派，复用其安全隔离入口与最新源码。
+核真实现有SessionManager内ShortCyclePhase2TransitionAdapter、ShortCycleSpace.viewTable(ShortCyclePhase0View)、ShortCyclePhase2HandoffPresenter、ShortCycleDataHandoff与InventoryManager读写面。原卡路径是设计名称，按当前声明位置最小实现，不创建同名并行类。Phase2Transition路由保持所有现有枚举整数/旧序列化行兼容，禁止用未经支持的YAML数字。复用FSM/Director作为唯一状态/显隐owner，按P2指导书§二矩阵把P1 Set和线索板收尾，Additive加载审定路径后消费recipeId/prepZoneContents并移交既有Inventory所有权；Phase2/Phase2SceneEntry只空壳/可观察状态，无分区/工具/美术内容。
+Teardown须卸载任务所有的P2、退订事件、解除旧owner、回P1恢复状态，重复进入/退出不叠订阅、不丢/复制库存；加载失败或中断能明确失败和恢复，不伪报已到P2。不让字符串场景名加载旧CookingProcess；由后续ENGINE配置新场景Buildindex2。原18探针逐字/语义保持，在后追加19/20交接和返回，禁止为让旧探针过而改断言。原23动作未含4个P2预留只报告扩全集申请，不补动作/CSV。MiniGames.Core契约存在只核不实现小游戏。
+只写允许C#、既有定向测试/runner和文档。禁止生成.unity/.prefab/.asset/.meta、改Build/ProjectSettings、真正Editor/CLI/MCP、导表、真实存档、生产数据。离线验证交接数据/ownership、矩阵路由、异步成功失败、Teardown/重复进出及现有相关行为；Unity真实加载/布局仍由ENGINE阶段②。交付REPORT/变更/日志/evidence/acceptance、ENGINE-HANDOFF精确新组件/字段/入口及未验项，不用离线通过宣称可玩。
+
+精确允许范围见AI281_SCOPE.json；领取及Checkpoint带Scope。验收合同inputs/acceptance/AI-000281.json，只能以真实证据填值。全部输出到.ai-workspace/outputs/DETACH-B13-20261019/AI-000281，每项合同必须能回到实际文件/日志。
+
+> SUPERVISED POLICY at 2026-10-20T00:44:04.4772564+08:00: {"taskId":"AI-000281","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户call_a8f7addab9304ac69c44dc698807bff9:0明确批准阶段①；仅源码离线或只读候选，原278阶段②生产gate不批准。","updatedAt":"2026-10-20T00:44:04.4150340+08:00","supervisionLevel":"full"}}
+## AI-000282 | [CODE] [SC] SEC-02 发布数据源与构建管线（源码/离线）
+
+- 序号：282
+- 提交时间：2026-10-20T00:44:04.6142919+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000280, AI-000274, AI-000269, AI-000279
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+AI-000282 / SEC-02 发布数据源与构建管线（源码/离线）
+
+用户已直接批准窗口②阶段①及算法调整，原话/ID/SHA见inputs/派发/DETACH-B13-20261019/窗口②阶段①用户批准.json（call_a8f7addab9304ac69c44dc698807bff9:0）。只批准源码/离线与只读布局候选，生产场景、导表/Publish、原生Compile/Play/Build和A+C仍未批准。原AI278 HumanGateAfter=true、gateApproved=false保持，后继卡根据本次独立阶段①批准安排，不能把父级机器解拒验当阶段②许可。不提交推送，不复原用户dirty，不写真实存档。先CORE、对应worker、项目两入口页首及本卡相关模块；AI279修正版只按相关条读取，避免重读全部历史。固定chat复用。每批写前正式Checkpoint；FEATURE首次不计重试，正式失败先Fail回传，CONTROL根据真实1/3/5根余量决定ApproveResume，不执行器自重启。Complete/Fail/Yield立即Prepare→一次真实app发送→Record给绑定CONTROL，只有CONTROL独立验收才推进依赖。输出完整文本目标1MB硬10MB，超1MB说明必要性；原失败/许可/验收证据保留。定向测试与改动相称，不重复全域Final/全仓哈希或创建一次性续行入口。原生/视觉/阶段②未验如实记录。
+
+原cards/SEC-02.md CODE阶段，L120，方案A不变；用户本次明确批准GCM改用已验SEC01 EWSB V2 AES256-CBC/PKCS7+HMACSHA256 Encrypt-then-MAC、HKDF分域。先核真实SEC01/AI274、AI277数值规范化、Catalog现有只读API与Generated数据结构。不能以改算法为名重建key provider/减认证/把嵌入key称不可提取。
+复用Catalog统一只读面，设计ICatalogSource/ScriptableObjectSource（Editor/Development）/EncryptedBlobSource（Release），任一时刻单一活动source，现有DTO/只读签名与程序集方向保持。catalog全量序列化含真实数据关系/GUID稳定Sprite注册表，解码在运行时不得依赖AssetDatabase。当前171.asset中170是SO，1是原生MissingSprite；详见AI278 generated-build-scope及AI279修正版。生产场景直引Catalog，因此只移Resources不够；构建过程用受控临时blob-backed catalog与BuildScene处理/依赖图隔离170SO，Editor/Dev和源资产保留，不永久改引用/删除搬迁源。测试真实受影响序列化关系和代码引用，不简单按路径宣称资产被排除。
+新增/扩充Editor/Build/CatalogBlobBuildProcessor.cs及必要同目录辅助，指纹源在Build前准备并编译，不能在Build回调生成C#触发reload；CK01_ENCRYPTED_DATA仅单次构建参数，非Development才选密文，恢复finally路径和异常残留保护明确。生产目标StreamingAssets/data/catalog.bin本阶段只列未来路径，离线样本写本卡输出/staging，不提前创建/发布。DevTools/DataTables既有runner仅增加被明确开关启用的blob导出/回读能力，默认生产导表流程不新增执行/副作用；CODE修工具，真正生产导表由DATA后续授权卡。禁止改xlsx/CSV非空值/Generated资产/ProjectSettings/Packages/场景/字体/真实存档。
+依既有Security/Persistence与数据序列化验证入口编译真实Unity引用并离线核全量字段/关系/三菜与反序列化一致、V2认证与指纹不匹配拒绝、SO与blob只读面等价、Dev/Editor策略及构建输入恢复逻辑；必要新fixture须作为既有runner的长期测试归属，不新造一次性入口。只对受影响边界跑一次最终组，不重跑全工程/旧数据发布。真实BuildReport/包内170SO排除、Player与篡改启动留ENGINE，不用离线模拟声称通过。Windows Mono为后续建议，不安装IL2CPP。
+交付REPORT/changed-files/evidence/acceptance、CODE→DATA和ENGINE-HANDOFF，明确下一阶段严格导出命令/staging、场景依赖处理、生产生成物清理和原生未验项。发现无法在已批准架构/范围内保证源兼容或SO排除，正式说明/Fail不偷换仅加密敏感表的否决B方案。
+
+精确允许范围见AI282_SCOPE.json；领取及Checkpoint带Scope。验收合同inputs/acceptance/AI-000282.json，只能以真实证据填值。全部输出到.ai-workspace/outputs/DETACH-B13-20261019/AI-000282，每项合同必须能回到实际文件/日志。
+
+> SUPERVISED POLICY at 2026-10-20T00:44:04.8572341+08:00: {"taskId":"AI-000282","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户call_a8f7addab9304ac69c44dc698807bff9:0明确批准阶段①；仅源码离线或只读候选，原278阶段②生产gate不批准。","updatedAt":"2026-10-20T00:44:04.7787735+08:00","supervisionLevel":"full"}}
+## AI-000283 | [ENGINE_CLI] [SC] D-T2 新节点精确布局候选（只读）
+
+- 序号：283
+- 提交时间：2026-10-20T00:44:05.0071469+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000280, AI-000279
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000283 / D-T2 新节点精确布局候选（只读）
+
+用户已直接批准窗口②阶段①及算法调整，原话/ID/SHA见inputs/派发/DETACH-B13-20261019/窗口②阶段①用户批准.json（call_a8f7addab9304ac69c44dc698807bff9:0）。只批准源码/离线与只读布局候选，生产场景、导表/Publish、原生Compile/Play/Build和A+C仍未批准。原AI278 HumanGateAfter=true、gateApproved=false保持，后继卡根据本次独立阶段①批准安排，不能把父级机器解拒验当阶段②许可。不提交推送，不复原用户dirty，不写真实存档。先CORE、对应worker、项目两入口页首及本卡相关模块；AI279修正版只按相关条读取，避免重读全部历史。固定chat复用。每批写前正式Checkpoint；FEATURE首次不计重试，正式失败先Fail回传，CONTROL根据真实1/3/5根余量决定ApproveResume，不执行器自重启。Complete/Fail/Yield立即Prepare→一次真实app发送→Record给绑定CONTROL，只有CONTROL独立验收才推进依赖。输出完整文本目标1MB硬10MB，超1MB说明必要性；原失败/许可/验收证据保留。定向测试与改动相称，不重复全域Final/全仓哈希或创建一次性续行入口。原生/视觉/阶段②未验如实记录。
+
+本卡属于用户批准阶段①，M80，仅磁盘只读与本卡输出。AI280已独立验收后才能派，核其ENGINE-HANDOFF最新文字/隔离接口；不重新审读所有旧卡。只读AI279完整修正版相关字段、实际scene/prefab/素材元数据、现行原设计图/指导书，现有Unity6用户布局为基线。Unity CLI/MCP调用0；不做身份/Console心跳，不编辑资源，不截图真实Editor，不安装/运行旧审计脚本。
+为真正新增的9个收藏星标（8卡与CurrentRecipeTab）、便签04/05、步骤Modal的10行/描述及必要图标，输出逐对象父级/候选名称/局部坐标/尺寸/间隔/排序/复用字体素材GUID-fileID/依据。用既有VerticalLayout契约推导新行布局，不改旧容器/已保存Transform/_TUNE；空间不足时明确列冲突/需用户改变的边界，不能暗改锚点或声称布局必然可用。图标容量按当前真实步骤上限/数据行和未来边界说明，不机械盲建50个。旧16标签、4食材卡、3便签、卡02选择绑定均复用，已有标签不再新增。新几何仅候选，不是假造已存在组件ID。
+通用便签先核同步素材/工程已有资产身份与原设计适用性；可明确复用时列真实GUID与为何合适，不能确定时列可审选项/精确缺口，不能下载/导入/生成或用MissingSprite静默填充。新增星标用已核eea87b3c50681d34aadb55f258a7396e/21300000候选。字体/材料不改，不以查看图片触发写入或图板生成。
+生成一份用户可读布局候选表/简图（仅报告内手工坐标示意，不冒充Editor截图）及机器对象清单，区分确定复用/候选新建/待设计，估算实际新节点组件数量、验证与回退。列phase2精确场景路径、每类操作和批准后ENGINE步骤、需要CODE/设计前置。若无法在保持旧Transform前提内给出可用候选，完整报告原因，不擅自生产调整。无原生验收结论/不代视觉批准。完整文本包≤1MB目标硬10MB，无新TK/测试/生产脚本。
+本卡Complete只意味着候选材料就绪；HumanGateAfter=true仍未批准，CONTROL审阅后请用户集中批准阶段②，不能执行器自行创建后继。
+
+精确允许范围见AI283_SCOPE.json；领取及Checkpoint带Scope。验收合同inputs/acceptance/AI-000283.json，只能以真实证据填值。全部输出到.ai-workspace/outputs/DETACH-B13-20261019/AI-000283，每项合同必须能回到实际文件/日志。
+
+> SUPERVISED POLICY at 2026-10-20T00:44:05.2097889+08:00: {"taskId":"AI-000283","policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户call_a8f7addab9304ac69c44dc698807bff9:0明确批准阶段①；仅源码离线或只读候选，原278阶段②生产gate不批准。","updatedAt":"2026-10-20T00:44:05.1611311+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-20T00:44:05.3999466+08:00: {"reason":"窗口②阶段①及算法调整获用户直接批准；4张明确阶段卡，保留278与283后续人工门，不扩大至生产场景/导表/Build。","taskIds":["AI-000280","AI-000281","AI-000282","AI-000283"]}
+
+> Verification rejected for AI-000281 at 2026-10-20T01:42:42.4885082+08:00: decision=REJECTED; reason=CONTROL实际复现：原18探针清理到None并清空菜谱，新增19/20未重建会话前置，零次load即双失败；39离线用例没有覆盖串联探针。
+## AI-000284 | [CODE] [SC] P2S追加探针在旧18清理后的会话前置修复
+
+- 序号：284
+- 提交时间：2026-10-20T01:43:44.2884221+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI284：AI281同根P2S追加19/20探针前置修复，固定CODE，REPAIR/M80，稳定key P2S_PROBE_POST_TEARDOWN_PREREQUISITE，cycle AI281:CODE284:retry1。原281 SUCCEEDED但CONTROL正式拒验，原两次内部失败/成功日志/结果和报告均保留，不对281重新Poll/ApproveResume。用户阶段①源码/离线批准见窗口②阶段①用户批准.json；SUPERVISED默认5同根周期来源inputs/续行许可分模式_用户长期授权_20261019.json，POLICY不是一次新的人类批准。初次实际领取计本根第1修复周期，执行器不自重启。
+先CORE、CODE worker与两项目入口页首及本卡模块；读outputs/control/DETACH-B13-20261019/independent-review-281.json和AI281-probe-prerequisite-repro.json。原18末尾三层ESC至None，Session.HandleStateChanged调用RecipeBook.Clear；新增RunPhase2HandoffChecks要求非空CurrentRecipe并直接StartCooking，未BeginSession/选择。CONTROL用真实交付源码+原Harness执行FSM.Teardown，再执行新增helper，隔离/adapter/inventory都具备时仍零load、两条失败。39新用例只验证adapter，未验证实际新增协程和18尾串联。
+只修新增19/20自身的前置和必要清理，保留原1..18整个源字节/调用顺序/断言，不能删旧cleanup或移调用到旧18中间，不能跳过失败/硬编码PASS。从实际旧18结束的None/空RecipeBook建立会话、使用真实绑定及当前已解锁配置菜谱、经过既有API/Router并等待实际状态/镜头/层前置，再开始19/20。不得以反射直接设置生产状态或绕过原数据/隔离契约。进入失败明确报告并仅清理本段所有的临时状态；不能把不执行当成功。验证选菜不擅改生产CSV/解锁存档。
+既有ShortCyclePhase2TransitionTests中增加针对实际RunPhase2HandoffChecks的定向离线回归：必须从None/菜谱被清空的真实18尾状态开始，用既有隔离Session与受控loader/fixture驱动实际协程（不是复制被测实现），证明19交接与20返回真的发生、原18源字节保留、数量守恒/所有权释放；保留未配置/不满足条件的明确失败反例及既有相关39。可最小复用runner现有CompileOnly入口；不新夹具文件/独立runner/续行入口。只必要的受影响编译/行为验证；不重跑全域Final/全仓哈希或旧数字矩阵。
+精确Scope见AI284_SCOPE.json；领取/每批Checkpoint带Scope。禁止修改原281输出、Session/adapter/库存生产逻辑、Unity资源/meta/Build/ProjectSettings/数据/字体/真实存档，禁止Unity Editor/CLI/MCP/Play/Build/导表/Publish。独立API生命周期与真实场景仍未验。若窄范围确实不足先证据回报CONTROL，不自行扩权。
+交付本卡REPORT、changed-files/before快照、原18保留证明、实际新增协程定向日志/失败史、evidence/acceptance及简短ENGINE补充；原281文档不覆盖，只在项目入口更正已拒验/本次修复与原生待验状态，不提升完整核验日期。合同inputs/acceptance/AI-000284.json。包目标1MB硬10MB，保留完整文本，不归档未结任务。
+Complete/Fail/Yield即Prepare→一次真实Send绑定控制台01a13ef5-eda9-7882-b1c9-eca47a6470d9→Record，UNKNOWN/NO_RESEND/拒绝不重发。CONTROL独立验收并以原拒验与双方result精确SHA正式ResolveControlRejection后才能释放281。禁止自行派后继，阶段②/A+C保持，无提交推送。
+
+> SUPERVISED POLICY at 2026-10-20T01:44:03.1378881+08:00: {"policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原281 CONTROL拒验的同根窄范围源码/既有离线修复，阶段②门不变。","updatedAt":"2026-10-20T01:44:03.0508380+08:00","supervisionLevel":"full"},"taskId":"AI-000284"}
+
+> SUPERVISED EXTEND at 2026-10-20T01:44:03.4059373+08:00: {"reason":"按已批准阶段①及SUPERVISED5政策修复281追加探针真实前置缺陷，保留同根历史。","taskIds":["AI-000284"]}
+
+> Dependency correction for AI-000282 at 2026-10-20T01:44:03.6446852+08:00: AI-000280, AI-000274, AI-000269, AI-000279, AI-000281
+
+> Dependency correction for AI-000283 at 2026-10-20T01:44:03.8092956+08:00: AI-000280, AI-000279, AI-000281
+> Control rejection resolved AI-000281 : {"at":"2026-10-20T02:05:50.1892312+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"P2S_PROBE_POST_TEARDOWN_PREREQUISITE","repairTaskId":"AI-000284","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","userDecision":"批准本次修复和续行，另外，对相关的续行许可次数限制进行放宽：手动模式时，每次需要人工续行不变，上限保持为1；自动模式时，允许3次的重复修复尝试后，再进行人工询问和额外次数的批准；监管模式下则默认允许5次自主重复尝试","verification":"CONTROL独立6合同/14复核及实际6协程场景13断言通过；原18字节一致，五反例明确失败，已提交prep不丢失。仅解除机器拒验，不代窗口②/A+C。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\DETACH-B13-20261019\\AI281-control-rejection-resolution.json","evidenceSha256":"5D5F5DD64C566BD9DD6A3607350E78FB78005CFEAB8930CE36C190FBFEFD16CE","rejectedResultSha256":"38B6FDE1F2420808C86B20EA1974331A8B16B3515910DD16C10E9C4AAC972293","repairResultSha256":"30FCFCAC4793BB7373A08C7567F4C49C2250801A82458DE071E105D76BF8B21B"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T02:57:13.1807944+08:00: {"remaining":4,"used":0,"authorizationSource":"POLICY","cycles":["AI282:retry1"],"reserved":1,"scope":{"paths":[".ai-workspace/ENGINEERING_CONVENTIONS.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000282",".ai-workspace/toolkit/DAT.md",".ai-workspace/toolkit/SEC.md","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Tools/Persistence","Assets/Scripts/Tools/Security","CODEBASE_MAP.md","DevTools/DataTables","DevTools/Persistence","DevTools/Security"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-edit"]},"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","taskId":"AI-000282","rootTaskId":"AI-000282","grantId":"1b5b11db15ff4c9b82170b59e821b677","verification":"fresh app idle revision181 saved code-idle-before-282-resume1.json; independent failure review8 passed, exact BOM native stdout parsing reproduced without business rerun; 0/5 used; original phase1 scope only"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T03:05:51.3363140+08:00: {"verification":"app idle revision182; independent failure8 checks and exact PSParameterizedProperty/monoPath.Chars synthetic replay; source unedited, no business rerun; root1/5; original phase1 scope only","cycles":["AI282:retry2"],"used":1,"scope":{"paths":[".ai-workspace/ENGINEERING_CONVENTIONS.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000282",".ai-workspace/toolkit/DAT.md",".ai-workspace/toolkit/SEC.md","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Tools/Persistence","Assets/Scripts/Tools/Security","CODEBASE_MAP.md","DevTools/DataTables","DevTools/Persistence","DevTools/Security"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-edit"]},"reserved":1,"authorizationSource":"POLICY","remaining":3,"grantId":"f12da61a1caf47eb99119de25070ef2b","taskId":"AI-000282","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","rootTaskId":"AI-000282"}
+
+> Verification rejected for AI-000282 at 2026-10-20T03:20:08.2341135+08:00: decision=REJECTED; reason=CONTROL source review: build Cleanup blanket-skips unknown .meta in both file ownership and nonempty-directory guards, hands directory with foreign metadata to DeleteAsset; companion meta hashes absent. Data/crypto/report direct12 passed but cleanup contract fails.
+## AI-000285 | [CODE] [SEC02] SEC02 构建清理归属修复
+
+- 序号：285
+- 提交时间：2026-10-20T03:21:06.4000188+08:00
+- 模块 ID：SEC02
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000285 / AI282构建清理归属修复（同根REPAIR，源码/隔离离线）
+用户阶段①授权保持；POLICY来源call_37410ba043344e9f81b4ce3ef3472a18:0，父/根AI-000282，cycle AI282:CODE285:retry3，M80。原282已SUCCEEDED但被CONTROL正式REJECTED，不能Poll/ApproveResume重跑282；本卡成功后仍需CONTROL独立验收+ResolveControlRejection绑定精确结果。根已真实消费2/5，本卡首次claim消耗第3/5，非新增人批、不重置key或旧两失败。
+
+必读CONTROL independent-review-282.json及AI282-CatalogBlobBuildProcessor-reviewed.txt（outputs/control/DETACH-B13-20261019），原AI282_SCOPE对应本卡更小scope、AI282 attempt3报告仅相关构建清理部分。数据/认证/三菜/报表12项CONTROL直接验证通过；7合同自报匹配，拒验仅清理归属边界。当前Cleanup行153把所有.meta跳过unknown guard，154把仅含.meta目录视为空并交DeleteAsset；Track只记主文件SHA，元数据漂移也未保护。未知foreign.asset.meta可落入删除路径是实际源码判断，不声称已实际发生Unity删除。
+
+在原Build实现最小修复：每个创建的资产/文件/目录及其真正由本次创建的伴随.meta都有明确归属与验证依据，元数据不能凭后缀放行。先完整只读预检所有将受删除影响的路径与内容（含folder.meta、orphan.meta、未知子目录/文件、修改过的已知meta、链接/越界），发现未知/漂移就保留并报具体项，不能先删一半再失败。最终删除目录必须真正空，不能过滤.meta假装空；既有目录/未知目录不当成owned。正常Cleanup与RecoverOwnedInputs共用同一实际校验，Journal需保留真实归属、预期字节/哈希（不信任泛后缀）；旧journal缺证据应明确拒绝/保留，不猜测升级或覆盖。不要把此修复扩为场景架构/加密/数据改写。
+
+可把纯归属/删除计划计算放入现有CatalogBuildPlan以让真实Cleanup及Recovery调用，既有Fixtures/CatalogBlobTests.cs加入有意义定向用例，必须测实际共用代码，不复制实现自证。覆盖：完整owned资产+meta/目录可清理；纯未知orphan.meta、已知.meta漂移、未知普通文件/子目录、folder.meta漂移、缺少journal归属/旧journal、路径逃逸/重定向均在首次删除前拒绝；失败保留旧报告/未知字节。目录可为空或已移除的幂等边界须明确，不能允许未知meta丢失。Fixture仅本卡输出内合成文件；若删合成文件，先核绝对目标仍在本卡目录，不递归链接目标。不得真实Unity DeleteAsset/Recover/Build/Refresh。
+
+按2个实际源码+既有fixture/runner定向验证，真实Unity引用API表面只编译受影响面；可用既有Initialize-CatalogHost/现有编译入口，不新建专属续行脚本/夹具，不重跑已过Catalog234双组/Security305/306或全域Final/全仓SHA。仅本修改影响项与必要编译、原guard不回退。输出6合同与真实日志/改动及before证据，原AI282包/所有失败/最后成功结果SHA保持，不覆盖。复杂度M80，预算未知app轮次记unknown。
+
+范围见AI285_SCOPE.json，合同inputs/acceptance/AI-000285.json。原生阶段②/场景/BuildReport/Player/170SO实际包内排除/A+C仍未批准；本卡不能宣称原生验证。禁止Unity/CLI/MCP/Play/Build、生产meta/场景/Generated/工作簿CSV/真实存档/导表Publish/提交推送。每批写前正式Checkpoint；本卡失败先正式结算回传，再由CONTROL用余量经ApproveResume原285续行；不能新卡/换key自行重启。成功Complete后立即Prepare→一次实际Send CONTROL→Record，停止不接后继。CODEBASE_MAP/项目基线和原工具说明仅维护必要完成度/限制，无新TK/新架构；完整核验日期不提升。整包目标1MB硬10MB，旧282证据引用不复制。
+
+本卡关闭条件：实际guard正确且定向离线通过；CONTROL再核原282受影响合同后以ResolveControlRejection解除，AI283依然由CONTROL按全scope/锁派发。
+
+> SUPERVISED POLICY at 2026-10-20T03:21:31.8033129+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原282控制拒验同根POLICY修复；只源码/隔离离线，原阶段②人工门不变。","updatedAt":"2026-10-20T03:21:31.7143884+08:00","supervisionLevel":"full"},"taskId":"AI-000285"}
+
+> SUPERVISED EXTEND at 2026-10-20T03:21:32.0797801+08:00: {"reason":"用户已批阶段①原范围同根清理归属修复，保留282拒验与真实重试消费","taskIds":["AI-000285"]}
+
+> Dependency correction for AI-000283 at 2026-10-20T03:21:32.3114360+08:00: AI-000280, AI-000279, AI-000281, AI-000282
+> Control rejection resolved AI-000282 : {"at":"2026-10-20T03:41:15.2305150+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"SEC02-CATALOG-SOURCE-BUILD-OFFLINE","repairTaskId":"AI-000285","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","userDecision":"CONTROL independent machine review under approved stage1; not human/native approval.","verification":"6 contracts/15 independent checks; actual shared guard42 checks,18 negatives before first delete,6 positive pairs;9 changes/18 snapshots/12 original evidence matched. No native operations; stage2 gate remains.","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\DETACH-B13-20261019\\AI282-control-rejection-resolution.json","evidenceSha256":"D9A7A3C49D3C4D27B9E57EE23ED0BB88A0BAA1ADA07D5D4634B77C2616024E9B","rejectedResultSha256":"7872C9D292150ED9120BFCFFE0D6D22B68EDFBE527DE059F3EF4EB658E74EA1A","repairResultSha256":"F7A6FB6D76065E17C74F07706A9F4EC3E5F133D1C170183531CBBA75B012FEAE"}
+
+> Verification rejected for AI-000283 at 2026-10-20T04:04:26.2092287+08:00: decision=REJECTED; reason=Actual step_qt_04 uses prd_fried_egg third ingredient and tool_pot first tool concurrently. Candidate x=4.95 and5.45; actual1x1/PPU100 center pivot sprites times scale60 produce widths0.6 each. Bounds[4.65,5.25] and[5.15,5.75] overlap0.1x0.6 with same local y/z/order203. StepDetailRowPiece.Fill does not rescale/reposition. Seven conflict entries omit this deterministic collision; clearances only check outer Modal bounds.
+## AI-000286 | [ENGINE_CLI] [D-T2] D-T2 候选图标间隙修复
+
+- 序号：286
+- 提交时间：2026-10-20T04:05:30.5191276+08:00
+- 模块 ID：D-T2
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000286 / D-T2候选图标间隙修复（同根AI283 REPAIR/POLICY，固定ENGINE_CLI，M80）
+当前用户批准仍仅窗口②阶段①源码/离线与磁盘只读候选（call_a8f7addab9304ac69c44dc698807bff9:0）；本卡为原AI283独立拒验后的必要报告修复。长期SUPERVISED5来源call_37410ba043344e9f81b4ce3ef3472a18:0，cycle AI283:ENGINE286:retry1；首次FEATURE不计，本修复实际claim消耗第1/5，剩4，不是新增人批。原283已成功但CONTROL REJECTED，不能重Poll/ApproveResume283；只本卡输出，原283所有文件/正式结果不改。
+
+先CORE/本车道相关节及CONTROL outputs/control/DETACH-B13-20261019/{independent-review-283.json,AI283-independent-candidate-check.json}；只按相关条复用原283 layout-candidates.json/layout-review.md/clearance-source.json。已核sceneSHA、46Transform字段、5Sprite元数据、18实际数据引用、10scriptGUID、49节点/124新组件+12补挂均匹配，不重跑旧16项全组或重新扫描全工程。
+
+具体拒验：原候选step-row-04-ingredients-2 x4.95、step-row-04-tools-0 x5.45，实际各Sprite1x1/PPU100、中心pivot，scale60，故各0.6宽高，范围[4.65,5.25]和[5.15,5.75]相交0.1x0.6。真实清汤面step_qt_04同时用prd_fried_egg第三食材和tool_pot第一工具；StepDetailRowPiece.Fill不自动缩放/挪位。两节点同y/z/order203，原7冲突未记此项，外包围框检查不能证明内部间隙。是磁盘计算反例，未声称真实Editor已渲染重叠。
+
+在原49节点候选上最小修正新增图标位置/间距（例如工具起点右移0.2为5.65；统一工具列若选此方案则其余相应列同步，可自行论证合理更小修订），不改既有Transform/_TUNE、Description/Backdrop/Close、49节点/13图标容量或生产数据。用原真Sprite rect/PPU/pivot和实际每条菜谱同行同时显示列表，复核受影响图标之间正间隙及内容外界；列修改前/后坐标、实际最小间隙与边距和哪些仅保守矩形/仍待视觉。不新增脚本/测试fixture、不建新TK、不执行原collector。只小范围数值/文档diff核验，至多必要只读素材观察，无全域Final/全仓哈希。
+
+输出本卡独立完整修正版机器图、与之逐项相符的用户表/手工示意、受影响clearance说明及4合同；旧17件原283包只引用不改，其SHA见CONTROL既有artifactHashes，可定向证实不变。保留12MissingSprite、番茄/白菜章鱼图、placeholder scale60/混槽极小、便签排序/角标越纸边及未来容量等未决项，不静默美化/改非空值。修正根入口旧句时只说明当前CONTROL状态，不越scope改根文档。SOURCE/APIs/生产资源均只读。
+
+严格Unity/CLI/MCP/身份心跳/Console/Refresh/Compile/Play/Build/导表/Publish/真实存档调用0；ENGINE_CLI只是固定队列身份，不因此使用引擎。输出目标1MB硬10MB；本卡报告用真实工具/额度unknown，不能把provider样本当账单。每写入批次正式Checkpoint带本卡Scope。
+
+完整完成4合同后Complete并立即Prepare→一次真实Send绑定CONTROL→Record，停止不领后继。正式失败先结算回传，CONTROL按真实余量经唯一ApproveResume原286组织续行，不执行器自行重启/换key/chat/card清零。CONTROL独立通过后才以精确拒验/双方result SHA ResolveControlRejection283；原HumanGateAfter和阶段②/A+C仍未批，不进入生产、不提交推送。精确范围AI286_SCOPE.json，合同inputs/acceptance/AI-000286.json。
+
+> SUPERVISED POLICY at 2026-10-20T04:05:30.9719375+08:00: {"policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Stage1 authorized same-root disk-only candidate repair; original283 human gate remains, no native operations.","updatedAt":"2026-10-20T04:05:30.9114069+08:00","supervisionLevel":"full"},"taskId":"AI-000286"}
+
+> SUPERVISED EXTEND at 2026-10-20T04:05:31.0812448+08:00: {"reason":"Original283 CONTROL rejection DT2_CANDIDATE_ICON_CLEARANCE; authorized phase1 same-root POLICY repair cycle1.","taskIds":["AI-000286"]}
+> Control rejection resolved AI-000283 : {"at":"2026-10-20T04:14:07.6593109+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"DT2_CANDIDATE_ICON_CLEARANCE","repairTaskId":"AI-000286","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","userDecision":"CONTROL independent machine acceptance under approved phase1; no human layout/window approval.","verification":"Four contracts/ten bounded independent checks. Exact7 x positions;11 actual steps/22 simultaneous pairs min0.1;outer8.75/margin2.324/cell0.45. Original17 artifacts and scene unchanged. No native/visual/phase2 approval.","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\DETACH-B13-20261019\\AI283-control-rejection-resolution.json","evidenceSha256":"B7D4E63E888658D5A0D98E7AB4D5F302D2C78CA850F58923231668251466532C","rejectedResultSha256":"8842B4A6EE29A2D56A1EB6655E6EF06372650BF0ED5B6320513273D6A6B76891","repairResultSha256":"ECD7ECBB8BA390A43DFC6BDB0E5E9095E18B48159DDD04AAD94EB882CD1595E1"}
+## AI-000287 | [CODE] [SC] 窗口②A 显式Editor/Player存档隔离宿主（源码）
+
+- 序号：287
+- 提交时间：2026-10-20T14:00:16.9852313+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000280, AI-000281, AI-000284, AI-000282, AI-000285, AI-000278, AI-000283, AI-000286
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000287 / 窗口②A 显式Editor/Player存档隔离宿主（源码）
+
+用户已批准窗口②阶段②A及A通过后B。唯一原件 inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json，A=call_86b591ca373e4267a15ff68639d064c1:0，B=:1；审定范围/逐对象表/SHA索引见 outputs/control/DETACH-B13-20261019/窗口②阶段②控制审查单.md（按本卡节读取）。固定chat/同session/共享unity-project互斥。先CORE、对应worker、两项目入口页首/本模块；只凭本卡票据领取一次，带本卡Scope，每批写前Checkpoint。首次FEATURE不计重试；正式失败结算回传，CONTROL再按同根SUPERVISED5/实际余量经ApproveResume，执行器不自行重启或换工具。120软/240临时硬限保持，unknown额度不猜。
+Complete/Fail/Yield立即Prepare→一次真实app Send→Record到绑定CONTROL；只有CONTROL独立验收才派后继。平台拒绝/未知写入/用户stop保持，非空配表、真实用户存档、IL2CPP安装、批次2/波次C、提交推送均不在范围。完整文本报告目标1MB/硬10MB，超1MB说明；失败/许可/history保留，不以拆包绕限。A+C视觉/USER-U5仍待人工，不把执行批准作产品验收。旧已过业务不重跑；定向验证与改动相称，不全仓/纹理JSON/内存保护。
+
+
+本卡只实现审查单§三的具体宿主/启动与释放，不执行Unity、CLI/MCP、场景/原生Compile/Play/Build或生产数据。AI280 API已验，读其ENGINE-HANDOFF.json（39新增断言是准确数）、当前ShortCycleSaveIsolation/Session Awake真实代码；原AI284真实追加19/20及原1～18保持。不要重做隔离API/codec/key/两保存点/本地化。
+优先复用既有长期验证体系，允许新增Debug/ShortCycleValidationBootstrap.cs与Editor/ProjectValidation/ShortCycleValidationLauncher.cs，必要时仅接既有ShortCycleAutomatedProbe.cs启动清理。SceneValidationSession旧入口含历史字体SHA/备份，不直接复用其旧MIG验证路径或重启旧工具；保留旧类，采用本次明确入口。现Editor.ProjectValidation已引用ShortCycle/Toolkit，不新增asmdef架构。新源码无需手写meta。
+Editor和受控Release/Dev Player都需明确启用且默认关闭；核真实Unity6000.3 API。ForTarget在BeforeSceneLoad精确唯一未Awake目标，或持久空宿主ForScene→同步加载；sceneLoaded太晚。关闭Domain/Scene Reload时不能复用已Awake对象；不靠ExecutionOrder猜安全。目标固定Assets/Scenes/Cooking/ShortCycle_P0P1.unity及Managers/SessionManager，绝对隔离根只在获批任务outputs/DETACH-B13-20261019/AI-xxxxxx/isolated-saves/<run>/，绑定本次任务/运行标识。拒绝路径越界、根目录、重定向与目标错配，不枚举真实persistentDataPath。无显式启用时不改变生产默认行为；显式启用但参数错误、目标错误/重复、晚安装、取消/异常必须阻断生产fallback，不能只在RuntimeInitialize抛异常后让Awake继续使用默认factory。原API是复用边界，若做不到则真实报告缺口，不暗改API/生产逻辑。
+租约覆盖完整生命周期，先目标销毁/卸载再释放；正常、异常、取消、退出Play、域重载/禁用重载保持可解释且无泄漏。启动/关闭须可由ENGINE确切操作，交付可核目标身份、启用状态、isolated RootPath、写入归属及未调用默认factory的证据路径。Player需显式受控入口/参数及失败关闭行为，不能伪造Unity内置-persistentDataPath标志或持久改全局Define/环境；验收开关不能影响普通发行默认。
+离线复用DevTools/ShortCycle的既有runner/stubs/IsolationAndTextTests，按本次宿主分支做真实行为测试并编译实际UnityEditor/UnityEngine API表面；测试调用交付宿主，不能复制实现假测。覆盖未启用默认不变、正确早安装、晚/错/重复/无效root拒绝且不回生产、生命周期释放、Editor/Player启用入口与实际1～20探针驱动兼容。离线不代native。只受影响范围Final，原Security/数字矩阵不重跑。交付ENGINE-HANDOFF.json：精确API/menu/CLI调用参数、Editor/Player安装顺序、退场/恢复/异常、后续每张任务独立目录、未验原生项。更新实际入口说明，复用TK-DAT-09与既有ShortCycle验证族，不新建平行工具。
+
+
+本卡M，FEATURE。输出只在.ai-workspace/outputs/DETACH-B13-20261019/AI-000287。精确Scope=AI287_SCOPE.json，合同inputs/acceptance/AI-000287.json，真实evidence.json逐项可追溯。实际耗时/原始日志/变更路径及前后状态写报告；CODE不生成meta，ENGINE经Editor生成并记录归属。
+
+> SUPERVISED POLICY at 2026-10-20T14:00:17.5300944+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户阶段②A/B明确批准，B依赖CONTROL实际A验收；本卡只执行审定阶段。AI292保留最终A+C人工门，旧错误与消费不变。","updatedAt":"2026-10-20T14:00:17.4575533+08:00","supervisionLevel":"full"},"taskId":"AI-000287"}
+## AI-000288 | [ENGINE_CLI] [SC] D-T2 原生接线与隔离前置（联合探针后置P2S）
+
+- 序号：288
+- 提交时间：2026-10-20T14:00:17.6295828+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000287, AI-000279, AI-000280, AI-000282, AI-000285, AI-000283, AI-000286
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000288 / D-T2 原生接线与隔离前置（联合探针后置P2S）
+
+用户已批准窗口②阶段②A及A通过后B。唯一原件 inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json，A=call_86b591ca373e4267a15ff68639d064c1:0，B=:1；审定范围/逐对象表/SHA索引见 outputs/control/DETACH-B13-20261019/窗口②阶段②控制审查单.md（按本卡节读取）。固定chat/同session/共享unity-project互斥。先CORE、对应worker、两项目入口页首/本模块；只凭本卡票据领取一次，带本卡Scope，每批写前Checkpoint。首次FEATURE不计重试；正式失败结算回传，CONTROL再按同根SUPERVISED5/实际余量经ApproveResume，执行器不自行重启或换工具。120软/240临时硬限保持，unknown额度不猜。
+Complete/Fail/Yield立即Prepare→一次真实app Send→Record到绑定CONTROL；只有CONTROL独立验收才派后继。平台拒绝/未知写入/用户stop保持，非空配表、真实用户存档、IL2CPP安装、批次2/波次C、提交推送均不在范围。完整文本报告目标1MB/硬10MB，超1MB说明；失败/许可/history保留，不以拆包绕限。A+C视觉/USER-U5仍待人工，不把执行批准作产品验收。旧已过业务不重跑；定向验证与改动相称，不全仓/纹理JSON/内存保护。
+
+
+仅在CONTROL独立通过287后派发，先读287 ENGINE-HANDOFF及审查单§二/三/六。本卡负责D-T2真实接线与隔离原生前置；完整原1～20探针统一由后继289在P2空壳建好后执行，避免先后重复整组。本卡成功不独立宣称原D-T2完整运行验收。
+先既有官方CLI核项目/版本/实例与磁盘/Editor未保存状态；正常权限升级，不换MCP重试。只用现行CLI/已登记验证入口，经Editor API修改保存，不手改YAML。保护用户dirty；先保存本次允许范围的恢复点到DevTools/Scenes/backup/D-T2_pre/AI-000288，不覆盖旧备份。原本已改变的源代码/资产不恢复。
+按AI279 D-T2-approval-bindings.json + AI286 layout-candidates.json/layout-review.md接线，原scene SHA以审查单及当前实况核漂移；复用16标签LocalizedText/4食材卡/3便签/卡02绑定1859361184，49新GO/124新节点组件+12补挂总136。每个新对象实际fileID与候选映射留档，旧Transform/_TUNE/排序/字体及Prefab源不变，新节点按已批几何/Sorting。七工具x5.65/6.35修正版，不再用原283。新TMP先fontSharedMaterial再font，现Static/材质资产不改；9空/5MissingSprite和12/18缺图/番茄白菜章鱼图保持真实，零非空配表修改/导入。只引用现有素材。
+允许原生Refresh/Compile已独立通过阶段①及287源码；编译前列本次确需生成的.cs.meta（由Editor生成，附属已批准源码），不是任意源码/资源改写许可。若发现范围外未验证源码、用户不明变更或未知资源写入先保全反馈。以287宿主完成真实pre-Awake隔离前置，显式本卡isolated-saves根且默认factory不被调用，核正常关闭/取消/目标错配原生边界；任何Play必须先满足该入口，真实用户目录不可访问。涉及预期反例的拒绝日志与普通Console错误分开，不假零错误。
+本卡记录实际内容/引用、旧布局字段diff0、新增表匹配与Console；提供P0_Catalog/Browse/StepDetail可见内容截图或明确将需要P2后的联合运行证据后置289。不重跑历史Unity2022审计工具或全仓哈希，不能用旧v2报告冒充当前。临时验收组件按G26记录/移除，最后场景留审定已保存成果、恢复自身临时Play状态。若新本地化缺字交DATA，不自改字体。交付NATIVE-ISOLATION.json、binding-map、REPORT/evidence、给289的精确当前状态与未验项。A级最终放行需288与289共同CONTROL独立通过。
+
+
+本卡M，FEATURE。输出只在.ai-workspace/outputs/DETACH-B13-20261019/AI-000288。精确Scope=AI288_SCOPE.json，合同inputs/acceptance/AI-000288.json，真实evidence.json逐项可追溯。实际耗时/原始日志/变更路径及前后状态写报告；CODE不生成meta，ENGINE经Editor生成并记录归属。
+
+> SUPERVISED POLICY at 2026-10-20T14:00:17.8435102+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户阶段②A/B明确批准，B依赖CONTROL实际A验收；本卡只执行审定阶段。AI292保留最终A+C人工门，旧错误与消费不变。","updatedAt":"2026-10-20T14:00:17.7783158+08:00","supervisionLevel":"full"},"taskId":"AI-000288"}
+## AI-000289 | [ENGINE_CLI] [SC] P2S 空壳与A阶段原生联合验证
+
+- 序号：289
+- 提交时间：2026-10-20T14:00:17.9446827+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000288, AI-000287, AI-000281, AI-000284, AI-000273
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000289 / P2S 空壳与A阶段原生联合验证
+
+用户已批准窗口②阶段②A及A通过后B。唯一原件 inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json，A=call_86b591ca373e4267a15ff68639d064c1:0，B=:1；审定范围/逐对象表/SHA索引见 outputs/control/DETACH-B13-20261019/窗口②阶段②控制审查单.md（按本卡节读取）。固定chat/同session/共享unity-project互斥。先CORE、对应worker、两项目入口页首/本模块；只凭本卡票据领取一次，带本卡Scope，每批写前Checkpoint。首次FEATURE不计重试；正式失败结算回传，CONTROL再按同根SUPERVISED5/实际余量经ApproveResume，执行器不自行重启或换工具。120软/240临时硬限保持，unknown额度不猜。
+Complete/Fail/Yield立即Prepare→一次真实app Send→Record到绑定CONTROL；只有CONTROL独立验收才派后继。平台拒绝/未知写入/用户stop保持，非空配表、真实用户存档、IL2CPP安装、批次2/波次C、提交推送均不在范围。完整文本报告目标1MB/硬10MB，超1MB说明；失败/许可/history保留，不以拆包绕限。A+C视觉/USER-U5仍待人工，不把执行批准作产品验收。旧已过业务不重跑；定向验证与改动相称，不全仓/纹理JSON/内存保护。
+
+
+CONTROL独立通过288后才派发；沿用用户原P2S M80（本卡涉及已有/新增场景，较GOV默认L差异据原卡保留）。先读审查单§三/四/六、P2指导书v0.1.1§二/三、281/284交付及287/288隔离证据。每次新的运行用本卡显式隔离目录，不沿用已释放租约，不访问真实用户存档。
+Editor API新建Assets/Scenes/ShortCycle_P2.unity空壳及meta，Build保留0/1仅追加2；P0P1 viewTable原行/枚举不变只增Phase2Transition=5，收尾P1所有Set/线索板。严格按指导书空Managers/Group/Cam_P2树，现Phase2SceneEntry/Phase2=3和InventoryManager单一所有权；无波次C内容/四未来P2动作/厨具分区美术。未来S0/S1/S2a/S2b矩阵超实际代码表达能力时如实列未落地，不伪造新enum或把空壳当交互完成。
+真实原1～20探针一次联合运行：原1～18保持，按284由None/空RecipeBook重建会话/选菜/镜头层后实际19/20；核Additive加载/consume/unload各目标、prep/recipe守恒、隐藏、返回P1与owner释放。D-T2实际收藏/换菜/LocalizedText/步骤按原探针核实，12MissingSprite等既有缺口原样报告，不声称三菜完整可玩。交付P0_Catalog/P0_Browse/P0_StepDetail三张实际截图与A+C四列表，补齐288后置运行证据；没有实测就是待验不能填true。正常Console新增Error0，预期拒绝反例单列。自己的临时状态按G26清理，未知dirty不覆盖，保留已审接线/空壳。
+A最终CONTROL独立审288+289后写A-stage-native-acceptance.json，确认前290/B不得派发。A+C视觉仍待用户，但本次B条件是A隔离/场景机器验证真实通过，不把机器证据填作A+C。最终人工门统一保留于292，不全局Defer。报告标明完整D-T2/P2原生达成与残余产品待办。
+
+
+本卡M，FEATURE。输出只在.ai-workspace/outputs/DETACH-B13-20261019/AI-000289。精确Scope=AI289_SCOPE.json，合同inputs/acceptance/AI-000289.json，真实evidence.json逐项可追溯。实际耗时/原始日志/变更路径及前后状态写报告；CODE不生成meta，ENGINE经Editor生成并记录归属。
+
+> SUPERVISED POLICY at 2026-10-20T14:00:18.2048511+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户阶段②A/B明确批准，B依赖CONTROL实际A验收；本卡只执行审定阶段。AI292保留最终A+C人工门，旧错误与消费不变。","updatedAt":"2026-10-20T14:00:18.1294793+08:00","supervisionLevel":"full"},"taskId":"AI-000289"}
+## AI-000290 | [ENGINE_CLI] [SC] SEC02 B阶段当前Catalog原生快照交DATA
+
+- 序号：290
+- 提交时间：2026-10-20T14:00:18.2949158+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000289, AI-000288, AI-000287, AI-000282, AI-000285
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000290 / SEC02 B阶段当前Catalog原生快照交DATA
+
+用户已批准窗口②阶段②A及A通过后B。唯一原件 inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json，A=call_86b591ca373e4267a15ff68639d064c1:0，B=:1；审定范围/逐对象表/SHA索引见 outputs/control/DETACH-B13-20261019/窗口②阶段②控制审查单.md（按本卡节读取）。固定chat/同session/共享unity-project互斥。先CORE、对应worker、两项目入口页首/本模块；只凭本卡票据领取一次，带本卡Scope，每批写前Checkpoint。首次FEATURE不计重试；正式失败结算回传，CONTROL再按同根SUPERVISED5/实际余量经ApproveResume，执行器不自行重启或换工具。120软/240临时硬限保持，unknown额度不猜。
+Complete/Fail/Yield立即Prepare→一次真实app Send→Record到绑定CONTROL；只有CONTROL独立验收才派后继。平台拒绝/未知写入/用户stop保持，非空配表、真实用户存档、IL2CPP安装、批次2/波次C、提交推送均不在范围。完整文本报告目标1MB/硬10MB，超1MB说明；失败/许可/history保留，不以拆包绕限。A+C视觉/USER-U5仍待人工，不把执行批准作产品验收。旧已过业务不重跑；定向验证与改动相称，不全仓/纹理JSON/内存保护。
+
+
+B仅在CONTROL独立288/289并落盘A-stage-native-acceptance.json为PASSED后可派；不存在或失败就不执行业务，回CONTROL。此卡是跨ENGINE→DATA所有权交接，不是再次导表。读取审查单§五及现PrepareSnapshot实现，核目标Unity/版本/空闲/clean，不改变场景/生产数据。
+用既有CatalogBlobBuildProcessor.PrepareSnapshot仅捕获当前Catalog、169数据SO/14表及Sprite精确GUID-fileID并导出到本卡fresh staging（已有同名/未知项拒绝）；记录来源清单、实际指纹、文件SHA、capture前后真实源状态。PrepareSnapshot内部已有认证封装/回读，不将其当DATA环节已完成；实际API行为如实报告，不另造导出工具。输出catalog.graph.json/catalog.bin/CatalogBuildFingerprint.g.cs/export.json及DATA-HANDOFF，全部task outputs。当前元数据基线变化需解释，不能复用旧离线合成图。
+不写Assets/StreamingAssets、生产Fingerprint源码、Build/Play或xlsx/CSV/Generated，不Publish、不访问用户存档；只取当前真实快照与磁盘证据。DATA291将对同一真实graph在其独立staging显式opt-in导出，ENGINE292最后核当前Catalog仍与快照一致再Build，漂移不静默重采。
+
+
+本卡S，FEATURE。输出只在.ai-workspace/outputs/DETACH-B13-20261019/AI-000290。精确Scope=AI290_SCOPE.json，合同inputs/acceptance/AI-000290.json，真实evidence.json逐项可追溯。实际耗时/原始日志/变更路径及前后状态写报告；CODE不生成meta，ENGINE经Editor生成并记录归属。
+
+> SUPERVISED POLICY at 2026-10-20T14:00:18.5190021+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户阶段②A/B明确批准，B依赖CONTROL实际A验收；本卡只执行审定阶段。AI292保留最终A+C人工门，旧错误与消费不变。","updatedAt":"2026-10-20T14:00:18.4473943+08:00","supervisionLevel":"full"},"taskId":"AI-000290"}
+## AI-000291 | [DATA] [SC] SEC02 B阶段DATA显式隔离blob导出与回读
+
+- 序号：291
+- 提交时间：2026-10-20T14:00:18.6017156+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000290, AI-000289, AI-000288, AI-000282, AI-000285
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000291 / SEC02 B阶段DATA显式隔离blob导出与回读
+
+用户已批准窗口②阶段②A及A通过后B。唯一原件 inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json，A=call_86b591ca373e4267a15ff68639d064c1:0，B=:1；审定范围/逐对象表/SHA索引见 outputs/control/DETACH-B13-20261019/窗口②阶段②控制审查单.md（按本卡节读取）。固定chat/同session/共享unity-project互斥。先CORE、对应worker、两项目入口页首/本模块；只凭本卡票据领取一次，带本卡Scope，每批写前Checkpoint。首次FEATURE不计重试；正式失败结算回传，CONTROL再按同根SUPERVISED5/实际余量经ApproveResume，执行器不自行重启或换工具。120软/240临时硬限保持，unknown额度不猜。
+Complete/Fail/Yield立即Prepare→一次真实app Send→Record到绑定CONTROL；只有CONTROL独立验收才派后继。平台拒绝/未知写入/用户stop保持，非空配表、真实用户存档、IL2CPP安装、批次2/波次C、提交推送均不在范围。完整文本报告目标1MB/硬10MB，超1MB说明；失败/许可/history保留，不以拆包绕限。A+C视觉/USER-U5仍待人工，不把执行批准作产品验收。旧已过业务不重跑；定向验证与改动相称，不全仓/纹理JSON/内存保护。
+
+
+B真实人批见阶段②原件，不消费或伪造新的USER-U1 DONE轮次。仅在CONTROL独立A通过及290实际快照验收后派；不重新CurrentCsvValidation/Excel规范化/普通导表/生成物Publish。读取290 DATA-HANDOFF、graph与SHA，核来源不是离线夹具，当前相符由ENGINE后继Build前再次核。
+既有DevTools/DataTables/Run-DataPipeline.ps1 -ExportCatalogBlob -CatalogSnapshotPath <290真实graph> -CatalogBlobStaging <本卡fresh staging>，核此参数集原有拒绝Publish/PlanOnly/字体操作机制，不改工具。只创建本卡四件catalog.graph.json/catalog.bin/CatalogBuildFingerprint.g.cs/export.json，认证回读与指纹/完整数据及Sprite身份一致。已有输出/漂移拒绝不覆盖，保留实际调用及退出码/最小日志。无需Unity授权操作，不开Editor/Play/Build，不读写真实存档、xlsx/CSV/Generated/字体/非空单元格。
+交付BUILD-HANDOFF：精确fresh路径、文件SHA、指纹、真实origin任务/采集时间/版本、导出与回读证据；native包内排除/Player仍待292。失败正式Fail回传后CONTROL决定同根续行，不擅自用别的参数集或先Publish修正。
+
+
+本卡S，FEATURE。输出只在.ai-workspace/outputs/DETACH-B13-20261019/AI-000291。精确Scope=AI291_SCOPE.json，合同inputs/acceptance/AI-000291.json，真实evidence.json逐项可追溯。实际耗时/原始日志/变更路径及前后状态写报告；CODE不生成meta，ENGINE经Editor生成并记录归属。
+
+> SUPERVISED POLICY at 2026-10-20T14:00:18.8326429+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户阶段②A/B明确批准，B依赖CONTROL实际A验收；本卡只执行审定阶段。AI292保留最终A+C人工门，旧错误与消费不变。","updatedAt":"2026-10-20T14:00:18.7557359+08:00","supervisionLevel":"full"},"taskId":"AI-000291"}
+## AI-000292 | [ENGINE_CLI] [SC] SEC02 Windows Mono本地构建与隔离Player验收
+
+- 序号：292
+- 提交时间：2026-10-20T14:00:49.4342761+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000291, AI-000290, AI-000289, AI-000288, AI-000287, AI-000282, AI-000285
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+AI-000292 / SEC02 Windows Mono本地构建与隔离Player验收
+
+用户已批准窗口②阶段②A及A通过后B。唯一原件 inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json，A=call_86b591ca373e4267a15ff68639d064c1:0，B=:1；审定范围/逐对象表/SHA索引见 outputs/control/DETACH-B13-20261019/窗口②阶段②控制审查单.md（按本卡节读取）。固定chat/同session/共享unity-project互斥。先CORE、对应worker、两项目入口页首/本模块；只凭本卡票据领取一次，带本卡Scope，每批写前Checkpoint。首次FEATURE不计重试；正式失败结算回传，CONTROL再按同根SUPERVISED5/实际余量经ApproveResume，执行器不自行重启或换工具。120软/240临时硬限保持，unknown额度不猜。
+Complete/Fail/Yield立即Prepare→一次真实app Send→Record到绑定CONTROL；只有CONTROL独立验收才派后继。平台拒绝/未知写入/用户stop保持，非空配表、真实用户存档、IL2CPP安装、批次2/波次C、提交推送均不在范围。完整文本报告目标1MB/硬10MB，超1MB说明；失败/许可/history保留，不以拆包绕限。A+C视觉/USER-U5仍待人工，不把执行批准作产品验收。旧已过业务不重跑；定向验证与改动相称，不全仓/纹理JSON/内存保护。
+
+
+仅在CONTROL独立A/290/291通过后派发。读审查单§三/五/六、287宿主、291 BUILD-HANDOFF、282/285真实处理器。该卡L120，Build与实际包体验收；A+C人工门HumanGateAfter=true，只用户实际视觉/产品验收才可批准，不能据B执行授权代验。
+核实时项目/6000.3.24f1/实例/Windows x64 Mono模块，缺模块停报、不安装IL2CPP。当前Catalog真实指纹须与290/291一致，无漂移才将291生成指纹精确更新到Assets/Scripts/DataBase/CookingData/Build/CatalogBuildFingerprint.g.cs（前版保全、diff限定），Editor导入编译完成后才BuildPrepared，不在回调重生成或触发reload。Build列表沿A的0/1/2；只本次Build extraScriptingDefines CK01_ENCRYPTED_DATA，Player验收宿主如需显式开关按287实际说明与批准边界，不持久改ProjectSettings、全局环境或普通生产默认。
+Release/Dev各一次，输出本卡release/dev。Release临时Assets/__CatalogBlobBuild_<32hex>、StreamingAssets/data/catalog.bin与伴随meta按AI285 schema2完整归属/预检/期望SHA，场景副本remap既有4处直引；保留真实源scene及Generated SO，不手改YAML。已有同名/未知meta/漂移/链接/未结journal拒绝并保全，不强制Cleanup/Recovery；只删本次完整归属pair和真正空目录。具体临时资产/日志清单先记，Library/CatalogBlobBuild.journal.json生命周期可核。
+真实BuildReport和包体证170 Generated SO排除、blob存在、13已知Sprite身份及原生MissingSprite保留（按当前真实图核数），单ICatalogSource，三菜数据基线一致；不把数据读取正确说成三菜完整可玩。Release/Dev Player全部通过287显式隔离本卡根先于Awake，正常路径拒绝访问用户存档，再运行相关原探针/回读；无隔离证明禁止启动。只在本卡构建副本篡改blob一字节并单次启动负例，明确报错拒绝且不崩溃，与正常Console Error0分开。记录实际用时，可信增量无基线则unknown不额外重复Build。
+保留Dev/Editor SO路径行为；结束核临时归属清理/源diff/Console/资源释放，无用户成果覆盖。输出文本报告/BuildReport提取/身份与认证/隔离日志/三菜结果/坏blob副本失败证据/必要截图及人工A+C四列表。大可再生Build作为活动验证产物留本卡，最终归档前按1MB目标/10MB硬限精简，不能分包或外移绕限。成功仅机器验收，CONTROL复核后停最终人工门并暂停WATCH，不自动提交推送或MANUAL。
+
+
+本卡L，FEATURE。输出只在.ai-workspace/outputs/DETACH-B13-20261019/AI-000292。精确Scope=AI292_SCOPE.json，合同inputs/acceptance/AI-000292.json，真实evidence.json逐项可追溯。实际耗时/原始日志/变更路径及前后状态写报告；CODE不生成meta，ENGINE经Editor生成并记录归属。
+
+Scope补充：queue只支持字面祖先，不支持通配符；Assets根仅承载已获批处理器运行内随机生成的Assets/__CatalogBlobBuild_<32hex>及其meta、本卡明确StreamingAssets输入与Fingerprint精确文件，绝不授权其它Assets写入。Build前核原处理器源码/允许模式，实际路径由其新建前日志和归属清单绑定；scope字面宽度不能扩大业务许可，也不能被续行借作任意资产范围。原生未知写入仍停。
+
+> SUPERVISED POLICY at 2026-10-20T14:00:49.8881623+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户已批阶段②B，依赖CONTROL实际A验收；本卡保留最终A+C人工视觉/产品门，执行批准不代验。","updatedAt":"2026-10-20T14:00:49.8349029+08:00","supervisionLevel":"full"},"taskId":"AI-000292"}
+
+> SUPERVISED EXTEND at 2026-10-20T14:00:50.1986928+08:00: {"taskIds":["AI-000287","AI-000288","AI-000289","AI-000290","AI-000291","AI-000292"],"reason":"用户call_86b591ca373e4267a15ff68639d064c1:0/1批准阶段②A及A实际通过后的B；六张跨线可验收交付阶段，先隔离宿主，B依赖实际A独立验收，最终A+C人工门保留。"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-20T14:00:50.3215035+08:00: {"userDecision":"用户2026-10-20 call_86b591ca373e4267a15ff68639d064c1:0 原话：批准 A，按审查单执行（推荐）；:1 原话：批准 B，在 A 通过后执行（推荐）。原件inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json绑定审查单SHA B8E95DC2FA8D1933C8DD60EFF2934DC650852CDD505F658263AEA20DBF24A2D5。本门只批准该审查单阶段②执行及布局选择，B条件不变；不代表A+C视觉/USER-U5验收，最终人工门保留AI292。","taskId":"AI-000278"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-20T14:00:50.6567926+08:00: {"userDecision":"用户2026-10-20 call_86b591ca373e4267a15ff68639d064c1:0 原话：批准 A，按审查单执行（推荐）；:1 原话：批准 B，在 A 通过后执行（推荐）。原件inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json绑定审查单SHA B8E95DC2FA8D1933C8DD60EFF2934DC650852CDD505F658263AEA20DBF24A2D5。本门只批准该审查单阶段②执行及布局选择，B条件不变；不代表A+C视觉/USER-U5验收，最终人工门保留AI292。","taskId":"AI-000283"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T15:33:21.9432736+08:00: {"grantId":"9bfcb2fefa654d2b91486071c855f346","taskId":"AI-000288","remaining":4,"rootTaskId":"AI-000288","reserved":1,"verification":"fresh app idle/completed revision47; independent-failure-review-288-attempt1.json10 checks confirm failure/cleanup, scene+meta equal restore point, no native Play, exact two-line payload repair. Same original scope; detailed next execution inputs/派发/DETACH-B13-20261019/AI288_ENGINE续行1.txt; preserve first attempt and unique backup. Root0/5 before reserve.","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":0,"cycles":["AI288:retry1"],"authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000288","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Editor/ProjectValidation","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scripts/Cooking/ShortCycle","Assets/Scripts/Core","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Tools/Persistence","Assets/Scripts/Tools/Security","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000288"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-new-node-create","unity-approved-source-import-compile","unity-isolated-play-validation","unity-owned-source-meta-create","unity-owned-temporary-cleanup","unity-scene-bindings","unity-target-check"]}}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T15:58:50.2519942+08:00: {"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","reserved":1,"taskId":"AI-000288","used":1,"authorizationSource":"POLICY","remaining":3,"cycles":["AI288:retry2"],"scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000288","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Editor/ProjectValidation","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scripts/Cooking/ShortCycle","Assets/Scripts/Core","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Tools/Persistence","Assets/Scripts/Tools/Security","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000288"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-new-node-create","unity-approved-source-import-compile","unity-isolated-play-validation","unity-owned-source-meta-create","unity-owned-temporary-cleanup","unity-scene-bindings","unity-target-check"]},"rootTaskId":"AI-000288","grantId":"c4b74b7fffc54c61aae3c4560e55f1bd","verification":"Fresh app idle revision49/latest completed; independent-failure-review-288-attempt2.json 10 checks; same original scope; preserve saved49 nodes; only10 owned Description anchors and remaining original native isolation; known unchanged-color TMP cache proven. Supplement inputs/派发/DETACH-B13-20261019/AI288_ENGINE续行2.txt. No new human approval; POLICY source verified."}
+## AI-000293 | [CODE] [SC] AI288启动取消恢复的同根源码修复
+
+- 序号：293
+- 提交时间：2026-10-20T16:21:48.0593885+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000293 / AI288 同根启动取消恢复修复（固定 CODE，M80，REPAIR）
+
+来源：用户已批准窗口②阶段②A及A通过后的B，原件inputs/派发/DETACH-B13-20261019/窗口②阶段②用户批准.json；本次修复属于A隔离宿主原范围。根AI288 attempt3正式Fail，CONTROL已Receive及独立10项复核，independent-failure-review-288-attempt3.json与原288/attempt3/REPORT.md、NATIVE-ISOLATION.json为精确证据。长期POLICY来源inputs/续行许可分模式_用户长期授权_20261019.json，ApprovalId call_37410ba043344e9f81b4ce3ef3472a18:0。根已用2/5，本卡cycle AI288:CODE293:retry3，实际claim才消费第三周期；不是新的人工许可，不叠加次数。此修复成功后CONTROL独立复核，再将原288续行与本卡最新成功execution/cycle配对，不双扣。执行器不自行启动原288或后继。
+
+只按正式派发票据领取本卡一次，带AI293_SCOPE.json。先CORE/workers/CODE、两项目入口页首和本模块、toolkit/PST的隔离宿主/恢复节；读取精确源码而不全仓通读。原AI287已经验证的API/Bootstrap/Session/SaveBoundary/codec/store/1～20探针、已有scene/meta和13新meta保持；原三次失败/几何与正常/错目标证据不覆盖。任务只源码/既有离线，不Unity/CLI/MCP/Refresh/原生Compile/Play/Build/场景写入/真实用户存档/配表/发布。
+
+故障事实：ShortCycleValidationLauncher.ArmAndPlay保存原setup并切空bridge、请求Play；同一命令立即Stop撤销启动，未发生EnteredEditMode，restore记录与clean空场景遗留。Stop当前只Stop Bootstrap、disarm和isPlaying=false；Restore仅Changed(EnteredEditMode)或Arm异常调用。原正常退出/错目标拒绝恢复已原生通过；取消的自有bridge已经ENGINE显式清理，现保存scene SHA4C4B4BF7A56E96848F64D496562B25D584B0010934950CF4A9FD22CF233BF982，clean/7根1062对象。源码修复不能把该手动清理写成自动取消通过。
+
+最小修复只现有Launcher的待进入Play取消/恢复时机，复用同一Restore及所有权检查，不新建公开续行入口/生产脚本/平行恢复工具。必须区分尚未进入Play的请求取消与实际Play退出；只在确实回到可恢复的Edit状态、且现有guard证明临时bridge干净/无路径/无根时恢复已保存setup。不能在还运行或切换的Play中恢复；必要的延后回调应可撤销/去重，不能在后续用户场景上迟到执行。保留restore记录直到恢复真正成功；dirty、额外对象、用户已开场景、记录损坏或恢复失败须拒绝覆盖并保留记录/现场，不能清标记掩盖失败。Stop重复调用及迟到EnteredEditMode不得二次恢复/重复打开；无本任务pending记录时不得打开/替换任何场景。正常Stop、宿主目标先销毁后租约释放、原错误/禁用重载设计边界保持。无需为本次修改Bootstrap/API/存档架构；发现不能在范围内完成则正式说明停点。
+
+验证：只扩已有ShortCycleIsolationAndTextTests、UnityStubs和必要既有Test-CK01CShortCycle.ps1分支，不能新增独立runner/专用夹具或复写实现当测试。直接驱动交付的ArmAndPlay/Stop及真实Changed回调入口：待启动立即取消且不触发EnteredEditMode时仍恢复原setup并消费记录；覆盖重复Stop/晚到事件、实际Play退出不能提前Restore、未知dirty/非空/已命名场景拒绝覆盖且保留记录、恢复失败保留记录/无pending无动作。stub明确区分pending和actual Play以及事件，不用强制发EnteredEditMode掩盖原生缺口。保留原host行为与默认路径读取0。用已有validation-host-only模式跑受影响宿主行为与真实UnityEditor引用表面编译，不全ShortCycle/P2L/安全/数据/Final套娃；该离线通过不代原生时序。无必要反复编译未变的模块。失败按原稳定问题key记录，正式Fail并回传，CONTROL再决定原卡续行；不自行重试新周期。
+
+交付：本卡REPORT/evidence/acceptance、实际改动清单与有限前后源码、原始编译/行为日志和ENGINE-HANDOFF。5合同见inputs/acceptance/AI-000293.json，值必须有真实证据。HANDOFF列需ENGINE补验的具体“待启动立即Stop→恢复原scene”的一次原生路径及失败保全边界；10锚点/49节点/原正常和错目标证据不无故重跑；若更改实际运行退出路径须明确最小相关复核而非伪称已验。文档仅更新当前Launcher取消行为/未验事项，不提高全工程核验日期，不宣告A/B/A+C或USER-U5通过。完整包目标1MB/硬10MB，保留必要失败，超1MB说明，不拆包绕限。
+
+每批写前Checkpoint；Complete/Fail/Yield立即Prepare→一次真实app Send→Record至CONTROL01a13ef5-eda9-7882-b1c9-eca47a6470d9。未知写入、真实平台拒绝、stop/exit、120/240硬门保持。无提交推送。根原288仍NEEDS_USER直到修复独立通过并正式ApproveResume；不以本卡成功代原288原生验收。
+
+> SUPERVISED POLICY at 2026-10-20T16:22:12.1953652+08:00: {"policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI288真实取消恢复失败的同根POLICY源码/既有离线修复；A已批，原生补验仍回原288且最终A+C门保持。","updatedAt":"2026-10-20T16:22:12.1080980+08:00","supervisionLevel":"full"},"taskId":"AI-000293"}
+
+> SUPERVISED EXTEND at 2026-10-20T16:22:12.5116362+08:00: {"taskIds":["AI-000293"],"reason":"同session原根288取消路径必要修复，不新增业务范围；CODE修复后独立验收与原根续行配对。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T16:51:33.3375505+08:00: {"remaining":2,"taskId":"AI-000288","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","grantId":"436476595df449de82a3eb3cb9e5a16e","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000288","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Editor/ProjectValidation","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scripts/Cooking/ShortCycle","Assets/Scripts/Core","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Tools/Persistence","Assets/Scripts/Tools/Security","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000288"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-new-node-create","unity-approved-source-import-compile","unity-isolated-play-validation","unity-owned-source-meta-create","unity-owned-temporary-cleanup","unity-scene-bindings","unity-target-check"]},"rootTaskId":"AI-000288","reserved":0,"used":3,"cycles":["AI288:CODE293:retry3"],"verification":"Fresh ENGINE idle revision50; CODE293 latest success b9bff21dc70f4ae09618c6e722881766 independent-review-293.json PASSED5contracts/13checks,actual37cancel+4direct boundaries; pair cycle AI288:CODE293:retry3, not new budget. Only pending-cancel and affected normal exit native replay under originalscope; preserve accepted geometry/wrong-target/history. AI288_ENGINE续行3.txt.","authorizationSource":"POLICY"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T17:24:24.3583084+08:00: {"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","taskId":"AI-000289","remaining":4,"cycles":["AI289:retry1"],"rootTaskId":"AI-000289","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scenes/ShortCycle_P2.unity","Assets/Scenes/ShortCycle_P2.unity.meta","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000289","ProjectSettings/EditorBuildSettings.asset"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-viewtable-bindings","unity-build-list-append","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-scene-create","unity-target-check"]},"used":0,"authorizationSource":"POLICY","verification":"Fresh app ENGINE idle/completed revision52 turn01a15893-2f60-7ee2-bfd2-5da9a3f7e194. CONTROL independent-failure-review-289-attempt1 confirms10checks, dynamic SceneAsset namespace error before execution; original scene/meta/Build and unique backups unchanged. Original scope same-task one resume, no production source changes; policy source SHA verified, root0of5, no human/stop/permission hard gate. AI289_ENGINE续行1.txt exact instruction; A/B/final gates retained.","grantId":"758b872b61494fd38d6aa61bec37e6fb","reserved":1}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T17:45:18.0511292+08:00: {"grantId":"258df3177152420aa81629fe92b4f642","taskId":"AI-000289","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scenes/ShortCycle_P2.unity","Assets/Scenes/ShortCycle_P2.unity.meta","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000289","ProjectSettings/EditorBuildSettings.asset"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-viewtable-bindings","unity-build-list-append","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-scene-create","unity-target-check"]},"remaining":3,"reserved":1,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":1,"cycles":["AI289:retry2"],"verification":"Fresh ENGINE app idle/completed revision53; independent-failure-review-289-attempt2 confirms11checks, known partial19nodes/view5 and Build memory3/disk2; actual serializer API precondition error, not platform permission denial. Root1of5/remaining4 CONTROL_REPAIR_ELIGIBLE; POLICY SHA verified. AI289_ENGINE续行2.txt limits one targeted settings save path with staged native candidate verification, no global save/manual YAML/source/scene rebuild; then original unrun isolated validation. Original scope and all A/B/final gates remain.","authorizationSource":"POLICY","rootTaskId":"AI-000289"}
+## AI-000294 | [CODE] [SC] AI289联合探针前置与转场组件同根源码修复
+
+- 序号：294
+- 提交时间：2026-10-20T18:24:20.0876149+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000294 / AI289 同根联合探针前置与转场组件源码修复（固定 CODE，M80，REPAIR）
+
+授权与身份：窗口②阶段② A 已获用户批准，B 仅在 A 实际通过后执行。原件为本目录窗口②阶段②用户批准.json；重试 POLICY 来源 inputs/续行许可分模式_用户长期授权_20261019.json，ApprovalId call_37410ba043344e9f81b4ce3ef3472a18:0。原 AI289 attempt3 已 Fail/Receive，CONTROL 独立17项复核确认。同根已用2/5，本卡 cycle AI289:CODE294:retry3，实际领取才消费第三周期；之后原289续行须与本卡最新成功周期正式配对，不双扣。不是新的人批或额外次数。
+
+只领取本卡一次；RUNNING 不再次 Poll。按 CORE、固定 CODE worker、AGENTS 四硬上限、TK-WF 续行条目及 AI294_SCOPE.json 执行。共享 unity-project 锁。仅源码/既有离线验证及必要文档；不调用 Unity/CLI/MCP/Refresh/Play/Build，不修改 scene/prefab/meta/BuildSettings/生产数据/字体/真实用户存档。CODE 不代领原289。
+
+必读（按相关字段读取）：outputs/control/DETACH-B13-20261019/independent-failure-review-289-attempt3.json；outputs/DETACH-B13-20261019/AI-000289/attempt3 下 probe-result.json、probe-failure-diagnosis-receipt.json及其stdoutPath、NATIVE-ISOLATION.json、ENGINE-HANDOFF.json。实际 Probe、ActionRegistry/Router、SessionManager、Phase2HandoffPresenter、Phase2SceneEntry/SceneLoader；既有 Phase2TransitionTests/RecipeBookTests/runner。项目文档页首及ShortCycle模块；AI284既有实际追加协程夹具。原生与离线结论分开。
+
+本卡工作：
+1. AI289已完成P2 19空节点、P0P1 view5、Build0/1保留并加2，Build原生保存与磁盘一致；本次fresh AI289/a3-joint隔离pre-Awake/factory1/Stop恢复成立。保留这些成果，不重做或回退。
+2. 原生联合探针一次：1～14 PASS、15～20 FAIL。14重启后为Cover；15直接OpenCatalog，但实际Registry仅允许OpenCover从Cover到Catalog、OpenCatalog从Browse到Catalog。修复14～18合法状态前置及衔接，包含已经Catalog、锁定/未使用卡；不放宽生产动作状态机。
+3. 17目前只接受Catalog前置，最后一张有效卡点击后可能已Browse。按实际状态等待镜头/锁/层再进入步骤详情。保留选菜ID/锁定拒绝、LocalizedText标题、步骤行数、收藏profile/两处星标一致性及还原语义。不得删卡、跳过断言、硬编码PASS、改数据或靠ENGINE额外注入动作掩盖。
+4. 原生sourceAdapterCount=0、Presenter.transitionAdapter未绑；ShortCyclePhase2TransitionAdapter是SessionManager.cs内第二个MonoBehaviour，无独立同名源码。最小拆出同目录ShortCyclePhase2TransitionAdapter.cs，完整类型名/命名空间/API/方法行为不变，Session本体/序列化字段不变；核runner源码包含方式。CODE不生成meta/接场景。交ENGINE由Editor生成新源码meta，在既有P2S对象挂唯一adapter、绑定原presenter。若发现超过此拆分的必要生产行为改动，正式说明后停止扩展。
+
+验证与保全：
+- 保全修改前源码。原1～13逻辑/断言/标签/顺序保持，19/20已验前置及清理逻辑保持。14～18只修前置/衔接和必要可测性。允许提取这段为生产与测试共同调用的IEnumerator，禁止复制测试实现；保留原全部20项断言/标签/顺序。旧卡“18源字节不改”不阻止本次明确的必要探针修复，也不授予重写整段探针。
+- 仅复用既有Phase2TransitionTests/RecipeBookTests/UnityStubs/Test-CK01CShortCycle，不建新runner/夹具。从实际原13尾None/空RecipeBook，经实际会话/Router/卡绑定驱动真实待修协程覆盖14～18。覆盖Cover起始、已Catalog/已Browse衔接、锁定/空卡后有效卡、无可用菜谱明确失败、缺绑定/错误层明确失败；保留19/20既有6场景回归。不得只静态匹配。
+- 做必要离线编译及上述定向行为验证；可CompileOnly加既有测试类入口，不重复整套Final/全路径哈希。如runner原断言硬绑Session文件，改查实际独立文件并保留等价断言。Unity DLL API编译仅表面兼容，原生挂载/序列化仍待ENGINE。
+- ENGINE-HANDOFF.json列新源码路径/类型/源码SHA、拟挂的既有对象和原presenter字段、Session.Configure链及原生待补验。旧审计hook两次NRE保留，下一原生观察须判空记录明确失败；CODE不自行修原289输出/调用Unity。
+- 仅维护现有CODEBASE_MAP、推进基线、shortcycle模块相关事实，不提高完整核验日期。原289三失败、原件、唯一备份不改；本卡输出目标1MB、硬限10MB，超1MB说明。
+- 5合同见inputs/acceptance/AI-000294.json，对应evidence.json checks。报告六要素、真实编译/定向日志、源码保全/diff/交接。源码通过不是A通过；原生1～20/接线/截图、A+C/USER-U5仍待验证。
+
+成功Complete后按长期授权立即Prepare→一次真实app Send→Record回传绑定CONTROL。真实失败按稳定key正式结算停止并回传，由CONTROL按剩余根额度处理；不自重启/换key或卡清零。CONTROL独立验收本卡后，唯一ApproveResume将原289与最新成功cycle配对。290～292继续等待，不提前B/Build/发布。
+
+> SUPERVISED POLICY at 2026-10-20T18:24:40.4109217+08:00: {"taskId":"AI-000294","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI289实际原生联合失败的同根POLICY源码及既有离线修复；原生接线回原289续行，B仍须A实际验收；最终A+C保持。","updatedAt":"2026-10-20T18:24:40.3078229+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-20T18:25:09.2663141+08:00: {"taskIds":["AI-000294"],"reason":"用户已批A执行的必要同根CODE修复；保留原289三失败及SUP5政策，本卡成功后配对原289补验，不扩大B或人工门。"}
+
+> SUPERVISED APPROVED_CONTINUATION_REFUSED at 2026-10-20T18:47:19.7860743+08:00: {"reason":"Requested path exceeds approved scope.","taskId":"AI-000289","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","problemKey":""}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T22:20:22.9345574+08:00: {"authorizationSource":"HUMAN","rootTaskId":"AI-000289","taskId":"AI-000289","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scenes/ShortCycle_P2.unity","Assets/Scenes/ShortCycle_P2.unity.meta","Assets/Scripts/Cooking/ShortCycle/ShortCyclePhase2TransitionAdapter.cs.meta","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000289","ProjectSettings/EditorBuildSettings.asset"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-adapter-bindings","unity-approved-viewtable-bindings","unity-build-list-append","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-reviewed-source-import","unity-scene-create","unity-target-check"]},"used":3,"remaining":2,"sourceApprovalId":"call_dfcbfc1d52b54f86969b0765d4edc0e3:0","reserved":0,"cycles":["AI289:CODE294:retry3"],"grantId":"8ad7c1c3294c419c93646e52ab0c7fa0","verification":"Actual app snapshot revision55 notLoaded, latest turn completed, no active turn; fresh-engine-289-approved3.json. CONTROL independent-review-294.json PASSED 5 contracts/17 checks. Direct human scope approval call_dfcbfc1d52b54f86969b0765d4edc0e3:0 permits exact adapter meta/bindings and one paired original run; no extra retry cycle."}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T22:47:22.9530125+08:00: {"cycles":["AI289:retry4"],"verification":"Fresh ENGINE app revision57 idle/completed; no active lane owner. AI289 attempt4 formal Fail received, independent-failure-review-289-attempt4.json 11/11 confirms payload guard escape failure before mutations, native clean Edit and approved meta retained. Same HUMAN-approved scope from call_dfcbfc1d52b54f86969b0765d4edc0e3:0, no new path; repair only existing command regex literals and original native validation. Root used3of5 before new actual claim; POLICY retry4 no reuse/pair with completed retry3.","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scenes/ShortCycle_P2.unity","Assets/Scenes/ShortCycle_P2.unity.meta","Assets/Scripts/Cooking/ShortCycle/ShortCyclePhase2TransitionAdapter.cs.meta","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000289","ProjectSettings/EditorBuildSettings.asset"],"operations":["documentation-update","evidence-write","idempotence-check","unity-approved-adapter-bindings","unity-approved-viewtable-bindings","unity-build-list-append","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-reviewed-source-import","unity-scene-create","unity-target-check"]},"reserved":1,"remaining":1,"used":3,"grantId":"05242d0b6de74df2ad43ab93ae463117","authorizationSource":"POLICY","rootTaskId":"AI-000289","taskId":"AI-000289"}
+## AI-000295 | [ENGINE_CLI] [SC] [DETACH-B13-20261019] AI289失效组件槽身份与公开API只读诊断
+
+- 序号：295
+- 提交时间：2026-10-20T23:00:49.9736260+08:00
+- 模块 ID：无
+- 初始状态：QUEUED
+- 前置依赖：AI-000294
+- 允许越过：False
+- 最大尝试次数：1
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原AI289 attempt5同根READONLY_DIAGNOSIS，固定ENGINE_CLI，M80（单场景只读，生产修改0）。当前根used4/5余1；首次只读诊断不消耗重试周期，不为原289发ApproveResume，不复活已验294，不改根历史/许可。按CORE→ENGINE_CLI/SUPERVISED/HANDOFF及点名材料读取。只写本卡outputs/DETACH-B13-20261019/<TaskId>/及正式结算，不修改项目入口文档/生产文件。
+
+材料：CONTROL independent-failure-review-289-attempt5.json（9事实复核非验收）；AI289/attempt5/REPORT.md、原binding payload/Console与前后只读回执；CONTROL AI289-stale-slot-primary-sources.json；真人已批范围原件AI289续行3_用户范围批准.json。正则已正确；Unity实际拒绝SerializedProperty.DeleteArrayElementAtIndex修改GameObject.m_Component（seq582），Undo后原字节/槽/clean态不变，当前Console1Error10Warning保留。不是操作者批准缺失，不伪称能直接续跑。
+
+仅两项诊断目标：
+1. 精确旧槽的真实身份与公开API可达性。先核官方CLI目标D:/GameProject/Eat-What/Unity6000.3.24f1/原实例新鲜心跳，读取本任务安全检查点；仅一个合并的只读eval（status确必要至多1，eval至多1，Console只读至多1），不得重复试探调用。当前P0P1 Managers/Phase2TransitionAdapter GO1205938950/Transform1205938952，槽1旧fileID1205938951/nativeInstance116368（native必须现场读，不硬编码）；m_Script指本scene内MonoScript611693423，Presenter1833023478.transitionAdapter原fileID1205938951。通过现有SerializedObject只读字段、明确GlobalObjectId解析以及安装版本已有public EditorUtility InstanceIDToObject/EntityIdToObject（核实际签名，选择单一适用公开查找；禁止反射private/internal、native指针、SerializedObject写入）尝试解析这两个精确已载对象。对ReferenceEquals(null)、Unity null、实际managedType、GlobalObjectId、是否persistent/assetPath、若是Component的go/scene和仅该对象必要字段分别报告；null须先判空，不抛NRE，不扩大Resources全扫。只读读取当前m_Component.editable/引用以及public Undo.DestroyObjectImmediate签名元数据，不Invoke任何删除/Undo。无已知public可达handle也可作为有效诊断结论。
+2. 依据真实handle/归属及官方文档，交付可执行的最小候选与停止条件。如果有合法可定位对象，只给精确公开API候选、受影响引用/如何保留Transform及如何Undo恢复，说明尚未生产验证；如果无法通过公开API精确处理，明确不可行和需要用户选择的范围差异。不制造/执行假对象测试，不调用Destroy/删除数组/RemoveMissingScripts/ExecuteMenuItem/反射非公开写API，不手改YAML、不重建GameObject或复制替换场景，不以此诊断卡试跑修复。官方UUM-141893仅相似情形，不能直接定性本项目同缺陷或使用批量RemoveMonoBehavioursWithMissingScript；本例missingCount0不构成可删证明。优先调查准确身份，未知保留，不给未经证据支持的成功保证。
+
+绝对禁止生产修改、调用Undo注册/回滚/删除/添加组件/赋值/Save、OpenScene/Refresh/Compile/Import/Play/Build/导表、源码/meta/字体/数据/真实存档访问、清Console、切换MCP/换工具重试。输出payload是只读表达式，不建立新工具/runner/夹具。完成后用同一只读eval前后摘要证明clean/场景/组件槽/Console计数基线保持；磁盘只核本次涉及scene/meta的允许diff，不重复全仓哈希。拿不到可用handle不是任务失败：如实交付明确候选不可行及缺口，diagnosisRecorded/planBounded为true仅表示证据和边界交付，绝不表示修复通过。
+
+原289保持NEEDS_USER，B继续等待A真实独立通过，A+C/USER-U5保持。本卡合同4项：checks.identityAndApiEvidenceRecorded=true；checks.planAndUncertaintiesBounded=true；checks.productionWrites=0；checks.mutatingUnityCalls=0。完整REPORT/evidence/acceptance/ENGINE-HANDOFF和原始CLI回执，包目标1MB硬限10MB。Complete/Fail立即Prepare→一次真实app Send→Record给CONTROL；不自行领取原289或动用余1，不自动重试，不提交推送。
+
+> SUPERVISED POLICY at 2026-10-20T23:01:39.0169474+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原289同根必要只读身份/API诊断；最多一次只读eval，仅本卡输出，无Unity/生产修改，不消费剩余1次重试。","updatedAt":"2026-10-20T23:01:38.9127018+08:00","supervisionLevel":"full"},"taskId":"AI-000295"}
+
+> SUPERVISED EXTEND at 2026-10-20T23:01:39.3453341+08:00: {"taskIds":["AI-000295"],"reason":"同批AI289正式失败5后只读诊断，为最后一次原范围续行形成依据，不启动根任务或B"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-20T23:30:40.3829316+08:00: {"verification":"Direct human scope/method approval call_cbb6abcbc1994847ba0b9fbfc63db19e:0 bound to review SHA52621E3E1C4FA3B64B88D915A8FD78515B8451FDC9ED340FC5FA79138ACC25ED and candidate original. AI295 independent4contracts11checks PASSED_DIAGNOSIS_ONLY, no paired repair. Actual ENGINE app idle/completed revision60 saved fresh-engine-289-resume5-approved.json. Same SUPERVISED ACTIVE session no stop/exit; existing root4of5, this is final existing cycle not extra quota. Exact production scene SHA unchanged.","remaining":0,"rootTaskId":"AI-000289","sourceApprovalId":"call_cbb6abcbc1994847ba0b9fbfc63db19e:0","used":4,"grantId":"5ce4585236584f6a8edbc3e04381a349","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scenes/Cooking/ShortCycle_P0P1.unity","Assets/Scenes/ShortCycle_P2.unity","Assets/Scenes/ShortCycle_P2.unity.meta","Assets/Scripts/Cooking/ShortCycle/ShortCyclePhase2TransitionAdapter.cs.meta","CODEBASE_MAP.md","DevTools/Scenes/backup/D-T2_pre/AI-000289","ProjectSettings/EditorBuildSettings.asset"],"operations":["documentation-update","evidence-write","idempotence-check","serialized-scene-script-reference-repair","unity-approved-adapter-bindings","unity-approved-viewtable-bindings","unity-build-list-append","unity-isolated-play-validation","unity-owned-scene-unload-reopen","unity-owned-temporary-cleanup","unity-reviewed-source-import","unity-scene-create","unity-target-check"]},"authorizationSource":"HUMAN","reserved":1,"cycles":["AI289:retry5"],"taskId":"AI-000289"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-21T00:12:38.3953649+08:00: {"used":5,"taskId":"AI-000289","authorizationSource":"HUMAN","cycles":["grant:916a257bb8a44396a6121f99d9eaa78e","grant:ed5b305dac8f40c78c1daf19724ec237","grant:3645f2c42b3942958251d3b4bccea739"],"grantId":"7613eadf06ae4a938f0bbabb027bc0d5","rootTaskId":"AI-000289","sourceApprovalId":"call_b2af02a0a6de42e993f613200ed47c02:0","reserved":3,"scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","CODEBASE_MAP.md"],"operations":["documentation-update","evidence-write","idempotence-check","unity-game-view-capture","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-target-check"]},"verification":"Actual app wait snapshot revision62 idle/completed saved fresh-engine-289-extra3.json; CONTROL independent attempt6 review16 facts confirms only screenshots missing; user extra3 original bound planSHA2CD55E0956A7634B5EC56CE7A091AD5325C698E68936E03FACDB639022D7443C and same screenshots-only Scope; no repair pairing, full session unchanged","remaining":0}
+
+> SUPERVISED RECONCILE at 2026-10-21T14:53:05.3888822+08:00: {"repairs":["REQUEUE_UNCLAIMED_DISPATCH:AI-000289"],"inspection":[],"evidence":"User explicitly approved actual AI289 prompt sending call_ce06f9d85bce4483973e49333137d563:0; fresh ENGINE app revision63 notLoaded latest completed no active turn, queue RUNNING0/old289 attempt6 queued with HUMAN grant3 unused; prior reservation expired; reconcile entire session and locks, no new approval grant"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-21T15:39:46.2389692+08:00: {"taskId":"AI-000289","cycles":["grant:916a257bb8a44396a6121f99d9eaa78e","grant:ed5b305dac8f40c78c1daf19724ec237","grant:3645f2c42b3942958251d3b4bccea739"],"authorizationSource":"HUMAN","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","CODEBASE_MAP.md"],"operations":["documentation-update","evidence-write","idempotence-check","unity-game-view-capture","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-target-check"]},"reserved":2,"grantId":"7613eadf06ae4a938f0bbabb027bc0d5","sourceApprovalId":"call_b2af02a0a6de42e993f613200ed47c02:0","remaining":0,"verification":"Same unused HUMAN grant remaining2; no new quota. Formal Receive attempt7 plus independent14/14 facts; known own PNG path excursion cleaned, no actual platform denial/unknown drift; same official capture_game_view screen omit save_path documented inline branch, output-only existingScope unchanged. Fresh ENGINE revision65 idle/completed no active run; see fresh-engine-after-289-fail7.json and independent-failure-review-289-attempt7.json","used":6,"rootTaskId":"AI-000289"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-21T16:20:40.4378120+08:00: {"remaining":0,"used":7,"sourceApprovalId":"call_b2af02a0a6de42e993f613200ed47c02:0","authorizationSource":"HUMAN","reserved":1,"verification":"CONTROL independent attempt8 review14of14 formalFail HTTP400 and clean native state; no platform refusal/blockReason; fresh ENGINE app revision66 idle/completed saved fresh-engine-289-after-fail8.json; same HUMAN original grant used2of3 reserve1; exact scope unchanged; bounded fresh host-log Ready before firstRPC candidate only, no new grant or pairing","scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","CODEBASE_MAP.md"],"operations":["documentation-update","evidence-write","idempotence-check","unity-game-view-capture","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-target-check"]},"taskId":"AI-000289","cycles":["grant:916a257bb8a44396a6121f99d9eaa78e","grant:ed5b305dac8f40c78c1daf19724ec237","grant:3645f2c42b3942958251d3b4bccea739"],"grantId":"7613eadf06ae4a938f0bbabb027bc0d5","rootTaskId":"AI-000289"}
+## AI-000296 | [CODE] [WF] REPAIR-CLI-01 队列落盘原子化
+
+- 序号：296
+- 提交时间：2026-10-21T17:56:33.8756902+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户已批准独立CLI管线修复轨。精确执行卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI296_REPAIR-CLI-01.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI296_SCOPE.json；预声明合同：.ai-workspace/inputs/acceptance/AI-000296.json。固定CODE，S40，CLI(磨合)，pipeline-repair；仅执行本卡，结算即时回CONTROL。
+
+> SUPERVISED POLICY at 2026-10-21T17:56:34.4134763+08:00: {"taskId":"AI-000296","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户明确独立管线修复轨；只工作流源码/隔离夹具，不启动Unity，不消耗289根","updatedAt":"2026-10-21T17:56:34.3333731+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-21T17:57:02.6384677+08:00: {"reason":"用户2026-10-21重新授权监管并下发独立AI289管线修复轨；首卡队列共享保存函数离线修复","taskIds":["AI-000296"]}
+## AI-000297 | [CODE] [WF] REPAIR-CLI-02 载荷字节传递
+
+- 序号：297
+- 提交时间：2026-10-21T18:08:59.9096273+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000296
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户2026-10-21授权独立CLI磨合修复轨；精确卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI297_REPAIR-CLI-02.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI297_SCOPE.json；合同：.ai-workspace/inputs/acceptance/AI-000297.json。共同来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。semanticCategory=pipeline-repair，独立根；不得自领后继。
+
+> SUPERVISED POLICY at 2026-10-21T18:09:00.4295906+08:00: {"taskId":"AI-000297","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":["AI-000296"],"humanGateAfter":false,"gateApproved":false,"reason":"按用户独立修复轨登记；前卡CONTROL独立验收后推进，共享文件顺序修改；原289计数保持","updatedAt":"2026-10-21T18:09:00.3563366+08:00","supervisionLevel":"full"}}
+## AI-000298 | [CODE] [WF] REPAIR-CLI-03 证据序列化器
+
+- 序号：298
+- 提交时间：2026-10-21T18:09:00.6106473+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000297
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户2026-10-21授权独立CLI磨合修复轨；精确卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI298_REPAIR-CLI-03.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI298_SCOPE.json；合同：.ai-workspace/inputs/acceptance/AI-000298.json。共同来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。semanticCategory=pipeline-repair，独立根；不得自领后继。
+
+> SUPERVISED POLICY at 2026-10-21T18:09:00.9101133+08:00: {"taskId":"AI-000298","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":["AI-000297"],"humanGateAfter":false,"gateApproved":false,"reason":"按用户独立修复轨登记；前卡CONTROL独立验收后推进，共享文件顺序修改；原289计数保持","updatedAt":"2026-10-21T18:09:00.7891072+08:00","supervisionLevel":"full"}}
+## AI-000299 | [CODE] [WF] REPAIR-CLI-04 截图保存路径与no-save通道
+
+- 序号：299
+- 提交时间：2026-10-21T18:09:01.0942703+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000298
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户2026-10-21授权独立CLI磨合修复轨；精确卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI299_REPAIR-CLI-04.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI299_SCOPE.json；合同：.ai-workspace/inputs/acceptance/AI-000299.json。共同来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。semanticCategory=pipeline-repair，独立根；不得自领后继。
+
+> SUPERVISED POLICY at 2026-10-21T18:09:01.3979656+08:00: {"taskId":"AI-000299","policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":["AI-000298"],"humanGateAfter":false,"gateApproved":false,"reason":"按用户独立修复轨登记；前卡CONTROL独立验收后推进，共享文件顺序修改；原289计数保持","updatedAt":"2026-10-21T18:09:01.3017060+08:00","supervisionLevel":"full"}}
+## AI-000300 | [CODE] [WF] REPAIR-CLI-05 宿主Ready握手
+
+- 序号：300
+- 提交时间：2026-10-21T18:09:01.5668715+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000299
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户2026-10-21授权独立CLI磨合修复轨；精确卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI300_REPAIR-CLI-05.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI300_SCOPE.json；合同：.ai-workspace/inputs/acceptance/AI-000300.json。共同来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。semanticCategory=pipeline-repair，独立根；不得自领后继。
+
+> SUPERVISED POLICY at 2026-10-21T18:09:01.8374374+08:00: {"taskId":"AI-000300","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":["AI-000299"],"humanGateAfter":false,"gateApproved":false,"reason":"按用户独立修复轨登记；前卡CONTROL独立验收后推进，共享文件顺序修改；原289计数保持","updatedAt":"2026-10-21T18:09:01.7606572+08:00","supervisionLevel":"full"}}
+## AI-000301 | [CODE] [WF] G87-METRICS CLI磨合期分类与任务简表接入
+
+- 序号：301
+- 提交时间：2026-10-21T18:09:02.0005786+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000300
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户2026-10-21授权独立CLI磨合修复轨；精确卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI301_G87-METRICS.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI301_SCOPE.json；合同：.ai-workspace/inputs/acceptance/AI-000301.json。共同来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。semanticCategory=pipeline-repair，独立根；不得自领后继。
+
+> SUPERVISED POLICY at 2026-10-21T18:09:02.2796923+08:00: {"taskId":"AI-000301","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":["AI-000300"],"humanGateAfter":false,"gateApproved":false,"reason":"按用户独立修复轨登记；前卡CONTROL独立验收后推进，共享文件顺序修改；原289计数保持","updatedAt":"2026-10-21T18:09:02.1953298+08:00","supervisionLevel":"full"}}
+## AI-000302 | [ENGINE_CLI] [WF] SMOKE-CLI-01 CLI截图链冒烟
+
+- 序号：302
+- 提交时间：2026-10-21T18:09:02.5022911+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000296, AI-000297, AI-000298, AI-000299, AI-000300, AI-000301
+- 允许越过：True
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户2026-10-21授权独立CLI磨合修复轨；精确卡：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI302_SMOKE-CLI-01.txt；Scope：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI302_SCOPE.json；合同：.ai-workspace/inputs/acceptance/AI-000302.json。共同来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。semanticCategory=pipeline-repair，独立根；不得自领后继。
+
+> SUPERVISED POLICY at 2026-10-21T18:09:02.7757191+08:00: {"taskId":"AI-000302","policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":["AI-000296","AI-000297","AI-000298","AI-000299","AI-000300","AI-000301"],"humanGateAfter":false,"gateApproved":false,"reason":"按用户独立修复轨登记；前卡CONTROL独立验收后推进，共享文件顺序修改；原289计数保持","updatedAt":"2026-10-21T18:09:02.7275681+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-21T18:09:03.1669985+08:00: {"reason":"用户要求维持监管并完成独立CLI修复/冒烟后续行289与已批B；原卡历史/最终人审门保持","taskIds":["AI-000297","AI-000298","AI-000299","AI-000300","AI-000301","AI-000302"]}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-21T18:23:35.7995066+08:00: {"taskId":"AI-000296","userDecision":"用户2026-10-21原话：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链。派发原文明确五修复由CONTROL独立核差异与回归后顺序推进；本次只登记该已授条件式执行门，AI296独立6合同/18断言通过，证据outputs/control/AI289-CLI-REPAIR-20261021/independent-review-296.json。不是新的人类视觉/产品验收，不解除最终A+C或USER-U5。"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-21T18:44:22.4756037+08:00: {"taskId":"AI-000297","userDecision":"用户2026-10-21原话：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链。派发原文五修复由CONTROL独立核差异及回归后顺序推进；本次仅登记该已授条件式执行门，AI297已经CONTROL独立4合同/76断言及12项事实核查通过，证据.ai-workspace/outputs/control/AI289-CLI-REPAIR-20261021/independent-review-297.json。不是新的人类视觉/产品验收，不解除最终A+C或USER-U5，也不续行原289。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-21T19:18:05.3996080+08:00: {"verification":"固定CODE app revision190真实idle/最新轮completed；AI298原CODE_STOP已Receive，CONTROL独立12事实复核，root used0/reserved0/limit5，CONTROL_REPAIR_ELIGIBLE，原scope内分流编码/帧和未完成caller验证。证据independent-failure-review-298-attempt1.json与fresh-code-idle-298-resume1.json；精确指令inputs/派发/AI289-CLI-REPAIR-20261021/AI298_CODE续行1.txt。原289不消费。","reserved":1,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":0,"taskId":"AI-000298","grantId":"522700570a784c1982ccbd3505459494","cycles":["AI298:retry1"],"rootTaskId":"AI-000298","remaining":4,"authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/outputs/AI289-CLI-REPAIR-20261021/AI-000298",".ai-workspace/toolkit/WF.md","DevTools/Workflow/Test-EngineCli.ps1","DevTools/Workflow/UnityEvidenceJson.cs"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-edit"]}}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-21T19:42:05.0155316+08:00: {"userDecision":"用户2026-10-21原话：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链。按已授条件式修复顺序，AI298 attempt2 CONTROL独立4合同/15复核/165真实结构体+14驱动断言通过，证据outputs/control/AI289-CLI-REPAIR-20261021/independent-review-298.json。本次仅登记具体内部执行gate，不伪造新人类回复或视觉验收，不解除最终A+C/USER-U5，不续289。","taskId":"AI-000298"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-21T20:13:26.2419754+08:00: {"grantId":"276f64725d784c22a92738e3b3a48136","reserved":1,"remaining":4,"verification":"CODE app revision193 idle/latest completed; independent-failure-review-299-attempt1.json 14 facts; same original scope; CONTROL_REPAIR_ELIGIBLE root0/5; original broken PNG header00DA independently confirmed, no native rerun. See fresh-code-idle-299-resume1.json.","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":0,"cycles":["AI299:retry1"],"scope":{"paths":[".ai-workspace/outputs/AI289-CLI-REPAIR-20261021/AI-000299",".ai-workspace/toolkit/WF.md","DevTools/Workflow/Invoke-TaskTool.ps1","DevTools/Workflow/Test-EngineCli.ps1","Library/PackageCache/com.unity.pipeline@62c08c808737/Editor/Commands/Capture/CaptureCommands.cs"],"operations":["documentation-update","evidence-write","idempotence-check","offline-validation","source-edit"]},"authorizationSource":"POLICY","rootTaskId":"AI-000299","taskId":"AI-000299"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-21T20:57:33.3681234+08:00: {"taskId":"AI-000299","userDecision":"用户原始条件式执行指令：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链；取消重载：不进行重载，忽略这个重载要求，向后正常推进其余内容。本卡AI299已CONTROL独立5合同/16复核/181断言通过，reviewSHA=71A2BC86EA082496CCDAD76C275B610E902958CC121217BF9E64D1272B3EA47F。仅登记本批修复顺序的ReviewDependsOn执行门；非新人工回复、非视觉/产品验收，不涉及292 A+C/USER-U5。"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-21T21:49:17.8519874+08:00: {"taskId":"AI-000300","userDecision":"接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链；本卡既定CONTROL独立通过条件已满足，证据D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021/independent-review-300.json SHA256=B7B8EE21791E9A0995EBCDE26A3C0183FF6056138C8BF81F8192DAB864249813；仅内部执行顺序门，非新增人工视觉批准。"}
+## AI-000303 | [ENGINE_CLI] [WF] SMOKE-CLI-01 CLI截图链冒烟（替代未领取302，隔离路径校正）
+
+- 序号：303
+- 提交时间：2026-10-21T22:22:09.6049515+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000296, AI-000297, AI-000298, AI-000299, AI-000300, AI-000301
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+# AI-000303 · SMOKE-CLI-01 CLI截图链冒烟
+固定ENGINE_CLI原chat；SUPERVISED；用户明确S/40（有Play但保留原卡等级并解释）；独立管线成熟度样本，usageCategory=pipeline-repair。用户最新“不进行重载，忽略这个重载要求，向后正常推进其余内容”覆盖派发文档新线/重载条件。不创建chat、不伪报重载。
+前置AI296～300五修复及AI301计量接入均CONTROL独立通过；CONTROL派发前汇总真实共享调用面与scope。用户本轮执行请求已批准原文限定本卡Scope，不重复索取同一许可。
+只一次fresh task/run隔离，源Assets/Scenes/Cooking/ShortCycle_P0P1.unity只读；已有287/293宿主，任何Play前精确task/run输出根、pre-Awake/target/root/lease核实，不真实用户存档。
+同官方CLI status→editor_status（受管RecordTaskProgress）→Arm/Play→共享Ready等待→Cover/Catalog/Browse各一次capture_game_view(source=screen,1024x576,no-save)→原流与PNG→Stop→G26清理→新增Console Error0。不跑原1～20，不改P2/Build/view5/adapter/meta，不替AI289交付三图，不发布。
+调用必须使用已通过296～301真实helper和wrapper；源码修复不是本卡权限，原生装载不明/类型未加载/未知dirty先停止。三个PNG为真实原生输出，不用编辑重绘；正证据不能覆盖错误历史。失败正式Fail回CONTROL判对应修复轨，不消费AI289。
+Scope仅本卡输出与已批准临时隔离生命周期；旧场景只读，任何新的资产/源码应用方案须CONTROL具体核实，不能凭字面scope扩大。
+输出REPORT六要素、evidence/acceptance、调用回执、隔离/Console/清理、三原图与size/hash、machine usage（实际工具CLI；未知null），包≤10MB，>1MB说明。C1-C4保持原scene结构；不新建交互UI/生产节点。
+Complete/Fail/Yield后Prepare→一次实际app Send→Record回CONTROL 01a13ef5-eda9-7882-b1c9-eca47a6470d9，结束不自领289。
+
+
+本卡仅替代从未领取的AI302；同一SMOKE目标/五合同/固定ENGINE_CLI/S40/一次fresh运行，非第二份冒烟。原卡attempt0、失败0、许可消费0完整保留并通过正式SupersedeTask行政关闭，不是机器验收或次数重置。queue无修改已登记businessScope接口，用既有行政替代流程纠正输出路径。实际隔离根为D:/GameProject/Eat-What/.ai-workspace/outputs/DETACH-B13-20261019/AI-000303/isolated-saves/<fresh-run>，正式报告/原流/PNG仍本批AI-000303目录；除此无新路径。宿主源码/原场景/P2/Build/meta均不改。明确不消费原289次数。
+依次读取AI300/CALL-EXAMPLE.md（Ready）、AI299/attempt2/CALL-EXAMPLE.md（capture）及AI298调用证据，位于本批outputs各卡。健康快照来自本次已有status/editor_status，必须绑定实际task/attempt/execution/owner/project/version/PID/port/timestamps；不新增健康轮询。共享wrapper显式UsageCategory pipeline-repair，ToolSource保持unity-official-cli。按AI300共享Ready模式后再业务导航，不自己复制重试循环。截图强制screen1024x576/no-save，用CapturePng批准路径输出；禁止旧save_path分支。原UnityEvidenceJson helper按已验反射caller加载不复制类；原生支持不明如实失败回传。
+
+> SUPERVISED POLICY at 2026-10-21T22:22:10.1477361+08:00: {"taskId":"AI-000303","policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":["AI-000296","AI-000297","AI-000298","AI-000299","AI-000300","AI-000301"],"humanGateAfter":false,"gateApproved":false,"reason":"Same originally authorized SMOKE; replaces never-claimed302 solely to add exact existing host output root. All5contracts/S40/shared locks/review edges preserved; no retry reset or extra business run.","updatedAt":"2026-10-21T22:22:10.0987916+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-21T22:22:10.3406020+08:00: {"taskIds":["AI-000303"],"reason":"Same user-authorized single SMOKE; correct fresh task isolation root, preserve302 via administrative supersession."}
+
+> SUPERVISED PauseSupervision at 2026-10-21T22:22:10.4141963+08:00: {"userDecision":"接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链","reason":"No running tasks/reservations. Brief dispatch pause required by official SupersedeTask to replace unclaimed AI302 with same-goal303; restore same session immediately under existing continue-supervision request."}
+
+> Superseded AI-000302 : {"at":"2026-10-21T22:22:10.5209672+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"Replaced by AI-000303: original302 was never claimed, attempts0/failures0/consumption0; same single SMOKE/S40/five contracts, correcting exact host isolated-saves root via existing Enqueue. No failed task reset.","userDecision":"接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链","verification":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021/AI302-to-303-administration-plan.json; fresh CODE196 idle/ENGINE68 notLoaded last completed; no running task/reservation."}
+
+> SUPERVISED ResumeSupervision at 2026-10-21T22:22:10.7519766+08:00: {"userDecision":"接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链","reason":"Administrative unclaimed-card replacement complete. Resume same session and originally authorized single SMOKE chain; final human gates unchanged."}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-21T22:22:53.1284112+08:00: {"userDecision":"接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链；301具体CONTROL独立验收条件现已满足，D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021/independent-review-301.json SHA256=7D2FF204BE1E17355A3513ED091C1FC2940A049C665114FC8C73737B3E0D1088；仅原执行顺序门，非新增人工视觉验收。","taskId":"AI-000301"}
+## AI-000304 | [CODE] [WF] AI303 Ready时限与真实CLI封装定向修复
+
+- 序号：304
+- 提交时间：2026-10-21T22:47:24.5323454+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+精确输入 .ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI304_原生Ready与CLI协议修复.txt；Scope AI304_SCOPE.json；合同 inputs/acceptance/AI-000304.json。独立pipeline-repair内同根303 REPAIR/POLICY；不消费289；CONTROL独立通过后原303同cycle配对。
+
+> SUPERVISED POLICY at 2026-10-21T22:47:25.0723319+08:00: {"taskId":"AI-000304","policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"303首轮真实SMOKE15秒等待超时及原生CLI封装差异，CONTROL14事实复核；同303根第1周期CODE源码/既有离线修复，先独立通过再配对303，不消耗289。","updatedAt":"2026-10-21T22:47:24.9933295+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-21T22:47:25.1662049+08:00: {"reason":"用户已批修复轨及SUP5政策，增补同独立SMOKE根303必要CODE修复，不触发289或B。","taskIds":["AI-000304"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-21T23:32:50.5162168+08:00: {"grantId":"6beeb25358194b3884e978c5f065c269","rootTaskId":"AI-000303","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":1,"remaining":4,"cycles":["AI303:CODE304:retry1"],"reserved":0,"verification":"ENGINE app idle revision69 latest turn completed; CONTROL304 independent5 contracts16facts274assertions PASSED evidenceSHA=50D73A1F7B2D76FCA15FFC64884E88E19D4F7B0B088DCAC0FCB625E0ACE672E4; pair latest successful304 execution efc98ab6fd714097aa1f74c2bc41ebd0 samecycle1/5 no doublecharge; original303 Scope unchanged.","scope":{"paths":[".ai-workspace/outputs/AI289-CLI-REPAIR-20261021/AI-000303",".ai-workspace/outputs/DETACH-B13-20261019/AI-000303/isolated-saves"],"operations":["evidence-write","idempotence-check","isolated-validation-play","native-readonly-observation","native-screen-capture","owned-temporary-cleanup"]},"authorizationSource":"POLICY","taskId":"AI-000303"}
+## AI-000305 | [CODE] [WF] AI303冒烟两处动作常量参数修正
+
+- 序号：305
+- 提交时间：2026-10-21T23:49:44.7607959+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+精确输入 .ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/AI305_冒烟动作参数修正.txt、AI305_SCOPE.json及inputs/acceptance/AI-000305.json。仅自有输出的两候选参数/静态diff；不生产源码/Unity/新runner。原303同根第2周期CODE修正，独立通过后配对303，不消费289。
+
+> SUPERVISED POLICY at 2026-10-21T23:49:45.2835024+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原303a2真实载荷动作参数错误，经CONTROL14事实核查；仅两处候选常量修正/有限静态diff，原生产及失败载荷只读，CODE先独立通过后同cycle配对303，根额度累计。","updatedAt":"2026-10-21T23:49:45.2153434+08:00","supervisionLevel":"full"},"taskId":"AI-000305"}
+
+> SUPERVISED EXTEND at 2026-10-21T23:49:45.4644543+08:00: {"taskIds":["AI-000305"],"reason":"用户已批准修复轨继续及SUP5；303自身管线payload修复第2周期，不消费289，保留后继和最终人工门。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-22T00:09:50.5437586+08:00: {"grantId":"fbf21d5c868b493e9b969388289d4ce5","used":2,"taskId":"AI-000303","cycles":["AI303:CODE305:retry2"],"rootTaskId":"AI-000303","verification":"CONTROL独立AI305三合同/8事实通过，review SHA D9F2FCA3A7F3FAD1170BFAF658DAA42439DE20200EF921F16E80866F9FDB2C25；实际app ENGINE revision70 idle/latest completed无活动轮，证据ENGINE-idle-before-303-resume2.json。仅原303 Scope与五合同，cycle AI303:CODE305:retry2配对不双扣。","remaining":3,"reserved":0,"authorizationSource":"POLICY","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","scope":{"paths":[".ai-workspace/outputs/AI289-CLI-REPAIR-20261021/AI-000303",".ai-workspace/outputs/DETACH-B13-20261019/AI-000303/isolated-saves"],"operations":["evidence-write","idempotence-check","isolated-validation-play","native-readonly-observation","native-screen-capture","owned-temporary-cleanup"]}}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-22T00:25:43.3138962+08:00: {"taskId":"AI-000303","userDecision":"AI289-CLI-REPAIR-20261021-user-request 用户原话：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链；条件已由CONTROL独立5合同/13事实验收原生SMOKE满足，review SHA4E2D11CF5970FC6883FCBA250071450D3F5F4541EBAFCEED8EEA527950BFC9B4。仅修复轨内部执行门，非A+C/USER-U5人工视觉验收。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-22T00:25:44.8834542+08:00: {"scope":{"paths":[".ai-workspace/codebase/shortcycle.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000289","项目整体阅读理解与推进基线_2026-08-14.md","CODEBASE_MAP.md"],"operations":["documentation-update","evidence-write","idempotence-check","unity-game-view-capture","unity-isolated-play-validation","unity-owned-temporary-cleanup","unity-target-check"]},"reserved":1,"sourceApprovalId":"AI289-CLI-REPAIR-20261021-user-request","grantId":"e18671a184bc4c3c834ffc4054ba9e37","rootTaskId":"AI-000289","taskId":"AI-000289","cycles":["grant:5649470492f5473fb2f0d7562c49038e"],"used":8,"authorizationSource":"HUMAN","remaining":0,"verification":"用户条件式许可原件SHA D63C20820D078630031A264681705F6A8292C09F8094AC50D7EFB62B9F15CB02；296至301及304305独立通过，SMOKE303原生五合同13事实独立通过review SHA4E2D11CF5970FC6883FCBA250071450D3F5F4541EBAFCEED8EEA527950BFC9B4。fresh固定ENGINE app revision72 idle/latest completed无活动轮。原289同补三截图Scope只追加1次，原9Fail/used8保持；独立管线卡不伪PairedRepairTaskId。"}
+
+> Dependency correction for AI-000289 at 2026-10-22T00:26:54.2888800+08:00: AI-000288, AI-000287, AI-000281, AI-000284, AI-000273, AI-000303
+
+> SUPERVISED POLICY at 2026-10-22T00:26:55.4866605+08:00: {"policy":{"resourceKeys":["unity-project","documentation","data-batch"],"reviewDependsOn":["AI-000303"],"humanGateAfter":false,"gateApproved":false,"reason":"用户2026-10-21条件式原范围续行已满足：独立修复296至301及原生SMOKE303 CONTROL通过；保留旧依赖与共享锁，仅追加303执行验收边，最终292 A+C和USER-U5不变。","updatedAt":"2026-10-22T00:26:55.3825893+08:00","supervisionLevel":"full"},"taskId":"AI-000289"}
+## AI-000306 | [CODE] [WF] AI289管线修复 未消费许可严格重新核验
+
+- 序号：306
+- 提交时间：2026-10-22T14:18:36.8035236+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000303
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000306 独立管线修复：未消费许可的显式重新核验
+固定CODE，WF，M80。技术WorkKind=FEATURE、semanticKind/usageCategory=pipeline-repair、线标CLI(磨合)，关联原AI289但不是同根repair，不消耗/退款289。前置303已独立通过。用户直接批准call_c239e3e041ab4eccbfbbaf707a7c6b8b:0“批准绑定修复并使用原许可继续”，原件本目录AI289未消费许可绑定修复_用户批准.json绑定控制审查单SHA。正式领取后读CORE/CODE及WF approve-resume相关节、项目两入口页首/工作流相关节，git定向状态；不全仓重读。
+
+只改AI306_SCOPE.json列5源码/文档及本卡输出，原文件已有前卡改动必须保留。先保全5文件精确before、SHA，再查看原函数和既有回归。CONTROL审查单与AI289-unused-grant-binding-proof.json都在outputs/control/AI289-CLI-REPAIR-20261021。原289领取前被拒，仍QUEUED9attempt/9failure、原grant used0/1，不能伪Fail或代为操作原289。
+
+实现仅在既有ApproveResume显式opt-in增加严格重新核验分支，不新入口、不修改普通claim的指纹检查，不自动随Configure/依赖变化更新许可。参数命名由最小兼容实现决定，交接给出完整精确调用例。显式绑定本次真实人批文件/ID/原话/审查单和前后证据SHA；原业务ApprovalId/UserDecision保持，不冒充新次数。读候选当前定义时在正式queue锁内重新核实。
+
+必须保持同一原grantId/cycleIds/runs/usedRuns/claims/expectedAttempt/failureHistorySha256/原来源历史与root计数。仅未消费：QUEUED、usedRuns0、claims空、原cycle未消费且仍预留，无RUNNING/活跃owner/预约，原session ACTIVE/stopfalse/exitfalse，固定原route/owner/Scope全相同。旧定义重新计算须匹配原grant fingerprint，当前定义重新计算须匹配审定新定义。只可增加已独立通过的dependsOn/reviewDependsOn及相应reason/updatedAt；原普通依赖/review边必须保留，其他定义字段精确保持。新增review必须是直接依赖，且原生/独立验收证据实际通过及正式gate成立，不能信任调用者自写true。禁止扩大instruction/title/pipeline/art字段/resourceKeys/supervisionLevel/业务scope/人工门或更改已批范围；缺证据/未知字段变更拒绝。不要硬编码AI289/303为绕过规则。
+
+保全旧fingerprint到正式审计，记录本次revalidation批准来源/证据SHA与新fingerprint；幂等重复不得追加次数或重复消费。已消费或历史变动、错身份、停机、未验依赖、缺批准/旧新证据漂移均拒绝。不得放宽Assert-BoundedResume；若仅修改metadata说明时间，应只和已批新增依赖一起允许，不泛化为任意政策编辑。
+
+只沿用DevTools/Workflow/Test-ApprovedResume.ps1既有隔离fixture，不建新runner/续行入口，不读写生产runtime。增加真实正式API情景：旧grant→正式追加已验依赖→旧Poll拒绝→显式同grant重新核验→唯一claim消费；幂等及以上反例；旧普通续行保留。Final用现有Verify-All Custom/该runner，按真实失败次数RecordCodeValidation同稳定key AI306_UNUSED_GRANT_REBIND，首次失败最多两次局部修复，达到门限正式停止并即时回传，不换key/task自动续行。不要把测试代码复制生产实现当独立断言。
+
+交付REPORT.md、evidence.json六合同、原始runner日志、5文件before/candidate与SHA、明确CONTROL-CALL-EXAMPLE含所需新证据schema/参数、只读的本次289匹配判断。不得对生产289调用ApproveResume/Configure/Dispatch/Poll；CONTROL独立验收后才执行。无需Unity/CLI/MCP/Play/Build/资产、账户采样、任务外Git操作或历史用量回填。任务生命周期走正式API，Complete/Fail/Stop后按Prepare→一次真实发绑定CONTROL→Record。包目标1MB硬10MB，完整文本/失败留存，超1MB说明必要性。
+
+> SUPERVISED POLICY at 2026-10-22T14:18:37.4268910+08:00: {"taskId":"AI-000306","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":["AI-000303"],"humanGateAfter":false,"gateApproved":false,"reason":"用户call_c239e3e041ab4eccbfbbaf707a7c6b8b:0批准独立CODE绑定修复；303已独立通过，保留原289未消费许可，CONTROL验后才正式重新核验原grant","updatedAt":"2026-10-22T14:18:37.3487841+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-22T14:18:37.5823460+08:00: {"taskIds":["AI-000306"],"reason":"用户明确批准绑定修复与使用原许可继续，同session追加独立pipeline-repair卡306，原289次数范围不变"}
+
+> SUPERVISED RECONCILE at 2026-10-22T14:19:14.0157847+08:00: {"repairs":["REQUEUE_UNCLAIMED_DISPATCH:AI-000289"],"evidence":"真实app当前CODE revision198 notLoaded/末轮completed；ENGINE revision74 idle/末轮completed。289唯一领取前指纹拒绝、没有claim，旧dispatch已过期。用户已批准306绑定修复；此次仅释放过期派发，不重发289。","inspection":[]}
+
+> SUPERVISED APPROVED_CONTINUATION_REFUSED at 2026-10-22T15:19:42.7072594+08:00: {"controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","reason":"Exception calling \"GetBytes\" with \"1\" argument(s): \"Value cannot be null. (Parameter 'chars')\"","problemKey":"","taskId":"AI-000289"}
+
+> Verification rejected for AI-000306 at 2026-10-22T15:23:00.9451536+08:00: decision=REJECTED; reason=Explicit revalidation cannot handle actual approved null collections; valid unused original grant fails before write.
+## AI-000307 | [CODE] [WF] AI306未消费许可空值与集合摘要修复
+
+- 序号：307
+- 提交时间：2026-10-22T15:26:33.0997242+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+精确输入 inputs/派发/AI289-CLI-REPAIR-20261021/AI307_未消费许可空值集合修复.txt；Scope AI307_SCOPE.json；合同 inputs/acceptance/AI-000307.json。同根306 REPAIR/POLICY，pipeline-repair，实际旧定义[null]/空数组摘要兼容，原289未消费许可和请求保持；不操作原289生产API。
+
+> SUPERVISED POLICY at 2026-10-22T15:26:33.6717441+08:00: {"taskId":"AI-000307","policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"Within approved binding repair; same-root306 null collection integration rejection, no new289 quota or scope.","updatedAt":"2026-10-22T15:26:33.6002538+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-22T15:26:33.8151962+08:00: {"taskIds":["AI-000307"],"reason":"Necessary same-root306 pipeline repair after actual unchanged-state revalidation failure."}
+> Control rejection resolved AI-000306 : {"at":"2026-10-22T16:26:38.7385183+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"UNUSED_GRANT_NULL_COLLECTION_DIGEST","repairTaskId":"AI-000307","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","userDecision":"批准绑定修复并使用原许可继续","verification":"5 contracts, 14 independent facts, 334 existing-runner checks / 390 events; strict structural digest preserves null/empty/single-null collection shape; historical digest/fingerprint/claim unchanged. Empty [] caused missing JSON; [null] collision separately preserved in correction. Original approved grant/proof/request SHA unchanged.","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021\\AI306-control-rejection-resolution.json","evidenceSha256":"627CAD85EEEEACCD0DA9695B94BA764E56E03983AE96149A7BA51F6B978900AA","rejectedResultSha256":"1F1773C2DF206BD534C2CF9342D1EA85A14520836381414EA1C96EBE66470C27","repairResultSha256":"C233A494DBC4BE65348C9EE65086DF92352CDDC364B4E37A838589FD8D181AF2"}
+
+> SUPERVISED UNUSED_GRANT_REVALIDATED at 2026-10-22T16:27:52.3931925+08:00: {"approvalId":"call_c239e3e041ab4eccbfbbaf707a7c6b8b:0","grantId":"e18671a184bc4c3c834ffc4054ba9e37","approvalPath":"D:\\GameProject\\Eat-What\\.ai-workspace\\inputs\\派发\\AI289-CLI-REPAIR-20261021\\AI289未消费许可绑定修复_用户批准.json","approvalSha256":"2010A47482052D9BA7E4E423EF58C54A47669CCB5A645A973D2D596EA715AA33","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021\\AI289-unused-grant-revalidation-request.json","evidenceSha256":"0F99A59364D730E99D78BDCEB686E3A784148E29623B931ECE748013198BE8A7","proofPath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021\\AI289-unused-grant-binding-proof.json","proofSha256":"C6B9730190C718EFEFB596DF7A768918BFA52C5E72A7AC988F60F5586803B535","oldFingerprint":"DA-B4-DD-3E-57-29-49-4C-02-CE-B0-6D-FE-32-E2-3F-30-87-47-2F-80-26-A3-BB-8C-46-66-42-5C-00-9A-9D","newFingerprint":"91-61-A1-89-C4-25-A6-E5-87-A7-00-15-43-68-76-45-4F-8B-9F-6E-3D-8B-EF-AD-CA-FA-0F-C1-F6-C8-39-08","at":"2026-10-22T16:27:52.3231832+08:00","userQuote":"批准绑定修复并使用原许可继续","reviewPath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\AI289-CLI-REPAIR-20261021\\AI289_未消费许可绑定修复审查单.md","reviewSha256":"FF104E928E8B9AA31EC4732E59E13FEC37B249C655B3E6E584FF840AB13FD384","stateSha256":"43841216D835E5E4953723F3D91B3275F34A6C705BEC7E24625BF0FF8545AE73","controllerThreadId":"01a13ef5-eda9-7882-b1c9-eca47a6470d9","verification":"Fresh app ENGINE_CLI revision74 idle/completed; engine-idle-before-revalidation-after-307.json. AI307 independently PASSED 5 contracts/14 facts/334 checks; formal resolve-306.json completed. Same original immutable request and user approval; no new quota."}
+
+> SUPERVISED RECONCILE at 2026-10-22T16:43:29.6156835+08:00: {"repairs":["REQUEUE_UNCLAIMED_DISPATCH:AI-000289"],"evidence":"Fresh app revision76 latest turn failed capacity, inactive/systemError no active turn. Actual289 stillQUEUED attempt9 grant0/1. Original ticket expired; user call_9c659d1224a3457e9e7d05d5bf9d0bb9:0 explicitly approved same-model resend once. No model override or new business grant.","inspection":[]}
+
+> SUPERVISED RECONCILE at 2026-10-22T18:08:38.0776982+08:00: {"repairs":["REQUEUE_UNCLAIMED_DISPATCH:AI-000290"],"evidence":"Actual app wait_threads revision84 idle/completed, prior turn01a162f3-256d-7261-b748-42a45fd9fcc1 ended with no platform error. Evidence heartbeat-20261022T100433776Z/engine-fresh-idle.json. AI290 QUEUED attempt0 executionnull errors0, workerENGINE_CLI IDLE/no active task. Old token b01cd05a43b7441fb459eca789a87fe4 expired before single Poll; ingress file preserved. A independent PASSED and prior B approval remain. No business Fail, no quota consumption, no runtime edits.","inspection":[]}
+## AI-000308 | [CODE] [WF] G87 CLI SceneHandle证据调用修复（关联AI290，独立pipeline-repair）
+
+- 序号：308
+- 提交时间：2026-10-22T19:05:55.6942631+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000298, AI-000304
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000308 · CLI SceneHandle证据调用修复 · 固定CODE · S/40 · semanticKind=pipeline-repair · lineLabel=CLI(磨合)
+原业务来源AI-000290；本卡是G87独立管线修复根，用FEATURE技术类型承载，不伪造同290 repairContext，不消费/退款290实际历史。用户已授权继续既有B链、G87管线失败独立CODE→必要SMOKE→原卡正式续行；长期SUP5和所有硬门保持。scope见本目录AI308_SCOPE.json，五合同inputs/acceptance/AI-000308.json。
+
+先读CORE、CODE worker、WF相关证据/离线/结算条目及P056，不全量重读历史。事实入口outputs/control/DETACH-B13-20261019/independent-failure-review-290-attempt1.json，15项事实复核，不是任务通过；原290 attempt1 execution6bb887ca407d4dcf9d2049090ccbcfe9，root0/5，只有2/5合同。四原生调用仅status/editor_status/preflight编译失败/console_status；PrepareSnapshot0/staging无/生产写0，API是否已加载未知，不是已证产品导出或项目编译缺陷。原始未结输出不可覆盖。
+原件outputs/DETACH-B13-20261019/AI-000290/attempt1/native-preflight.cs.txt（SHA612D4508A02119B34679FF601C5208D2D365AF7E7B0667F59095C16D2F754F8A）把s.handle直接赋JObject；未执行prepare-snapshot.cs.txt的sourceState同样scene.handle直接赋值。实际Unity6000.3.24f1 Scene.handle返回UnityEngine.SceneManagement.SceneHandle，原编译拒绝隐式转JToken。
+
+任务范围：
+1. 只读核实际Unity6引用/公开SceneHandle标量API，选择保持真实场景身份的显式标量投影；不能用GetHashCode/对象ToString不明语义/丢字段/固定值/默认null/ReflectionLoopIgnore掩盖。把确证API、类型及最小正反例写交接。
+2. 在本卡输出生成两份原调用载荷的最小修正版，不修改290旧原件。除了SceneHandle标量兼容以及明确必要的当前task/attempt/execution/output/staging参数化，原业务代码/前置/未知dirty/journal/fresh-staging/认证回读/实际Catalog-Sprite捕获/前后无漂移断言完整保留。两份完整语句体均需按现有官方eval Execute上下文、真实UnityEditor/CoreModule及Newtonsoft引用离线编译，不只测孤立一行。原失败载荷作为离线预期编译失败负例，不能当实际重新调用Unity。仅静态核反射类型/方法名与当前实际源码一致；发现另一个实质范围问题给明确证据，不顺手改产品实现。
+3. 复用既有Test-EngineCli.ps1 EvidenceJson分支，必要最小扩充同文件用例和已有UnityEvidenceJson.cs；若直接公开标量转换已足够，无需为此新增helper API。禁止新runner/夹具入口/恢复入口，不全量All/ProtocolRepair重跑；保全所有旧组/断言，新增最少实际SceneHandle身份投影与两份完整caller编译验证，证明原坏例失败且修正版通过。不得复制实现代替原载荷测试、硬编码PASS、绕过严格JSON/PNG/授权门。仅本卡源码与相称离线验证；记录原真实失败，不为一次性载荷建专用长期runner。
+4. WF同原条目补“Unity6 SceneHandle需先投影标量，JObject构建期错误无法由后续converter兜底”的精确用法。无需改root项目核验日期、生产Assets/Exporter/Catalog/SAVE/scene/meta、queue/Importer/运行态或PackageCache。API定义/默认行为/原已验helper功能保持。
+5. 交付可直接复用ENGINE-HANDOFF和最小只读SMOKE方案：使用既有官方eval及实际helper载入方式；只核场景handle标量/已加载PrepareSnapshot签名/只读前置，不执行PrepareSnapshot/Play/Build/Refresh。CODE不调用Unity/CLI/MCP，也不替SMOKE写PASS。CONTROL先独立通过，再正式安排固定ENGINE最小SMOKE；其通过后才按长期POLICY唯一ApproveResume原290原范围，独立FEATURE修复不能伪作PairedRepairTaskId。
+
+治理：三个允许共享文件最多，S40与任务规模相称；改动前保全，受保护快照源码只读不修改；不全仓哈希/内存导出，不部署/提交/推送。正式生命周期API可用，测试状态仅隔离fixture，禁止生产runtime手改。稳定key SCENEHANDLE_CALLER_OFFLINE；首次验证失败最多再两次局部修正验证，达到既有CODE_VALIDATION_STOP即正式结算回传，不执行器自行续行或换key。包目标1MB/硬10MB，原文本/失败/必要快照完整保留，>1MB说明。实际工具与pipeline-repair分类、预算/真实provider、app turns未知写unknown，不伪造账单。
+输出.ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000308：REPORT六要素、原/候选小快照、真实离线日志、evidence/acceptance、完整最小差异、可复用调用与ENGINE-HANDOFF。Complete后立即Prepare→一次实际app Send→Record给绑定CONTROL，Receive不等于验收；不得自领后继或原290。
+
+> SUPERVISED POLICY at 2026-10-22T19:05:56.0951398+08:00: {"taskId":"AI-000308","policy":{"resourceKeys":["workflow-devtools","documentation","unity-project"],"reviewDependsOn":["AI-000298","AI-000304"],"humanGateAfter":false,"gateApproved":false,"reason":"G87 independent pipeline caller repair under existing B task/standing SUP policy, exact source/offline scope only. Original290 failure and root0of5 retained; CODE independent pass then minimum readonly ENGINE smoke, then original unique ApproveResume.","updatedAt":"2026-10-22T19:05:56.0398220+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-22T19:05:56.2303593+08:00: {"taskIds":["AI-000308"],"reason":"Authorized B continuation necessary G87 independent pipeline repair for exact AI290 SceneHandle caller compile failure; no exporter/production scope expansion, no human gate waiver."}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-22T19:12:34.0893482+08:00: {"userDecision":"依据用户2026-10-21原话：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链。仅登记已有304独立5合同16事实274断言通过后的内部执行依赖门，review SHA50D73A1F7B2D76FCA15FFC64884E88E19D4F7B0B088DCAC0FCB625E0ACE672E4；非新增人类视觉或产品验收，不触及292/A+C/USER-U5。来源inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json及AI290-CLI-CALLER-REPAIR-20261022/控制范围依据.json。","taskId":"AI-000304"}
+
+> SUPERVISED USER_GATE_APPROVED at 2026-10-22T19:34:34.5637392+08:00: {"taskId":"AI-000308","userDecision":"依据用户2026-10-21原话：接收相关的修复派发指令，维持回到监管模式，修复轨任务都完成后续行原本的289任务并继续推进后续的待完成任务链；G87管线修复/必要SMOKE顺序。AI308 CONTROL独立五合同15项、一次EvidenceJson18检查/168真实结构体与句柄断言通过，详见outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-308.json。本门仅具体已批内部执行验收依赖，不是新的人工视觉/产品批准，不解除292/A+C/USER-U5。"}
+## AI-000309 | [ENGINE_CLI] [WF] AI290管线SceneHandle修复最小只读SMOKE
+
+- 序号：309
+- 提交时间：2026-10-22T19:38:23.1578554+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000308
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI309 · SMOKE-CLI-SCENEHANDLE · 固定 ENGINE_CLI · S40 · 独立 pipeline-repair / CLI(磨合)，关联原业务AI290。此卡只读，无Play/场景变更，使用现有固定chat，用户免重载有效。
+授权依据：既有用户继续修复轨及后继/G87必要SMOKE，控制范围依据.json；AI308已Complete/Receive并CONTROL独立5合同、15事实通过（independent-review-308.json SHA B24DCC9B0303C58D14A12D986B3FB0CF6998E469308E2B695178E2EB4C66082F）。原290首Fail保持，未签原卡续行。此独立FEATURE技术根不作为PairedRepair，不退款/消耗289，不伪新人批。
+先唯一Poll正式领取，复用已读共同入口，不全量重读历史；仅补本卡Scope/4合同与AI308 ENGINE-HANDOFF.md、candidate-preflight.eval.cs。使用原已验官方CLI和Invoke-TaskTool，UsageCategory=pipeline-repair / ToolSource=unity-official-cli，真实TaskId/OwnerThreadId/ExecutionId及监管checkpoint绑定本卡Scope；输出根本卡attempt1，fresh不覆盖。
+1. status和editor_status各至多一次，保持现有30秒命令/35秒进程超时及无重试。只选D:/GameProject/Eat-What、Unity6000.3.24f1、当前唯一PID/port/新鲜heartbeat，clean idle Edit；若身份/版本/新鲜度不匹配或无法判定停止，不靠旧7800/PID猜测。既有command eval用同一目标，不换MCP/工具。
+2. 核AI308 candidate-preflight.eval.cs SHA7FDB37BEBA27EF7C14D4CDF528E3DA2B7F8F519FFDCE463D988EF278B8DA707E，复制到本卡输出绑定且仅绑定头部__TASK_ID__、attempt=0、__EXECUTION_ID__为本次真实claim。完整原业务body保持，保存来源SHA/精确diff；不要运行candidate-snapshot.eval.cs。经既有官方eval_file/file参数调用完整载荷一次（沿原290调用方式，只有已批准标量修复）。不改原载荷文件、helper、wrapper或项目源码。不要启动验证宿主、Arm/Play或StartupReady（本卡是Edit只读检查，无宿主启动期重试）。
+3. 必须核CLI默认完整外层success/command/data/errors/warnings、data.command/parameters/result/target及eval内层success/result/output/diagnostics，退出码0/单JSON/真实项目port/回显载荷；不能递归猜result或用--result-only。原双流和SHA/长度保存；核返回claim三项、pid/project/unityVersion，playing/compiling/building=false、scenes各path/Int32 handle/dirty=false、prepareSnapshotLoaded=true、method精确Void PrepareSnapshot(System.String)、assembly和MVID非空。句柄只当前快照内有效，不与历史句柄匹配；不得GetHashCode/固定常量/删字段或忽略错误。preflight直接返回标量DTO，不需要加载helper DLL或复制serializer。
+4. 现有dirty场景/未结journal/缺已加载类型或方法/动态编译错误立即原始保全并正式Fail，不Refresh/Compile/Import/Play/Build/Open/Save/尝试API修复。不执行PrepareSnapshot（含测试性调用）、不触碰Catalog导出/生产Fingerprint/StreamingAssets/真实用户存档或旧已验P2/289探针截图。既有载荷只读已加载scene/API/journal；所有文件写入只本卡输出。
+5. 一次console_status核当前compile状态和错误事实；无连续起点不声称新增Error0，不清Console。记录总调用数和实证读取结果、无业务API调用/输出staging；不能用CLI退出0或离线结果代本卡4合同，不能把“只读冒烟成功”当290快照成功。结果仍有不确定项须如实失败或待CONTROL判断，不删减合同完成。
+交付：REPORT六要素、evidence.json、acceptance.json、实际bound preflight与SHA/精确diff、全部原CLI双流/回执、原生API/句柄标量与干净Edit证据；输出目标1MB硬10MB，完整文本/失败保留。无需截图/全路径哈希/重复导表/临时探针或新runner。实际tools/provider与appturn未知写unknown。正式失败先结算回传，不自行续行或原290；Complete/Fail立即Prepare→一次真实appSend→Record给绑定CONTROL。CONTROL独立4合同通过后才按现有SUP5唯一ApproveResume原290原范围，后继DATA/Build均不由本线领取。
+
+> SUPERVISED POLICY at 2026-10-22T19:38:55.0210152+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":["AI-000308"],"humanGateAfter":false,"gateApproved":false,"reason":"G87独立管线只读SMOKE，308五合同/15事实独立通过；只现有完整preflight、真实句柄标量及loaded API签名/clean Edit，不调用快照/Play/Refresh。","updatedAt":"2026-10-22T19:38:54.9260364+08:00","supervisionLevel":"full"},"taskId":"AI-000309"}
+
+> SUPERVISED EXTEND at 2026-10-22T19:39:30.3036143+08:00: {"taskIds":["AI-000309"],"reason":"AI308独立通过后的精确G87只读SMOKE；关联290，仅loaded scenehandle/API preflight，不执行快照/产品写入，原290待其独立通过后唯一ApproveResume。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-22T20:10:27.6033784+08:00: {"cycles":["AI290:retry1"],"taskId":"AI-000290","reserved":1,"used":0,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","grantId":"b2b092e5a4674eb383c51582902059c2","verification":"本轮fresh app ENGINE revision89 idle/latestTurn completed/error null，原290首轮正式Fail/Receive且root used0/limit5，CONTROL独立308五合同15事实及309四合同13事实通过，review309 SHA926C6C9BAA99D4787439255BD40195D90BB0592E686CD54CD3E3ADAE24B97F43。全部scope无运行/预约；只原卡原Scope一次真实快照。独立FEATURE308/309不伪PairedRepair，不改任务定义或历史。","rootTaskId":"AI-000290","scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000290"],"operations":["evidence-write","idempotence-check","isolated-catalog-export","unity-catalog-readonly-snapshot","unity-target-check"]},"remaining":4,"authorizationSource":"POLICY"}
+## AI-000310 | [CODE] [WF] AI290快照反射失败离线只读诊断
+
+- 序号：310
+- 提交时间：2026-10-22T20:48:14.3860078+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000308
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000310 · 原AI290快照反射失败离线只读诊断 · 固定CODE · S/40 · READONLY_DIAGNOSIS/ParentTaskId AI-000290；usageCategory=pipeline-repair，CLI(磨合)，不是已确证管线根因，不新增原业务续行、不计诊断为重试、不退款旧1of5。
+授权为现有监管继续B任务链、必要只读诊断/G87分层；不需要Unity/真实快照执行。正式Scope仅本卡输出，禁止生产源码、共享工具、runtime手改。先读CORE/CODE worker和相关WF；只按需读原始证据，不全量历史。
+CONTROL事实：outputs/control/DETACH-B13-20261019/independent-failure-review-290-attempt2.json SHA37D6ABB6169AABBBCFF332D8EB9B4BA95D06AD6E55500809208AE9E433546E54，16事实/五合同2过。原attempt2 execution715dbecb4acf493fa3e9dbe0581f5389，5原生调用，前置成功，PrepareSnapshot反射一次CLI exit6，只外层TargetInvocation错误；source-before/after原字节相同170SO/14表/dirty0，staging-a2与四件不存在。不能把缺产物直接判Capture前失败，Export也有自有失败清理；不能推断无调用/无瞬时克隆。原两失败/所有许可保持。任务目录outputs/DETACH-B13-20261019/AI-000290/attempt2含完整调用/双流/两个原载荷，原件只读。
+1. 只读完整原始失败、当前CatalogBlobBuildProcessor.PrepareSnapshot→Capture/Rehydrate→CatalogBlobStaging.Export→认证路径，以及实际CatalogBlobSerializer与用到的数据类型。核真实现有SDK反射异常处理仅解一层的事实，读取必要现成Editor日志中的同时间段错误（仅已存在磁盘，不Unity调用）。确证与推测分开，不把SDK外层Runtime Error误判编译、权限拒绝或特定产品缺陷。无证根因可以明确unknown并列排除边界，不能为Complete猜根因。
+2. 根据实际代码/序列化资源只读定位最小候选与影响。尤其实际Unity Object null语义、已知MissingSprite保留契约、稳定GUID/fileID、全量字段支持、fresh路径/认证等边界按证据核对，不默认哪一项就是根因，不改非空配表/素材、不删除MissingSprite/字段/认证来绕过。原内层错误不可恢复时，准备一个只增加异常链观测的完整snapshot候选：本卡输出内复制原完整载荷，仅阶段标识/反射inner类型消息stack最小保全，并仍抛失败、保留原finally和所有原业务guards；成功路径/调用次数/认证/产物集合不能变，不能加业务重试/吞异常/输出PASS。不应用任何生产/共享源码修复。
+3. 有可验证假设时使用已经存在的离线入口/可调用compiler，隔离输出作最小复核。无需强造回归；不能新建独立长期runner/fixture或改已有共享脚本。候选完整eval语句体以实际Unity6 Editor/CoreModule/Newtonsoft引用编译，明确这只是离线、不调用任何Unity API入口；为验证异常透传可用小型隔离反射合成例，证明一次调用、真实inner保留、failure仍失败/finally仍执行，不能将模拟报错说成原Editor根因。保留负例和实错，不全量All/全仓hash/内存导出。若现有入口不能完成且需共享实现改动，仅给具体差异候选供CONTROL另行定范围，不现场扩大。
+4. 交付ROOT-CAUSE-ASSESSMENT.json（confirmed/unknown/hypotheses逐项证据）、REPORT六要素、原SHA/候选精确diff/必要离线日志、NEXT-STEP.json。后一文件给最小可审下一步：若需native诊断或原290续行，列唯一调用/读写/产物/权限/停止点；本卡不注册/执行下一步、不发grant、不自领后继。生产修复、原生SMOKE/PrepareSnapshot仍须CONTROL基于实际结论正式派发；不得把READONLY_DIAGNOSIS改成REPAIR实施。本卡成功条件为诊断材料可靠和边界完整，不是已解决原290或导出成功。
+正式结算Complete/Fail立即Prepare→一次真实appSend→Record回绑定CONTROL。CODE不用Unity官方CLI/MCP/Refresh/Play/Build/导表/用户存档；实际appturn/bill不可观测写unknown，actualTool如实不以CODE车道推定code-cli。包目标1MB硬10MB、完整报告与失败保留。输出.ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000310。稳定离线验证key AI290_REFLECTION_DIAG_OFFLINE，既有CODE三次局部失败门保持，正式失败先回CONTROL不能自重启。
+
+> SUPERVISED POLICY at 2026-10-22T20:49:12.5653184+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原290第二次失败根因未知，当前授权内固定CODE只读离线诊断；仅本卡输出候选，不修改生产或共享源码、不Unity、不续原业务。诊断不计修复周期；原290根1of5与历史保持。","updatedAt":"2026-10-22T20:49:12.4599035+08:00","supervisionLevel":"full"},"taskId":"AI-000310"}
+
+> SUPERVISED EXTEND at 2026-10-22T20:49:12.8504145+08:00: {"taskIds":["AI-000310"],"reason":"同一已批B监管链必要READONLY_DIAGNOSIS，保留原290两失败/根1of5；无新增业务/原卡grant。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-22T21:17:36.0827141+08:00: {"authorizationSource":"POLICY","grantId":"bf7b94ef5c4a467c8e171273c2dbb26e","taskId":"AI-000290","scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000290"],"operations":["evidence-write","idempotence-check","isolated-catalog-export","unity-catalog-readonly-snapshot","unity-target-check"]},"rootTaskId":"AI-000290","remaining":3,"cycles":["AI290:retry2"],"verification":"ENGINE fresh revision92 idle/latestTurn completed/error null，实际AI290 attempt2已Fail/Receive root used1/limit5余4；AI310正式Complete/Receive且CONTROL独立四合同13事实 PASSED_DIAGNOSIS_NOT_ROOT_CAUSE_OR_REPAIR，review SHA E666F71997B7BF03D6EBA735E77A72CC836B0F825DA0DFAE5331ED280F13B541。只原Scope一次PrepareSnapshot，候选14行异常链观察已完整引用编译且原业务/finally保留。实际根因未知，不伪PairedRepair、不改定义。精确指令AI290_ENGINE续行2.txt。","reserved":1,"used":1,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0"}
+## AI-000311 | [CODE] [WF] AI290 Sprite身份拒绝对象定位与只读观测准备
+
+- 序号：311
+- 提交时间：2026-10-22T21:50:28.3060981+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000310
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000311 · AI290 Sprite身份拒绝对象定位与只读观测准备 · 固定CODE · S40 · READONLY_DIAGNOSIS/ParentTaskId AI-000290。原根实际已用2/5，三Fail完整保留，本诊断不计重试、不签原290新grant。usageCategory=pipeline-repair/CLI(磨合)是排障成本，不能据此预判产品或管线根因。授权沿用户监管B继续及必要诊断/G87，Scope仅本卡输出，生产源码/共享工具/资产/runtime不修改。
+CONTROL已正式Receive原attempt3并独立16事实复核，review outputs/control/DETACH-B13-20261019/independent-failure-review-290-attempt3.json SHA1F9373CBE65EE4D60838B9704D0156C6013F407D2D25201DCB0B526D2E6BED0A，原五合同仅2/5。原execution7bf8f58a5dd54cb6abd1070e4169242d，精确异常链位于outputs/DETACH-B13-20261019/AI-000290/attempt3/snapshot-exception-chain.json SHA454E2959669F72A794DE6AA6089B7FF421D979750948425CECA6BEF3B7614717；stage PrepareSnapshot.Invoke，TargetInvocationException→BuildFailedException Unstable catalog asset/Sprite identity。原生栈CatalogBlobSerializer.Encode:84 Sprite分支→BuildProcessor.Identity:38，guard asset==null或TryGetGUIDAndLocalFileIdentifier失败。具体asset/field/Sprite和哪个guard项未知，不能把MissingSprite名字、托管null语义猜测当确证。Capture未完成，未到Rehydrate/Export；本卡不得调用这些业务函数或再跑快照。原attempt2当时inner未知不回填。
+1. 只读相关现源码CatalogBlobSerializer/CatalogBlobBuildProcessor、真实序列化数据类型与Generated受影响Sprite引用/必要meta及旧282的完整数据契约。定位磁盘候选资产、字段路径、序列化GUID/fileID/type与实际文件/子资产声明是否相符。以当前读到的引用为准，不全仓hash、不导纹理/内存快照。明确托管null、Unity fake-null、无稳定身份/非持久Sprite、既有MissingSprite本体等候选的可证与未知；GUID路径不存在或子资产未找到也不能静默清空生产非空值。已知原生MissingSprite本体必须保留，不弱化identity/auth/字段/数据集合。
+2. 若磁盘不足以证明当前Editor对象身份，交一个完整、可编译的只读eval_file候选，供CONTROL审后另派ENGINE诊断；本CODE不执行native。复用308已验preflight的目标/clean Edit/无journal/SceneHandle显式int/当次task-attempt-execution绑定方法，新增观测只读取当前169dataSO的Sprite字段与必要List/嵌套字段（遵循真实Fields序列化规则），准确附asset path/GUID/localID/类型及字段路径。分别记录ReferenceEquals托管空、Unity null、instanceID（仅合法时）、AssetDatabase身份获取成功与GUID/fileID、asset path/持久性，结合必要SerializedProperty只读PPtr/instanceID和已核磁盘引用。不能用GetHashCode、无证ToString、任意类型递归或把Unity对象直接塞JSON。仅具体异常/不稳定引用明细和计数、必要正常对照；默认最多20条异常明细，更多以计数/明确截断标识和可定位索引保留，不能把截断当全通过。针对这些Sprite只读诊断不属于常规内存保护/纹理导出。
+3. 完整候选必须同既有eval Execute上下文、真实Unity6 Editor/CoreModule/Newtonsoft引用离线编译；优先复用308/310已有compiler方式，不新增长期runner/fixture、不修改共享Test-EngineCli。保存完整语句体、wrapped源码、真实编译双流/来源SHA及明确待绑定头部。候选禁止PrepareSnapshot/Capture/Encode/Rehydrate/Export/创建销毁Unity对象/Refresh/Compile/Import/Play/Build/Save/SerializedObject.ApplyModifiedProperties等写入。字段读取异常仅如实记录为诊断失败或unknown，不改对象/吞错伪通过，不现场循环重试。
+4. 输出ROOT-CAUSE-ASSESSMENT.json、SERIALIZED-SPRITE-CANDIDATES.json、完整native只读候选与编译证据、ENGINE-HANDOFF/NEXT-STEP（唯一eval范围/读写/精确输出根/停止条件）及REPORT六要素、evidence/acceptance。若有足够实证可提出最小修复diff仅候选，但不能应用生产，不能猜授权清空非空源值。诊断可明确待native，不用强造根因；成功条件是可靠对象候选、可审只读观测和真实编译。原生诊断后，CONTROL再定CODE产品修复或DATA/USER-U5门；本卡不注册后继/ApproveResume/业务重试。
+正式输入/输出限定 .ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000311；先读CORE/CODE worker及相关P/TK入口。CODE不Unity/CLI/MCP调用、不新chat/重载；包目标1MB硬10MB，不复制完整旧证据重复占包，旧失败原件保留。稳定验证key AI290_SPRITE_IDENTITY_DIAG_OFFLINE，既有CODE局部三失败停止门保持，正式失败先结算回传不得自续。Complete/Fail即时Prepare→一次真实appSend→Record给CONTROL，不自行领取后继。actualTool按观测、未知null，不以CODE车道写code-cli。
+
+> SUPERVISED POLICY at 2026-10-22T21:51:17.0709395+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原290第三失败已独立16事实：Sprite身份guard拒绝，具体对象/字段未知。仅已授权范围内固定CODE离线只读定位和候选编译，原根2of5保留，不执行原生/快照/产品或共享源码修复，不新增原290许可。310独立诊断已通过。","updatedAt":"2026-10-22T21:51:16.9663595+08:00","supervisionLevel":"full"},"taskId":"AI-000311"}
+
+> SUPERVISED EXTEND at 2026-10-22T21:51:17.4433935+08:00: {"taskIds":["AI-000311"],"reason":"现有B继续及必要诊断授权，纳入Sprite对象定位311；只读诊断不重跑290业务，原范围/次数和最终人审保持。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-22T22:18:03.9117867+08:00: {"authorizationSource":"POLICY","rootTaskId":"AI-000290","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["AI290:DIAG311:retry3"],"used":2,"reserved":1,"verification":"CONTROL independently reviewed AI311 CODE_STOP: 13 facts review SHA EB30C7C5654D1CCAD3A876F05B74C76E48CD27B56B7B1C27632AF0B34F54E13C. Current SUPERVISED ACTIVE/no stop, same original output scope. Fixed CODE fresh app revision250 idle/completed, no active turn, evidence code-before-311-resume1.json. Only failed diagnosis continuation compiler references and bounded readonly candidate; no original290 business run/production writes. Root290 used2of5 remaining3 verified, retain failures and actual API cycle consumption.","scope":{"paths":[".ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000311"],"operations":["evidence-write","idempotence-check","offline-candidate-validation","readonly-source-and-evidence-inspection"]},"grantId":"300fab85db4343f892b6f65fa8db65de","taskId":"AI-000311","remaining":2}
+## AI-000312 | [ENGINE_CLI] [WF] AI290 Sprite身份拒绝原生只读定位
+
+- 序号：312
+- 提交时间：2026-10-22T22:37:56.5641902+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000311
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000312 · AI290 Sprite身份拒绝的原生只读对象观测 · 固定ENGINE_CLI · S40 READONLY_DIAGNOSIS Parent AI-000290。用户原监管B与继续修复链已授权范围内必要诊断；同session，不新chat/模型/重载。AI311 attempt2已Complete/Receive且CONTROL独立4合同14事实通过，review outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-311.json SHA FD26F1DAE8BED579067E41B9B69FC946DE7A884D5DB1BA9D72678E9BDC518899。完整候选已按真实Unity6/Mono/Newtonsoft七引用由worker及CONTROL各一次离线编译通过，未native。原290仍三正式失败/原五合同2/5；共享根现3of5余2包含已失败311续行，旧2业务周期与311首次0消费保留。本卡首次只读诊断不签原290新grant，不伪repair配对、不重新快照/退款。usageCategory pipeline-repair只表示排障成本，不预判产品或管线根因。
+候选与交接：outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000311/attempt2/ENGINE-HANDOFF.md、candidate-sprite-observe.eval.cs SHA3009BBBF603562E2A8CE21CCF0687663FF252C6E7359C024A6CE6A93FB620CB7；相关原清单SERIALIZED-SPRITE-CANDIDATES.json SHA15811E360F02AFCBA8CE7B5CD5BC5A6D47C7A4D8DBF53EB9F80BE0FAF5B3819F。磁盘98字段78非空20空，13组都有对应文件，57引用本地MissingSprite已有localID，但不证明实际Editor引用/根因。必须保留全部非空数据和占位，不改数据/源码/资产。
+
+唯一正式写入根 .ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000312；本轮fresh输出根即该目录，不已有结果/失败文件/链接。status/editor_status各一次取得真实项目D:/GameProject/Eat-What/6000.3.24f1/当前实例PID/port/heartbeat与clean idle Edit，无忙/dirty/journal；只目标核对无Refresh/Compile/Import。按既有官方CLI共享wrapper权限/互斥/当前身份处理，UsageCategory pipeline-repair / ToolSource unity-official-cli。非启动期普通eval不启Ready400重试。
+只替换已审候选前两行五常量taskId=本卡/attempt=实际claim/executionId=实际claim/output=本卡绝对精确根/approvedOutputRoot=同根；其余完整body逐字保存、核SHA/差异。不能携带311/290身份或自行修改逻辑/复制一半表达式。执行前正式SupervisionCheckpoint，Scope本卡只读/evidence；然后同官方eval_file执行一次完整候选，保存全载荷+wrapper回执+原stdout/stderr+原生结果/失败JSON。不得复制自定义runner、改共享工具或PackageCache/全局配置/端口。
+
+候选读取169dataSO及真实Fields/List/LocTableEntry，记录owner path/GUID/localID、Sprite managedReferenceNull与UnityNull、合法instanceID/PPtr、TryGetGUID/fileID/path/persistent，最多20明细+总数/坐标/截断。只调用Fields和公开只读API；GetMethod PrepareSnapshot仅签名检查，绝不调用PrepareSnapshot/Capture/Encode/Rehydrate/Export/Create/Destroy/Refresh/Compile/Import/Play/Build/Save/ApplyModifiedProperties。不RunOriginalProbe/原1..20/旧289/快照，不实际存档/生产Fingerprint/StreamingAssets/数据；不加载场景或创建Unity对象。原serializedProperty读取与SerializedObject Dispose允许，不序列化内存快照/纹理。
+正常OBSERVATION_ONLY不等于290通过。逐条把实际异常asset/field/owner与原磁盘清单对应，区分真正managednull、Unityfake-null、非持久或GUID查询失败；列实际观察和未知。没有异常也如实报告原因仍未明，不能为拿根因再跑snapshot或扩扫描。若异常>20，保留计数和坐标且明示未逐条全证，不二次eval补证。若当前文件实际漂移/类型未载/候选运行失败/平台拒绝/未知dirty，保全后立即正式Fail，同轮不修载荷/换工具/重试。
+
+完成后console_status一次保留原生当前groundTruth与历史计数；没有连续起点不可声称新增错误0。候选原生scenes和入口状态、只读调用清单/受限git diff（相关Catalog源码/数据/源场景范围）的前后事实足够，不全仓路径hash、全texture/内存JSON。输出REPORT六要素/evidence/acceptance、NATIVE-SPRITE-IDENTITY.json或明确引用实际原结果、FIELD-CORRELATION.json（实际对象vs磁盘/原因unknown）、SOURCE-BOUNDARY.json、NEXT-STEP。结果/原流/失败完整保留，包目标1MB硬10MB，原生结构结果可无损压缩但原SHA/映射保留。四合同只验只读诊断有效，不验原290导出或A+C。
+Complete/Fail当轮Prepare→一次实际appSend完整handoff给CONTROL→Record，执行器不自续/领取后继。CONTROL独立核实际观察后，才定CODE最小修复或DATA/USER-U5人工门及原290正式续行，尚未批准具体生产修复；291/292继续等待。未知账单/appturnactualTool保持null+原因，不以车道推断产品。
+
+> SUPERVISED POLICY at 2026-10-22T22:38:34.3419582+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"311 independent4contracts14facts passed; exactly one native read-only Sprite identity observation, no snapshot/export or production writes. User supervised B and G87 necessary diagnosis authorization; scope only312 output; root290 actual3of5 unchanged by first diagnosis.","updatedAt":"2026-10-22T22:38:34.2423287+08:00","supervisionLevel":"full"},"taskId":"AI-000312"}
+
+> SUPERVISED EXTEND at 2026-10-22T22:38:34.6256285+08:00: {"taskIds":["AI-000312"],"reason":"Same authorized B chain necessary precise native readonly Sprite diagnostic after311 independent acceptance; no business snapshot retry/no extra root allowance/no production repair authority."}
+## AI-000313 | [CODE] [SEC-02] AI290已空Sprite的Unity空值语义修复
+
+- 序号：313
+- 提交时间：2026-10-22T23:07:58.7955770+08:00
+- 模块 ID：SEC-02
+- 初始状态：QUEUED
+- 前置依赖：AI-000312
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+精确输入 inputs/派发/AI290-CLI-CALLER-REPAIR-20261022/AI313_CODE空Sprite修复.txt；Scope AI313_SCOPE.json；五合同 inputs/acceptance/AI-000313.json。同根290 REPAIR/POLICY cycle AI290:CODE313:retry4，312原生诊断独立4合同16事实通过；只最小空Sprite语义与非空身份保护、既有离线回归，不Unity/资产/原290业务。
+
+> SUPERVISED POLICY at 2026-10-22T23:08:48.0958129+08:00: {"taskId":"AI-000313","policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"312 independent4contracts16facts passed; narrow product null-Sprite repair under original290 SUPERVISED policy, cycle4, fixedCODE offline only. No new business or human gate approval.","updatedAt":"2026-10-22T23:08:47.9910788+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-22T23:08:48.4074169+08:00: {"reason":"Existing supervised B necessary same-root repair after312 actual diagnosis; original290/291/292 and final human gates retained.","taskIds":["AI-000313"]}
+## AI-000314 | [ENGINE_CLI] [WF] AI313修复已加载接口只读核对
+
+- 序号：314
+- 提交时间：2026-10-22T23:40:06.7160000+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000313
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000314 · AI313修复的已加载接口只读核对 · 固定ENGINE_CLI · S40 READONLY_DIAGNOSIS Parent AI-000290。用户原监管B及后继修复链已授权必要诊断；同session/原chat，不重载/换模型。AI313已正式Complete/Receive且CONTROL独立5合同15事实通过，review outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-313.json SHA28124AC615B00D2198C3A1E80176AFE4F705C88DCA6C710B2AD2089E787F314A。本卡仅确定Editor是否已自动装载新签名，不执行修复或快照，不签原290续行许可。原root290实际4/5余1（313成功REPAIR cycle AI290:CODE313:retry4已消费，之后原290须配对不双扣）；首次只读诊断不新增周期，历史失败保持。
+
+唯一输出根 .ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000314。精确候选 inputs/派发/AI290-CLI-CALLER-REPAIR-20261022/AI314-loaded-api.eval.cs SHA9B8FA3175CB46BA22C30A8DA11B5AC2880182B9EA52533B22431DE8F9F4F8B1E；CONTROL沿既有完整eval Execute载体、实际7引用离线编译exit0/stdout0/stderr0，证据outputs/control/AI290-CLI-CALLER-REPAIR-20261022/AI314-candidate/compile.json，未执行DLL/native。候选保留308完整preflight，追加只读GetMethod签名和程序集MVID；不复制半段表达式或自建runner。只替换第1行taskId/attempt/executionId为本次正式claim，其余body逐字保持，保存实际载荷和差异。
+
+按既有官方CLI共享wrapper、当前task/execution/owner/Scope执行。UsageCategory task，ToolSource unity-official-cli；无启动Ready或普通eval400重试。status/editor_status各一次，核D:/GameProject/Eat-What、6000.3.24f1、当前PID/port/fresh heartbeat、clean idle Edit与无journal；若busy/unknown dirty/平台拒绝保全并正式Fail，不现场编译或重试。执行前正式SupervisionCheckpoint后官方eval_file一次完整候选，再console_status一次；保留4调用8原始双流/完整严格JSON及命令回执。没有连续Console起点不得声称新增Error0；只区分当前和历史。
+
+观察CatalogBlobBuildProcessor私有static bool IsSerializedEmptySprite(ScriptableObject,string,Sprite)，CatalogBlobSerializer保留3参数Capture与新增4参数Capture，返回JObject且第4参数Func<ScriptableObject,string,Sprite,bool>。记录完整签名、各程序集名称/MVID及repairSignaturesLoaded真假，不调用任何这些方法。旧processor MVID fb204dbd-7941-405b-b1c3-635c06089b4e只历史；新签名能说明接口加载，不单凭签名推断整个程序集字节/本次业务必成功。新接口未加载或部分未加载而完整观测有效可Complete为OBSERVED_NOT_LOADED，不伪失败/不伪PASSED_LOAD；原既有PrepareSnapshot缺失/实际eval失败按真实Fail。不得为证明已加载调用proof/Capture/Encode/PrepareSnapshot/Rehydrate/Export，不读169SO/98字段、不重新快照或跑1..20。
+
+仅两份相关生产源在前后核精确SHA，使用AI313清单：CatalogBlobSerializer.cs B2825BA990CD02A9BC0945F79C6228BEF9FA670AE2D92E185EF0E0D9DA763FDD；CatalogBlobBuildProcessor.cs D8CC12CB20E36910B7A5E92BD261B360B9F399A4C06CBB4B676152255D9E2C2B。受限git状态/diff及原生cleanEdit事实，不全仓hash或内存/纹理JSON。无Refresh/Compile/Import/Play/Build/场景加载保存/Apply/CreateDestroy/Assets与meta或数据写入、生产Fingerprint/StreamingAssets/真实存档；不改SDK/PackageCache/端口/全局配置。原场景已有用户修改保持。
+
+输出REPORT六要素、evidence.json/acceptance、LOADED-API.json（实际原流对应）、SOURCE-BOUNDARY.json、NEXT-STEP；4合同验观测真实性/边界，不要求repairSignaturesLoaded必true。若未加载只提精确装载需求给CONTROL，不能自行扩Scope；若加载也停止等CONTROL独立验收和原290正式配对，不能自领取原卡。包目标1MB硬10MB，未结失败/原流不删。Complete/Fail当轮Prepare→一次实际appSend完整handoff至CONTROL→Record，UNKNOWN/NO_RESEND/平台拒绝不重发/换通道。
+
+> SUPERVISED POLICY at 2026-10-22T23:40:07.1911269+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI313 independently accepted5contracts15facts; read-only loaded signatures/MVID observation only. No native compile or snapshot. Parent290 root4of5 unchanged by first diagnosis; eventual original resume paired to latest successful313 cycle.","updatedAt":"2026-10-22T23:40:07.1261996+08:00","supervisionLevel":"full"},"taskId":"AI-000314"}
+
+> SUPERVISED EXTEND at 2026-10-22T23:40:07.3329017+08:00: {"taskIds":["AI-000314"],"reason":"Necessary read-only load observation after independent313 acceptance; original290 grant remains unissued."}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-23T00:11:49.1941561+08:00: {"cycles":["AI290:CODE313:retry4"],"scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000290"],"operations":["evidence-write","idempotence-check","isolated-catalog-export","unity-catalog-readonly-snapshot","unity-loaded-api-readonly","unity-recompile-status-readonly","unity-script-refresh-compile","unity-target-check"]},"verification":"用户直接批准一次官方recompile内部全项目Refresh及原290配对续行；精确用户批准/审查单/Scope在本批inputs和outputs。ENGINE fresh revision96 idle/latestTurn completed/error null，workerIDLE无lease/activeTask/预约。313正式Complete/Receive与独立5合同15事实通过，最新成功cycle AI290:CODE313:retry4；314实际独立四合同15事实有效观察新接口未加载，原290三Fail/root4of5保持。同周期配对不新增根周期，不改task定义/依赖。完整批准执行AI290_ENGINE编译装载与配对续行_已批准.txt，实际一次recompile/有界readonly状态/loaded再原snapshot一次。","grantId":"44a1c352f10a4cacab730758ea0d70f5","remaining":1,"taskId":"AI-000290","authorizationSource":"HUMAN","reserved":0,"used":4,"sourceApprovalId":"call_1023ba3eaee945eabd38968be1dc030d:0","rootTaskId":"AI-000290"}
+## AI-000315 | [ENGINE_CLI] [WF] AI290编译断连后当前装载只读核对
+
+- 序号：315
+- 提交时间：2026-10-23T00:38:57.9814305+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000313, AI-000314
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000315 · AI290编译状态断连后的当前装载只读核对 · 固定ENGINE_CLI · READONLY_DIAGNOSIS Parent AI-000290 · S40。
+用户在明确获知290 attempt4已正式失败、单次编译已触发但状态连接重置且快照未执行后，直接说“现在继续推进任务链的执行”。真实原件 inputs/派发/AI290-CLI-CALLER-REPAIR-20261022/AI290失败后继续推进_用户指令_20261023.json；CONTROL失败复核 independent-failure-review-290-attempt4.json（15事实，原五合同2/5，未验收）。本卡是这一新直接指令下的只读当前状态观察，不重放已失败业务，不再次触发recompile/Refresh，不重开旧status轮询，不声称断连原因已证。原290四失败、同根4/5余1保持；首次只读诊断0消费，不伪REPAIR配对，不在本卡ApproveResume或执行原快照。
+
+固定原ENGINE_CLI 01a14087-d8ea-7561-b9b5-260798096a19，同session beefe968cb5e48e0bea0b8b47260abd9；免chat重载/不换模型或工具。先CORE、WORKFLOW/SUPERVISED及ENGINE_CLI当前规则、两项目文档页首与本模块。精确Scope AI315_SCOPE.json、四合同 inputs/acceptance/AI-000315.json。唯一输出根 .ai-workspace/outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000315；fresh结果拒已有/链接。所有旧290/314原件保持。
+
+复用已验完整候选 inputs/派发/AI290-CLI-CALLER-REPAIR-20261022/AI314-loaded-api.eval.cs，SHA9B8FA3175CB46BA22C30A8DA11B5AC2880182B9EA52533B22431DE8F9F4F8B1E；只第1行taskId/attempt/executionId绑定315正式claim，body逐字不变，不复制片段/新runner/改helper。该候选已经真实引用编译并在314实际执行，仅观察GetMethod签名与MVID，不调用proof/Capture/PrepareSnapshot。禁止现场载荷修正或再次编译该候选以规避失败。
+
+通过当前共享Invoke-TaskTool和同官方CLI，UsageCategory pipeline-repair（本卡为诊断成本，不预断产品根因），ToolSource unity-official-cli。status/editor_status各一次形成真实新health：项目D:/GameProject/Eat-What、6000.3.24f1、实际PID/port/freshheartbeat、clean idle Edit、没有现存未结journal。不能复用314/290旧health。若busy/未知dirty/项目不符/权限/连接失败，保原样正式Fail，不重试、不重载、不切工具；没有第二次status。可只读保存Temp/pipeline_recompile_status.json（存在时）的原始字节/SHA/mtime，缺失明确null；只辅助线索，不覆盖真实Editor状态或宣称恢复了旧请求。
+
+核已审2源码及2meta精确SHA，和本轮允许清单git diff/status基线；不要全仓hash。Serializer B2825BA990CD02A9BC0945F79C6228BEF9FA670AE2D92E185EF0E0D9DA763FDD；Processor D8CC12CB20E36910B7A5E92BD261B360B9F399A4C06CBB4B676152255D9E2C2B；对应meta122656FC272E7C5E8B0476324854D1C6CBDF39EE649254B5D9D8C5AEF28D2A9D和4EFE33F695C777DAF1DB66C56ADFC9362FEE041EA7BD427018224A6FB87AB55A。限定diff至少含这4件及源scene/Generated/StreamingAssets/Fingerprint/BuildSettings；证据不能将Git状态等同全内容或Importer活动已查完。
+
+正式SupervisionCheckpoint后官方eval_file一次完整候选，最后console_status一次。成功总4调用8双流；严格UTF8完整JSON、SHA/长度、target/命令/实际载荷与完整返回保全。观察 PrepareSnapshot(string)、Capture3兼容、新Capture4与private bool IsSerializedEmptySprite(ScriptableObject,string,Sprite)真实签名/MVID及repairSignaturesLoaded。旧processorMVID fb204dbd-7941-405b-b1c3-635c06089b4e、serializer185d312e-300e-4d7d-a4be-1a98feab8547仅比较基线。当前接口已加载不等于快照行为成功；加载否都可以作为完整观察结果Complete，明确readyForOriginal290=true/false及理由。运行错误则Fail。不能仅凭后采Console0error说旧编译或快照成功，无连续起点不得宣称新增Error0。
+
+禁止recompile/recompile_status循环/Refresh/Import/RequestScriptCompilation/Compile/Play/Build/PrepareSnapshot/Capture/Encode/Rehydrate/Export/创建销毁对象/Apply/SaveScene/MarkClean/清Console/源码场景数据meta写入；不执行旧289探针或三图，不读取真实存档，不清理用户脏数据。两源/meta和限定diff前后保全。包目标1MB硬10MB，完整失败/文本留原位，可无损压缩双流并保存原SHA/长度。没有对生产写入的直接证据不得泛称OS-wide无写入。
+
+Complete/Fail/Yield本轮立即Prepare→一次真实app Send完整handoff到CONTROL 01a13ef5-eda9-7882-b1c9-eca47a6470d9→Record。UNKNOWN/NO_RESEND/平台拒绝不重发。执行器停止，不自行领290/291。CONTROL独立四合同及本次真实loaded/clean后，才决定290唯一ApproveResume剩余1周期、原scope一次fresh快照；不重用313已消费且290失败的cycle、不退款、不增额，最终A+C/USER-U5保留。
+
+> SUPERVISED POLICY at 2026-10-23T00:38:58.5002620+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已获知290a4正式失败后直接要求继续；仅已验完整候选的当前loaded只读诊断，无第二次编译/快照/状态重试，无新根消费，最终人工门保持。","updatedAt":"2026-10-23T00:38:58.3770313+08:00","supervisionLevel":"full"},"taskId":"AI-000315"}
+
+> SUPERVISED EXTEND at 2026-10-23T00:38:58.6547811+08:00: {"taskIds":["AI-000315"],"reason":"用户当前继续指令下，290a4新失败已经CONTROL15事实核实；必要首次只读诊断315确认现装载后才决定原卡剩余1周期，不触发新编译或业务。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-23T00:51:51.3951838+08:00: {"authorizationSource":"POLICY","taskId":"AI-000290","remaining":0,"scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000290"],"operations":["evidence-write","idempotence-check","isolated-catalog-export","unity-catalog-readonly-snapshot","unity-target-check"]},"verification":"AI315 independent 4 contracts/16 facts PASSED_CURRENT_LOADED_OBSERVATION SHA A64DADBEA42FE18992DD6802003FCAA929759658BA398A014DD42C5948252340; fresh ENGINE app revision103 idle/completed, no active turn. AI290 fail4 reviewed, root4/5 remaining1, user latest continue. Original snapshot scope only; no second compile or failed-cycle reuse.","grantId":"aa8c6029662f4daa92cdcf64d354817e","reserved":1,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":4,"cycles":["AI290:retry5"],"rootTaskId":"AI-000290"}
+## AI-000316 | [CODE] [WF] G87显式Player数据验收宿主补齐（关联292，独立pipeline-repair）
+
+- 序号：316
+- 提交时间：2026-10-23T01:59:03.4702738+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000287, AI-000293, AI-000291
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000316 · G87显式Player数据验收宿主补齐 · 固定CODE · M/80 · semanticKind/usageCategory=pipeline-repair · businessOrigin AI-000292 · CLI(磨合)
+技术WorkKind=FEATURE独立管线根；不是292同根REPAIR，不扣/退292历史，不伪repairContext。依据AGENTS用户G87、2026-10-21继续原链及2026-10-23“现在继续推进任务链的执行”，仅完成已批B验证必需管线缺口，不新增产品功能。固定原CODE chat；不自动重载/换模型/新chat。精确Scope=同目录AI316_SCOPE.json，预声明五合同inputs/acceptance/AI-000316.json。
+
+事实入口 outputs/control/AI292-PLAYER-VALIDATION-REPAIR-20261023/independent-failure-review-292-attempt1.json（SHA01DB6FC9CAB9D7472939C5BF08E1A6DABFE49688E568F22F3406184A890DE26C），16事实复核。292 a1正式Fail/Receive，2/7，不是Build或产品编译失败；4只读CLI/8流，无源漂移，Windows64 Mono可用，但当前Bootstrap只隔离/Ready，没有Player自动数据断言+受控完成。Build/Player/Fingerprint写/Refresh均0。原292根0/5、失败/原证据保留，不自续292。
+先CORE/CODE worker、两项目入口页首与SEC02/隔离相关节、WF既有验证/失败结算，实际源码优先。只按需读：292 PLAYER-READINESS-GAP.json/REPAIR-PROPOSAL.json与build-readiness原件；287/293宿主及已有RunValidationHost；291 BUILD-HANDOFF/真实staging/catalog.graph.json及认证blob；原A-stage。不要全量读289历史或全仓hash。
+
+唯一实现目标：在已有ShortCycleValidationBootstrap内最小扩充显式启用的Player数据验收选项和有限生命周期，真正驱动/观察现有Catalog source读取，输出可归属机器证据，随后目标先销毁/lease后释放并受控退出。普通启动与原四参数仅隔离模式保持；未显式启用新数据验证时不执行数据断言/新增文件/自动退出。沿精确task/run/root校验、fresh输出/CreateNew/拒覆盖与祖先链接/无生产默认save回退。参数缺失/重复/未知/错根/超时/生命周期错目标均fail-closed；新增数据验收期有明确上界、失败退出码和证据，不能挂起。原before-Awake、取消/场景恢复/默认关语义及原1～20源码字节不改，也不自动RunOriginalProbe。
+
+数据合同：验证实际当前Session绑定的唯一Catalog及ICatalogSource，Release真实EncryptedBlob/Dev真实SO策略，当前三菜实际记录/14表/169数据对象及完整关系保持；需要Sprite registry/key/对象事实，不用Sprite.name/GetInstanceID冒充GUID/fileID。从已独立通过291真实graph建立显式绑定的验证基线/身份映射（校验哈希/格式和完整性），只放本次验证输出，不能把固定数值或期望文件直接抄成观察PASS。允许使用已有serializer/graph公开API和只读对象观察，不复制生产实现作假验证。Player无AssetDatabase；为观察私有绑定若确有必要，精确允许Session与CK01GeneratedDataCatalog仅增加最少只读、非序列化验证访问器，不改变Awake/初始化/Source选择、资产字段/导表/codec/serializer/BuildProcessor/默认路径。优先现有API，不能顺手修产品或改配表非空值。图/章鱼/番茄/白菜等已有缺口保持，数据读取一致不代表三菜完整可玩。
+
+坏blob合同：只在显式本卡验证模式，实际当前Release来源读取被篡改副本时，鉴别真实认证拒绝/无SO回退/无部分接受，明确期望拒绝结果与意外失败分别记录，受控清理/退出，不能笼统catch异常即PASS。处理实际Awake可能先失败的时序：不得用孤立Authenticate替代当前source，不能吞产品错误或改变正常路径；有界等待与事件/退出归属必须能验证。CODE只隔离fixture坏副本；原生只在未来ENGINE292的本卡构建副本，不能修改291原件/生产StreamingAssets。禁止新增Runtime Pipeline HTTP/RPC服务、ENABLE_RUNTIME_PIPELINE、ProjectSettings配置、PackageCache/manifest变更或部署。
+
+验证与交接：只扩既有DevTools/ShortCycle/ShortCycleIsolationAndTextTests.cs、UnityStubs.cs、Test-CK01CShortCycle.ps1中的RunValidationHost与明确opt-in分支。保留原所有断言主体/正常默认行为，新增相称实际宿主/真实Catalog数据读取正反例（正常Release/Dev、损坏认证、错误期望/关系/重复或缺失身份、错root/重复run/超时/清理失败/未启用）。不要新runner、复制算法模拟PASS或重跑无关全量Final。原宿主41及必要新用例调用真实改后实现，默认persistent路径读取0。既有真实Unity引用编译必须覆盖Player Release/Development/Editor分支和新依赖；API shim只能解释接口编译，不能冒充完整生产依赖/Player运行。需要修runner的Catalog引用就在同runner最小接入，不能改Serializer/导出器。原验证结果/失败保留，稳定key PLAYER_DATA_HOST_VALIDATION；首次失败至多两次局部修正，达到正式CODE_VALIDATION_STOP立即结算回传，不能换key自续。
+
+输出主根 outputs/AI292-PLAYER-VALIDATION-REPAIR-20261023/AI-000316；已有host固定根还允许 outputs/DETACH-B13-20261019/AI-000316（仅本卡离线fixture/isolated-saves），不能借此访问AI292或真实存档。最多9个共享文件，禁止新生产cs/meta（需实质新增路径先交具体方案CONTROL核）；CODE不调用Unity/CLI/MCP/Play/Build/Refresh/Compile原生，不生成meta/场景、生产Fingerprint/StreamingAssets/数据。只最少WF与项目模块定位说明，不能提升完整核验日期。
+
+交付REPORT六要素、before/candidate最小快照、原日志/失败、完整差异、evidence/acceptance、可复用ENGINE-HANDOFF及参数例：Release/Dev/坏副本的明确预期与退出码、精确task/run根与基线来源SHA、观察输出字段及清理顺序、必要原生装载/验证前置。交接原生验证不得假称本卡已完成。CONTROL独立通过后才安排必要固定ENGINE就绪验证及原292唯一ApproveResume；独立FEATURE不得伪配对，本卡不预发/消费业务许可。292七项合同/最终A+C/USER-U5全保留。
+
+生产变更前正式Checkpoint，保用户已有改动；无提交推送。包目标1MB硬10MB，>1MB说明，未结报告/原失败完整留原位，新冗余原流可核SHA后无损压缩。actualTool逐响应未知留null，不由CODE分类推工具/账单，原用量不重写。Complete/Fail/Yield本轮立即Prepare→一次实际appSend→Record给CONTROL 01a13ef5-eda9-7882-b1c9-eca47a6470d9，Receive非验收，不自行领后继。
+
+> SUPERVISED POLICY at 2026-10-23T01:59:04.0213969+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"G87 independent validation-pipeline repair under approved B continuation. Dependencies287/293/291 already independently accepted; no new human product gate. CODE offline only, original292 untouched; CONTROL independent pass and necessary ENGINE readiness before formal292 resume.","updatedAt":"2026-10-23T01:59:03.9409390+08:00","supervisionLevel":"full"},"taskId":"AI-000316"}
+
+> SUPERVISED EXTEND at 2026-10-23T01:59:04.1739241+08:00: {"reason":"Continue approved B through G87 independent CODE validation-entry repair; original292 failed receipt retained, no new292 grant.","taskIds":["AI-000316"]}
+## AI-000317 | [ENGINE_CLI] [WF] G87显式Player宿主原生装载与参数冒烟（关联292）
+
+- 序号：317
+- 提交时间：2026-10-23T02:30:26.2438760+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000316
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI317 · PLAYER-DATA-HOST原生装载/参数只读SMOKE · 固定ENGINE_CLI · S40 · FEATURE独立技术根 / semanticKind与usageCategory=pipeline-repair / businessOrigin=AI292。
+依据用户G87必要SMOKE、已批准B的unity-import-compile和“现在继续推进任务链的执行”。这是已批Player验证管线必要装载，不是新业务/额外292许可，也不复用已消费的旧AI290单次编译批准。只登记本卡精确Scope；Library仅正常Unity编译缓存与已加载程序集观察，不允许手改/删除/恢复Library、Assets或配置。原292仍Fail/根0of5；本卡不是其PairedRepairTaskId。免chat重载/不换模型/不新chat有效。
+前置AI316 Complete/Receive+CONTROL独立5合同16事实PASSED，review outputs/control/AI292-PLAYER-VALIDATION-REPAIR-20261023/independent-review-316.json SHA F165902C61085E0495866AE07B19A8C63837A62579EAB60523C34D82A9450E32。只补读316 ENGINE-HANDOFF.md、source-manifest及本卡4合同。41原+28新离线断言和5引用编译不代表原生。Dev仅155可达/169基线边界必须保留，原292完整7合同不减。
+先唯一Poll携真实OwnerThreadId领取；运行中不二次Poll。所有官方CLI沿既有Invoke-TaskTool和正式checkpoint，实际task/execution绑定；UsageCategory=pipeline-repair、ToolSource=unity-official-cli。新鲜本卡输出attempt1，原流/身份/载荷/异常完整保全，既有严格完整JSON门、不使用--result-only/猜递归result/非幂等重试。
+1.status/editor_status各一次核实际唯一项目D:/GameProject/Eat-What、Unity6000.3.24f1、PID/port/heartbeat、clean idle Edit和无未结CatalogBuild journal。只核316两个改动生产cs当前SHA及现meta存在/归属；未知dirty/漂移/平台拒绝立即停止。无全仓hash、内存快照或纹理导出。
+2.一次只读eval_file检查当前已加载类型EatWhat.Cooking.ShortCycle.ShortCycleValidationBootstrap与ShortCycleSessionManager，程序集名称/MVID；Request嵌套public类型的DataMode/BaselinePath/BaselineSha256(string)/TimeoutSeconds(int)，ParsePlayerArguments(string[])和ValidateRequest(Request)方法，Session内部只读ValidationCatalog属性，以及新VerifyData实例私有方法。通过反射检查字段/签名；缺新字段时只报告loaded=false，不能动态直接引用缺失字段造成编译失败。只输出scalar DTO/JObject，不直接序列化Unity结构体。scene handle用实际(int)转换。
+3.若上述新接口已全部加载，不触发编译。仅当旧程序集尚未加载修复且项目groundTruth没有编译错误、dirty/journal/未知写入时，正式Checkpoint后允许同官方recompile至多一次完成316已有两源码装载。此命令内部全项目AssetDatabase.Refresh/域重载，属于已批B编译必要准备；禁止另外Refresh/ImportAsset/RequestScriptCompilation/修改EditorPrefs或绕工具重试。按现有官方命令一次执行及其正式状态/完成回执判终态；连接重置/UNKNOWN/拒绝或超时即保全正式Fail，不再触发也不换工具。若需要后续读取仅完成回执允许的状态读取，不能启动通用轮询/400重试。编译后独立一次同读只读payload核实际新签名/MVID与项目编译状态。
+4.已加载后只在一次只读eval载荷中调用纯ParsePlayerArguments（允许创建普通托管Request/数组，不创建Unity对象、不Begin/Arm/Play）。真实参数解析release/development/reject-tampered三个模式，给本卡AI-000317/task/run与预期本卡路径字符串、291基线SHA和timeout60，检查返回模式/三身份/path/hash/timeout不丢失；解析不读取或创建这些目录。再核普通无验证参数返回null、原四参数模式DataMode为空、重复data/未知validation参数各确切拒绝。只能捕获精确预期ArgumentException，异常链/type/message保存；其它异常不是PASS。不要调用ValidateRequest（本卡不创建baseline）、Begin/Stop/VerifyData/任何Catalog Source或业务函数，不读真实存档。观察State/IsRunning/factory前后完全相同，clean场景未改。
+5.console_status一次保留当前编译/错误和历史，无连续起点不声称新增Error0、不清Console。记录总调用与compile次数，两个源码/原meta前后及限定Git diff，不能把Git状态字节等于全内容证明。源码写入0/Fingerprint写0/Build0/Player0/Play0/原1～20及P2调用0；仅必要条件compile可能1。输出完整报告/evidence/acceptance及原流与精准SHA，目标1MB硬10MB。原316CODE验证的native0边界不改写。
+本卡4合同必须均真实满足，不能用离线替代native。新接口缺失且编译不可安全执行/签名或解析错误/未知dirty/平台拒绝立即原卡正式Fail→Prepare一次实际Send→Record，执行器不修源码/自续/代领292。成功同样立即完整handoff给CONTROL；CONTROL独立通过后才唯一ApproveResume原292 Runs1按原Scope，保留首Fail/root消费与最终A+C/USER-U5人审门。实际Build/Player与Fingerprint编译仍在原292，不在本卡提前执行。
+
+> SUPERVISED POLICY at 2026-10-23T02:30:42.1887373+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"G87必要独立SMOKE，316已CONTROL独立通过。只精确目标/纯参数解析与必要一次已批B编译装载；无292业务/无新许可/无最终人审。","updatedAt":"2026-10-23T02:30:42.0874852+08:00","supervisionLevel":"full"},"taskId":"AI-000317"}
+
+> SUPERVISED EXTEND at 2026-10-23T02:30:42.4624265+08:00: {"reason":"316独立通过后推进必要SMOKE，不恢复旧完成业务；同session","taskIds":["AI-000317"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-23T02:54:53.8671712+08:00: {"cycles":["AI292:retry1"],"taskId":"AI-000292","reserved":1,"verification":"app fresh ENGINE revision110 idle/completed/errornull; fresh-engine-before-292-resume1.json. AI316 five contracts16facts and AI317 four contracts14facts independently PASSED; review317 SHA F05BE6D1316925236C450746FEA3B2004011EBB4BA432CED500EB13C509F55C3. Independent FEATURE pipeline roots are not paired repair; original292 scope/7contracts/L120/final gate unchanged, root0of5, initial failure retained.","scope":{"paths":[".ai-workspace/codebase/data.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000292",".ai-workspace/toolkit/SEC.md","项目整体阅读理解与推进基线_2026-08-14.md","Assets","Assets/Scripts/DataBase/CookingData/Build/CatalogBuildFingerprint.g.cs","Assets/StreamingAssets/data","CODEBASE_MAP.md","Library/CatalogBlobBuild.journal.json"],"operations":["approved-generated-fingerprint-update","controlled-build-copy-tamper","documentation-update","evidence-write","idempotence-check","isolated-player-validation","unity-import-compile","unity-owned-build-staging","unity-owned-temporary-cleanup","unity-target-check","unity-windows-mono-build"]},"used":0,"rootTaskId":"AI-000292","remaining":4,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","grantId":"25a9613588f6449eaba8aa38acd79804","authorizationSource":"POLICY"}
+## AI-000318 | [CODE] [WF] G87 Player编译空输出与预处理残留定位（关联292，独立pipeline-repair）
+
+- 序号：318
+- 提交时间：2026-10-23T03:17:39.7791214+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000317
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000318 · G87 Player编译空输出与预处理残留定位 · 固定CODE · M/80 · technical FEATURE独立管线根；semanticKind/usageCategory=pipeline-repair，businessOrigin AI-000292。纯定位与隔离编译，不改生产/共享源码，不直接修复或重试原292；不伪repairContext/PairedRepairTaskId，不消费退款292。依据用户G87、已批B及最新“现在继续推进任务链的执行”，只继续不受影响的离线调查。原292仍停止，额外4件尚未获清理/再建造放行，不用本卡绕过硬门。
+
+精确Scope同目录AI318_SCOPE.json，预声明4合同inputs/acceptance/AI-000318.json。先CORE/CODE worker/WF和两项目入口页首/本模块，按需读下面原证据，不全量读历史或扫仓。固定CODE不新chat/换模型/重载。正式领取一次，写前Checkpoint，结算立即Prepare→一次appSend→Record绑定CONTROL 01a13ef5-eda9-7882-b1c9-eca47a6470d9，不自行领后继。
+
+事实：292attempt2/execution072a801a76d94effb8926f556a9fd261，原首败后唯一POLICYretry1已消费，root1of5余4。正式Fail-7d4fca97cf1d SHA7DB383F00550ECFB10301825F443A855ACC06CA391731209F4A6DC7B25F88109；CONTROL independent-failure-review-292-attempt2.json SHA F0F306DACE4FD7C40C594F4901E2C70F90C3E6977E096BD991C1CEBFE608236B（outputs/control/AI292-PLAYER-VALIDATION-REPAIR-20261023）。16事实、3/7业务合同，不是通过。已审291指纹生产更新/Editor编译真实成功；一次Release真实Failed/3Error12Warning/0bytes，Dev/Player/tamper0。9CLI18流无CLI退出错误不表示Build成功。原额外4件与源码/已保存场景不得改变。
+原证据目录 outputs/DETACH-B13-20261019/AI-000292/attempt2：release-build-result.json、release-failed-BuildReport.json、LastBuild.buildreport、editor-log-bounded-tail.gz及来源SHA、editor-build-error-context.txt、failed-compiler-response-files.json+原4rsp/rsp2、PREFLIGHT/FAILURE-READBACK、git-status-before/after、performance-preprocessor-paths.json、release-ownership-observations与原4journal。完整log为已保全2MiB片段，不叫完整Editor日志；需要额外日志只按对应失败时段/路径有界只读，写出处/时间/缺失原因，不扫全机器。
+控制更正AI292-fail2-report-corrections.json：两个Csc目标MCPForUnity.Runtime.dll和spine-unity-examples.dll输出为空；ExitCode3在编译graph级，未证明各Csc进程各自退出3。实际Build job19:04:07..19:04:35Z，SDK投影UTC早8小时保留，不改原件。5组AI285 ownedpair磁盘都不存在/journal无，但AssetDatabase仍返回5个非空GUID；不得写成GUID空或据此删缓存。具体空输出根因未知，不默认AI316/数据/权限/插件不兼容。
+
+目标一：核失败的真实完整编译命令、2个rsp+2个rsp2、编译器/引用/源文件路径和受控输出参数，结合已有Bee/Compiler日志证据定位空输出。允许只读实际对应Unity6000.3.24f1 dotnet/csc版本与响应文件，不调用Unity/官方CLI/MCP/Build/Play/Refresh/Import/域重载，不清删Library/Bee/PackageCache、不重启Editor/编译服务、不变全局环境、权限或配置、不安装工具。
+若静态证据不足，可在本卡输出下准备完整响应文件诊断副本，仅把所有输出位置（-out/-refout/-pdb/-errorlog/generatedfiles等，包含间接@rsp）改到本卡fresh目录，先输出逐参数diff、原/副本SHA、所有读写路径清单；保留全部原源/引用/define/analyzer/编译选项，不能删插件/Sample/源码或去掉analyzer来“通过”。确认所有显式输出均在本卡根、原路径无并发漂移/链接后，同一原Unity自带dotnet+csc可各目标离线运行至多一次（最多2次总计），保全准确argv/退出/双流/时间与本卡结果，不使用原Library输出、不启动任何新runner/fixture/生产程序集装载。不能安全重定向的选项或隐含写入不明则不运行，给具体阻断和候选。无权限拒绝则同工具隔离诊断可进行；遇真实平台拒绝/UNKNOWN立即正式Fail，不换工具/变参数绕过。两个诊断若通过只能说明本次隔离编译成功，不证明原Build瞬时故障已修，也不得据此新增Build次数。本卡不做共享csc参数变体循环，不二次重试失败目标。
+
+目标二：核4件性能预处理输出的精确来源、是否本次创建、业务引用和恢复边界，交具体候选而不删除。实际已安装 Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0/Editor/TestRunBuilder.cs 的OnPreprocessBuild无测试Build条件即SaveToStorage；OnPostprocessBuild/Cleanup会删2JSON/meta，可能根据EditorPrefs递归删Resources并Refresh，禁止盲调用该Cleanup或改EditorPrefs/包缓存。仅精确4件：Assets/Resources/PerformanceTestRunInfo.json及meta（04A830...2594/F94A2A...9E5）、PerformanceTestRunSettings.json及meta（600C5C...55B/1C2EF5...CC8），完整SHA用原manifest。CONTROL已在AI292-fail2-extra-preserved保全当前字节。原日志CreateNew/新meta导入/前未列后untracked是归属证据，不把整Assets/Resources目录当owned。用目标GUID/路径必要的定向引用搜索和包源码核业务引用；不扫全纹理/整仓hash。符合G26需精确EditorAPI清理两asset及meta的候选参数/前置/当前SHA/禁止跟随链接/Resources目录保持/失败停；不生成执行成功回执。未来Build还会生成同文件，提出明确限定的新边界/保全与清理候选，不静默扩大原292 Scope或直接修改BuildProcessor。未知部分明确留unknown。
+
+交付：REPORT六要素、evidence/四合同、原失败证据索引SHA、实际静态发现和最多2次隔离编译原流（若未执行写原因，不伪要求必须成功）、完整原因/尚未确定项、四件归属/引用与仅候选清理方案、可供CONTROL安排最小修复/必要SMOKE/原292续行的精确下一步。可以完成“根因未定但证据边界和安全下一步明确”的诊断，不能用标签说修复完成。无需改共享文档，本卡只有自己的输出可写；不修改两项目入口/AGENTS/WF/源码/asmdef/meta/PackageCache/manifest/ProjectSettings/runtime/原292结果。原Spine Sample/MCP包必须保留。
+稳定自验key AI292_BUILD_DIAGNOSIS；可修自身文本/输出脚本，但不得重执行已失败隔离csc或业务；原自验失败按既有CODE至多两次局部修正/三次正式STOP，不能换key续跑。包目标1MB硬10MB，超1MB说明，原失败完整留原位可无损压缩新大日志且保原SHA/映射，不复制全仓/Unity运行库。actualTool逐响应未知null，不由CODE车道推账单。原292七合同/1of5失败史、最终A+C/USER-U5全保持。成功Receive后CONTROL独立诊断，不自动授予新生产写/清理/原业务许可。
+
+> SUPERVISED POLICY at 2026-10-23T03:17:40.4068797+08:00: {"policy":{"resourceKeys":["unity-project","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"G87 independent offline diagnostic evidence only, businessOrigin292. Original292 remains stopped after unplanned preprocessor outputs and failedBuild. No production/source/package/cache write or cleanup; no new292grant. Review317 passed. CONTROL must independently examine root cause and precise restoration candidate before future production work.","updatedAt":"2026-10-23T03:17:40.2913005+08:00","supervisionLevel":"full"},"taskId":"AI-000318"}
+
+> SUPERVISED EXTEND at 2026-10-23T03:17:40.5980730+08:00: {"taskIds":["AI-000318"],"reason":"User G87 and latest continue authorize unaffected isolated diagnosis for292; no expansion of product/asset write; same session."}
+
+> SUPERVISED RESUME_APPROVED at 2026-10-23T13:55:37.6926705+08:00: {"rootTaskId":"AI-000292","scope":{"paths":[".ai-workspace/codebase/data.md",".ai-workspace/outputs/DETACH-B13-20261019/AI-000292",".ai-workspace/toolkit/SEC.md","项目整体阅读理解与推进基线_2026-08-14.md","Assets","Assets/Resources/PerformanceTestRunInfo.json","Assets/Resources/PerformanceTestRunInfo.json.meta","Assets/Resources/PerformanceTestRunSettings.json","Assets/Resources/PerformanceTestRunSettings.json.meta","Assets/Scripts/DataBase/CookingData/Build/CatalogBuildFingerprint.g.cs","Assets/StreamingAssets/data","CODEBASE_MAP.md","Library/CatalogBlobBuild.journal.json"],"operations":["approved-generated-fingerprint-update","controlled-build-copy-tamper","documentation-update","evidence-write","idempotence-check","isolated-player-validation","unity-import-compile","unity-owned-build-staging","unity-owned-temporary-cleanup","unity-performance-preprocessor-exact-cleanup","unity-performance-preprocessor-owned-output","unity-target-check","unity-windows-mono-build"]},"authorizationSource":"HUMAN","sourceApprovalId":"call_e46b2ba4e5914dd68a38e343b1d04531:0","remaining":3,"cycles":["grant:dbe48d94597148a5960c5ad46028df58"],"verification":"fresh-engine-before-292-four-files.json: app revision112 idle/latest turn completed/error null; live worker IDLE/no activeTask/no RUNNING/reservation; same SUPERVISED ACTIVE session. independent-review-318.json four contracts16 facts PASSED_DIAGNOSIS_NOT_ROOT_CAUSE_OR_REPAIR. AI292性能预处理四件_用户批准.json binds user call_e46b2ba4e5914dd68a38e343b1d04531:0 and exact review/scope. Original root1/5 remaining4, two failures retained; new four paths approved, no new limit, no paired diagnosis or definition change. Evidence under .ai-workspace/outputs/control/AI292-PLAYER-VALIDATION-REPAIR-20261023.","grantId":"874c6128ce7e482abc60fd1d2fae55eb","reserved":1,"used":1,"taskId":"AI-000292"}
+## AI-000319 | [CODE] [SC] [CK01C] 人工缺陷Catalog单一锁定提示与空卡装饰显隐
+
+- 序号：319
+- 提交时间：2026-10-23T23:28:28.8498674+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000289
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000319 | A+C人工缺陷：Catalog单一锁定提示与空卡装饰显隐 | 固定CODE | M/80
+本轮真实用户原话与部分签收见同目录用户反馈与部分验收.json。WorkKind=FEATURE技术独立产品缺陷卡，semanticKind=human-acceptance-defect，usageCategory=task，origin=AI289/D-T2；不是管线修复/原任务重试/退款，原已成功任务与历史保持。Scope=AI319_SCOPE.json，四合同inputs/acceptance/AI-000319.json。后继AI320已拆分，仅CONTROL独立通过才派ENGINE。
+
+只修两个已反馈显示问题：
+1. 当前CatalogCard.Apply把lockedRecipeSprite写入iconRenderer并令placeholderRenderer启用，造成两问号。查实际prefab+scene只读绑定，选择唯一既有锁定提示，保持原序列化字段/引用兼容；已解锁显示原菜图，空卡无问号，不把未解锁变可选择，不变配表/解锁逻辑。保留明确旧ConfigureRecipe调用兼容；不可用全面隐藏图标掩盖正常菜图。问号尺寸由ENGINE在既有场景实例调整，本卡不要生产资源文本编辑。
+2. 空view除已有基本显示外必须隐藏该CatalogCard所属名称底/胶带等装饰；重新绑定非空后恢复应有装饰。优先精确序列化装饰引用、或能保留原状态的等价最小实现；不要无差别开启所有子Renderer而复活空tag/未收藏star/占位图，不把整个脚本宿主/交互所有者永久SetActive(false)导致不可重绑。若增加装饰引用只列CatalogCard所需字段，默认兼容，ENGINE对八实例精确绑定。其他GridPiece/Ingredient/Sticker显隐语义不扩大。
+
+允许现有CatalogCard.cs及ShortCycleGridPieceBase.cs必要最小改动；首选Catalog局部，不顺手重构。只读Content/RecipeBookBinder、StepDetailRowPiece、现CatalogCard.prefab/scene/AI288 binding-map确认实际链。StepDetail颜色归ENGINE，本卡不通过运行时每帧重设颜色压制用户后续调整。
+
+验证与改动相称：既有ShortCycleRecipeBookTests/原Test-CK01CShortCycle入口定向调用真实改后实现；仅必要锁定/解锁/空/重新非空、装饰恢复及收藏/tag不被误开。允许给既有runner加显式窄选择或复用CompileOnly后实际既有Run，不新runner、不重跑旧整套Final/Phase2/安全/隔离宿主。需要的UnityStubs最小接口真实编译，不以stub视为原生效果；不为纯颜色/尺寸另写镜像测试。旧断言保留、实际源差异及编译/定向行为日志交付，失败按稳定CATALOG_HUMAN_FEEDBACK键登记，不能换key绕止损。
+
+交付REPORT、evidence/acceptance与ENGINE-HANDOFF：选定单问号路径和理由、原图与占位的互斥规则、八实例所需具体字段/已有对象、名称底/胶带的对象范围、StepDetail十Description现白色与需黑色（只读定位），允许场景diff清单与验证动作。不要虚构原生观察；不改prefab/scene/meta/Unity/CLI/MCP。本卡输出outputs/AC-HUMAN-FEEDBACK-20261023/AI-000319。固定原chat、PowerShell7及正式queue。读取CORE/对应worker/模块入口和已知坑账，保留用户已有未提交修改。源码/原生事实优先，严禁全仓重复哈希/旧1～20/Build/导表/真实用户存档。写入前正式SupervisionCheckpoint。失败立即按正式规则结算回传，不自续/换工具；Complete/Fail/Yield本轮Prepare→一次实际appSend→Record给CONTROL01a13ef5-eda9-7882-b1c9-eca47a6470d9。CONTROL Receive后独立核验，不自行派后继。包目标1MB硬10MB，保留失败和未结原件。无Git提交推送、素材导入、非空配表修改。源码/资源完整核验日期不提高。
+
+> SUPERVISED POLICY at 2026-10-23T23:28:29.3337806+08:00: {"taskId":"AI-000319","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"2026-10-23用户人工反馈指定显示缺陷，新产品缺陷卡；旧289/292机器验收和所有历史保持。319独立通过后按同一修复指令登记内部执行门才派320；320最终修复画面待人审，不解除292整体A+C或USER-U5。","updatedAt":"2026-10-23T23:28:29.2321212+08:00","supervisionLevel":"full"}}
+## AI-000320 | [ENGINE_CLI] [SC] [CK01C] 人工缺陷Catalog场景落地与StepDetail黑字
+
+- 序号：320
+- 提交时间：2026-10-23T23:28:29.4628817+08:00
+- 模块 ID：SC
+- 初始状态：QUEUED
+- 前置依赖：AI-000319, AI-000287, AI-000293
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI-000320 | A+C人工缺陷场景落地：单问号/空卡/步骤黑字 | 固定ENGINE_CLI | M/80
+用户要求见同目录用户反馈与部分验收.json；Scope=AI320_SCOPE.json；五合同inputs/acceptance/AI-000320.json。产品人工缺陷，usageCategory=task，semanticKind=human-acceptance-defect，origin=AI289/D-T2。只在319 CONTROL独立通过和具体内部执行gate后由CONTROL正式派发。最终humanGateAfter=true，不代用户确认修复后画面。
+
+目标仅Assets/Scenes/Cooking/ShortCycle_P0P1.unity：原八CatalogCard实例采用319已验互斥/空卡逻辑，按交接精确绑定名称标签底和胶带等装饰；复用现有主图/placeholder与问号素材，禁止新导入或改原prefab。原生先读实际对象与Renderer边界，再选唯一锁定问号；测原大小两者实际可见/world尺寸，在二者之间选中间量并限制卡框内部、保持素材纵横比和居中，不使用过大算术均值导致仍出框。记录具体before/after数值与取值依据。只改保留问号的局部尺寸/位置必要字段，不改变卡本身布局、其它菜图或全局scale。八实例一致规则，原16SpriteRenderer+LocalizedText标签/卡02绑定/4食材/便签/收藏保留。
+
+StepDetail十个现Description TextMeshPro通过原Editor API .color设纯黑RGBA(0,0,0,1)，保持font/fontSharedMaterial/文本/LocalizedText/字号/RectTransform/排序/_TUNE不变，允许一致Color32派生缓存。检查是否有其他实际可见步骤字体仍白，仅本步骤文本范围；若扩大至不明标题/材质先报告精确差异不改。用户明确Browse和StepDetail排版留人工，本卡不重排/调字体尺寸或修品红素材。
+
+status/editor_status各一次核真实项目/clean基线/当前绑定；官方CLI/EditorAPI/Undo/SerializedObject保存本卡改动，不手编Unity YAML。319新源码装载确有必要时按已授权显示修复执行一次官方recompile（正常内部Refresh/域重载），未知写入/终态unknown/平台拒绝停止不换工具；已载则不重复。Library仅正常缓存观察不改缓存。若用户未保存改动不覆盖，G26仅清自有临时变动。复读允许diff；禁止重建49节点、原scene/Build/P2/view5/adapter/meta或整批旧备份恢复。
+
+验证只本卡fresh task/run，先独立核287/293显式隔离pre-Awake入口，隔离根outputs/DETACH-B13-20261019/AI-000320/isolated-saves/<fresh-run>，报告原流/PNG根outputs/AC-HUMAN-FEEDBACK-20261023/AI-000320。用304当前Ready及298/299/305已验调用方案，官方capture_game_view(source=screen,1024x576,no-save)，原流+原生PNG严格门保存。只必要Catalog已锁白菜一个问号/空区域背景胶带都隐藏，已配置卡/标签/收藏不被误开或隐藏；同run打开清汤面StepDetail核黑色文本，正常返回与Stop/G26。最多两张必要原生图（Catalog/StepDetail），不重拍Browse、不跑RunOriginalProbe/原1～20/P2往返/Build/Player/数据导出。若实际改动≤10字段则按AGENTS硬限只保留一张必要截图，另一用精确允许diff和字段证据，不能为凑图扩大修改。
+
+保留旧已验数据/解锁语义，原生实际显示及新场景保存结果才可Complete，离线交接不能代验。Console当前与历史分开，无连续起点不声称新增0。清理目标先毁后释lease，恢复原clean Edit/宿主关闭。最终修复画面仍交用户签收，原AI292整体人工门和USER-U5不变。固定原chat、PowerShell7及正式queue。读取CORE/对应worker/模块入口和已知坑账，保留用户已有未提交修改。源码/原生事实优先，严禁全仓重复哈希/旧1～20/Build/导表/真实用户存档。写入前正式SupervisionCheckpoint。失败立即按正式规则结算回传，不自续/换工具；Complete/Fail/Yield本轮Prepare→一次实际appSend→Record给CONTROL01a13ef5-eda9-7882-b1c9-eca47a6470d9。CONTROL Receive后独立核验，不自行派后继。包目标1MB硬10MB，保留失败和未结原件。无Git提交推送、素材导入、非空配表修改。源码/资源完整核验日期不提高。
+
+> SUPERVISED POLICY at 2026-10-23T23:28:29.8746531+08:00: {"taskId":"AI-000320","policy":{"resourceKeys":["unity-project","documentation"],"reviewDependsOn":["AI-000319"],"humanGateAfter":true,"gateApproved":false,"reason":"2026-10-23用户人工反馈指定显示缺陷，新产品缺陷卡；旧289/292机器验收和所有历史保持。319独立通过后按同一修复指令登记内部执行门才派320；320最终修复画面待人审，不解除292整体A+C或USER-U5。","updatedAt":"2026-10-23T23:28:29.7101254+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-10-23T23:28:30.1245017+08:00: {"taskIds":["AI-000319","AI-000320"],"reason":"用户2026-10-23人工验收反馈明确要求Catalog单问号/尺寸/空卡装饰与StepDetail黑字，新增CODE→ENGINE缺陷卡；未重开任何已成功卡，仍同session。"}
+## AI-000321 | [CODE] [WF] GIT-CP-01 当前阶段本地检查点提交
+
+- 序号：321
+- 提交时间：2026-10-24T00:03:24.7041064+08:00
+- 模块 ID：WF
+- 初始状态：QUEUED
+- 前置依赖：AI-000319
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI-000321 | GIT-CP-01 当前阶段检查点提交 | 固定CODE | 原用户S20目标，API技术S40上限（保持原目标，不因大量已有文件扩大验证）
+用户已直接明确“先在当前阶段做一轮git的提交…包内…都进行显性的授权”。授权原件本目录用户授权与接收.json，原始派发包/cards/GIT-CP-01.md与索引§〇。任务仅当前工作树本地检查点，不push/合main/切分支，不改业务代码/资源/恢复用户成果。已完成AI263～318及AI319源码可纳入；319 CODE已CONTROL独立通过但场景/视觉仍延后，提交不声明人工验收通过。当前已有原批次/管线/文档归档改动整体保全纳入合理检查点，不通过只提交几文件隐藏大量已完成工作。原12逻辑卡与G87轨在提交说明列明；清楚指出布局/USER-U5及320场景修复待验。
+
+先读CORE/CODE worker/Git hook约束和实际git状态。CONTROL预核1165条路径、index空、branch codex/unity6-followup；原始git-status-before.z/git-change-inventory.json位于outputs/control/BATCH2-INDEPENDENT-20261023。此只是预核，实际边界以本卡开始状态为准。CODE319已结算、ENGINE闲置，新卡/场景未执行；本卡持unity-project+git-index+documentation锁。只接收本任务，不自行派后继。
+允许正式git add/commit所必需index/object/HEAD更新，是用户明确提交授权，不手工编辑.git、重置/改写历史或创建隔离index/tree/ref；queue Scope禁止.git字面目录故只列工作树目标与git操作，不能误当绕保护读写.git文件许可。正常git过程需平台升级权限时使用正式审批入口，明确已有用户授权；不禁hook、不--no-verify、不改core.hooksPath/字体白名单绕过。现pre-commit原字体/LFS保护必须正常运行并保存真实stdout/stderr/exit。
+
+盘点并合理暂存当前已授权阶段源码/scene/asm/meta/Packages/ProjectSettings/项目入口及既有完整文档历史归档（旧tracked删除须与归档保全映射对应）。读取.gitignore/attributes，先用path列表/体积排除Build约2.83GB、isolated-saves、临时Assets/__CatalogBlobBuild_*、性能四件残留、runtime/log/cache、Library/Temp、活输出、凭证和用户同步美术；不force-add被忽略运行物。历史.ai-workspace/archive已有原件为文档归档，不能一律当临时删掉；ZIP按已有LFS规则，不改属性逃检查。保留未关闭活动原件，不移动/删除本卡外文件。过大未知binary/疑似密钥须具体定位后停止，不打印密钥。无需全仓内容哈希、旧全套Final或Unity，只索引路径/体积、相关diff、现字体提交hook。原目标SHA可核但禁止替用户回滚任何无关变化。
+
+提交前正式SupervisionCheckpoint，再以正常git stage明确审核文件列表（路径含中文用安全文件列表/参数）；核cached name-status和excluded目录没有进入索引，原字体hook无漂移。git commit一次成功检查点（若hook真实拒绝正式Fail，不自行改保护/强行二提交）。提交message体说明12业务逻辑卡+G87修复+319源码和未验项，可写本卡临时message文件，不命令插值。保留commit前HEAD/branch、暂存清单、排除清单/理由、真实hook证据、commit SHA/父提交/提交后status。仅本轮checkpoint，不替后续修复提交，不push。
+
+交付REPORT.md、evidence.json checks四合同：checkpointCommitCreated、existingHooksPassedWithoutBypass、reproducibleAndRuntimeArtifactsExcluded、historyAndPendingAcceptancePreserved。receipt绑定真实SHA与产物；状态若非clean准确解释剩余（queue生命周期INSTRUCTIONS等），不为clean清空文件。所有证据写outputs/BATCH2-INDEPENDENT-20261023/AI-000321。临时包目标1MB硬10MB只报告索引不复制全仓。结算本轮Prepare→一次真实appSend→Record回CONTROL 01a13ef5-eda9-7882-b1c9-eca47a6470d9，不等WATCH。失败保留现场、只正式Fail，不自行ApproveResume；本批仍SUPERVISED，人工门延后不代签。
+
+> SUPERVISED POLICY at 2026-10-24T00:03:25.2773331+08:00: {"policy":{"resourceKeys":["unity-project","git-index","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮明确先提交；319源码独立通过；旧320及A+C延后不放行。","updatedAt":"2026-10-24T00:03:25.1894562+08:00","supervisionLevel":"full"},"taskId":"AI-000321"}
+
+> SUPERVISED EXTEND at 2026-10-24T00:03:25.4430959+08:00: {"reason":"接收20261023批次2独立项，用户要求检查点先行，同session监管。","taskIds":["AI-000321"]}

@@ -34,12 +34,16 @@ function Body($Result){
     if(-not $text){throw 'MCP response has no JSON content.'}
     return $text|ConvertFrom-Json -DateKind String
 }
-$sample=[ordered]@{schemaVersion=1;source='coplay-mcp-streamable-http';observedAt=[DateTimeOffset]::Now.ToString('o');taskId=$null;executionId=$null;available=$false;instanceId=$null;dataPath=$null;unityVersion=$null;isPlaying=$null;isCompiling=$null;sceneDirty=$null;scenePath=$null;unavailableReason=$null;sceneDirtyUnavailableReason=$null;rawPath="$OutputPath.raw.json";requestCount=0;requestUtf8Bytes=0;responseUtf8Bytes=0}
+$sample=[ordered]@{schemaVersion=2;lane='ENGINE_MCP';toolSource='coplay-mcp';attempt=$null;threadId=$null;source='coplay-mcp-streamable-http';observedAt=[DateTimeOffset]::Now.ToString('o');taskId=$null;executionId=$null;available=$false;instanceId=$null;dataPath=$null;unityVersion=$null;isPlaying=$null;isCompiling=$null;sceneDirty=$null;scenePath=$null;unavailableReason=$null;sceneDirtyUnavailableReason=$null;rawPath="$OutputPath.raw.json";requestCount=0;requestUtf8Bytes=0;responseUtf8Bytes=0}
 try{
     $uri=[uri]$Endpoint
     if(-not $uri.IsLoopback -or $uri.Scheme -ne 'http' -or $uri.Port -ne 8080 -or $uri.AbsolutePath.TrimEnd('/') -cne '/mcp'){throw 'Only the configured Coplay localhost:8080/mcp transport is allowed.'}
     $workers=Get-Content -LiteralPath (Join-Path $StateRoot 'worker-state.json') -Raw|ConvertFrom-Json
     $sample.taskId=$workers.workers.ENGINE_MCP.activeTaskId;$sample.executionId=$workers.workers.ENGINE_MCP.activeExecutionId
+    $queue=Get-Content -LiteralPath (Join-Path $StateRoot 'queue-state.json') -Raw|ConvertFrom-Json -DateKind String
+    $task=@($queue.tasks|Where-Object id -eq $sample.taskId)[0]
+    if(-not $task -or $task.status -ne 'RUNNING' -or $task.pipeline -ne 'ENGINE_MCP' -or -not $sample.executionId -or $sample.executionId -cne $task.execution.executionId){throw 'No owned MCP task; no Editor attribution.'}
+    $sample.attempt=$task.attempts;$sample.threadId=$task.execution.ownerThreadId
     $init=Rpc 'initialize' @{protocolVersion='2025-03-26';capabilities=@{};clientInfo=@{name='EatWhat-WATCH';version='PRE5c'}}
     $headers['MCP-Protocol-Version']=[string]$init.protocolVersion
     Rpc 'notifications/initialized' @{} -Notification

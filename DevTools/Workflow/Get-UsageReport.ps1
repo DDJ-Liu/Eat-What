@@ -127,7 +127,17 @@ function Get-PeriodSummary([object[]]$Items) {
         }
     })
 
-    [pscustomobject]@{ recordCount=$Items.Count; byLanePhase=$byLanePhase; topCalls=$topCalls; topRecords=$topRecords; topTasks=$topTasks;
+    $byLaneTool=@($Items | Group-Object { "$($_.lane)|$($_.actualTool)|$($_.usageCategory)" } | ForEach-Object {
+        $first=$_.Group[0]
+        $members=@($_.Group);$cost=[ordered]@{lane=$first.lane;actualTool=$first.actualTool;category=$first.usageCategory;records=$members.Count}
+        foreach($metric in @('inputTokens','cachedInputTokens','outputTokens','reasoningOutputTokens','toolCallCount','toolResultBytes')){
+            $observed=@($members|Where-Object {$null -ne $_.$metric});$cost[$metric]=if($observed.Count){[long](($observed|Measure-Object $metric -Sum).Sum)}else{$null};$cost["${metric}Coverage"]=$observed.Count
+        }
+        $durations=@($members|ForEach-Object {if($null -ne $_.metadata.durationMs){$_.metadata.durationMs}elseif($null -ne $_.metadata.sampling.durationMs){$_.metadata.sampling.durationMs}})
+        $cost.durationMs=if($durations.Count){($durations|Measure-Object -Sum).Sum}else{$null};$cost.durationCoverage=$durations.Count
+        [pscustomobject]$cost
+    })
+    [pscustomobject]@{ byLaneTool=$byLaneTool; recordCount=$Items.Count; byLanePhase=$byLanePhase; topCalls=$topCalls; topRecords=$topRecords; topTasks=$topTasks;
         tierGroups=$tierGroups;
         contextDistribution=$contextDistribution;
         contextStrongCount=@($Items|Where-Object {$_.event -eq 'watch_event' -and $_.metadata.kind -eq 'CONTEXT_HIGH'}).Count;
@@ -178,6 +188,18 @@ else {
             $lines.Add("| $($row.lane) | $($row.phase) | $($row.records) | $inputValue ($($row.inputTokenCoverage)/$($row.records)) | $outputValue ($($row.outputTokenCoverage)/$($row.records)) | $callValue ($($row.toolCallCoverage)/$($row.records)) | $byteValue ($($row.resultByteCoverage)/$($row.records)) |")
         }
         $lines.Add('')
+        $lines.Add('Queue lane and actual tool (unknown remains null; setup is separate from task work):')
+        $lines.Add('')
+        $lines.Add('| Queue lane | Actual tool | Category | Records | Input | Output | Calls | Returned bytes | Duration ms |')
+        $lines.Add('| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |')
+        foreach($toolRow in @($summary.byLaneTool)){
+            $toolName=if($toolRow.actualTool){$toolRow.actualTool}else{'null'}
+            $category=if($toolRow.category){$toolRow.category}else{'null'}
+                        $costText=@('inputTokens','outputTokens','toolCallCount','toolResultBytes'|ForEach-Object {$v=$toolRow.$_;$coverage=$toolRow."$($_)Coverage";$(if($null -eq $v){'null'}else{"$v ($coverage/$($toolRow.records))"})})
+            $durationText=if($null -eq $toolRow.durationMs){'null'}else{"$($toolRow.durationMs) ($($toolRow.durationCoverage)/$($toolRow.records))"}
+            $lines.Add("| $($toolRow.lane) | $toolName | $category | $($toolRow.records) | $($costText -join ' | ') | $durationText |")
+        }
+        $lines.Add('')
         $lines.Add('App turns per task (observed) / provider responses / cache hit rate:')
         $lines.Add('')
         $lines.Add('| Task | App turns/task | Provider responses | Cache hit rate |')
@@ -203,7 +225,7 @@ else {
         $lines.Add('')
         $lines.Add("Context observations: $($summary.contextRecordCount); STRONG WATCH triggers: $($summary.contextStrongCount); strong observations: $($summary.contextStrongObservationCount). Values are per observation, never summed as a live window or task bill.")
         $lines.Add('| Lane | Role | Source | Records | Observed | Unknown | Min tokens | Max tokens | STRONG observations |')
-        $lines.Add('| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |')
+        $lines.Add('| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |')
         foreach($row in $summary.contextDistribution){
             $minText=if($null -eq $row.minTokens){'null'}else{[string]$row.minTokens}
             $maxText=if($null -eq $row.maxTokens){'null'}else{[string]$row.maxTokens}

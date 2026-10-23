@@ -1,5 +1,8 @@
 # 工具库 · DAT
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
 2026-10-05 AI199 修正 TK-DAT-01 本地文件身份：生产 C# 及 PowerShell 凭证门现按非零有符号 Int64 比较主资产、Sprite 子资产与纹理归属 ID；合法负数不再误拒，零/缺失/非整数/溢出/重复身份仍拒绝。隔离 Test-NativeRootProof 使用实际负 Sprite ID 经 JSON 往返验证，不代表真实 Unity 验收；AI194 保持暂停待控制核验。
 
 2026-10-05 AI198 补强 TK-DAT-01 生成根证明：生产 ImportAllBatch 的 dependencyProof 升至 schemaVersion 2；122个生成.asset中，普通根仍限单个 ScriptableObject，只有注册的 Shared/CK01-MissingSpriteTexture.asset 允许 Texture2D 主对象加唯一 Sprite 子对象，须核名称、类型、GUID/本地文件ID、Sprite.texture归属、文件/meta和断裂引用；未知子资产及旧Spine/动画引用拒绝。原 GetDependencies 全根递归闭包、候选SHA及 AI197 ExpectedStagedHash 发布门不降级。Test-NativeRootProof 为编辑器外生产核心回归，原 AI194 的真实 Unity 结果仍待 DATA；不提升完整核对日期。
@@ -39,3 +42,19 @@
 AI189 扩展 TK-DAT-07：集中 header-descriptions.mjs 与 authoring.mjs 的 header-comment-plan 负责14表119字段语义注释；Update-HeaderComments.ps1 公开隔离候选入口（InputWorkbook/CandidateWorkbook/ExpectedInputSha256/DataTablesRoot），合并有工具作者身份证据的旧线程并保留未知用户备注，逐格内容和结构零差异。生产xlsx只读，AI191 DATA 再按 FormatOrCommentOnly 门发布格式/注释合并候选。
 
 AI193 补强同一 TK-DAT-07：header-comment-plan 额外给出与schema绑定的完整旧Type/Reference模板；Update-HeaderComments.ps1仅替换完全匹配且归属明确的工具正文，旧式tc=备注只随确实移除的工具线程清理。独立备注审计核源/候选的未知正文、作者、回复父ID与兼容条目；不明增补保留或拒绝，不能用值/结构零差异代替。Test-HeaderCommentProtection.ps1覆盖控制台反例和回复/幂等。DATA191须读取候选的commentProtectionAudit后再考虑发布。
+
+2026-10-19 AI271 / TK-DAT-01：ReportDirectory空值保留runtime/data-reports及合法子目录；新outputs仅允许outputs/<单一批次>/<精确当前AI-xxxxxx>及子目录。Resolve-DataReportLocation按RepositoryRoot解析相对路径，parent/runRoot共边界，拒绝其它任务/前缀/dot/ADS/Windows别名/外部/控制区及reparse祖先，创建前复核/碰撞拒绝；不把runtime加入业务Scope。runId/nonce/严格完成日志保持。纯解析不创建/复制项目；本轮只有离线验证，不承诺解决Unity许可IPC。原DATA须CONTROL独立验收后按正式Scope/权限审查执行，无Publish/生产数据修改。
+
+2026-10-19 AI269/AI272扩充TK-DAT-01只读面：RecipeView及只读slot/tag/ingredient/step/icon快照仍归既有CookingData/Generated.DataTables；TryGetRecipeView/EnumerateRecipesOrdered组装T1→T13、T1→T2→T4、T6和T1→T3链序→T4/T7，复用现有TryGetRecipeStepChain及校验器三菜链序报告。不增第二数据源、Generated→ShortCycle回边或导入资产结构，不写生产表值。本次既有ShortCycle离线runner调用现有Validate-DataTables -Quick只读校验并比对链序，不运行导表/Publish；证据见AI272。
+
+2026-10-19 AI273扩充既有TK-DAT-01只读适配：Phase2DataViews提供无Unity字段的ProcessingRecordView/ProcessingToolView/RecipeStepRuleView，Catalog.TryGetProcessingRecords(ids)/TryGetProcessingTool/TryGetStepChain复制既有表与验证链，保持Generated→Toolkit、ShortCycle→Generated。ProcessingMatcher只留ShortCycle/Core/Phase2，本卡不登记或提升拟议TK-DAT-08；不改导表/生产值，DATA-FOLLOWUPS保留USER-U5待办。
+
+2026-10-19 AI275：原包“TK-DAT-07 Persistence”编号冲突，依CONTROL勘误映射为未占用TK-DAT-09，见[PST](PST.md#tk-dat-09)。原07Authoring/08SceneToolInventory保持。09提供共享codec下版本化Envelope/HMAC与原子Store，应用SaveBoundary只接原2保存点；损坏/版本不符锁slot保原件，原生Play待验。旧TK-DAT-03 DataEncryptor不作为新SaveBoundary实现，旧DataBaseManager链不改。
+
+2026-10-20 AI282（未验收候选）：既有TK-DAT-01增加显式CatalogBlob参数集：Run-DataPipeline.ps1 -ExportCatalogBlob -CatalogSnapshotPath <已授权canonical graph> -CatalogBlobStaging <本任务outputs下绝对新空目录>。默认导表不调用该支路；禁止与Publish/PlanOnly/font发布并用。CatalogBlob.Common、ReadUnityCatalogSnapshot.py与CatalogBlobTests归既有离线runner，静态读实际Unity序列化数据，不从CSV反建源资产。169数据SO含14个未入Catalog对象，保持原155个表内对象及14表成员。导出候选含graph/bin/指纹源码/export.json，需后继DATA授权及指纹编译后再做构建；当前整组第三次结果解析失败已停，不授权实际导表/发布。完整失败及DATA-HANDOFF见outputs/DETACH-B13-20261019/AI-000282/。
+2026-10-20 AI282 POLICY续行1/attempt2：仅修既有CatalogBlob.Common原生stdout协议（单个行首BOM+Ordinal匹配及严格拒绝），22项定向/原字节回放通过；原Catalog Final4在编译元数据JToken.FromObject处遇PS包装对象自引用失败，已停止，不再修复/复验。原三次失败保持，新证据outputs/DETACH-B13-20261019/AI-000282/attempt2/REPORT.md；原生/发布仍未验。
+
+2026-10-20 AI282 POLICY续行2/attempt3：既有runner以有限原生JSON边界替代三处FromObject包装值转换，拒绝深度截断/缺失路径/错误数组和布尔；完整结果63项严格写入回读、原22协议项及Catalog Final5通过，主机/Mono234、指纹一致/双向认证已持久化。原attempt1/2失败与正式停止保留；待CONTROL独立验收，真实Build/Player/发布仍未验。证据outputs/DETACH-B13-20261019/AI-000282/attempt3/REPORT.md。
+
+2026-10-20 AI285同根修复：原282数据/加密/三菜结果保留但清理义务被CONTROL拒验。既有CatalogBuildPlan承载实际Cleanup/Recovery共用的schema2资产+meta精确归属/全量预检/真空目录删除；未知orphan.meta、folder.meta漂移、未知子目录、旧/未完成journal与重定向均拒绝且保留。42定向/3受影响API编译通过，未重跑234/305/306，无新TK或生产导入。CONTROL已独立6合同/15复核、实际guard42项通过并以精确证据正式解除原282拒验，原失败/拒验历史保留；原生Build/场景/170SO包排除仍未验。证据outputs/DETACH-B13-20261019/AI-000285/REPORT.md。
+2026-10-22 AI313 / TK-DAT-01 修复CatalogBlob捕获空Sprite语义：托管null直接编码JSON null；托管非null但Unity-null仅在Editor同时核实未脏Generated owner、稳定身份、SerializedProperty的PPtr实例ID为0和所属磁盘YAML字段精确{fileID: 0}时编码null，否则仍走原Sprite身份拒绝门。非空Sprite键/闭包、graph schema及认证/指纹不变。既有离线Catalog回归244项、Mono双向认证及Unity6真实引用源码编译通过；未执行原生Editor、PrepareSnapshot或Build，AI290后继须CONTROL独立验收并正式续行。证据outputs/AI290-CLI-CALLER-REPAIR-20261022/AI-000313/REPORT.md。

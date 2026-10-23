@@ -2875,6 +2875,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var recipe = new CK01RecipeData
             {
                 name = "rcp_test",
+                standard_variant_id = "var_test_standard",
                 first_step_id = "step_test_01",
                 slots = new List<string> { "slot_test" },
                 whitelist_proc_ids = new List<string> { "proc_test" }
@@ -2923,6 +2924,10 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 new CK01GeneratedDataTable("Recipes", null, new[]
                 {
                     new CK01GeneratedDataRowReference("rcp_test", recipe)
+                }),
+                new CK01GeneratedDataTable("RecipeVariants", null, new[]
+                {
+                    new CK01GeneratedDataRowReference("var_test_standard", new CK01RecipeVariantData { recipe_id = "rcp_test" })
                 }),
                 new CK01GeneratedDataTable("RecipeSteps", null, new[]
                 {

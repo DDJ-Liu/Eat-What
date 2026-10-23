@@ -155,6 +155,9 @@ function Write-TaskUsageRecord {
         source = $Source.Trim()
         coverage = $Coverage.Trim()
         unavailableReason = [pscustomobject]$reasons
+        actualTool = $(if($Metadata.toolSource){[string]$Metadata.toolSource}else{$null})
+        usageCategory = $(if($Metadata.usageCategory){[string]$Metadata.usageCategory}else{$null})
+        actualToolUnavailableReason = $(if(-not $Metadata.toolSource){'Actual tool was not observed; queue lane is not a tool identity.'}else{$null})
         metadata = [pscustomobject]$Metadata
     }
     if ($Event -eq 'thread_context' -or $ContextSource) {

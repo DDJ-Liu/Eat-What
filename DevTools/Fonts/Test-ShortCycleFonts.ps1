@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath,[switch]$SkipGuardFixture)
+param([string]$UnityEditorPath,[switch]$SkipGuardFixture,[string]$ProjectAssemblyDirectory)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -107,6 +107,19 @@ $dotnet = Join-Path $unityData 'NetCoreRuntime\dotnet.exe'
 $csc = Join-Path $unityData 'DotNetSdkRoslyn\csc.dll'
 $unityManaged = Join-Path $unityData 'Managed\UnityEngine'
 $framework = Join-Path $unityData 'MonoBleedingEdge\lib\mono\4.7.1-api'
+# Explicit offline split outputs can be supplied before ENGINE installs definitions.
+$explicitAssemblyDirectory = -not [string]::IsNullOrWhiteSpace($ProjectAssemblyDirectory)
+if (-not $explicitAssemblyDirectory) { $ProjectAssemblyDirectory = Join-Path $repoRoot 'Library/ScriptAssemblies' }
+$splitAssemblies = $explicitAssemblyDirectory -or (Test-Path -LiteralPath (Join-Path $repoRoot 'Assets/Scripts/Tools/Toolkit.asmdef'))
+$projectReferences = if ($splitAssemblies) {
+    @('Toolkit','Generated.DataTables','ShortCycle','Legacy') | ForEach-Object { Join-Path $ProjectAssemblyDirectory "$_.dll" }
+} else {
+    @(Join-Path $ProjectAssemblyDirectory 'Assembly-CSharp.dll')
+}
+foreach ($reference in $projectReferences) {
+    if (-not (Test-Path -LiteralPath $reference -PathType Leaf)) { throw "Required project assembly missing (compile before validation): $reference" }
+}
+
 $references = @(
     (Join-Path $framework 'mscorlib.dll'),
     (Join-Path $framework 'System.dll'),
@@ -124,9 +137,9 @@ $references = @(
     (Join-Path $unityManaged 'UnityEditor.dll'),
     (Join-Path $unityManaged 'UnityEditor.CoreModule.dll'),
     (Join-Path $repoRoot 'Library\ScriptAssemblies\Unity.TextMeshPro.dll'),
-    (Join-Path $repoRoot 'Library\ScriptAssemblies\UnityEngine.UI.dll'),
-    (Join-Path $repoRoot 'Library\ScriptAssemblies\Assembly-CSharp.dll')
+    (Join-Path $repoRoot 'Library\ScriptAssemblies\UnityEngine.UI.dll')
 )
+$references += $projectReferences
 foreach ($required in @($dotnet, $csc) + $references) {
     if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
         throw "Required Unity compile input is missing: $required"

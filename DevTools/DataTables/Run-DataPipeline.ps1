@@ -1,6 +1,9 @@
 [CmdletBinding(DefaultParameterSetName = 'Round')]
 param(
     [Parameter(Mandatory, ParameterSetName = 'Round')][string]$RoundManifestPath,
+    [Parameter(Mandatory, ParameterSetName = 'CatalogBlob')][switch]$ExportCatalogBlob,
+    [Parameter(Mandatory, ParameterSetName = 'CatalogBlob')][string]$CatalogSnapshotPath,
+    [Parameter(Mandatory, ParameterSetName = 'CatalogBlob')][string]$CatalogBlobStaging,
     [Parameter(Mandatory, ParameterSetName = 'CurrentCsv')][switch]$CurrentCsvValidation,
     [Parameter(Mandatory, ParameterSetName = 'CurrentCsv')][ValidateNotNullOrEmpty()][string]$ValidationSource,
     [Parameter(ParameterSetName = 'CurrentCsv')][string]$ValidationCsvOverlayPath,
@@ -17,6 +20,13 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ($ExportCatalogBlob) {
+    if ($Publish -or $PlanOnly -or $FontPublishApprovalPath) { throw 'Catalog export is staging-only; no Publish/plan/font operation.' }
+    . (Join-Path $PSScriptRoot 'CatalogBlob.Common.ps1')
+    Invoke-CatalogBlobOptInExport -SnapshotPath $CatalogSnapshotPath -Staging $CatalogBlobStaging
+    return
+}
+
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 . (Join-Path $PSScriptRoot 'DataRound.Common.ps1')
 . (Join-Path $PSScriptRoot 'DataPipeline.Common.ps1')
@@ -105,12 +115,15 @@ $runId = "{0}-{1}-{2}" -f $safeTaskId, $safeRoundId, ([DateTimeOffset]::Now.ToSt
 if ([string]::IsNullOrWhiteSpace($WorkspaceRoot)) { $WorkspaceRoot = $approvedWorkspaceRoot }
 if ([string]::IsNullOrWhiteSpace($ReportDirectory)) { $ReportDirectory = $approvedReportRoot }
 $workspaceParent = Assert-DataPathWithin -Path $WorkspaceRoot -AllowedRoot $approvedWorkspaceRoot -AllowRoot
-$reportParent = Assert-DataPathWithin -Path $ReportDirectory -AllowedRoot $approvedReportRoot -AllowRoot
-$reportRoot = Assert-DataPathWithin -Path (Join-Path $reportParent $runId) -AllowedRoot $approvedReportRoot
+$reportLocation = Resolve-DataReportLocation -RepositoryRoot $repositoryRoot -TaskId $TaskId -ReportDirectory $ReportDirectory -RunId $runId
+$reportParent = $reportLocation.reportParent
+$reportRoot = $reportLocation.reportRoot
 $validationRoot = Join-Path $reportRoot 'validation'
 if (Test-Path -LiteralPath $reportRoot) { throw "DATA report directory collision: $reportRoot" }
 $isolation = New-DataBatchIsolationDirectory -WorkspaceRoot $workspaceParent -ApprovedRoot $approvedWorkspaceRoot -RunId $runId
 $batchRoot = $isolation.path
+# Recheck the same ownership boundary immediately before creating the report.
+$null = Resolve-DataReportLocation -RepositoryRoot $repositoryRoot -TaskId $TaskId -ReportDirectory $reportParent -RunId $runId
 [void](New-Item -ItemType Directory -Path $reportRoot -ErrorAction Stop)
 
 $completionNonce = [Guid]::NewGuid().ToString('N')

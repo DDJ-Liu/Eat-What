@@ -167,6 +167,36 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
     [SerializeField] private List<CK01GeneratedDataTable> tables =
         new List<CK01GeneratedDataTable>();
 
+    [SerializeField] private List<CatalogSpriteReference> releaseSprites = new List<CatalogSpriteReference>();
+    [NonSerialized] private ICatalogSource activeSource;
+    private ICatalogSource Source
+    {
+        get
+        {
+            if (activeSource == null)
+            {
+#if CK01_ENCRYPTED_DATA && !UNITY_EDITOR && !DEVELOPMENT_BUILD
+                var sprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
+                foreach (var item in releaseSprites) { if (item == null || sprites.ContainsKey(item.key)) throw new FormatException("Invalid catalog sprite registry."); sprites.Add(item.key, item.sprite); }
+                activeSource = new EncryptedBlobSource(() => System.IO.File.ReadAllBytes(System.IO.Path.Combine(Application.streamingAssetsPath, "data/catalog.bin")),
+                    CatalogBuildFingerprint.Expected, key => { Sprite value; return sprites.TryGetValue(key, out value) ? value : null; },
+                    new EatWhat.Tools.Security.CatalogBlobCipher(new EatWhat.Tools.Security.ObfuscatedStaticKeyProvider()));
+#else
+                activeSource = new ScriptableObjectSource(() => (tables ?? new List<CK01GeneratedDataTable>()).AsReadOnly());
+#endif
+            }
+            return activeSource;
+        }
+    }
+    public string SourceKind { get { return Source.Kind; } }
+    internal void InstallSourceForValidation(ICatalogSource source)
+    { if (source == null || activeSource != null) throw new InvalidOperationException("Catalog already has its single source."); activeSource = source; InvalidateIndexes(); }
+    public void ConfigureBuildSpriteReferences(IEnumerable<CatalogSpriteReference> sprites)
+    {
+        if (activeSource != null) throw new InvalidOperationException("Prepare a fresh build-only catalog before use.");
+        tables = new List<CK01GeneratedDataTable>(); releaseSprites = new List<CatalogSpriteReference>(sprites); InvalidateIndexes();
+    }
+    private void OnDisable() { var lifetime = activeSource as IDisposable; if (lifetime != null) lifetime.Dispose(); activeSource = null; InvalidateIndexes(); }
     [NonSerialized] private bool indexesReady;
     [NonSerialized] private string indexError;
     [NonSerialized] private Dictionary<string, CK01GeneratedDataTable> tableByName;
@@ -174,7 +204,7 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
 
     public IList<CK01GeneratedDataTable> Tables
     {
-        get { return (tables ?? new List<CK01GeneratedDataTable>()).AsReadOnly(); }
+        get { return Source.Tables; }
     }
 
     private void OnEnable()
@@ -189,6 +219,7 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
     /// </summary>
     public bool ReplaceTables(IEnumerable<CK01GeneratedDataTable> source)
     {
+        if (activeSource != null && !(activeSource is ScriptableObjectSource)) throw new InvalidOperationException("Cannot replace a blob source with SO data.");
         var next = new List<CK01GeneratedDataTable>();
         if (source != null)
         {
@@ -224,6 +255,94 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
 
         tables = next;
         InvalidateIndexes();
+        return true;
+    }
+
+    public IReadOnlyList<RecipeView> EnumerateRecipesOrdered()
+    {
+        IList<CK01GeneratedDataRecord<CK01RecipeData>> records;
+        string diagnostic;
+        if (!TryGetRecords(RecipesTable, out records, out diagnostic))
+            throw new InvalidOperationException(diagnostic);
+        var result = new List<RecipeView>();
+        foreach (var record in records)
+        {
+            RecipeView view;
+            if (!TryGetRecipeView(record.StableId, out view, out diagnostic))
+                throw new InvalidOperationException(diagnostic);
+            result.Add(view);
+        }
+        result.Sort((left, right) => {
+            var order = left.display_order_in_menu.CompareTo(right.display_order_in_menu);
+            return order != 0 ? order : StringComparer.Ordinal.Compare(left.recipe_id, right.recipe_id);
+        });
+        return result.AsReadOnly();
+    }
+
+    public bool TryGetRecipeView(string recipeId, out RecipeView view, out string diagnostic)
+    {
+        view = null;
+        CK01RecipeData recipe;
+        if (!TryGetRecipe(recipeId, out recipe, out diagnostic)) return false;
+        CK01RecipeVariantData variant;
+        if (!TryGetRow("RecipeVariants", recipe.standard_variant_id, out variant, out diagnostic)) return false;
+        if (!string.Equals(variant.recipe_id, recipeId, StringComparison.Ordinal))
+        { diagnostic = "Standard variant belongs to another recipe: " + recipeId; return false; }
+        var tags = new List<RecipeTagView>();
+        if (recipe.note_tags != null && recipe.note_tags.Count > 5)
+        { diagnostic = "Recipe has more than five note tags: " + recipeId; return false; }
+        foreach (var id in recipe.note_tags ?? new List<string>())
+        {
+            CK01TagData tag;
+            if (!TryGetTag(id, out tag, out diagnostic)) return false;
+            tags.Add(new RecipeTagView(id, tag.name_key, tag.icon_sprite, tag.sticker_sprite));
+        }
+        var slots = new List<RecipeSlotView>();
+        foreach (var id in recipe.slots ?? new List<string>())
+        {
+            CK01RecipeSlotData slot; CK01ItemData item;
+            if (!TryGetRecipeSlot(id, out slot, out diagnostic) ||
+                !TryGetItem(slot.standard_ingredient, out item, out diagnostic)) return false;
+            if (slot.required_count < 1)
+            { diagnostic = "Recipe slot count must be positive: " + id; return false; }
+            var ids = new[] { slot.sub_01, slot.sub_02, slot.sub_03, slot.sub_04,
+                slot.sub_05, slot.sub_06, slot.sub_07, slot.sub_08 };
+            var counts = new[] { slot.sub_01_count, slot.sub_02_count, slot.sub_03_count, slot.sub_04_count,
+                slot.sub_05_count, slot.sub_06_count, slot.sub_07_count, slot.sub_08_count };
+            var substitutes = new List<RecipeSubstituteView>();
+            for (var index = 0; index < ids.Length; index++)
+                if (!string.IsNullOrEmpty(ids[index]))
+                    substitutes.Add(new RecipeSubstituteView(index, ids[index], Math.Max(1, counts[index])));
+            slots.Add(new RecipeSlotView(id, new RecipeIngredientView(slot.standard_ingredient,
+                item.name_key, item.icon_sprite, slot.required_count), slot.standard_action, substitutes));
+        }
+        IList<CK01RecipeStepData> chain;
+        if (!TryGetRecipeStepChain(recipeId, out chain, out diagnostic)) return false;
+        if (chain.Count > 10) { diagnostic = "Step detail supports at most ten ordered rows: " + recipeId; return false; }
+        var steps = new List<RecipeStepView>();
+        var stepId = recipe.first_step_id;
+        foreach (var step in chain)
+        {
+            var ingredients = new List<RecipeIconView>();
+            foreach (var id in step.standard_ingredients ?? new List<string>())
+            {
+                CK01ItemData item;
+                if (!TryGetItem(id, out item, out diagnostic)) return false;
+                ingredients.Add(new RecipeIconView(id, item.name_key, item.icon_sprite));
+            }
+            var tools = new List<RecipeIconView>();
+            foreach (var id in step.standard_tools ?? new List<string>())
+            {
+                CK01ToolData tool;
+                if (!TryGetRow(ToolsTable, id, out tool, out diagnostic)) return false;
+                tools.Add(new RecipeIconView(id, tool.name_key, tool.icon_sprite));
+            }
+            steps.Add(new RecipeStepView(stepId, step.display_text_key, ingredients, tools));
+            stepId = step.next_step_id;
+        }
+        view = new RecipeView(recipeId, recipe.name_key, variant.display_sprite,
+            recipe.display_order_in_menu, recipe.is_unlocked_default, tags, slots, steps);
+        diagnostic = null;
         return true;
     }
 
@@ -346,6 +465,41 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
         out string diagnostic)
     {
         return TryGetRow(ProcessingRecordsTable, processingRecordId, out record, out diagnostic);
+    }
+
+    public bool TryGetProcessingRecords(IEnumerable<string> ids, out IList<ProcessingRecordView> records, out string diagnostic)
+    {
+        records = new List<ProcessingRecordView>().AsReadOnly();
+        if (ids == null) { diagnostic = "Processing record IDs are required."; return false; }
+        var result = new List<ProcessingRecordView>();
+        foreach (var id in ids)
+        {
+            CK01ProcessingRecordData row;
+            if (!TryGetProcessingRecord(id, out row, out diagnostic)) return false;
+            var inputs = new List<string>();
+            foreach (var input in new[] { row.input_01, row.input_02, row.input_03, row.input_04, row.input_05, row.input_06 })
+                if (!string.IsNullOrEmpty(input)) inputs.Add(input);
+            result.Add(new ProcessingRecordView(id, row.output_item, inputs, row.action, row.carrier, row.is_final_product));
+        }
+        records = result.AsReadOnly(); diagnostic = null; return true;
+    }
+    public bool TryGetProcessingTool(string toolId, out ProcessingToolView tool, out string diagnostic)
+    {
+        tool = null; CK01ToolData row;
+        if (!TryGetTool(toolId, out row, out diagnostic)) return false;
+        tool = new ProcessingToolView(toolId, row.supported_actions); return true;
+    }
+    public bool TryGetStepChain(string recipeId, out IList<RecipeStepRuleView> steps, out string diagnostic)
+    {
+        steps = new List<RecipeStepRuleView>().AsReadOnly();
+        IList<CK01RecipeStepData> chain;
+        if (!TryGetRecipeStepChain(recipeId, out chain, out diagnostic)) return false;
+        CK01RecipeData recipe;
+        if (!TryGetRecipe(recipeId, out recipe, out diagnostic)) return false;
+        var result = new List<RecipeStepRuleView>(); var id = recipe.first_step_id;
+        foreach (var row in chain)
+        { result.Add(new RecipeStepRuleView(id, row.trigger_items, row.permanent_trigger_items)); id = row.next_step_id; }
+        steps = result.AsReadOnly(); diagnostic = null; return true;
     }
 
     public bool TryGetKitchenArea(string areaId, out KitchenAreaData area, out string diagnostic)
@@ -677,7 +831,10 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
         rowsByTable = new Dictionary<string, Dictionary<string, ScriptableObject>>(StringComparer.Ordinal);
         var errors = new List<string>();
 
-        foreach (var table in tables ?? new List<CK01GeneratedDataTable>())
+        IList<CK01GeneratedDataTable> sourceTables;
+        try { sourceTables = Source.Tables; }
+        catch (Exception exception) { indexError = "Catalog source rejected: " + exception.Message; indexesReady = true; return; }
+        foreach (var table in sourceTables)
         {
             if (table == null || string.IsNullOrWhiteSpace(table.TableName))
             {

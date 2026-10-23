@@ -1,0 +1,21 @@
+{
+  "name": "Editor.DataTables",
+  "rootNamespace": "",
+  "references": [
+    "Generated.DataTables",
+    "Legacy",
+    "spine-unity",
+    "Toolkit"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

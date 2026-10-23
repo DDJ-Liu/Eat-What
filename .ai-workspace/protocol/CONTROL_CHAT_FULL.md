@@ -1,18 +1,15 @@
 # 控制任务约定
 
+2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](../toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+
+
 ## 监管结算长期发送授权（2026-10-14）
 
 用户已授权本批及以后所有监管任务结算后立即回传一次，详见[原话](../inputs/监管结算即时回传_用户长期授权_20261014.json)与[完整步骤](../../DevTools/Workflow/HANDOFF.md)。Complete/Fail/Yield同轮Prepare→Send→Record，控制台Receive→独立验收→fresh idle/Reconcile/Dispatch；不是等待下一次60分钟WATCH。旧缺少发送授权条款不再适用此范围；停止、去重、拒绝不重试及人工门仍有效。
 
 > 2026-10-12现行组织规则：复用PIPELINES登记的固定CODE/ENGINE_MCP/DATA/ART职能chat，不再每任务单开；运行中任务安全结算后正式改绑，旧chat归档保留。只改变组织方式，不恢复旧监管/许可、不改变当前模式。验收现况见outputs/control/人工处理索引.md。
 
-> **2026-09-23 当前覆盖：** 用户下发U1 PRE-1～5并要求监管，scope=AI156、AI157～164；F-α成功任务不重跑，AI149拒绝与AI154待验结论保留。AI157(PRE-5)与AI158(PRE-4只读)首轮并行，按资源与依赖继续。详见`.ai-workspace/inputs/U1-PRE_执行边界与接力_20260923.md`和`outputs/control/U1-PRE-20260923/接收与编排.md`。AI160完成后须通过其交付API注册DATA、把预留AI164由CODE重分类DATA并确认独立执行路由；在此之前绝不可让CODE执行其Unity首跑。指导书v0.3等待AI156实际世界坐标报告，不能用缺v0.3阻断AI156，也不能虚构坐标。下一段规范整理由AI159更新，保留本段语义。
-
-> **H后现行规则：** 2026-09-22 用户更新分支规则：当前成果（含H后格式提交）集成main，旧content/p0p1-layout关闭并删除；从新main建立codex/unity6-followup并跟踪同名origin，后续F和E2由“AI工作流-控制台（接管）”管理，E2完整关闭时再集成main。用户已选择F-α（MIG-F04→MIG-F01→A0→A1）并明确进入AUTOMATIC；字体结构MIG-F09不并入F。E1标签仍固定37bb854，backup保持ec3aa7c；迁移分支/副本暂留。固定引擎6000.3.24f1；双工作区冻结/路由已解除，生产实例仍需路径核对。[交接与待办](MIG63/H后分支切换与控制台移交.md)为迁移入口；本轮范围见[迁移后状态同步](inputs/迁移后状态同步_inputs恢复_F批次建议_20260922.md)。
-
-当前：2026-09-17 阶段的145项已全部关闭（137 VERIFIED、8行政关闭）；2026-09-22 用户已选择 F-α 并要求 AUTOMATIC，任务从146继续。四条旧周期领取保持暂停，独立美术午夜审查不变；本轮自动链只覆盖F核心技术段，链尾人工验收不自动签收。
-
-历史状态更新、原始指令和过程证据见[阶段归档](archive/2026-09-17/README.md)；当前待验入口为outputs/control/人工处理索引.md。历史报告中的旧路径通过manifest和DevTools/Workflow/Archive-Stage.ps1查阅。队列与错误史不清空，不重置已完成任务。
+当前模式/任务/路由以正式queue与[PIPELINES](../PIPELINES.md)为准。旧阶段状态原文见[本批快照](../archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/DOC-SLIM-20261016/entry-before/.ai-workspace/protocol/CONTROL_CHAT_FULL.md)，不作为当前执行许可。失败唯一续行入口见[ApproveResume](../toolkit/WF.md#approve-resume)。
 
 ## 模式语义
 
@@ -38,7 +35,7 @@
    - `WAITING_USER`：不发送任务，向用户报告当前阻塞节点。
    - `CHAIN_COMPLETE`：报告本链没有待执行项。
 4. 后续由每个成功任务读取 `Complete.autoHandoff` 并直接发送下一棒。控制任务不做周期巡检。每条自动链只能覆盖一个“自动化段”，不得跨越人工介入边界。
-5. 任一 `Fail` 会把链置为 `WAITING_USER`。只有用户介入、问题处理完并明确同意后，才可 `ResetTask` 并发送它返回的同一节点 handoff；不得触发后继任务。
+5. 任一 `Fail` 会把链置为 `WAITING_USER`。只有用户明确批准续行次数与范围、问题修复及必要门禁通过后，才可通过 `ApproveResume` 续原卡；保留失败/预算，未结算前不得触发后继。
 
 ### 切到定时维护模式
 
@@ -63,7 +60,7 @@
 - 只有任务已调用 `Fail`、进入 `WAITING_USER/NEEDS_USER`，或现场存在不明确写入、无安全后备、产品编译/数据安全/核心实现产物问题时才介入恢复。
 - 每次 Fail 根因确认后，以及指令修订包含可跨任务复用的技术教训时，控制任务必须更新 `KNOWN_PITFALLS.md`；同类根因合并现有条目，不重复建项。
 - `ORPHANED_RUN` 必须由控制端或调度器先取得“上一轮线程已结束且 idle”的外部证据，并同时确认租约已到期或存在等价失联证据；执行器在自身活跃轮次或上下文压缩恢复阶段不得仅凭 Worker=`BUSY` 自判孤儿。
-- 用户验收不通过会把成功任务标记为 `verificationStatus=REJECTED`，不回滚原任务。控制任务下次被唤起时先处理 REJECTED：按需 `ReviseInstruction → ResetTask`，或拆分明确的返工任务；不得由流水线线程自行返工。
+- 用户验收不通过会把成功任务标记为 `verificationStatus=REJECTED`，不回滚原任务。控制任务按用户决定处理REJECTED并保留原结果；返工按正式修复卡及原根预算办理。失败原卡续行只走ApproveResume，不用ResetTask重置成功或失败历史；执行线不得自行返工。
 
 ## 监管模式专用入口
 
@@ -77,11 +74,13 @@
 
 ### `[USER]` 伪车道（G64）
 
-- 人工工作项以 `USER-Ux` 登记在 `.ai-workspace/INSTRUCTIONS.md`，记录 `dependsOn` 与状态，但不派发、也不占 AI 编号；权威状态文件是 `.ai-workspace/inputs/USER_WORK_STATUS.md`。
+- 人工工作项以 `USER-Ux` 登记在 `.ai-workspace/INSTRUCTIONS.md`，记录 `dependsOn` 与状态，但不派发、也不占 AI 编号；权威状态文件是 `.ai-workspace/inputs/USER_WORK_STATUS.md`。账本瘦身仍须完整保留未关闭人工项的登记块；其中历史状态不能覆盖权威状态文件，也不能因AI队列已全部关闭而一并移走。
 - 用户在控制台发送 `USER-Ux <TODO|DOING|DONE|BLOCKED> <日期可选>` 时，控制台更新权威文件对应行并回显。追踪表仅作阅读视图，不建立第二份状态。
 - 日报心跳每日读取权威文件。AI 任务领取前预检其 `USER-Ux` 依赖；未 `DONE` 时保持等待，不领取、不计失败、不触发熔断。
 
-### 常驻输入
+### 磁盘常驻与上下文读取
+
+2026-10-15：此处常驻指磁盘保留，不是每轮全文读入。投放、恢复与派发按[落盘+索引/常驻集v2](../CONTEXT_READ_PROTOCOL.md)执行：控制台取派发摘要，执行器取本卡标题块，追踪表/Schema/总档/指导书按角色和实际节名读取；不得因缺少所指新版而猜测全文。
 
 以下文件名模式不随 `Archive-Stage` 清理或移动；只有新版已经投放并核对后，旧版才归档：`排布指导书_*`、`CK01-B_配表Schema_*`、`CK01_P0P1_需求对照基准_*`（现行无后缀主本同样保留）、`P0-P1_模块拆分追踪表_*`、`P0-P1_开发路径规划_*`、`USER_WORK_STATUS.md`。`DevTools/Workflow/Archive-Stage.ps1` 的 `PermanentInputPatterns` 是机器白名单入口。
 
@@ -160,7 +159,7 @@ DATA 初次启用先 `queue.ps1 -Action RegisterDataLane`；注册成功后才�
 pwsh -NoProfile -Command "& { & '.ai-workspace/queue.ps1' -Action UpdateDependencies -TaskId 'AI-000003' -DependsOn @('AI-000001','AI-000002') }"
 ```
 
-如果失败暴露了任务验收边界问题，先用 `ReviseInstruction` 把修订写入账本，再用 `ResetTask` 重新排队；不要抹除原错误历史。
+失败暴露验收边界问题时先核用户决定和正式修订条件；修复后仅由ApproveResume按明确次数/范围续原任务。不得通过改定义指纹、ResetTask或新编号清除失败史。
 
 尚未被认领的任务若需要改换流水线，先修订任务指令以符合目标流水线边界，再使用 `ReclassifyTask`；不要直接编辑队列 JSON，也不要新建重复任务：
 
@@ -200,11 +199,7 @@ ART 午夜日期服务继续生成、忙碌顺延、不占AI编号。监管仅�
 
 ## 人工恢复
 
-问题修复后重新排队：
-
-```powershell
-pwsh -NoProfile -File .ai-workspace/queue.ps1 -Action ResetTask -TaskId AI-000001
-```
+问题修复后按[唯一通用续行](../toolkit/WF.md#approve-resume)调用ApproveResume，传原TaskId、Runs、精确Scope、用户原话/ApprovalId及真实idle/路由证据；同一批准幂等，不新增次数，失败不自动重试。
 
 只查看当前队列和熔断：
 
@@ -215,3 +210,5 @@ pwsh -NoProfile -File .ai-workspace/queue.ps1 -Action Status
 ## 定时巡检
 
 仅在用户启用 SCHEDULED 时按 SUPERVISOR.md 执行；本阶段已经关闭，四条领取与监管日程均暂停。历史首批 AI1～9 的固定范围不用于下一轮。独立 ART 午夜服务保持原配置。
+
+AI271控制/WATCH消费：Receive后读完整失败receipt.task.continuationDisposition并复核当前mode/root/scope/fresh idle、人工/资源门。CONTROL_REPAIR_ELIGIBLE不是必须询问用户的旧WAITING_USER；先独立诊断/修复验收，必要REPAIR用现有Enqueue同根、精确CODE Scope、真实POLICY来源和RetryCycleId。根续行只用ApproveResume -AuthorizationSource POLICY -Runs 1 -RetryCycleId <root:failed-execution-or-paired-cycle> -ApprovalId <长期原件实际ID> -UserDecision <原件userQuote> -Scope <原根范围>及原Owner/Controller/idle参数。AUTO使用返回的同任务autoHandoff，SUP用原Reconcile/Dispatch；执行器不自行重启。NEEDS_HUMAN_ADDITIONAL才询问额外次数；HARD_STOP不能由政策解锁。原根仅可与最新成功且独立验证通过的REPAIR execution/cycle原子配对；失败cycle不得重用，同卡新周期首次实际claim才消费。计数取正式根视图，不沿用早先固定2/5预期。WATCH仅兜底；Status/失败Task/RESUME_APPROVED审计使用同一root/cycle/grant/source/used/reserved/remaining口径。

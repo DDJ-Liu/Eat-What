@@ -1,4 +1,4 @@
-﻿# CONTROL_CHAT actions under queue.ps1 mutex. ART never calls Enqueue or review actions.
+# CONTROL_CHAT actions under queue.ps1 mutex. ART never calls Enqueue or review actions.
 function Read-ArtDailyControlState {
     $path=Join-Path $workspaceRoot 'runtime/art-daily-control-state.json'
     if(Test-Path -LiteralPath $path){return Read-JsonFile $path}
@@ -20,7 +20,7 @@ function Convert-ArtSourcePath([string]$Path) {
 function Get-ArtDailyBlockers($Task) {
     $reasons=@();$ids=@(Get-ObjectPropertyValue $Task 'artDailyIds' | Where-Object {$_})
     foreach($id in $ids){if(-not (Get-PublishedArtDaily $id)){$reasons+="ART_DAILY_UNAVAILABLE:$id"}}
-    if($Task.pipeline -ne 'ENGINE_MCP'){return @($reasons)}
+    if($Task.pipeline -notin @('ENGINE_MCP','ENGINE_CLI')){return @($reasons)}
     $paths=@(Get-ObjectPropertyValue $Task 'artSourcePaths' | Where-Object {$_})
     if($ids.Count -gt 0 -and $paths.Count -eq 0){$reasons+='ART_SOURCE_PATHS_REQUIRED'}
     $state=Read-ArtAuditState;$control=Read-ArtDailyControlState

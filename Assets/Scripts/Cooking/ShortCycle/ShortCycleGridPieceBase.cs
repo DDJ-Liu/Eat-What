@@ -1,4 +1,5 @@
 using System;
+using EatWhat.Tools.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -39,6 +40,7 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private ShortCycleTrayView requiredTrayView = ShortCycleTrayView.Collapsed;
 
         public SortingGroup SortingGroup { get { return sortingGroup; } }
+        protected bool HasPlaceholderRenderer { get { return placeholderRenderer != null; } }
         public bool InteractionAllowed { get; private set; }
         public ShortCycleGridPieceDisplay Display { get; private set; }
 
@@ -76,11 +78,11 @@ namespace EatWhat.Cooking.ShortCycle
             }
             if (nameLabel != null)
             {
-                nameLabel.text = ResolveName(Display.name_key, Display.fallback_name);
+                LocalizedText.ConfigureContent(nameLabel, Display.name_key, ResolveName(Display.name_key, Display.fallback_name));
             }
             if (badgeLabel != null)
             {
-                badgeLabel.text = Display.badge_text ?? string.Empty;
+                LocalizedText.ConfigureContent(badgeLabel, string.Empty, Display.badge_text ?? string.Empty);
             }
             if (placeholderRenderer != null)
             {
@@ -101,8 +103,24 @@ namespace EatWhat.Cooking.ShortCycle
             }
         }
 
+        protected virtual bool ContentAllowsInteraction { get { return true; } }
+        private bool contentVisible = true;
+        public void SetContentVisible(bool visible)
+        {
+            contentVisible = visible;
+            // Existing grid prefabs have a root paper/frame renderer in addition to their icon.
+            var surface = GetComponent<SpriteRenderer>();
+            if (surface != null) surface.enabled = visible;
+            if (iconRenderer != null) iconRenderer.enabled = visible;
+            if (nameLabel != null) nameLabel.enabled = visible;
+            if (badgeLabel != null) badgeLabel.enabled = visible;
+            if (placeholderRenderer != null) placeholderRenderer.enabled = visible && Display != null && Display.is_placeholder;
+            RefreshInteractionGate();
+        }
+
         public void SetInteractionAllowed(bool allowed)
         {
+            allowed = allowed && contentVisible && ContentAllowsInteraction;
             InteractionAllowed = allowed;
             foreach (var behaviour in mouseInteractBehaviours)
             {
@@ -113,11 +131,13 @@ namespace EatWhat.Cooking.ShortCycle
             }
         }
 
+        protected string CurrentBadgeText { get { return badgeLabel == null ? null : badgeLabel.text; } }
+
         protected void SetBadge(string value)
         {
             if (badgeLabel != null)
             {
-                badgeLabel.text = value ?? string.Empty;
+                LocalizedText.ConfigureContent(badgeLabel, string.Empty, value ?? string.Empty);
             }
         }
 

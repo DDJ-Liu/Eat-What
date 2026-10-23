@@ -17,7 +17,8 @@ namespace EatWhat.Cooking.ShortCycle
         RecipeBrowse,
         RecipeCatalog,
         ClueBoardShell,
-        StepDetail
+        StepDetail,
+        Phase2Transition = 5
     }
 
     /// <summary>
@@ -35,7 +36,8 @@ namespace EatWhat.Cooking.ShortCycle
     {
         Phase0,
         Phase1,
-        Shared
+        Shared,
+        Phase2 = 3
     }
 
     public enum ShortCycleModalId
