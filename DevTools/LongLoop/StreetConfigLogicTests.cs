@@ -156,7 +156,42 @@ internal static class StreetConfigLogicTests
         Check(StreetConfigs.Current == null, "Binder disable unbinds owned set");
         Application.isPlaying = false;
 
+        ShrinkDelayConfiguration();
+        LookLimitConfiguration();
         Console.WriteLine("PASS " + count + " actual-source config assertions");
         return 0;
     }
+
+    private static void ShrinkDelayConfiguration()
+    {
+        var config = new CameraFollowConfig();
+        Default(config, "shrinkDelay", 0f);
+        var field = typeof(CameraFollowConfig).GetField("shrinkDelay", BindingFlags.NonPublic | BindingFlags.Instance);
+        Check(field.IsDefined(typeof(SerializeField), false), "ShrinkDelay is serialized on existing config");
+        Check(config.ShrinkDelay == 0, "old config missing field receives zero delay");
+        int events = 0; config.Changed += () => events++;
+        config.ShrinkDelay = .5f;
+        Check(events == 1 && config.ShrinkDelay == .5f, "ShrinkDelay setter publishes once");
+        config.ShrinkDelay = .5f;
+        Check(events == 1, "same ShrinkDelay value is quiet");
+        config.CaptureSerializedState(); InspectorEdit(config, "shrinkDelay", 1f);
+        Check(events == 2 && config.ShrinkDelay == 1, "captured Inspector delay change publishes");
+        InspectorEdit(config, "shrinkDelay", 1f);
+        Check(events == 2, "same Inspector delay is quiet");
+        config.ShrinkDelay = float.NaN;
+        Check(float.IsNaN(config.ShrinkDelay), "asset does not silently clamp an invalid user delay");
+    }
+
+    private static void LookLimitConfiguration()
+    {
+        var c=new CameraFollowConfig();Default(c,"lookMaxDistance",2.5f);Default(c,"lookMaxSpeed",8f);
+        Check(c.LookMaxDistance==2.5f&&c.LookMaxSpeed==8,"look limits public defaults");
+        int events=0;c.Changed+=()=>events++;c.LookMaxDistance=1;c.LookMaxSpeed=2;
+        Check(events==2&&c.LookMaxDistance==1&&c.LookMaxSpeed==2,"both setters notify");
+        c.LookMaxDistance=1;c.LookMaxSpeed=2;Check(events==2,"same limits quiet");
+        c.CaptureSerializedState();InspectorEdit(c,"lookMaxDistance",0f);InspectorEdit(c,"lookMaxSpeed",0f);
+        Check(events==4&&c.LookMaxDistance==0&&c.LookMaxSpeed==0,"both Inspector fields participate in captured state");
+        c.LookMaxSpeed=float.NaN;Check(float.IsNaN(c.LookMaxSpeed),"invalid user setting not silently repaired");
+    }
+
 }

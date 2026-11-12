@@ -32,10 +32,16 @@ namespace EatWhat.LongLoop.Configuration
         [SerializeField] private float moveSpeedThreshold = 0.5f;
         [SerializeField] private float expandTime = 1.2f;
         [SerializeField] private StreetCurvePreset expandCurve = StreetCurvePreset.EaseInOut;
+        [SerializeField, Tooltip("停止移动后保持当前视野的等待秒数；有限非负，0立即开始按Shrink Time缩小，重新移动取消等待。")]
+        private float shrinkDelay = 0f;
         [SerializeField] private float shrinkTime = 1.5f;
         [SerializeField] private StreetCurvePreset shrinkCurve = StreetCurvePreset.EaseInOut;
         [SerializeField] private bool freezeOnOverride = true;
         [SerializeField] private bool lookFloatEnabled = true;
+        [SerializeField, Tooltip("浮动通道二维世界偏移的径向距离硬上限；有限非负，0禁止该通道距离，不改变前视上限。")]
+        private float lookMaxDistance = 2.5f;
+        [SerializeField, Tooltip("浮动通道世界偏移每秒变化的速度硬上限；有限非负，0暂停正常推进。降低距离限值时优先立即纠正越界。")]
+        private float lookMaxSpeed = 8f;
         [SerializeField] private float edgeZoneRatio = 0.25f;
         [SerializeField] private StreetCurvePreset lookResponseCurve = StreetCurvePreset.Quadratic;
         [SerializeField] private float lookInTime = 0.35f;
@@ -65,10 +71,13 @@ namespace EatWhat.LongLoop.Configuration
         public float MoveSpeedThreshold { get => moveSpeedThreshold; set => SetValue(ref moveSpeedThreshold, value); }
         public float ExpandTime { get => expandTime; set => SetValue(ref expandTime, value); }
         public StreetCurvePreset ExpandCurve { get => expandCurve; set => SetValue(ref expandCurve, value); }
+        public float ShrinkDelay { get => shrinkDelay; set => SetValue(ref shrinkDelay, value); }
         public float ShrinkTime { get => shrinkTime; set => SetValue(ref shrinkTime, value); }
         public StreetCurvePreset ShrinkCurve { get => shrinkCurve; set => SetValue(ref shrinkCurve, value); }
         public bool FreezeOnOverride { get => freezeOnOverride; set => SetValue(ref freezeOnOverride, value); }
         public bool LookFloatEnabled { get => lookFloatEnabled; set => SetValue(ref lookFloatEnabled, value); }
+        public float LookMaxDistance { get => lookMaxDistance; set => SetValue(ref lookMaxDistance, value); }
+        public float LookMaxSpeed { get => lookMaxSpeed; set => SetValue(ref lookMaxSpeed, value); }
         public float EdgeZoneRatio { get => edgeZoneRatio; set => SetValue(ref edgeZoneRatio, value); }
         public StreetCurvePreset LookResponseCurve { get => lookResponseCurve; set => SetValue(ref lookResponseCurve, value); }
         public float LookInTime { get => lookInTime; set => SetValue(ref lookInTime, value); }
@@ -77,7 +86,7 @@ namespace EatWhat.LongLoop.Configuration
 
         protected override string SerializedState()
         {
-            return StateKey(deadZoneWidth, deadZoneHeight, dampingX, dampingY, stoppedSpeedMultiplier, lookahead, lookaheadTime, maxHorizontalOffset, recenterDelay, recenterSpeed, recenterRampTime, recenterCurve, verticalSpeedThreshold, maxVerticalOffset, verticalOffsetInTime, verticalOffsetOutTime, verticalOffsetCurve, dynamicZoomEnabled, orthoSizeMin, orthoSizeMax, moveSpeedThreshold, expandTime, expandCurve, shrinkTime, shrinkCurve, freezeOnOverride, lookFloatEnabled, edgeZoneRatio, lookResponseCurve, lookInTime, lookOutTime, gamepadLookAxis);
+            return StateKey(deadZoneWidth, deadZoneHeight, dampingX, dampingY, stoppedSpeedMultiplier, lookahead, lookaheadTime, maxHorizontalOffset, recenterDelay, recenterSpeed, recenterRampTime, recenterCurve, verticalSpeedThreshold, maxVerticalOffset, verticalOffsetInTime, verticalOffsetOutTime, verticalOffsetCurve, dynamicZoomEnabled, orthoSizeMin, orthoSizeMax, moveSpeedThreshold, expandTime, expandCurve, shrinkDelay, shrinkTime, shrinkCurve, freezeOnOverride, lookFloatEnabled, lookMaxDistance, lookMaxSpeed, edgeZoneRatio, lookResponseCurve, lookInTime, lookOutTime, gamepadLookAxis);
         }
     }
 }

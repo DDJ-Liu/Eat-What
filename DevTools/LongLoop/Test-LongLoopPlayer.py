@@ -163,6 +163,11 @@ def main():
     parser.add_argument("--y-sort", action="store_true",
                         help="Compile current closures and execute only actual-source sorting and independent-foot cases")
     parser.add_argument("--follow-pipeline", action="store_true", help="Compile current closures and test pure FR-01 target rules")
+    parser.add_argument("--dynamic-zoom", action="store_true", help="Compile current LongLoop and test the pure V012-01 zoom plus unchanged configuration suite")
+    parser.add_argument("--look-float", action="store_true", help="Compile current LongLoop and test the pure two-axis V012-02 look float")
+    parser.add_argument("--vertical-offset", action="store_true", help="Compile current LongLoop and test pure V012-03 blocked vertical input")
+    parser.add_argument("--follow-composition", action="store_true", help="Compile current LongLoop and test V012-04 scaled channel composition")
+    parser.add_argument("--parallax", action="store_true", help="Compile current LongLoop and test V012-06 math and component lifecycle")
     parser.add_argument("--follow-pipeline-logic-only", action="store_true", help="Focused pure target compilation")
     parser.add_argument("--follow-r-timestep-counterexample", action="store_true", help="Expected old a5 tuple and independent-clock coefficient rejections before production repair")
     parser.add_argument("--follow-r-snapshot-counterexample", action="store_true", help="Expected old Watch permanent stop under actual queue-mutex contention")
@@ -170,6 +175,7 @@ def main():
     parser.add_argument("--follow-r-startup-counterexample", action="store_true", help="Execute two expected rejection cases against the captured pre-fix current production startup")
     parser.add_argument("--follow-r-smoke", action="store_true", help="Current FOLLOW-R five-check sequence, exact MANUAL route and extracted owned lifecycle")
     parser.add_argument("--follow-r-smoke-logic-only", action="store_true", help="Focused FOLLOW-R logic/lifecycle; final uses four current closures")
+    parser.add_argument("--follow-driver-v012", action="store_true", help="Run independent V012-05 actual-driver integration cases")
     parser.add_argument("--follow-driver", action="store_true", help="Compile current runtime/Editor closures and actual CM3.1.7 Driver boundary")
     parser.add_argument("--follow-driver-logic-only", action="store_true", help="Focused Driver boundary compilation; no production closure replay")
     parser.add_argument("--street-probe", action="store_true", help="Compile current Editor probe closure and test its actual bounded sequence/check source")
@@ -913,6 +919,46 @@ try {
         if result.returncode:print(result.stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(result.returncode)
         return
 
+    if args.dynamic_zoom or args.look_float or args.vertical_offset or args.follow_composition or args.parallax:
+        configs = sorted((root / "Assets/Scripts/LongLoop/Configuration").glob("*.cs"))
+        module_name = "StreetParallax" if args.parallax else ("StreetFollowComposition" if args.follow_composition else ("StreetVerticalOffset" if args.vertical_offset else ("StreetLookFloat" if args.look_float else "StreetDynamicZoom")))
+        stage = "parallax" if args.parallax else ("composition" if args.follow_composition else ("vertical-offset" if args.vertical_offset else ("look-float" if args.look_float else "zoom")))
+        zoom = root / ("Assets/Scripts/LongLoop/" + module_name + ".cs")
+        pipeline = root / "Assets/Scripts/LongLoop/StreetFollowPipeline.cs"
+        lines = set((bee / "LongLoop.rsp").read_text(encoding="utf-8-sig").splitlines())
+        missing = [p for p in sorted((root / "Assets/Scripts/LongLoop").rglob("*.cs"))
+                   if '"' + p.relative_to(root).as_posix() + '"' not in lines]
+        build_bee("LongLoop", {}, missing)
+        production = list(records)
+        boundary = out / "ZoomConfigBoundary.cs"
+        boundary.write_text("namespace UnityEngine { public static class Debug { public static void LogWarning(string message, object context) {} } }", encoding="utf-8")
+        sources = configs + [zoom, pipeline, boundary] + src("DevTools/LongLoop/" + module_name + "Tests.cs",
+            "DevTools/LongLoop/StreetConfigLogicTests.cs", "DevTools/LongLoop/FollowUnityShim.cs",
+            "Assets/Scripts/LongLoop/ChannelContext.cs", "Assets/Scripts/Tools/Input/IGameInput.cs")
+        if args.follow_composition:
+            sources += src("Assets/Scripts/LongLoop/StreetDynamicZoom.cs")
+        if args.parallax:
+            sources += src("Assets/Scripts/LongLoop/StreetParallaxLayer.cs", "DevTools/LongLoop/StreetParallaxLayerTests.cs")
+        exe = build(module_name + "Tests", sources, [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"],
+                    "exe", main_type=module_name + "Tests")
+        command = [str(mono), str(exe)]
+        started = datetime.now(timezone.utc).isoformat()
+        process = subprocess.Popen(command, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        (out / (stage + "-run.stdout.bin")).write_bytes(stdout)
+        (out / (stage + "-run.stderr.bin")).write_bytes(stderr)
+        report = {"unityNativeLaunched": False, "productionCompiles": production, "logicCompile": records[-1],
+                  "logicTest": {"command": command, "pid": process.pid, "exitCode": process.returncode,
+                                "startedAt": started, "finishedAt": datetime.now(timezone.utc).isoformat(),
+                                "text": stdout.decode("utf-8-sig", "replace")}}
+        (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(json.dumps({"productionExitCodes": [r["exitCode"] for r in production],
+                          "logicRunExitCode": process.returncode, "logic": report["logicTest"]["text"]}))
+        if process.returncode:
+            print(stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+            raise SystemExit(process.returncode)
+        return
+
     if args.follow_pipeline:
         pipeline=root/"Assets/Scripts/LongLoop/StreetFollowPipeline.cs"
         text=pipeline.read_text(encoding="utf-8-sig")
@@ -951,16 +997,21 @@ try {
             print(stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(process.returncode)
         return
 
-    if args.follow_driver or args.follow_r_smoke:
+    if args.follow_driver or args.follow_driver_v012 or args.follow_r_smoke:
         configs=sorted((root/"Assets/Scripts/LongLoop/Configuration").glob("*.cs"))
-        own=src("Assets/Scripts/LongLoop/StreetFollowDriver.cs","Assets/Scripts/LongLoop/CameraFollowConfigBinder.cs","Assets/Scripts/LongLoop/StreetCameraDebug.cs","Assets/Scripts/LongLoop/StreetFollowPipeline.cs")
+        own=src("Assets/Scripts/LongLoop/StreetFollowDriver.cs","Assets/Scripts/LongLoop/CameraFollowConfigBinder.cs","Assets/Scripts/LongLoop/StreetCameraDebug.cs","Assets/Scripts/LongLoop/StreetFollowPipeline.cs","Assets/Scripts/LongLoop/StreetDynamicZoom.cs","Assets/Scripts/LongLoop/StreetLookFloat.cs","Assets/Scripts/LongLoop/StreetVerticalOffset.cs","Assets/Scripts/LongLoop/StreetFollowComposition.cs")
         forbidden=r"\bForceCameraPosition\s*\(|\bBindingFlags\.NonPublic|\b(?:RawPosition|PositionCorrection)\s*(?:[+\-*/]?=)"
         for path in own:
             if re.search(forbidden,path.read_text(encoding="utf-8-sig")):raise SystemExit("Illegal target ownership operation in "+str(path))
         (out/"driver-source-check.json").write_text(json.dumps({"paths":[str(p) for p in own],"forbiddenPattern":forbidden,"passed":True},indent=2),encoding="utf-8")
         cm=root/"Library/PackageCache/com.unity.cinemachine@f3f96bcb59af"
         if json.loads((cm/"package.json").read_text())["version"]!="3.1.7":raise SystemExit("Recheck CM version")
-        if not (args.follow_driver_logic_only or args.follow_r_smoke_logic_only):
+        if args.follow_driver_v012:
+            lines=set((bee/"LongLoop.rsp").read_text(encoding="utf-8-sig").splitlines())
+            missing=[p for p in sorted((root/"Assets/Scripts/LongLoop").rglob("*.cs"))
+                     if '"' + p.relative_to(root).as_posix() + '"' not in lines]
+            build_bee("LongLoop",{},missing)
+        if not (args.follow_driver_logic_only or args.follow_r_smoke_logic_only or args.follow_driver_v012):
             def missing_driver(name,candidates):
                 lines=set((bee/(name+".rsp")).read_text(encoding="utf-8-sig").splitlines())
                 return [p for p in candidates if '"'+p.relative_to(root).as_posix()+'"' not in lines]
@@ -985,14 +1036,14 @@ try {
         callbacks=out/"CmInstalledCallbacks.cs"
         fragments=[method(text,m) for m in ("internal void AddExtension(","internal void RemoveExtension(","protected void InvokePostPipelineStageCallback(")]
         fragments.append("internal List<CinemachineExtension> Extensions { get; private set; }")
-        callbacks.write_text("using System.Collections.Generic;using UnityEngine;namespace Unity.Cinemachine { public partial class CinemachineVirtualCameraBase {"+"\n".join(fragments)+"} public partial class CinemachineConfiner2D {"+method(confiner.read_text(encoding="utf-8-sig"),"protected override void PostPipelineStageCallback(")+"}}",encoding="utf-8")
+        callbacks.write_text("using System.Collections.Generic;using UnityEngine;namespace Unity.Cinemachine { public partial class CinemachineVirtualCameraBase {"+"\n".join(fragments)+"} public partial class CinemachineConfiner2D {"+method(confiner.read_text(encoding="utf-8-sig"),"protected override void PostPipelineStageCallback(")+"\n"+method(confiner.read_text(encoding="utf-8-sig"),"public void InvalidateLensCache(")+"}}",encoding="utf-8")
         cm_sources=[cm/"Runtime/Components/CinemachinePositionComposer.cs",cm/"Runtime/Core/ScreenComposerSettings.cs",cm/"Runtime/Core/LookaheadSettings.cs",cm/"Runtime/Core/Predictor.cs",callbacks]
         (out/"cm-callback-provenance.json").write_text(json.dumps({"originals":[{"path":str(p),"sha256":digest(p)} for p in [vcam,confiner]],"boundary":"Actual installed Composer/Damper and callback bodies; Unity/Brain/Transform, player public-state shell and declared rectangle cache substituted."},indent=2),encoding="utf-8")
         sources=configs+own+src("Assets/Scripts/LongLoop/StreetFollowPoint.cs","Assets/Scripts/LongLoop/GroundSpace.cs","Assets/Scripts/Tools/GroundSpaceMath.cs","Assets/Scripts/LongLoop/ChannelContext.cs","Assets/Scripts/Tools/Input/IGameInput.cs","DevTools/LongLoop/FollowUnityShim.cs","DevTools/LongLoop/FollowCinemachineBoundary.cs","DevTools/LongLoop/ChannelUnityBoundary.cs","DevTools/LongLoop/StreetConfigLogicTests.cs","DevTools/LongLoop/StreetFollowPipelineTests.cs","DevTools/LongLoop/StreetFollowDriverTests.cs")+cm_sources
         sources+=src("Assets/Editor/ProjectValidation/LongLoopProbeChecks.cs")
         newtonsoft=root/"Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64/Runtime/Newtonsoft.Json.dll"
         shutil.copyfile(newtonsoft,out/"Newtonsoft.Json.dll")
-        main_type="StreetFollowDriverTests"
+        main_type="StreetFollowDriverV012Tests" if args.follow_driver_v012 else "StreetFollowDriverTests"
         if args.follow_r_smoke:
             probe=root/"Assets/Editor/ProjectValidation/LongLoopAutomatedProbe.cs"
             actual=probe.read_text(encoding="utf-8-sig")
@@ -1290,7 +1341,11 @@ namespace UnityEngine {
         return
 
     current_toolkit = build_bee("Toolkit", {})
-    current_longloop = build_bee("LongLoop", {"Toolkit": current_toolkit})
+    # Match the existing channel/driver branches when Bee predates current source additions.
+    current_lines = set((bee / "LongLoop.rsp").read_text(encoding="utf-8-sig").splitlines())
+    current_missing = [p for p in sorted((root / "Assets/Scripts/LongLoop").rglob("*.cs"))
+                       if '"' + p.relative_to(root).as_posix() + '"' not in current_lines]
+    current_longloop = build_bee("LongLoop", {"Toolkit": current_toolkit}, current_missing)
     build_bee("Legacy", {"Toolkit": current_toolkit, "LongLoop": current_longloop})
     shim = out / "LogicVector2Shim.cs"
     shim.write_text("""using System;
@@ -1309,6 +1364,18 @@ namespace UnityEngine {
         public static bool GetKey(KeyCode key) => Held.Contains(key);
         public static bool GetKeyDown(KeyCode key) => Down.Contains(key); }
     public static class Screen { public static int width,height; }
+    public static class Application { public static bool isFocused=true; }
+}
+// Transparent processed-control sample only; no real Input System device is created.
+namespace UnityEngine.InputSystem.Controls {
+    public sealed class StickControl { public UnityEngine.Vector2 Value; public UnityEngine.Vector2 ReadValue()=>Value; }
+}
+namespace UnityEngine.InputSystem {
+    public sealed class Gamepad {
+        public static Gamepad current;
+        public bool added=true,enabled=true;
+        public Controls.StickControl rightStick=new Controls.StickControl();
+    }
 }
 """, encoding="utf-8")
     logic = build("LongLoopLogicTests",

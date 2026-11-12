@@ -82,7 +82,12 @@ namespace Unity.Cinemachine
     // centre rectangle. This proves callback ordering/correction, never real scene baking.
     public partial class CinemachineConfiner2D:CinemachineExtension
     {
-        public int BodyCallbacks;
+        public int BodyCallbacks,LensInvalidations;
+        private System.Collections.Generic.List<VcamExtraState> m_ExtraStateCache;
+        private void GetAllExtraStates(System.Collections.Generic.List<VcamExtraState> states)
+        {LensInvalidations++;states.Clear();foreach(var value in extraStates.Values)states.Add((VcamExtraState)value);}
+        public float CachedFrustumHeight(CinemachineVirtualCameraBase camera)
+            =>extraStates.TryGetValue(camera,out var value)?((VcamExtraState)value).FrustumHeight:0;
         public float Damping,SlowingDistance;
         public float MinX=-2,MaxX=2,MinY=-2,MaxY=2;
         public object BoundingShape2D,OversizeWindow;
@@ -96,16 +101,16 @@ namespace Unity.Cinemachine
             public float AspectRatio;public MatrixBoundary DeltaWorldToBaked=new MatrixBoundary();public Oven ConfinerOven=new Oven();
             public bool ValidateCache(object shape,object oversize,float aspect,out bool changed){changed=false;return true;}
         }
-        private class VcamExtraState {public Baked BakedSolution;public float FrustumHeight;public Vector3 PreviousCameraPosition,PreviousDisplacement,DampedDisplacement;}
+        private class VcamExtraState {public CinemachineVirtualCameraBase Vcam;public Baked BakedSolution;public float FrustumHeight;public Vector3 PreviousCameraPosition,PreviousDisplacement,DampedDisplacement;}
         private readonly System.Collections.Generic.Dictionary<CinemachineVirtualCameraBase,object> extraStates=new System.Collections.Generic.Dictionary<CinemachineVirtualCameraBase,object>();
         private T GetExtraState<T>(CinemachineVirtualCameraBase c) where T:new()
-        {BodyCallbacks++;if(!extraStates.ContainsKey(c))extraStates[c]=new T();return (T)extraStates[c];}
+        {BodyCallbacks++;if(!extraStates.ContainsKey(c))extraStates[c]=new T();if(extraStates[c] is VcamExtraState state)state.Vcam=c;return (T)extraStates[c];}
         private float CalculateHalfFrustumHeight(LensSettings lens,float z)=>lens.OrthographicSize;
         private Vector3 ConfinePoint(Vector3 p,VcamExtraState extra,Vector3 fwd)
             =>new Vector3(Math.Max(MinX,Math.Min(MaxX,p.x)),Math.Max(MinY,Math.Min(MaxY,p.y)),p.z);
         private float GetDistanceFromEdge(Vector3 p,Vector3 dir,float slowing,VcamExtraState extra,Vector3 fwd)
             =>Math.Min(slowing,Math.Max(0,Math.Min(Math.Min(p.x-MinX,MaxX-p.x),Math.Min(p.y-MinY,MaxY-p.y))));
-        public void Boot(Transform owner){transform=owner;base.Awake();}
+        public void Boot(Transform owner){transform=owner;transform.components[typeof(CinemachineConfiner2D)]=this;base.Awake();}
         public void Reconnect(){ConnectToVcam(true);}
     }
     public abstract class CinemachineComponentBase:MonoBehaviour

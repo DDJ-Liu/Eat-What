@@ -54,6 +54,8 @@ internal static class StreetFollowDriverTests
         public Fixture(bool confinerFirst=false)
         {
             Application.isPlaying=true;StreetConfigs.Unbind();
+            Config.DynamicZoomEnabled=false;
+            Config.LookFloatEnabled=false;
             Config.StoppedSpeedMultiplier=1; // Explicit AI492 regression baseline.
             Config.Lookahead=4.5f;Config.LookaheadTime=2;Config.MaxHorizontalOffset=8;Config.DampingX=.5f;Config.DampingY=.25f;
             Config.RecenterDelay=0;Config.RecenterSpeed=.4f;Interest.SafeZoneWidth=1;
@@ -500,4 +502,334 @@ internal static class StreetFollowDriverTests
             Check(f.Debugger.FormatLine().Contains("weight=")&&f.Debugger.FormatLine().Contains("goal="),"new target/phase diagnostics");
         }
     }
+}
+
+
+internal static class StreetFollowDriverV012Tests
+{
+    private static int checks,scenarios;
+    private static void Check(bool ok,string name){checks++;if(!ok)throw new Exception(name);}
+    private static void Near(double a,double b,string name,double epsilon=1e-5)
+        =>Check(!double.IsNaN(a)&&Math.Abs(a-b)<=epsilon,name+": "+a+" / "+b);
+    private static void Scenario(string name,Action body){body();scenarios++;Console.WriteLine("DRIVER_V012 PASS "+name);}
+    private sealed class InputSource:IGameInput
+    {
+        public float X=1,Y;public Vector2 Look;
+        public float Horizontal=>X;public float Vertical=>Y;public Vector2 LookAxis=>Look;
+        public GameInputDevice CurrentDevice=>GameInputDevice.Keyboard;public bool Interact=>false;
+        public Vector2 MouseScreenPos=>Vector2.zero;
+    }
+    private sealed class ModeSource:IStreetChannelState
+    {
+        public InputSource Source=new InputSource();public bool DialogueOrCinematic {get;set;}
+        public Vector3 VelocityWorld=>new Vector3(10000,10000,0);
+        public IGameInput Input=>Source;
+        public System.Collections.Generic.IReadOnlyList<ChannelInterest> NearbyInterests=>null;
+    }
+    private static void Enable(StreetFollowDriverTests.Fixture f,bool floating=false)
+    {
+        f.Config.OrthoSizeMin=2;f.Config.OrthoSizeMax=4;
+        f.Config.ExpandTime=1;f.Config.ShrinkTime=1;
+        f.Config.ExpandCurve=StreetCurvePreset.Linear;f.Config.ShrinkCurve=StreetCurvePreset.Linear;
+        f.Config.LookInTime=.2f;f.Config.LookOutTime=.3f;
+        f.Config.VerticalOffsetInTime=.2f;f.Config.VerticalOffsetOutTime=.3f;
+        f.Config.LookFloatEnabled=floating;f.Config.DynamicZoomEnabled=true;
+    }
+    // Native CinemachineCamera re-pulls its authored Lens before each Pre callback.
+    private static void Tick(StreetFollowDriverTests.Fixture f,float time,float dx=0,float dy=0,float dt=.1f,float authoredSize=5)
+    {
+        f.Foot.position+=new Vector3(dx,dy,0);
+        var lens=f.State.Lens;lens.OrthographicSize=authoredSize;f.State.Lens=lens;
+        f.Step(time,dt);
+    }
+    public static int Main()
+    {
+        try {
+            Scenario("ActualSizeRatioAndPublicCacheRefresh",SizeAndCache);
+            Scenario("HeldCallbackReappliesSizeWithoutIntegration",Held);
+            Scenario("DisabledSizeAndLifecycleRecovery",Disabled);
+            Scenario("FormalPlayerInputAndBlockedVerticalGate",PlayerInput);
+            Scenario("TeleportAndReenableResetAllThreeStates",Reset);
+            Scenario("OverrideFreezeAndNonLiveResume",Freeze);
+            Scenario("DiagnosticsIncludeSizeRatioAndChannels",Diagnostics);
+            Scenario("ShrinkDelaySnapshotAndChanged",ShrinkDelaySnapshotAndChanged);
+            Scenario("WorldLookLimitsAndLifecycle",WorldLookLimitsAndLifecycle);
+            Scenario("LookIntentSuspendsRealReturnChannels",LookIntentSuspendsRealReturnChannels);
+            Scenario("DirectGamepadUsesSharedLimitsAndReturn",DirectGamepadUsesSharedLimitsAndReturn);
+            Console.WriteLine("DRIVER_V012 PASS scenarios="+scenarios+" assertions="+checks);return 0;
+        }catch(Exception error){Console.Error.WriteLine(error);return 1;}
+    }
+    private static void SizeAndCache()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture(true)) {
+            Enable(f);Tick(f,0);Near(f.State.Lens.OrthographicSize,2,"first lens minimum");
+            Near(f.Confiner.CachedFrustumHeight(f.Camera),2,"actual installed Body consumes new lens");
+            for(int i=1;i<=12;i++) {
+                Tick(f,i*.1f,.65f);
+                Check(f.Driver.Status==StreetFollowDriverStatus.Applied,"frame applied");
+                Check(f.Driver.LastZoomResult.Valid&&f.Driver.LastZoomResult.Size.HasValue,"zoom output valid");
+                Near(f.State.Lens.OrthographicSize,f.Driver.LastZoomResult.Size.Value,"state equals pure output each frame");
+                Near(f.Driver.LastRatio,f.State.Lens.OrthographicSize/4,"actual ratio");
+                Near(f.Confiner.CachedFrustumHeight(f.Camera),f.State.Lens.OrthographicSize,"lens invalidation rebuilds current frustum");
+            }
+            Near(f.State.Lens.OrthographicSize,4,"moving reaches maximum");
+            int count=f.Confiner.LensInvalidations;
+            for(int i=13;i<=18;i++)Tick(f,i*.1f,.65f);
+            Near(f.Confiner.LensInvalidations,count,"stable output does not refresh despite freshly pulled authored lens5");
+        }
+    }
+    private static void Held()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture(true)) {
+            Enable(f);Tick(f,0);Tick(f,.3f,1.95f,dt:.3f);
+            float size=f.State.Lens.OrthographicSize;var zoom=f.Driver.ZoomState;
+            var target=f.Target.position;ulong sequence=f.Driver.EvaluationSequence;int invalidations=f.Confiner.LensInvalidations;
+            Tick(f,.3f,dt:.3f);
+            Near(f.State.Lens.OrthographicSize,size,"same-time freshly pulled lens restored to successful size");
+            Check(f.Driver.ZoomState.Equals(zoom),"duplicate does not integrate zoom");
+            Check(f.Target.position==target&&f.Driver.EvaluationSequence==sequence,"duplicate does not integrate target or sequence");
+            Near(f.Confiner.LensInvalidations,invalidations,"duplicate same size does not invalidate");
+            f.Config.DynamicZoomEnabled=false;Tick(f,.3f,dt:.3f,authoredSize:6);
+            Near(f.State.Lens.OrthographicSize,6,"disabled held callback never writes Size");
+        }
+    }
+    private static void Disabled()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture(true)) {
+            Enable(f);Tick(f,0);Tick(f,.5f,3.25f,dt:.5f);
+            int count=f.Confiner.LensInvalidations;
+            f.Config.DynamicZoomEnabled=false;Tick(f,.6f,.65f);
+            Near(f.State.Lens.OrthographicSize,5,"disabled preserves authored Size");
+            Check(!f.Driver.LastZoomResult.Size.HasValue,"disabled output has no lens write");
+            Near(f.Driver.LastRatio,1,"disabled ratio1");
+            Near(f.Confiner.LensInvalidations,count+1,"one refresh on return to authored size");
+            count=f.Confiner.LensInvalidations;Tick(f,.7f,.65f);
+            Near(f.Confiner.LensInvalidations,count,"disabled stable lens no repeated refresh");
+            Tick(f,.8f,.65f,authoredSize:6);Near(f.State.Lens.OrthographicSize,6,"authored size change preserved");
+            Near(f.Confiner.CachedFrustumHeight(f.Camera),6,"new authored size refreshed through same public API");
+            f.Driver.Stop();f.Driver.Boot();f.Config.DynamicZoomEnabled=true;Tick(f,.9f);
+            Near(f.State.Lens.OrthographicSize,2,"re-enabled zoom starts minimum");
+        }
+    }
+    private static void PlayerInput()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f,true);f.Config.DynamicZoomEnabled=false;
+            var source=new InputSource {Look=new Vector2(1,0),Y=1};
+            var playerRoot=new Transform();f.Foot.parent=playerRoot;
+            playerRoot.components[typeof(IGameInput)]=source;
+            var player=new LongLoopPlayerController {transform=playerRoot,MoveInput=Vector2.zero};
+            f.Driver.Configure(f.Binding,f.Point,f.Target,f.Interest,player,f.Debugger);
+            Tick(f,0);Tick(f,.2f,dt:.2f);
+            Check(f.Debugger.LastLookInput==source.Look,"formal player gets actual IGameInput LookAxis");
+            Check(f.Driver.LastResult.Channels.LookFloat.x>0,"real mouse path produces float");
+            Check(f.Driver.LastResult.Channels.Vertical.y>0,"blocked Y input produces vertical despite fake/absent game velocity");
+            Tick(f,.4f,dy:2,dt:.2f);
+            Near(f.Driver.VerticalOffsetState.Target,0,"actual foot Y speed clears blocked trigger");
+            Check(f.Driver.VerticalOffsetState.Value<1,"actual speed recovery exits vertical channel");
+            var mode=new ModeSource {Source=source,DialogueOrCinematic=true};
+            f.Driver.ConfigureGameState(mode);Tick(f,.6f,dt:.2f);
+            Near(f.Driver.LastResult.Channels.LookFloat.x,0,"final float gated zero");
+            Check(f.Driver.LookFloatState.X.Value>0,"internal float exits gradually while final contribution zero");
+            StreetConfigs.Current.CameraMode.GateOffsetsInDialogue=false;Tick(f,.8f,dt:.2f);
+            Check(f.Driver.LastResult.Channels.LookFloat.x>0,"existing mode gate switch observed");
+            f.Driver.Configure(f.Binding,f.Point,f.Target,f.Interest,null,f.Debugger);
+            Tick(f,1,dt:.2f);Tick(f,1.2f,dt:.2f);
+            Check(f.Debugger.LastLookInput==source.Look,"empty gameState resolves actual foot-parent input");
+            Check(f.Driver.LastResult.Channels.LookFloat.x>0,"formal child-foot hierarchy produces mouse float");
+        }
+    }
+    private static void Reset()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f,true);
+            var input=new InputSource {Look=new Vector2(1,1),Y=1};f.Foot.components[typeof(IGameInput)]=input;
+            Tick(f,0);
+            for(int i=1;i<=4;i++)Tick(f,i*.2f,1.3f,dt:.2f);
+            Check(f.Driver.ZoomState.Size>2&&f.Driver.LookFloatState.X.Value>0&&f.Driver.VerticalOffsetState.Value>0,"all three states established");
+            Tick(f,1,10000,10000,dt:.2f);
+            Check(f.Driver.LastResult.GoalStep.Status==FollowStepStatus.TeleportReset,"true pure pipeline teleport");
+            Near(f.Driver.ZoomState.Size,2,"teleport zoom minimum");Near(f.State.Lens.OrthographicSize,2,"teleport writes minimum this frame");
+            Near(f.Driver.LookFloatState.X.Value,0,"teleport float zero");Near(f.Driver.VerticalOffsetState.Value,0,"teleport vertical zero");
+            Tick(f,1.2f,1.3f,dt:.2f);f.Driver.Stop();f.Driver.Boot();Tick(f,1.4f,dt:.2f);
+            Near(f.Driver.ZoomState.Size,2,"re-enable zoom minimum");
+            Near(f.Driver.LookFloatState.X.Value,0,"re-enable float zero");Near(f.Driver.VerticalOffsetState.Value,0,"re-enable vertical zero");
+        }
+    }
+    private static void Freeze()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f);var mode=new ModeSource();f.Driver.ConfigureGameState(mode);
+            Tick(f,0);Tick(f,.2f,1.3f,dt:.2f);
+            var saved=f.Driver.ZoomState;mode.DialogueOrCinematic=true;Tick(f,.4f,1.3f,dt:.2f);
+            Check(f.Driver.ZoomState.Equals(saved),"live takeover freezes full zoom progress");
+            Near(f.State.Lens.OrthographicSize,saved.Size,"frozen size still written");
+            f.Config.FreezeOnOverride=false;Tick(f,.6f,1.3f,dt:.2f);
+            Check(f.Driver.ZoomState.Size>saved.Size,"freeze switch false permits advance");
+            mode.DialogueOrCinematic=false;f.Config.FreezeOnOverride=true;saved=f.Driver.ZoomState;
+            f.Camera.Live=false;Tick(f,.8f,1.3f,dt:.2f);
+            Check(f.Driver.ZoomState.Equals(saved),"non-live takeover retains frozen zoom state");
+            f.Camera.Live=true;Tick(f,1,dt:.2f);
+            Near(f.State.Lens.OrthographicSize,saved.Size,"resume holds preserved size for first sample");
+            f.Config.FreezeOnOverride=false;f.Camera.Live=false;Tick(f,1.2f,dt:.2f);
+            f.Camera.Live=true;Tick(f,1.4f,dt:.2f);
+            Near(f.State.Lens.OrthographicSize,2,"unfrozen takeover reset resumes minimum");
+        }
+    }
+    private static void Diagnostics()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f,true);Tick(f,0);Tick(f,.1f,.65f);
+            Near(f.Debugger.LastSize,f.State.Lens.OrthographicSize,"debug actual size");
+            Near(f.Debugger.LastRatio,f.Driver.LastRatio,"debug actual ratio");
+            string line=f.Debugger.FormatLine();
+            Check(line.Contains("ratio=")&&line.Contains("horizontal=")&&line.Contains("vertical=")&&line.Contains("float=")&&line.Contains("interest="),"all channel diagnostics present");
+        }
+    }
+
+    private static void ShrinkDelaySnapshotAndChanged()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f);f.Config.ShrinkDelay=.5f;
+            Tick(f,0);Tick(f,.25f,1.625f,dt:.25f);Tick(f,.5f,1.625f,dt:.25f);
+            Near(f.State.Lens.OrthographicSize,3,"delay driver mid-expand value");
+            Tick(f,.75f,dt:.25f);
+            Near(f.State.Lens.OrthographicSize,3,"real Driver holds Size after stop");
+            Near(f.Driver.ZoomState.ShrinkWaitElapsed,.25,"real Driver forwards configured delay");
+            Tick(f,1.25f,dt:.5f);
+            Near(f.State.Lens.OrthographicSize,2.75,"Driver forwards only remaining shrink dt");
+            f.Config.ShrinkDelay=1;Tick(f,1.5f,dt:.25f);
+            Near(f.State.Lens.OrthographicSize,2.75,"Changed delay holds current Size");
+            Near(f.Driver.ZoomState.ShrinkDelay,1,"Changed refreshes actual Driver snapshot");
+            Near(f.Driver.ZoomState.ShrinkWaitElapsed,.25,"Changed restarts a full wait");
+            f.Config.ShrinkDelay=0;Tick(f,1.75f,dt:.25f);
+            Near(f.State.Lens.OrthographicSize,2.5625,"Changed zero delay resumes normal shrink");
+        }
+    }
+
+    private static double LookLength(Vector2 v)=>Math.Sqrt((double)v.x*v.x+(double)v.y*v.y);
+    private static void WorldLookLimitsAndLifecycle()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f,true);f.Config.LookMaxDistance=1;f.Config.LookMaxSpeed=.5f;
+            f.Config.MaxHorizontalOffset=f.Config.MaxVerticalOffset=100;
+            f.Config.LookInTime=f.Config.LookOutTime=0;
+            var input=new InputSource{Look=new Vector2(1000,1000)};f.Foot.components[typeof(IGameInput)]=input;
+            Tick(f,0);Near(LookLength(f.Driver.LookWorldOffset),0,"first sample starts world zero");
+            Vector2 before=f.Driver.LookWorldOffset;
+            for(int i=1;i<=60;i++) {
+                if(i==30)input.Look=new Vector2(-1000,-1000);
+                Tick(f,i*.1f,dt:.1f);
+                Check(f.Driver.Status==StreetFollowDriverStatus.Applied,"world Driver frame applied");
+                Check(LookLength(f.Driver.LookWorldOffset)<=1+1e-5,"actual Driver radial cap");
+                Check(LookLength(f.Driver.LookWorldOffset-before)<=.05+1e-5,"actual Driver speed cap");
+                Near(f.Driver.LastResult.Channels.LookFloat.x,f.Driver.LookWorldOffset.x,"composition consumes world X directly");
+                Near(f.Driver.LastResult.Channels.LookFloat.y,f.Driver.LookWorldOffset.y,"composition consumes world Y directly");
+                before=f.Driver.LookWorldOffset;
+            }
+            Tick(f,6,dt:.1f);Check(f.Driver.LookWorldOffset==before,"same-time callback does not advance world limiter");
+            f.Config.LookMaxDistance=.01f;Tick(f,6.1f,dt:.1f);
+            Check(LookLength(f.Driver.LookWorldOffset)<=.01001,"Changed distance immediately corrects old state");
+            f.Config.LookMaxSpeed=0;before=f.Driver.LookWorldOffset;input.Look=new Vector2(1,1);Tick(f,6.2f,dt:.1f);
+            Check(f.Driver.LookWorldOffset==before,"Changed speed zero pauses actual Driver");
+            f.Config.LookMaxDistance=0;Tick(f,6.3f,dt:.1f);Near(LookLength(f.Driver.LookWorldOffset),0,"Changed distance zero clears channel");
+            f.Config.LookMaxDistance=1;f.Config.LookMaxSpeed=1;Tick(f,6.4f,dt:.1f);
+            Check(LookLength(f.Driver.LookWorldOffset)>0,"channel resumes from current world state");
+            f.Camera.Live=false;Tick(f,6.5f,dt:.1f);Near(LookLength(f.Driver.LookWorldOffset),0,"NonLive resets limiter");
+            f.Camera.Live=true;Tick(f,6.6f,dt:.1f);Near(LookLength(f.Driver.LookWorldOffset),0,"NonLive resume first sample zero");
+            Tick(f,6.7f,dt:.1f);Tick(f,6.8f,10000,dt:.1f);Near(LookLength(f.Driver.LookWorldOffset),0,"teleport resets limiter");
+            Tick(f,6.9f,dt:.1f);f.Driver.Stop();f.Driver.Boot();Tick(f,7,dt:.1f);
+            Near(LookLength(f.Driver.LookWorldOffset),0,"reenable resets limiter");
+        }
+    }
+
+
+    private sealed class ReturnIntentInput:IGameInput
+    {
+        public Vector2 Look;public GameInputDevice Device;
+        public float Horizontal=>0;public float Vertical=>0;public Vector2 LookAxis=>Look;
+        public GameInputDevice CurrentDevice=>Device;public bool Interact=>false;public Vector2 MouseScreenPos=>Vector2.zero;
+    }
+    private sealed class ReturnIntentMode:IStreetChannelState
+    {
+        public ReturnIntentInput Source;public bool DialogueOrCinematic{get;set;}
+        public IGameInput Input=>Source;public Vector3 VelocityWorld=>Vector3.zero;
+        public System.Collections.Generic.IReadOnlyList<ChannelInterest> NearbyInterests=>null;
+    }
+    private static void LookIntentSuspendsRealReturnChannels()
+    {
+        foreach(var device in new[]{GameInputDevice.Keyboard,GameInputDevice.Gamepad})
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f,true);f.Config.ShrinkDelay=.5f;f.Config.RecenterDelay=.5f;
+            var source=new ReturnIntentInput{Device=device};var mode=new ReturnIntentMode{Source=source};f.Driver.ConfigureGameState(mode);
+            Tick(f,0);Tick(f,.5f,3.25f,dt:.5f);Tick(f,1,3.25f,dt:.5f);Tick(f,1.75f,dt:.75f);
+            double size=f.Driver.ZoomState.Size,curve=f.Driver.ZoomState.Elapsed,wait=f.Driver.ZoomState.ShrinkWaitElapsed;
+            var goal=f.Driver.PipelineState.Goal;double stopped=f.Driver.PipelineState.StoppedSeconds;
+            source.Look=new Vector2(1,0);Tick(f,1.85f,dt:.1f);
+            Check(f.Driver.ZoomState.ShrinkSuspended&&f.Driver.PipelineState.ReturnSuspended,"Driver forwards current effective intent to both channels for either device");
+            Near(f.Driver.ZoomState.Size,size,"actual Driver holds shrinking Size");
+            Near(f.Driver.ZoomState.Elapsed,curve,"actual Driver holds shrink progress");Near(f.Driver.ZoomState.ShrinkWaitElapsed,wait,"actual Driver holds shrink delay");
+            Check(f.Driver.PipelineState.Goal==goal,"actual Driver holds recenter axes");Near(f.Driver.PipelineState.StoppedSeconds,stopped,"actual Driver does not accumulate stopped delay");
+            Check(f.Driver.LookWorldOffset.x>0,"floating itself is not suppressed");
+            Tick(f,2.85f,dt:1);Near(f.Driver.ZoomState.Size,size,"stationary edge remains triggered without mouse motion");
+            Tick(f,2.95f,.65f,dt:.1f);Check(f.Driver.LastResult.GoalStep.Moving,"not faking Moving");
+            Check(f.Driver.ZoomState.Size>size,"real moving still expands during look intent");
+            Tick(f,3.05f,dt:.1f);size=f.Driver.ZoomState.Size;
+            source.Look=Vector2.zero;Tick(f,3.15f,dt:.1f);
+            Check(!f.Driver.ZoomState.ShrinkSuspended&&!f.Driver.PipelineState.ReturnSuspended,"neutral Target releases both immediately");
+            Check(f.Driver.LookFloatState.X.Value>0,"release does not wait for fading Value");
+            Near(f.Driver.ZoomState.Size,size,"release starts fresh complete shrink delay");Near(f.Driver.ZoomState.ShrinkWaitElapsed,.1,"release shrink delay starts once");
+            Near(f.Driver.PipelineState.StoppedSeconds,.1,"release recenter delay starts once");
+            Tick(f,3.25f,dt:.1f);Near(f.Driver.ZoomState.ShrinkWaitElapsed,.2,"next frame keeps counting new shrink delay");
+            var zoom=f.Driver.ZoomState;var pipeline=f.Driver.PipelineState;
+            source.Look=new Vector2(1,0);Tick(f,3.25f,dt:.1f);
+            Check(f.Driver.ZoomState.Equals(zoom)&&f.Driver.PipelineState.Equals(pipeline),"same-time callback does not double-integrate intent");
+            Tick(f,3.35f,dt:.1f);Check(f.Driver.PipelineState.ReturnSuspended,"retrigger works");
+            f.Config.LookMaxSpeed=0;Tick(f,3.45f,dt:.1f);Check(!f.Driver.PipelineState.ReturnSuspended,"zero speed cannot trigger actual floating intent");
+            f.Config.LookMaxSpeed=8;f.Config.LookMaxDistance=0;Tick(f,3.55f,dt:.1f);Check(!f.Driver.PipelineState.ReturnSuspended,"zero distance cannot trigger");
+            f.Config.LookMaxDistance=2.5f;f.Config.LookFloatEnabled=false;Tick(f,3.65f,dt:.1f);Check(!f.Driver.PipelineState.ReturnSuspended,"disabled float cannot trigger");
+            f.Config.LookFloatEnabled=true;mode.DialogueOrCinematic=true;Tick(f,3.75f,dt:.1f);Check(!f.Driver.PipelineState.ReturnSuspended,"effective dialogue gate cannot trigger");
+            StreetConfigs.Current.CameraMode.GateOffsetsInDialogue=false;Tick(f,3.85f,dt:.1f);
+            Check(f.Driver.ZoomState.ShrinkSuspended&&f.Driver.PipelineState.ReturnSuspended,"allowed dialogue look remembered while Zoom frozen");
+            source.Look=Vector2.zero;mode.DialogueOrCinematic=false;Tick(f,3.95f,dt:.1f);
+            Near(f.Driver.ZoomState.ShrinkWaitElapsed,.1,"unfreeze and neutral intent restart shrink delay");
+            Near(f.Driver.PipelineState.StoppedSeconds,.1,"unfreeze and neutral intent restart recenter delay");
+            Tick(f,4.05f,10000,dt:.1f);
+            Check(f.Driver.LastResult.GoalStep.Status==FollowStepStatus.TeleportReset,"teleport still resets actual pipeline");
+            Near(f.Driver.ZoomState.Size,2,"teleport discards speculative shrink and starts minimum");
+        }
+    }
+
+
+    private static void DirectGamepadUsesSharedLimitsAndReturn()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            Enable(f,true);f.Config.ShrinkDelay=.5f;f.Config.RecenterDelay=.5f;
+            f.Config.LookMaxDistance=.5f;f.Config.LookMaxSpeed=.2f;
+            f.Config.LookResponseCurve=StreetCurvePreset.Linear;f.Config.LookInTime=.01f;f.Config.LookOutTime=.5f;
+            var source=new ReturnIntentInput{Device=GameInputDevice.Gamepad};var mode=new ReturnIntentMode{Source=source};f.Driver.ConfigureGameState(mode);
+            Tick(f,0);Tick(f,.5f,3.25f,dt:.5f);Tick(f,1,3.25f,dt:.5f);Tick(f,1.75f,dt:.75f);
+            double size=f.Driver.ZoomState.Size;source.Look=new Vector2(.2f,0);Tick(f,1.85f,dt:.1f);
+            Near(f.Driver.LookFloatState.X.Target,.2,"Driver reads Gamepad and maps small input directly");
+            Check(f.Driver.ZoomState.ShrinkSuspended&&f.Driver.PipelineState.ReturnSuspended,"small stick shares both return suppressions");
+            Near(f.Driver.ZoomState.Size,size,"small stick holds actual Size");
+            Check(f.Driver.LookWorldOffset.x>0,"small stick produces actual world contribution");
+            float time=1.85f;var previous=f.Driver.LookWorldOffset;
+            for(int i=0;i<30;i++) {
+                time+=.1f;Tick(f,time,dt:.1f);
+                Check(LookLength(f.Driver.LookWorldOffset)<=.5+1e-5,"actual direct Driver distance cap");
+                Check(LookLength(f.Driver.LookWorldOffset-previous)<=.02+1e-5,"actual direct Driver speed cap");
+                previous=f.Driver.LookWorldOffset;
+            }
+            source.Look=new Vector2(1000,1000);time+=.1f;Tick(f,time,dt:.1f);
+            Check(Math.Sqrt(f.Driver.LookFloatState.X.Target*f.Driver.LookFloatState.X.Target+f.Driver.LookFloatState.Y.Target*f.Driver.LookFloatState.Y.Target)<=1+1e-5,"actual Driver diagonal direct target unit circle");
+            source.Look=Vector2.zero;time+=.1f;Tick(f,time,dt:.1f);
+            Check(!f.Driver.ZoomState.ShrinkSuspended&&!f.Driver.PipelineState.ReturnSuspended,"gamepad centering releases both channels immediately");
+            Check(f.Driver.LookFloatState.X.Value>0,"release ignores fading direct Value");
+            Near(f.Driver.ZoomState.ShrinkWaitElapsed,.1,"center restarts full shrink delay");
+            Near(f.Driver.PipelineState.StoppedSeconds,.1,"center restarts full recenter delay");
+            time+=.1f;Tick(f,time,dt:.1f);Near(f.Driver.ZoomState.ShrinkWaitElapsed,.2,"neutral followup does not repeatedly reset delay");
+        }
+    }
+
 }

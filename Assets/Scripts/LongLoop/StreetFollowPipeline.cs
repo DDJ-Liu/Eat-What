@@ -18,6 +18,7 @@ namespace EatWhat.LongLoop
         public float Focus;
         public Vector2 VisibleSize;
         public double Time, DeltaTime;
+        public bool SuspendReturn;
     }
     public struct RecenterAxisState
     {
@@ -37,6 +38,7 @@ namespace EatWhat.LongLoop
     public struct StreetFollowState
     {
         public bool Initialized;
+        public bool ReturnSuspended;
         public Vector3 Goal, Target, PreviousFoot;
         public double LastTime, StoppedSeconds;
         public RecenterAxisState X, Y;
@@ -51,6 +53,7 @@ namespace EatWhat.LongLoop
         public Vector2 FootVelocity;
         public double Elapsed, RecenterDelta;
         public bool Moving;
+        public bool ReturnSuspended, ReturnRestarted;
         public int HorizontalDirection;
         public bool HorizontalBoundary;
         public bool Advances => Status==FollowStepStatus.Advanced;
@@ -119,7 +122,7 @@ namespace EatWhat.LongLoop
                 return result;
             result.Follow=follow;
             if(!previous.Initialized)
-            {result.State=Initialize(input.Foot,input.Focus,input.Time);result.Status=FollowStepStatus.Initialized;return result;}
+            {result.State=Initialize(input.Foot,input.Focus,input.Time);result.State.ReturnSuspended=input.SuspendReturn;result.Status=FollowStepStatus.Initialized;return result;}
             if(!Finite(previous.Goal)||!Finite(previous.Target)||!Finite(previous.PreviousFoot)||
                 !Finite(previous.LastTime)||!Finite(previous.StoppedSeconds)||previous.StoppedSeconds<0)
                 return result;
@@ -129,7 +132,7 @@ namespace EatWhat.LongLoop
             double dx=(double)input.Foot.x-previous.PreviousFoot.x,dy=(double)input.Foot.y-previous.PreviousFoot.y;
             double screen=Math.Max(input.VisibleSize.x,input.VisibleSize.y);
             if(dx*dx+dy*dy>screen*screen)
-            {result.State=Initialize(input.Foot,input.Focus,input.Time);result.Status=FollowStepStatus.TeleportReset;return result;}
+            {result.State=Initialize(input.Foot,input.Focus,input.Time);result.State.ReturnSuspended=input.SuspendReturn;result.Status=FollowStepStatus.TeleportReset;return result;}
             var next=previous;
             double vx=dx/dt,vy=dy/dt;
             if(!Representable(vx)||!Representable(vy)) {result.Status=FollowStepStatus.InvalidInput;return result;}
@@ -143,12 +146,16 @@ namespace EatWhat.LongLoop
             result.HorizontalBoundary=result.HorizontalDirection!=0&&
                 result.HorizontalDirection*((double)follow.x-edge)>=0;
             double oldStopped=next.StoppedSeconds;
-            next.StoppedSeconds=result.Moving?0:oldStopped+dt;
+            result.ReturnSuspended=input.SuspendReturn;
+            result.ReturnRestarted=previous.ReturnSuspended&&!input.SuspendReturn;
+            next.ReturnSuspended=input.SuspendReturn;
+            if(result.ReturnRestarted){oldStopped=0;next.X=default;next.Y=default;}
+            next.StoppedSeconds=result.Moving?0:input.SuspendReturn?oldStopped:oldStopped+dt;
             next.Goal=new Vector3(Push(next.Goal.x,follow.x,.5d*input.VisibleSize.x*s.DeadZoneWidth),
                 Push(next.Goal.y,follow.y,.5d*input.VisibleSize.y*s.DeadZoneHeight),follow.z);
             result.BeforeRecenter=next.Goal;
             if(result.Moving) {next.X=default;next.Y=default;}
-            else if(s.RecenterSpeed>0)
+            else if(!input.SuspendReturn&&s.RecenterSpeed>0)
             {
                 result.RecenterDelta=Math.Min(dt,Math.Max(0,next.StoppedSeconds-s.RecenterDelay)-Math.Max(0,oldStopped-s.RecenterDelay));
                 if(result.RecenterDelta>0)
@@ -174,12 +181,7 @@ namespace EatWhat.LongLoop
             if(!axis.Active||axis.Target!=target||axis.SpeedSetting!=s.RecenterSpeed||
                 axis.RampSetting!=s.RecenterRampTime||axis.Curve!=s.RecenterCurve)
             {
-                double distance=Math.Abs(target-current);
-                double ramp=Math.Min(s.RecenterRampTime,Math.Sqrt(distance*s.RecenterRampTime/s.RecenterSpeed));
-                double peak=ramp>0?Math.Min(s.RecenterSpeed,distance/ramp):s.RecenterSpeed;
-                axis=new RecenterAxisState {Active=true,Start=current,Target=target,Ramp=ramp,Peak=peak,
-                    Cruise=peak>0?Math.Max(0,distance/peak-ramp):0,SpeedSetting=s.RecenterSpeed,
-                    RampSetting=s.RecenterRampTime,Curve=s.RecenterCurve};
+                axis=CreateRecenterAxis(current,target,s);
             }
             double d=Math.Abs(axis.Target-axis.Start),duration=axis.Duration;
             axis.Time=Math.Min(duration,axis.Time+dt);
@@ -206,6 +208,15 @@ namespace EatWhat.LongLoop
             if(axis.Time<axis.Ramp) return axis.Peak*CurveValue(axis.Curve,axis.Time/axis.Ramp);
             if(axis.Time<axis.Ramp+axis.Cruise) return axis.Peak;
             return axis.Peak*(1-CurveValue(axis.Curve,(axis.Time-axis.Ramp-axis.Cruise)/axis.Ramp));
+        }
+        internal static RecenterAxisState CreateRecenterAxis(double current,double target,StreetFollowSettings s)
+        {
+            double distance=Math.Abs(target-current);
+            double ramp=Math.Min(s.RecenterRampTime,Math.Sqrt(distance*s.RecenterRampTime/s.RecenterSpeed));
+            double peak=ramp>0?Math.Min(s.RecenterSpeed,distance/ramp):s.RecenterSpeed;
+            return new RecenterAxisState {Active=true,Start=current,Target=target,Ramp=ramp,Peak=peak,
+                Cruise=peak>0?Math.Max(0,distance/peak-ramp):0,SpeedSetting=s.RecenterSpeed,
+                RampSetting=s.RecenterRampTime,Curve=s.RecenterCurve};
         }
         public static bool CurveDefined(StreetCurvePreset curve)=>curve==StreetCurvePreset.Linear||
             curve==StreetCurvePreset.Quadratic||curve==StreetCurvePreset.SmoothStep||curve==StreetCurvePreset.EaseInOut;
@@ -243,6 +254,11 @@ namespace EatWhat.LongLoop
             else if(step.Advances)
             {
                 if(!h.HasTarget) {h.HasTarget=true;h.LastTarget=step.BeforeRecenter.x;}
+                if(step.ReturnRestarted&&!step.Moving)
+                {
+                    h.Exiting=false;h.Exit=default;
+                    h.Carry=h.LastTarget-Blend(goal,follow,distance,h.SignedWeight);
+                }
                 if(step.Moving)
                 {
                     if(step.HorizontalDirection!=0)
@@ -264,6 +280,7 @@ namespace EatWhat.LongLoop
                     h.SignedWeight=desired+(h.SignedWeight-desired)*decay;h.Carry*=decay;
                     h.LastTarget=Blend(goal,follow,distance,h.SignedWeight)+h.Carry;
                 }
+                else if(step.ReturnSuspended) { /* Keep horizontal exit position and progress. */ }
                 else if(step.RecenterDelta>0)
                 {
                     if(!h.Exiting)

@@ -1,3 +1,44 @@
+<!-- DEMO012-DRIVER-501-20261112 -->
+## 2026-11-12 V012-05 实际驱动接入
+
+新增既有runner选项--follow-driver-v012，独立选择同一StreetFollowDriverTests.cs末尾的StreetFollowDriverV012Tests；原测试类/Main/原断言及AI504两赋值完整字节前缀保持。该入口只真实编译当前LongLoop40源255引用，不扩大到Legacy/Editor全量编译；旧--follow-driver --follow-driver-logic-only统一跑原三组回归。既有Confiner边界补所需extra.Vcam/状态枚举，runner同时提取安装包公开InvalidateLensCache真实方法体及原Body回调，替代的仍是声明的Unity/矩形烘焙边界，不运行SDK原生。
+
+最终7场景105断言覆盖Size/Ratio、实际public cache body、稳定/重复回调重拉Lens、关闭/生命周期恢复、正式Foot父级输入/顶边/门控、三状态复位、接管冻结与Debug。Final共3：首轮成功后源审发现输入层级缺口；第二轮旧closure目录fresh保护拒绝，未编译；第三轮显式RepeatReason且新round3目录成功。原始输出全部保留，同稳定root已RESOLVED，不换key/计数清账。正确重试须新建每轮输出目录，不覆盖证据闭包。没有新工具族/TK/adapter/引擎门或冻结探针。
+<!-- /DEMO012-DRIVER-501-20261112 -->
+
+<!-- DEMO012-PARALLAX-502-20261112 -->
+## 2026-11-12 V012-06 视差数学与生命周期
+
+既有Test-LongLoopPlayer.py新增--parallax --output <本任务目录>，沿共用真实LongLoop编译与透明Unity边界；具名StreetParallaxTests包含数学4场景44断言，StreetParallaxLayerTests在本文件内声明窄Camera/Brain事件边界并调用实际组件生命周期，7场景26断言。既有FollowUnityShim/旧四测试不改，不复用冻结FOLLOW-R夹具。一次Custom Final串联--parallax和--follow-driver --follow-driver-logic-only，40源255真引用生产编译及原配置/Pipeline/Driver回归均通过。真实事件顺序以安装包Brain/Confiner源码审查记录佐证，边界测试不冒原生Cinemachine运行。无新TK/通用框架/探针/adapter；证据与07接线详AI-000502/attempt1。
+<!-- /DEMO012-PARALLAX-502-20261112 -->
+
+<!-- DEMO012-COMPOSITION-500-20261112 -->
+## 2026-11-12 V012-04 比例与双轴合成
+
+既有Test-LongLoopPlayer.py新增--follow-composition --output <本任务目录>，复用前卡共享编译分支并补StreetDynamicZoom实际源供透传Size测试。8场景4649断言覆盖原卡前视5→2.5、连续Size与真实回中时间、双轴同向限幅/反向抵消、FOCUS/本帧几何、门控及额外通道状态隔离、关闭路径逐值回归和非法输入。未改旧四份测试。
+
+Final实际两轮：首轮生产编译成功、测试边界缺Vector2.right编译失败；改用new Vector2(1,0)，保留round1及原始双流。第二轮编译/测试全过，前三卡和旧三组回归同时通过，38源255引用真实生产编译。没有Unity/新TK/通用框架/冻结探针或新验收门。共享profile从StepAxis原式提取，重投影只更新已有状态，保留累计回中时间与未缩放速度设置。交接详AI-000500/attempt1/CODE-HANDOFF.md。
+<!-- /DEMO012-COMPOSITION-500-20261112 -->
+
+<!-- DEMO012-VERTICAL-OFFSET-499-20261112 -->
+## 2026-11-12 V012-03 纵向输入偏移纯函数
+
+既有Test-LongLoopPlayer.py新增--vertical-offset --output <本任务输出目录>，仅在前两卡共用分支中选择StreetVerticalOffsetTests；保持真实LongLoop Bee引用编译及透明Unity边界流程。7场景144断言覆盖顶边输入建立、松开/速度恢复退出、严格阈值/无输入、上下方向及直接反向连续过渡，补曲线/时间/非法值边界。唯一Custom Final串联该入口、--look-float、--dynamic-zoom与--follow-driver --follow-driver-logic-only；37源/255引用生产编译三个入口各一次，全部通过。没有新TK、通用框架或验收adapter，没有Unity/FOLLOW-R/全量探针执行。原始RSP、闭包、双流见AI-000499/attempt1。
+<!-- /DEMO012-VERTICAL-OFFSET-499-20261112 -->
+
+## 2026-11-12 V012-02 视角浮动纯函数
+
+既有 Test-LongLoopPlayer.py 增加 --look-float --output <本任务输出目录>，与 --dynamic-zoom 共用现有生产编译/透明边界流程：真实 Bee 引用编译 LongLoop，补入响应文件尚未收录的当前 LongLoop 源码，随后运行 StreetLookFloatTests。新测试 8 场景 114 断言，涵盖原卡中央/边缘/二次增长/完整进入退出/门控关闭/独立轴/四向对称，并核输入边界和非法值。没有新通用框架或验收适配器。
+
+本卡唯一 Custom Final 串联 --look-float、--dynamic-zoom 与 --follow-driver --follow-driver-logic-only；保留旧三组测试不改，生产编译及原回归均通过。不运行 Unity、FOLLOW-R、全量探针或定时回归；该 Final 是具名定向入口组合，不是全项目 Final。原始闭包/进程/双流在 AI-000498/attempt1。状态/距离合成/驱动接入边界见该目录 CODE-HANDOFF.md。
+
+## 2026-11-12 V012-01 动态视野纯函数
+
+既有 Test-LongLoopPlayer.py 增加 --dynamic-zoom --output <本任务输出目录>：只离线编译当前LongLoop真实Bee引用（必要时补具名新源码），然后以原透明Unity边界编译运行StreetDynamicZoomTests及未改StreetConfigLogicTests。不调用Unity、不跑FOLLOW-R/全量探针，无新TK编号或通用runner。源闭包、RSP、真实编译器/引用、双流与进程退出码沿用现有证据机制。
+
+AI497唯一Final通过：新函数7场景150断言，配置68断言；同次 --follow-driver --follow-driver-logic-only 执行未改Driver及其调用的未改Pipeline/配置套件，16场景49733与16场景177337检查均通过。旧StreetConfigurationTests.cs保留但未恢复其探针验收流程。全量源码编译仅新模块所属LongLoop一次；不把离线透明边界当实机表现。
+
+本卡范围仅纯函数和后继接口：StreetDynamicZoomSettings/Input/State/Result；Result.Size为可空float，关闭或拒绝时不写Size。调用/状态所有权/零时长/冻结和集成限制见AI497的CODE-HANDOFF.md。后继V012-04/05未实施，现镜头仍走原路径。
 <!-- FOLLOW-R-473A5-FRAME-DT-20261111 -->
 2026-11-11 AI473第5次实际执行（SUP）局部核对，不提高完整核验日期：沿AI476/477已通过的新FOLLOW-R-476-v1，一次Play/Begin已建立真实自然基线（startup5268→baseline5269，等待墙钟约0.055447s）；首个后续帧5269→5270且Driver序号5269→5270均连续，但游戏dt=0.24980769557822669s超过原冻结0.1s，明确失败FOLLOW_R_GAME_FRAME_INTERVAL_EXCEEDED。有效移动样本0，五项Ready/Console通过、其余未观测，不能判断前视/Delay实际效果，也不能据此倒补a4旧未知子条件。正常Stop后Edit/Street/四SO clean、原六项输入/配置/回调清理全true，Console18211→18244完整33项新增Error0。原三合同证据true/false/true，正式Fail及CONTROL独立审查见attempt5；13官方native/host0、六保存项/九冻结输入/四存档保持，人工4.5/2/Delay0.8/Speed0.4、FOCUS/Size/Confiner/Y挤压不改。接线/Save/Refresh/新FR_pre备份0，NPC/Lab/22材质未操作、描边暂停、旧包未重建。原四Fail及已用续行保留，本轮POLICY grant单次消费，执行器不自续；帧间隔问题交独立修复，不卡内改阈值/调度器/探针或再Begin。
 <!-- /FOLLOW-R-473A5-FRAME-DT-20261111 -->

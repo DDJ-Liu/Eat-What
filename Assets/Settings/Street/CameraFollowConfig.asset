@@ -19,28 +19,31 @@ MonoBehaviour:
   stoppedSpeedMultiplier: 0.6
   lookahead: 3.5
   lookaheadTime: 0.8
-  maxHorizontalOffset: 8
-  recenterDelay: 0.8
+  maxHorizontalOffset: 6
+  recenterDelay: 5
   recenterSpeed: 0.65
   recenterRampTime: 0.25
   recenterCurve: 2
   verticalSpeedThreshold: 1
   maxVerticalOffset: 1.5
   verticalOffsetInTime: 0.3
-  verticalOffsetOutTime: 0.4
+  verticalOffsetOutTime: 0.7
   verticalOffsetCurve: 2
   dynamicZoomEnabled: 1
-  orthoSizeMin: 7.2
-  orthoSizeMax: 8.3
+  orthoSizeMin: 7.5
+  orthoSizeMax: 10
   moveSpeedThreshold: 0.5
-  expandTime: 1.2
-  expandCurve: 3
-  shrinkTime: 1.5
-  shrinkCurve: 3
+  expandTime: 7
+  expandCurve: 2
+  shrinkDelay: 10
+  shrinkTime: 14
+  shrinkCurve: 1
   freezeOnOverride: 1
   lookFloatEnabled: 1
-  edgeZoneRatio: 0.25
+  lookMaxDistance: 2.5
+  lookMaxSpeed: 4
+  edgeZoneRatio: 0.2
   lookResponseCurve: 1
   lookInTime: 0.35
-  lookOutTime: 0.5
+  lookOutTime: 0.8
   gamepadLookAxis: 0

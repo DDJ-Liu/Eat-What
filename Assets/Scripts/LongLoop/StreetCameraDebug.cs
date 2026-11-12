@@ -12,6 +12,7 @@ namespace EatWhat.LongLoop
         public StreetFollowResult LastResult { get; private set; }
         public ulong LastSequence { get; private set; }
         public float LastSize { get; private set; }
+        public float LastRatio { get; private set; }=1;
         public Vector2 LastLookInput { get; private set; }
         public Vector2 LastMoveInput { get; private set; }
         public string LastStatus { get; private set; }
@@ -19,9 +20,9 @@ namespace EatWhat.LongLoop
         public void ConfigureLogging(bool on,float minimumInterval)
         { loggingEnabled=on; minimumIntervalSeconds=minimumInterval; }
         public void RequestSample() { logNextSample=true; }
-        public void Capture(StreetFollowResult result,string status,float now,ulong sequence,float size,Vector2 lookInput,Vector2 moveInput)
+        public void Capture(StreetFollowResult result,string status,float now,ulong sequence,float size,Vector2 lookInput,Vector2 moveInput,float ratio=1)
         {
-            LastResult=result; LastStatus=status; LastSequence=sequence; LastSize=size; LastLookInput=lookInput; LastMoveInput=moveInput;
+            LastResult=result; LastStatus=status; LastSequence=sequence; LastSize=size; LastRatio=ratio; LastLookInput=lookInput; LastMoveInput=moveInput;
             if(!loggingEnabled || !logNextSample || float.IsNaN(now) || float.IsInfinity(now)) return;
             float interval=minimumIntervalSeconds;
             if(float.IsNaN(interval) || float.IsInfinity(interval) || interval<0) interval=1f;
@@ -35,7 +36,7 @@ namespace EatWhat.LongLoop
             return $"StreetFollow status={LastStatus} sequence={LastSequence} target={result.Target} goal={s.Goal} "+
                 $"weight={s.Lookahead.SignedWeight} stopped={s.StoppedSeconds} X={Phase(s.X)} Y={Phase(s.Y)} "+
                 $"raw=({r.RawSum.x},{r.RawSum.y}) clipped=({r.ClippedSum.x},{r.ClippedSum.y}) gate={r.GateApplied} "+
-                $"outside={r.BaselineOutside} size={LastSize} time={s.LastTime} valid={result.Valid}";
+                $"outside={r.BaselineOutside} size={LastSize} ratio={LastRatio} horizontal={r.Horizontal} vertical={r.Vertical} float={r.LookFloat} interest={r.Interest} time={s.LastTime} valid={result.Valid}";
         }
         private static string Phase(RecenterAxisState s)=>!s.Active?"Inactive":s.Time>=s.Duration?"Complete":
             s.Time<s.Ramp?"Accelerating":s.Time<s.Ramp+s.Cruise?"Cruising":"Decelerating";

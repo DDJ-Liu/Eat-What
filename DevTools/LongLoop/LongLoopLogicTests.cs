@@ -103,7 +103,60 @@ internal static class LongLoopLogicTests
         Yes(!HorizontalMotion.CanAdvance(-10f, -1f, 4f, -10f, 10f), "left edge idle");
         Yes(HorizontalMotion.CanAdvance(0f, -1f, 4f, -10f, 10f), "inside moving");
         Yes(HorizontalMotion.CanAdvance(10f, -1f, 4f, -10f, 10f), "can return from right edge");
+        RightStickProvider();
         Console.WriteLine("PASS " + count + " actual-source logic assertions");
+
         return 0;
     }
+
+    private static void InputEvent(LegacyInputProvider p,string name,bool? value=null)
+    {
+        typeof(LegacyInputProvider).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance)
+            .Invoke(p,value.HasValue?new object[]{value.Value}:null);
+    }
+    private static void RightStickProvider()
+    {
+        UnityEngine.InputSystem.Gamepad.current=null;
+        var p=new LegacyInputProvider();Screen.width=800;Screen.height=600;
+        UnityEngine.Input.mousePosition=new Vector3(800,0,0);
+        Eq(p.LookAxis.x,1,"no-pad mouse path preserved");
+        var pad=new UnityEngine.InputSystem.Gamepad();UnityEngine.InputSystem.Gamepad.current=pad;
+        pad.rightStick.Value=new Vector2(.2f,.1f);
+        Yes(p.CurrentDevice==GameInputDevice.Gamepad,"real provider selects current right-stick sample");
+        Eq(p.LookAxis.x,.2f,"processed weak stick not deadzoned twice");Eq(p.LookAxis.y,.1f,"right-stick vertical source");
+        Yes(p.CurrentDevice==GameInputDevice.Gamepad,"repeated device reads stable");Eq(p.LookAxis.x,.2f,"repeated axis reads stable");
+        pad.rightStick.Value=Vector2.zero;
+        Eq(p.LookAxis.x,0,"centering pad does not fall back to static edge mouse");Eq(p.LookAxis.y,0,"center remains neutral");
+        Yes(p.CurrentDevice==GameInputDevice.Gamepad,"neutral gamepad owns look until real mouse move");
+        Screen.width=1000;UnityEngine.Input.mousePosition=new Vector3(1000,0,0);
+        Eq(p.LookAxis.x,0,"resize and cursor reposition do not manufacture mouse takeover");
+        Eq(p.LookAxis.x,0,"repeated resized sample remains neutral");
+        UnityEngine.Input.mousePosition=new Vector3(999,0,0);
+        Yes(p.CurrentDevice==GameInputDevice.Keyboard,"actual mouse pixel motion returns mouse mode");
+        Yes(p.LookAxis.x>.9f,"mouse mapping active after takeover");
+        pad.rightStick.Value=new Vector2(.3f,.4f);UnityEngine.Input.mousePosition=new Vector3(500,300,0);
+        Yes(p.CurrentDevice==GameInputDevice.Gamepad,"simultaneous active stick wins mouse movement");
+        Eq(p.LookAxis.x,.3f,"diagonal processed magnitude retained");Eq(p.LookAxis.y,.4f,"diagonal direction retained");
+        pad.enabled=false;Eq(p.LookAxis.x,0,"disabled device is neutral");pad.enabled=true;
+        pad.added=false;Eq(p.LookAxis.x,0,"removed device is neutral");pad.added=true;
+        UnityEngine.InputSystem.Gamepad.current=null;Eq(p.LookAxis.x,0,"unplugged current device neutral without stale mouse fallback");
+        UnityEngine.InputSystem.Gamepad.current=pad;pad.rightStick.Value=new Vector2(2,2);
+        var axis=p.LookAxis;Eq((float)Math.Sqrt((double)axis.x*axis.x+(double)axis.y*axis.y),1,"provider clamps finite outside stick to unit circle");
+        pad.rightStick.Value=new Vector2(float.NaN,0);Eq(p.LookAxis.x,0,"nonfinite stick neutral");
+        pad.rightStick.Value=new Vector2(.3f,0);
+        UnityEngine.Input.Held.Clear();UnityEngine.Input.Held.Add(KeyCode.A);UnityEngine.Input.Held.Add(KeyCode.W);
+        UnityEngine.Input.Down.Add(KeyCode.E);UnityEngine.Input.Down.Add(KeyCode.Escape);
+        Eq(p.Horizontal,-1,"keyboard horizontal unchanged in gamepad look mode");Eq(p.Vertical,1,"keyboard vertical unchanged");
+        Yes(p.Interact&&p.BackPressed,"existing interact and navigation keys unchanged");
+        InputEvent(p,"OnApplicationFocus",false);Eq(p.LookAxis.x,0,"focus loss neutral");
+        InputEvent(p,"OnApplicationPause",true);InputEvent(p,"OnApplicationFocus",true);Eq(p.LookAxis.x,0,"focus gain while paused remains neutral");
+        InputEvent(p,"OnApplicationPause",false);Eq(p.LookAxis.x,.3f,"resume reads fresh processed stick");
+        InputEvent(p,"OnApplicationFocus",false);InputEvent(p,"OnApplicationPause",false);Eq(p.LookAxis.x,0,"unpause cannot override missing focus");
+        p.isActiveAndEnabled=false;InputEvent(p,"OnDisable");Eq(p.LookAxis.x,0,"disabled component neutral");
+        p.isActiveAndEnabled=true;Application.isFocused=false;InputEvent(p,"OnEnable");Eq(p.LookAxis.x,0,"enable in background remains neutral");
+        Application.isFocused=true;InputEvent(p,"OnEnable");Eq(p.LookAxis.x,.3f,"reenable reads fresh input");
+        UnityEngine.InputSystem.Gamepad.current=null;UnityEngine.Input.Held.Clear();UnityEngine.Input.Down.Clear();
+        Application.isFocused=true;Screen.width=800;Screen.height=600;
+    }
+
 }

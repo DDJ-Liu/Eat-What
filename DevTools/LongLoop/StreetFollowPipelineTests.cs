@@ -55,6 +55,7 @@ internal static class StreetFollowPipelineTests
         Scenario("ExistingSafetyAndDialogueCasesMigrated",ClippingMigration);
         Scenario("TargetSafetyAndConfiguration",TargetSafety);
         Scenario("DeadzoneThresholdZeroWidthAndViewChanges",DirectionalBoundary);
+        Scenario("LookIntentSuspendsAndRestartsBothAxesAndFront",SuspendReturn);
         Console.WriteLine((failures.Count==0?"PASS ":"FAIL ")+scenarios+" named scenarios; "+assertions+" assertions/frame observations; failed="+failures.Count+"; pure target source, no native execution");
         return failures.Count==0?0:1;
     }
@@ -309,4 +310,53 @@ internal static class StreetFollowPipelineTests
         context=Clip();context.ScreenRight=new Vector3(1,0,.2f);Check(!StreetFollowPipeline.SumAndClip(context,contribution,2,2).Valid,"unknown projection rejected");
         contribution.Horizontal.x=float.NaN;context=Clip();Check(!StreetFollowPipeline.SumAndClip(context,contribution,2,2).Valid,"nonfinite contribution rejected");
     }
+
+    private static void SuspendReturn()
+    {
+        foreach(float delay in new[]{0f,.5f})
+        foreach(StreetCurvePreset curve in Enum.GetValues(typeof(StreetCurvePreset)))
+        {
+            var s=Settings();s.RecenterDelay=delay;s.RecenterCurve=curve;
+            var state=StreetFollowPipeline.Initialize(Vector3.zero,2,0);
+            state.Goal=new Vector3(2,1,0);state.Target=state.Goal;
+            state.Lookahead=new FollowLookaheadState{HasTarget=true,LastTarget=7,SignedWeight=1,Direction=1,Triggered=true,Carry=2.5};
+            state=Evaluate(state,Input(delay+.2,Vector3.zero,delay+.2),s).State;
+            var before=state;var input=Input(state.LastTime+2,Vector3.zero,2);input.SuspendReturn=true;
+            var paused=Evaluate(state,input,s);
+            Check(paused.Valid&&!paused.GoalStep.Moving,"actual stopped intent path");
+            Check(paused.State.Goal==before.Goal,"both recenter positions held");
+            Near(paused.State.X.Time,before.X.Time,"X progress held",0);Near(paused.State.Y.Time,before.Y.Time,"Y progress held",0);
+            Near(paused.State.Lookahead.LastTarget,before.Lookahead.LastTarget,"front exit position held",0);
+            Near(paused.State.Lookahead.Exit.Time,before.Lookahead.Exit.Time,"front exit progress held",0);
+            Near(paused.State.StoppedSeconds,before.StoppedSeconds,"paused time not added to StoppedSeconds",0);
+            input=Input(paused.State.LastTime+.1,Vector3.zero,.1);
+            var released=Evaluate(paused.State,input,s);
+            Check(released.GoalStep.ReturnRestarted,"one release edge restarts return");
+            Near(released.State.StoppedSeconds,.1,"release restarts complete delay");
+            if(delay>0) {
+                Check(released.State.Goal==paused.State.Goal,"full new recenter delay holds current axes");
+                Near(released.State.Lookahead.LastTarget,paused.State.Lookahead.LastTarget,"full new front delay holds target");
+                input=Input(released.State.LastTime+.1,Vector3.zero,.1);
+                var ordinary=Evaluate(released.State,input,s);
+                Check(!ordinary.GoalStep.ReturnRestarted,"ordinary frame does not repeat release");
+                Near(ordinary.State.StoppedSeconds,.2,"ordinary delay continues instead of reset");
+                input=Input(ordinary.State.LastTime+1,Vector3.zero,1);
+                released=Evaluate(ordinary.State,input,s);
+            }
+            Check(released.State.Goal.x<paused.State.Goal.x&&released.State.Goal.y>paused.State.Goal.y,"both axes resume from held positions");
+            Check(released.State.Lookahead.LastTarget<paused.State.Lookahead.LastTarget,"front exit restarts from held position");
+            input=Input(paused.State.LastTime+.1,new Vector3(.65f,0,0),.1);input.SuspendReturn=true;
+            var move=Evaluate(paused.State,input,s);input.SuspendReturn=false;var control=Evaluate(paused.State,input,s);
+            Check(move.GoalStep.Moving&&move.State.Goal==control.State.Goal,"intent does not freeze real moving base follow");
+            Near(move.State.Lookahead.LastTarget,control.State.Lookahead.LastTarget,"real moving front remains normal");
+            input=Input(paused.State.LastTime,Vector3.zero,0);input.SuspendReturn=false;
+            var held=Evaluate(paused.State,input,s);
+            Check(held.State.Equals(paused.State),"held time does not consume release or progress");
+            input=Input(paused.State.LastTime+.1,Vector3.zero,.1);input.SuspendReturn=true;
+            var again=Evaluate(paused.State,input,s);input=Input(again.State.LastTime+.1,Vector3.zero,.1);
+            var repeat=Evaluate(again.State,input,s);
+            Near(repeat.State.StoppedSeconds,.1,"retrigger release gets another complete delay");
+        }
+    }
+
 }
