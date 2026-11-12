@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="UnityStubs.cs" />
+    <Compile Include="..\..\..\Assets\Editor\DataTables\DataTableValidationCore.cs" Link="DataTableValidationCore.cs" />
+    <Compile Include="..\..\..\Assets\Editor\DataTables\DataTableImportContracts.cs" Link="DataTableImportContracts.cs" />
+    <Compile Include="..\..\..\Assets\Editor\DataTables\DataTableImportService.cs" Link="DataTableImportService.cs" />
+    <Compile Include="..\..\..\Assets\Scripts\DataBase\Localization\LocTextCatalog.cs" Link="LocTextCatalog.cs" />
+    <Compile Include="..\..\..\Assets\Scripts\DataBase\Localization\LocTableAsset.cs" Link="LocTableAsset.cs" />
+  </ItemGroup>
+</Project>
