@@ -1,3 +1,5 @@
+2026-11-11新规则复盘：[P-071 AI473八轮逐轮坑账](ENGINE.md#p-071)；[P-072 FOLLOW-R十四张管线卡复盘与冻结](DEVTOOLS.md#p-072)。现行格式：现象、层级、处置、预防、实际轮次及来源；不再以修复链为熔断原卡续验。
+
 # 工程坑账本索引
 
 > 任务卡只点 P 编号，再读对应车道正文；兼容入口 KNOWN_PITFALLS.md 保持。
@@ -8,6 +10,7 @@
 
 | 编号 | 一句话 | 车道 | 正文 |
 | --- | --- | --- | --- |
+| P-070 | CLI黄金参数按实际子命令；角色不等于子命令，公开ArgumentList不加错误别名 | [CODE/ENGINE_CLI] | [DEVTOOLS](DEVTOOLS.md#p-070-cli-argv) |
 | P-051 | Unity 资产 SHA 凭据取 Editor 退出后稳定磁盘；字体 Dynamic 按空 glyph 验收 | [DATA/CODE] | [CODE](CODE.md#p-051-unity-font-post-exit) |
 | P-049 | PowerShell JSON 日期自动转换丢 UTC，须保留显式时区 | [CODE] | [CODE](CODE.md#p-049-code-utc-json) |
 | P-048 | Prefab源批准不自动覆盖映射外继承传播，字体与atlas材质须配对核对 | [CODE/ENGINE_MCP/控制端] | [CODE](CODE.md#p-048-prefab-scope) |
@@ -76,3 +79,18 @@
 - [P-058 启动后首Ready RPC返回400，根因未证](ENGINE.md#p-058)
 - [P-059 队列Save-TextFile替换失败](ENGINE.md#p-059)
 - [P-060 长上下文与连续失败并存，不据此证明因果](ENGINE.md#p-060)
+
+## 2026-10-24 回查补记
+
+- [P-061 动作wire ID](ENGINE.md#p-061)
+- [P-062 Ready时限与默认封包](ENGINE.md#p-062)
+- [P-063 SceneHandle显式标量与Editor导出](ENGINE.md#p-063)
+- [P-064 Unity空语义与原空PPtr证明](ENGINE.md#p-064)
+- [P-065 DATA许可连接超时](DATA.md#p-065)
+- [P-066 DATA输出根与Scope冲突](DATA.md#p-066)
+- [P-067 换行夹具与Git配置继承](DEVTOOLS.md#p-067)
+
+规划按P-047及[CONTROL当前规则](../CONTROL_CHAT.md#dispatch-planning)；本轮按已有证据补坑账，不触发业务回归。
+
+- [P-068 组件同名/meta交付、Assets互斥与小改动验收](CODE.md#p-068)
+- [P-069 ProjectSettings置值与SaveAssets持久化协议](ENGINE.md#p-069)

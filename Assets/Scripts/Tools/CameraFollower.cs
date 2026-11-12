@@ -1,5 +1,9 @@
 using UnityEngine;
+#if CINEMACHINE_3_OR_NEWER
+using Unity.Cinemachine;
+#else
 using Cinemachine;
+#endif
 
 /// <summary>
 /// 使 GameObject 跟随 CinemachineVirtualCamera 的位置，支持平滑插值。

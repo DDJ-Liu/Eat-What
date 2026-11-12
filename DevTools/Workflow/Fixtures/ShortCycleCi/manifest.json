@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "fixtureSet": "ShortCycleCi",
+  "createdFor": "AI-000407",
+  "entries": [
+    {
+      "bytes": 18433,
+      "purpose": "Old actual CI source rejects inactive original probe before AI400",
+      "file": "ShortCycleProbeCi.PreAI400.cs.txt",
+      "sourcePath": ".ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000400/source-before/ShortCycleProbeCi.cs",
+      "sourceSha256": "11AAC3326C540D0A0FFAC72B95E7CD2849B728A90DB4BBBB0ABB9D5443683441"
+    },
+    {
+      "bytes": 24039,
+      "purpose": "Old actual CI source rejects clean empty initial scene before AI405",
+      "file": "ShortCycleProbeCi.PreAI405.cs.txt",
+      "sourcePath": ".ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000405/source-before/ShortCycleProbeCi.cs",
+      "sourceSha256": "857045B0134B14A8A4CE694F0B23DDD440FBDA921FAC714FC1B5C66D50F84A47"
+    },
+    {
+      "bytes": 23928,
+      "purpose": "Old actual audit expression rejects migrated world TMP before AI406",
+      "file": "ShortCycleLayoutAudit.PreAI406.cs.txt",
+      "sourcePath": ".ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000406/source-before/ShortCycleLayoutAudit.cs",
+      "sourceSha256": "407775CA1A2E4E7ED72E4538E8BC800907A578219B7B8C1F098F7A3DAC813A59"
+    },
+    {
+      "bytes": 30354,
+      "purpose": "Old actual CI rejects Windows slash-normalized launcher identity before AI408",
+      "file": "ShortCycleProbeCi.PreAI408.cs.txt",
+      "sourcePath": ".ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000408/source-before/ShortCycleProbeCi.cs",
+      "sourceSha256": "917FE895A71D3061DDF86DD234A7264F75635D1F081153F773F8AC00D3D0B11B"
+    }
+  ]
+}

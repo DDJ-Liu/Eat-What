@@ -41,6 +41,9 @@ namespace EatWhat.Cooking.ShortCycle
 
         public SortingGroup SortingGroup { get { return sortingGroup; } }
         protected bool HasPlaceholderRenderer { get { return placeholderRenderer != null; } }
+        protected SpriteRenderer PrimaryIconRenderer { get { return iconRenderer; } }
+        protected SpriteRenderer PlaceholderRenderer { get { return placeholderRenderer; } }
+        protected bool ContentVisible { get { return contentVisible; } }
         public bool InteractionAllowed { get; private set; }
         public ShortCycleGridPieceDisplay Display { get; private set; }
 
@@ -55,6 +58,7 @@ namespace EatWhat.Cooking.ShortCycle
                 trayStateController.StateChanged += HandleTrayStateChanged;
             }
             RefreshInteractionGate();
+            OnDisplayStateChanged();
         }
 
         protected virtual void OnDisable()
@@ -67,6 +71,7 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 trayStateController.StateChanged -= HandleTrayStateChanged;
             }
+            OnDisplayStateChanged();
         }
 
         public void Configure(ShortCycleGridPieceDisplay display)
@@ -88,6 +93,7 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 placeholderRenderer.enabled = Display.is_placeholder;
             }
+            OnDisplayStateChanged();
         }
 
         public void SetPlaceholder(bool isPlaceholder)
@@ -101,6 +107,7 @@ namespace EatWhat.Cooking.ShortCycle
             {
                 placeholderRenderer.enabled = isPlaceholder;
             }
+            OnDisplayStateChanged();
         }
 
         protected virtual bool ContentAllowsInteraction { get { return true; } }
@@ -115,8 +122,11 @@ namespace EatWhat.Cooking.ShortCycle
             if (nameLabel != null) nameLabel.enabled = visible;
             if (badgeLabel != null) badgeLabel.enabled = visible;
             if (placeholderRenderer != null) placeholderRenderer.enabled = visible && Display != null && Display.is_placeholder;
+            OnDisplayStateChanged();
             RefreshInteractionGate();
         }
+
+        protected virtual void OnDisplayStateChanged() { }
 
         public void SetInteractionAllowed(bool allowed)
         {
@@ -159,7 +169,7 @@ namespace EatWhat.Cooking.ShortCycle
             RefreshInteractionGate();
         }
 
-        private void RefreshInteractionGate()
+        protected void RefreshInteractionGate()
         {
             var sessionAllowed = sessionManager != null && sessionManager.CurrentPhase == requiredPhase;
             if (sessionAllowed && requirePhase0View)

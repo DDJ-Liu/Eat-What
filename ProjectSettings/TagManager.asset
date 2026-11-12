@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - Tool
   layers:
@@ -41,6 +41,24 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: LL_Background
+    uniqueID: 660092413
+    locked: 0
+  - name: LL_Buildings
+    uniqueID: 789723195
+    locked: 0
+  - name: LL_MidgroundBack
+    uniqueID: 2474343005
+    locked: 0
+  - name: LL_Characters
+    uniqueID: 4144662429
+    locked: 0
+  - name: LL_MidgroundFront
+    uniqueID: 3984015289
+    locked: 0
+  - name: LL_Foreground
+    uniqueID: 2859662277
     locked: 0
   - name: DialogBackground
     uniqueID: 3859992787
@@ -96,3 +114,5 @@ TagManager:
   - name: UI_Top
     uniqueID: 2592636631
     locked: 0
+  m_RenderingLayers:
+  - Default

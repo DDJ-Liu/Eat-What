@@ -8,7 +8,7 @@ namespace EatWhat.Cooking.ShortCycle
     /// CK01 inventory boundary. The scene references only the generated catalog;
     /// item definitions and initial quantities are resolved by stable IDs.
     /// </summary>
-    public sealed class InventoryManager : MonoBehaviour, IInventoryConsumptionGateway, IShortCycleInventoryQuery
+    public sealed class InventoryManager : MonoBehaviour, IInventoryConsumptionGateway, IShortCycleInventoryQuery, IShortCycleInventoryChangeSource
     {
         [SerializeField] private CK01GeneratedDataCatalog dataCatalog = null;
         [SerializeField] private int defaultDemoQuantity = 0;
@@ -17,6 +17,8 @@ namespace EatWhat.Cooking.ShortCycle
         private readonly Dictionary<string, CK01ItemData> itemDefinitions = new Dictionary<string, CK01ItemData>(StringComparer.Ordinal);
         private readonly Dictionary<string, int> quantities = new Dictionary<string, int>(StringComparer.Ordinal);
         private IInventoryTightReflow runtimeTightReflow;
+
+        public event Action Changed;
 
         public CK01GeneratedDataCatalog DataCatalog
         {
@@ -53,70 +55,55 @@ namespace EatWhat.Cooking.ShortCycle
         public bool TryRebuildFromDataCatalog(out string diagnostic)
         {
             if (Phase2Owner != null) { diagnostic = "Inventory is owned by Phase2; rebuild is refused."; return false; }
-            itemDefinitions.Clear();
-            quantities.Clear();
-            DemoFridgeCapacity = 0;
-
             if (dataCatalog == null)
             {
                 diagnostic = "CK01 generated data catalog is not connected.";
                 LastCatalogDiagnostic = diagnostic;
                 return false;
             }
-
             IList<CK01GeneratedDataRecord<CK01ItemData>> items;
             if (!dataCatalog.TryGetRecords(CK01GeneratedDataCatalog.ItemsTable, out items, out diagnostic))
-            {
-                LastCatalogDiagnostic = diagnostic;
-                return false;
-            }
-
+            { LastCatalogDiagnostic = diagnostic; return false; }
+            var nextItems = new Dictionary<string, CK01ItemData>(StringComparer.Ordinal);
+            var nextQuantities = new Dictionary<string, int>(StringComparer.Ordinal);
             foreach (var item in items)
             {
-                if (item == null || item.Asset == null || string.IsNullOrEmpty(item.StableId))
-                {
-                    continue;
-                }
-
-                itemDefinitions[item.StableId] = item.Asset;
-                quantities[item.StableId] = Math.Max(0, defaultDemoQuantity);
+                if (item == null || item.Asset == null || string.IsNullOrEmpty(item.StableId)) continue;
+                nextItems[item.StableId] = item.Asset;
+                nextQuantities[item.StableId] = Math.Max(0, defaultDemoQuantity);
             }
-
             IList<CK01InitialInventoryRecord> initialInventory;
             if (!dataCatalog.TryGetInitialInventory(out initialInventory, out diagnostic))
-            {
-                itemDefinitions.Clear();
-                quantities.Clear();
-                LastCatalogDiagnostic = diagnostic;
-                return false;
-            }
-
+            { LastCatalogDiagnostic = diagnostic; return false; }
             foreach (var entry in initialInventory)
             {
-                if (entry == null || entry.Data == null || !itemDefinitions.ContainsKey(entry.ItemId))
+                if (entry == null || entry.Data == null || !nextItems.ContainsKey(entry.ItemId))
                 {
                     diagnostic = "InitialInventory references missing Items ID '" +
                         (entry == null ? string.Empty : entry.ItemId) + "'.";
-                    itemDefinitions.Clear();
-                    quantities.Clear();
                     LastCatalogDiagnostic = diagnostic;
                     return false;
                 }
-                quantities[entry.ItemId] = Math.Max(0, entry.Data.quantity);
+                nextQuantities[entry.ItemId] = Math.Max(0, entry.Data.quantity);
             }
-
             CK01FridgeCapacityLevelData capacityLevel;
             if (!dataCatalog.TryGetDemoFridgeCapacity(out capacityLevel, out diagnostic))
+            { LastCatalogDiagnostic = diagnostic; return false; }
+            var changed = quantities.Count != nextQuantities.Count;
+            if (!changed) foreach (var pair in nextQuantities)
             {
-                itemDefinitions.Clear();
-                quantities.Clear();
-                LastCatalogDiagnostic = diagnostic;
-                return false;
+                int previous;
+                if (!quantities.TryGetValue(pair.Key, out previous) || previous != pair.Value)
+                { changed = true; break; }
             }
+            itemDefinitions.Clear();
+            quantities.Clear();
+            foreach (var pair in nextItems) itemDefinitions.Add(pair.Key, pair.Value);
+            foreach (var pair in nextQuantities) quantities.Add(pair.Key, pair.Value);
             DemoFridgeCapacity = capacityLevel.capacity;
-
             diagnostic = null;
             LastCatalogDiagnostic = null;
+            if (changed) NotifyChanged();
             return true;
         }
 
@@ -185,26 +172,35 @@ namespace EatWhat.Cooking.ShortCycle
                 runtimeTightReflow.RequestTightReflow();
             }
 
+            if (consumedQuantity > 0) NotifyChanged();
             return InventoryCommitResult.Success(consumedQuantity);
         }
-    }
-
-    /// <summary>
-    /// Observable bridge for the P1 fridge view. C-T2 supplies the visual
-    /// compact-reflow listener; the data layer owns only the post-deduction call.
-    /// </summary>
-    public sealed class ShortCycleInventoryReflowAdapter : MonoBehaviour, IInventoryTightReflow
-    {
-        public int RequestCount { get; private set; }
-        public event Action Requested;
-
-        public void RequestTightReflow()
+        /// <summary>P2's sole owned prep write. P1 quantities were already committed before handoff.</summary>
+        internal InventoryCommitResult TryCommitPhase2Product(Phase2SceneEntry owner, PrepZoneItem product)
         {
-            RequestCount++;
-            var callback = Requested;
-            if (callback != null)
+            if (owner == null || !ReferenceEquals(Phase2Owner, owner) ||
+                !owner.IsReady || !ReferenceEquals(owner.KitchenInventory, this))
+                return InventoryCommitResult.Failure("P2 inventory owner is missing or stale.");
+            if (product == null || string.IsNullOrWhiteSpace(product.item_id) ||
+                string.IsNullOrWhiteSpace(product.instance_id) || product.quantity <= 0)
+                return InventoryCommitResult.Failure("P2 product identity and positive quantity are required.");
+            CK01ItemData definition; string diagnostic;
+            if (dataCatalog == null || !dataCatalog.TryGetItem(product.item_id, out definition, out diagnostic) ||
+                definition == null || !string.Equals(definition.item_kind, "product", StringComparison.Ordinal))
+                return InventoryCommitResult.Failure("P2 product T4 definition is missing or not a product: " + product.item_id);
+            if (!owner.TryReceiveProductFromInventory(this, product, out diagnostic))
+                return InventoryCommitResult.Failure(diagnostic);
+            // P2 prep ownership changes; P1 fridge quantities and Changed notifications do not.
+            return InventoryCommitResult.Success(0);
+        }
+        private void NotifyChanged()
+        {
+            var listeners = Changed;
+            if (listeners == null) return;
+            foreach (Action listener in listeners.GetInvocationList())
             {
-                callback();
+                try { listener(); }
+                catch (Exception exception) { Debug.LogError(exception.ToString()); }
             }
         }
     }

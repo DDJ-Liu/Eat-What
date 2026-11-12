@@ -22,7 +22,7 @@ internal static class TomatoAnimationProbe
  [MenuItem("Tools/Project Validation/Tomato Dual Path GPU %#F10")]
  public static void Run()
  {
-     var asset = AssetDatabase.LoadAssetAtPath<SkeletonDataAsset>("Assets/Scripts/Spine_Package/Avatars/Tomato/skeleton_SkeletonData.asset");
+     var asset = AssetDatabase.LoadAssetAtPath<SkeletonDataAsset>("Assets/Sprites/StreetView/LongLoop/Characters/Tomato/skeleton_SkeletonData.asset");
      if (asset == null || asset.GetSkeletonData(false).Version != "3.8.99")
          throw new InvalidOperationException("Requires the approved Tomato 3.8.99 fixture.");
      SceneValidationSession.Begin("tomato", null);
@@ -30,7 +30,7 @@ internal static class TomatoAnimationProbe
  static void Set(object instance,string name,object value){instance.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).SetValue(instance,value);}
  static CharacterEquipment Dress(GameObject go){var c=go.AddComponent<CharacterEquipment>();c.baseSkin="Tomato_Non";c.autoOptimize=false;c.equipmentSlots=new List<CharacterEquipment.EquipmentSlot>();foreach(var part in new[]{"Hair","Eyes","Ear","Mouth","TopCloth","BottomCloth","Shoes"})c.equipmentSlots.Add(new CharacterEquipment.EquipmentSlot(part,"Tomato_"+part+"_A"));return c;}
  static void Setup(){
-  var data=AssetDatabase.LoadAssetAtPath<SkeletonDataAsset>("Assets/Scripts/Spine_Package/Avatars/Tomato/skeleton_SkeletonData.asset");
+  var data=AssetDatabase.LoadAssetAtPath<SkeletonDataAsset>("Assets/Sprites/StreetView/LongLoop/Characters/Tomato/skeleton_SkeletonData.asset");
   var go=new GameObject("Tomato SkeletonAnimation - runtime only");go.SetActive(false);go.layer=30;actor=go.AddComponent<SkeletonAnimation>();actor.skeletonDataAsset=data;actor.initialSkinName="Tomato_Non";actor.Initialize(true);equipment=Dress(go);movement=go.AddComponent<HorizontalPlayerController>();Set(movement,"useProjectInputManagerFallback",false);Set(movement,"useKeyboardFallbackWhenInputManagerMissing",false);Set(movement,"spineAnimation",actor);Set(movement,"spineIdleAnimation","idle");Set(movement,"spineWalkAnimation","walk");movement.MoveSpeed=1;go.SetActive(true);
   var mg=new GameObject("Tomato SkeletonMecanim - runtime only");mg.SetActive(false);mg.layer=30;mg.transform.position=new Vector3(5,0,0);animator=mg.AddComponent<Animator>();var controller=new AnimatorController{name="MIG63 temporary in-memory controller",hideFlags=HideFlags.DontSave};owned.Add(controller);controller.AddLayer("Base Layer");controller.AddParameter("IsMoving",AnimatorControllerParameterType.Bool);var sm=controller.layers[0].stateMachine;owned.Add(sm);var timing=new GameObject("Timing");timing.transform.SetParent(mg.transform,false);
   foreach(var name in new[]{"idle","walk","kick"}){var clip=new AnimationClip{name=name,hideFlags=HideFlags.DontSave};owned.Add(clip);clip.SetCurve("Timing",typeof(Transform),"localPosition.x",AnimationCurve.Linear(0,0,data.GetSkeletonData(false).FindAnimation(name).Duration,0));var settings=AnimationUtility.GetAnimationClipSettings(clip);settings.loopTime=true;AnimationUtility.SetAnimationClipSettings(clip,settings);var state=sm.AddState(name);owned.Add(state);state.motion=clip;if(name=="idle")sm.defaultState=state;}

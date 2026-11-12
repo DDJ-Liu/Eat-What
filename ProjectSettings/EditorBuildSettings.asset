@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/LongLoop/Boot.unity
+    guid: edd552a86da4d7d43a4ea6ca41e71241
+  - enabled: 1
     path: Assets/Scenes/Cooking/ShortCycle_P0P1.unity
     guid: 7a0c3d3c3003f5449819f0e57a50a528
   - enabled: 1
@@ -14,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ShortCycle_P2.unity
     guid: 531735586aec56049b6591f91066d7fd
+  - enabled: 1
+    path: Assets/Scenes/LongLoop/LongLoop_Street.unity
+    guid: d057397b78714bc4e901b928e195a875
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

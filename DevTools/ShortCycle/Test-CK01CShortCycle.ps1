@@ -1,11 +1,55 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath, [switch]$CompileOnly)
+param([string]$UnityEditorPath, [switch]$CompileOnly, [string]$CoreAssemblyReportRoot)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$coreAssemblyOnly=$env:EATWHAT_CORE_ASSEMBLY_ONLY -eq '1'
 $jointProbeOnly=$env:EATWHAT_JOINT_PREREQUISITES_ONLY -eq '1'
 $validationHostOnly=$env:EATWHAT_VALIDATION_HOST_ONLY -eq '1' -or $jointProbeOnly
 $catalogFeedbackOnly=$env:EATWHAT_CATALOG_FEEDBACK_ONLY -eq '1'
+$reflowAdapterOnly=$env:EATWHAT_REFLOW_ADAPTER_TASK_ID -ceq 'AI-000341'
+if($env:EATWHAT_REFLOW_ADAPTER_TASK_ID -and -not $reflowAdapterOnly){throw 'Reflow adapter task identity mismatch.'}
+$toolkitCoreOnly=$env:EATWHAT_TOOLKIT_CORE_TASK_ID -ceq 'AI-000323'
+$gridOnly=$env:EATWHAT_GRID_TASK_ID -ceq 'AI-000398'
+if($env:EATWHAT_GRID_TASK_ID -and -not $gridOnly){throw 'GRID task identity mismatch.'}
+$stepIconOnly=$env:EATWHAT_STEP_ICON_TASK_ID -cin @('AI-000324','AI-000360')
+$trayOnly=$env:EATWHAT_TRAY_TASK_ID -ceq 'AI-000325'
+$trayRepairOnly=$env:EATWHAT_TRAY_REPAIR_TASK_ID -ceq 'AI-000326'
+$trayCancelOnly=$env:EATWHAT_TRAY_CANCEL_TASK_ID -ceq 'AI-000395'
+$clueOnly=$env:EATWHAT_CLUE_TASK_ID -ceq 'AI-000327'
+$clueRepairOnly=$env:EATWHAT_CLUE_REPAIR_TASK_ID -ceq 'AI-000328'
+$operationZoneOnly=$env:EATWHAT_OPERATION_ZONE_TASK_ID -ceq 'AI-000329'
+$productOnly=$env:EATWHAT_PRODUCT_TASK_ID -cin @('AI-000330','AI-000331')
+$productRepairOnly=$env:EATWHAT_PRODUCT_TASK_ID -ceq 'AI-000331'
+$p2PresentationOnly=$env:EATWHAT_PHASE2_PRESENTATION_TASK_ID -cin @('AI-000334','AI-000335','AI-000336','AI-000397')
+$p2LayerRepairOnly=$env:EATWHAT_PHASE2_PRESENTATION_TASK_ID -ceq 'AI-000397'
+$p2FinalRepairOnly=$env:EATWHAT_PHASE2_PRESENTATION_TASK_ID -ceq 'AI-000336'
+$p2ProbeRepairOnly=$env:EATWHAT_PHASE2_PRESENTATION_TASK_ID -ceq 'AI-000335'
+$mgOnly=($env:EATWHAT_MINIGAME_TASK_ID -cin @('AI-000332','AI-000333')) -or $p2PresentationOnly
+$mgRepairOnly=($env:EATWHAT_MINIGAME_TASK_ID -ceq 'AI-000333') -or $p2PresentationOnly
+if($gridOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or $trayCancelOnly -or $clueOnly -or $clueRepairOnly -or $operationZoneOnly -or $productOnly -or $mgOnly -or $reflowAdapterOnly)){throw 'GRID mode must be isolated.'}
+if($env:EATWHAT_TOOLKIT_CORE_TASK_ID -and -not $toolkitCoreOnly){throw 'Toolkit core task identity mismatch.'}
+if($toolkitCoreOnly -and ($validationHostOnly -or $catalogFeedbackOnly)){throw 'Toolkit core mode must be isolated.'}
+if($env:EATWHAT_STEP_ICON_TASK_ID -and -not $stepIconOnly -and -not $trayOnly -and -not $trayRepairOnly){throw 'Step icon task identity mismatch.'}
+if($stepIconOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly)){throw 'Step icon mode must be isolated.'}
+if($env:EATWHAT_TRAY_TASK_ID -and -not $trayOnly){throw 'Tray task identity mismatch.'}
+if($env:EATWHAT_TRAY_REPAIR_TASK_ID -and -not $trayRepairOnly){throw 'Tray repair task identity mismatch.'}
+if($env:EATWHAT_TRAY_CANCEL_TASK_ID -and -not $trayCancelOnly){throw 'Tray cancel task identity mismatch.'}
+if($env:EATWHAT_CLUE_TASK_ID -and -not $clueOnly){throw 'Clue task identity mismatch.'}
+if($env:EATWHAT_CLUE_REPAIR_TASK_ID -and -not $clueRepairOnly){throw 'Clue repair task identity mismatch.'}
+if($env:EATWHAT_OPERATION_ZONE_TASK_ID -and -not $operationZoneOnly){throw 'Operation zone task identity mismatch.'}
+if($env:EATWHAT_PRODUCT_TASK_ID -and -not $productOnly){throw 'Product task identity mismatch.'}
+if($env:EATWHAT_MINIGAME_TASK_ID -and $env:EATWHAT_MINIGAME_TASK_ID -cnotin @('AI-000332','AI-000333')){throw 'Mini-game task identity mismatch.'}
+if($env:EATWHAT_PHASE2_PRESENTATION_TASK_ID -and -not $p2PresentationOnly){throw 'P2 presentation task identity mismatch.'}
+if($p2PresentationOnly -and $env:EATWHAT_MINIGAME_TASK_ID){throw 'P2 presentation and mini-game modes must be isolated.'}
+if($mgOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or $clueOnly -or $clueRepairOnly -or $operationZoneOnly -or $productOnly)){throw 'Mini-game mode must be isolated.'}
+if($productOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or $clueOnly -or $clueRepairOnly -or $operationZoneOnly)){throw 'Product mode must be isolated.'}
+if($reflowAdapterOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or $clueOnly -or $clueRepairOnly -or $operationZoneOnly -or $productOnly -or $mgOnly)){throw 'Reflow adapter mode must be isolated.'}
+if($operationZoneOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or $clueOnly -or $clueRepairOnly)){throw 'Operation zone mode must be isolated.'}
+if(($clueOnly -or $clueRepairOnly) -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or ($clueOnly -and $clueRepairOnly))){throw 'Clue mode must be isolated.'}
+if($trayRepairOnly -and ($trayOnly -or $validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly)){throw 'Tray repair mode must be isolated.'}
+if($trayOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly)){throw 'Tray mode must be isolated.'}
+if($trayCancelOnly -and ($validationHostOnly -or $catalogFeedbackOnly -or $toolkitCoreOnly -or $stepIconOnly -or $trayOnly -or $trayRepairOnly -or $clueOnly -or $clueRepairOnly -or $operationZoneOnly -or $productOnly -or $mgOnly -or $reflowAdapterOnly)){throw 'Tray cancel mode must be isolated.'}
 function Resolve-MigratedSource {
     param([string]$Before, [string]$After)
     $matches = @(@($Before, $After) | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
@@ -16,6 +60,12 @@ function Resolve-MigratedSource {
 $builderPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\ShortCycleSceneBuilder.cs'
 $inputAdapterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleMouseActionBinding.cs'
 $layerStackPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleInteractionLayerStack.cs'
+if($env:EATWHAT_PHASE2_STACK_SOURCE_OVERRIDE){
+    $before=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000397/snapshots/before/ShortCycleInteractionLayerStack.cs'))
+    if(-not $p2LayerRepairOnly -or [IO.Path]::GetFullPath($env:EATWHAT_PHASE2_STACK_SOURCE_OVERRIDE) -cne $before -or
+        -not (Test-Path -LiteralPath $before -PathType Leaf)){throw 'AI397 old-source snapshot override only.'}
+    $layerStackPath=$before
+}
 $presenterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleScenePresenter.cs'
 $stateMachinePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleStateMachine.cs'
 $trayStateMachinePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleTrayStateMachine.cs'
@@ -162,7 +212,12 @@ $globalInputManagerSource = Get-Content -Raw -LiteralPath $globalInputManagerPat
 $inputActionsSource = Get-Content -Raw -LiteralPath $inputActionsPath
 $inputActionsMetaSource = Get-Content -Raw -LiteralPath $inputActionsMetaPath
 $shortCycleRoot = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle'
-$shortCycleCompilePaths = @(Get-ChildItem -LiteralPath $shortCycleRoot -Filter '*.cs' -File -Recurse | Select-Object -ExpandProperty FullName)
+$coreSourceRoot = Join-Path $shortCycleRoot 'Core'
+$coreSourcePaths = @(Get-ChildItem -LiteralPath $coreSourceRoot -Filter '*.cs' -File -Recurse | Select-Object -ExpandProperty FullName)
+$shortCycleCompilePaths = @(Get-ChildItem -LiteralPath $shortCycleRoot -Filter '*.cs' -File -Recurse |
+    Where-Object { -not $_.FullName.StartsWith($coreSourceRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) } |
+    Select-Object -ExpandProperty FullName)
+if(-not $mgOnly){$shortCycleCompilePaths=@($shortCycleCompilePaths|Where-Object{$_ -notmatch '[\\/](CountdownStubMiniGame|ShortCycleWaitingProcess)\.cs$'})}
 $transitionCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Assets\Scripts\Tools\Transition') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
 $layoutCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Assets\Scripts\Tools\Layout') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
 $shortCycleProductionSource = ($shortCycleCompilePaths |
@@ -170,7 +225,7 @@ $shortCycleProductionSource = ($shortCycleCompilePaths |
 $shortCycleCoreSource = @(Get-ChildItem -LiteralPath (Join-Path $shortCycleRoot 'Core') -Filter '*.cs' -File -Recurse |
     ForEach-Object { Get-Content -Raw -LiteralPath $_.FullName }) -join "`n"
 
-if(-not $validationHostOnly -and -not $catalogFeedbackOnly){
+if(-not $coreAssemblyOnly -and -not $validationHostOnly -and -not $catalogFeedbackOnly -and -not $toolkitCoreOnly -and -not $gridOnly -and -not $stepIconOnly -and -not $trayOnly -and -not $trayRepairOnly -and -not $trayCancelOnly -and -not $clueOnly -and -not $clueRepairOnly -and -not $operationZoneOnly -and -not $productOnly -and -not $mgOnly -and -not $reflowAdapterOnly){
 Assert-SourceContains $cameraViewportAnchorSource 'DefaultExecutionOrder\(10000\)' `
     'Viewport anchors must update after camera-pan coroutines in LateUpdate.'
 Assert-SourceContains $cameraViewportAnchorSource '(?s)targetCamera.*anchoredRoot.*viewportAnchor.*inwardViewportInset.*preserveInitialWorldZ.*worldPlaneZ' `
@@ -495,9 +550,9 @@ Assert-SourceContains $directorSource 'interactionLayerStack\.Push\s*\(' `
     'PresentationDirector EnterSpace/PushModal must push explicit project interaction layers.'
 Assert-SourceContains $directorSource 'interactionLayerStack\.Pop\s*\(' `
     'PresentationDirector LeaveSpace/PopModal must pop explicit project interaction layers.'
-Assert-SourceContains $sessionManagerSource 'fridgeBinder\.Bind\s*\(' `
+Assert-SourceContains $sessionManagerSource '(?s)RunBeginSessionSequence\s*\(.*?\(\)\s*=>\s*BindFridge\s*\(\)' `
     'SessionManager BeginSession must bind fridge content before entering the FSM.'
-Assert-SourceContains $sessionManagerSource 'clueBoardBinder\.Bind\s*\(' `
+Assert-SourceContains $sessionManagerSource '(?s)RunBeginSessionSequence\s*\(.*?\(\)\s*=>\s*BindClueBoard\s*\(' `
     'SessionManager BeginSession must bind clue-board content before entering the FSM.'
 Assert-SourceContains $sessionManagerSource 'LocalizedText\.RefreshAll\s*\(' `
     'SessionManager BeginSession must refresh localization after both Binder calls.'
@@ -814,7 +869,7 @@ foreach ($requiredUnityPath in @($unityEngineFacadePath, $unityCoreModulePath, $
         throw "Required Unity $unityVersion verification dependency is missing: $requiredUnityPath"
     }
 }
-if(-not $validationHostOnly -and -not $catalogFeedbackOnly){
+if(-not $coreAssemblyOnly -and -not $validationHostOnly -and -not $catalogFeedbackOnly -and -not $toolkitCoreOnly -and -not $gridOnly -and -not $stepIconOnly -and -not $trayOnly -and -not $trayRepairOnly -and -not $trayCancelOnly -and -not $clueOnly -and -not $clueRepairOnly -and -not $operationZoneOnly -and -not $productOnly -and -not $mgOnly -and -not $reflowAdapterOnly){
 $cameraFrameCompileRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('EatWhat-CameraFrameGizmo-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $cameraFrameCompileRoot | Out-Null
 try {
@@ -849,6 +904,10 @@ finally {
 }
 $sourcePaths = @(
     $unityStubsPath,
+    (Join-Path $repoRoot 'Assets/Scripts/Tools/TagFilter.cs'),
+    (Join-Path $repoRoot 'Assets/Scripts/Tools/TidyLayout.cs'),
+    (Join-Path $repoRoot 'Assets/Scripts/Tools/StackedIcon.cs'),
+    (Join-Path $repoRoot 'Assets/Scripts/Tools/PlaceholderRule.cs'),
     $outlinePath,
     $outlineGroupPath,
     $outlineDefaultsPath,
@@ -873,7 +932,9 @@ $sourcePaths = @(
     (Join-Path $repoRoot "Assets/Scripts/DataBase/CookingData/Phase2DataViews.cs"),
     (Join-Path $repoRoot "Assets/Editor/DataTables/DataTableValidationCore.cs"),
     (Join-Path $PSScriptRoot "ShortCycleRecipeBookTests.cs"),
+    (Join-Path $PSScriptRoot "ToolkitCoreTests.cs"),
     (Join-Path $PSScriptRoot "ShortCyclePhase2Tests.cs"),
+    (Join-Path $PSScriptRoot "ShortCycleTrayTests.cs"),
     (Join-Path $PSScriptRoot "ShortCyclePersistenceTests.cs"),
     (Join-Path $PSScriptRoot "ShortCycleIsolationAndTextTests.cs"),
     (Join-Path $PSScriptRoot "ShortCyclePhase2TransitionTests.cs"),
@@ -888,14 +949,265 @@ $sourcePaths = @(
     Get-ChildItem -LiteralPath (Join-Path $repoRoot "Assets/Scripts/Tools/Security"),(Join-Path $repoRoot "Assets/Scripts/Tools/Persistence") -Filter "*.cs" -File | Select-Object -ExpandProperty FullName
 )
 
+if($clueOnly -or $clueRepairOnly){$sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleClueBoardTests.cs')}
 $jsonPackage=@(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
 if($jsonPackage.Count -ne 1){throw 'Expected exactly one installed JSON package.'}
 $jsonReference=Join-Path $jsonPackage[0].FullName 'Runtime/Newtonsoft.Json.dll'
 Add-Type -Path $jsonReference
-$hostReferences=@(Get-ChildItem -LiteralPath (Join-Path $PSHOME 'ref') -File -Filter '*.dll'|ForEach-Object FullName)+@($jsonReference)
+$bclReferences=@(Get-ChildItem -LiteralPath (Join-Path $PSHOME 'ref') -File -Filter '*.dll'|ForEach-Object FullName)
+$hostReferences=$bclReferences+@($jsonReference)
+$coreAssemblyReportRoot=if($CoreAssemblyReportRoot){[IO.Path]::GetFullPath($CoreAssemblyReportRoot)}else{Join-Path ([IO.Path]::GetTempPath()) ('EatWhat-ShortCycleCore-'+[guid]::NewGuid().ToString('N'))}
+[void][IO.Directory]::CreateDirectory($coreAssemblyReportRoot)
+$shortCycleCoreDll=Join-Path $coreAssemblyReportRoot 'ShortCycle.Core.offline.dll'
+$shortCycleCoreTestsDll=Join-Path $coreAssemblyReportRoot 'ShortCycle.Core.Tests.offline.dll'
+if(Test-Path -LiteralPath $shortCycleCoreDll){throw 'Core assembly output already exists; use a fresh report directory.'}
+if(Test-Path -LiteralPath $shortCycleCoreTestsDll){throw 'Core test assembly output already exists; use a fresh report directory.'}
+# These two assemblies are deliberately built without Unity stubs or other project sources.
+Add-Type -Path $coreSourcePaths -ReferencedAssemblies $bclReferences -OutputAssembly $shortCycleCoreDll
+Add-Type -Path $shortCycleCoreDll
+Add-Type -Path (Join-Path $PSScriptRoot 'ShortCycleCoreAssemblyTests.cs') -ReferencedAssemblies ($bclReferences+@($shortCycleCoreDll)) -OutputAssembly $shortCycleCoreTestsDll
+Add-Type -Path $shortCycleCoreTestsDll
+$coreAssemblyResult=if($CompileOnly){0}else{[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreAssemblyTests]::Run()}
+$coreResultPath=Join-Path $coreAssemblyReportRoot 'core-tests.json'
+if(Test-Path -LiteralPath $coreResultPath){throw 'Core result already exists; use a fresh report directory.'}
+$coreResult=@{success=$true;testCases=$coreAssemblyResult;compiledOnly=[bool]$CompileOnly;
+    coreAssemblySha256=(Get-FileHash -LiteralPath $shortCycleCoreDll -Algorithm SHA256).Hash;
+    testsAssemblySha256=(Get-FileHash -LiteralPath $shortCycleCoreTestsDll -Algorithm SHA256).Hash;
+    coreReferences=@([Reflection.Assembly]::LoadFrom($shortCycleCoreDll).GetReferencedAssemblies()|ForEach-Object Name);
+    testsReferences=@([Reflection.Assembly]::LoadFrom($shortCycleCoreTestsDll).GetReferencedAssemblies()|ForEach-Object Name)}|ConvertTo-Json -Depth 5
+$coreResultBytes=[Text.UTF8Encoding]::new($false).GetBytes($coreResult)
+$coreResultStream=[IO.FileStream]::new($coreResultPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
+try{$coreResultStream.Write($coreResultBytes,0,$coreResultBytes.Length)}finally{$coreResultStream.Dispose()}
+$hostReferences+=@($shortCycleCoreDll)
 $sourcePaths+=@(Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')
 $sourcePaths+=@('ICatalogSource.cs','ScriptableObjectSource.cs','EncryptedBlobSource.cs','CatalogBlobSerializer.cs','Build/CatalogBuildFingerprint.g.cs'|ForEach-Object{Join-Path $repoRoot ("Assets/Scripts/DataBase/CookingData/"+$_)})
-Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences
+if($mgOnly){
+    $mgTaskId=if($p2PresentationOnly){$env:EATWHAT_PHASE2_PRESENTATION_TASK_ID}else{$env:EATWHAT_MINIGAME_TASK_ID}
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot ('.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/'+$mgTaskId)))
+    $mgReport=[IO.Path]::GetFullPath($(if($p2PresentationOnly){$env:EATWHAT_PHASE2_PRESENTATION_REPORT_ROOT}else{$env:EATWHAT_MINIGAME_REPORT_ROOT}))
+    if(-not $mgReport.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Current mini-game task report root required.'}
+    [void][IO.Directory]::CreateDirectory($mgReport)
+    $coreDll=Join-Path $mgReport 'MiniGames.Core.offline.dll'
+    if(Test-Path -LiteralPath $coreDll){Remove-Item -LiteralPath $coreDll -Force}
+    $corePaths=@((Join-Path $repoRoot 'Assets/Scripts/MiniGames/Core/IMiniGame.cs'),(Join-Path $repoRoot 'Assets/Scripts/MiniGames/Core/MiniGameHost.cs'))
+    Add-Type -Path $corePaths -ReferencedAssemblies $hostReferences -OutputAssembly $coreDll
+    Add-Type -Path $coreDll
+    $hostReferences+=@($coreDll)
+    $sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleMiniGameTests.cs')
+    if($p2PresentationOnly){$sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCyclePhase2PresentationTests.cs')}
+}
+if($mgOnly){
+    $shortDll=Join-Path $mgReport 'ShortCycle.offline.dll'
+    if(Test-Path -LiteralPath $shortDll){Remove-Item -LiteralPath $shortDll -Force}
+    Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences -OutputAssembly $shortDll
+    Add-Type -Path $shortDll
+}else{Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences}
+if($coreAssemblyOnly){
+    if($CompileOnly){@{action='CORE_ASSEMBLY_COMPILED';coreSourceCount=$coreSourcePaths.Count;integrationSourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $coreIntegration=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $phase2Integration=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $zoneIntegration=[ShortCyclePhase2Tests]::RunOperationZone()
+    $namesIntegration=[ShortCyclePhase2Tests]::RunProductNames()
+    @{success=$true;coreAssemblyTests=$coreAssemblyResult;coreAssembly=$shortCycleCoreDll;
+        coreTestsAssembly=$shortCycleCoreTestsDll;coreSourceCount=$coreSourcePaths.Count;
+        integrationSourceCount=$sourcePaths.Count;coreIntegration=$coreIntegration;
+        phase2Integration=$phase2Integration;zoneIntegration=$zoneIntegration;namesIntegration=$namesIntegration;
+        nativeInvocations=0}|ConvertTo-Json -Depth 6;return
+}
+if($gridOnly){
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000398'))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_GRID_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'Current AI398 GRID report root required.'
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='GRID_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $result=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::RunGridDisplay()
+    $value=@{taskId='AI-000398';success=$true;result=$result;sourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Actual FridgeSlot/StackedIcon and Session/TagFilter/Binder source under Unity stubs; Editor scene wiring, physical input and visual acceptance remain ENGINE.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 5),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 5;return
+}
+if($reflowAdapterOnly){
+    $report=Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000341/validation'
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='REFLOW_ADAPTER_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $result=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::RunInventoryReflowAdapter()
+    $value=@{taskId='AI-000341';success=$true;result=$result;sourceCount=$sourcePaths.Count;nativeInvocations=0;boundary='Current source under .NET Unity stubs; no Editor MonoScript or scene identity claim.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 5),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 5;return
+}
+if($mgOnly){
+    if($CompileOnly){@{action=$(if($p2PresentationOnly){'P2_PRESENTATION_COMPILED'}else{'MINIGAME_COMPILED'});coreSourceCount=2;shortCycleSourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    if($p2LayerRepairOnly){
+        [ShortCyclePhase2PresentationTests]::PrepareTableFixture()
+        $value=@{taskId=$mgTaskId;success=$true;layerLifecycle=[ShortCyclePhase2PresentationTests]::RunLayerLifecycleCases();layerCases=@([ShortCyclePhase2PresentationTests]::LayerLifecycleCases);presentation=[ShortCyclePhase2PresentationTests]::Run($repoRoot);presentationCases=@([ShortCyclePhase2PresentationTests]::Cases);probe=[ShortCyclePhase2PresentationTests]::RunProbeCases($repoRoot);probeCases=@([ShortCyclePhase2PresentationTests]::ProbeCases);finalCallback=[ShortCyclePhase2PresentationTests]::RunFinalCallbackCases($repoRoot);finalCallbackCases=@([ShortCyclePhase2PresentationTests]::FinalCallbackCases);shortCycleSourceCount=$sourcePaths.Count;nativeInvocations=0;boundary='Current production Stack with actual-style MouseInteractionLayer global stack stub; no Unity Editor, scene, Play, rendering or native lifecycle.'}
+        [IO.File]::WriteAllText((Join-Path $mgReport 'result.json'),($value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))
+        $value|ConvertTo-Json -Depth 6;return
+    }
+    $transition=[ShortCyclePhase2TransitionTests]::Run((Join-Path $mgReport 'transition'),$repoRoot)
+    $phase2=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $integration=[ShortCyclePhase2TransitionTests]::RunProductionIntegration($repoRoot)
+    $reentrancy=[ShortCyclePhase2TransitionTests]::RunProductionReentrancy($repoRoot)
+    $core=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $zone=[ShortCyclePhase2Tests]::RunOperationZone()
+    $names=[ShortCyclePhase2Tests]::RunProductNames()
+    $mg=[ShortCycleMiniGameTests]::Run($repoRoot)
+    $originalMgCases=@([ShortCycleMiniGameTests]::Cases)
+    $opening=if($mgRepairOnly){[ShortCycleMiniGameTests]::RunOpeningLifecycle()}else{$null}
+    $value=@{taskId=$mgTaskId;success=$true;miniGame=$mg;miniGameCases=$originalMgCases;transition=$transition;phase2=$phase2;production=$integration;reentrancy=$reentrancy;core=$core;zone=$zone;names=$names;productionCases=@([ShortCyclePhase2TransitionTests]::ProductionCases);reentrancyCases=@([ShortCyclePhase2TransitionTests]::ReentrancyCases);nameCases=@([ShortCyclePhase2Tests]::ProductNameCases);coreSourceCount=2;shortCycleSourceCount=$sourcePaths.Count;nativeInvocations=0;boundary='Current T11 catalog and C11 source under .NET Unity stubs; no Unity Editor, scene or native timing.'}
+    if($mgRepairOnly){$value.openingLifecycle=$opening;$value.openingCases=@([ShortCycleMiniGameTests]::OpeningCases)}
+    if($p2PresentationOnly){$value.presentation=[ShortCyclePhase2PresentationTests]::Run($repoRoot);$value.presentationCases=@([ShortCyclePhase2PresentationTests]::Cases);$value.boundary='P2 Director/Space/Set/LayerStack and current T14 via stub host; no Unity Editor, scene, Play, visual or native invocation.'}
+    if($p2ProbeRepairOnly){$value.probe=[ShortCyclePhase2PresentationTests]::RunProbeCases($repoRoot);$value.probeCases=@([ShortCyclePhase2PresentationTests]::ProbeCases)}
+    if($p2FinalRepairOnly){$value.probe=[ShortCyclePhase2PresentationTests]::RunProbeCases($repoRoot);$value.probeCases=@([ShortCyclePhase2PresentationTests]::ProbeCases);$value.finalCallback=[ShortCyclePhase2PresentationTests]::RunFinalCallbackCases($repoRoot);$value.finalCallbackCases=@([ShortCyclePhase2PresentationTests]::FinalCallbackCases)}
+    [IO.File]::WriteAllText((Join-Path $mgReport 'result.json'),($value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($productOnly){
+    $taskId=$env:EATWHAT_PRODUCT_TASK_ID
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot ('.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/'+$taskId)))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_PRODUCT_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw ('Current '+$taskId+' product report root required.')
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='PRODUCT_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $transitionResult=[ShortCyclePhase2TransitionTests]::Run((Join-Path $report 'transition'),$repoRoot)
+    $phase2Result=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $integrationResult=[ShortCyclePhase2TransitionTests]::RunProductionIntegration($repoRoot)
+    $repairResult=if($productRepairOnly){[ShortCyclePhase2TransitionTests]::RunProductionReentrancy($repoRoot)}else{$null}
+    $coreResult=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $zoneResult=[ShortCyclePhase2Tests]::RunOperationZone()
+    $namesResult=[ShortCyclePhase2Tests]::RunProductNames()
+    $value=@{taskId=$taskId;success=$true;core=$coreResult;phase2=$phase2Result;zone=$zoneResult;
+        names=$namesResult;transition=$transitionResult;integration=$integrationResult;
+        nameCases=@([ShortCyclePhase2Tests]::ProductNameCases);
+        productionCases=@([ShortCyclePhase2TransitionTests]::ProductionCases);
+        phase2Cases=@([ShortCyclePhase2Tests]::PassedCases);
+        transitionCases=@([ShortCyclePhase2TransitionTests]::PassedCases);
+        compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Actual InventoryManager, Phase2SceneEntry, matcher and StepProgress with current CSV catalog; Unity stubs only, no Editor/scene execution.'}
+    if($productRepairOnly){$value.reentrancy=$repairResult;$value.reentrancyCases=@([ShortCyclePhase2TransitionTests]::ReentrancyCases)}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($operationZoneOnly){
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000329'))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_OPERATION_ZONE_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'Current AI329 operation zone report root required.'
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='OPERATION_ZONE_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $coreResult=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $phase2Result=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $zoneResult=[ShortCyclePhase2Tests]::RunOperationZone()
+    $value=@{taskId='AI-000329';success=$true;core=$coreResult;phase2=$phase2Result;operationZone=$zoneResult;
+        operationZoneCases=@([ShortCyclePhase2Tests]::OperationZoneCases);phase2Cases=@([ShortCyclePhase2Tests]::PassedCases);
+        compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Current production Core and generated views compiled with Unity stubs; actual OperationZoneSession plus original Core/P2 tests. No Editor or scene execution.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($clueRepairOnly){
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000328'))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_CLUE_REPAIR_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'Current AI328 clue repair report root required.'
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='CLUE_REPAIR_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $clueResult=[ShortCycleClueBoardTests]::Run($repoRoot)
+    $visibilityResult=[ShortCycleClueBoardTests]::RunVisibility($repoRoot)
+    $coreResult=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $trayResult=[ShortCycleTrayTests]::Run()
+    $phase2Result=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $recipeBookResult=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    $value=@{taskId='AI-000328';success=$true;clue=$clueResult;visibility=$visibilityResult;
+        core=$coreResult;tray=$trayResult;phase2=$phase2Result;dt1a=$recipeBookResult;
+        compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Actual current CSV, RendererHidden Set and Binder/Inventory composition with Unity stubs; existing Clue/Core/Tray/P2/D-T regression. Native Editor and scene execution remain ENGINE.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($clueOnly){
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000327'))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_CLUE_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'Current AI327 clue report root required.'
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='CLUE_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $clueResult=[ShortCycleClueBoardTests]::Run($repoRoot)
+    $coreResult=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $trayResult=[ShortCycleTrayTests]::Run()
+    $phase2Result=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $recipeBookResult=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    $value=@{taskId='AI-000327';success=$true;clue=$clueResult;core=$coreResult;tray=$trayResult;phase2=$phase2Result;dt1a=$recipeBookResult;
+        compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Actual current CSV and production Binder/Inventory with Unity stubs; existing Core/Tray/P2/D-T1a regression. Native Editor and serialized scene wiring remain ENGINE.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($trayOnly -or $trayRepairOnly -or $trayCancelOnly){
+    $trayTaskId=if($trayCancelOnly){'AI-000395'}elseif($trayRepairOnly){'AI-000326'}else{'AI-000325'}
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot ('.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/'+$trayTaskId)))
+    $report=[IO.Path]::GetFullPath($(if($trayCancelOnly){$env:EATWHAT_TRAY_CANCEL_REPORT_ROOT}elseif($trayRepairOnly){$env:EATWHAT_TRAY_REPAIR_REPORT_ROOT}else{$env:EATWHAT_TRAY_REPORT_ROOT}))
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw ('Current '+$trayTaskId+' tray report root required.')
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action=$(if($trayCancelOnly){'TRAY_CANCEL_COMPILED'}else{'TRAY_COMPILED'});sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $trayResult=[ShortCycleTrayTests]::Run()
+    if($trayCancelOnly){
+        $value=@{taskId=$trayTaskId;success=$true;tray=$trayResult;compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;boundary='Current production Binding through the existing Tray tests and Unity stubs; coroutine/rendering and serialized event wiring still require ENGINE.'}
+        [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
+        $value|ConvertTo-Json -Depth 6;return
+    }
+    $coreResult=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $phase2Result=[ShortCyclePhase2Tests]::Run($repoRoot)
+    $recipeBookResult=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    $value=@{taskId=$trayTaskId;success=$true;tray=$trayResult;core=$coreResult;phase2=$phase2Result;dt1a=$recipeBookResult;
+        compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Current production source compiled with Unity stubs; targeted Phase1 tray and existing Core/Phase2/D-T1a groups. Native Editor and scene execution remain TRAY-02.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($stepIconOnly){
+    $stepIconTaskId=$env:EATWHAT_STEP_ICON_TASK_ID
+    $taskOutput=if($stepIconTaskId -ceq 'AI-000360'){'.ai-workspace/outputs/AI339-SIMPLIFY-20261026/AI-000360'}else{'.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000324'}
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot $taskOutput))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_STEP_ICON_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'Current step icon task report root required.'
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='STEP_ICON_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $stepIconResult=[ShortCycleRecipeBookTests]::RunStepIconFeedback()
+    $stepIconCases=@([ShortCycleRecipeBookTests]::StepIconCases)
+    $recipeBookResult=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    $value=@{taskId=$stepIconTaskId;success=$true;stepIcons=$stepIconResult;stepIconCases=$stepIconCases;
+        dt1a=$recipeBookResult;compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Actual current production source compiled with Unity stubs; targeted StepDetail icon transitions and existing D-T1a RecipeBook runner only. Unity Editor/scene execution not performed.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
+if($toolkitCoreOnly){
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000323'))
+    $report=[IO.Path]::GetFullPath($env:EATWHAT_TOOLKIT_CORE_REPORT_ROOT)
+    if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'Current AI323 toolkit report root required.'
+    }
+    [void][IO.Directory]::CreateDirectory($report)
+    if($CompileOnly){@{action='TOOLKIT_CORE_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $toolkitResult=[ToolkitCoreTests]::Run($repoRoot)
+    $recipeBookResult=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    $value=@{taskId='AI-000323';success=$true;toolkit=$toolkitResult;toolkitCases=@([ToolkitCoreTests]::Cases);
+        dt1a=$recipeBookResult;compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
+        boundary='Actual current production/tool source compiled with Unity stubs; TK-01 behavior and existing D-T1a RecipeBook runner only. Unity Editor/scene execution not performed.'}
+    [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+    $value|ConvertTo-Json -Depth 6;return
+}
 if($catalogFeedbackOnly){
     if($env:EATWHAT_CATALOG_FEEDBACK_TASK_ID -cne 'AI-000319'){throw 'Catalog feedback branch is bound to AI-000319.'}
     $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/AC-HUMAN-FEEDBACK-20261023/AI-000319'))
@@ -991,6 +1303,7 @@ if($validationHostOnly){
     $authoring=Compile-ValidationApi 'Validation.EditorRuntime' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'UNITY_EDITOR'
     $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($toolkit,$catalogAssembly,$authoring)) 'UNITY_EDITOR'
     $value=@{taskId=$validationTaskId;success=$true;behavior=$behavior;cases=$hostCases;playerDataBehavior=$playerDataBehavior;playerDataCases=$playerDataCases;baselineSha256=$baselineSha;hostSources=$sourcePaths.Count;isolatedRunPrefix=$run;defaultPathReads=[UnityEngine.Application]::PersistentPathReads;compiled=@($toolkit,$player,$dev,$authoring,$launcher);catalogDependency=@{path=$catalogAssembly;sha256=(Get-FileHash -LiteralPath $catalogAssembly -Algorithm SHA256).Hash};nativeInvocations=0;apiBoundary='Real Unity6000.3.24f1 Engine/Editor DLLs and installed Catalog assembly; project declaration shim only for API compilation. Behavioral fixtures execute actual current Session/Catalog/host source. No native lifecycle claim.'}
+    if($productRepairOnly){$value.reentrancy=$repairResult;$value.reentrancyCases=@([ShortCyclePhase2TransitionTests]::ReentrancyCases)}
     [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))
     $value|ConvertTo-Json -Depth 6;return
 }
@@ -1027,6 +1340,9 @@ foreach($chain in $expectedChains){
     actualPostTeardownProbeRuns = [ShortCyclePhase2TransitionTests]::ProbeRuns
     isolationRoot = $isolationRoot
     result = $result
+    coreAssemblyTests = $coreAssemblyResult
+    coreAssembly = $shortCycleCoreDll
+    coreTestsAssembly = $shortCycleCoreTestsDll
     recipeBook = $recipeBookResult
     phase2 = $phase2Result
     persistenceRuntime = $saveRuntimeResult

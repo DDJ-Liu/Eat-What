@@ -1,0 +1,55 @@
+$ErrorActionPreference='Stop'
+$out=[IO.Path]::GetFullPath($PSScriptRoot).Replace('\','/')
+if($out -cne 'D:/GameProject/Eat-What/.ai-workspace/outputs/PLAYABLE-DEMO011-20261104/AI-000435/attempt3' -or -not[IO.Directory]::Exists($out)){throw 'Exact attempt3 output root required before any write'}
+$taskRoot=$out
+$ps7='C:/Users/DDJ/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
+$utf=[Text.UTF8Encoding]::new($false)
+$ex='eefb38808cc54249be7710ea10d8a256'
+if($ex -cnotmatch '^[0-9a-f]{32}$'){throw 'Bind actual claim before loading helper'}
+$owner='01a14087-d8ea-7561-b9b5-260798096a19'
+function ReadJ($p){
+ $p=[IO.Path]::GetFullPath($p)
+ if(-not[IO.File]::Exists($p)-and[IO.File]::Exists($p+'.gz')){$f=[IO.File]::OpenRead($p+'.gz');try{$g=[IO.Compression.GZipStream]::new($f,[IO.Compression.CompressionMode]::Decompress);$r=[IO.StreamReader]::new($g,[Text.UTF8Encoding]::new($false,$true));$txt=$r.ReadToEnd();$r.Dispose()}finally{$f.Dispose()}}else{$txt=[IO.File]::ReadAllText($p)}
+ $txt|ConvertFrom-Json -AsHashtable -DateKind String
+}
+function SaveJ($p,$v){
+ $txt=ConvertTo-Json -InputObject $v -Depth 90
+ if([IO.Path]::GetFileName($p)-in@('console-before-result.json','console-after-result.json')){
+  $b=$utf.GetBytes($txt);$f=[IO.File]::Open($p+'.gz',[IO.FileMode]::CreateNew);try{$g=[IO.Compression.GZipStream]::new($f,[IO.Compression.CompressionMode]::Compress);$g.Write($b);$g.Dispose()}finally{$f.Dispose()}
+  $map=@{format='gzip-json-utf8-lossless';rawBytes=$b.Length;rawSha256=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($b));compressedSha256=(Get-FileHash -LiteralPath ($p+'.gz')).Hash}
+  [IO.File]::WriteAllText($p+'.map.json',(ConvertTo-Json -InputObject $map),$utf)
+ }else{$file=[IO.File]::Open($p,[IO.FileMode]::CreateNew);try{$bytes=$utf.GetBytes($txt);$file.Write($bytes)}finally{$file.Dispose()}}
+}
+function Need($v,$m){if(-not$v){throw $m}}
+function ReadCli($p){
+ $txt=[IO.File]::ReadAllText($p,[Text.UTF8Encoding]::new($false,$true));$doc=[Text.Json.JsonDocument]::Parse($txt)
+ function NoDuplicate($el){if($el.ValueKind-eq[Text.Json.JsonValueKind]::Object){$set=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);foreach($pr in $el.EnumerateObject()){Need ($set.Add($pr.Name)) 'Duplicate JSON key';NoDuplicate $pr.Value}}elseif($el.ValueKind-eq[Text.Json.JsonValueKind]::Array){foreach($x in $el.EnumerateArray()){NoDuplicate $x}}}
+ try{Need ($doc.RootElement.ValueKind-eq[Text.Json.JsonValueKind]::Object) 'CLI root must be object';NoDuplicate $doc.RootElement}finally{$doc.Dispose()}
+ $txt|ConvertFrom-Json -AsHashtable -DateKind String
+}
+function Checkpoint($scope,$name){
+ $raw=& ./.ai-workspace/queue.ps1 -Action SupervisionCheckpoint -Pipeline ENGINE_CLI -TaskId AI-000435 -OwnerThreadId $owner -ExecutionId $ex -Scope ($scope|ConvertTo-Json -Compress -Depth 10)
+ $txt=$raw|Out-String;[IO.File]::WriteAllText("$out/$name.json",$txt,$utf);Need (($txt|ConvertFrom-Json -AsHashtable).action -ceq 'CONTINUE') 'Checkpoint not CONTINUE'
+}
+
+function AssertCompiled([string]$name){
+ $proof=ReadJ "$out/$name-offline-compile.json";$file="$out/$name.eval.cs"
+ Need ($proof.exitCode-eq0-and$proof.payloadSha256-ceq(Get-FileHash -LiteralPath $file).Hash) 'Exact successful offline compile required; native blocked'
+ Need ($proof.sdkSha256-ceq(Get-FileHash -LiteralPath 'Library/PackageCache/com.unity.pipeline@62c08c808737/Runtime/Compilation/EvalCodeCompiler.cs').Hash) 'SDK changed after compile'
+}
+
+
+function EnsureLiveLease {
+ $w=(ReadJ '.ai-workspace/runtime/worker-state.json').workers.ENGINE_CLI;$m=ReadJ '.ai-workspace/runtime/mode-state.json'
+ Need ($w.activeExecutionId-ceq$ex-and[DateTimeOffset]::Parse($w.leaseUntil)-gt[DateTimeOffset]::Now-and$m.mode-ceq'SUPERVISED'-and$m.supervised.status-ceq'ACTIVE'-and-not$m.supervised.stopRequested-and-not$m.supervised.exitRequested) 'Actual live lease and active mode'
+ if(([DateTimeOffset]::Parse($w.leaseUntil)-[DateTimeOffset]::Now).TotalMinutes-lt15){$r=& .ai-workspace/queue.ps1 -Action RenewLease -TaskId AI-000435 -Pipeline ENGINE_CLI -OwnerThreadId $owner -ExecutionId $ex -LeaseMinutes 30;$j=($r|Out-String)|ConvertFrom-Json -AsHashtable -DateKind String;Need ($j.action-ceq'LEASE_RENEWED') 'Formal valid lease renewal';SaveJ ("$out/lease-renewed-"+[Guid]::NewGuid().ToString('N')+'.json') $j}
+}
+function AwaitTransitionReady {
+ foreach($transition in @('play','stop')){
+  if(-not(Test-Path "$out/$transition-receipt.json")-or(Test-Path "$out/$transition-ready-proof.json")){continue}
+  $startPath="$out/$transition-readiness-start.json";if(-not(Test-Path $startPath)){SaveJ $startPath @{startTick=[Diagnostics.Stopwatch]::GetTimestamp();frequency=[Diagnostics.Stopwatch]::Frequency;maximumSeconds=30;stepMilliseconds=500;startedAt=[DateTimeOffset]::UtcNow.ToString('o')}}
+  $start=ReadJ $startPath;$ready=$false;$checks=0
+  while(([Diagnostics.Stopwatch]::GetTimestamp()-[long]$start.startTick)/[double]$start.frequency-le30){EnsureLiveLease;$target=ReadJ "$out/target.json";$p=Get-Process -Id $target.pid;$d=ReadJ 'Library/Pipeline/.unity-pipeline-port';Need ($p.StartTime.ToUniversalTime().ToString('o')-ceq$target.osStartUtc-and$d.pid-eq$target.pid-and$d.projectPath.Replace('\','/')-ceq$target.projectPath-and$d.unityVersion-ceq$target.version) 'Transition actual identity';$checks++;$s=@(Get-NetTCPConnection -State Listen -LocalPort $d.port -ErrorAction SilentlyContinue|Where-Object {$_.OwningProcess-eq$target.pid-and$_.LocalAddress-in@('127.0.0.1','::1')});if($s.Count){$ready=$true;SaveJ "$out/$transition-ready-proof.json" @{pid=$target.pid;osStartUtc=$target.osStartUtc;project=$target.projectPath;version=$target.version;port=$d.port;observedOwnedLoopback=$true;checks=$checks;elapsedSeconds=([Diagnostics.Stopwatch]::GetTimestamp()-[long]$start.startTick)/[double]$start.frequency;deadlineReset=$false;noCliReplay=$true};break};Start-Sleep -Milliseconds 500}
+  Need $ready 'Single non-resetting30s transition readiness exhausted'
+ }
+}

@@ -1,6 +1,32 @@
+<!-- ACCEPTANCE-V2-20261111 -->
+## 验收与操作硬上限（2026-11-11 用户 v2，优先）
+
+先离线保证生产代码逻辑与数据；引擎验收从首次累计最多3轮，所有失败原因计入，跨模式/修复不清零。第3轮未过，可人工检查的功能转“待人工检查”，不再询问追加或配对续验；不可人工判断的内部检查停下报用户决定。有表现效果的任务无论通过或熔断都交五列人工检查说明。临时需求/漂移修正/重构也必须细分低难度目标。接线、组件、保存、导入、构建等操作轮另按分模式额度，超额再申请；混合卡两类分开记，旧失败/许可不改账。
+引擎仅验加载接线、运行无新增Error、数据可读有限/变化；卡≤3，版级S40一次Play≤5。禁止引擎行为时序/阈值/逐帧/连续性/速度曲线/截图比对/输入监视。每轮失败记层级、现象、处置、预防。后台全量探针与定时回归暂停。
+完整单一执行口径：[WORKFLOW_FULL现行验收规则](.ai-workspace/protocol/WORKFLOW_FULL.md#acceptance-20261111)。下方旧5/3/1与配对段落只用于未被覆盖的开发/操作，不授权验收超过3轮。正式API/权限/用户停止保持；不手改runtime，不自动恢复当前MANUAL。
+<!-- /ACCEPTANCE-V2-20261111 -->
+
+<!-- USER-REPORT-PACKAGE-LIMIT-20261111 -->
+2026-11-11 用户任务报告包规则：面向用户交付的单任务或整批任务报告压缩包，**仅保留文本文档，压缩后尽量≤3,000,000B，严格≤5,000,000B**；当前及以后所有任务报告包适用，按十进制字节保守落实。交付前必须测量最终ZIP并校验内容。保留逐轮报告、必要需求/任务正文、审查结论、失败与未完成状态；去重，剔除二进制、嵌套压缩包、脚本执行载体、重复页面/项目快照和大批机器明细，必要机器记录整理为标明来源的可读文本。不能为达标篡改结论、删去失败事实、拆包规避5MB或提交超限包。原始工程证据不因报告精简而删除或迁移；内部任务证据保全仍按既有规则执行，本条优先约束用户报告交付。原话见.ai-workspace/outputs/control/REPORT-DELIVERY-20261111/用户任务报告包体积规则_20261111.json。仅局部规则维护，不提高项目完整核验日期，不恢复已暂停的开发。
+<!-- /USER-REPORT-PACKAGE-LIMIT-20261111 -->
+<!-- VALIDATION-LAYERS-20261106 -->
+2026-11-06 用户新发卡规则优先（仅局部规则维护，不提高项目完整核验日期）。原件：.ai-workspace/inputs/派发/PLAYABLE-DEMO011-20261104/发卡规则更新与AI435重做指令_20261106_用户提供原件.md，SHA3F6807262B8E3FBEBDE237A8A3E04CF3DD64F54024F9AD9151B97D0B4E3B5148。
+
+- K1：卡级机器门≤3断言；版级只有一张S40冒烟、一次Play、≤5断言；整体体验由用户人工验收。
+- K2/K7：验证卡固定S40，正文明确“不截图、不CI消费判定、不Build判定、不新写门/比较器/身份校验、不在验收卡内修复”；只引用已经离线回归的探针。超出拆卡，失败交对应小卡。
+- K3：后台全量探针与定时回归已依2026-11-11 v2暂停，不新建、不执行；恢复由用户决定。其它CI/Build体检不作版本前置。
+- K4：验收期间框架冻结，不在卡内修adapter。管线自身修复可独立离线→必要三类SMOKE；已熔断可人工检查原卡不再配对续验。FOLLOW-R旧探针成果冻结且不再作为任何验收门；详现行v2。
+- K5/K6：每卡列明断言清单和数量上限，禁止“随卡追加”；用户亲自签收不要求截图，留档由用户决定。
+- 新卡独立根；操作轮沿分模式及真实已批准额度，验收轮从首次累计3轮，适用页首v2。逐轮Runs1、正式API及独立停止门保持，不因新编号清零，不手改runtime。
+- AI435已正式CLOSED_SUPERSEDED，保留实际9Fail及第10轮安全Yield，未验收且禁止再续行。原文8轮/3预留是旧快照；实际14已用/1历史预留/15上限不改账，最后b467a8465ef1437a9901caf21092ac88执行许可撤销。436～445成功成果及失败史保留；不再立预留余额机制卡。
+- a3项目路径比较、a4时间戳比较、a8 Owned loopback listener missing降为warning并记录，实施走K4独立REPAIR；不把平台审批拒绝或已证实际错误目标降为可执行。当前是否已安装以CODE交付和独立审查为准。
+- 当前0.1.1顺序依2026-11-11用户修正：AI473转人工检查，不再第9轮；镜头人工通过后才新目录两场景打包及用户签收。旧探针顺序仅历史，不再成为版本前置。
+<!-- /VALIDATION-LAYERS-20261106 -->
 # 项目开发规范
 
-2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](.ai-workspace/toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
+2026-10-19分模式额度保留用于开发/操作轮：MANUAL每次真实人批1，AUTOMATIC默认3、SUPERVISED默认5次同根续行。引擎验收计数、所有失败计入及取消配对续验统一按页首[2026-11-11 v2](.ai-workspace/protocol/WORKFLOW_FULL.md#acceptance-20261111)，不沿用旧“诊断不计”排除验收轮。来源与正式入口见[TK-WF](.ai-workspace/toolkit/WF.md#approve-resume)。执行器不自行重启业务。
+
+2026-10-25用户再次确认5/3/1：每次新任务链下派须按[CONTROL派发规划](.ai-workspace/CONTROL_CHAT.md#dispatch-planning)核mode及正式rootRetry。逐轮Runs=1不是根额度1；普通额度内按长期政策推进，独立停止门保持，不因新编号重置累计。原问答及验证见TK-WF，不覆盖固定SHA的旧授权原件。
 
 
 ## 多客户端入口一致性（2026-10-17）
@@ -14,9 +40,11 @@
 1. **验证成本 ≤ 改动规模。** 改动不超过 10 个字段时，验收上限为允许清单内的 `git diff` 加一张截图；全量路径哈希只在批次末做一次，不在任务/步骤/重试间重复。禁止把内存快照、纹理 JSON 导出作为常规验收。
 2. **保护放在提交边界。** 受保护资产只在提交前由 hook 核 SHA；任务中不做内存层保护。TMP 绑定先设 `fontSharedMaterial`，再设 `font`，以绑定顺序预防副作用。用户未保存成果仍不得覆盖；不以保护为由恢复整套内存比对。
 3. **一次性工具限制。** 标记为一次性的脚本（如 FontSwapOnce）只做离线编译和真实 Editor 单次执行，不建独立进程/冷加载测试，不进 Final。`DevTools/one-time-tools.json` 登记源码与专属 runner；已完成工具停用留存，不因规则更新重跑。
-4. **唯一通用续行（2026-10-19 用户修订）。** 失败任务仍仅通过 `queue.ps1 -Action ApproveResume -TaskId … -Runs N -Scope …` 续行。MANUAL 每次需人工批准且最多1次；AUTOMATIC 默认允许3次自主修复/重试，SUPERVISED 默认允许5次，额度用尽后再请用户批准额外次数。首次执行不计重试；保留原任务及修复链累计次数、失败史、范围、人工闸门与停止状态，不因换错误key/线程/任务编号/模式清零；一次修复及其对应原任务续行配对计数，不双扣或重复叠加许可。一次批准内的幂等检查不另扣次数。禁止为单次续行新增入口与夹具，SCHEDULED未扩大授权。原话及本次AI266修复/1次续行批准见[长期授权](.ai-workspace/inputs/续行许可分模式_用户长期授权_20261019.json)，机制状态与正式参数见[WF](.ai-workspace/toolkit/WF.md#approve-resume)。本次规则实施期间仍须正式API，不手改runtime；旧独立权限/人工门与用户停止要求保持。
+4. **唯一通用续行（操作与验收分列）。** 仍仅通过 `queue.ps1 -Action ApproveResume -TaskId … -Runs N -Scope …`，不新增单次入口或手改runtime。操作轮沿MANUAL人批1、AUTOMATIC默认3次续行、SUPERVISED默认5次续行及实际已批准额度，超限才申请；引擎验收从首次累计3轮、满3按页首v2交接，不再申请追加或配对续验。保留原根累计、历史失败/许可、范围、人工门及停止状态，不因换错误key/线程/编号/模式清零。历史原话见[长期授权](.ai-workspace/inputs/续行许可分模式_用户长期授权_20261019.json)，现行分类及正式参数见[WF](.ai-workspace/toolkit/WF.md#approve-resume)。
 
-2026-10-21 用户G87决定：管线层失败与产品层失败分开结算，走独立REPAIR（固定CODE离线）→必要SMOKE（对应线）→原卡正式续行，不删减交付项规避。CLI磨合期修复/冒烟按pipeline-repair单列线成熟度，不计业务任务轮次/失败；历史原卡实际attempt/失败/许可不删除、不退款。实现未有独立枚举时，独立管线根用现有FEATURE技术类型，语义、关联原卡和usageCategory写在批准卡/报告/索引，不伪造repairContext或手改runtime；原卡仍唯一ApproveResume。来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。
+2026-10-21 G87保留管线与产品分层、独立CODE离线REPAIR和必要SMOKE；现行次数与原卡处置按[2026-11-11 v2](.ai-workspace/protocol/WORKFLOW_FULL.md#acceptance-20261111)。修管线不能排除原引擎验收失败计数，也不授权回头给可人工检查原卡配对续验。原实际attempt/失败/许可不删除、不退款，不伪造repairContext或手改runtime。历史来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。
+
+2026-10-24 派发补正：诊断和只读核对并入修复目标；许可/计量检查由CONTROL本地处理，仅生产脚本改动立卡；新节点默认初值+_TUNE、待U2终调。卡前路径/映射预检不编号，固定车道/停止门保持。详见[CONTROL规划规则](.ai-workspace/CONTROL_CHAT.md#dispatch-planning)。
 
 ## 固定职能流水线（2026-10-12 用户决定）
 
@@ -227,3 +255,8 @@ When working with Unity:
 - 检查是否存在明显的 Unity 编译问题。
 - 报告发生改动的文件。
 - 说明仍需在 Unity 内完成的验证事项。
+
+
+2026-10-26 用户简化修复决定优先于旧 AI339 指令：AI339 已正式 CLOSED_SUPERSEDED，不再续行。新脚本由 CODE 同交付合适 .meta（保已有 GUID）、可挂载 MonoBehaviour 同名独立文件；ENGINE CLAIMED 期间 CODE Assets 写入排队。FIX-A1-R/FIX-A2-R 只 Edit/字段核对，用户保存后核允许路径 diff，禁止恢复整对象内存比较门。完整规则见 [.ai-workspace/ENGINEERING_CONVENTIONS.md C10](.ai-workspace/ENGINEERING_CONVENTIONS.md#c10--脚本资产交接与小型场景修复2026-10-26-用户决定)。
+
+2026-10-29 用户批准 ProjectSettings 写入协议：公开API置值→场景脏检查→AssetDatabase.SaveAssets→目标回读及其它ProjectSettings SHA对比。保存前须通过场景脏检查，SaveAssets为允许动作并列影响文件，覆盖相关卡旧“禁止全局保存”措辞；各卡字段/次数/未知写入与人工门不扩大，后继不自动触发。完整边界见[ENGINE_CLI协议](.ai-workspace/workers/ENGINE_CLI.md#projectsettings-save-protocol)，旧364/371保存候选停用且历史保持。

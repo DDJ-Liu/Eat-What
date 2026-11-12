@@ -85,7 +85,20 @@ param(
     [Nullable[int]]$Runs,
     [string]$Scope,
     [string]$ApprovalId,
+    [string]$InstructionApprovalPath,
+    [string]$InstructionApprovalSha256,
+    [string]$InstructionEvidencePath,
+    [string]$InstructionEvidenceSha256,
+    [switch]$ControllerRepairReview,
+    [string]$RepairReviewPath,
+    [string]$RepairReviewSha256,
+    [switch]$AmendReviewedInstruction,
+    [string]$AmendmentReviewPath,
+    [string]$AmendmentReviewSha256,
     [switch]$RevalidateUnusedGrant,
+    [switch]$ReassignReservedCycle,
+    [string]$ReservationReviewPath,
+    [string]$ReservationReviewSha256,
     [string]$RevalidationApprovalPath,
     [string]$RevalidationApprovalSha256,
     [string]$RevalidationEvidencePath,
@@ -114,6 +127,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if(($ReassignReservedCycle -or $ReservationReviewPath -or $ReservationReviewSha256) -and ($Action -cne 'ApproveResume' -or -not $ReassignReservedCycle)){throw 'Reserved-cycle review requires explicit ApproveResume -ReassignReservedCycle.'}
+if(($ControllerRepairReview -or $RepairReviewPath -or $RepairReviewSha256) -and $Action -cne 'Enqueue'){throw 'Controller repair review parameters apply only to Enqueue.'}
 if($Pipeline -eq 'ART'){$Pipeline='ART_ASSET'}
 $workspaceRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $workspaceRoot
@@ -287,7 +302,7 @@ function Invoke-TaskObservation {
     }
     $gate=Sync-TaskTurnGate $t
     Save-JsonFile $queuePath $q;Save-JsonFile $workerPath $w
-    Write-Result @{action=$(if($gate -eq 'CONTINUE'){'OBSERVATION_RECORDED'}else{$gate});taskId=$TaskId;executionId=$run.executionId;duplicate=$duplicate;lastProgressAt=$worker.lastProgressAt;appTurnCount=$run.appTurnCount;maxTurns=120;temporaryHardTurns=240;next=$(if($gate -eq 'HANDOFF_REQUIRED'){'WRITE_HANDOFF_AND_YIELD'}elseif($gate -eq 'STOP_AT_TURN_LIMIT'){'STOP_AND_REPORT'}else{$null})}
+    Write-Result @{action=$(if($gate -eq 'CONTINUE'){'OBSERVATION_RECORDED'}else{$gate});taskId=$TaskId;executionId=$run.executionId;duplicate=$duplicate;lastProgressAt=$worker.lastProgressAt;appTurnCount=$run.appTurnCount;maxTurns=120;temporaryHardTurns=240;next=$(if($gate -eq 'HANDOFF_REQUIRED'){'WRITE_HANDOFF_AND_YIELD'}elseif($gate -eq 'STOP_AT_TURN_LIMIT'){'STOP_AND_REPORT'}else{$null})} -ObservationTask $(if($Action -ceq 'RecordTaskProgress'){$t}else{$null})
 }
 function Invoke-TurnHandoffAction {
     $q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath
@@ -299,7 +314,7 @@ function Invoke-TurnHandoffAction {
     $gate=Sync-TaskTurnGate $t
     if($Action -eq 'CheckManagedTool'){
         Save-JsonFile $queuePath $q
-        Write-Result @{action=$(if($gate -eq 'CONTINUE'){'MANAGED_TOOL_ALLOWED'}else{$gate});taskId=$TaskId;handoffFrom=$run.handoffFrom}
+        Write-Result @{action=$(if($gate -eq 'CONTINUE'){'MANAGED_TOOL_ALLOWED'}else{$gate});taskId=$TaskId;handoffFrom=$run.handoffFrom} -ObservationTask $t
         return
     }
     Assert-Value ($gate -eq 'HANDOFF_REQUIRED' -and -not $run.softLimitHandoff) 'WriteHandoff requires an unsaved 120-turn soft-limit handoff.'
@@ -431,14 +446,44 @@ function Get-DataTablesCsvSummaryHash {
 function Read-JsonFile {
     param([string]$Path)
     Assert-Value (Test-Path -LiteralPath $Path) "Missing state file: $Path"
-    return Get-Content -Raw -Encoding UTF8 -LiteralPath $Path | ConvertFrom-Json -DateKind String
+    $share=[IO.FileShare]([IO.FileShare]::Read -bor [IO.FileShare]::Delete)
+    $stream=[IO.FileStream]::new($Path,[IO.FileMode]::Open,[IO.FileAccess]::Read,$share)
+    try {
+        $reader=[IO.StreamReader]::new($stream,$utf8NoBom,$true)
+        try {$json=$reader.ReadToEnd()} finally {$reader.Dispose()}
+    } finally {$stream.Dispose()}
+    if([string]::IsNullOrWhiteSpace($json)){throw "Empty state file: $Path"}
+    return ConvertFrom-Json -InputObject $json -DateKind String
 }
 
 function Save-TextFile {
     param([string]$Path, [string]$Text)
     $temporaryPath = "$Path.tmp.$PID.$([guid]::NewGuid().ToString('N'))"
-    [System.IO.File]::WriteAllText($temporaryPath, $Text, $utf8NoBom)
-    [System.IO.File]::Move($temporaryPath, $Path, $true)
+    $stage='write-temp'
+    try {
+        [System.IO.File]::WriteAllText($temporaryPath, $Text, $utf8NoBom)
+        $stage='publish-move'
+        [System.IO.File]::Move($temporaryPath, $Path, $true)
+    } catch {
+        $original=$_
+        try {
+            $chain=[Collections.Generic.List[object]]::new()
+            $cause=$original.Exception
+            while($cause){
+                $hresult=[int]$cause.HResult
+                $win32=if(($hresult -band -65536) -eq -2147024896){$hresult -band 65535}else{$null}
+                $chain.Add([ordered]@{type=$cause.GetType().FullName;hResult=$hresult;win32Code=$win32;message=$cause.Message})
+                $cause=$cause.InnerException
+            }
+            $diagnostic=[ordered]@{stage=$stage;targetPath=$Path;temporaryPath=$temporaryPath;processId=$PID;exceptionChain=$chain.ToArray()}
+            $detail=$diagnostic|ConvertTo-Json -Depth 6 -Compress
+            $original.Exception.Data['EatWhat.QueuePersistence']=$detail
+            [Console]::Error.WriteLine("Queue persistence failed: $detail")
+        } catch {
+            # Supplemental diagnostics must never replace the original write error.
+        }
+        throw
+    }
 }
 
 function Save-JsonFile {
@@ -469,13 +514,20 @@ function Get-WorkflowUsagePhase {
 }
 
 function Write-Result {
-    param([object]$Value, [switch]$CompactOutput)
+    param([object]$Value, [switch]$CompactOutput, [object]$ObservationTask)
     # Read-only snapshots may be PSCustomObject; use the same writable reply
     # shape as dictionary actions before adding context or fallback fields.
     if ($Value -is [pscustomobject]) {
         $reply = [ordered]@{}
         foreach ($property in $Value.PSObject.Properties) { $reply[$property.Name] = $property.Value }
         $Value = $reply
+    }
+    # These two callers have finished every state save and retain the validated
+    # in-process task/execution. Slow response telemetry must not hold the queue
+    # transaction or reread a later execution as the origin of this observation.
+    if ($Action -cin @('CheckManagedTool','RecordTaskProgress') -and $ObservationTask -and $script:lockTaken) {
+        $script:mutex.ReleaseMutex()
+        $script:lockTaken = $false
     }
     # Settlement handoffs retain a task/execution snapshot before compacting.
     if ((Get-ObjectPropertyValue $Value 'supervisorHandoff') -and -not (Get-ObjectPropertyValue $Value 'task') -and $TaskId) {
@@ -527,7 +579,7 @@ function Write-Result {
         -not ($contextTask -and (($Action -eq 'Poll' -and $resultAction -in @('CLAIMED','CLAIMED_RETRY')) -or
             ($Action -eq 'Complete' -and $resultAction -eq 'COMPLETED')))) {
         try {
-            $owned = if($contextTask){$contextTask}elseif($TaskId){Get-Task (Read-JsonFile $queuePath) $TaskId}else{$null}
+            $owned = if($ObservationTask){$ObservationTask}elseif($contextTask){$contextTask}elseif($TaskId){Get-Task (Read-JsonFile $queuePath) $TaskId}else{$null}
             if($owned -and [string]$owned.execution.ownerThreadId -ceq $OwnerThreadId){
                 $workerContext = & (Join-Path $projectRoot 'DevTools/Workflow/Get-ThreadContext.ps1') -ThreadId $OwnerThreadId -RuntimeRoot (Join-Path $workspaceRoot 'runtime') | ConvertFrom-Json -DateKind String
                 $Value['contextTokens']=$workerContext.contextTokens
@@ -628,7 +680,7 @@ function Write-Result {
     # state mutation look as though it should be replayed.
     if ($null -ne (Get-Command Write-TaskUsageRecord -ErrorAction SilentlyContinue)) {
         try {
-            $taskObject = Get-ObjectPropertyValue $Value 'task'
+            $taskObject = if($ObservationTask){$ObservationTask}else{Get-ObjectPropertyValue $Value 'task'}
             $recordTaskId = if ($script:workflowUsageContext -and $script:workflowUsageContext.taskId) {
                 [string]$script:workflowUsageContext.taskId
             }
@@ -650,6 +702,7 @@ function Write-Result {
                 $model = if (-not [string]::IsNullOrWhiteSpace($env:CODEX_MODEL)) { $env:CODEX_MODEL } elseif (-not [string]::IsNullOrWhiteSpace($env:OPENAI_MODEL)) { $env:OPENAI_MODEL } else { $null }
                 $responseBytes = [System.Text.Encoding]::UTF8.GetByteCount($json)
                 $usageMetadata=@{ action=$Action; resultAction=[string](Get-ObjectPropertyValue $Value 'action'); triggerSource=$TriggerSource; hostVersion=$PSVersionTable.PSVersion.ToString() }
+                if($ObservationTask){$usageMetadata['executionId']=$ObservationTask.execution.executionId}
                 if($Action -eq 'Complete' -and $taskObject -and $taskObject.result){
                     $tier=Get-ObjectPropertyValue $taskObject.result 'tierMetrics'
                     if($tier){
@@ -1455,7 +1508,7 @@ try {
     if ($Action -in @('ResumeApprovedTask','ResumeCodeValidationStop')) { throw 'Legacy continuation entry retired. Use ApproveResume -TaskId -Runs -Scope -ApprovalId -UserDecision.' }
     if ($Action -eq 'ApproveResume') {
         . (Join-Path $workspaceRoot 'approved-resume.ps1')
-        try { Invoke-ApproveResume }
+        try { Invoke-ApproveResume -ReviseInstruction:$PSBoundParameters.ContainsKey('Instruction') }
         catch { Write-SupervisionAudit 'APPROVED_CONTINUATION_REFUSED' @{taskId=$TaskId;problemKey=$ProblemKey;reason=$_.Exception.Message;controllerThreadId=$ControllerThreadId}; throw }
         return
     }
@@ -1823,6 +1876,8 @@ try {
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Title)) 'Title is required for Enqueue.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Instruction)) 'Instruction is required for Enqueue.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($Complexity)) 'New Enqueue requires Complexity S, M, or L.'
+        Assert-Value ((-not $RepairReviewPath -and -not $RepairReviewSha256) -or $ControllerRepairReview) 'Controller repair review requires explicit opt-in.'
+        if($ControllerRepairReview){Assert-Value ($WorkKind -ceq 'REPAIR' -and $Pipeline -ceq 'CODE' -and $AuthorizationSource -ceq 'HUMAN' -and ($null -eq $Runs -or $Runs -eq 1) -and -not $AllowBypass -and -not $DiagnosisTaskId -and -not $PairedRecoveryId) 'Controller review is only one direct HUMAN CODE repair, without bypass or legacy diagnosis.'}
 
         $workers = Read-JsonFile $workerPath
         [void](Get-Worker $workers $Pipeline)
@@ -1845,6 +1900,7 @@ try {
         }
         $repairContext = $null
         $requiresRepairApproval = $false
+        $controllerRepairProof = $null
         if ($WorkKind -ne 'FEATURE') {
             Assert-Value (-not [string]::IsNullOrWhiteSpace($ParentTaskId)) "$WorkKind requires ParentTaskId."
             $parent = Get-Task $queue $ParentTaskId
@@ -1855,6 +1911,12 @@ try {
             Assert-Value (-not [string]::IsNullOrWhiteSpace($stableKey)) 'Repair parent has no recorded failure key.'
             Assert-Value ([string]::IsNullOrWhiteSpace($ProblemKey) -or $ProblemKey.Trim().ToLowerInvariant() -eq $stableKey.ToLowerInvariant()) 'A new problem key cannot reset the repair budget.'
             $budget = Get-RepairBudgetState $queue $root
+            if($ControllerRepairReview){
+                . (Join-Path $workspaceRoot 'approved-resume.ps1')
+                Assert-Value ($ParentTaskId -ceq $root.id) 'Controller review requires the original direct root.'
+                $definition=[pscustomobject][ordered]@{pipeline=$Pipeline;title=$Title;instruction=$Instruction.Trim();moduleId=$ModuleId;complexity=$Complexity;dependsOn=@($DependsOn);scope=(ConvertTo-ResumeScope $Scope)}
+                $controllerRepairProof=Assert-ControllerHumanRepairReview $queue $root $workers (Read-ModeState) ('AI-{0:D6}' -f [int]$queue.nextSequence) $definition $RepairReviewPath $RepairReviewSha256 $ControllerThreadId $ApprovalId $UserDecision $RetryCycleId
+            }
             if ($PairedRecoveryId) {
                 Assert-Value ($WorkKind -eq 'REPAIR') 'PairedRecoveryId applies only to a repair card.'
                 $family = @($queue.tasks | Where-Object { $_.id -eq $root.id -or $_.repairContext.rootTaskId -eq $root.id })
@@ -1864,8 +1926,7 @@ try {
             }
             if ($WorkKind -eq 'REPAIR' -and ((Test-TaskFailureStopped $root) -or ($budget.used -ge $budget.limit -and -not $PairedRecoveryId))) {
                 $proposedId = 'AI-{0:D6}' -f [int]$queue.nextSequence
-                Assert-RepairDecision $queue $root $DiagnosisTaskId $UserDecision $proposedId
-                $requiresRepairApproval = $true
+                if(-not $controllerRepairProof){Assert-RepairDecision $queue $root $DiagnosisTaskId $UserDecision $proposedId;$requiresRepairApproval = $true}
             }
             $repairContext = [pscustomobject]@{
                 rootTaskId=$root.id; parentTaskId=$ParentTaskId; nature=$WorkKind
@@ -1926,6 +1987,7 @@ try {
         if($WorkKind -eq 'REPAIR' -and (Get-RetryAuthority)){
             . (Join-Path $workspaceRoot 'approved-resume.ps1')
             Register-RepairRetryCycle $queue $root $task (Read-ModeState) $AuthorizationSource $ApprovalId $UserDecision $RetryCycleId $Scope
+            if($controllerRepairProof){Set-RetryValue $task.repairContext 'controllerHumanReview' $controllerRepairProof}
         }
         $queue.tasks = @($queue.tasks) + $task
         if ($requiresRepairApproval) { Use-RepairDecision $root $DiagnosisTaskId $UserDecision $newTaskId }
@@ -2159,7 +2221,52 @@ $($Instruction.Trim())
         Assert-Value ($task -and $task.status -eq 'SUCCEEDED' -and $task.result.verificationStatus -eq 'REJECTED') 'Only a completed rejected result can use control resolution.'
         $rejection=@($task.result.verificationResolutionHistory | Where-Object {$_.decision -eq 'REJECTED'}) | Select-Object -Last 1
         Assert-Value ($rejection.stage -eq 'CONTROL_ACCEPTANCE' -and $ProblemKey -ceq $rejection.problemKey) 'Latest control rejection and stable key required.'
-        Assert-Value ($repair -and $repair.id -ne $TaskId -and $repair.status -eq 'SUCCEEDED' -and $repair.repairContext.rootTaskId -ceq $TaskId -and $repair.repairContext.problemKey -ceq $ProblemKey -and $repair.result.verificationStatus -eq 'VERIFIED') 'A completed same-root verified repair is required.'
+        Assert-Value ($repair -and $repair.id -ne $TaskId -and $repair.status -eq 'SUCCEEDED' -and $repair.result.verificationStatus -eq 'VERIFIED') 'A completed verified repair is required.'
+        # The rejected card may itself be a repair. Establish its actual root first.
+        $rootId=$TaskId
+        $targetContext=Get-ObjectPropertyValue $task 'repairContext'
+        if($targetContext){
+            $rootId=[string](Get-ObjectPropertyValue $targetContext 'rootTaskId')
+            Assert-Value ($rootId -and $rootId -cne $TaskId) 'Rejected repair must name an earlier root.'
+            $cursor=$task;$visited=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);$reachedRoot=$false
+            for($depth=0;$depth -le @($queue.tasks).Count;$depth++){
+                Assert-Value ($cursor -and $cursor.status -eq 'SUCCEEDED' -and $visited.Add([string]$cursor.id)) 'Rejected repair lineage is missing, incomplete or cyclic.'
+                if($cursor.id -ceq $rootId){$reachedRoot=$true;break}
+                $context=Get-ObjectPropertyValue $cursor 'repairContext'
+                Assert-Value ($context -and $context.nature -ceq 'REPAIR' -and
+                    $context.rootTaskId -ceq $rootId -and $context.problemKey -ceq $ProblemKey -and
+                    $context.parentTaskId -and $context.parentTaskId -cne $cursor.id) 'Rejected repair lineage has a wrong root, key or parent.'
+                $parent=Get-Task $queue ([string]$context.parentTaskId)
+                Assert-Value ($parent -and $parent.id -ceq [string]$context.parentTaskId) 'Rejected repair parent identity is missing or mismatched.'
+                $cursor=$parent
+            }
+            Assert-Value ($reachedRoot -and -not (Get-ObjectPropertyValue $cursor 'repairContext')) 'Rejected repair root is missing or is itself a repair.'
+        }
+        # Walk from the completed repair to the rejected card, not merely to the same root.
+        # A parentless direct repair of an original root remains valid for historical records.
+        $cursor=$repair;$visited=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);$reachedTask=$false
+        for($depth=0;$depth -le @($queue.tasks).Count;$depth++){
+            Assert-Value ($cursor -and $cursor.status -eq 'SUCCEEDED' -and $visited.Add([string]$cursor.id)) 'Repair lineage is missing, incomplete or cyclic.'
+            if($cursor.id -ceq $TaskId){$reachedTask=$true;break}
+            $context=Get-ObjectPropertyValue $cursor 'repairContext'
+            Assert-Value ($context -and $context.rootTaskId -ceq $rootId -and
+                $context.problemKey -ceq $ProblemKey) 'Repair lineage has a wrong root or stable key.'
+            $parentId=[string](Get-ObjectPropertyValue $context 'parentTaskId')
+            if(-not $parentId){
+                Assert-Value ($rootId -ceq $TaskId -and $cursor.id -ceq $repair.id) 'Only a historical direct root repair may omit its parent.'
+                $parentId=$TaskId
+            }
+            if($rootId -ceq $TaskId -and $cursor.id -ceq $repair.id -and $parentId -ceq $TaskId){
+                Assert-Value (-not $context.nature -or $context.nature -ceq 'REPAIR') 'Historical direct repair nature is invalid.'
+            } else {
+                Assert-Value ($context.nature -ceq 'REPAIR') 'Nested repair lineage requires repair nature.'
+            }
+            Assert-Value ($parentId -cne $cursor.id) 'Repair cannot name itself as parent.'
+            $parent=Get-Task $queue $parentId
+            Assert-Value ($parent -and $parent.id -ceq $parentId) 'Repair parent identity is missing or mismatched.'
+            $cursor=$parent
+        }
+        Assert-Value $reachedTask 'Repair is not a descendant of this rejected task.'
         Assert-Value ((ConvertTo-WorkflowUtcInstant $repair.completedAt) -gt (ConvertTo-WorkflowUtcInstant $rejection.at)) 'Repair must complete after the rejection.'
         Assert-Value ($ControllerThreadId -and $ControllerThreadId -ceq $modeState.supervised.controllerThreadId -and $ControllerThreadId -cne $repair.execution.ownerThreadId -and $UserDecision -and $Verification) 'Independent bound controller, decision and verification required.'
         Assert-Value ($EvidencePath -and (Test-Path -LiteralPath $EvidencePath -PathType Leaf)) 'Independent control evidence required.'

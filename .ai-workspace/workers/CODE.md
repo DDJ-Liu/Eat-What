@@ -1,3 +1,5 @@
+2026-11-11统一验收规则：[现行协议v2](../protocol/WORKFLOW_FULL.md#acceptance-20261111)。生产逻辑/数据先离线保证，表现交人工，临时卡也规划粒度；引擎验收三类/累计3轮，操作轮独立按模式。禁止为熔断原卡再建配对续验链；每次有表现交付附人工检查说明。
+
 # CODE 执行器
 
 2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](../toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
@@ -49,3 +51,6 @@ DATA 长期分工中，CODE 只维护队列路由、导表工具、schema 和业
 其它用户消息一律不执行、不入队，只回复“请在控制台下达”后结束。TaskId 不属于 CODE 时提示用户转对应流水线或控制台。你仍禁止 `Enqueue`、`ReviseInstruction`、`ResetTask`、`ReclassifyTask` 和任务定义改写。
 
 监管结算回传：Prepare 一次登记 → 读取完整 messagePath → app 向绑定控制台发送一次 → Record 保存实际 SENT/REJECTED/UNKNOWN；禁止自行派后继。具体见 `DevTools/Workflow/HANDOFF.md`。历史拒绝不重试；NOTIFY_CONTROLLER 不能只打印路径或留在本线。
+
+
+2026-10-26 新交付强制读 [ENGINEERING_CONVENTIONS C10](../ENGINEERING_CONVENTIONS.md)：可挂载 MonoBehaviour 同名独立文件，新 .cs 同时交付正确新 .meta，保已有 GUID；ENGINE CLAIMED 期间不写 Assets，按正式共用资源锁排队。

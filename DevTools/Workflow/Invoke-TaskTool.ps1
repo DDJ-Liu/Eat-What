@@ -21,7 +21,10 @@ param(
     [switch]$CapturePng,
     [string]$CaptureTaskOutputRoot,
     [string]$CaptureSavePath,
-    [string]$RuntimeRoot
+    [string]$RuntimeRoot,
+    [string]$ProjectGrantPath,
+    [string]$WriteIntentPath,
+    [string]$StandardPreflightPath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +32,130 @@ if ([string]::IsNullOrWhiteSpace($RuntimeRoot)) {
     $RuntimeRoot = Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) '.ai-workspace/runtime'
 }
 . (Join-Path $PSScriptRoot 'UsageMetrics.ps1')
+
+function Resolve-ProjectGrantPath([string]$Root,[string]$Value) {
+    if([string]::IsNullOrWhiteSpace($Value) -or $Value -match '(^|[/\\])\.\.?($|[/\\])' -or $Value.StartsWith('\\')){
+        throw 'PROJECT_GRANT_PATH: Empty, traversal or UNC path refused.'
+    }
+    $rootPath=[IO.Path]::GetFullPath($Root).TrimEnd('\','/')
+    $full=[IO.Path]::GetFullPath($(if([IO.Path]::IsPathRooted($Value)){$Value}else{Join-Path $rootPath $Value}))
+    if(-not $full.StartsWith($rootPath+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        throw 'PROJECT_GRANT_PATH: Path must be below this project root.'
+    }
+    $relative=[IO.Path]::GetRelativePath($rootPath,$full)
+    if($relative -match '[:*?"<>|\x00-\x1f]'){throw 'PROJECT_GRANT_PATH: Wildcard, stream or invalid path refused.'}
+    for($probe=$full;$probe -and $probe.Length -ge $rootPath.Length;$probe=Split-Path -Parent $probe){
+        if(Test-Path -LiteralPath $probe){
+            if((Get-Item -LiteralPath $probe -Force).Attributes -band [IO.FileAttributes]::ReparsePoint){
+                throw 'PROJECT_GRANT_PATH: Redirected path refused.'
+            }
+        }
+    }
+    return $full
+}
+function Read-ProjectGrantJson([string]$Path,[string]$ExpectedSha256) {
+    if(-not (Test-Path -LiteralPath $Path -PathType Leaf) -or (Get-Item -LiteralPath $Path).Length -gt 65536){
+        throw 'PROJECT_GRANT_JSON: Manifest missing or larger than 65536 bytes.'
+    }
+    $bytes=[IO.File]::ReadAllBytes($Path)
+    if($ExpectedSha256){
+        $hasher=[Security.Cryptography.SHA256]::Create()
+        try{$hash=[BitConverter]::ToString($hasher.ComputeHash($bytes)).Replace('-','')}finally{$hasher.Dispose()}
+        if($hash -ine $ExpectedSha256){throw 'PROJECT_GRANT_PIN: Grant bytes differ from the formal instruction.'}
+    }
+    try{
+        $text=[Text.UTF8Encoding]::new($false,$true).GetString($bytes).TrimStart([char]0xFEFF)
+        return $text|ConvertFrom-Json -AsHashtable -DateKind String
+    }catch{throw 'PROJECT_GRANT_JSON: Invalid UTF-8 or JSON manifest.'}
+}
+function Assert-ProjectGrantShape($Value,[string[]]$Keys) {
+    if($Value -isnot [Collections.IDictionary] -or @($Value.GetEnumerator()).Count -ne $Keys.Count -or
+        @($Keys|Where-Object{-not $Value.Contains($_)}).Count){throw 'PROJECT_GRANT_SCHEMA: Unexpected or missing fields.'}
+}
+function Assert-ProjectGrantScope([string]$Root,$Requested,$Allowed) {
+    Assert-ProjectGrantShape $Requested @('paths','operations')
+    if($Requested.paths -isnot [array] -or -not $Requested.paths.Count -or
+        $Requested.operations -isnot [array] -or -not $Requested.operations.Count -or
+        -not $Allowed.paths -or -not $Allowed.operations){throw 'PROJECT_GRANT_SCOPE: Explicit nonempty paths and operations required.'}
+    foreach($path in $Requested.paths){
+        if($path -isnot [string]){throw 'PROJECT_GRANT_SCOPE: Path must be a string.'}
+        $candidate=Resolve-ProjectGrantPath $Root $path
+        $matched=$false
+        foreach($parent in $Allowed.paths){
+            $prefix=(Resolve-ProjectGrantPath $Root $parent).TrimEnd('\','/')
+            if($candidate.Equals($prefix,[StringComparison]::OrdinalIgnoreCase) -or
+                $candidate.StartsWith($prefix+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){$matched=$true;break}
+        }
+        if(-not $matched){throw 'PROJECT_GRANT_SCOPE: Requested path exceeds declared scope.'}
+    }
+    foreach($operation in $Requested.operations){
+        if($operation -isnot [string] -or $operation -cnotin $Allowed.operations){throw 'PROJECT_GRANT_SCOPE: Requested operation exceeds declared scope.'}
+    }
+}
+function Assert-TaskToolProjectGrant {
+    param([string]$Root,[string]$QueuePath,$Managed,[string]$Task,[string]$Pipeline,
+        [string]$Owner,[string]$Execution,[string]$GrantPath,[string]$IntentPath)
+    $canonicalQueue=Resolve-ProjectGrantPath $Root '.ai-workspace/queue.ps1'
+    if(-not $QueuePath -or -not [IO.Path]::GetFullPath($QueuePath).Equals($canonicalQueue,[StringComparison]::OrdinalIgnoreCase) -or
+        $Managed.action -cne 'MANAGED_TOOL_ALLOWED' -or $Managed.taskId -cne $Task){
+        throw 'PROJECT_GRANT_MANAGED: Current canonical CheckManagedTool is required.'
+    }
+    # The authoritative queue can be large; the small-manifest limit is not a queue limit.
+    $statePath=Resolve-ProjectGrantPath $Root '.ai-workspace/runtime/queue-state.json'
+    $state=[IO.File]::ReadAllText($statePath,[Text.UTF8Encoding]::new($false,$true))|ConvertFrom-Json -AsHashtable -Depth 100 -DateKind String
+    $current=@($state.tasks|Where-Object id -CEQ $Task)
+    if($current.Count -ne 1 -or $current[0].status -cne 'RUNNING' -or $current[0].pipeline -cne $Pipeline -or
+        $current[0].execution.ownerThreadId -cne $Owner -or $current[0].execution.executionId -cne $Execution){
+        throw 'PROJECT_GRANT_IDENTITY: Current task, lane, owner and execution must match.'
+    }
+    $current=$current[0]
+    $shaPin=[regex]::Matches([string]$current.instruction,'(?m)^PROJECT_GRANT_SHA256=([A-Fa-f0-9]{64})\r?$')
+    $pathPin=[regex]::Matches([string]$current.instruction,'(?m)^PROJECT_GRANT_PATH=([^\r\n]+)\r?$')
+    if($shaPin.Count -ne 1 -or $pathPin.Count -ne 1){throw 'PROJECT_GRANT_PIN: Formal instruction must pin exactly one grant path and SHA256.'}
+    if(-not $GrantPath){$GrantPath=$pathPin[0].Groups[1].Value}
+    if(-not $IntentPath){throw 'PROJECT_GRANT_INTENT: Explicit write-intent file required.'}
+    $grantFile=Resolve-ProjectGrantPath $Root $GrantPath
+    $pinnedFile=Resolve-ProjectGrantPath $Root $pathPin[0].Groups[1].Value
+    if(-not $grantFile.Equals($pinnedFile,[StringComparison]::OrdinalIgnoreCase) -or
+        -not (Test-Path -LiteralPath $grantFile -PathType Leaf)){throw 'PROJECT_GRANT_PIN: Grant file or path differs from the formal instruction.'}
+    $grant=Read-ProjectGrantJson $grantFile $shaPin[0].Groups[1].Value
+    Assert-ProjectGrantShape $grant @('schemaVersion','grantId','taskId','ownerThreadId','projectRoot','validFromUtc','validUntilUtc','authorizationSource','scope')
+    if($grant.schemaVersion -ne 1 -or -not $grant.grantId -or $grant.taskId -cne $Task -or $grant.ownerThreadId -cne $Owner -or
+        -not [IO.Path]::GetFullPath([string]$grant.projectRoot).TrimEnd('\','/').Equals([IO.Path]::GetFullPath($Root).TrimEnd('\','/'),[StringComparison]::OrdinalIgnoreCase)){
+        throw 'PROJECT_GRANT_IDENTITY: Grant task, owner or project mismatch.'
+    }
+    try{
+        foreach($name in @('validFromUtc','validUntilUtc')){
+            if($grant[$name] -isnot [string] -or $grant[$name] -notmatch '(Z|\+00:00)$'){throw 'Explicit UTC required.'}
+        }
+        $from=[DateTimeOffset]::Parse($grant.validFromUtc,[Globalization.CultureInfo]::InvariantCulture)
+        $until=[DateTimeOffset]::Parse($grant.validUntilUtc,[Globalization.CultureInfo]::InvariantCulture)
+    }catch{throw 'PROJECT_GRANT_TIME: Explicit valid UTC timestamps required.'}
+    if($from -ge $until -or [DateTimeOffset]::UtcNow -lt $from -or [DateTimeOffset]::UtcNow -ge $until){throw 'PROJECT_GRANT_TIME: Grant not yet valid or expired.'}
+    Assert-ProjectGrantShape $grant.authorizationSource @('path','sha256')
+    $source=Resolve-ProjectGrantPath $Root $grant.authorizationSource.path
+    if($grant.authorizationSource.sha256 -notmatch '^[A-Fa-f0-9]{64}$' -or -not (Test-Path -LiteralPath $source -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash -ine $grant.authorizationSource.sha256){throw 'PROJECT_GRANT_SOURCE: Original authorization source integrity mismatch.'}
+    Assert-ProjectGrantScope $Root $grant.scope $current.businessScope
+    $intent=Read-ProjectGrantJson (Resolve-ProjectGrantPath $Root $IntentPath)
+    Assert-ProjectGrantShape $intent @('schemaVersion','taskId','ownerThreadId','executionId','scope')
+    if($intent.schemaVersion -ne 1 -or $intent.taskId -cne $Task -or $intent.ownerThreadId -cne $Owner -or $intent.executionId -cne $Execution){
+        throw 'PROJECT_GRANT_IDENTITY: Write intent belongs to another claim.'
+    }
+    foreach($operation in $intent.scope.operations){
+        # Keep the explicit allowlist. The four additional literal names are the
+        # already-registered AI479 scene operations, not aliases for broader writes.
+        if($operation -cnotin @('scene-save','project-settings','build','asset-move','asset-delete',
+            'create-owned-empty-scene','single-save-owned-scene','delete-owned-smoke-scene','restore-author-scene-setup')){
+            throw 'PROJECT_GRANT_OPERATION: Unsupported declared write operation.'
+        }
+    }
+    Assert-ProjectGrantScope $Root $intent.scope $grant.scope
+    if($current.execution.approvedScope){Assert-ProjectGrantScope $Root $intent.scope $current.execution.approvedScope}
+    return [pscustomobject]@{grantId=$grant.grantId;grantPath=$grantFile;grantSha256=$shaPin[0].Groups[1].Value;
+        intentPath=[IO.Path]::GetFullPath((Resolve-ProjectGrantPath $Root $IntentPath));authorizationSource=$grant.authorizationSource;
+        taskId=$Task;ownerThreadId=$Owner;executionId=$Execution;scope=$intent.scope;platformApprovalProvided=$false}
+}
 
 function Get-PowerShell7Path {
     $candidate = if ($PSVersionTable.PSEdition -eq 'Core') {
@@ -47,6 +174,18 @@ function Get-PowerShell7Path {
         throw "Resolved PowerShell host is not PowerShell 7 Core: $candidate"
     }
     return $candidate
+}
+
+function Get-TaskToolArgumentPlan {
+    param([string]$CommandPath,[AllowEmptyCollection()][string[]]$ArgumentList=@(),[string]$PowerShellPath)
+    $fileName=$CommandPath
+    $arguments=[Collections.Generic.List[string]]::new()
+    if([IO.Path]::GetExtension($CommandPath) -ieq '.ps1'){
+        $fileName=$PowerShellPath
+        foreach($value in @('-NoProfile','-File',$CommandPath)){$arguments.Add($value)}
+    }
+    foreach($value in $ArgumentList){$arguments.Add($value)}
+    return [pscustomobject]@{fileName=$fileName;arguments=$arguments.ToArray()}
 }
 
 function Assert-TaskToolPayload {
@@ -113,15 +252,38 @@ function Assert-CaptureEvidencePath {
 }
 
 function Get-CaptureEvidencePlan {
-    param($Task,[string]$ProjectRoot,[string]$TaskRoot,[string]$SavePath,[string]$CallId,[string[]]$Arguments,[string]$RawRoot)
+    param($Task,$QueueState,[string]$ProjectRoot,[string]$TaskRoot,[string]$SavePath,[string]$CallId,[string[]]$Arguments,[string]$RawRoot)
     if(-not $Task -or $Task.id -cne $TaskId -or $Task.pipeline -cne $Lane -or $Task.status -ne 'RUNNING' -or $Task.execution.executionId -cne $ExecutionId -or $Task.execution.ownerThreadId -cne $OwnerThreadId){throw 'Capture requires the current owned task execution.'}
     if($CaptureTargetPort -lt 1){throw 'CaptureTargetPort must come from the verified CLI target.'}
     $taskBoundary=[IO.Path]::GetFullPath($TaskRoot,$ProjectRoot).TrimEnd('\','/')
     $outputs=[IO.Path]::GetFullPath('.ai-workspace/outputs',$ProjectRoot).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
     if(-not $taskBoundary.StartsWith($outputs,[StringComparison]::OrdinalIgnoreCase) -or [IO.Path]::GetFileName($taskBoundary) -cne $TaskId){throw 'CaptureTaskOutputRoot must be the current task output directory.'}
-    $scopes=@($Task.businessScope)
-    if($Task.execution.approvedScope){$scopes+=@($Task.execution.approvedScope)}
-    if(-not $Task.businessScope -or -not @($Task.businessScope.paths|Where-Object{[IO.Path]::GetFullPath($_,$ProjectRoot).TrimEnd('\','/') -ieq $taskBoundary}).Count){throw 'CaptureTaskOutputRoot is not declared by the task business scope.'}
+    $scopes=@()
+    $rootScope=$Task.businessScope
+    if($Task.workKind -ceq 'REPAIR'){
+        $repair=$Task.repairContext
+        $roots=@($QueueState.tasks|Where-Object id -ceq $repair.rootTaskId)
+        if(-not $repair -or $repair.nature -cne 'REPAIR' -or -not $repair.rootTaskId -or
+            $repair.parentTaskId -cne $repair.rootTaskId -or $repair.rootTaskId -ceq $Task.id -or $roots.Count -ne 1){throw 'Capture REPAIR scope has no formal same-root identity.'}
+        foreach($scope in @($repair.repairScope,$Task.execution.approvedScope)){
+            if(-not $scope -or $scope.paths -isnot [array] -or -not $scope.paths.Count -or
+                @($scope.paths|Where-Object{$_ -isnot [string] -or [string]::IsNullOrWhiteSpace($_)}).Count -or
+                $scope.operations -isnot [array] -or $scope.operations -cnotcontains 'capture-screen-no-save'){
+                throw 'Capture REPAIR and current approved scopes must explicitly permit screen capture with valid paths.'
+            }
+        }
+        $scopes+=@($repair.repairScope,$Task.execution.approvedScope)
+        if($Task.businessScope){$scopes+=@($Task.businessScope)}else{$rootScope=$repair.repairScope}
+    }else{
+        $scopes+=@($Task.businessScope)
+        if($Task.execution.approvedScope){$scopes+=@($Task.execution.approvedScope)}
+    }
+    if(-not $rootScope -or -not @($rootScope.paths|Where-Object{[IO.Path]::GetFullPath($_,$ProjectRoot).TrimEnd('\','/') -ieq $taskBoundary}).Count){throw 'CaptureTaskOutputRoot is not declared by the task business or repair scope.'}
+    if($Task.workKind -ceq 'REPAIR'){
+        foreach($scope in $scopes){
+            if(-not @($scope.paths|Where-Object{[IO.Path]::GetFullPath($_,$ProjectRoot).TrimEnd('\','/') -ieq $taskBoundary}).Count){throw 'CaptureTaskOutputRoot is not declared by every required REPAIR scope.'}
+        }
+    }
     $target=if([string]::IsNullOrEmpty($SavePath)){Join-Path $taskBoundary ($CallId+'.png')}else{$SavePath}
     $target=Assert-CaptureEvidencePath $target $taskBoundary $ProjectRoot
     if([IO.Path]::GetExtension($target) -ine '.png'){throw 'Capture target must end in .png.'}
@@ -495,6 +657,22 @@ if($progressEnabled){
         throw "Managed tool invocation refused by cumulative turn gate: $($preflight.action). Save a bounded WriteHandoff checkpoint and Yield before continuing."
     }
 }
+$projectGrantProof=$null
+if($PSBoundParameters.ContainsKey('ProjectGrantPath') -or $PSBoundParameters.ContainsKey('WriteIntentPath')){
+    $projectGrantRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+    $projectGrantProof=Assert-TaskToolProjectGrant -Root $projectGrantRoot -QueuePath $QueueScriptPath -Managed $preflight -Task $TaskId -Pipeline $Lane -Owner $OwnerThreadId -Execution $ExecutionId -GrantPath $ProjectGrantPath -IntentPath $WriteIntentPath
+}
+$standardPreflightProof=$null
+if($PSBoundParameters.ContainsKey('StandardPreflightPath')){
+    if($Lane -cne 'ENGINE_CLI'){throw 'STANDARD_PREFLIGHT_INPUT: Standard preflight is the ENGINE_CLI route.'}
+    # Keep the library's parameter binding/functions local; preserve all wrapper bound switches.
+    $standardPreflightProof=& {
+        . (Join-Path $PSScriptRoot 'Preflight-Standard.ps1') -ContextPath $StandardPreflightPath -TaskId $TaskId -OwnerThreadId $OwnerThreadId -ExecutionId $ExecutionId
+        Get-StandardPreflight -Path $StandardPreflightPath -Root (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) -Managed $preflight -QueuePath $QueueScriptPath -Task $TaskId -Owner $OwnerThreadId -Execution $ExecutionId
+    }
+    if(-not $standardPreflightProof.passed){throw ('STANDARD_PREFLIGHT_STOP: '+(($standardPreflightProof.checks|Where-Object{-not $_.passed}|ForEach-Object id)-join ',')+'; specifiedFileSha='+$standardPreflightProof.guards.specifiedFileSha.passed)}
+    if($projectGrantProof -and -not $standardPreflightProof.writeAllowed){throw 'STANDARD_PREFLIGHT_INTENT: A declared grant write cannot consume a read-only preflight.'}
+}
 if ($Lane -eq 'ENGINE_CLI') {
     $CaptureOutput=$true
     if (-not $PSBoundParameters.ContainsKey('ProgressKind') -or @($ArgumentList | Where-Object {$_ -in @('status','editor_status','--help','-h','--version')}).Count) { $ProgressKind='Observation' }
@@ -516,7 +694,7 @@ if($CapturePng){
     $captureTasks=@($captureState.tasks|Where-Object id -CEQ $TaskId)
     if($captureTasks.Count -ne 1){throw 'Capture task identity is ambiguous.'}
     $captureProjectRoot=Split-Path -Parent (Split-Path -Parent ([IO.Path]::GetFullPath($QueueScriptPath)))
-    $capturePlan=Get-CaptureEvidencePlan -Task $captureTasks[0] -ProjectRoot $captureProjectRoot -TaskRoot $CaptureTaskOutputRoot -SavePath $CaptureSavePath -CallId $progressId -Arguments $ArgumentList -RawRoot $OutputRoot
+    $capturePlan=Get-CaptureEvidencePlan -Task $captureTasks[0] -QueueState $captureState -ProjectRoot $captureProjectRoot -TaskRoot $CaptureTaskOutputRoot -SavePath $CaptureSavePath -CallId $progressId -Arguments $ArgumentList -RawRoot $OutputRoot
     $OutputRoot=$capturePlan.rawRoot
 }elseif($CaptureTaskOutputRoot -or $PSBoundParameters.ContainsKey('CaptureSavePath')){throw 'Capture output parameters require CapturePng.'}
 Report-Progress 'start'
@@ -526,7 +704,7 @@ if ($CaptureOutput) {
     if($capturePlan){$null=Assert-CaptureEvidencePath (Join-Path $OutputRoot ($progressId+'.stdout.bin')) $capturePlan.taskRoot $capturePlan.projectRoot}
     [void][IO.Directory]::CreateDirectory($OutputRoot)
     $stdoutPath=Join-Path $OutputRoot "$progressId.stdout.bin";$stderrPath=Join-Path $OutputRoot "$progressId.stderr.bin"
-    $stdoutBytes=$null;$stderrBytes=$null;$exitCode=$null;$failure=$null;$process=$null
+    $stdoutBytes=$null;$stderrBytes=$null;$exitCode=$null;$failure=$null;$process=$null;$nativeProcessId=$null
     $attempt=$null
     if($progressEnabled){
         $claim=Get-Content -LiteralPath (Join-Path (Split-Path -Parent $QueueScriptPath) 'runtime/queue-state.json') -Raw|ConvertFrom-Json -DateKind String
@@ -535,19 +713,22 @@ if ($CaptureOutput) {
     try {
         $info=[Diagnostics.ProcessStartInfo]::new();$info.UseShellExecute=$false;$info.CreateNoWindow=$true
         $info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
-        if([IO.Path]::GetExtension($CommandPath) -ieq '.ps1'){
-            $info.FileName=Get-PowerShell7Path
-            foreach($arg in @('-NoProfile','-File',$CommandPath)){$info.ArgumentList.Add($arg)}
-        }else{$info.FileName=$CommandPath}
-        foreach($arg in $ArgumentList){$info.ArgumentList.Add($arg)}
+        $powerShellPath=if([IO.Path]::GetExtension($CommandPath) -ieq '.ps1'){Get-PowerShell7Path}else{$null}
+        $argumentPlan=Get-TaskToolArgumentPlan -CommandPath $CommandPath -ArgumentList $ArgumentList -PowerShellPath $powerShellPath
+        $info.FileName=$argumentPlan.fileName
+        foreach($arg in $argumentPlan.arguments){$info.ArgumentList.Add($arg)}
         $process=[Diagnostics.Process]::new();$process.StartInfo=$info
         if(-not $process.Start()){throw 'Process did not start.'}
+        $nativeProcessId=$process.Id
         if($capturePlan){
             $null=Assert-CaptureEvidencePath $stdoutPath $capturePlan.taskRoot $capturePlan.projectRoot
             $null=Assert-CaptureEvidencePath $stderrPath $capturePlan.taskRoot $capturePlan.projectRoot
             $stdoutFile=[IO.File]::Open($stdoutPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
             try{$stderrFile=[IO.File]::Open($stderrPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)}catch{$stdoutFile.Dispose();throw}
-        }else{$stdoutFile=[IO.File]::Create($stdoutPath);$stderrFile=[IO.File]::Create($stderrPath)}
+        }else{
+            $stdoutFile=[IO.File]::Open($stdoutPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+            try{$stderrFile=[IO.File]::Open($stderrPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)}catch{$stdoutFile.Dispose();throw}
+        }
         try {
             $stdoutCopy=$process.StandardOutput.BaseStream.CopyToAsync($stdoutFile)
             $stderrCopy=$process.StandardError.BaseStream.CopyToAsync($stderrFile)
@@ -567,20 +748,39 @@ if ($CaptureOutput) {
         catch{$failure='Capture PNG validation/save failed: '+$_.Exception.Message}
     }
     $finishedAt=[DateTimeOffset]::Now
-    $summary=[ordered]@{action='TOOL_CAPTURED';taskId=$TaskId;lane=$Lane;actualTool=$(if($ToolSource){$ToolSource}else{$null});category=$UsageCategory;attempt=$attempt;executionId=$ExecutionId;threadId=$OwnerThreadId;exitCode=$exitCode;failure=$failure;durationMs=[Math]::Round(($finishedAt-$startedAt).TotalMilliseconds,3);stdoutBytes=$stdoutBytes;stderrBytes=$stderrBytes;stdoutPath=$stdoutPath;stderrPath=$stderrPath}
+    $summary=[ordered]@{action='TOOL_CAPTURED';taskId=$TaskId;lane=$Lane;actualTool=$(if($ToolSource){$ToolSource}else{$null});category=$UsageCategory;attempt=$attempt;executionId=$ExecutionId;threadId=$OwnerThreadId;commandPath=$CommandPath;processId=$nativeProcessId;startedAt=$startedAt.ToString('o');finishedAt=$finishedAt.ToString('o');exitCode=$exitCode;failure=$failure;durationMs=[Math]::Round(($finishedAt-$startedAt).TotalMilliseconds,3);stdoutBytes=$stdoutBytes;stderrBytes=$stderrBytes;stdoutPath=$stdoutPath;stderrPath=$stderrPath}
     if($capturePlan){$summary.capturePng=$pngEvidence;$summary.captureRequestedPath=$capturePlan.path}
+    if($projectGrantProof){$summary.projectGrant=$projectGrantProof}
+    if($standardPreflightProof){$summary.standardPreflight=$standardPreflightProof}
     $json=$summary|ConvertTo-Json -Depth 6 -Compress
     $summaryBytes=[Text.Encoding]::UTF8.GetByteCount($json+[Environment]::NewLine)
     $metadata=@{toolSource=$ToolSource;usageCategory=$UsageCategory;attempt=$attempt;executionId=$ExecutionId;threadId=$OwnerThreadId;exitCode=$exitCode;failure=$failure;durationMs=$summary.durationMs;startedAt=$startedAt.ToString('o');finishedAt=$finishedAt.ToString('o');stdoutBytes=$stdoutBytes;stderrBytes=$stderrBytes;summaryUtf8Bytes=$summaryBytes;stdoutPath=$stdoutPath;stderrPath=$stderrPath;byteSemantics='Raw process stream bytes; summary UTF-8 includes host newline.'}
-    Write-TaskUsageRecord -TaskId $TaskId -Lane $Lane -Phase $Phase -Event ('tool:'+[IO.Path]::GetFileName($CommandPath)) -ToolCallCount 1 -ToolResultBytes $summaryBytes -Model $Model -Source 'DevTools/Workflow/Invoke-TaskTool.ps1' -Coverage 'Captured local process, exact streams and emitted summary; no provider token estimate.' -UnavailableReason @{actualTool=$(if(-not $ToolSource){'ToolSource not supplied.'}else{$null});inputTokens='Not exposed by local process.';outputTokens='Not exposed by local process.'} -Metadata $metadata -RuntimeRoot $RuntimeRoot|Out-Null
     $proofPath=Join-Path $OutputRoot "$progressId.json"
+    $accountingPath=Join-Path $OutputRoot "$progressId.accounting.json"
     if($capturePlan){
         $null=Assert-CaptureEvidencePath $proofPath $capturePlan.taskRoot $capturePlan.projectRoot
-        $proofStream=[IO.File]::Open($proofPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
-        try{$proofBytes=[Text.UTF8Encoding]::new($false).GetBytes(($summary|ConvertTo-Json -Depth 6));$proofStream.Write($proofBytes,0,$proofBytes.Length)}finally{$proofStream.Dispose()}
-    }else{[IO.File]::WriteAllText($proofPath,($summary|ConvertTo-Json -Depth 6),[Text.UTF8Encoding]::new($false))}
-    Report-Progress 'finish' $proofPath
+        $null=Assert-CaptureEvidencePath $accountingPath $capturePlan.taskRoot $capturePlan.projectRoot
+    }
+    Write-StartupFile $proofPath ([Text.UTF8Encoding]::new($false).GetBytes(($summary|ConvertTo-Json -Depth 6)))
+    # Emit the exact measured summary even when subsequent accounting fails;
+    # the host still exits nonzero and the caller must inspect accounting state.
     Write-Output $json
+    $usageStatus='NOT_ATTEMPTED';$finishStatus=$(if($progressEnabled){'NOT_ATTEMPTED'}else{'NOT_APPLICABLE'})
+    try {
+        Write-TaskUsageRecord -TaskId $TaskId -Lane $Lane -Phase $Phase -Event ('tool:'+[IO.Path]::GetFileName($CommandPath)) -ToolCallCount 1 -ToolResultBytes $summaryBytes -Model $Model -Source 'DevTools/Workflow/Invoke-TaskTool.ps1' -Coverage 'Captured local process, exact streams and emitted summary; no provider token estimate.' -UnavailableReason @{actualTool=$(if(-not $ToolSource){'ToolSource not supplied.'}else{$null});inputTokens='Not exposed by local process.';outputTokens='Not exposed by local process.'} -Metadata $metadata -RuntimeRoot $RuntimeRoot|Out-Null
+        $usageStatus='RECORDED'
+        Report-Progress 'finish' $proofPath
+        if($progressEnabled){$finishStatus='RECORDED'}
+    }catch{
+        $accountingError=$_
+        if($usageStatus -ne 'RECORDED'){$usageStatus='UNKNOWN'}else{$finishStatus='UNKNOWN'}
+        $status=[ordered]@{taskId=$TaskId;executionId=$ExecutionId;proofPath=$proofPath;status='FAILED';usageStatus=$usageStatus;finishStatus=$finishStatus;error=$accountingError.ToString();exceptionType=$accountingError.Exception.GetType().FullName}
+        try { Write-StartupFile $accountingPath ([Text.UTF8Encoding]::new($false).GetBytes(($status|ConvertTo-Json -Depth 6))) }
+        catch { $accountingError.Exception.Data['EatWhat.AccountingStateWriteError']=$_.ToString() }
+        throw $accountingError
+    }
+    $status=[ordered]@{taskId=$TaskId;executionId=$ExecutionId;proofPath=$proofPath;status='RECORDED';usageStatus=$usageStatus;finishStatus=$finishStatus}
+    Write-StartupFile $accountingPath ([Text.UTF8Encoding]::new($false).GetBytes(($status|ConvertTo-Json -Depth 6)))
     if($failure){throw "Wrapped command failed; raw output retained at $proofPath"}
     return
 }
@@ -590,13 +790,10 @@ $failure = $null
 $isPowerShellScript = [System.IO.Path]::GetExtension($CommandPath) -ieq '.ps1'
 try {
     $global:LASTEXITCODE = 0
-    if ($isPowerShellScript) {
-        $powerShell = Get-PowerShell7Path
-        $captured = @(& $powerShell -NoProfile -File $CommandPath @ArgumentList 2>&1)
-    }
-    else {
-        $captured = @(& $CommandPath @ArgumentList 2>&1)
-    }
+    $powerShellPath=if($isPowerShellScript){Get-PowerShell7Path}else{$null}
+    $argumentPlan=Get-TaskToolArgumentPlan -CommandPath $CommandPath -ArgumentList $ArgumentList -PowerShellPath $powerShellPath
+    $processArguments=$argumentPlan.arguments
+    $captured = @(& $argumentPlan.fileName @processArguments 2>&1)
     if ($null -ne $LASTEXITCODE) { $exitCode = [int]$LASTEXITCODE }
     $capturedErrors = @($captured | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] })
     if ($capturedErrors.Count -gt 0) {

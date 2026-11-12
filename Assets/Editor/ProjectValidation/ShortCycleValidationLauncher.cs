@@ -11,6 +11,10 @@ public static class ShortCycleValidationLauncher
     private const string Key="EatWhat.Validation.Isolation.";
     private static EditorApplication.CallbackFunction pendingRestore;
     private static int restoreEpoch;
+    public static bool IsRestored => !SessionState.GetBool(Key+"armed",false) &&
+        !SessionState.GetBool(Key+"entered",false) &&
+        string.IsNullOrEmpty(SessionState.GetString(Key+"restore","")) &&
+        !EditorApplication.isPlayingOrWillChangePlaymode && !ShortCycleValidationBootstrap.IsRunning;
     static ShortCycleValidationLauncher()
     {
         ShortCycleValidationBootstrap.EditorRequestProvider=ReadRequest;

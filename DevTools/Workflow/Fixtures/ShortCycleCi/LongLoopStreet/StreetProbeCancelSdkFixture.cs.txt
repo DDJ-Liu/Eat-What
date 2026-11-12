@@ -1,0 +1,58 @@
+// Offline SDK serialization boundary. Cancel/ReadJson state is explicitly synthetic;
+// delivered payload bodies, production report DTOs and installed SerializeResult are real source.
+using System;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using EatWhat.EditorValidation;
+using UnityEngine;
+namespace EatWhat.EditorValidation
+{
+    public static class LongLoopAutomatedProbe
+    {
+        public static int Cancels, Reads;
+        public static bool Done, Deny;
+        public static string Expected, JsonPath;
+        public static StreetProbeReport Cancel(string run)
+        {
+            if (run != Expected || Done || Deny) throw new InvalidOperationException("Wrong, duplicate or denied fixture cancel");
+            Cancels++; Done=true;
+            return new StreetProbeReport {runId=run,status="FAILED",error="EXPLICIT_CANCEL",
+                checks=new[]{new StreetProbeCheck {observedSample=new StreetProbeObservation {foot=new Vector3(1,2,3)}}}};
+        }
+        public static string ReadJson(string run)
+        {
+            if(run != Expected || !Done)throw new InvalidOperationException("Unknown fixture read");
+            Reads++;return File.ReadAllText(JsonPath);
+        }
+    }
+}
+internal static class CancelSdkBoundary
+{
+    static int checks;
+    static bool GateAllowed=true;
+    static void Gate(bool required){if(!required||!GateAllowed)throw new InvalidOperationException("Fixture gate");}
+    static void Check(bool ok,string label){checks++;if(!ok)throw new Exception(label);}
+    static void Reject(Action action,string label){bool bad=false;try{action();}catch(InvalidOperationException){bad=true;}Check(bad,label);}
+    static void Reset(string run){LongLoopAutomatedProbe.Cancels=0;LongLoopAutomatedProbe.Reads=0;LongLoopAutomatedProbe.Done=false;LongLoopAutomatedProbe.Deny=false;LongLoopAutomatedProbe.Expected=run;GateAllowed=true;}
+    static object Old(){__OLD_CANCEL_BODY__}
+    static object Current(){__NEW_CANCEL_BODY__}
+    __SDK_SERIALIZER__
+    public static int Main(string[] args)
+    {
+        LongLoopAutomatedProbe.JsonPath=args[0];
+        Reset("a5_street435");var old=SerializeResult(Old());
+        Check(LongLoopAutomatedProbe.Cancels==1&&LongLoopAutomatedProbe.Reads==0,"Old delivered body cancels once without JSON read");
+        Check(old is string&&(string)old==typeof(StreetProbeReport).FullName,"Installed SDK fallback reproduces real report class-name text");
+        Reset("a6_street435");var result=SerializeResult(Current());
+        Check(result is string,"Installed SDK preserves actual ReadJson string");
+        var json=JObject.Parse((string)result);
+        Check((string)json["runId"]=="a6_street435"&&(string)json["error"]=="EXPLICIT_CANCEL","Read returns current identity and failure honestly");
+        foreach(var key in new[]{"inputRestored","configsRestored","configOwnerRestored","callbacksRemoved","temporaryObjectsDestroyed","noForeignOverwrite"})Check((bool)json["cleanup"][key],"Returned cleanup "+key);
+        Check(LongLoopAutomatedProbe.Cancels==1&&LongLoopAutomatedProbe.Reads==1,"Current actual body one Cancel then one ReadJson");
+        Reject(()=>Current(),"Second body execution refuses duplicate cancel");Check(LongLoopAutomatedProbe.Cancels==1&&LongLoopAutomatedProbe.Reads==1,"Duplicate cannot add cancel/read");
+        Reset("foreign");Reject(()=>Current(),"Foreign run refuses");Check(LongLoopAutomatedProbe.Cancels==0&&LongLoopAutomatedProbe.Reads==0,"Foreign does not cancel/read");
+        Reset("a6_street435");LongLoopAutomatedProbe.Deny=true;Reject(()=>Current(),"Cancel failure is not swallowed");Check(LongLoopAutomatedProbe.Reads==0,"Failed Cancel cannot substitute read");
+        Reset("a6_street435");GateAllowed=false;Reject(()=>Current(),"Gate refusal retained");Check(LongLoopAutomatedProbe.Cancels==0,"Gate failure cannot cancel");
+        Console.WriteLine("PASS "+checks+" actual payload/installed SDK serialization assertions; synthetic cancellation state, no Unity");return 0;
+    }
+}

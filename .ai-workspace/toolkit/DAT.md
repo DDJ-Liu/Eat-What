@@ -25,6 +25,7 @@
 <a id="tk-dat-06"></a>
 <a id="tk-dat-07"></a>
 <a id="tk-dat-08"></a>
+<a id="tk-dat-10"></a>
 
 ## 5. DAT · 数据
 
@@ -34,10 +35,11 @@
 | TK-DAT-02 | `SerializableDictionary<K,V>` `DataBase/` | 可序列化字典 | — | 沿用 | — | CK01-A | |
 | TK-DAT-03 | `DataEncryptor` | 存档加密 | — | 沿用 | —（SaveBoundary） | CK01-A | |
 | TK-DAT-04 | `DataBaseManager` / SpreadsheetData | 旧配表体系 | — | 弃用 | 旧场景 | CK01-A #16 | 禁止新增依赖 |
-| TK-DAT-05 | **`TagFilter`（拟）** | 带 tag 集合的单/多选筛选输出可见集合（纯 C#） | 拟 | 规划中 | 格架筛选 / 目录筛选 / P2 分类 | T-03 | 可单测 |
-| TK-DAT-06 | **`PlaceholderRule`（拟）** | 数据到位/缺失/AIGC 三态占位统一（纯 C#） | 拟 | 规划中 | 全游戏 | T-05 | B1 3.7 |
+| TK-DAT-05 | `TagFilter` `Assets/Scripts/Tools/TagFilter.cs` | 纯 C# 按 tag ID 集合 Any/All 筛选，保留输入顺序和重复行；空筛选保留全部，重复选择去重 | `TagFilter.Apply<T>(source,tagsFor,selectedTags,mode,comparer)` | AI323 CODE候选·待CONTROL验收及原生消费 | 格架筛选 / 目录筛选 / P2 分类 | TK-01 / AI-000323 | 默认 Ordinal，比较器可显式提供；非法所选 tag 拒绝，不改源集合；不读取/改写生产配表 |
+| TK-DAT-06 | `PlaceholderRule` `Assets/Scripts/Tools/PlaceholderRule.cs` | 纯 C# 将资产存在与名称归为 Ready/Missing/Aigc 三态 | `PlaceholderRule.Classify(hasAsset,assetName)` → `ToolkitPlaceholderState` | AI323 已CONTROL验收；AI327消费待验 | StickerNotesPiece；StepDetailRowPiece；ShortCycleSubCard/SlotBlock | TK-01 / AI-000323 / AI-000327 | `_AIGC` 后缀 OrdinalIgnoreCase；工具只分类、不替换 Sprite。AI327 Clue 消费者按精确 CK01-MissingSprite 引用判 Missing，需另绑非缺失替代 Sprite；普通图在源身份未绑时不伪 Ready；已锁替代取首 ingredient category tag 图并需剪影 Material。原生绑定待 CLUE-02 |
 | TK-DAT-07 | `DevTools/DataTables/Authoring/` 配表往返工具 | 14 表 CSV↔Excel 双入口、每轮隔离工作簿格式候选、共享校验、逐格内容快照/diff、格式/注释及已知空格窄填门、冻结发布计划、源/暂存/备份漂移门、归属核验的原子文件发布/反序回退、CSV来源追踪与 G53 新字形清单 | `Format-AuthoringWorkbook.ps1 -InputWorkbook -CandidateWorkbook -ExpectedInputSha256`；`Authoring.Common.ps1` 的 `Get/Compare/Publish/Restore-Authoring*`、`New-AuthoringDerivedPublishPlan`、`Invoke-AuthoringTransactionRollback`；`New-AuthoringWorkbook.ps1` `Export-AuthoringToCsv.ps1` `Import-CsvToAuthoring.ps1` `Invoke-DataTableAuthoring.ps1`；`Validate-DataTables.ps1 -Quick` | 沿用·AI186格式候选与发布漂移门 | USER-U1 配表；U1-R1格式/注释/导出；F4-ENGINE 导表前置 | AI-000150 / F3-CODE；AI-000185 / U1-CONTENT-GUARD；AI-000192 / U1-CONTENT-GUARD-R1；AI-000186 / U1-FORMAT | 仅编辑器外数据源工具；人工xlsx不由CODE实际格式发布，191经DATA授权后才发布。候选只改已知schema格式，全值/类型/公式/空白结构保持；Excel客户端显示仍需人工验收。Exporter在生成候选前冻结目标/备份基线，复核源/候选/暂存/目标，回退仅覆盖可证明归属字节。xlsx与CSV各有备份/审计，非跨文件原子事务；直接CSV路径标识无源工作簿。不导入Unity、不改字体 |
 | TK-DAT-08 | `SceneToolIdentity` + `SceneToolInventory` + Editor 场景厨具导出 | 按稳定ID和显式/层级共同归属识别真实工具及固定设施；场景源GUID/SHA清单供编辑器外校验 | `CookingRoomManager.GetSceneToolInventory(catalog)`；Tools > Data Tables > Export Active Scene Tool Inventory；`Validate-DataTables.ps1 -SceneInventoryPath <json> -RequireSceneInventory` | AI188源码完成，真实场景待AI190接线/验收 | ENGINE AI190、DATA AI191 | AI-000188 / U1-SCENE-TOOLS | 旧`preset_tools`内容保留但不授予可用性；无/过期清单报告未验证。CODE不导出生产场景，也不改场景/Prefab；真实Editor编译/清单由ENGINE负责。 |
+| TK-DAT-10 | `Assets/Scripts/Tools/GroundSpaceMath.cs` | 对脚底世界坐标 X/Y 按 DEPTH 算椭圆地面距离，忽略 Z；非法输入显式拒绝 | `GroundSpaceMath.GroundDistance(Vector3 a, Vector3 b, float depth)` | AI424 CODE 离线候选，待 CONTROL 独立验收/后继原生消费 | LongLoop `GroundSpace`；后续兴趣点/触发/遮挡 | AI-000424 / W-04 | 原卡拟用 TK-DAT-08 已被场景厨具占用，DAT-09 也已登记，故映射到此前空闲的 DAT-10；不改旧08/09。Toolkit 只收参数，不读 LongLoop 配置；DEPTH 来源为 `StreetConfigs.Current.DepthScale.Depth`。脚底为调用者传入的世界点，不从 Renderer 猜。 |
 
 AI189 扩展 TK-DAT-07：集中 header-descriptions.mjs 与 authoring.mjs 的 header-comment-plan 负责14表119字段语义注释；Update-HeaderComments.ps1 公开隔离候选入口（InputWorkbook/CandidateWorkbook/ExpectedInputSha256/DataTablesRoot），合并有工具作者身份证据的旧线程并保留未知用户备注，逐格内容和结构零差异。生产xlsx只读，AI191 DATA 再按 FormatOrCommentOnly 门发布格式/注释合并候选。
 

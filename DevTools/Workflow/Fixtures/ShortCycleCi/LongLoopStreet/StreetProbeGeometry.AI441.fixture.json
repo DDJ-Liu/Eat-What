@@ -1,0 +1,582 @@
+{
+  "schemaVersion": 1,
+  "kind": "CONTROL_REVIEWED_STREET_GEOMETRY",
+  "cameraBoundsPath": "Confiner_TUNE",
+  "cameraPath": "CM_StreetFollow_TUNE",
+  "confinerGeometrySha256": "C0903DA9A63AA4D3750E2EB3F24DEA8C4A48AC8E56B975F9D9576ECA904315C8",
+  "savedScenePath": "D:\\GameProject\\Eat-What\\Assets\\Scenes\\LongLoop\\LongLoop_Street.unity",
+  "savedSceneSha256": "0E577320D2EB4B6A019BC1C8070D6DA74F344DCAAF7AA772AA3FF344AE55209F",
+  "nativeReadbackPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\PLAYABLE-DEMO011-20261104\\AI-000434\\attempt1\\geometry-readback.json",
+  "nativeReadbackSha256": "F0511E8FD2CDD3EE37A54BAF967A3896074A1615ADB404E6CC28D67A68C06367",
+  "independentReviewPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PLAYABLE-DEMO011-20261104\\independent-review-434-complete1.json",
+  "independentReviewSha256": "A43DFB2317E900BF60C3939F4E57A212C5506588590BC2FE8625641269F732F8",
+  "actualGeometry": {
+    "taskId": "AI-000434",
+    "attempt": 1,
+    "executionId": "f333ba4473b94fc6a2729964a822febe",
+    "cameraPath": "CM_StreetFollow_TUNE",
+    "cameraBoundsPath": "Confiner_TUNE",
+    "confinerGeometrySha256": "C0903DA9A63AA4D3750E2EB3F24DEA8C4A48AC8E56B975F9D9576ECA904315C8",
+    "walk": {
+      "path": "WalkArea_TUNE",
+      "instanceId": -26078,
+      "enabled": true,
+      "trigger": true,
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "localPaths": [
+        [
+          [
+            -54.85,
+            -6.49000025
+          ],
+          [
+            46.19,
+            -6.49000025
+          ],
+          [
+            46.19,
+            -1.69
+          ],
+          [
+            -54.85,
+            -1.69
+          ]
+        ]
+      ],
+      "worldPaths": [
+        [
+          [
+            -54.85,
+            -6.49000025,
+            0.0
+          ],
+          [
+            46.19,
+            -6.49000025,
+            0.0
+          ],
+          [
+            46.19,
+            -1.69,
+            0.0
+          ],
+          [
+            -54.85,
+            -1.69,
+            0.0
+          ]
+        ]
+      ]
+    },
+    "confiner": {
+      "path": "Confiner_TUNE",
+      "instanceId": 71204,
+      "enabled": true,
+      "trigger": true,
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "matrix": [
+        3.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        0.0,
+        4.02,
+        -1.3,
+        0.0,
+        1.0
+      ],
+      "localPaths": [
+        [
+          [
+            -20.0200043,
+            -6.5
+          ],
+          [
+            -20.0200043,
+            8.0
+          ],
+          [
+            13.9799957,
+            8.0
+          ],
+          [
+            13.9799957,
+            -6.5
+          ]
+        ]
+      ],
+      "worldPaths": [
+        [
+          [
+            -56.0400124,
+            -20.8,
+            0.0
+          ],
+          [
+            -56.0400124,
+            22.7,
+            0.0
+          ],
+          [
+            45.9599876,
+            22.7,
+            0.0
+          ],
+          [
+            45.9599876,
+            -20.8,
+            0.0
+          ]
+        ]
+      ]
+    },
+    "worldMin": [
+      -56.0400124,
+      -20.8
+    ],
+    "worldMax": [
+      45.9599876,
+      22.7
+    ],
+    "containedCenterY": [
+      -10.7999992,
+      12.7000008
+    ],
+    "fullSlowingInsetY": [
+      -5.799999,
+      7.700001
+    ],
+    "horizontalContainedCenterX": [
+      -38.2622337,
+      28.182209
+    ],
+    "size": 10.0,
+    "aspect": 1.77777779,
+    "focus": 2.0,
+    "spawnY": -4.09,
+    "idealSpawnFollowY": -2.09000015,
+    "idealWalkFollowY": [
+      -4.49000025,
+      0.309999943
+    ],
+    "sceneClean": true,
+    "missingScripts": 0,
+    "sceneSha256": "0E577320D2EB4B6A019BC1C8070D6DA74F344DCAAF7AA772AA3FF344AE55209F",
+    "sceneBytes": 64887,
+    "metaSha256": "8156077FC044CD4D5CB085AF9DDFB4DBCD46535D59B0BD5E07433D5DA986E1D1",
+    "humanTuningCompleted": false,
+    "finalVisualAccepted": false,
+    "prbPassed": false,
+    "temporaryInputCreated": 0,
+    "temporaryCallbacksCreated": 0,
+    "playCalls": 0
+  },
+  "paths": {
+    "playerPath": "PlayerRoot_TUNE",
+    "depthPath": "PlayerRoot_TUNE/Visual_TUNE",
+    "sorterPath": "PlayerRoot_TUNE",
+    "followPointPath": "PlayerRoot_TUNE",
+    "cameraPath": "CM_StreetFollow_TUNE",
+    "brainPath": "Cam_Street"
+  },
+  "runId": "a1_street435",
+  "stages": [
+    {
+      "id": "ready",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "x-positive",
+      "input": {
+        "x": 1,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "x-negative",
+      "input": {
+        "x": -1,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "y-positive",
+      "input": {
+        "x": 0,
+        "y": 1
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "y-negative",
+      "input": {
+        "x": 0,
+        "y": -1
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "diagonal",
+      "input": {
+        "x": 1,
+        "y": 1
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "idle",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.75,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "edge-approach",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": true,
+      "destination": {
+        "x": 3.65,
+        "y": -6.47,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 6,
+      "captureId": ""
+    },
+    {
+      "id": "edge-slide",
+      "input": {
+        "x": 1,
+        "y": -1
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.75,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "edge-stop",
+      "input": {
+        "x": 0,
+        "y": -1
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 1,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "depth-low",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": true,
+      "destination": {
+        "x": 0.4,
+        "y": -4.49,
+        "z": 0
+      },
+      "seconds": 0.6,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "depth-mid",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": true,
+      "destination": {
+        "x": 0.4,
+        "y": -4.09,
+        "z": 0
+      },
+      "seconds": 0.6,
+      "timeoutSeconds": 45,
+      "captureId": "sorting"
+    },
+    {
+      "id": "depth-high",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": true,
+      "destination": {
+        "x": 0.4,
+        "y": -3.69,
+        "z": 0
+      },
+      "seconds": 0.6,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "camera-settle",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 3.2,
+      "timeoutSeconds": 6,
+      "captureId": ""
+    },
+    {
+      "id": "deadzone-hold",
+      "input": {
+        "x": 0.05,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.5,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "deadzone-push",
+      "input": {
+        "x": 1,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.6,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "ahead-right",
+      "input": {
+        "x": 1,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.8,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "ahead-left",
+      "input": {
+        "x": -1,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.8,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "stopped-recenter",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 3.2,
+      "timeoutSeconds": 6,
+      "captureId": ""
+    },
+    {
+      "id": "focus",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.75,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "f02-zero",
+      "input": {
+        "x": 1,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.75,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    },
+    {
+      "id": "restore",
+      "input": {
+        "x": 0,
+        "y": 0
+      },
+      "navigate": false,
+      "destination": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "seconds": 0.75,
+      "timeoutSeconds": 3,
+      "captureId": ""
+    }
+  ],
+  "maximumSeconds": 120,
+  "stageDeadlineSum": 117,
+  "cleanupSeconds": 2,
+  "expectedMoveSpeed": 6.5,
+  "expectedVerticalFactor": 0.6,
+  "edgeTangent": {
+    "x": 1,
+    "y": 0
+  },
+  "focusDelta": 0.5,
+  "routeReview": "AI441: timeout-only18x4to3 +sorting24to45; exact motion/input/navigation/destination preserved;119withcleanup; CONTROL final review/currentclaim still required.",
+  "humanTuningStatus": "DEFERRED_NONBLOCKING",
+  "humanTuningCompleted": false,
+  "finalVisualAccepted": false
+}

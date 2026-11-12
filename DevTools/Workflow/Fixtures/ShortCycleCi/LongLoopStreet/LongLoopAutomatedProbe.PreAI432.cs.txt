@@ -1,0 +1,457 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using EatWhat.LongLoop;
+using EatWhat.LongLoop.Configuration;
+using EatWhat.Toolkit.Input;
+using Spine.Unity;
+using Unity.Cinemachine;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
+using Object=UnityEngine.Object;
+
+namespace EatWhat.EditorValidation
+{
+    [InitializeOnLoad]
+    public static class LongLoopAutomatedProbe
+    {
+        private static Run active;
+        static LongLoopAutomatedProbe()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload+=()=>CancelActive("ASSEMBLY_RELOAD");
+            EditorApplication.playModeStateChanged+=s=>{if(s==PlayModeStateChange.ExitingPlayMode)CancelActive("PLAY_EXIT");};
+        }
+        public static string[] RequiredAssertions()=>LongLoopProbeChecks.RequiredIds.ToArray();
+        public static StreetProbeReport Begin(string requestJson)
+        {
+            var request=JsonUtility.FromJson<StreetProbeRequest>(requestJson);
+            LongLoopProbeChecks.ValidatePlan(request);
+            var sha=Hash(Encoding.UTF8.GetBytes(requestJson));
+            if(active!=null)
+            {
+                if(active.Request.runId==request.runId&&active.Request.taskId==request.taskId&&active.RequestSha==sha)return active.Report();
+                if(!active.Terminal||!active.Report().cleanup.Passed||active.Request.executionId==request.executionId)
+                    throw new InvalidOperationException("Registered same-execution/unfinished Street run exists; no reset or rerun.");
+            }
+            ValidateIdentity(request);
+            if(Directory.Exists(request.outputRoot))throw new InvalidOperationException("Street run root already exists; preserve unfinished/finished evidence, use Read not Begin.");
+            Directory.CreateDirectory(request.outputRoot);
+            WriteNew(Path.Combine(request.outputRoot,"request.json"),requestJson);
+            active=new Run(request,sha);
+            try{active.Start();}catch(Exception ex){active.Fail("BEGIN:"+ex);}
+            return active.Report();
+        }
+        public static StreetProbeReport Read(string runId)
+        {
+            if(active!=null&&active.Request.runId==runId)return active.Report();
+            throw new InvalidOperationException("No current matching Street run. Read saved evidence after reload; do not Begin again.");
+        }
+        public static string ReadJson(string runId)
+        {
+            var report=Read(runId);var path=Path.Combine(report.outputRoot,"run-report.json");
+            return File.Exists(path)?File.ReadAllText(path,Encoding.UTF8):JsonUtility.ToJson(report,true);
+        }
+        public static StreetProbeReport Cancel(string runId)
+        {if(active==null||active.Request.runId!=runId)throw new InvalidOperationException("Wrong Street run.");active.Fail("EXPLICIT_CANCEL");return active.Report();}
+        public static StreetProbeReport AcknowledgeCapture(string runId,string captureId,string receiptSha256)
+        {if(active==null||active.Request.runId!=runId)throw new InvalidOperationException("Wrong Street run.");return active.AcknowledgeCapture(captureId,receiptSha256);}
+        private static void CancelActive(string reason){if(active!=null&&!active.Terminal)active.Fail(reason);}
+        private static string Hash(byte[] data){using(var h=SHA256.Create())return BitConverter.ToString(h.ComputeHash(data)).Replace("-","");}
+        private static void WriteNew(string path,string text)
+        {using(var s=new FileStream(path,FileMode.CreateNew,FileAccess.Write,FileShare.Read))using(var w=new StreamWriter(s,new UTF8Encoding(false)))w.Write(text);}
+        private static void NoLinks(string path)
+        {for(var p=Path.GetFullPath(path);!string.IsNullOrEmpty(p);p=Path.GetDirectoryName(p))if((File.Exists(p)||Directory.Exists(p))&&(File.GetAttributes(p)&FileAttributes.ReparsePoint)!=0)throw new InvalidOperationException("Redirected Street evidence path.");}
+        private static void ValidateIdentity(StreetProbeRequest r)
+        {
+            string project=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            if(Application.unityVersion!="6000.3.24f1"||!EditorApplication.isPlaying||EditorApplication.isCompiling||EditorApplication.isUpdating||
+                r.attempt<1||!System.Text.RegularExpressions.Regex.IsMatch(r.taskId??"","^AI-[0-9]{6}$")||
+                !System.Text.RegularExpressions.Regex.IsMatch(r.executionId??"","^[0-9a-f]{32}$")||string.IsNullOrWhiteSpace(r.ownerThreadId)||
+                !System.Text.RegularExpressions.Regex.IsMatch(r.runId??"","^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")||
+                !string.Equals(Path.GetFullPath(r.projectPath),project,StringComparison.OrdinalIgnoreCase)||
+                SceneManager.GetActiveScene().path!=r.scenePath||r.scenePath!="Assets/Scenes/LongLoop/LongLoop_Street.unity")
+                throw new InvalidOperationException("Current normal Street Play and exact task/project/scene identity required.");
+            using(var p=Process.GetCurrentProcess())
+                if(r.editorPid!=p.Id||DateTimeOffset.Parse(r.editorStartedAt)!=new DateTimeOffset(p.StartTime))throw new InvalidOperationException("Editor PID/start mismatch.");
+            foreach(var sha in new[]{r.contextSha256,r.scopeSha256,r.geometrySha256})
+                if(!System.Text.RegularExpressions.Regex.IsMatch(sha??"","^[A-Fa-f0-9]{64}$"))throw new InvalidOperationException("Reviewed context/scope/geometry SHA required.");
+            var expected=Path.Combine(project,".ai-workspace","outputs","PLAYABLE-DEMO011-20261104",r.taskId,"attempt"+r.attempt,"street-probe",r.runId);
+            if(!Path.IsPathRooted(r.outputRoot)||!string.Equals(Path.GetFullPath(r.outputRoot),expected,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Exact task/attempt/run output root required.");
+            NoLinks(r.outputRoot);
+            var taskRoot=Path.GetDirectoryName(Path.GetDirectoryName(r.outputRoot));
+            var authorization=Path.Combine(taskRoot,"ci-contexts",r.runId+".authorization.json");
+            var geometry=Path.Combine(taskRoot,"ci-contexts",r.runId+".geometry.json");
+            if(!string.Equals(Path.GetFullPath(r.authorizationPath),authorization,StringComparison.OrdinalIgnoreCase)||
+                !string.Equals(Path.GetFullPath(r.geometryPath),geometry,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Sealed prior authorization/USERa geometry paths required.");
+            NoLinks(authorization);NoLinks(geometry);
+            if(Hash(File.ReadAllBytes(authorization))!=r.contextSha256||Hash(File.ReadAllBytes(geometry))!=r.geometrySha256)throw new InvalidOperationException("Prior authorization or USERa geometry SHA drift.");
+            var auth=JsonUtility.FromJson<Authorization>(File.ReadAllText(authorization));
+            if(auth.schemaVersion!=1||auth.taskId!=r.taskId||auth.attempt!=r.attempt||auth.executionId!=r.executionId||auth.runId!=r.runId||auth.ownerThreadId!=r.ownerThreadId||auth.scopeSha256!=r.scopeSha256||auth.geometrySha256!=r.geometrySha256)
+                throw new InvalidOperationException("Prior reviewed authorization identity mismatch.");
+            foreach(var p in new[]{auth.userAdjustmentReceiptPath})if(!Path.GetFullPath(p).StartsWith(Path.Combine(project,".ai-workspace")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Human review evidence outside workspace.");
+            NoLinks(auth.userAdjustmentReceiptPath);
+            if(Hash(File.ReadAllBytes(auth.userAdjustmentReceiptPath))!=auth.userAdjustmentReceiptSha256)throw new InvalidOperationException("Missing actual USERa review evidence.");
+            var review=JsonUtility.FromJson<UserAdjustment>(File.ReadAllText(auth.userAdjustmentReceiptPath));
+            if(review.schemaVersion!=1||review.kind!="USERa"||review.source!="direct-human-user"||review.decision!="APPROVED"||review.geometrySha256!=r.geometrySha256)throw new InvalidOperationException("USERa not signed for this actual geometry.");
+            if(!Path.GetFullPath(review.userReplyEvidencePath).StartsWith(Path.Combine(project,".ai-workspace")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Original human evidence outside workspace.");
+            NoLinks(review.userReplyEvidencePath);if(Hash(File.ReadAllBytes(review.userReplyEvidencePath))!=review.userReplyEvidenceSha256)throw new InvalidOperationException("Original human reply evidence missing.");
+        }
+        [Serializable] private sealed class Authorization {public int schemaVersion,attempt;public string taskId,executionId,runId,ownerThreadId,scopeSha256,geometrySha256,userAdjustmentReceiptPath,userAdjustmentReceiptSha256;}
+        [Serializable] private sealed class UserAdjustment {public int schemaVersion;public string kind,source,decision,geometrySha256,userReplyEvidencePath,userReplyEvidenceSha256;}
+        private static T Resolve<T>(string path) where T:Component
+        {
+            var matches=Object.FindObjectsByType<T>(FindObjectsInactive.Include,FindObjectsSortMode.None)
+                .Where(c=>c.gameObject.scene==SceneManager.GetActiveScene()&&ObjectPath(c.transform)==path).ToArray();
+            if(matches.Length!=1)throw new InvalidOperationException("Missing or ambiguous "+typeof(T).Name+" at "+path);
+            return matches[0];
+        }
+        private static string ObjectPath(Transform t)
+        {string p=t.name;for(var parent=t.parent;parent!=null;parent=parent.parent)p=parent.name+"/"+p;return p;}
+        private static SerializedProperty Property(Object o,string name)
+        {var p=new SerializedObject(o).FindProperty(name);if(p==null)throw new InvalidOperationException("Installed serialized field missing: "+o.GetType().FullName+"."+name);return p;}
+        private static T Ref<T>(Object o,string name) where T:Object=>Property(o,name).objectReferenceValue as T;
+        private static object RuntimeField(LongLoopPlayerController player,string name,Type type)
+        {var f=typeof(LongLoopPlayerController).GetField(name,BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.DeclaredOnly);if(f==null||f.FieldType!=type)throw new InvalidOperationException("Controller runtime interface contract changed.");return f.GetValue(player);}
+
+        private sealed class Proxy:IGameInput
+        {
+            public Vector2 Move;
+            public float Horizontal=>Move.x;public float Vertical=>Move.y;public Vector2 LookAxis=>Vector2.zero;
+            public GameInputDevice CurrentDevice=>GameInputDevice.Keyboard;public bool Interact=>false;public Vector2 MouseScreenPos=>Vector2.zero;
+        }
+        private sealed class Run
+        {
+            public readonly StreetProbeRequest Request;public readonly string RequestSha;
+            private readonly StreetProbeSequence sequence;private readonly string startedAt;
+            private readonly Proxy input=new Proxy();private readonly StreetProbeCleanup cleanup=new StreetProbeCleanup {noForeignOverwrite=true};
+            private LongLoopPlayerController player;private DepthScale depth;private YSorter sorter;private StreetFollowPoint point;
+            private CinemachineCamera camera;private CinemachineBrain brain;private CameraFollowConfigBinder binding;private FollowRecenterExtension f01;private StreetFollowChannels channels;
+            private IGameInput originalInput;private IPlayerAvatar originalAvatar;private SkeletonAnimation skeleton;private int animationTrack;
+            private string walkName,idleName;private Transform ground;private Vector3 baseline,localFoot;
+            private StreetConfigSet original,owned;private StreetConfigBinder originalOwner;
+            private CameraFollowConfig followClone;private DepthScaleConfig depthClone;
+            private CameraModeConfig modeClone;private SceneBoundsConfig boundsClone;private CameraInterestConfig interestClone,originalInterest;
+            private MonoBehaviour originalChannelState;private StreetCameraDebug originalDebug;
+            private bool externalConfigChange,changingClones,channelCloneBound,inputInstalled,callbacks,cleaning;
+            private GameObject markerRoot,front,back;private Texture2D markerTexture;private Sprite markerSprite;
+            private YSorter frontSort,backSort;private Renderer selectedRenderer;private SortingGroup selectedGroup;
+            private int expectedLayer,brainFrame=-1,sampledFrame=-1,bodyFrame=-1,notifications,previousChannelCount,enteredStage=-1;
+            private double cleanupStarted;private float priorCmTime;private Vector3 priorRaw,priorGoal,bodyRaw,bodyCorrection,brainOutput,cameraOutput,stopGoal;
+            private float bodySize,dampingError,aheadError,delayGoalError,recenterObserved,priorStopped,priorAhead;private Vector3 priorFoot;
+            private bool previousBody,dampingMeasured,stopGoalSet;
+            private ulong bodySequence;private StreetProbeReport terminal;
+            private string captureReceiptSha,captureStarted,captureAcknowledged;
+            public bool Terminal=>terminal!=null;
+            public Run(StreetProbeRequest r,string sha)
+            {Request=r;RequestSha=sha;startedAt=DateTimeOffset.UtcNow.ToString("o");sequence=new StreetProbeSequence(r,Time.realtimeSinceStartupAsDouble);}
+            public void Start()
+            {
+                player=Resolve<LongLoopPlayerController>(Request.playerPath);depth=Resolve<DepthScale>(Request.depthPath);sorter=Resolve<YSorter>(Request.sorterPath);
+                point=Resolve<StreetFollowPoint>(Request.followPointPath);camera=Resolve<CinemachineCamera>(Request.cameraPath);brain=Resolve<CinemachineBrain>(Request.brainPath);
+                f01=camera.GetComponent<FollowRecenterExtension>();channels=camera.GetComponent<StreetFollowChannels>();binding=camera.GetComponent<CameraFollowConfigBinder>();
+                if(!player.isActiveAndEnabled||!depth.isActiveAndEnabled||!sorter.isActiveAndEnabled||!point.isActiveAndEnabled||f01==null||channels==null||binding==null||
+                    !f01.isActiveAndEnabled||!channels.isActiveAndEnabled||!brain.isActiveAndEnabled||brain.ActiveVirtualCamera!=camera||brain.IsBlending||!camera.Lens.Orthographic||
+                    camera.Follow!=point.Node||point.Foot==null||point.Foot.IsChildOf(depth.transform)||binding.Camera!=camera||binding.Composer==null||
+                    Ref<StreetFollowPoint>(f01,"followPoint")!=point||Ref<FollowRecenterExtension>(channels,"f01")!=f01||Ref<StreetFollowPoint>(channels,"followPoint")!=point)
+                    throw new InvalidOperationException("Incomplete actual Street bindings/independent foot/live orthographic Brain.");
+                if(camera.GetComponents<CinemachineExtension>().Any(e=>e.enabled&&e!=f01&&e!=channels)||
+                    camera.GetComponents<CinemachineComponentBase>().Any(c=>c.enabled&&c!=binding.Composer))throw new InvalidOperationException("Unknown camera pipeline driver.");
+                if(Math.Abs(player.MoveSpeed-Request.expectedMoveSpeed)>.0001||Math.Abs(player.VerticalSpeedFactor-Request.expectedVerticalFactor)>.0001)
+                    throw new InvalidOperationException("Reviewed actual speed/vertical factor differs; do not overwrite saved values.");
+                originalInput=RuntimeField(player,"input",typeof(IGameInput)) as IGameInput;
+                originalAvatar=RuntimeField(player,"avatar",typeof(IPlayerAvatar)) as IPlayerAvatar;
+                if(originalInput==null||!(originalAvatar is TomatoSpineAvatar avatar)||!avatar.isActiveAndEnabled||originalInput.Horizontal!=0||originalInput.Vertical!=0)
+                    throw new InvalidOperationException("Actual neutral input and real initialized avatar required.");
+                skeleton=Ref<SkeletonAnimation>(avatar,"skeletonAnimation");animationTrack=Property(avatar,"trackIndex").intValue;
+                walkName=Property(avatar,"walkAnimation").stringValue;idleName=Property(avatar,"idleAnimation").stringValue;
+                if(skeleton==null||skeleton.AnimationState==null)throw new InvalidOperationException("Wait for natural avatar initialization; no manual Start/Awake.");
+                original=StreetConfigs.Current;
+                if(original==null||original.DepthScale==null||original.CameraMode==null||original.CameraFollow==null||original.SceneBounds==null)
+                    throw new InvalidOperationException("All four actual CFG assets must be bound.");
+                float settle=original.CameraFollow.RecenterDelay+6*Math.Max(original.CameraFollow.DampingX,original.CameraFollow.DampingY)+
+                    camera.Lens.OrthographicSize*Math.Max(camera.Lens.Aspect*original.CameraFollow.DeadZoneWidth,original.CameraFollow.DeadZoneHeight)/Math.Max(.01f,original.CameraFollow.RecenterSpeed);
+                foreach(var id in new[]{"camera-settle","stopped-recenter"})if(Request.stages.First(s=>s.id==id).seconds<settle)
+                    throw new InvalidOperationException("Insufficient actual configured settling/recenter time: "+id);
+                if(Request.stages.First(s=>s.id=="edge-stop").seconds<original.CameraFollow.RecenterDelay+.25f)
+                    throw new InvalidOperationException("Boundary stop must cover actual delay.");
+                originalInterest=Ref<CameraInterestConfig>(channels,"interestConfig");originalChannelState=Ref<MonoBehaviour>(channels,"gameState");originalDebug=Ref<StreetCameraDebug>(channels,"debugger");
+                if(originalInterest==null||originalChannelState!=null)throw new InvalidOperationException("Local C7 required; unknown external channel state must be reviewed.");
+                VerifyFiles();
+                var assets=new Object[]{original.DepthScale,original.CameraMode,original.CameraFollow,original.SceneBounds,originalInterest};
+                if(Request.configuredAssets==null||Request.configuredAssets.Length!=5||assets.Any(a=>!EditorUtility.IsPersistent(a)||EditorUtility.IsDirty(a)))
+                    throw new InvalidOperationException("Five real saved configuration assets required; do not save dirty user assets.");
+                foreach(var a in assets)if(!Request.configuredAssets.Any(f=>string.Equals(Path.GetFullPath(f.path),Path.GetFullPath(Path.Combine(Request.projectPath,AssetDatabase.GetAssetPath(a))),StringComparison.OrdinalIgnoreCase)))
+                    throw new InvalidOperationException("Configured asset identity missing from reviewed snapshot.");
+                var owners=Object.FindObjectsByType<StreetConfigBinder>(FindObjectsInactive.Exclude,FindObjectsSortMode.None).Where(b=>b.isActiveAndEnabled&&b.gameObject.scene==SceneManager.GetActiveScene()&&OwnerReferencesMatch(b)).ToArray();
+                if(owners.Length!=1)throw new InvalidOperationException("Unique existing original StreetConfigBinder owner required.");originalOwner=owners[0];
+                var area=Ref<WalkArea>(player,"walkArea");if(area==null||!area.IsUsable)throw new InvalidOperationException("USERa actual WalkArea required.");
+                foreach(var s in Request.stages.Where(s=>s.navigate))if(!area.Contains(new Vector2(s.destination.x,s.destination.y)))throw new InvalidOperationException("Unreachable approved sample point outside actual WalkArea: "+s.id);
+                var ys=Request.stages.Where(s=>s.id.StartsWith("depth-",StringComparison.Ordinal)).Select(s=>s.destination.y).OrderBy(y=>y).ToArray();
+                if(ys.Length!=3||ys[1]-ys[0]<.2||ys[2]-ys[1]<.2)throw new InvalidOperationException("Three distinct actual depth positions required.");
+                ground=Ref<Transform>(depth,"groundLine")??original.GroundLine;localFoot=Property(depth,"localFootOffset").vector3Value;
+                if(ground==null||Math.Abs(depth.AppliedFactor)<.0001||depth.Status!=DepthScaleStatus.Applied||Ref<MonoBehaviour>(depth,"depthOverrideProvider")!=null)
+                    throw new InvalidOperationException("Known actual ground/coefficient and nonzero baseline required.");
+                baseline=depth.transform.localScale/depth.AppliedFactor;
+                selectedGroup=Ref<SortingGroup>(sorter,"targetSortingGroup");selectedRenderer=Ref<Renderer>(sorter,"targetRenderer");
+                if(selectedGroup==null&&selectedRenderer==null||Ref<Transform>(sorter,"foot")!=point.Foot||sorter.BakeOnStart||sorter.Precision<=0)
+                    throw new InvalidOperationException("Actual dynamic precise sorting target/independent foot required.");
+                expectedLayer=selectedGroup!=null?selectedGroup.sortingLayerID:selectedRenderer.sortingLayerID;
+                followClone=Object.Instantiate(original.CameraFollow);depthClone=Object.Instantiate(original.DepthScale);
+                modeClone=Object.Instantiate(original.CameraMode);boundsClone=Object.Instantiate(original.SceneBounds);interestClone=Object.Instantiate(originalInterest);
+                foreach(var a in new Object[]{followClone,depthClone,modeClone,boundsClone,interestClone})a.hideFlags=HideFlags.DontSave;
+                foreach(var a in CloneAssets())a.Changed+=OnCloneChanged;
+                foreach(var a in OriginalAssets())a.Changed+=OnOriginalChanged;
+                StreetConfigs.Bind(depthClone,modeClone,followClone,boundsClone,original.GroundLine,original.CameraBounds);owned=StreetConfigs.Current;
+                player.ConfigureInterfaces(input,originalAvatar);inputInstalled=true;
+                CreateMarkers();
+                previousChannelCount=channels.AppliedEvaluations;
+                f01.BodyCompleted+=ObserveBody;CinemachineCore.CameraUpdatedEvent.AddListener(ObserveBrain);
+                Application.onBeforeRender+=ObserveAfterLateUpdate;EditorApplication.update+=Watch;
+                callbacks=true;EnterStage();
+                WriteNew(Path.Combine(Request.outputRoot,"registered.json"),JsonUtility.ToJson(Report(),true));
+            }
+            private void VerifyFiles()
+            {
+                foreach(var f in (Request.sources??Array.Empty<StreetProbeFile>()).Concat(Request.configuredAssets??Array.Empty<StreetProbeFile>()))
+                {
+                    var p=Path.GetFullPath(f.path);if(!p.StartsWith(Path.GetFullPath(Request.projectPath)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Source/config path outside project.");
+                    NoLinks(p);if(!File.Exists(p)||!string.Equals(Hash(File.ReadAllBytes(p)),f.sha256,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Source/config SHA drift: "+p);
+                }
+                if(Request.sources==null||Request.sources.Length<2||!Request.sources.Any(f=>Path.GetFileName(f.path)=="LongLoopAutomatedProbe.cs")||!Request.sources.Any(f=>Path.GetFileName(f.path)=="LongLoopProbeChecks.cs"))
+                    throw new InvalidOperationException("Actual compiled probe source bindings required.");
+            }
+            private void CreateMarkers()
+            {
+                markerRoot=new GameObject("StreetProbe_"+Request.runId);markerRoot.hideFlags=HideFlags.DontSave;
+                markerTexture=new Texture2D(1,1);markerTexture.SetPixel(0,0,Color.white);markerTexture.Apply();markerTexture.hideFlags=HideFlags.DontSave;
+                markerSprite=Sprite.Create(markerTexture,new Rect(0,0,1,1),new Vector2(.5f,.5f),1);markerSprite.hideFlags=HideFlags.DontSave;
+                var center=Request.stages.First(s=>s.id=="depth-mid").destination;
+                front=Marker("Front_numeric_not_visual_acceptance",center+Vector3.down*.2f,Color.magenta,out frontSort);
+                back=Marker("Back_numeric_not_visual_acceptance",center+Vector3.up*.2f,Color.cyan,out backSort);
+            }
+            private GameObject Marker(string name,Vector3 pos,Color color,out YSorter sort)
+            {
+                var go=new GameObject(name);go.transform.SetParent(markerRoot.transform,false);go.transform.position=pos;
+                var renderer=go.AddComponent<SpriteRenderer>();renderer.sprite=markerSprite;renderer.color=color;renderer.sortingLayerID=expectedLayer;
+                sort=go.AddComponent<YSorter>();sort.BaseOrder=sorter.BaseOrder;sort.Precision=sorter.Precision;sort.DepthOffset=sorter.DepthOffset;
+                sort.ConfigureTargets(renderer,null,go.transform);return go; // Unity runs its real Start/LateUpdate, never manually Refresh.
+            }
+            private bool Owned()=>ReferenceEquals(RuntimeField(player,"input",typeof(IGameInput)),input)&&ReferenceEquals(RuntimeField(player,"avatar",typeof(IPlayerAvatar)),originalAvatar)&&
+                ReferenceEquals(StreetConfigs.Current,owned)&&!externalConfigChange&&
+                Ref<CameraInterestConfig>(channels,"interestConfig")== (channelCloneBound?interestClone:originalInterest);
+            private StreetConfigAsset[] CloneAssets()=>new StreetConfigAsset[]{followClone,depthClone,modeClone,boundsClone,interestClone};
+            private StreetConfigAsset[] OriginalAssets()=>original==null?Array.Empty<StreetConfigAsset>():new StreetConfigAsset[]{original.DepthScale,original.CameraMode,original.CameraFollow,original.SceneBounds,originalInterest};
+            private void OnCloneChanged(){if(!changingClones)externalConfigChange=true;}
+            private void OnOriginalChanged(){externalConfigChange=true;}
+            private bool OwnerReferencesMatch(StreetConfigBinder owner)=>Ref<DepthScaleConfig>(owner,"depthScaleConfig")==original.DepthScale&&Ref<CameraModeConfig>(owner,"cameraModeConfig")==original.CameraMode&&Ref<CameraFollowConfig>(owner,"cameraFollowConfig")==original.CameraFollow&&Ref<SceneBoundsConfig>(owner,"sceneBoundsConfig")==original.SceneBounds&&Ref<Transform>(owner,"groundLine")==original.GroundLine&&Ref<Collider2D>(owner,"cameraBounds")==original.CameraBounds;
+            private void EnterStage()
+            {
+                if(sequence.Finished)return;
+                if(!Owned())throw new InvalidOperationException("Foreign input/config ownership before stage transition.");
+                enteredStage=sequence.StageIndex;string id=Request.stages[enteredStage].id;
+                changingClones=true;
+                try
+                {
+                    followClone.Lookahead=(id=="deadzone-hold"||id=="deadzone-push")?0:original.CameraFollow.Lookahead;
+                    depthClone.Focus=original.DepthScale.Focus+(id=="focus"?Request.focusDelta:0);
+                    interestClone.SafeZoneWidth=id=="f02-zero"?0:originalInterest.SafeZoneWidth;
+                }
+                finally{changingClones=false;}
+                if(id=="f02-zero"&&!channelCloneBound){channels.Configure(camera,f01,point,interestClone,originalChannelState,originalDebug);channelCloneBound=true;}
+                previousBody=false;stopGoalSet=false;
+            }
+            private void ObserveBody(FollowRecenterExtension source,CinemachineVirtualCameraBase owner,ulong serial,ref CameraState state,float dt)
+            {
+                if(cleaning||Terminal||source!=f01||owner!=camera)return;
+                try
+                {
+                    float now=CinemachineCore.CurrentTime;float elapsed=now-priorCmTime;
+                    dampingMeasured=previousBody&&elapsed>0&&dt>0;
+                    dampingError=0;aheadError=0;recenterObserved=0;delayGoalError=0;
+                    if(dampingMeasured)
+                    {
+                        var desired=f01.DeadZoneGoal+Vector3.right*f01.LookaheadWorldX;
+                        float x=followClone.DampingX<=0?desired.x:priorRaw.x+(desired.x-priorRaw.x)*(float)(1-Math.Exp(-elapsed/followClone.DampingX));
+                        float y=followClone.DampingY<=0?desired.y:priorRaw.y+(desired.y-priorRaw.y)*(float)(1-Math.Exp(-elapsed/followClone.DampingY));
+                        dampingError=Math.Max(Math.Abs(state.RawPosition.x-x),Math.Abs(state.RawPosition.y-y));
+                        var center=point.Node.position+state.RawOrientation*Vector3.back*binding.Composer.CameraDistance;
+                        float activeDt=Math.Min(elapsed,Math.Max(0,(float)f01.StoppedSeconds-followClone.RecenterDelay)-Math.Max(0,priorStopped-followClone.RecenterDelay));
+                        if(activeDt>0&&((center-priorGoal).magnitude>followClone.RecenterSpeed*activeDt+.003))
+                            recenterObserved=(f01.DeadZoneGoal-priorGoal).magnitude/activeDt;
+                        var velocity=(point.Foot.position-priorFoot)/elapsed;float limit=Math.Min(followClone.Lookahead,followClone.MaxHorizontalOffset);
+                        float expected=Math.Max(-limit,Math.Min(limit,priorAhead));
+                        if(new Vector2(velocity.x,velocity.y).magnitude>followClone.MoveSpeedThreshold)
+                        {
+                            float target=Math.Abs(velocity.x)>followClone.MoveSpeedThreshold?Math.Sign(velocity.x)*limit:0;
+                            expected+=(target-expected)*(followClone.LookaheadTime<=0?1:(float)(1-Math.Exp(-3*elapsed/followClone.LookaheadTime)));
+                        }
+                        else if(f01.StoppedSeconds>=followClone.RecenterDelay)expected=0;
+                        aheadError=Math.Abs(f01.LookaheadWorldX-expected);
+                    }
+                    if(Request.stages[sequence.StageIndex].id=="stopped-recenter")
+                    {if(!stopGoalSet){stopGoal=f01.DeadZoneGoal;stopGoalSet=true;}delayGoalError=(f01.DeadZoneGoal-stopGoal).magnitude;}
+                    priorRaw=bodyRaw=state.RawPosition;priorGoal=f01.DeadZoneGoal;priorCmTime=now;previousBody=true;
+                    bodyCorrection=state.PositionCorrection;bodySize=state.Lens.OrthographicSize;bodySequence=serial;bodyFrame=Time.frameCount;notifications++;
+                    priorFoot=point.Foot.position;priorAhead=f01.LookaheadWorldX;priorStopped=(float)f01.StoppedSeconds;
+                }
+                catch(Exception ex){Fail("BODY_OBSERVER:"+ex);}
+            }
+            private void ObserveBrain(CinemachineBrain source)
+            {
+                if(cleaning||Terminal||source!=brain)return;
+                brainFrame=Time.frameCount;brainOutput=brain.State.GetFinalPosition();cameraOutput=camera.State.GetFinalPosition();
+            }
+            private void ObserveAfterLateUpdate()
+            {
+                if(cleaning||Terminal||sampledFrame==Time.frameCount||brainFrame!=Time.frameCount)return;
+                sampledFrame=Time.frameCount;
+                try
+                {
+                    var observation=Sample();var next=sequence.Tick(observation,Time.realtimeSinceStartupAsDouble,Persist);
+                    if(sequence.PendingCapture!=null&&captureStarted==null)captureStarted=DateTimeOffset.UtcNow.ToString("o");
+                    previousChannelCount=channels.AppliedEvaluations;notifications=0;
+                    if(sequence.Finished){BeginCleanup();return;}
+                    if(enteredStage!=sequence.StageIndex)EnterStage();
+                    input.Move=next;
+                }
+                catch(Exception ex){Fail("NATURAL_FRAME:"+ex);}
+            }
+            private StreetProbeObservation Sample()
+            {
+                var area=Ref<WalkArea>(player,"walkArea");var actualConfig=Ref<DepthScaleConfig>(depth,"localConfig")??StreetConfigs.Current.DepthScale;
+                float coefficient=depth.UseOverrideFactor?depth.OverrideFactor:actualConfig.DepthScaleFactor;
+                var track=skeleton.AnimationState.GetCurrent(animationTrack);var name=track?.Animation?.Name;
+                bool sorterReady=sorter.Status==YSorterStatus.Applied||sorter.Status==YSorterStatus.Saturated;
+                var intent=new Vector2(player.HorizontalInput,player.VerticalInput*player.VerticalSpeedFactor);
+                float along=intent.x*Request.edgeTangent.x+intent.y*Request.edgeTangent.y;
+                var normal=new Vector2(intent.x-Request.edgeTangent.x*along,intent.y-Request.edgeTangent.y*along);
+                bool boundaryBlocked=normal.sqrMagnitude>.0001f&&!area.Contains(new Vector2(point.Foot.position.x,point.Foot.position.y)+normal.normalized*.05f);
+                var s=new StreetProbeObservation {
+                    frame=Time.frameCount,gameTime=Time.timeAsDouble,deltaTime=Time.deltaTime,fixedDeltaTime=Time.fixedDeltaTime,
+                    ready=depth.Status==DepthScaleStatus.Applied&&sorterReady&&point.Status==StreetFollowPointStatus.Ready&&binding.IsReady&&brain.ActiveVirtualCamera==camera&&!brain.IsBlending,
+                    inputOwned=ReferenceEquals(RuntimeField(player,"input",typeof(IGameInput)),input),configsOwned=Owned(),
+                    foot=point.Foot.position,derivedFoot=depth.transform.TransformPoint(localFoot),visualScale=depth.transform.localScale,baselineScale=baseline,
+                    speed=player.MoveSpeed,verticalFactor=player.VerticalSpeedFactor,coefficient=coefficient,groundY=ground.position.y,factor=depth.AppliedFactor,inputX=player.HorizontalInput,inputY=player.VerticalInput,
+                    focus=StreetConfigs.Current.DepthScale.Focus,originalFocus=original.DepthScale.Focus,followPoint=point.Node.position,
+                    facingRight=player.IsFacingRight,moving=player.IsMoving,animationWalk=name==walkName,animationIdle=name==idleName,
+                    inside=area.Contains(new Vector2(point.Foot.position.x,point.Foot.position.y)),boundaryBlocked=boundaryBlocked,movementPath=Ref<Rigidbody2D>(player,"targetRigidbody")!=null?"Rigidbody2D":"Transform",
+                    layer=selectedGroup!=null?selectedGroup.sortingLayerID:selectedRenderer.sortingLayerID,expectedLayer=expectedLayer,
+                    order=selectedGroup!=null?selectedGroup.sortingOrder:selectedRenderer.sortingOrder,baseOrder=sorter.BaseOrder,precision=sorter.Precision,depthOffset=sorter.DepthOffset,
+                    sorterTargetMatches=Ref<SortingGroup>(sorter,"targetSortingGroup")==selectedGroup&&Ref<Renderer>(sorter,"targetRenderer")==selectedRenderer,
+                    markersReady=frontSort.Status==YSorterStatus.Applied&&backSort.Status==YSorterStatus.Applied,
+                    frontOrder=frontSort.AppliedOrder,backOrder=backSort.AppliedOrder,camera=camera.State.RawPosition,goal=f01.DeadZoneGoal,
+                    ahead=f01.LookaheadWorldX,stopped=(float)f01.StoppedSeconds,delay=followClone.RecenterDelay,recenterSpeed=followClone.RecenterSpeed,
+                    lookahead=followClone.Lookahead,lookaheadTime=followClone.LookaheadTime,cap=followClone.MaxHorizontalOffset,
+                    size=camera.State.Lens.OrthographicSize,f01Size=bodySize,aspect=camera.State.Lens.Aspect,dampingError=dampingError,aheadError=aheadError,dampingMeasured=dampingMeasured,
+                    delayGoalError=delayGoalError,recenterSpeedObserved=recenterObserved,sequence=f01.EvaluationSequence,bodySequence=bodySequence,
+                    channelAdvances=channels.AppliedEvaluations-previousChannelCount,bodyNotifications=notifications,
+                    channelValid=channels.LastResult.Valid,channelZero=channels.LastResult.RawSum.Equals(Vector2.zero)&&channels.LastResult.ClippedSum.Equals(Vector2.zero)&&
+                        camera.State.RawPosition.Equals(bodyRaw)&&camera.State.PositionCorrection.Equals(bodyCorrection),
+                    baselineOutside=channels.LastResult.BaselineOutside,observerSameFrame=bodyFrame==Time.frameCount,
+                    brainOutput=brainOutput,cameraOutput=cameraOutput };
+                return s;
+            }
+            private void Persist(StreetProbeObservation sample)
+            {
+                var path=Path.Combine(Request.outputRoot,"samples.jsonl");NoLinks(path);
+                using(var s=new FileStream(path,File.Exists(path)?FileMode.Append:FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+                using(var w=new StreamWriter(s,new UTF8Encoding(false)))w.WriteLine(JsonUtility.ToJson(sample)); // Saved before fatal assertion.
+            }
+            private void Watch()
+            {
+                if(Terminal)return;
+                if(cleaning){FinishCleanupIfReady();return;}
+                if(!EditorApplication.isPlaying||EditorApplication.isCompiling){Fail("PLAY_EXIT_OR_RELOAD");return;}
+                sequence.CheckDeadline(Time.realtimeSinceStartupAsDouble);
+                if(sequence.Finished)BeginCleanup();
+            }
+            public void Fail(string error)
+            {
+                if(Terminal)return;sequence.Cancel(error);
+                try{WriteNew(Path.Combine(Request.outputRoot,"failure-"+Guid.NewGuid().ToString("N")+".json"),JsonUtility.ToJson(Report(),true));}catch(Exception log){UnityEngine.Debug.LogError("Street failure evidence write failed: "+log);}
+                BeginCleanup();
+            }
+            public StreetProbeReport AcknowledgeCapture(string id,string receiptSha)
+            {
+                if(!System.Text.RegularExpressions.Regex.IsMatch(receiptSha??"","^[A-Fa-f0-9]{64}$"))throw new InvalidOperationException("Actual official capture wrapper receipt SHA required; CI validates it, acknowledgement alone is not image acceptance.");
+                sequence.AcknowledgeCapture(id);captureReceiptSha=receiptSha;captureAcknowledged=DateTimeOffset.UtcNow.ToString("o");
+                WriteNew(Path.Combine(Request.outputRoot,"capture-ack.json"),JsonUtility.ToJson(Report(),true));return Report();
+            }
+            private void BeginCleanup()
+            {
+                if(cleaning||Terminal)return;cleaning=true;cleanupStarted=Time.realtimeSinceStartupAsDouble;input.Move=Vector2.zero;
+                try
+                {
+                    if(inputInstalled&&player!=null)
+                    {
+                        if(ReferenceEquals(RuntimeField(player,"input",typeof(IGameInput)),input)&&ReferenceEquals(RuntimeField(player,"avatar",typeof(IPlayerAvatar)),originalAvatar))
+                        {player.StopMovement();player.ConfigureInterfaces(originalInput,originalAvatar);cleanup.inputRestored=true;}
+                        else {cleanup.noForeignOverwrite=false;cleanup.error="Foreign input/avatar ownership; not overwritten.";}
+                    }
+                    else cleanup.inputRestored=!inputInstalled;
+                    bool currentOwned=owned!=null&&ReferenceEquals(StreetConfigs.Current,owned)&&!externalConfigChange;
+                    if(currentOwned&&originalOwner!=null&&originalOwner.isActiveAndEnabled&&OwnerReferencesMatch(originalOwner))
+                    {
+                        // Real public lifecycle restores the existing owner's activeSet as well as references.
+                        // Calling Bind alone creates a different container and would orphan that owner's exit cleanup.
+                        originalOwner.enabled=false;originalOwner.enabled=true;
+                        cleanup.configOwnerRestored=StreetConfigs.Current!=null&&ReferenceEquals(StreetConfigs.Current.DepthScale,original.DepthScale)&&ReferenceEquals(StreetConfigs.Current.CameraFollow,original.CameraFollow);
+                    }
+                    else if(owned!=null){cleanup.noForeignOverwrite=false;cleanup.error="Foreign Current binding; not overwritten.";}
+                    bool localOwned=!channelCloneBound||channels!=null&&Ref<CameraInterestConfig>(channels,"interestConfig")==interestClone;
+                    if(channelCloneBound&&localOwned)channels.Configure(camera,f01,point,originalInterest,originalChannelState,originalDebug);
+                    if(!localOwned){cleanup.noForeignOverwrite=false;cleanup.error="Foreign local C7 binding; not overwritten.";}
+                    cleanup.configsRestored=(owned==null||currentOwned&&cleanup.configOwnerRestored)&&localOwned;
+                    if(owned==null)cleanup.configOwnerRestored=true;
+                }
+                catch(Exception ex){cleanup.error=ex.ToString();}
+                finally
+                {
+                    if(f01!=null)f01.BodyCompleted-=ObserveBody;
+                    foreach(var a in CloneAssets())if(a!=null)a.Changed-=OnCloneChanged;
+                    foreach(var a in OriginalAssets())if(a!=null)a.Changed-=OnOriginalChanged;
+                    CinemachineCore.CameraUpdatedEvent.RemoveListener(ObserveBrain);Application.onBeforeRender-=ObserveAfterLateUpdate;
+                    callbacks=false;cleanup.callbacksRemoved=true;
+                    if(markerRoot!=null&&(markerRoot.transform.childCount!=2||front==null||back==null||front.transform.parent!=markerRoot.transform||back.transform.parent!=markerRoot.transform))
+                    {cleanup.noForeignOverwrite=false;cleanup.error="Foreign marker hierarchy; retained.";}
+                    else DestroyOwned(markerRoot);
+                    DestroyOwned(markerSprite);DestroyOwned(markerTexture);
+                    if(!externalConfigChange&&cleanup.configsRestored)foreach(var o in CloneAssets())DestroyOwned(o);
+                    // Editor watch remains only until delayed own destruction is observed or two seconds elapse.
+                    EditorApplication.update-=Watch;EditorApplication.update+=Watch;
+                    FinishCleanupIfReady();
+                }
+            }
+            private static void DestroyOwned(Object o){if(o==null)return;if(EditorApplication.isPlaying)Object.Destroy(o);else Object.DestroyImmediate(o);}
+            private void FinishCleanupIfReady()
+            {
+                bool destroyed=markerRoot==null&&markerSprite==null&&markerTexture==null&&followClone==null&&depthClone==null&&modeClone==null&&boundsClone==null&&interestClone==null;
+                if(!destroyed&&Time.realtimeSinceStartupAsDouble-cleanupStarted<2)return;
+                cleanup.temporaryObjectsDestroyed=destroyed;EditorApplication.update-=Watch;
+                try{VerifyFiles();}catch(Exception ex){cleanup.error="Final source/config drift: "+ex;}
+                terminal=Report();terminal.finishedAt=DateTimeOffset.UtcNow.ToString("o");terminal.status=sequence.Error!=null?"FAILED":cleanup.Passed&&terminal.checks.All(c=>c.passed)?"SUCCEEDED":"FAILED";
+                terminal.passed=terminal.status=="SUCCEEDED";terminal.error=sequence.Error??(terminal.passed?null:"ASSERTION_OR_CLEANUP_FAILED");
+                WriteNew(Path.Combine(Request.outputRoot,"run-report.json"),JsonUtility.ToJson(terminal,true));
+            }
+            public StreetProbeReport Report()
+            {
+                if(terminal!=null)return terminal;
+                var ledger=Path.Combine(Request.outputRoot,"samples.jsonl");
+                var result=LongLoopProbeChecks.BuildReport(Request,sequence.Samples,cleanup);
+                result.requestSha256=RequestSha;result.startedAt=startedAt;result.status=cleaning?"CLEANING":"RUNNING";result.error=sequence.Error;
+                result.unityVersion=Application.unityVersion;result.assemblyPath=typeof(LongLoopAutomatedProbe).Assembly.Location;result.assemblySha256=Hash(File.ReadAllBytes(result.assemblyPath));
+                result.sampleLedgerPath=ledger;result.sampleLedgerSha256=File.Exists(ledger)?Hash(File.ReadAllBytes(ledger)):null;
+                result.pendingCapture=sequence.PendingCapture;result.captureReceiptSha256=captureReceiptSha;
+                result.captureWindowStartedAt=captureStarted;result.captureAcknowledgedAt=captureAcknowledged;
+                return result;
+            }
+        }
+    }
+}

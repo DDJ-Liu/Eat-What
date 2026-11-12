@@ -2,6 +2,7 @@ using System.IO;
 using EatWhat.Tools.Persistence;
 using EatWhat.Tools.Security;
 using System;
+using System.Globalization;
 using EatWhat.Tools.Localization;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private ShortCyclePresentationDirector presentationDirector = null;
         [SerializeField] private CK01GeneratedDataCatalog dataCatalog = null;
         [SerializeField] private ShortCycleFridgeBinder fridgeBinder = null;
+        [SerializeField] private ShortCycleTrayInteraction trayInteraction = null;
         [SerializeField] private ShortCycleClueBoardBinder clueBoardBinder = null;
         [SerializeField] private RecipeBookBinder recipeBookBinder = null;
         [SerializeField] private string defaultRecipeId = "rcp_tomato_egg";
@@ -69,6 +71,7 @@ namespace EatWhat.Cooking.ShortCycle
         { return new UnlockManager(dataCatalog, playerProfile == null ? new string[0] : playerProfile.UnlockedRecipeIds).IsUnlocked(recipeId); }
 
         public InventoryManager Inventory { get { return inventoryManager; } }
+        public ShortCycleTrayInteraction TrayInteraction { get { return trayInteraction; } }
         public PlayerProfile PlayerProfile { get { return playerProfile; } }
         public PlayerUnlockManager PlayerUnlockManager { get { return playerUnlockManager; } }
         public KitchenEquipmentManager KitchenEquipmentManager { get { return kitchenEquipmentManager; } }
@@ -250,17 +253,196 @@ namespace EatWhat.Cooking.ShortCycle
                 return ShortCycleTransitionResult.Failure("Recipe is locked: " + recipeId);
             if (recipeBookBinder == null || !recipeBookBinder.CanBindBrowse(view, out diagnostic))
                 return ShortCycleTransitionResult.Failure("Recipe browse content is not ready.");
+            if (trayInteraction != null)
+            {
+                int configuredCapacity;
+                if (!TryGetPrepCapacity(out configuredCapacity, out diagnostic) ||
+                    !trayInteraction.CanPresent(configuredCapacity, out diagnostic))
+                    return ShortCycleTransitionResult.Failure(diagnostic);
+            }            var recipeChanged = Context == null || !string.Equals(Context.current_recipe_id, recipeId, StringComparison.Ordinal);
             var selection = stateMachine.TrySelectRecipe(recipeId, isMismatchDish);
             if (!selection.Succeeded) return selection;
+            if (recipeChanged && fridgeBinder != null) fridgeBinder.ResetOrder();
 
             var fridge = BindFridge();
             if (!fridge.Succeeded) return fridge;
+            if (trayInteraction != null)
+            {
+                int prepCapacity; string prepDiagnostic;
+                if (TryGetPrepCapacity(out prepCapacity, out prepDiagnostic))
+                    trayInteraction.Refresh(Context, inventoryManager, prepCapacity);
+            }
             recipeBookBinder.BindBrowse(view.WithUnlocked(true));
             RefreshFavoriteContent();
             var clueBoard = BindClueBoard(recipeId);
             return clueBoard.Succeeded ? selection : clueBoard;
         }
 
+        public ShortCycleActionResult TryTakeItem(string itemId, string instanceId)
+        {
+            string diagnostic;
+            int capacity;
+            if (!TryPrepareTrayAction(itemId, out capacity, out diagnostic))
+                return ShortCycleActionResult.Failure(diagnostic);
+            CK01ItemData item;
+            if (!inventoryManager.TryGetGeneratedItem(itemId, out item) || item == null)
+                return ShortCycleActionResult.Failure("Generated Items does not contain " + itemId + ".");
+            if (item.stack_type == "pack" && item.pack_size <= 0)
+                return ShortCycleActionResult.Failure("Pack unit has no positive pack_size.");
+            if (item.stack_type == "container" &&
+                (item.container_capacity <= 0f || item.container_use_step <= 0f))
+                return ShortCycleActionResult.Failure("Container unit has no positive capacity/use step.");
+            var beforePrep = CopyPrep();
+            var beforeStates = Context.CopyPlaceholderStates();
+            var result = ShortCycleTrayReservation.TryTake(Context, itemId, instanceId,
+                item.stack_type, inventoryManager.GetQuantity(itemId), capacity);
+            if (!result.Succeeded) return result;
+            if (!RefreshPhase1Presentation(capacity, out diagnostic))
+            {
+                RestoreReservations(beforePrep, beforeStates, capacity);
+                return ShortCycleActionResult.Failure(diagnostic);
+            }
+            trayInteraction.StateController.ShowCollapsed();
+            return result;
+        }
+
+        public ShortCycleActionResult TryPutBackItem(string itemId, string instanceId)
+        {
+            string diagnostic;
+            int capacity;
+            if (!TryPrepareTrayAction(itemId, out capacity, out diagnostic))
+                return ShortCycleActionResult.Failure(diagnostic);
+            var beforePrep = CopyPrep();
+            var beforeStates = Context.CopyPlaceholderStates();
+            var result = ShortCycleTrayReservation.TryPutBack(Context, itemId, instanceId);
+            if (!result.Succeeded) return result;
+            if (!RefreshPhase1Presentation(capacity, out diagnostic))
+            {
+                RestoreReservations(beforePrep, beforeStates, capacity);
+                return ShortCycleActionResult.Failure(diagnostic);
+            }
+            trayInteraction.StateController.ShowCollapsed();
+            return result;
+        }
+
+        public ShortCycleActionResult TryFilterFridge(string tagId)
+        {
+            if (CurrentPhase != ShortCyclePhase.Phase1 || Context == null || Context.active_modal.HasValue ||
+                dataCatalog == null || inventoryManager == null || fridgeBinder == null)
+                return ShortCycleActionResult.Failure("Phase1 fridge filter requires its catalog, inventory and binder.");
+            var nextTag = Context.current_filter_tag == tagId ? null : tagId;
+            if (!string.IsNullOrEmpty(nextTag))
+            {
+                CK01TagData tag; string lookup;
+                if (!dataCatalog.TryGetTag(nextTag, out tag, out lookup) || tag == null ||
+                    tag.tag_class != "ingredient" || tag.filter_order <= 0)
+                    return ShortCycleActionResult.Failure("Fridge filter requires a configured ingredient tag.");
+            }
+            string diagnostic;
+            if (!fridgeBinder.BindView(dataCatalog, inventoryManager, nextTag,
+                fridgeBinder.IsTidied, Context, out diagnostic))
+                return ShortCycleActionResult.Failure(diagnostic);
+            Context.current_filter_tag = nextTag;
+            Context.current_scroll_offset = fridgeBinder.CurrentTier;
+            return ShortCycleActionResult.Success();
+        }
+
+        public ShortCycleActionResult TryTidyFridge()
+        {
+            if (CurrentPhase != ShortCyclePhase.Phase1 || Context == null || Context.active_modal.HasValue ||
+                dataCatalog == null || inventoryManager == null || fridgeBinder == null)
+                return ShortCycleActionResult.Failure("Phase1 tidy requires its catalog, inventory and binder.");
+            string diagnostic;
+            if (!fridgeBinder.BindView(dataCatalog, inventoryManager, Context.current_filter_tag,
+                true, Context, out diagnostic)) return ShortCycleActionResult.Failure(diagnostic);
+            Context.current_scroll_offset = fridgeBinder.CurrentTier;
+            return ShortCycleActionResult.Success();
+        }
+
+        public ShortCycleActionResult TrySetTrayView(ShortCycleTrayView target)
+        {
+            var controller = trayInteraction == null ? null : trayInteraction.StateController;
+            if (CurrentPhase != ShortCyclePhase.Phase1 || Context.active_modal.HasValue || controller == null)
+                return ShortCycleActionResult.Failure("Phase1 tray state controller is not connected.");
+            if (target == ShortCycleTrayView.Collapsed) controller.ShowCollapsed();
+            else if (target == ShortCycleTrayView.Highlight) controller.ShowHighlight();
+            else if (target == ShortCycleTrayView.Detail) controller.ShowDetail();
+            else return ShortCycleActionResult.Failure("Unknown tray view.");
+            return controller.CurrentView == target ? ShortCycleActionResult.Success() :
+                ShortCycleActionResult.Failure("Tray presentation did not enter the requested view.");
+        }
+
+        public ShortCycleActionResult TryToggleTrayDetail()
+        {
+            var controller = trayInteraction == null ? null : trayInteraction.StateController;
+            if (CurrentPhase != ShortCyclePhase.Phase1 || Context.active_modal.HasValue || controller == null)
+                return ShortCycleActionResult.Failure("Phase1 tray state controller is not connected.");
+            return TrySetTrayView(controller.CurrentView == ShortCycleTrayView.Detail
+                ? ShortCycleTrayView.Collapsed : ShortCycleTrayView.Detail);
+        }
+
+        public ShortCycleTransitionResult TryOpenEquipmentEntry()
+        {
+            var missing = RequireStateMachine();
+            return missing ?? stateMachine.TryOpenModal(ShortCycleModalId.Generic);
+        }
+
+        private bool TryGetPrepCapacity(out int capacity, out string diagnostic)
+        {
+            capacity = 0;
+            CK01CookingGameConfigData config;
+            if (dataCatalog == null ||
+                !dataCatalog.TryGetCookingGameConfig("prep_zone_capacity", out config, out diagnostic) ||
+                config == null || !int.TryParse(config.value, NumberStyles.Integer,
+                    CultureInfo.InvariantCulture, out capacity) || capacity <= 0)
+            {
+                diagnostic = "T8 prep_zone_capacity must be a positive integer.";
+                return false;
+            }
+            diagnostic = null;
+            return true;
+        }
+        private bool TryPrepareTrayAction(string itemId, out int capacity, out string diagnostic)
+        {
+            capacity = 0;
+            if (CurrentPhase != ShortCyclePhase.Phase1 || Context == null ||
+                inventoryManager == null || dataCatalog == null || fridgeBinder == null ||
+                trayInteraction == null || Context.active_modal.HasValue || string.IsNullOrEmpty(itemId))
+            {
+                diagnostic = "Phase1 item action needs an item ID, inventory, catalog, fridge and tray bindings.";
+                return false;
+            }
+            if (!TryGetPrepCapacity(out capacity, out diagnostic)) return false;
+            return trayInteraction.CanPresent(capacity, out diagnostic);
+        }
+
+        private bool RefreshPhase1Presentation(int capacity, out string diagnostic)
+        {
+            if (!trayInteraction.Refresh(Context, inventoryManager, capacity))
+            { diagnostic = trayInteraction.LastDiagnostic; return false; }
+            if (!fridgeBinder.BindView(dataCatalog, inventoryManager, Context.current_filter_tag,
+                fridgeBinder.IsTidied, Context, out diagnostic)) return false;
+            Context.current_scroll_offset = fridgeBinder.CurrentTier;
+            return true;
+        }
+
+        private System.Collections.Generic.List<PrepZoneItem> CopyPrep()
+        {
+            var copy = new System.Collections.Generic.List<PrepZoneItem>();
+            foreach (var item in Context.prep_zone_contents) if (item != null) copy.Add(item.Clone());
+            return copy;
+        }
+
+        private void RestoreReservations(System.Collections.Generic.List<PrepZoneItem> prep,
+            System.Collections.Generic.IList<PlaceholderState> states, int capacity)
+        {
+            Context.prep_zone_contents.Clear();
+            Context.prep_zone_contents.AddRange(prep);
+            Context.placeholder_states.Clear();
+            foreach (var state in states) Context.placeholder_states.Add(state);
+            string ignored;
+            RefreshPhase1Presentation(capacity, out ignored);
+        }
         public ShortCycleTransitionResult TryShowCover() { return TryShowPhase0View(ShortCyclePhase0View.Cover); }
         public ShortCycleTransitionResult TryShowRecipeBrowse() { return TryShowPhase0View(ShortCyclePhase0View.RecipeBrowse); }
         public ShortCycleTransitionResult TryShowRecipeCatalog() { return TryShowPhase0View(ShortCyclePhase0View.RecipeCatalog); }
@@ -379,7 +561,8 @@ namespace EatWhat.Cooking.ShortCycle
         private ShortCycleTransitionResult BindFridge()
         {
             string diagnostic = null;
-            return fridgeBinder != null && fridgeBinder.Bind(dataCatalog, inventoryManager, out diagnostic)
+            return fridgeBinder != null && fridgeBinder.BindView(dataCatalog, inventoryManager,
+                Context == null ? null : Context.current_filter_tag, fridgeBinder.IsTidied, Context, out diagnostic)
                 ? ShortCycleTransitionResult.Success()
                 : ShortCycleTransitionResult.Failure(diagnostic ?? "ShortCycle fridge binding is unavailable.");
         }

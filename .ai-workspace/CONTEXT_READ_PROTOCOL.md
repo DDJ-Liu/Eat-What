@@ -1,3 +1,5 @@
+2026-11-12 AI478局部补充：原始用户授权文件路径/SHA、正式grant路径/pin及当前任务scope分别保留；grant不能冒平台批准或ENGINE真人消息。CONTROL在派发前正式Instruction固定grant原字节SHA，执行器领取后只补实际execution intent；交接只发索引/路径/当前scope，按需读小manifest，不回灌整包或猜C#全部写集合。完整schema与原479消费见outputs/INFRA-011-20261109/AI-000478/attempt1/ENGINE-HANDOFF.md；实际拒绝与失败不删除，不提高完整项目核验日期。
+
 # 文档投放与上下文读取协议（常驻集 v2）
 
 2026-10-15 按用户请求落实 A0～A6；用户选择“先用历史首样本，未来重载补测”。原件和用户决定见 [FLOOR 输入](archive/2026-10-17-workspace-correction/readable/.ai-workspace/inputs/FLOOR-20261015/用户决定.json)。本文管理后续读取方式；完整原件继续落盘保留，磁盘常驻不等于每轮全文载入上下文。现行 AGENTS、CORE、对应 worker、实际任务卡与人工门仍须遵守。

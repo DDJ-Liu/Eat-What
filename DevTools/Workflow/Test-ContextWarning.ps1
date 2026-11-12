@@ -1,6 +1,169 @@
 [CmdletBinding()]
-param()
+param([ValidateSet('All','ObservationLock')][string]$Case='All',[string]$OutputRoot,
+    [string]$QueueSourcePath,[switch]$ExpectOldObservationLock)
 $ErrorActionPreference='Stop'
+function Test-ObservationLockBoundary {
+    $repo=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+    if(-not $OutputRoot){$OutputRoot=Join-Path ([IO.Path]::GetTempPath()) ('EatWhatObservation-'+[guid]::NewGuid().ToString('N'))}
+    $obsRoot=[IO.Path]::GetFullPath($OutputRoot);[void][IO.Directory]::CreateDirectory($obsRoot)
+    if($obsRoot.StartsWith([IO.Path]::GetFullPath((Join-Path $repo '.ai-workspace/runtime')),[StringComparison]::OrdinalIgnoreCase)){throw 'Isolated observation output cannot be live runtime'}
+    $utf=[Text.UTF8Encoding]::new($false);$results=[Collections.Generic.List[object]]::new();$runs=[Collections.Generic.List[object]]::new()
+    $cli='11111111-1111-4111-8111-111111111111';$pwsh=(Get-Process -Id $PID).Path
+    if($PSVersionTable.PSEdition -ne 'Core'){throw 'Observation fixture requires PowerShell Core'}
+    function SaveObs($p,$v){[void][IO.Directory]::CreateDirectory((Split-Path -Parent $p));[IO.File]::WriteAllText($p,($v|ConvertTo-Json -Depth 35),$utf)}
+    function ReadObs($p){Get-Content -LiteralPath $p -Raw|ConvertFrom-Json -DateKind String}
+    function AssertObs($ok,$name){$results.Add(@{name=$name;passed=[bool]$ok});if(-not $ok){throw $name}}
+    function ProbeObs($name){$m=[Threading.Mutex]::new($false,$name);$got=$false;try{try{$got=$m.WaitOne(0)}catch [Threading.AbandonedMutexException]{$got=$true};return $got}finally{if($got){$m.ReleaseMutex()};$m.Dispose()}}
+    function WaitObs([scriptblock]$test,[string]$label){$watch=[Diagnostics.Stopwatch]::StartNew();while(-not (& $test)){if($watch.Elapsed.TotalSeconds -ge 8){throw "Fixture timed out: $label"};Start-Sleep -Milliseconds 10}}
+    function QObs($a){$r=(& $script:obsQueue @a|Out-String).Trim()|ConvertFrom-Json -DateKind String;if($r.receiptPath){return ReadObs $r.receiptPath};return $r}
+    function InitObs($label){
+        $script:obsDir=Join-Path $obsRoot ($label+'-'+[guid]::NewGuid().ToString('N'));$script:obsWs=Join-Path $script:obsDir '.ai-workspace';$script:obsState=Join-Path $script:obsWs 'runtime'
+        $script:obsPrefix='Local\EatWhatFixture_'+[guid]::NewGuid().ToString('N')+'_';$script:obsMutex=$script:obsPrefix+'AI_Workspace_Queue_v1';$script:obsUsageMutex=$script:obsPrefix+'AI_Workspace_Usage_v1'
+        [void][IO.Directory]::CreateDirectory($script:obsState);$tools=Join-Path $script:obsDir 'DevTools/Workflow';[void][IO.Directory]::CreateDirectory($tools)
+        $sourceMap=[Collections.Generic.List[object]]::new()
+        foreach($f in @(Get-ChildItem -LiteralPath (Join-Path $repo '.ai-workspace') -Filter '*.ps1' -File)){
+            $source=if($f.Name -eq 'queue.ps1' -and $QueueSourcePath){[IO.Path]::GetFullPath($QueueSourcePath)}else{$f.FullName}
+            $text=[IO.File]::ReadAllText($source);$copy=$text.Replace('Local\EatWhat_',$script:obsPrefix)
+            if($f.Name -eq 'queue.ps1'){
+                $copy=$copy.Replace("`$ErrorActionPreference = 'Stop'","`$ErrorActionPreference = 'Stop'`n`$global:EatWhatFixturePhases=[Collections.Generic.List[object]]::new()")
+                $copy=$copy.Replace("Assert-Value `$lockTaken 'Could not acquire the AI workspace queue lock within 20 seconds.'","Assert-Value `$lockTaken 'Could not acquire the AI workspace queue lock within 20 seconds.'`n`$global:EatWhatFixtureLockAt=[DateTimeOffset]::UtcNow.ToString('o')")
+                $pt=$null;$pe=$null;$ast=[Management.Automation.Language.Parser]::ParseInput($copy,[ref]$pt,[ref]$pe);if($pe.Count){throw 'Source queue fixture parse failed'}
+                $read=$ast.Find({param($n)$n-is[Management.Automation.Language.FunctionDefinitionAst]-and$n.Name-ceq'Read-JsonFile'},$false).Extent.Text
+                $wrapped=$read.Replace('function Read-JsonFile','function Read-JsonFileOriginal')+@'
+
+function Read-JsonFile {
+ param([string]$Path)
+ $clock=[Diagnostics.Stopwatch]::StartNew()
+ try {Read-JsonFileOriginal $Path} finally {[void]$global:EatWhatFixturePhases.Add(@{stage='read-parse';file=[IO.Path]::GetFileName($Path);milliseconds=$clock.Elapsed.TotalMilliseconds})}
+}
+'@
+                $copy=$copy.Replace($read,$wrapped)
+                $save=$ast.Find({param($n)$n-is[Management.Automation.Language.FunctionDefinitionAst]-and$n.Name-ceq'Save-JsonFile'},$false).Extent.Text
+                $profiled=$save.Replace('$json = $Value | ConvertTo-Json -Depth 30',@'
+$fixtureClock=[Diagnostics.Stopwatch]::StartNew()
+    $json = $Value | ConvertTo-Json -Depth 30
+    [void]$global:EatWhatFixturePhases.Add(@{stage='serialize';file=[IO.Path]::GetFileName($Path);milliseconds=$fixtureClock.Elapsed.TotalMilliseconds})
+    $fixtureClock.Restart()
+'@).Replace('Save-TextFile $Path ($json + [Environment]::NewLine)',@'
+Save-TextFile $Path ($json + [Environment]::NewLine)
+    [void]$global:EatWhatFixturePhases.Add(@{stage='atomic-publish';file=[IO.Path]::GetFileName($Path);milliseconds=$fixtureClock.Elapsed.TotalMilliseconds})
+    $pause=Join-Path $workspaceRoot 'runtime/fixture-pause-state'
+    if([IO.Path]::GetFileName($Path)-eq'queue-state.json' -and (Test-Path -LiteralPath $pause)){
+        [IO.File]::WriteAllText($pause+'.entered','committed first file',[Text.UTF8Encoding]::new($false))
+        $limit=[Diagnostics.Stopwatch]::StartNew();while(-not(Test-Path -LiteralPath ($pause+'.release'))){if($limit.Elapsed.TotalSeconds-gt8){throw 'State fixture pause timed out'};Start-Sleep -Milliseconds 10}
+    }
+'@)
+                $copy=$copy.Replace($save,$profiled)
+                # A deterministic test latch just after the new release tests snapshot attribution before any later reader.
+                $copy=$copy.Replace('$script:lockTaken = $false',@'
+$script:lockTaken = $false
+        $pause=Join-Path $workspaceRoot 'runtime/fixture-pause-release'
+        if(Test-Path -LiteralPath $pause){
+            [IO.File]::WriteAllText($pause+'.entered','released',[Text.UTF8Encoding]::new($false))
+            $limit=[Diagnostics.Stopwatch]::StartNew();while(-not(Test-Path -LiteralPath ($pause+'.release'))){if($limit.Elapsed.TotalSeconds-gt8){throw 'Release fixture pause timed out'};Start-Sleep -Milliseconds 10}
+        }
+'@)
+            }
+            $destination=Join-Path $script:obsWs $f.Name;[IO.File]::WriteAllText($destination,$copy,$utf)
+            $sourceMap.Add(@{source=$source;sourceSha256=(Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash;fixture=$destination;fixtureSha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash;changes='Unique fixture mutex namespace; queue-only transparent phase timing and bounded state/release latches; production methods otherwise unchanged.'})
+        }
+        $script:obsQueue=Join-Path $script:obsWs 'queue.ps1'
+        $usage=Join-Path $PSScriptRoot 'UsageMetrics.ps1';[IO.File]::WriteAllText((Join-Path $tools 'UsageMetrics.ps1'),[IO.File]::ReadAllText($usage).Replace('Local\EatWhat_',$script:obsPrefix),$utf)
+        $context=@'
+param([string]$ThreadId,[string]$RuntimeRoot)
+$ErrorActionPreference='Stop';$p=Join-Path $RuntimeRoot 'fixture-control.json'
+if(-not(Test-Path -LiteralPath $p)){@{contextTokens=$null;contextSource='unknown';contextWarning='NONE';reason='Isolated fixture no context sample';responseId=$null}|ConvertTo-Json -Compress;return}
+$c=Get-Content -LiteralPath $p -Raw|ConvertFrom-Json -DateKind String
+@{enteredAt=[DateTimeOffset]::UtcNow.ToString('o');lockAcquiredAt=$global:EatWhatFixtureLockAt;phases=@($global:EatWhatFixturePhases);threadId=$ThreadId}|ConvertTo-Json -Depth 10|Set-Content -LiteralPath $c.entered -Encoding utf8NoBOM
+if($c.stage-eq'context'){$limit=[Diagnostics.Stopwatch]::StartNew();while(-not(Test-Path -LiteralPath $c.release)){if($limit.Elapsed.TotalSeconds-gt8){throw 'Slow context fixture timed out'};Start-Sleep -Milliseconds 10}}
+if($c.stage-eq'context-error'){throw 'ISOLATED_CONTEXT_READER_FAILURE'}
+@{contextTokens=175000;contextSource='provider';contextWarning='ADVISE';reason='Isolated supplied context, not actual account';responseId=$c.responseId;observedAt=[DateTimeOffset]::UtcNow.ToString('o');method='isolated-external-boundary'}|ConvertTo-Json -Compress
+'@
+        [IO.File]::WriteAllText((Join-Path $tools 'Get-ThreadContext.ps1'),$context,$utf)
+        SaveObs (Join-Path $script:obsDir 'source-map.json') @($sourceMap)
+        $workers=@{};foreach($lane in @('CODE','ENGINE_MCP','ART_AIGC','ART_ASSET')){$workers[$lane]=@{status='IDLE';activeTaskId=$null;leaseUntil=$null;circuit=@{state='CLOSED';openUntil=$null;reason=$null}}}
+        SaveObs "$script:obsState/queue-state.json" @{schemaVersion=1;nextSequence=1;tasks=@()};SaveObs "$script:obsState/worker-state.json" @{schemaVersion=1;workers=$workers}
+        SaveObs "$script:obsState/mode-state.json" @{schemaVersion=1;mode='MANUAL';automatic=@{status='IDLE';taskIds=@();currentTaskId=$null};updatedAt=[DateTimeOffset]::Now.ToString('o');updatedBy='isolated-fixture'}
+        [IO.File]::WriteAllText("$script:obsWs/INSTRUCTIONS.md",'Isolated observation fixture',$utf)
+        QObs @{Action='RegisterExecutionPipeline';Pipeline='ENGINE_CLI';UserDecision='fixture';Verification='isolated empty lane'}|Out-Null
+        QObs @{Action='BindExecutionPipeline';Pipeline='ENGINE_CLI';PipelineThreadId=$cli;UserDecision='fixture';Verification='isolated idle'}|Out-Null
+        $script:obsTask=(QObs @{Action='Enqueue';Pipeline='ENGINE_CLI';Title='isolated observation';Instruction='isolated read-only verification';Complexity='S';MaxAttempts=6}).task
+        $script:obsTask=(QObs @{Action='Poll';Pipeline='ENGINE_CLI';TaskId=$script:obsTask.id;TriggerSource='MANUAL';OwnerThreadId=$cli}).task
+        $q=ReadObs "$script:obsState/queue-state.json";$history=for($i=0;$i-lt500;$i++){@{id=('AI-{0:D6}'-f(600000+$i));pipeline='CODE';status='SUCCEEDED';instruction=('fixture historical instruction '+('x'*18000))}}
+        $q.tasks=@($q.tasks)+@($history);SaveObs "$script:obsState/queue-state.json" $q
+        SaveObs "$script:obsDir/work.json" @{fixture=$true;taskId=$script:obsTask.id;executionId=$script:obsTask.execution.executionId}
+        AssertObs (-not [IO.File]::ReadAllText($script:obsQueue).Contains('Local\EatWhat_AI_Workspace_Queue_v1')) 'Queue mutex is isolated, never production'
+    }
+    function ArgsObs($action,$key='fixture-tool/finish'){
+        $a=@{Action=$action;Pipeline='ENGINE_CLI';TaskId=$script:obsTask.id;ExecutionId=$script:obsTask.execution.executionId;OwnerThreadId=$cli}
+        if($action-eq'RecordTaskProgress'){$a.ProgressId=$key;$a.ProgressKind='WorkCompleted';$a.EvidencePath="$script:obsDir/work.json"};return $a
+    }
+    function StartObs($args0,$stage,$response='fixture-response'){
+        $job=Join-Path $script:obsDir ('job-'+[guid]::NewGuid().ToString('N'));[void][IO.Directory]::CreateDirectory($job)
+        $cfg=@{stage=$stage;entered="$job/context-entered.json";release="$job/context-release";responseId=$response};SaveObs "$script:obsState/fixture-control.json" $cfg;SaveObs "$job/arguments.json" $args0
+        $body="param([string]`$ArgumentsPath)`n`$ErrorActionPreference='Stop'`n`$a=Get-Content -LiteralPath `$ArgumentsPath -Raw|ConvertFrom-Json -AsHashtable`n& '"+$script:obsQueue.Replace("'","''")+"' @a"
+        [IO.File]::WriteAllText("$job/invoke.ps1",$body,$utf)
+        $info=[Diagnostics.ProcessStartInfo]::new($pwsh);$info.UseShellExecute=$false;$info.CreateNoWindow=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
+        foreach($arg in @('-NoProfile','-File',"$job/invoke.ps1",'-ArgumentsPath',"$job/arguments.json")){$info.ArgumentList.Add($arg)}
+        $process=[Diagnostics.Process]::Start($info)
+        return @{process=$process;stdout=$process.StandardOutput.ReadToEndAsync();stderr=$process.StandardError.ReadToEndAsync();job=$job;config=$cfg;args=$args0;startedAt=[DateTimeOffset]::UtcNow.ToString('o')}
+    }
+    function EndObs($j,$expectSuccess=$true){
+        if(-not $j.process.WaitForExit(12000)){$j.process.Kill($true);throw 'Isolated queue process exceeded bounded fixture wait'}
+        $a=$j.stdout.GetAwaiter().GetResult();$b=$j.stderr.GetAwaiter().GetResult();[IO.File]::WriteAllText($j.job+'/stdout.bin',$a,$utf);[IO.File]::WriteAllText($j.job+'/stderr.bin',$b,$utf)
+        $record=@{pid=$j.process.Id;exitCode=$j.process.ExitCode;startedAt=$j.startedAt;finishedAt=[DateTimeOffset]::UtcNow.ToString('o');arguments=$j.args;phase='actual-isolated-queue';stdoutSha256=(Get-FileHash ($j.job+'/stdout.bin') -Algorithm SHA256).Hash;stderrSha256=(Get-FileHash ($j.job+'/stderr.bin') -Algorithm SHA256).Hash}
+        SaveObs ($j.job+'/process.json') $record;$runs.Add($record)
+        AssertObs (($j.process.ExitCode-eq0)-eq$expectSuccess) ('Expected isolated exit: '+$j.args.Action)
+        if($expectSuccess){return $a|ConvertFrom-Json -DateKind String};return $null
+    }
+    try {
+        foreach($action in @('CheckManagedTool','RecordTaskProgress')){
+            foreach($stage in @('context','usage')){
+                InitObs ($action+'-'+$stage);$a=ArgsObs $action;$stream=$null;$j=$null
+                try{
+                    if($stage-eq'usage'){$log=Join-Path $script:obsState ('usage-'+[DateTimeOffset]::Now.ToString('yyyyMM')+'.jsonl');if(-not(Test-Path $log)){[IO.File]::WriteAllText($log,'',$utf)};$stream=[IO.File]::Open($log,[IO.FileMode]::Open,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)}
+                    $j=StartObs $a $stage;WaitObs {Test-Path -LiteralPath $j.config.entered} 'context entered after actual state transaction'
+                    if($stage-eq'usage'){WaitObs {-not(ProbeObs $script:obsUsageMutex)} 'actual isolated usage logger waiting on unopened file'}
+                    $first=ProbeObs $script:obsMutex;Start-Sleep -Milliseconds 1100;$second=ProbeObs $script:obsMutex
+                    AssertObs ($first-eq(-not $ExpectOldObservationLock)-and$second-eq(-not $ExpectOldObservationLock)) ('Slow '+$stage+' queue lock boundary: '+$action)
+                    if(-not $ExpectOldObservationLock){$q=ReadObs "$script:obsState/queue-state.json";$w=ReadObs "$script:obsState/worker-state.json";$t=@($q.tasks|Where-Object id -eq $a.TaskId)[0];AssertObs ($t.execution.executionId-ceq$w.workers.ENGINE_CLI.activeExecutionId) 'Committed queue/worker identities agree while telemetry remains blocked'}
+                    SaveObs ($j.job+'/lock-observations.json') @{firstAvailable=$first;after1100msAvailable=$second;stage=$stage;queueBytes=(Get-Item "$script:obsState/queue-state.json").Length;context=ReadObs $j.config.entered;exactOriginalA8Owner='UNKNOWN'}
+                }finally{if($stream){$stream.Dispose()};if($j){[IO.File]::WriteAllText($j.config.release,'release',$utf)}}
+                $r=EndObs $j;AssertObs ($r.action-in@('MANAGED_TOOL_ALLOWED','OBSERVATION_RECORDED')) 'Original response semantics retained'
+            }
+        }
+        if(-not $ExpectOldObservationLock){
+            InitObs 'capture-before-late-context';$a=ArgsObs 'RecordTaskProgress';$oldExec=$a.ExecutionId;$pause="$script:obsState/fixture-pause-release";[IO.File]::WriteAllText($pause,'pause',$utf)
+            $j=StartObs $a 'none' 'capture-response';try{WaitObs {Test-Path ($pause+'.entered')} 'released transaction before telemetry';AssertObs (ProbeObs $script:obsMutex) 'Captured observation released before any later task read'
+                $m=[Threading.Mutex]::new($false,$script:obsMutex);$got=$m.WaitOne(2000);try{AssertObs $got 'Isolated next-execution writer acquired';$q=ReadObs "$script:obsState/queue-state.json";$w=ReadObs "$script:obsState/worker-state.json";$t=@($q.tasks|Where-Object id -eq $a.TaskId)[0];$t.execution.executionId='fixture-next-execution';$w.workers.ENGINE_CLI.activeExecutionId='fixture-next-execution';SaveObs "$script:obsState/queue-state.json" $q;SaveObs "$script:obsState/worker-state.json" $w}finally{if($got){$m.ReleaseMutex()};$m.Dispose()}
+            }finally{[IO.File]::WriteAllText($pause+'.release','release',$utf)}
+            $r=EndObs $j;$usage=@(Get-ChildItem $script:obsState -Filter 'usage-*.jsonl'|ForEach-Object{Get-Content $_.FullName|ForEach-Object{$_|ConvertFrom-Json -DateKind String}})
+            AssertObs (@($usage|Where-Object {$_.event-eq'thread_context'-and$_.metadata.executionId-ceq$oldExec-and$_.metadata.responseId-eq'capture-response'}).Count-eq1) 'Context retains original captured execution after concurrent state changes'
+            AssertObs (@($usage|Where-Object {$_.event-eq'queue:RecordTaskProgress'-and$_.metadata.executionId-ceq$oldExec}).Count-eq1) 'Ordinary API accounting retains captured execution'
+            $rejected=$false;try{QObs (ArgsObs 'CheckManagedTool')|Out-Null}catch{$rejected=$true};AssertObs $rejected 'Subsequent stale execution remains rejected by real gate'
+            InitObs 'duplicate-and-context-failure';$a=ArgsObs 'RecordTaskProgress';$j=StartObs $a 'none' 'same-response';$one=EndObs $j;$j=StartObs $a 'none' 'same-response';$two=EndObs $j
+            AssertObs (-not$one.duplicate-and$two.duplicate) 'Actual duplicate progress remains idempotent'
+            $j=StartObs (ArgsObs 'CheckManagedTool') 'context-error';$unknown=EndObs $j;AssertObs ($null-eq$unknown.contextTokens-and$unknown.contextSource-eq'unknown') 'Context failure preserves committed action and unknown sample'
+            $usage=@(Get-ChildItem $script:obsState -Filter 'usage-*.jsonl'|ForEach-Object{Get-Content $_.FullName|ForEach-Object{$_|ConvertFrom-Json -DateKind String}})
+            AssertObs (@($usage|Where-Object event -eq 'queue:RecordTaskProgress').Count-eq2-and@($usage|Where-Object {$_.event-eq'thread_context'-and$_.metadata.responseId-eq'same-response'}).Count-eq1) 'Each API accounted, duplicate response context recorded once'
+            InitObs 'atomic-state-and-write-failure';$pause="$script:obsState/fixture-pause-state";[IO.File]::WriteAllText($pause,'pause',$utf);$j=StartObs (ArgsObs 'RecordTaskProgress') 'none'
+            try{WaitObs {Test-Path ($pause+'.entered')} 'first state file published';AssertObs (-not(ProbeObs $script:obsMutex)) 'Reader cannot obtain mixed transaction state'}finally{[IO.File]::WriteAllText($pause+'.release','release',$utf)}
+            EndObs $j|Out-Null;Remove-Item -LiteralPath $pause;AssertObs (ProbeObs $script:obsMutex) 'Complete atomic state transaction releases normally'
+            $qHash=(Get-FileHash "$script:obsState/queue-state.json").Hash;$wHash=(Get-FileHash "$script:obsState/worker-state.json").Hash;$file=[IO.File]::Open("$script:obsState/queue-state.json",[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+            try{$j=StartObs (ArgsObs 'RecordTaskProgress' 'fixture-failed-write') 'none';EndObs $j $false|Out-Null}finally{$file.Dispose()}
+            AssertObs ((Get-FileHash "$script:obsState/queue-state.json").Hash-eq$qHash-and(Get-FileHash "$script:obsState/worker-state.json").Hash-eq$wHash-and(ProbeObs $script:obsMutex)) 'Real state publish failure keeps original bytes and finally releases'
+            foreach($fault in @('owner','execution','expired','stop')){
+                InitObs ('guard-'+$fault);$a=ArgsObs 'CheckManagedTool'
+                switch($fault){owner{$a.OwnerThreadId='22222222-2222-4222-8222-222222222222'} execution{$a.ExecutionId='stale'} expired{$w=ReadObs "$script:obsState/worker-state.json";$w.workers.ENGINE_CLI.leaseUntil=[DateTimeOffset]::UtcNow.AddSeconds(-1).ToString('o');SaveObs "$script:obsState/worker-state.json" $w} stop{$q=ReadObs "$script:obsState/queue-state.json";$q.tasks[0].execution.mode='SUPERVISED';SaveObs "$script:obsState/queue-state.json" $q;SaveObs "$script:obsState/mode-state.json" @{mode='SUPERVISED';supervised=@{status='ACTIVE';sessionId='isolated';taskIds=@($a.TaskId);stopRequested=$true;exitRequested=$false}}}}
+                $j=StartObs $a 'none';EndObs $j $false|Out-Null;AssertObs (ProbeObs $script:obsMutex) ('Real '+$fault+' guard rejects and releases')
+            }
+        }
+        $report=@{status='PASS';expectOldLock=[bool]$ExpectOldObservationLock;checkCount=$results.Count;checks=@($results);runs=@($runs);fixtureRoot=$obsRoot;usesProductionMutex=$false;usesProductionRuntime=$false;actualA8LockOwner='UNKNOWN'}
+        SaveObs (Join-Path $obsRoot 'observation-lock-report.json') $report
+        @{status='PASS';checkCount=$results.Count;expectOldLock=[bool]$ExpectOldObservationLock;evidencePath=(Join-Path $obsRoot 'observation-lock-report.json')}|ConvertTo-Json -Compress
+    }catch{SaveObs (Join-Path $obsRoot 'failure.json') @{error=$_.Exception.Message;stack=$_.ScriptStackTrace;checks=@($results);runs=@($runs)};throw}
+}
+if($Case -eq 'ObservationLock'){Test-ObservationLockBoundary;return}
 $root=Join-Path ([IO.Path]::GetTempPath()) ('EatWhatContext-'+[guid]::NewGuid().ToString('N'))
 $state=Join-Path $root 'runtime'
 $out=Join-Path $root 'watch'

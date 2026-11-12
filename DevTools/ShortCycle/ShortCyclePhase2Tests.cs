@@ -14,7 +14,7 @@ public static class ShortCyclePhase2Tests
     public static IDictionary<string, bool> SchemaBranches { get; private set; }
     private static void Check(bool condition, string id)
     { if (!condition) throw new Exception("P2L-01: " + id); PassedCases.Add(id); }
-    private static CK01GeneratedDataTable Table<T>(string root, string name, string primaryKey) where T : ScriptableObject, new()
+    internal static CK01GeneratedDataTable Table<T>(string root, string name, string primaryKey) where T : ScriptableObject, new()
     {
         var csv = DataTableCsvParser.Parse(File.ReadAllText(Path.Combine(root, "DataTables/Cooking/" + name + ".csv")));
         Check(csv.IsValid, "CSV parses: " + name);
@@ -133,4 +133,203 @@ public static class ShortCyclePhase2Tests
         CK01RecipeStepData rawStep;catalog.TryGetRow("RecipeSteps","step_te_01",out rawStep,out diagnostic);rawStep.trigger_items.Clear();Check(foldChain[0].TriggerItems.Count>0,"Step rule snapshot detaches serialized trigger lists");
         return "PASS: P2L-01 "+PassedCases.Count+" assertions; Schema8 six branches, actual CSV snapshots and explicit pure fixtures.";
     }
-}
+    public static IList<string> OperationZoneCases { get; private set; }
+    private static void ZoneCheck(bool condition, string id)
+    { if (!condition) throw new Exception("P2-C10: " + id); OperationZoneCases.Add(id); }
+
+    public static string RunOperationZone()
+    {
+        OperationZoneCases = new List<string>();
+        var standard = new ProcessingRecordView("standard","out-standard",new[]{"egg","tomato"},"cook","pan",false);
+        var alternate = new ProcessingRecordView("alternate","out-alternate",new[]{"onion","egg"},"cook","pan",false);
+        var doubled = new ProcessingRecordView("doubled","out-double",new[]{"egg","egg"},"cook","pan",false);
+        var pot = new ProcessingRecordView("pot","out-pot",new[]{"egg","water"},"cook","pot",false);
+        var blank = new ProcessingRecordView("blank","out-blank",new[]{"flour"},"cook","",false);
+        var outside = new ProcessingRecordView("outside","bad",new[]{"outsider"},"cook","pan",false);
+        var records = new[]{standard,alternate,doubled,pot,blank,outside};
+        var whitelist = new RecipeWhitelist("recipe",new[]{"standard","alternate","doubled","pot","blank"});
+        var area = new AreaConstraint("prep",new[]{"cook"},new[]{"pan","pot"});
+        var scene = new List<string>{"pan","pot"};
+        var zone = new OperationZoneSession(whitelist,area,records,scene);
+        var first = zone.TryAdd("recipe","prep","egg");
+        ZoneCheck(first.Accepted && first.Snapshot.CarrierId=="pan" &&
+            first.Snapshot.CandidateRecordIds.SequenceEqual(new[]{"standard","alternate","doubled"}) &&
+            first.Snapshot.InitialCarrierCandidates.SequenceEqual(new[]{"pan","pot"}) &&
+            first.Snapshot.InitialCarrierAmbiguous,"First input atomically selects whitelist-first available carrier, not one proc");
+        scene.Clear();
+        ZoneCheck(zone.TryAdd("recipe","prep","tomato").Accepted &&
+            zone.GetSnapshot().CandidateRecordIds.SequenceEqual(new[]{"standard"}),
+            "Standard route narrows despite caller mutating scene inventory list");
+        var completed = zone.Complete();
+        ZoneCheck(completed.Inputs.Count==2 && completed.CarrierId=="pan" &&
+            !zone.GetSnapshot().HasInputs && zone.GetSnapshot().CarrierId==null,
+            "Complete returns detached prior state and clears carrier/inputs");
+        ZoneCheck(zone.TryAdd("recipe","prep","egg").Accepted &&
+            zone.TryAdd("recipe","prep","onion").Accepted &&
+            zone.GetSnapshot().CandidateRecordIds.SequenceEqual(new[]{"alternate"}),
+            "Alternative route remains legal after first shared ingredient");
+        zone.Clear();
+        ZoneCheck(zone.TryAdd("recipe","prep","onion").Accepted &&
+            zone.TryAdd("recipe","prep","egg").Accepted &&
+            zone.GetSnapshot().CandidateRecordIds.SequenceEqual(new[]{"alternate"}),
+            "Input order has no semantic effect");
+        zone.Clear();
+        ZoneCheck(zone.TryAdd("recipe","prep","egg",2).Accepted &&
+            zone.GetSnapshot().CandidateRecordIds.SequenceEqual(new[]{"doubled"}) &&
+            zone.GetSnapshot().Inputs[0].Quantity==2,"Duplicate item quantity is a multiset");
+        var before=zone.GetSnapshot();
+        var excess=zone.TryAdd("recipe","prep","egg");
+        ZoneCheck(!excess.Accepted && excess.RejectionCode==OperationZoneRejectionCode.QuantityExceedsPath &&
+            zone.GetSnapshot().Inputs.Count==1 && zone.GetSnapshot().Inputs[0].Quantity==2 &&
+            zone.GetSnapshot().CandidateRecordIds.SequenceEqual(before.CandidateRecordIds),
+            "Excess rejects atomically");
+        var wrong=zone.TryAdd("other","prep","tomato");
+        ZoneCheck(wrong.RejectionCode==OperationZoneRejectionCode.WrongRecipe &&
+            zone.GetSnapshot().CandidateRecordIds.SequenceEqual(before.CandidateRecordIds),
+            "Wrong recipe rejects atomically");
+        ZoneCheck(zone.TryAdd("recipe","stove","tomato").RejectionCode==OperationZoneRejectionCode.WrongArea &&
+            zone.GetSnapshot().Inputs.Count==1,"X5 wrong area rejects without cross-area search");
+        ZoneCheck(zone.TryAdd("recipe","prep","",1).RejectionCode==OperationZoneRejectionCode.InvalidRequest &&
+            zone.TryAdd("recipe","prep","egg",0).RejectionCode==OperationZoneRejectionCode.InvalidRequest &&
+            zone.GetSnapshot().Inputs.Count==1,"Invalid requests preserve state");
+        zone.Clear();
+        ZoneCheck(zone.TryAdd("recipe","prep","outsider").RejectionCode==OperationZoneRejectionCode.NoWhitelistedPath &&
+            !zone.GetSnapshot().HasInputs,"Global record outside whitelist cannot start a session");
+        var lockZone=new OperationZoneSession(new RecipeWhitelist("recipe",new[]{"pot","standard"}),
+            area,records,new[]{"pot","pan"});
+        ZoneCheck(lockZone.TryAdd("recipe","prep","egg").Snapshot.CarrierId=="pot" &&
+            lockZone.GetSnapshot().InitialCarrierCandidates.SequenceEqual(new[]{"pot","pan"}),
+            "G74 selection follows whitelist rather than scene order");
+        var lockBefore=lockZone.GetSnapshot();
+        var locked=lockZone.TryAdd("recipe","prep","tomato");
+        ZoneCheck(locked.RejectionCode==OperationZoneRejectionCode.CarrierPathLocked &&
+            lockZone.GetSnapshot().Inputs.Count==1 &&
+            lockZone.GetSnapshot().CandidateRecordIds.SequenceEqual(lockBefore.CandidateRecordIds),
+            "Different carrier path rejects atomically");
+        ZoneCheck(lockZone.TryAdd("recipe","prep","water").Accepted &&
+            lockZone.GetSnapshot().CandidateRecordIds.SequenceEqual(new[]{"pot"}),
+            "Locked carrier still narrows a legal route");
+        var missing=new OperationZoneSession(new RecipeWhitelist("recipe",new[]{"standard"}),
+            area,records,new string[0]);
+        ZoneCheck(missing.TryAdd("recipe","prep","egg").RejectionCode==OperationZoneRejectionCode.CarrierUnavailable &&
+            !missing.GetSnapshot().HasInputs,"Missing current-area carrier refuses");
+        var forbidden=new OperationZoneSession(new RecipeWhitelist("recipe",new[]{"standard"}),
+            new AreaConstraint("prep",new[]{"cook"},new[]{"pot"}),records,new[]{"pan"});
+        ZoneCheck(forbidden.TryAdd("recipe","prep","egg").RejectionCode==OperationZoneRejectionCode.CarrierNotAllowed,
+            "Configured area carrier constraint refuses");
+        var wrongAction=new OperationZoneSession(new RecipeWhitelist("recipe",new[]{"standard"}),
+            new AreaConstraint("prep",new[]{"cut"},new[]{"pan"}),records,new[]{"pan"});
+        ZoneCheck(wrongAction.TryAdd("recipe","prep","egg").RejectionCode==OperationZoneRejectionCode.ActionNotAllowed,
+            "Configured area action constraint refuses");
+        var carrierless=new OperationZoneSession(new RecipeWhitelist("recipe",new[]{"blank"}),
+            area,records,new string[0]);
+        ZoneCheck(carrierless.TryAdd("recipe","prep","flour").Accepted &&
+            carrierless.GetSnapshot().CarrierId==null &&
+            carrierless.GetSnapshot().InitialCarrierCandidates.Count==0,
+            "Legal blank-carrier record does not fabricate scene equipment");
+        var detached=carrierless.GetSnapshot();
+        var readOnly=false;try{((IList<ProcessingItemStack>)detached.Inputs).Clear();}catch(NotSupportedException){readOnly=true;}
+        ZoneCheck(readOnly && carrierless.GetSnapshot().Inputs.Count==1,
+            "Returned input snapshot cannot mutate live session");
+        readOnly=false;try{((IList<string>)detached.CandidateRecordIds).Clear();}catch(NotSupportedException){readOnly=true;}
+        ZoneCheck(readOnly && carrierless.GetSnapshot().CandidateRecordIds.Count==1,
+            "Returned candidate snapshot cannot mutate live session");
+        carrierless.Clear();
+        carrierless.Clear();
+        ZoneCheck(!carrierless.GetSnapshot().HasInputs && detached.Inputs.Count==1,
+            "Empty clear is safe and old snapshots remain detached");
+        var incomplete=false;try{new OperationZoneSession(new RecipeWhitelist("recipe",new[]{"missing"}),
+            area,records,new[]{"pan"});}catch(ArgumentException){incomplete=true;}
+        ZoneCheck(incomplete,"Incomplete whitelist snapshots fail closed");
+        return "PASS: P2-C10 "+OperationZoneCases.Count+" operation-zone assertions.";
+    }    public static IList<string> ProductNameCases { get; private set; }
+    private static void NameCheck(bool condition, string id)
+    { if (!condition) throw new Exception("P2-C11: " + id); ProductNameCases.Add(id); }
+    private sealed class FixtureNames : IPhase2ProductNameSource
+    {
+        private static readonly Dictionary<string,string> Names=new Dictionary<string,string> {
+            {"egg","Egg"},{"tomato","Tomato"},{"onion","Onion"},{"carrot","Carrot"},
+            {"rice","Rice"},{"unknown","Unknown"},{"knife","Knife"},{"bowl","Bowl"},
+            {"pan-tool","Spatula"},{"pot-tool","Ladle"},{"cut","Cut"},{"whisk","Whisk"},
+            {"stir","Stir"},{"boil","Boil"}};
+        private static bool Name(string id,out string name) { return Names.TryGetValue(id,out name); }
+        public bool TryGetItemName(string id,out string name) { return Name(id,out name); }
+        public bool TryGetToolName(string id,out string name) { return Name(id,out name); }
+        public bool TryGetActionName(string id,out string name) { return Name(id,out name); }
+    }
+    private static Phase2ProductDraft ProductName(string[] inputs,string action,string carrier,string toolId,
+        out string diagnostic)
+    {
+        var record=new ProcessingRecordView("fixture-record","product",inputs,action,carrier,false);
+        var area=new AreaConstraint("fixture-area",new[]{action},new[]{carrier});
+        var whitelist=new RecipeWhitelist("fixture-recipe",new[]{record.Id});
+        var zone=new OperationZoneSession(whitelist,area,new[]{record},new[]{carrier});
+        foreach(var input in inputs)
+            if(!zone.TryAdd("fixture-recipe","fixture-area",input).Accepted)
+                throw new Exception("P2-C11 fixture input was rejected: "+input);
+        var snapshot=zone.GetSnapshot();
+        var tool=new ProcessingToolView(toolId,new[]{action});
+        var match=new ProcessingMatcher(whitelist,area,new[]{record},"unknown")
+            .Match("fixture-recipe","fixture-area",snapshot.Inputs,tool,new[]{carrier});
+        if(!match.Matched || match.Record.Id!=record.Id)
+            throw new Exception("P2-C11 fixture did not produce its public match.");
+        Phase2ProductDraft draft;
+        var ok=Phase2ProductProduction.TryCreate(match,snapshot,tool,"unknown",new FixtureNames(),out draft,out diagnostic);
+        return ok?draft:null;
+    }
+    public static string RunProductNames()
+    {
+        ProductNameCases=new List<string>();string error;Phase2ProductDraft draft;
+        draft=ProductName(new[]{"egg","tomato"},"cut","board","knife",out error);
+        NameCheck(draft!=null && draft.DisplayName=="Egg + Tomato · Knife · Cut",
+            "Name example 1: ordered two ingredients, knife, cut");
+        draft=ProductName(new[]{"tomato","egg"},"cut","board","knife",out error);
+        NameCheck(draft!=null && draft.DisplayName=="Egg + Tomato · Knife · Cut",
+            "Name example 2: reverse input order keeps stable display");
+        draft=ProductName(new[]{"egg","egg"},"whisk","bowl","bowl",out error);
+        NameCheck(draft!=null && draft.DisplayName=="Egg ×2 · Bowl · Whisk",
+            "Name example 3: repeated item retains quantity identity");
+        draft=ProductName(new[]{"onion","carrot"},"stir","pan","pan-tool",out error);
+        NameCheck(draft!=null && draft.DisplayName=="Carrot + Onion · Spatula · Stir",
+            "Name example 4: other ingredients, tool and action");
+        draft=ProductName(new[]{"rice"},"boil","pot","pot-tool",out error);
+        NameCheck(draft!=null && draft.DisplayName=="Rice · Ladle · Boil",
+            "Name example 5: single input with boil route");
+        var area=new AreaConstraint("fixture-area",new[]{"cut"},new[]{"bowl"});
+        var currentRecord=new ProcessingRecordView("fixture-record","product",new[]{"egg"},"cut","bowl",false);
+        var currentWhitelist=new RecipeWhitelist("fixture-recipe",new[]{currentRecord.Id});
+        var zone=new OperationZoneSession(currentWhitelist,area,new[]{currentRecord},new[]{"bowl"});
+        if(!zone.TryAdd("fixture-recipe","fixture-area","egg").Accepted)
+            throw new Exception("P2-C11 current operation fixture was rejected.");
+        var session=zone.GetSnapshot();
+        var knife=new ProcessingToolView("knife",new[]{"cut"});
+        var otherInput=new ProcessingRecordView("unmatched","product",new[]{"tomato"},"cut","bowl",false);
+        var unknown=new ProcessingMatcher(new RecipeWhitelist("fixture-recipe",new[]{otherInput.Id}),
+            area,new[]{otherInput},"unknown")
+            .Match("fixture-recipe","fixture-area",session.Inputs,knife,new[]{"bowl"});
+        if(!unknown.ProducesUnknown || unknown.RejectionCode!=ProcessingRejectionCode.NoWhitelistedMatchInCurrentArea)
+            throw new Exception("P2-C11 public unknown fixture was not produced.");
+        NameCheck(Phase2ProductProduction.TryCreate(unknown,session,
+            knife,"unknown",new FixtureNames(),out draft,out error) &&
+            draft.IsUnknown && draft.DisplayName=="Unknown" && draft.SourceRecordId==null,
+            "Name example 6: configured unknown uses only configured T4 name");
+        var invalid=new ProcessingMatcher(currentWhitelist,area,new[]{currentRecord},"unknown")
+            .Match("fixture-recipe","fixture-area",session.Inputs,knife,new string[0]);
+        if(invalid.RejectionCode!=ProcessingRejectionCode.CarrierUnavailable)
+            throw new Exception("P2-C11 public carrier rejection fixture was not produced.");
+        NameCheck(!Phase2ProductProduction.TryCreate(invalid,session,
+            knife,"unknown",new FixtureNames(),out draft,out error) &&
+            draft==null && !string.IsNullOrEmpty(error),"Rejected carrier never becomes unknown");
+        var otherRecord=new ProcessingRecordView("other","product",new[]{"egg"},"cut","bowl",false);
+        var stale=new ProcessingMatcher(new RecipeWhitelist("fixture-recipe",new[]{otherRecord.Id}),
+            area,new[]{otherRecord},"unknown")
+            .Match("fixture-recipe","fixture-area",session.Inputs,knife,new[]{"bowl"});
+        if(!stale.Matched || stale.Record.Id!="other")
+            throw new Exception("P2-C11 public stale candidate fixture was not produced.");
+        NameCheck(!Phase2ProductProduction.TryCreate(stale,session,
+            knife,"unknown",new FixtureNames(),out draft,out error),
+            "Matched record must belong to current C10 candidates");
+        NameCheck(ProductName(new[]{"egg"},"cut","board","missing-tool",out error)==null &&
+            error.Contains("Tool name"),"Missing resolved name is diagnostic, never raw ID fallback");
+        return "PASS: P2-C11 "+ProductNameCases.Count+" name and rejection assertions.";
+    }}

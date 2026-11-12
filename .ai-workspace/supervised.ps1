@@ -43,11 +43,34 @@ function Get-SupervisionLevel {
     return 'full'
 }
 
+function Test-SupervisionCodeAssetsScope {
+    param($Task)
+    $business=Get-ObjectPropertyValue $Task 'businessScope'
+    $execution=Get-ObjectPropertyValue $Task 'execution'
+    $approved=if($execution){Get-ObjectPropertyValue $execution 'approvedScope'}else{$null}
+    # A missing or malformed scope is not evidence that Assets are excluded.
+    if(-not $business){return $true}
+    $assetsRoot=[IO.Path]::GetFullPath((Join-Path $projectRoot 'Assets')).TrimEnd('\','/')
+    $project=[IO.Path]::GetFullPath($projectRoot).TrimEnd('\','/')
+    foreach($scope in @($business,$approved|Where-Object{$null -ne $_})){
+        if(-not $scope -or -not $scope.paths -or -not $scope.operations){return $true}
+        foreach($path in @($scope.paths)){
+            if([string]::IsNullOrWhiteSpace([string]$path)){return $true}
+            try{$full=[IO.Path]::GetFullPath([string]$path,$project).TrimEnd('\','/')}catch{return $true}
+            if($full.Equals($project,[StringComparison]::OrdinalIgnoreCase) -or
+               $full.Equals($assetsRoot,[StringComparison]::OrdinalIgnoreCase) -or
+               $full.StartsWith($assetsRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){return $true}
+        }
+    }
+    return $false
+}
+
 function Get-SupervisionResources {
     param($Task)
     $keys=@((Get-SupervisionPolicy $Task).resourceKeys)
-    # An explicit policy cannot remove the shared Editor/publication exclusion.
+    # Explicit light/workflow policies cannot strip the shared Assets exclusion.
     if ($Task.pipeline -in @('ENGINE_MCP','ENGINE_CLI','DATA')) { $keys+=@('unity-project','data-batch') }
+    if ($Task.pipeline -eq 'CODE' -and (Test-SupervisionCodeAssetsScope $Task)) { $keys+=@('unity-project') }
     return @($keys + "lane:$($Task.pipeline)" | Select-Object -Unique)
 }
 

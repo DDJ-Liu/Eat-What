@@ -13,11 +13,12 @@
 | TK-DAT-02 | SerializableDictionary<K,V> DataBase/ | DAT | [DAT.md](DAT.md#tk-dat-02) |
 | TK-DAT-03 | DataEncryptor | DAT | [DAT.md](DAT.md#tk-dat-03) |
 | TK-DAT-04 | DataBaseManager / SpreadsheetData | DAT | [DAT.md](DAT.md#tk-dat-04) |
-| TK-DAT-05 | **TagFilter（拟）** | DAT | [DAT.md](DAT.md#tk-dat-05) |
-| TK-DAT-06 | **PlaceholderRule（拟）** | DAT | [DAT.md](DAT.md#tk-dat-06) |
+| TK-DAT-05 | TagFilter：稳定单/多 tag 筛选（CODE候选，待CONTROL验收/消费） | DAT | [DAT.md](DAT.md#tk-dat-05) |
+| TK-DAT-06 | PlaceholderRule：Ready/Missing/Aigc 分类（CODE候选，待CONTROL验收/消费） | DAT | [DAT.md](DAT.md#tk-dat-06) |
 | TK-DAT-07 | DevTools/DataTables/Authoring/ 配表往返工具 | DAT | [DAT.md](DAT.md#tk-dat-07) |
 | TK-DAT-08 | SceneToolIdentity/SceneToolInventory（既有登记补索引） | DAT | [DAT.md](DAT.md#tk-dat-08) |
 | TK-DAT-09 | Persistence版本化Envelope/HMAC/原子Store/codec选择和应用SaveBoundary | DAT | [PST.md](PST.md#tk-dat-09) |
+| TK-DAT-10 | GroundSpaceMath：脚底XY椭圆地面距离纯函数 | DAT | [DAT.md](DAT.md#tk-dat-10) |
 | TK-DBG-01 | ShortCycleManualVerificationDriver | DBG | [DBG.md](DBG.md#tk-dbg-01) |
 | TK-DBG-02 | ShortCycleAutomatedProbe | DBG | [DBG.md](DBG.md#tk-dbg-02) |
 | TK-DBG-03 | ShortCycleLayoutAudit（Editor） | DBG | [DBG.md](DBG.md#tk-dbg-03) |
@@ -50,8 +51,8 @@
 | TK-LAY-03 | ShortCycleIconScaleTarget + ShortCycleV22LayoutContracts | LAY | [LAY.md](LAY.md#tk-lay-03) |
 | TK-LAY-04 | GridPlacement（×3） GridPlacement/ | LAY | [LAY.md](LAY.md#tk-lay-04) |
 | TK-LAY-05 | IgnoreParentScale / IgnoreParentRotation | LAY | [LAY.md](LAY.md#tk-lay-05) |
-| TK-LAY-06 | **TidyLayout（拟）** | LAY | [LAY.md](LAY.md#tk-lay-06) |
-| TK-LAY-07 | **StackedIcon（拟）** | LAY | [LAY.md](LAY.md#tk-lay-07) |
+| TK-LAY-06 | TidyLayout：既有点位只读规划（CODE候选，待CONTROL验收/消费） | LAY | [LAY.md](LAY.md#tk-lay-06) |
+| TK-LAY-07 | StackedIcon：四种 stack_type 显式配置展示计划（CODE候选，待CONTROL验收/消费） | LAY | [LAY.md](LAY.md#tk-lay-07) |
 | TK-LAY-08 | FridgeCatRig + FridgeCatTier Cooking/ShortCycle/Presentation/ | LAY | [LAY.md](LAY.md#tk-lay-08) |
 | TK-LOC-01 | LocService / LocTextCatalog DataBase/Localization/ | LOC | [LOC.md](LOC.md#tk-loc-01) |
 | TK-LOC-02 | LocalizedText Tools/Localization/ | LOC | [LOC.md](LOC.md#tk-loc-02) |

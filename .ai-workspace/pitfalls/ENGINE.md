@@ -1,6 +1,23 @@
-# 工程坑账本 · ENGINE_MCP
+## P-071 验收复杂化与失败轮次失控（2026-11-11）
+<a id="p-071"></a>
 
-2026-10-22 原生接入更新：AI303 attempt3已CONTROL独立5合同/13事实通过；18次官方CLI、共享Ready一次RPC/400重试0、298反射结构体和同fresh run三张screen/no-save原PNG均核实，Stop clean Edit/新增ConsoleError0。原305两处调用参数须用实际动作常量；原生通过不代表人工视觉通过，慢启动/旧400根因仍未证，PackageCache及native save_path/Refresh分支未改。证据[原生独立验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-303.json)，具体调用复用304与303 attempt3交接；下方带日期待验状态保留为历史。
+AI473历史八轮按用户新分类复盘，原Fail原件/实际轮次不改；当前业务处置待人工检查。统一坑账格式如下，今后每轮引擎失败都记一条；层级未证明不猜。
+
+| 实际轮次 | 新规则分类 | 层级 | 现象 | 当时处置 | 以后避免 |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 操作 | 守卫 | 冻结Ready误要求Foot等于控制器根，现子Foot合法；写前停。 | 保现场；后独立补正脚底探针。 | 接卡先核现引用契约，不为探针迁移玩家结构。 |
+| 2 | 操作 | 守卫/归属未明 | 磁盘与clean内存相机位置不同，来源不明，写前停。 | 用户确认作者基线后接续。 | dirty/clean不是来源证明；不得覆盖未知手动状态。 |
+| 3 | 操作完成边界 | 环境/归属未明 | 接线单Save成功，后NPC Renderer未知dirty阻止Play。 | 保保存成果，用户检查保存；未Play。 | 操作与验收分段；已有接线不重做，未知成果不强清。 |
+| 4 | 验收1 | 封装/探针 | 首个自然样本被复合帧/时钟/样本条件拒绝，具体旧分支UNKNOWN。 | 正常Stop；记录Console无新增Error。 | 时序与逐帧门不进实机验收，未知不补造。 |
+| 5 | 验收2 | 封装/探针 | 连续自然帧dt约0.2498s被旧0.1s硬上限拒绝。 | 正常Stop；当时独立修复。 | 引擎不设帧间隔阈值，行为放离线单测。 |
+| 6 | 验收3，按新规应止 | 封装/共享队列 | 非阻塞快照锁忙，69样本后停止；实际锁拥有者未知。 | 正常Stop；当时派生修复。 | 累计3轮后交人工，独立修管线不再配对原验收。 |
+| 7 | 历史验收4，保留超额事实 | 守卫/输入监视 | 无基线样本时USER_INPUT停止；真实触发字段UNKNOWN。 | 正常Stop；当时独立修监视。 | 禁止输入监视作为实机断言，不能把误报归责用户编辑。 |
+| 8 | 历史验收5，保留超额事实 | 封装/共享队列 | 160样本后BUSY_TIMEOUT；具体持锁者/时长未知。 | 正常Stop；用户拒第9轮；后只读修复结果保留。 | 有输出不是行为通过；停止再追修验收链，转人工。 |
+
+来源：`outputs/FOLLOW-R-20261110/AI-000473/attempt1..8/REPORT.md`及对应CONTROL独立审查。新处置不回改任何历史结果；a4～a8无新增Error、a3已保存、a8有输出是有限证据，不是镜头功能通过。
+
+# 工程坑账本 · ENGINE（MCP/CLI 两线）
+
 
 > 从 [INDEX.md](INDEX.md) 按 P 编号定位。跨车道/全流水线条目会在相关车道重复，正文语义保持一致。
 
@@ -367,76 +384,60 @@
 
 
 <a id="p-052"></a>
-
 ## P-052 | [ENGINE_CLI/CODE/CONTROL] 持久对象不适用于SaveToSerializedFileAndForget
 
-已持久对象会被Unity拒绝，Build磁盘未更新。用已验证的非持久快照/原生保存策略；EditorBuildSettings.scenes赋值后必须回读磁盘，不以保存标记当持久化。
+对已持久对象使用该API被拒，Build磁盘未更新。按ENGINE_CLI API表使用已审非持久快照和原生保存；赋值后须读实际磁盘，不把标记当持久化。
 
-来源：AI289 attempt2正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+规避见[ENGINE_CLI API表](../workers/ENGINE_CLI.md)；[原失败复核](../outputs/control/DETACH-B13-20261019/independent-failure-review-289-attempt2.json)。这是API用法约束，没有待验源码修复卡，旧失败保留。
 
 <a id="p-053"></a>
-
 ## P-053 | [ENGINE_CLI/CODE/CONTROL] m_Component不可按普通SerializedProperty数组删除
 
-DeleteArrayElementAtIndex对GameObject.m_Component被拒；managed null旧槽不可拿embedded MonoScript替代。有效组件按审定Editor API；null旧槽需精确归属和另批单字段修复，不能把本例许可当通用文本写许可。
+DeleteArrayElementAtIndex对GameObject.m_Component被拒；managed null旧槽不能用embedded MonoScript代替。核精确归属/允许API；AI289另批单字段修复不是通用YAML写许可。
 
-来源：AI289 attempt5正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+规避见[ENGINE_CLI API表](../workers/ENGINE_CLI.md)；[原失败复核](../outputs/control/DETACH-B13-20261019/independent-failure-review-289-attempt5.json)。这是API用法约束，没有待验源码修复卡，旧失败保留。
 
 <a id="p-054"></a>
-
 ## P-054 | [ENGINE_CLI/CODE/CONTROL] SceneAsset属于UnityEditor
 
-UnityEngine.SceneAsset不存在；发载荷前核真实Unity引用/命名空间，避免把首个写入载荷当类型试验。
+UnityEngine.SceneAsset不存在，载荷动态编译在写前失败。使用UnityEditor.SceneAsset，先以真实引用核完整语句与命名空间。
 
-来源：AI289 attempt1正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+规避见[ENGINE_CLI API表](../workers/ENGINE_CLI.md)；[原失败复核](../outputs/control/DETACH-B13-20261019/independent-failure-review-289-attempt1.json)。这是API用法约束，没有待验源码修复卡，旧失败保留。
 
 <a id="p-055"></a>
-
 ## P-055 | [ENGINE_CLI/CODE/CONTROL] 正则词边界在输入中成为U+0008
 
-原AI289/a4已保存载荷在进入wrapper前含两处U+0008（UTF8 byte1481/1594），早先生成环节未证；不将其归因于ProcessStartInfo.ArgumentList。单纯往返不能修复已损坏输入或literal z语义。AI297在原CheckManagedTool之后、进程/进度start之前加入严格UTF8与转义JSON往返检查，原字符串仍经原ArgumentList传递；拒绝原生NUL/非TAB-LF-CR的C0及孤立surrogate，给零基参数/字符/UTF8字节定位，不静默改写。
+原AI289/a4载荷进入wrapper前已有两处U+0008，更早损坏环节未证，不归因于ArgumentList。共享wrapper在进程前核严格UTF8/控制字符/JSON往返，不静默修正坏输入。
 
-实际CONTROL独立4合同/76断言通过：真实收参9参数与空向量、反斜杠/引号/中文emoji/合法JSON转义全C0保持；31拒发发生在进程前。既有入口`DevTools/Workflow/Test-EngineCli.ps1 -Case PayloadBytes`，证据[独立验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-297.json)。原生SMOKE尚待，不倒改历史失败。
+回归：Test-EngineCli.ps1 -Case PayloadBytes；[AI297独立验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-297.json)。
 
 <a id="p-056"></a>
-
 ## P-056 | [ENGINE_CLI/CODE/CONTROL] Unity结构体JSON自引用
 
-Vector3.normalized会令默认JsonConvert进入派生属性环。证据使用Assets外共用`DevTools/Workflow/UnityEvidenceJson.cs`七类型显式标量converter，Bounds保留center/extents；Ignore仅其它引用环兜底，不直接序列化整个Camera/GameObject/Component。
+默认JsonConvert递归Vector3.normalized等派生属性导致自引用。复用Assets外UnityEvidenceJson.cs显式标量converter及已验反射caller；不直接序列化整Camera/GameObject/Component。完整单JSON与双流分开，不拼日志作结果。
 
-AI298 attempt2已CONTROL独立四合同/15复核、真实Unity引用165结构体+14帧/反射caller断言通过。既有`Test-EngineCli.ps1 -Case EvidenceJson`双流按字节采集；严格UTF8只允许起始BOM，完整单JSON对象拒绝尾随内容，字符串内UFEFF保留。无helper静态引用的同形eval反射载入已离线验证；可复用DLL/原样eval调用见AI298 attempt2/ENGINE-HANDOFF.json，独立证据[验收记录](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-298.json)。真实Editor/CLI/SMOKE未执行，不写原生已通过。
-
-原首轮三失败（MONO_PATH实现程序集冲突、首BOM、合并日志尾UFEFF）及CODE_STOP保留；新双流无BOM不证明旧额外BOM来自哪条流。已有165部分结果不单独构成整卡通过；最终通过是在正式续行后完整driver/caller已核。
+回归：Test-EngineCli.ps1 -Case EvidenceJson；[AI298离线验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-298.json)、[AI303真实原生验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-303.json)。首轮失败保留，原生成功不代人工视觉。
 
 <a id="p-057"></a>
-
 ## P-057 | [ENGINE_CLI/CODE/CONTROL] capture save_path进入Assets解析并Refresh
 
-绝对/工作区路径经官方ProjectPaths变为Assets前缀。2026-10-21 AI299共享wrapper CapturePng已独立5合同/16复核/181断言通过：保存意图在批准输出根内解析，原生命令强制screen/no-save，保留原始流；严格PNG/CRC/IHDR/zlib完整流/Adler32/扫描行校验先于CreateNew，拒链接/越界/覆盖/损坏流。原生包缓存及其旧save_path/Refresh分支未修改，受管截图不得误入；实际Editor链留AI303（原302未领取行政替代），离线通过不冒充原生通过。
+官方旧save_path把绝对/工作区路径加Assets前缀并Refresh，该PackageCache分支未改。共享CapturePng/CaptureSavePath在批准输出根解析保存意图，native同官方screen/no-save；保原流，PNG/CRC/IHDR/zlib/Adler32/扫描行严格校验先于CreateNew，拒链接/越界/覆盖/坏流。
 
-回归入口：DevTools/Workflow/Test-EngineCli.ps1 -Case CapturePng；调用例见outputs/AI289-CLI-REPAIR-20261021/AI-000299/attempt2/CALL-EXAMPLE.md。证据outputs/control/AI289-CLI-REPAIR-20261021/independent-review-299.json。原AI289 attempt7和299首轮三失败/旧原件完整保留；299根1/5不退款。
+回归：Test-EngineCli.ps1 -Case CapturePng；[AI299验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-299.json)、[AI303原生验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-303.json)。受管截图不走旧native保存分支。
 
 <a id="p-058"></a>
-
 ## P-058 | [ENGINE_CLI/CODE/CONTROL] 启动后首Ready RPC返回400，根因未证
 
-错误结束后约0.474秒host Ready仅时间相关，原400根因仍未证明。2026-10-21 AI300源码/离线已独立5合同/14复核/32断言通过：既有wrapper StartupReadyContextPath绑定正式task/run/root与新鲜健康身份，等待精确宿主日志后发送固定只读探针；15秒/61次本地读、30秒总窗、最多3次RPC，只精确启动期只读400可重试。权限/UNKNOWN/503/错目标/普通调用/写入不重试；原生仍待303（原302未领取行政替代）。
+原错误后约0.474秒Ready仅时间相关，旧400根因仍未证；后续慢启动/封包见[P-062](#p-062)。仅同execution/run/root、明确启动期只读400经共享门最多3次总RPC/500ms间隔；权限/UNKNOWN/503/错目标/普通调用/写入不重试。等待用当前协议，不沿旧15秒值。
 
-回归：DevTools/Workflow/Test-EngineCli.ps1 -Case ReadyHandshake（OutputRoot用绝对路径）；调用例见outputs/AI289-CLI-REPAIR-20261021/AI-000300/CALL-EXAMPLE.md，独立证据outputs/control/AI289-CLI-REPAIR-20261021/independent-review-300.json。原289错误、300内部编译失败、CONTROL首次相对路径调用失误保留；后者路径修正后原Case通过，未修改实现迎合测试。
+回归：Test-EngineCli.ps1 -Case ReadyHandshake及ProtocolRepair，OutputRoot绝对路径；[AI300](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-300.json)、[AI304](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-304.json)。fixture不证明原400根因。
 
 <a id="p-059"></a>
-
-2026-10-21 AI303首次原生SMOKE复核：15秒本地Ready等待失败，宿主实测Arm后28.457秒才Ready；RPC0/HTTP4000，慢启动原因及旧400仍未知。实际普通eval原流为outer success/data/result、inner eval success/result，当前解析器取top.result形成静态接入缺陷；Capture亦未到达。原生停止恢复clean Edit/新增Error0。AI304同303根修复已派，时限与严格封装需离线独立通过再配对原303原生验证，不把调整时限或fixture当现场已修。证据outputs/control/AI289-CLI-REPAIR-20261021/independent-failure-review-303-attempt1.json。
-
-2026-10-21 AI304修复已CONTROL独立5合同/16复核/274断言通过：共享等待default45/hard60/Arm90，entry30与健康/最多3次只读400边界保持；严格默认CLI outer/data/result、target/code/diagnostics与CaptureTargetPort对接，原PNG检查字节保全。原28.457秒时序仅离线合成回归，慢启动/旧400根因未证明。原303已正式同cycle配对attempt2原生SMOKE，根仍1/5；尚不能称原生Ready/捕图修好。复用Test-EngineCli.ps1 -Case ProtocolRepair和304 CALL-EXAMPLE，不新建runner。
-
-2026-10-21 原303a2已实际通过新共享Ready一次RPC/结构体序列化/首张原生PNG；之后自身载荷DispatchAction("OpenCover")错误，真实ShortCycleActionNames.OpenCover为shortcycle.open_cover。未执行SelectRecipe也必须引用实际常量；动作显示名/常量符号名不能当wire ID，不改产品注册表迎合错误。原5合同只4过、Catalog/Browse无图，失败后停止清理，固定CODE305仅两候选参数修正/允许diff，原载荷与原图完整保留；下一原303新run仍完整三图。该错误与旧HTTP400不同，旧原因未证。
-
 ## P-059 | [ENGINE_CLI/CODE/CONTROL] 队列Save-TextFile替换失败
 
-原Move-Item覆盖在受管start、底层Process.Start前失败，遗留tmp保留。采用同目录GUID临时文件完整写后File.Move覆盖；错误上抛、不预删目标、不吞错/无限重试/旧快照回写。底层锁/并发原因未证。2026-10-21 AI296交付并经CONTROL独立6合同/18断言通过；[独立复核](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-296.json)，[实际回归与报告](../outputs/AI289-CLI-REPAIR-20261021/AI-000296/REPORT.md)。原生SMOKE仍待。
+原Move-Item覆盖在底层Process.Start前失败，锁/并发原因未证、旧tmp保留。改同目录GUID临时完整写后File.Move覆盖，不预删目标/吞错/无限重试/回写旧快照。
 
-来源：AI289 attempt9正式失败及CONTROL独立复核；本批派发2026-10-21。对应修复尚未验收，成功后链接实际回归，不倒改旧失败。
+AI296已完成并CONTROL独立通过：[实际回归报告](../outputs/AI289-CLI-REPAIR-20261021/AI-000296/REPORT.md)、[独立复核](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-296.json)。原AI289第九次失败保留。
 
 <a id="p-060"></a>
 
@@ -445,3 +446,38 @@ AI298 attempt2已CONTROL独立四合同/15复核、真实Unity引用165结构体
 ENGINE第8轮约438K单provider input只是代理量，非完整窗口；出现多轮错误不能证明由上下文造成。用户2026-10-21明确取消本批重载前置，仍提示而不换chat/自动重载/设新门。
 
 来源：AI289 attempt8正式失败及CONTROL独立复核；本批派发2026-10-21。AI301已独立4合同/12复核/33断言通过，既有Test-EngineCli UsageClassification 12项与Test-DocumentArchive两简表case 21项验证来源SHA绑定、CLI(磨合)/类别/车道/真实工具分列、unknown及旧计数保全；见outputs/control/AI289-CLI-REPAIR-20261021/independent-review-301.json。这不证明上下文致错或原生修复；原生冒烟由AI303执行，原302未领取行政替代，旧失败不倒改。
+
+<a id="p-061"></a>
+## P-061 | [ENGINE_CLI/CODE] 动作显示名和常量名不是wire ID
+
+DispatchAction("OpenCover")不等于ShortCycleActionNames.OpenCover的实际值shortcycle.open_cover。直接引用真实动作常量，SelectRecipe等同理；不改产品注册表迎合错误。
+证据：[AI305](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-305.json)、[AI303原生通过](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-303.json)。
+
+<a id="p-062"></a>
+## P-062 | [ENGINE_CLI/CODE] Ready时限与CLI默认JSON封包须匹配真实协议
+
+AI303首轮Arm后28.457秒才Ready，旧15秒等待超时、RPC/400均0，慢启动原因未证。用304共享门默认45/硬60秒、本地250ms有界观察、Arm总90秒，绑定当前健康与精确task/run/root；不复制自写轮询。
+默认outer success/command/data/errors/warnings及data.result内eval结果须逐层严格核验；拒重复键/尾随/错target/code，不递归猜result。
+回归Test-EngineCli.ps1 -Case ProtocolRepair；[304调用例](../outputs/AI289-CLI-REPAIR-20261021/AI-000304/CALL-EXAMPLE.md)、[AI304验收](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-304.json)、[AI303原生通过](../outputs/control/AI289-CLI-REPAIR-20261021/independent-review-303.json)。权限/UNKNOWN/写入停止门不放宽。
+
+<a id="p-063"></a>
+## P-063 | [ENGINE_CLI/CODE] Unity6 SceneHandle须显式标量转换
+
+直接将Scene.handle写JToken导致CS0029；用真实公开(int)scene.handle保身份，不用GetHashCode/无证ToString或删字段。完整候选以真实UnityEditor/CoreModule/Newtonsoft引用核编译；原生前置并入对应任务验收，不另开取handle诊断链。
+Catalog采用Editor静态PrepareSnapshot/AssetDatabase读取SO与Sprite身份。AI290实际Edit态、无Play；CLI eval反射调用不等于Play态运行时快照。
+回归既有EvidenceJson完整载荷编译/SceneHandle用例；证据[AI308](../outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-308.json)、[AI309原生前置](../outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-309.json)、[AI290成功](../outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-290.json)。
+
+<a id="p-064"></a>
+## P-064 | [CODE/ENGINE_CLI] Unity托管空与Unity空语义不同
+
+ReferenceEquals/is null与Unity重载==null不等价；托管包装存在但Unity判空可能误入Sprite身份guard。只有owner/字段/持久身份/clean状态与原PPtr {fileID: 0}严格证明时才把原空字段编码null，非空或未知保持原拒绝，不能吞掉不稳定引用。
+入口CatalogBlobBuildProcessor.IsSerializedEmptySprite及CatalogBlobSerializer；[AI313验收](../outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-313.json)、[AI290实际成功](../outputs/control/AI290-CLI-CALLER-REPAIR-20261022/independent-review-290.json)。20原空/78非空边界保持，不重跑已验业务。
+
+<a id="p-069"></a>
+## P-069 | ProjectSettings 置值与落盘必须分开验证
+
+- 用户2026-10-29纠正：本问题不再靠单对象SaveToSerializedFileAndForget/反射m_Scenes绕过保存，也不把关窗、变化通知或等待当作保存。改按公开API置值→场景脏检查→SaveAssets→目标回读＋其它ProjectSettings SHA核对，实际影响文件列出。
+- “ProjectSettings单例无局部保存入口”记录为本次处置依据：本工程该共享Build设置尚无已验可用的局部保存路径，旧候选撤用；不外推为全部Unity版本/所有ProjectSettings类型绝无任何局部API的已证定理。AI382第五次原生执行已证：内存目标五项时setter0、场景clean后SaveAssets1，磁盘立即五项，其余25个ProjectSettings不变；CONTROL独立复核通过该合同。仅证明本次目标与保存窗口，非所有设置类型的通用成功保证。
+- a2 SetScenes内存五项成立而磁盘四项；a3全部Profile不得dirty的门过宽；a4正常关窗后仍四项；要求用户删除重加未经证明，重复要求已撤销。内存生效、磁盘未过、业务Play未执行分别记录，不能甩给用户重做或称游戏逻辑失败。
+- SaveAssets可能保存多个脏资产，不把场景clean等同全资产clean。按用户批准范围和影响文件执行，回读不符或未知写入停止，不再fallback/重启/手写YAML。旧364关闭、371拒验和所有原证据保留。
+- 入口：[ENGINE_CLI协议](../workers/ENGINE_CLI.md#projectsettings-save-protocol)；授权：[用户原话](../inputs/派发/PLAYABLE-DEMO01-20261026/AI382_SaveAssets范围放宽与第五次执行_用户原始授权_20261029.json)；独立既有事实：outputs/control/PLAYABLE-DEMO01-20261026/AI382-user-manual-and-process-review.json。

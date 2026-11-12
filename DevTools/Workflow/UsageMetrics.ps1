@@ -170,13 +170,30 @@ function Write-TaskUsageRecord {
     [void][System.IO.Directory]::CreateDirectory($RuntimeRoot)
     $path = Join-Path $RuntimeRoot ("usage-{0}.jsonl" -f $RecordedAt.ToString('yyyyMM'))
     $line = ($record | ConvertTo-Json -Depth 12 -Compress) + [Environment]::NewLine
+    $watch = [Diagnostics.Stopwatch]::StartNew()
     $mutex = [System.Threading.Mutex]::new($false, 'Local\EatWhat_AI_Workspace_Usage_v1')
     $lockTaken = $false
     try {
         try { $lockTaken = $mutex.WaitOne([TimeSpan]::FromSeconds(20)) }
         catch [System.Threading.AbandonedMutexException] { $lockTaken = $true }
         if (-not $lockTaken) { throw 'Could not acquire the usage log lock within 20 seconds.' }
-        [System.IO.File]::AppendAllText($path, $line, $script:UsageUtf8NoBom)
+        # Only the unopened append may be retried. Once Write starts, its outcome
+        # is unknown on failure and replaying the row could double count usage.
+        $stream = $null
+        while ($null -eq $stream) {
+            if ($watch.Elapsed -ge [TimeSpan]::FromSeconds(20)) { throw 'Usage log open exceeded the existing 20-second lock budget.' }
+            try { $stream = [IO.File]::Open($path, [IO.FileMode]::Append, [IO.FileAccess]::Write, [IO.FileShare]::Read) }
+            catch [IO.IOException] {
+                if ($_.Exception.HResult -notin @(-2147024864, -2147024863) -or $watch.Elapsed -ge [TimeSpan]::FromSeconds(20)) { throw }
+                Start-Sleep -Milliseconds ([Math]::Min(50, [Math]::Max(1, [int](20000 - $watch.Elapsed.TotalMilliseconds))))
+            }
+        }
+        try {
+            $bytes = $script:UsageUtf8NoBom.GetBytes($line)
+            $stream.Write($bytes, 0, $bytes.Length)
+            $stream.Flush($true)
+        }
+        finally { $stream.Dispose() }
     }
     finally {
         if ($lockTaken) { [void]$mutex.ReleaseMutex() }
@@ -196,13 +213,30 @@ function Read-TaskUsageRecords {
 
     $records = New-Object System.Collections.ArrayList
     if (-not (Test-Path -LiteralPath $RuntimeRoot)) { return @() }
-    foreach ($file in @(Get-ChildItem -LiteralPath $RuntimeRoot -Filter 'usage-*.jsonl' -File | Sort-Object Name)) {
+    # Read complete monthly snapshots under the writer mutex, then parse outside
+    # the lock. A cooperating reader cannot hold an incomplete append open.
+    $snapshots = @()
+    $mutex = [System.Threading.Mutex]::new($false, 'Local\EatWhat_AI_Workspace_Usage_v1')
+    $lockTaken = $false
+    try {
+        try { $lockTaken = $mutex.WaitOne([TimeSpan]::FromSeconds(20)) }
+        catch [System.Threading.AbandonedMutexException] { $lockTaken = $true }
+        if (-not $lockTaken) { throw 'Could not acquire the usage log lock within 20 seconds.' }
+        $snapshots = @(foreach ($file in @(Get-ChildItem -LiteralPath $RuntimeRoot -Filter 'usage-*.jsonl' -File | Sort-Object Name)) {
+            [pscustomobject]@{ path = $file.FullName; lines = [IO.File]::ReadAllLines($file.FullName) }
+        })
+    }
+    finally {
+        if ($lockTaken) { [void]$mutex.ReleaseMutex() }
+        $mutex.Dispose()
+    }
+    foreach ($snapshot in $snapshots) {
         $lineNumber = 0
-        foreach ($line in [System.IO.File]::ReadLines($file.FullName)) {
+        foreach ($line in $snapshot.lines) {
             $lineNumber++
             if ([string]::IsNullOrWhiteSpace($line)) { continue }
             try { $record = $line | ConvertFrom-Json -DateKind String }
-            catch { throw "Invalid usage JSONL at $($file.FullName):$lineNumber - $($_.Exception.Message)" }
+            catch { throw "Invalid usage JSONL at $($snapshot.path):$lineNumber - $($_.Exception.Message)" }
             $at = [DateTimeOffset]::Parse([string]$record.recordedAt)
             if ($at -ge $From -and $at -lt $To) { [void]$records.Add($record) }
         }

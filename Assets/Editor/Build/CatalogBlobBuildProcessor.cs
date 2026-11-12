@@ -29,6 +29,7 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
         public string Root;
         public Scene Guard;
         public SceneSetup[] Scenes;
+        public bool CleanUntitledScene;
         public readonly List<CatalogBuildPlan.OwnedInput> Owned = new List<CatalogBuildPlan.OwnedInput>();
         public string Pending, JournalHash;
         public readonly HashSet<int> AuthoringHandles = new HashSet<int>();
@@ -106,7 +107,9 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
         if(CatalogBuildFingerprint.Expected!=fingerprint)throw new BuildFailedException("Prepare fingerprint source and compile before building; callback cannot fix it.");
         var packet=File.ReadAllBytes(Path.Combine(stage,"catalog.bin"));CatalogBlobSerializer.Authenticate(packet,fingerprint,new CatalogBlobCipher(new ObfuscatedStaticKeyProvider()));
         var plan=new CatalogBuildPlan(((string)graph["catalog"]).Substring(0,32),((JArray)graph["assets"]).Select(x=>((string)x["key"]).Substring(0,32)));
-        var ctx=new Context{Plan=plan,Scenes=EditorSceneManager.GetSceneManagerSetup(),Root="Assets/__CatalogBlobBuild_"+Guid.NewGuid().ToString("N")};
+        bool cleanUntitled;
+        var authoringSetup=CaptureAuthoringSetup(out cleanUntitled);
+        var ctx=new Context{Plan=plan,Scenes=authoringSetup,CleanUntitledScene=cleanUntitled,Root="Assets/__CatalogBlobBuild_"+Guid.NewGuid().ToString("N")};
         for(var i=0;i<SceneManager.sceneCount;i++)ctx.AuthoringHandles.Add(SceneManager.GetSceneAt(i).handle);
         try
         {
@@ -116,6 +119,32 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
             },()=>Cleanup(ctx));
         }
         finally{options.extraScriptingDefines=original;current=null;}
+    }
+    private static SceneSetup[] CaptureAuthoringSetup(out bool cleanUntitled)
+    {
+        cleanUntitled=false;
+        var setup=EditorSceneManager.GetSceneManagerSetup();
+        if(setup==null||setup.Length==0||setup.Length!=SceneManager.sceneCount)
+            throw new BuildFailedException("Unknown or unloaded authoring scene setup; refuse preparation.");
+        var active=SceneManager.GetActiveScene();
+        var activeCount=0;
+        for(var i=0;i<setup.Length;i++)
+        {
+            var scene=SceneManager.GetSceneAt(i);
+            if(!scene.IsValid()||!scene.isLoaded||scene.isDirty||!setup[i].isLoaded||
+                !string.Equals(setup[i].path,scene.path,StringComparison.Ordinal)||
+                setup[i].isActive!=(scene.handle==active.handle))
+                throw new BuildFailedException("Authoring scene setup changed or is not clean and loaded.");
+            if(setup[i].isActive)activeCount++;
+            if(string.IsNullOrEmpty(scene.path))
+            {
+                if(setup.Length!=1||scene.GetRootGameObjects().Length!=0)
+                    throw new BuildFailedException("Untitled authoring scene has objects or mixed setup; preserve.");
+                cleanUntitled=true;
+            }
+        }
+        if(activeCount!=1)throw new BuildFailedException("Authoring setup needs one active loaded scene.");
+        return setup;
     }
     private static void AssertJournal(Context ctx)
     {
@@ -197,15 +226,41 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
     {if(current!=null&&(report.summary.options&BuildOptions.Development)==0)AssertReport(report,current.Plan);}
     private static void AssertReport(BuildReport report,CatalogBuildPlan plan)
     {foreach(var pack in report.packedAssets)plan.AssertNoExcluded(pack.contents.Select(item=>AssetDatabase.AssetPathToGUID(item.sourceAssetPath)));}
+    public static void AssertExistingReport(BuildReport report,JObject authenticatedGraph)
+    {
+        if(report==null||report.packedAssets==null||report.packedAssets.Length==0)
+            throw new BuildFailedException("Detailed original BuildReport packed assets are unavailable.");
+        var plan=new CatalogBuildPlan(((string)authenticatedGraph["catalog"]).Substring(0,32),
+            ((JArray)authenticatedGraph["assets"]).Select(x=>((string)x["key"]).Substring(0,32)));
+        AssertReport(report,plan);
+    }
     private static void Cleanup(Context ctx)
     {
         if(ctx.JournalHash==null&&ctx.Owned.Count==0&&ctx.Pending==null)return;
         AssertJournal(ctx);
         if(ctx.Guard.IsValid()&&ctx.Guard.isDirty)throw new BuildFailedException("Unknown guard-scene edits: preserve scene and journal.");
         var cleanup=CatalogBuildPlan.PlanOwnedCleanup(Path.GetFullPath("."),ctx.Root,CatalogBuildPlan.OwnershipSchema,ctx.Pending,ctx.Owned);
-        if(ctx.Guard.IsValid())EditorSceneManager.RestoreSceneManagerSetup(ctx.Scenes);
+        RestoreAuthoring(ctx);
         cleanup.Execute(path=>{if(!AssetDatabase.DeleteAsset(path))throw new IOException("Owned input cleanup failed: "+path);});
         AssertJournal(ctx);File.Delete(JournalPath);
+    }
+    private static void RestoreAuthoring(Context ctx)
+    {
+        if(ctx.Scenes!=null&&ctx.Scenes.Length>0)
+        {
+            if(!ctx.Guard.IsValid()||!ctx.Guard.isLoaded)
+                throw new BuildFailedException("Build guard scene disappeared; preserve authoring state and journal.");
+            if(ctx.CleanUntitledScene)
+            {
+                // Unity cannot RestoreSceneManagerSetup with an empty path. A clean rootless
+                // single active guard is the same recorded authoring state, without claiming its old handle.
+                if(SceneManager.sceneCount!=1||SceneManager.GetSceneAt(0).handle!=ctx.Guard.handle||
+                    SceneManager.GetActiveScene().handle!=ctx.Guard.handle||ctx.Guard.isDirty||
+                    !string.IsNullOrEmpty(ctx.Guard.path)||ctx.Guard.GetRootGameObjects().Length!=0)
+                    throw new BuildFailedException("Untitled authoring scene is not clean and rootless; preserve.");
+            }
+            else EditorSceneManager.RestoreSceneManagerSetup(ctx.Scenes);
+        }
     }
     /// <summary>Never auto-recover after domain/process interruption. Recovery validates exact journal-owned paths/bytes.</summary>
     public static void RecoverOwnedInputs()

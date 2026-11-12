@@ -156,6 +156,12 @@ namespace EatWhat.Cooking.ShortCycle
 
         public override void ExitState(ShortCycleStateMachine sessionManager)
         {
+            if (sessionManager.Context.active_modal == ShortCycleModalId.Generic)
+            {
+                if (sessionManager.PresentationHost != null)
+                    sessionManager.PresentationHost.PopModal(ShortCycleModalId.Generic);
+                sessionManager.Context.active_modal = null;
+            }
             if (sessionManager.PresentationHost != null)
                 sessionManager.PresentationHost.LeaveSpace(ShortCycleSpaceId.Phase1);
         }
@@ -269,10 +275,12 @@ namespace EatWhat.Cooking.ShortCycle
 
         public ShortCycleTransitionResult TryOpenModal(ShortCycleModalId modal)
         {
-            if (!ReferenceEquals(currentState, phase0State) ||
-                context.phase0_view != ShortCyclePhase0View.RecipeBrowse ||
-                context.active_modal.HasValue)
-                return ShortCycleTransitionResult.Failure("A modal can only open once while Phase 0 is active.");
+            var phase0Modal = ReferenceEquals(currentState, phase0State) &&
+                context.phase0_view == ShortCyclePhase0View.RecipeBrowse;
+            var phase1Equipment = ReferenceEquals(currentState, phase1State) &&
+                modal == ShortCycleModalId.Generic;
+            if ((!phase0Modal && !phase1Equipment) || context.active_modal.HasValue)
+                return ShortCycleTransitionResult.Failure("The requested modal cannot open from the current state.");
             context.active_modal = modal;
             if (presentationHost != null) presentationHost.PushModal(modal);
             NotifyStateChanged();
@@ -281,7 +289,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         public ShortCycleTransitionResult TryCloseModal(ShortCycleModalId modal)
         {
-            if (!ReferenceEquals(currentState, phase0State) || context.active_modal != modal)
+            if ((!ReferenceEquals(currentState, phase0State) && !ReferenceEquals(currentState, phase1State)) || context.active_modal != modal)
                 return ShortCycleTransitionResult.Failure("The requested modal is not active.");
             if (presentationHost != null) presentationHost.PopModal(modal);
             context.active_modal = null;
@@ -308,7 +316,7 @@ namespace EatWhat.Cooking.ShortCycle
 
         public ShortCycleTransitionResult TryAdvanceToPhase2()
         {
-            if (!ReferenceEquals(currentState, phase1State))
+            if (!ReferenceEquals(currentState, phase1State) || context.active_modal.HasValue)
                 return ShortCycleTransitionResult.Failure("P1 -> P2 processing requires the Phase 1 state.");
             var processResult = dataProcessor.TryProcess(context);
             if (!processResult.Succeeded)
@@ -329,8 +337,12 @@ namespace EatWhat.Cooking.ShortCycle
 
         public ShortCycleTransitionResult TryEscape()
         {
+            if (ReferenceEquals(currentState, phase1State))
+                return context.active_modal == ShortCycleModalId.Generic
+                    ? TryCloseModal(ShortCycleModalId.Generic)
+                    : ShortCycleTransitionResult.Failure("ESC has no Phase 1 modal to close.");
             if (!ReferenceEquals(currentState, phase0State))
-                return ShortCycleTransitionResult.Failure("ESC is only handled by the Phase 0 exit layer.");
+                return ShortCycleTransitionResult.Failure("ESC is only handled by an active short-cycle space.");
 
             if (context.active_modal.HasValue)
                 return TryCloseModal(context.active_modal.Value);

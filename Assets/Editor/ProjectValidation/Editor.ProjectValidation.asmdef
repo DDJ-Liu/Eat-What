@@ -3,10 +3,12 @@
   "rootNamespace": "",
   "references": [
     "Legacy",
+    "LongLoop",
     "ShortCycle",
     "spine-unity",
     "Toolkit",
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "Unity.Cinemachine"
   ],
   "includePlatforms": [
     "Editor"

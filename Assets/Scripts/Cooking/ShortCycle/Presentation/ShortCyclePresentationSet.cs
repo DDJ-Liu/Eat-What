@@ -46,6 +46,7 @@ namespace EatWhat.Cooking.ShortCycle
         public float AppearAtProgress { get { return SafeProgress(appearAtProgress); } }
         public float DisappearAtProgress { get { return SafeProgress(disappearAtProgress); } }
         internal bool IsVisibilityRequested { get { return requestedActive == true; } }
+        internal bool IsContentRendererHidden { get { return deactivateMode == DeactivateMode.RendererHidden && hidden; } }
         internal bool HasVisibilityRequest { get { return requestedActive.HasValue; } }
 
         private void OnEnable() { CaptureTransientState(); MarkBoundsDirty(); }
@@ -122,6 +123,11 @@ namespace EatWhat.Cooking.ShortCycle
             hidden = false;
             RestoreHiddenRenderers();
             if (containerRoot != null && !containerRoot.activeSelf) containerRoot.SetActive(true);
+            if (deactivateMode == DeactivateMode.RendererHidden)
+            {
+                var clueContent = GetComponent<ShortCycleClueBoardBinder>();
+                if (clueContent != null && clueContent.enabled) clueContent.RefreshPresentationContent();
+            }
             if (transitionController != null && !string.IsNullOrEmpty(enterTransition))
                 transitionController.PlayTransition(enterTransition);
         }
@@ -141,6 +147,8 @@ namespace EatWhat.Cooking.ShortCycle
                 for (var i = 0; i < hiddenRenderers.Length; i++)
                     if (hiddenRenderers[i] != null && hiddenRenderers[i].enabled)
                         hiddenRenderers[i].enabled = false;
+                var clueContent = GetComponent<ShortCycleClueBoardBinder>();
+                if (clueContent != null) clueContent.ReconcilePresentationVisibility();
                 return;
             }
             if (transitionController != null && !string.IsNullOrEmpty(exitTransition))
@@ -288,6 +296,15 @@ namespace EatWhat.Cooking.ShortCycle
                 if (containerRoot != null && containerRoot.activeSelf) containerRoot.SetActive(false);
             }
             finally { internalLifecycleChange = false; }
+        }
+
+        // The clue Binder may update active child Renderers while this Set is hidden.
+        internal void ReassertRendererHidden()
+        {
+            if (!IsContentRendererHidden) return;
+            for (var i = 0; i < hiddenRenderers.Length; i++)
+                if (hiddenRenderers[i] != null && hiddenRenderers[i].enabled)
+                    hiddenRenderers[i].enabled = false;
         }
 
         private void RestoreHiddenRenderers()

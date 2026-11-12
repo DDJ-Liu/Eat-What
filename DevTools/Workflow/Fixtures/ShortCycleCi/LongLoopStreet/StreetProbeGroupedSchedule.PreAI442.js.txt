@@ -1,0 +1,176 @@
+// @exec: {"yield_time_ms": 10000, "max_output_tokens": 1200}
+// AI438 output-only435attempt5 candidate. This same source is exercised by the explicit offline tool fixture.
+// Actual ENGINE must bind the execution placeholder and obtain new CONTROL proof before using functions.exec.
+async function runStreetProbeManagedSchedule(host,execution){
+ const root="D:/GameProject/Eat-What",out=root+"/.ai-workspace/outputs/PLAYABLE-DEMO011-20261104/AI-000435/attempt5";
+ const need=(ok,m)=>{if(!ok)throw Error(m);},quote=s=>"'"+String(s).replaceAll("'","''")+"'";
+ need(/^[0-9a-f]{32}$/.test(execution),"Current actual claim required");
+ const recoveryKey="AI435-a5-returned-objects";
+ const state={schemaVersion:1,taskId:"AI-000435",attempt:5,executionId:execution,runId:"a5_street435",pending:[],objects:[],calls:[],nativeCount:0,playIssued:false,playConfirmed:false,registerIssued:false,registered:false,captureIssued:false,stopIssued:false,diskFailed:false,unknownNative:false,completed:false};
+ let sequence=0,forecastSeconds=0;
+ const journal=()=>host.store(recoveryKey,JSON.parse(JSON.stringify(state)));
+ function remember(response,label){
+  // Capture before validation, including failures and every partial. Store is NOT a disk commit.
+  const item={path:out+"/"+label+".json",json:JSON.stringify(response)};
+  state.pending.push(item);state.objects.push({path:item.path,json:item.json});journal();return item;
+ }
+ function carryPrefix(batch,label,reservation){
+  const packet=JSON.stringify({root:out,records:batch,label,reservation});
+  return "$ErrorActionPreference='Stop';$streetCarry="+quote(packet)+"|ConvertFrom-Json -Depth 100 -DateKind String;"+
+   "$streetCarryStarted=[Diagnostics.Stopwatch]::StartNew();try{"+
+   "foreach($record in $streetCarry.records){$path=[IO.Path]::GetFullPath($record.path);$base=[IO.Path]::GetFullPath($streetCarry.root).TrimEnd('\\','/');"+
+   "if(-not$path.StartsWith($base+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'Response outside exact task output'};"+
+   "for($ancestor=[IO.Path]::GetDirectoryName($path);$ancestor;$ancestor=[IO.Path]::GetDirectoryName($ancestor)){if((Test-Path -LiteralPath $ancestor)-and([IO.File]::GetAttributes($ancestor)-band[IO.FileAttributes]::ReparsePoint)){throw 'Redirected response ancestor'}};"+
+   "$bytes=[Text.UTF8Encoding]::new($false).GetBytes($record.json);$sha=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes));"+
+   "if(Test-Path -LiteralPath $path){if(([IO.File]::GetAttributes($path)-band[IO.FileAttributes]::ReparsePoint)-or(Get-FileHash -LiteralPath $path).Hash-cne$sha){throw 'Existing response bytes differ'}}"+
+   "else{$f=[IO.File]::Open($path,[IO.FileMode]::CreateNew);try{$f.Write($bytes)}finally{$f.Dispose()}};"+
+   "if((Get-FileHash -LiteralPath $path).Hash-cne$sha){throw 'Original returned object disk SHA mismatch'}};"+
+   "$meta=[ordered]@{label=$streetCarry.label;elapsedSeconds=$streetCarryStarted.Elapsed.TotalSeconds;objects=@($streetCarry.records|ForEach-Object {@{path=$_.path;sha256=(Get-FileHash -LiteralPath $_.path).Hash}});at=[DateTimeOffset]::UtcNow.ToString('o')};"+
+   "$metaPath=Join-Path $streetCarry.root ($streetCarry.label+'-carry-write.json');"+
+   "$f=[IO.File]::Open($metaPath,[IO.FileMode]::CreateNew);try{$b=[Text.UTF8Encoding]::new($false).GetBytes(($meta|ConvertTo-Json -Depth 20));$f.Write($b)}finally{$f.Dispose()};"+
+   "if($streetCarry.reservation){$f=[IO.File]::Open($streetCarry.reservation.path,[IO.FileMode]::CreateNew);try{$b=[Text.UTF8Encoding]::new($false).GetBytes($streetCarry.reservation.token+[Environment]::NewLine);$f.Write($b)}finally{$f.Dispose()}}"+
+   "}catch{[Console]::Error.WriteLine('STREET_PERSIST_FAILED: '+$_.Exception.Message);exit 91};";
+ }
+ async function call(command,label,nativeRole=null,measure=false){
+  const batch=state.pending.slice(),id=++sequence,callLabel=label+"Call"+id;
+  const started=Date.now();let actual;
+  const metrics={taskId:"AI-000435",attempt:5,executionId:execution,runId:"a5_street435",forecastAppSeconds:forecastSeconds,perRoleReserveSeconds:.5,totalReserveSeconds:.5};
+  const saveMetrics="$m="+quote(JSON.stringify(metrics))+";$p="+quote(out+"/"+callLabel+"-schedule.json")+";$f=[IO.File]::Open($p,[IO.FileMode]::CreateNew);try{$b=[Text.UTF8Encoding]::new($false).GetBytes($m);$f.Write($b)}finally{$f.Dispose()};";
+  const full=carryPrefix(batch,callLabel,null)+saveMetrics+command.replaceAll("__SCHEDULE_PATH__",out+"/"+callLabel+"-schedule.json");
+  journal();
+  try{actual=await host.tools.exec_command({cmd:full,workdir:root,yield_time_ms:10000,max_output_tokens:6000});}
+  catch(error){if(nativeRole)state.unknownNative=true;journal();throw error;}
+  let item=remember(actual,callLabel+"-app-response");
+  if(actual.exit_code!==91)state.pending=state.pending.filter(x=>!batch.includes(x));
+  if(actual.exit_code===91){state.diskFailed=true;journal();throw Error("Prior response persistence failed; no next native command was issued");}
+  while(actual.session_id){
+   const oldPath=item.path;item.path=out+"/"+callLabel+"-app-partial"+(++sequence)+".json";state.objects.find(x=>x.path===oldPath).path=item.path;
+   journal();
+   try{actual=await host.tools.write_stdin({session_id:actual.session_id,chars:"",yield_time_ms:1000,max_output_tokens:6000});}
+   catch(error){if(nativeRole)state.unknownNative=true;journal();throw error;}
+   item=remember(actual,callLabel+"-app-final"+(++sequence));
+  }
+  const elapsed=(Date.now()-started)/1000;
+  state.calls.push({label,nativeRole,appRoundtripSeconds:elapsed,returnedAppWallSeconds:actual.wall_time_seconds??null,prefixWriteIncluded:true});
+  // No concatenation of partial output into a fabricated response. Final actual output must be complete.
+  if(nativeRole&&(!Number.isInteger(actual.exit_code)||String(actual.output).includes("STREET_NATIVE_UNKNOWN")))state.unknownNative=true;
+  need(actual.exit_code===0&&!actual.session_id,label+" actual app failed");
+  let result;
+  if(!nativeRole&&label!=="select-ready"){journal();return {action:"LOCAL_COMPLETED",nativeSuccessProven:false};}
+  try{result=JSON.parse(actual.output);}catch{if(nativeRole)state.unknownNative=true;journal();throw Error(label+" incomplete/truncated actual output");}
+  if(nativeRole&&result.action==="TOOL_CAPTURED"){
+   need(result.taskId==="AI-000435"&&result.attempt===5&&result.executionId===execution&&result.exitCode===0,"Exact current managed receipt required");
+   const prior=item.path;item.path=out+"/"+nativeRole+"-app-response.json";state.objects.find(x=>x.path===prior).path=item.path;
+   if(measure)forecastSeconds=Math.max(forecastSeconds,elapsed);
+  }
+  if(nativeRole==="captureGroup"&&result.kind==="STREET_CAPTURE_GROUP_RAW_V1"){
+   need(result.taskId==="AI-000435"&&result.attempt===5&&result.executionId===execution&&result.runId==="a5_street435"&&result.memberCount===3&&result.members.length===3,"Exact one-app group identity/count");
+   ["pendingRead","capture","captureAck"].forEach((role,index)=>need(result.members[index].role===role&&result.members[index].index===index,"Fixed grouped role order/index"));
+   const prior=item.path;item.path=out+"/captureGroup-app-response.json";state.objects.find(x=>x.path===prior).path=item.path;
+   state.groupId=result.groupId;state.groupReturned=true;
+  }
+  journal();return result;
+ }
+ async function local(role,args=""){
+  return call("& "+quote(out+"/"+role+".ps1")+args,role);
+ }
+ async function native(role,payload="",waitFor=""){
+  need(state.nativeCount<(state.failing?60:57),"Official call budget exhausted");
+  if(role==="capture"){need(!state.captureIssued,"No second capture");state.captureIssued=true;}
+  if(role==="play"){need(!state.playIssued,"No second Play");state.playIssued=true;}
+  if(role==="register"){need(!state.registerIssued,"No second Begin");state.registerIssued=true;}
+  if(role==="stop"){need(!state.stopIssued,"No second Stop");state.stopIssued=true;}
+  state.nativeCount++;journal();
+  const command="& "+quote(out+"/run-one.ps1")+" -Name "+quote(role)+(payload?" -Payload "+quote(payload):"")+
+   (waitFor?" -WaitFor "+quote(waitFor):"")+" -ScheduleInputPath "+quote("__SCHEDULE_PATH__");
+  const r=await call(command,role,role,!state.playConfirmed);
+  if(r.action==="LOCAL_WAIT"){state.nativeCount--;journal();return r;}
+  need(r.action==="TOOL_CAPTURED","A local hint cannot prove a managed role");
+  if(role==="play")state.playConfirmed=true;
+  if(role==="register")state.registered=true; // run-one verified actual RUNNING payload, not merely issued.
+  journal();return r;
+ }
+ async function captureGroup(){
+  need(!state.captureIssued&&state.nativeCount+3<=57,"One bounded fixed capture group only");
+  state.captureIssued=true;state.nativeCount+=3;journal();
+  const r=await call("& "+quote(out+"/capture-window.ps1")+" -ScheduleInputPath "+quote("__SCHEDULE_PATH__"),"captureGroup","captureGroup");
+  if(r.action==="LOCAL_WAIT"){state.nativeCount-=3;state.captureIssued=false;journal();return false;}
+  need(r.kind==="STREET_CAPTURE_GROUP_RAW_V1"&&state.groupReturned,"Actual group frame required, never three synthesized app0 objects");
+  journal();return true;
+ }
+ async function waitAndNative(role,waitFor){
+  for(let slice=0;slice<3;slice++){const r=await native(role,"read",waitFor);if(r.action!=="LOCAL_WAIT")return r;}
+  throw Error("Original native120s clock/local bounded waits exhausted");
+ }
+ async function flush(){
+  if(!state.pending.length)return;
+  const batch=state.pending.slice(),label="finalFlush"+(++sequence);
+  const reservation={path:out+"/"+label+"-app-response.json",token:"STREET_RESERVED_"+execution+"_"+sequence};
+  let response=await host.tools.exec_command({cmd:carryPrefix(batch,label,reservation)+"Write-Output '{\"flushed\":true}'",workdir:root,yield_time_ms:10000,max_output_tokens:2000});
+  let finalItem=remember(response,label+"-actual-return");
+  while(response.session_id){response=await host.tools.write_stdin({session_id:response.session_id,chars:"",yield_time_ms:1000,max_output_tokens:2000});finalItem=remember(response,label+"-partial"+(++sequence));}
+  need(response.exit_code===0&&!response.session_id,"Final actual response flush failed; store is still only memory");
+  state.pending=state.pending.filter(x=>!batch.includes(x));
+  // The storage exec's own real returned object is not knowable until it returns.
+  // Close that last window with the file tool, replacing only our CreateNew reservation token.
+  // apply_patch is not another exec/write_stdin, so this creates no infinite receipt-writing chain.
+  const patch="*** Begin Patch\n*** Update File: "+reservation.path+"\n@@\n-"+reservation.token+"\n"+
+   JSON.stringify(response).split("\n").map(x=>"+"+x).join("\n")+"\n*** End Patch";
+  const saved=await host.tools.apply_patch(patch);
+  need(!saved?.isError,"Final storage response file write was rejected");
+  state.objects.find(x=>x.path===finalItem.path).path=reservation.path;
+  state.finalStorageResponse={path:reservation.path,json:JSON.stringify(response)};
+  state.pending=state.pending.filter(x=>x.json!==JSON.stringify(response));
+  // Any earlier partial storage responses were included in the original batch only on the next flush.
+  // Flush itself must normally finish within10s; otherwise leave explicit pending raw partials for recovery.
+  need(state.pending.length===0,"Storage flush partials retained in store; recovery may persist them, never replay business");
+  journal();
+ }
+ let failure=null;
+ try{
+  await local("prepare-target");await native("status");await native("editorStatus");await local("check-status");
+  await local("build-payloads"," -Names @('preflight','savesBefore','savesAfter','ready','register','read','captureAck','postStop','cancel')");
+  await native("preflight","preflight");await native("savesBefore","savesBefore");await native("consoleBefore0");await local("check-console"," -When before");
+  await native("play");
+  const readyStarted=Date.now();let ready=false;
+  for(let i=0;i<3&&!ready&&Date.now()-readyStarted<30000;i++){await native("ready"+i,"ready");const selected=await local("select-ready"," -Role "+quote("ready"+i));ready=selected.next==="BEGIN";}
+  need(ready&&Date.now()-readyStarted<=30000,"Single30s natural readiness window exhausted");
+  await local("prepare-context"," -PresetReviewPath "+quote(out+"/ci-contexts/a5_street435.preset-review.json"));
+  await native("register","register");
+  let grouped=false;for(let i=0;i<3&&!grouped;i++)grouped=await captureGroup();
+  need(grouped,"Original120s capture wait exhausted");
+  await waitAndNative("complete","Terminal");await native("cleanup","read");
+  await native("stop");await native("postStop","postStop");await native("savesAfter","savesAfter");await native("consoleAfter0");await local("check-console"," -When after");
+  await local("finalize-context");
+  // Every native app object is carried to disk before this actual Final consumer command starts.
+  await call("& "+quote(root+"/DevTools/Verify-All.ps1")+" -TaskId AI-000435 -Profile ShortCycleNativeCi -Mode Final -NativeCiContextPath "+quote(out+"/ci-contexts/a5_street435.json")+" -StateRoot "+quote(out+"/verify-state"),"nativeConsumer");
+  state.consumerPassed=true;journal();
+ }catch(error){
+  failure=error;state.failing=true;state.failure=String(error);journal();
+  // Unknown/persistence failures stop new commands. Unknown Begin does not authorize blind Cancel.
+  if(!state.diskFailed&&!state.unknownNative){
+   if(state.registered&&!state.stopIssued){try{await native("cancel","cancel");}catch(e){state.cleanupError=String(e);journal();}}
+   if(state.registered&&!state.stopIssued&&!state.unknownNative){for(let i=0;i<2&&state.nativeCount<59;i++){try{await native("failureCleanup"+i,"read");}catch(e){state.cleanupError=String(e);break;}}}
+  }
+  // A confirmed Play can still use the one ordinary Stop lifecycle when Begin was unknown.
+  if(state.playConfirmed&&!state.stopIssued&&!state.diskFailed&&state.nativeCount<60){try{await native("stop");}catch(e){state.stopError=String(e);journal();}}
+  if(state.playIssued&&!state.playConfirmed&&!state.stopIssued&&!state.diskFailed&&state.nativeCount<60){
+   // A failed host after a proven plaintext Play is different from an unknown native Play.
+   // The safety helper revalidates the saved actual managed receipt/SDK/target before the one Stop.
+   state.stopIssued=true;state.nativeCount++;journal();
+   try{const r=await call("& "+quote(out+"/safety-stop.ps1"),"safetyStop","stop");if(r.action==="TOOL_CAPTURED")state.playConfirmed=true;else need(r.action==="NO_PLAY_PROVEN","Unknown safety transition");}
+   catch(e){state.stopError=String(e);journal();}
+  }
+  if(state.playConfirmed&&state.stopIssued&&!state.registered&&!state.diskFailed&&!state.stopError&&state.nativeCount<58){
+   try{await native("safetySavesAfter","savesAfter");await native("consoleAfter0");await local("check-console"," -When after");}catch(e){state.safetyReadbackError=String(e);journal();}
+  }
+ }finally{
+  try{await flush();}catch(error){state.flushError=String(error);journal();failure??=error;}
+ }
+ state.completed=!failure&&state.consumerPassed===true;
+ host.store(recoveryKey,JSON.parse(JSON.stringify(state)));
+ if(failure)throw failure;
+ host.text("435a5 candidate evidence consumed; independent review and formal settlement remain.");
+ return state;
+}
+await runStreetProbeManagedSchedule({tools,store,text}, "__CURRENT_EXECUTION_ID__");

@@ -150,6 +150,174 @@ Transform:
   m_Children: []
   m_Father: {fileID: 323667813}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &136734147
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 136734148}
+  - component: {fileID: 136734149}
+  m_Layer: 0
+  m_Name: StepDetailEntry_Group_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &136734148
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136734147}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1362238768}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &136734149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136734147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0afd1eb816afc694a82069e7a0f60f21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet
+  containerRoot: {fileID: 136734147}
+  interactionLayer: {fileID: 0}
+  gatedInteractions: []
+  overflowRenderers: []
+  outline: {fileID: 0}
+  transitionController: {fileID: 0}
+  enterTransition: Show
+  exitTransition: Hide
+  deactivateMode: 0
+  keepVisualActiveAcrossSpaces: 0
+  appearAtProgress: 0
+  disappearAtProgress: 0
+--- !u!1 &158298644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 158298645}
+  - component: {fileID: 158298646}
+  m_Layer: 0
+  m_Name: StapleBubble_Group_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &158298645
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158298644}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1362238768}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &158298646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158298644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0afd1eb816afc694a82069e7a0f60f21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet
+  containerRoot: {fileID: 158298644}
+  interactionLayer: {fileID: 0}
+  gatedInteractions: []
+  overflowRenderers: []
+  outline: {fileID: 0}
+  transitionController: {fileID: 0}
+  enterTransition: Show
+  exitTransition: Hide
+  deactivateMode: 0
+  keepVisualActiveAcrossSpaces: 0
+  appearAtProgress: 0
+  disappearAtProgress: 0
+--- !u!1 &160955766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 160955767}
+  - component: {fileID: 160955768}
+  m_Layer: 0
+  m_Name: Escape_Group_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &160955767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160955766}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1362238768}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &160955768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160955766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0afd1eb816afc694a82069e7a0f60f21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet
+  containerRoot: {fileID: 160955766}
+  interactionLayer: {fileID: 0}
+  gatedInteractions: []
+  overflowRenderers: []
+  outline: {fileID: 0}
+  transitionController: {fileID: 0}
+  enterTransition: Show
+  exitTransition: Hide
+  deactivateMode: 0
+  keepVisualActiveAcrossSpaces: 0
+  appearAtProgress: 0
+  disappearAtProgress: 0
 --- !u!1 &246869361
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,6 +516,109 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.Phase2SceneEntry
   presentationDirector: {fileID: 2022103168}
+  kitchenAreaController: {fileID: 1922427433}
+--- !u!1 &1054665717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1054665718}
+  - component: {fileID: 1054665719}
+  m_Layer: 0
+  m_Name: P2_BaseLayer_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1054665718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054665717}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2117820935}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1054665719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054665717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c348a05ab8844439d85dfa9603cc2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Toolkit::MouseInteractionLayer
+  layerID: 0
+  manualStackLayer: 1
+  alloweInteractionLayers: []
+  clickNullEqualsCancel: 0
+  onClickNullCancel:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!1 &1152213393
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1152213394}
+  - component: {fileID: 1152213395}
+  m_Layer: 0
+  m_Name: P2_ModalLayer_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1152213394
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152213393}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2117820935}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1152213395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152213393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c348a05ab8844439d85dfa9603cc2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Toolkit::MouseInteractionLayer
+  layerID: 2
+  manualStackLayer: 1
+  alloweInteractionLayers: []
+  clickNullEqualsCancel: 0
+  onClickNullCancel:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1158096505
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,14 +797,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.ShortCycleSpace
   spaceId: 3
   cameraSlot: 0
-  spaceLayer: {fileID: 0}
-  structureSets:
-  - {fileID: 1336691429}
-  - {fileID: 246869362}
-  - {fileID: 1665002050}
-  - {fileID: 2134496242}
+  spaceLayer: {fileID: 1785334888}
+  structureSets: []
   visualOnlySets: []
   viewTable: []
+  phase2ViewTable:
+  - role: 0
+    set: {fileID: 1336691429}
+  - role: 1
+    set: {fileID: 246869362}
+  - role: 2
+    set: {fileID: 1498228763}
+  - role: 3
+    set: {fileID: 1665002050}
+  - role: 4
+    set: {fileID: 1988772932}
+  - role: 5
+    set: {fileID: 1718223467}
+  - role: 6
+    set: {fileID: 1270651538}
+  - role: 7
+    set: {fileID: 158298646}
+  - role: 8
+    set: {fileID: 160955768}
+  - role: 9
+    set: {fileID: 136734149}
+  - role: 10
+    set: {fileID: 2134496242}
+  - role: 11
+    set: {fileID: 1918381265}
+  - role: 12
+    set: {fileID: 2126233277}
+  phase2ModalLayer: {fileID: 1152213395}
 --- !u!4 &1362238768
 Transform:
   m_ObjectHideFlags: 0
@@ -554,6 +849,11 @@ Transform:
   - {fileID: 1988772931}
   - {fileID: 2134496243}
   - {fileID: 1158096506}
+  - {fileID: 2117820935}
+  - {fileID: 158298645}
+  - {fileID: 160955767}
+  - {fileID: 136734148}
+  - {fileID: 1922427432}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1498228761
@@ -566,6 +866,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1498228762}
   - component: {fileID: 1498228763}
+  - component: {fileID: 1498228764}
   m_Layer: 0
   m_Name: AreaDetail_Group
   m_TagString: Untagged
@@ -612,6 +913,19 @@ MonoBehaviour:
   keepVisualActiveAcrossSpaces: 0
   appearAtProgress: 0
   disappearAtProgress: 0
+--- !u!114 &1498228764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498228761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9a1b9693a697b644acd03f485e706ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.ShortCycleAreaDetailBinding
+  areaDetailSet: {fileID: 1498228763}
 --- !u!1 &1665002049
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,6 +1038,57 @@ MonoBehaviour:
   keepVisualActiveAcrossSpaces: 0
   appearAtProgress: 0
   disappearAtProgress: 0
+--- !u!1 &1785334886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1785334887}
+  - component: {fileID: 1785334888}
+  m_Layer: 0
+  m_Name: P2_SpaceLayer_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1785334887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785334886}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2117820935}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1785334888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785334886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c348a05ab8844439d85dfa9603cc2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Toolkit::MouseInteractionLayer
+  layerID: 1
+  manualStackLayer: 1
+  alloweInteractionLayers: []
+  clickNullEqualsCancel: 0
+  onClickNullCancel:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1862406163
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,6 +1273,53 @@ MonoBehaviour:
   keepVisualActiveAcrossSpaces: 0
   appearAtProgress: 0
   disappearAtProgress: 0
+--- !u!1 &1922427431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1922427432}
+  - component: {fileID: 1922427433}
+  m_Layer: 0
+  m_Name: KitchenAreaController_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1922427432
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922427431}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1362238768}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1922427433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922427431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 001d4c93c5da5d2428bdccccd8513d70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.KitchenAreaController
+  sceneEntry: {fileID: 1035096559}
+  presentationDirector: {fileID: 2022103168}
+  areaDetailBinding: {fileID: 1498228764}
 --- !u!1 &1988772930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1013,9 +1425,63 @@ MonoBehaviour:
   sharedSpace: {fileID: 0}
   travelingElements: []
   cameraPanController: {fileID: 0}
-  interactionLayerStack: {fileID: 0}
+  interactionLayerStack: {fileID: 2117820936}
   trayPresentation: {fileID: 0}
   modals: []
+--- !u!1 &2117820934
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2117820935}
+  - component: {fileID: 2117820936}
+  m_Layer: 0
+  m_Name: P2_InputLayers_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2117820935
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2117820934}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1054665718}
+  - {fileID: 1785334887}
+  - {fileID: 1152213394}
+  m_Father: {fileID: 1362238768}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2117820936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2117820934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b18a726065b6d7142a99ef6d8123ab25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ShortCycle::EatWhat.Cooking.ShortCycle.ShortCycleInteractionLayerStack
+  sessionManager: {fileID: 0}
+  baseLayer: {fileID: 1054665719}
+  phase1Layer: {fileID: 0}
+  configuredLayers:
+  - {fileID: 1054665719}
+  - {fileID: 1785334888}
+  - {fileID: 1152213395}
 --- !u!1 &2126233275
 GameObject:
   m_ObjectHideFlags: 0

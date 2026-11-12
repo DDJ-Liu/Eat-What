@@ -72,7 +72,7 @@ namespace EatWhat.Cooking.ShortCycle
         }
         private static ProcessingMatchResult Reject(ProcessingRejectionCode code)
         { return new ProcessingMatchResult(null, null, code, new string[0]); }
-        internal static Dictionary<string, int> Counts(IEnumerable<ProcessingItemStack> inputs)
+        public static Dictionary<string, int> Counts(IEnumerable<ProcessingItemStack> inputs)
         {
             var counts = new Dictionary<string, int>(StringComparer.Ordinal);
             foreach (var input in inputs ?? new ProcessingItemStack[0])

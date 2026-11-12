@@ -25,8 +25,8 @@
 | TK-LAY-03 | `ShortCycleIconScaleTarget` + `ShortCycleV22LayoutContracts` | 图标七类画布统一缩放常量 | 常量表 | 沿用 | 六 prefab | C-T6 v2.2 | 512 画布规则（G19） |
 | TK-LAY-04 | `GridPlacement`（×3） `GridPlacement/` | 占位网格：cell 状态、多格、旋转 | — | 冻结 | —（P2 / 长循环） | 总档 A-6 | 复用裁决改【沿用·保留】 |
 | TK-LAY-05 | `IgnoreParentScale` / `IgnoreParentRotation` | 子对象抵消父级缩放/旋转 | — | 沿用 | 猫伸展下图标稳定 | CK01-A #33/34 | |
-| TK-LAY-06 | **`TidyLayout`（拟）** | 可见集合按规则重排到点位 | 拟 | 规划中 | 一键整理（B1 3.9） | 框架 v0.2 T-04 | 消费 TK-LAY-01 |
-| TK-LAY-07 | **`StackedIcon`（拟）** | 四种堆叠形态按数量切换 | 拟 | 规划中 | 冰箱格件（F2-a 5.4） | T-08 | |
+| TK-LAY-06 | `TidyLayout` `Assets/Scripts/Tools/TidyLayout.cs` | 可见项稳定压缩到既有点位快照，输出只读 placement 计划 | `TidyLayout.Plan<TItem,TPoint>(items,isVisible,layoutPoints)` | AI323 CODE候选·待CONTROL验收及原生消费 | 一键整理（B1 3.9） | TK-01 / AI-000323 | `layoutPoints` 由既有 TK-LAY-01 布局/锚点提供；不产生点位、不调 ArrangeChildren、不写 Transform 或 _TUNE；容量不足拒绝 |
+| TK-LAY-07 | `StackedIcon` `Assets/Scripts/Tools/StackedIcon.cs` | 严格识别 Items.stack_type 的 single/stack/pack/container，按数量和调用方显式容量输出形态/可见图层/数量文字计划 | `StackedIcon.TryParseShape`、`StackedIcon.Plan(stackType,quantity,visibleCapacityByShape,showQuantity)` | AI323 CODE候选·待CONTROL验收及原生消费 | 冰箱格件（F2-a 5.4） | TK-01 / AI-000323 | 不提供未经 D-004/005/009 核实的默认图层数、偏移/缩放或实际画面接线；未知类型/负数/容量缺项拒绝 |
 | TK-LAY-08 | `FridgeCatRig` + `FridgeCatTier` `Cooking/ShortCycle/Presentation/` | 固定层 + 池化扩展层的五列 Shelf 锚点排布与按层滚动；可选按真实 Anchor 间距对齐并自动拟合纵向 Content 边界 | `SetTierCount(int)` `GetShelfAnchor(row,col)` `ScrollToTier(int)` `TierCount`；序列化 `tierScrollMapping` / `tierAlignmentTarget_TUNE` / `tierAlignmentColumn_TUNE` | 沿用·扩充 | ShortCycleFridgeBinder；CAT-T2 Prefab 接线 | AI-000063 / AI-000128 | 默认 `UniformTierIndex` 保持旧行为；`AnchorAlignedAutoBounds` 需固定 Target、Vertical/BoxCollider 接线和严格下降 Anchor，按真实世界跨度及非单位缩放求解；0/1层安全，扩展层回收为 inactive，不销毁；正式P0启用/六层实测归AI129 |
 
 

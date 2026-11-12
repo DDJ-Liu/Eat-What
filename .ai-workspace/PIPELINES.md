@@ -1,3 +1,7 @@
+<!-- SUP-INFRA-V012-20261112 -->
+2026-11-12本轮顺序：INFRA→0.1.1本地commit→CODE/ENGINE_CLI/CONTROL新对话继承→0.1.2开发。INFRA478/480、必要495/496均CONTROL独立3/3，479/481独立2/2；479原Fail保留、a2清理完成、总Save1，480离线Final174项，481真实只读路由通过/无新增Error。有限session fc9cb2ad0fda4cdfbe378ce589ada0b2全scope成功自动MANUAL，非真人撤销后续授权。阶段2精确哈希已获真人批准，保留字体原字节并准备正常hook提交；未换chat/未开发0.1.2；人工值、描边暂停、旧失败/许可保持。权威outputs/control/SUP-INFRA-COMMIT-RELOAD-V012-20261112/plan.json；完整接棒与未关闭项在handover/20261112/COMMON.md、unclosed-current.json、v012-backlog.json。只局部维护，不提高完整核验日期；以下旧等待状态不反向恢复。
+<!-- /SUP-INFRA-V012-20261112 -->
+
 # 流水线任务与计划任务映射
 
 固定路由以本表及正式绑定为准。2026-10-15旧主控和四条执行线已完成交接归档，2026-10-16官方CLI接管AI250独立4/4通过；原失败与许可保留。当前不因本页历史记录恢复模式或日程。
@@ -24,3 +28,6 @@ ENGINE_CLI优先承接已授权引擎任务，与ENGINE_MCP/DATA互斥；不自�
 当前规则入口：[DATA操作](../DevTools/DataTables/DATA_PIPELINE.md)、[DATA执行器](workers/DATA.md)、[ART日报](ART_ASSET_DAILY.md)。交接证据：[COMMON](archive/2026-10-17-workspace-correction/readable/.ai-workspace/inputs/PIPELINE-RELOAD-20261015/COMMON.md)、[接管复核](archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/PIPELINE-AUDIT-20261015/审查报告.md)、[CLI收口](archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/UNITY-CLI-LINE-20261015/推进状态.md)。历史路由与旧批次原文见[整理前快照](archive/2026-10-17-workspace-correction/readable/.ai-workspace/outputs/control/DOC-SLIM-20261016/entry-before/.ai-workspace/PIPELINES.md)，不再作为当前状态重复读取。
 
 2026-10-21：用户恢复同session监管并取消本批ENGINE_CLI重载前置；固定chat与route不变，WATCH已app更新ACTIVE。AI296～302独立修复/分类/SMOKE源卡见.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/执行登记.md；原289旧8/8与9Fail保持，全部修复与SMOKE独立通过才按本轮条件式授权新增1次。CODE已实际领取297，296独立通过，298～302等待，不自动并行同源修改。
+
+
+2026-10-26：按 ENGINEERING_CONVENTIONS C10，CODE 含 Assets 写范围时与 ENGINE 共用 unity-project 锁，ENGINE CLAIMED 期间不得并行写 Assets；PROBE-CI 后续同样适用。用户人工保存待完成时，不以后台 Assets 变更打断现场。

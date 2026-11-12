@@ -2,7 +2,7 @@
   "name": "Toolkit",
   "rootNamespace": "",
   "references": [
-    "Cinemachine",
+    "GUID:4307f53044263cf4b835bd812fc161a4",
     "Unity.InputSystem",
     "Unity.RenderPipelines.Core.Runtime",
     "Unity.TextMeshPro",
@@ -15,6 +15,12 @@
   "precompiledReferences": [],
   "autoReferenced": true,
   "defineConstraints": [],
-  "versionDefines": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.cinemachine",
+      "expression": "[3.0.0,4.0.0)",
+      "define": "CINEMACHINE_3_OR_NEWER"
+    }
+  ],
   "noEngineReferences": false
 }

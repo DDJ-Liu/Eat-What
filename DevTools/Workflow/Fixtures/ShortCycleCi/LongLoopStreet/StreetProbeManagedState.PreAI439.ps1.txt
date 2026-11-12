@@ -1,0 +1,37 @@
+# Domain-specific435a3 output helper; no CLI runner. Its functions are exercised by StreetProbeCi.
+function Street-AssertIdentity($report,$identity){
+ foreach($key in @('taskId','attempt','executionId','ownerThreadId','runId','projectPath','scenePath','editorPid','editorStartedAt')){
+  LLAssert ((LLCanonical $report.$key) -ceq (LLCanonical $identity.$key)) "Managed report identity differs: $key"
+ }
+ LLAssert ($report.capabilityVersion -ceq 'AI436-sorting24-clock-ack-v1') 'Loaded capture capability differs.'
+}
+function Street-AssertAdmission($notice,$schedule,[int]$remaining,[DateTimeOffset]$now=[DateTimeOffset]::UtcNow){
+ LLAssert ($remaining -ge 1 -and $remaining -le 3 -and $schedule.forecastAppSeconds -is [ValueType] -and $schedule.forecastAppSeconds -isnot [bool]) 'Typed measured app admission required.'
+ $forecast=[double]$schedule.forecastAppSeconds
+ LLAssert (-not[double]::IsNaN($forecast)-and-not[double]::IsInfinity($forecast)-and$forecast-gt0-and$forecast-le35-and$schedule.perRoleReserveSeconds-eq.5-and$schedule.totalReserveSeconds-eq.5) 'Admission requires actual same-path app measurements and unchanged safety reserve.'
+ $available=([DateTimeOffset]::Parse($notice.stageDeadlineAt)-$now).TotalSeconds
+ $total=([DateTimeOffset]::Parse($notice.totalDeadlineAt)-$now).TotalSeconds
+ LLAssert ($available -gt $remaining*($forecast+.5)+.5 -and $total -gt $remaining*($forecast+.5)+.5) 'Insufficient actual remaining sorting/total window; cancel without capture replay.'
+}
+function Street-AssertPending($report,$notice,[string]$noticeSha,$identity,$request){
+ Street-AssertIdentity $report $identity;LLValidateCapturePending $notice $identity $request
+ LLAssert ($report.status -ceq 'RUNNING'-and$report.pendingCapture-ceq'sorting'-and$report.capturePendingNotificationSha256-ceq$noticeSha-and$report.captureStageDeadlineAt-ceq$notice.stageDeadlineAt-and$report.captureTotalDeadlineAt-ceq$notice.totalDeadlineAt-and$report.captureWindowStartedAt-ceq$notice.createdAt) 'Actual managed pendingRead must bind original sorting notification/deadlines.'
+}
+function Street-AssertCleanup($report){
+ foreach($key in @('inputRestored','configsRestored','configOwnerRestored','callbacksRemoved','temporaryObjectsDestroyed','noForeignOverwrite')){LLAssert (LLTrue $report.cleanup.$key) "Actual cleanup flag false: $key"}
+ LLAssert ([string]::IsNullOrEmpty($report.cleanup.error)) 'Actual cleanup error.'
+}
+function Street-AssertRolePayload([string]$role,$report,$identity,$request,$notice,[string]$noticeSha,$receipt,$captureReceipt){
+ if($role -cin @('register','pendingRead','captureAck','complete','cleanup','cancel','failureCleanup0','failureCleanup1')){Street-AssertIdentity $report $identity}
+ switch -CaseSensitive ($role){
+  'register' {LLAssert ($report.status-ceq'RUNNING'-and(LLFalse $report.passed)) 'Begin must return actual RUNNING, not completion'}
+  'pendingRead' {Street-AssertPending $report $notice $noticeSha $identity $request}
+  'captureAck' {
+   LLAssert ([string]::IsNullOrEmpty($report.pendingCapture)-and$report.captureReceiptSha256-ceq$captureReceipt.sha256) 'ACK must bind the unique actual capture receipt'
+   $at=[DateTimeOffset]::Parse($report.captureAcknowledgedAt)
+   LLAssert ($at-ge[DateTimeOffset]::Parse($receipt.startedAt)-and$at-le[DateTimeOffset]::Parse($receipt.finishedAt)-and$at-le[DateTimeOffset]::Parse($notice.stageDeadlineAt)-and$at-le[DateTimeOffset]::Parse($notice.totalDeadlineAt)) 'Actual ACK is late or outside its managed call'
+  }
+  'complete' {LLAssert ($report.status-ceq'SUCCEEDED'-and(LLTrue $report.passed)-and$report.requiredCount-eq32-and@($report.checks).Count-eq32) 'All32 actual complete assertions required';foreach($c in $report.checks){LLAssert (LLTrue $c.passed) 'Actual assertion failed'};Street-AssertCleanup $report}
+  'cleanup' {LLAssert ($report.status-ceq'SUCCEEDED'-and(LLTrue $report.passed)) 'Actual successful cleanup report required';Street-AssertCleanup $report}
+ }
+}

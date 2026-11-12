@@ -1,0 +1,7 @@
+{
+  "path": "DevTools/BuildRelease/Fixtures/CatalogBlobBuildProcessor.before-author-recovery.cs.txt",
+  "bytes": 18039,
+  "sha256": "D8CC12CB20E36910B7A5E92BD261B360B9F399A4C06CBB4B676152255D9E2C2B",
+  "originalPath": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/AI418-original-build-source/Assets/Editor/Build/CatalogBlobBuildProcessor.cs",
+  "purpose": "Exact pre-AI418 source for observed empty SceneManagerSetup failure regression"
+}

@@ -1,12 +1,13 @@
 [CmdletBinding()]
 param(
     [string]$TaskId = 'UNSCOPED',
-    [ValidateSet('Auto', 'Workflow', 'ShortCycle', 'DataTables', 'Rendering', 'Fonts', 'Custom', 'All')][string]$Profile = 'Auto',
+    [ValidateSet('Auto', 'Workflow', 'ShortCycle', 'ShortCycleNativeCi', 'DataTables', 'Rendering', 'Fonts', 'Custom', 'All')][string]$Profile = 'Auto',
     [ValidateSet('Incremental', 'Final')][string]$Mode = 'Final',
     [string]$RepeatReason,
     [string[]]$RunnerPath = @(),
     [string]$StateRoot,
-    [string]$ReuseManifestPath
+    [string]$ReuseManifestPath,
+    [string]$NativeCiContextPath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -156,9 +157,30 @@ if ($Profile -eq 'Auto' -and $selectedProfiles.Count -eq 0) {
 if ($Profile -eq 'Custom' -and $RunnerPath.Count -eq 0) {
     throw 'Custom profile requires at least one -RunnerPath.'
 }
+if ($Profile -eq 'ShortCycleNativeCi') {
+    if ($Mode -ne 'Final' -or [string]::IsNullOrWhiteSpace($NativeCiContextPath) -or $RunnerPath.Count -ne 0 -or $ReuseManifestPath) {
+        throw 'ShortCycleNativeCi requires Final and one explicit NativeCiContextPath; runner/reuse overrides are forbidden.'
+    }
+    if ($TaskId -cnotmatch '^AI-[0-9]{6}$' -or $TaskId -ceq 'AI-000000') {
+        throw 'ShortCycleNativeCi requires one explicit legal task ID.'
+    }
+    if (-not (Test-Path -LiteralPath $NativeCiContextPath -PathType Leaf)) {
+        throw 'ShortCycleNativeCi context file is missing.'
+    }
+    try { $nativeContext = Get-Content -LiteralPath $NativeCiContextPath -Raw | ConvertFrom-Json -DateKind String }
+    catch { throw 'ShortCycleNativeCi context JSON is invalid.' }
+    if ($nativeContext.schemaVersion -ne 1 -or [string]$nativeContext.taskId -cne $TaskId) {
+        throw 'ShortCycleNativeCi TaskId must exactly match its context before Final history or runner execution.'
+    }
+}
+elseif ($NativeCiContextPath) { throw 'NativeCiContextPath requires the explicit ShortCycleNativeCi profile.' }
 
 $runners = New-Object System.Collections.Generic.List[string]
 foreach ($selected in $selectedProfiles) {
+    if ($selected -eq 'ShortCycleNativeCi') {
+        $runners.Add((Join-Path $repositoryRoot 'DevTools/ShortCycle/Invoke-ShortCycleProbeCi.ps1'))
+        continue
+    }
     foreach ($relative in @($profileRunners[$selected])) {
         $full = Join-Path $repositoryRoot $relative
         if (-not $runners.Contains($full)) { $runners.Add($full) }
@@ -215,7 +237,7 @@ try {
         foreach ($runner in $runners) {
             $runnerOrdinal++
             if (-not (Test-Path -LiteralPath $runner)) { throw "Missing runner: $runner" }
-            $fingerprint = Get-ReuseFingerprint $ReuseManifestPath $runner $powerShell
+            $fingerprint = if ($Profile -eq 'ShortCycleNativeCi') { $null } else { Get-ReuseFingerprint $ReuseManifestPath $runner $powerShell }
             $latest = $null
             if ($fingerprint -and (Test-Path -LiteralPath $historyPath)) {
                 foreach ($line in [IO.File]::ReadLines($historyPath)) {
@@ -235,8 +257,11 @@ try {
             }
             $runnerStarted = [DateTimeOffset]::Now
             $global:LASTEXITCODE = 0
-            $runnerOutput = @(& $powerShell -NoProfile -File $runner 2>&1)
+            $runnerOutput = if ($Profile -eq 'ShortCycleNativeCi') {
+                @(& $powerShell -NoProfile -File $runner -ContextPath $NativeCiContextPath 2>&1)
+            } else { @(& $powerShell -NoProfile -File $runner 2>&1) }
             $exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+            if ($Profile -eq 'ShortCycleNativeCi' -and ($runnerOutput | Out-String) -match '"status"\s*:\s*"(?:ALREADY_RECORDED|REUSED)"') { $exitCode = 3 }
             $outputPath = Join-Path $StateRoot ("verify-all-{0}-{1}-{2:D2}.log" -f $safeTaskId,$runId,$runnerOrdinal)
             [IO.File]::WriteAllText($outputPath,($runnerOutput | Out-String),$utf8NoBom)
             if ($runnerOutput.Count -gt 0) { $runnerOutput | Write-Output }

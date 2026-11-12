@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
+using System.Runtime.ExceptionServices;
 /// <summary>Shared decision/finally policy; no Editor IO and no assertion of native package exclusion.</summary>
 public sealed class CatalogBuildPlan
 {
@@ -150,5 +151,17 @@ public sealed class CatalogBuildPlan
         return new OwnedCleanup(project,root,present);
     }
     public static T Execute<T>(Action prepare, Func<T> build, Action cleanup)
-    { try { prepare(); return build(); } finally { cleanup(); } }
+    {
+        T result=default(T);
+        ExceptionDispatchInfo workError=null,cleanupError=null;
+        try { prepare(); result=build(); }
+        catch(Exception error) { workError=ExceptionDispatchInfo.Capture(error); }
+        try { cleanup(); }
+        catch(Exception error) { cleanupError=ExceptionDispatchInfo.Capture(error); }
+        if(workError!=null&&cleanupError!=null)
+            throw new AggregateException("Build work and owned-input cleanup both failed.",workError.SourceException,cleanupError.SourceException);
+        if(workError!=null)workError.Throw();
+        if(cleanupError!=null)cleanupError.Throw();
+        return result;
+    }
 }

@@ -159,7 +159,11 @@ namespace UnityEngine
             }
         }
     }
-    public class Sprite : Object { }
+    public class Sprite : Object
+    {
+        public Rect rect;
+        public float pixelsPerUnit;
+    }
     public class AnimationClip : Object { }
     public class RuntimeAnimatorController : Object
     {
@@ -910,13 +914,27 @@ namespace UnityEngine.UI
 }
 
 // MouseInteract event payload stubs used only by the editor-external compile.
-public class MouseDraggableObject : UnityEngine.MonoBehaviour { }
+[Flags]
+public enum DropTag
+{
+    None = 0, Ingredient = 1 << 0, Tool = 1 << 1, Recipe = 1 << 2,
+    Trash = 1 << 3, FridgeIngredient = 1 << 4, Everything = ~0
+}
+public class MouseDraggableObject : UnityEngine.MonoBehaviour
+{
+    public DropTag allowedDropTags = DropTag.Everything;
+}
 public class MouseScrollableObject : UnityEngine.MonoBehaviour
 {
     public UnityEngine.Events.UnityEvent<float> scrollStepEvent;
     public bool AllowScrollThroughPressables { get; set; }
 }
-public class Collider2D : UnityEngine.Behaviour { }
+public class Collider2D : UnityEngine.Behaviour
+{
+    public Func<UnityEngine.Vector2, bool> ContainsPoint;
+    public bool OverlapPoint(UnityEngine.Vector2 point)
+    { return ContainsPoint != null && ContainsPoint(point); }
+}
 public class HiddenButtonIdentifier : UnityEngine.MonoBehaviour { }
 public abstract class MousePressableObject : UnityEngine.MonoBehaviour
 {
@@ -943,6 +961,9 @@ public class MouseManager : UnityEngine.MonoBehaviour
 {
     public static MouseManager Instance;
     public static event Action<float> OnScrollStep;
+    public static event Action OnMouseCancel;
+    public static void TriggerMouseCancel() { if (OnMouseCancel != null) OnMouseCancel(); }
+    public MouseDraggableObject currentDraggableObject;
     public Stack<MouseInteractionLayer> mouseInteractiveLayers = new Stack<MouseInteractionLayer>();
     public MouseScrollableObject currentScrollableObject;
     public bool dragStarted;
@@ -971,7 +992,19 @@ public class MouseManager : UnityEngine.MonoBehaviour
     }
     public static void RaiseScrollStep(float delta) { var callback = OnScrollStep; if (callback != null) callback(delta); }
 }
-public class DropZone : UnityEngine.MonoBehaviour { }
+public class DropZone : UnityEngine.MonoBehaviour
+{
+    public DropTag zoneTags = DropTag.Everything;
+    public UnityEngine.Events.UnityEvent<MouseDraggableObject> onDropEvent;
+    public UnityEngine.Events.UnityEvent<MouseDraggableObject> onDropRejectedEvent;
+    public bool CanAccept(MouseDraggableObject source)
+    { return source != null && (source.allowedDropTags & zoneTags) != 0; }
+    public void OnDrop(MouseDraggableObject source)
+    {
+        if (CanAccept(source)) { if (onDropEvent != null) onDropEvent.Invoke(source); }
+        else { if (onDropRejectedEvent != null) onDropRejectedEvent.Invoke(source); }
+    }
+}
 public struct DragLimitBoundsStub
 {
     public UnityEngine.Vector2 center;
@@ -1066,8 +1099,23 @@ public class MouseInteractionLayer : UnityEngine.MonoBehaviour
     public List<LayerMask> alloweInteractionLayers = new List<LayerMask>();
     public int PushCount { get; private set; }
     public int RemoveCount { get; private set; }
-    public void OnPushLayer() { PushCount++; }
-    public void OnRemoveLayer() { RemoveCount++; }
+    public void OnPushLayer()
+    {
+        PushCount++;
+        var manager = MouseManager.Instance;
+        if (manager != null && !manager.mouseInteractiveLayers.Contains(this))
+            manager.mouseInteractiveLayers.Push(this);
+    }
+    public void OnRemoveLayer()
+    {
+        RemoveCount++;
+        var manager = MouseManager.Instance;
+        if (manager == null || !manager.mouseInteractiveLayers.Contains(this)) return;
+        var topFirst = manager.mouseInteractiveLayers.ToArray();
+        manager.mouseInteractiveLayers.Clear();
+        for (var i = topFirst.Length - 1; i >= 0; i--)
+            if (!ReferenceEquals(topFirst[i], this)) manager.mouseInteractiveLayers.Push(topFirst[i]);
+    }
 }
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
@@ -1102,6 +1150,10 @@ public class InputManager : UnityEngine.MonoBehaviour
 public static class Tools
 {
     public static UnityEngine.Sprite[] LoadSpritesFromFolder(string path) { return new UnityEngine.Sprite[0]; }
+    public static bool HasMouseWorldPosition = true;
+    public static UnityEngine.Vector3 MouseWorldPosition;
+    public static bool TryGetMousePos(out UnityEngine.Vector3 point)
+    { point = MouseWorldPosition; return HasMouseWorldPosition; }
 }
 #endif
 

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using EatWhat.Cooking.ShortCycle;
+using EatWhat.Toolkit;
 using EatWhat.Tools.Layout;
 using EatWhat.Tools.Rendering;
 using UnityEngine;
@@ -13,6 +14,165 @@ namespace EatWhat.Cooking.ShortCycle.Tests
 {
     public static class ShortCycleCoreTests
     {
+        public static string RunGridDisplay()
+        {
+            VerifyFridgeIconDisplay();
+            VerifySevenTagFridgeFilter();
+            return "PASS: GRID-01 four shape renderer plans, placeholder/visibility/rebind, and seven real session filters.";
+        }
+
+        private static void VerifyFridgeIconDisplay()
+        {
+            var slot = new FridgeSlot();
+            var primary = new SpriteRenderer();
+            var extraStack = new SpriteRenderer();
+            var extraPack = new SpriteRenderer();
+            var placeholder = new SpriteRenderer();
+            typeof(ShortCycleGridPieceBase).GetField("iconRenderer", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(slot, primary);
+            typeof(ShortCycleGridPieceBase).GetField("placeholderRenderer", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(slot, placeholder);
+            SetPrivateField(slot, "singleIconLayers", new[] { primary });
+            SetPrivateField(slot, "stackIconLayers", new[] { primary, extraStack });
+            SetPrivateField(slot, "packIconLayers", new[] { primary, extraPack });
+            SetPrivateField(slot, "containerIconLayers", new[] { primary });
+            var ready = new Sprite { name = "ready" };
+            var aigc = new Sprite { name = "draft_AIGC" };
+            var item = new CK01ItemData { name = "item", stack_type = "stack", icon_sprite = ready };
+
+            slot.ConfigureItem(item, 3, false, "stack-id", "stack-instance", 0);
+            Assert(slot.IconPlan.Shape == StackedIconShape.Stack && slot.IconPlan.VisibleIconCount == 2 &&
+                slot.IconPlan.Quantity == 3 && slot.Display.badge_text == "x3" &&
+                primary.enabled && extraStack.enabled && primary.sprite == ready && extraStack.sprite == ready &&
+                !placeholder.enabled && slot.AssetState == ToolkitPlaceholderState.Ready,
+                "Stack must consume Plan capacity, bind two actual layers, and preserve quantity text.");
+            slot.ConfigureItem(item, 2, true, "stack-id", "stack-instance", 1);
+            Assert(slot.Display.badge_text == "1/2" && slot.Display.is_placeholder && placeholder.enabled &&
+                slot.ItemId == "stack-id" && slot.InstanceId == "stack-instance",
+                "Reservation must preserve stack badge and business placeholder identity.");
+
+            item.stack_type = "pack"; item.pack_size = 6;
+            slot.ConfigureItem(item, 3, false, "pack-id", "pack-instance", 0);
+            Assert(slot.IconPlan.Shape == StackedIconShape.Pack && slot.IconPlan.VisibleIconCount == 2 &&
+                extraPack.enabled && extraPack.sprite == ready && !extraStack.enabled && extraStack.sprite == null &&
+                slot.Display.badge_text == "6/6" && !slot.Display.is_placeholder,
+                "Pack must use its own layers, clear stack residue, and keep pack_size badge.");
+
+            item.stack_type = "container"; item.container_capacity = 2.5f;
+            slot.ConfigureItem(item, 4, false, "container-id", "container-instance", 0);
+            Assert(slot.IconPlan.Shape == StackedIconShape.Container && slot.IconPlan.VisibleIconCount == 1 &&
+                !extraPack.enabled && extraPack.sprite == null && slot.Display.badge_text == "2.5/2.5",
+                "Container must use one configured layer and preserve capacity text.");
+            slot.SetContentVisible(false);
+            Assert(!primary.enabled && primary.sprite == null && !placeholder.enabled && !slot.InteractionAllowed,
+                "Hidden content must clear renderer sprites and interaction.");
+            slot.SetContentVisible(true);
+            Assert(primary.enabled && primary.sprite == ready && !extraPack.enabled,
+                "Re-show must restore only the current container plan.");
+
+            item.stack_type = "single"; item.icon_sprite = aigc;
+            slot.ConfigureItem(item, 1, false, "single-id", "single-instance", 0);
+            Assert(slot.IconPlan.Shape == StackedIconShape.Single && slot.IconPlan.VisibleIconCount == 1 &&
+                slot.AssetState == ToolkitPlaceholderState.Aigc && !slot.Display.is_placeholder &&
+                !placeholder.enabled && primary.sprite == aigc && !extraStack.enabled,
+                "Aigc artwork must remain artwork, separate from a business placeholder.");
+            slot.SetPlaceholder(true);
+            Assert(slot.Display.is_placeholder && placeholder.enabled && primary.sprite == aigc,
+                "Business placeholder switch must not replace the source sprite or asset classification.");
+            slot.SetPlaceholder(false);
+            item.icon_sprite = null;
+            slot.ConfigureItem(item, 1, true, "missing-id", "missing-instance", 0);
+            Assert(slot.AssetState == ToolkitPlaceholderState.Missing && !slot.Display.is_placeholder &&
+                placeholder.enabled && !primary.enabled && primary.sprite == null,
+                "Missing artwork must show the missing overlay without becoming a business reservation.");
+            slot.ConfigureItem(item, 0, true, "empty-id", "empty-instance", 0);
+            Assert(slot.IconPlan == null && slot.ItemId == null && slot.InstanceId == null &&
+                slot.Display.badge_text == string.Empty && !placeholder.enabled && !primary.enabled,
+                "Zero quantity must clear all owned layers, identity and badge.");
+        }
+
+        private static void VerifySevenTagFridgeFilter()
+        {
+            var ids = new[] { "tag_veg", "tag_fruit", "tag_egg", "tag_meat",
+                "tag_seafood", "tag_staplefood", "tag_dairy" };
+            var tagRows = new List<CK01GeneratedDataRowReference>();
+            var itemRows = new List<CK01GeneratedDataRowReference>();
+            var inventoryRows = new List<CK01GeneratedDataRowReference>();
+            for (var index = 0; index < ids.Length; index++)
+            {
+                tagRows.Add(new CK01GeneratedDataRowReference(ids[index],
+                    new CK01TagData { tag_class = "ingredient", filter_order = index + 1 }));
+                itemRows.Add(new CK01GeneratedDataRowReference("item_" + index,
+                    new CK01ItemData { name = "item_" + index, stack_type = "single",
+                        ingredient_categories = new List<string> { ids[index] } }));
+                inventoryRows.Add(new CK01GeneratedDataRowReference("item_" + index,
+                    new CK01InitialInventoryData { quantity = 1 }));
+            }
+            tagRows.Add(new CK01GeneratedDataRowReference("tag_other",
+                new CK01TagData { tag_class = "recipe", filter_order = 8 }));
+            var catalog = new CK01GeneratedDataCatalog();
+            catalog.ReplaceTables(new[]
+            {
+                new CK01GeneratedDataTable("Tags", null, tagRows),
+                new CK01GeneratedDataTable("Items", null, itemRows),
+                new CK01GeneratedDataTable("InitialInventory", null, inventoryRows),
+                new CK01GeneratedDataTable("CookingGameConfig", null, new[]
+                {
+                    new CK01GeneratedDataRowReference(CK01CookingGameConfigData.DemoFridgeCapacityLevelKey,
+                        new CK01CookingGameConfigData { value = "fcap_lv2" })
+                }),
+                new CK01GeneratedDataTable("FridgeCapacityLevels", null, new[]
+                {
+                    new CK01GeneratedDataRowReference("fcap_lv2",
+                        new CK01FridgeCapacityLevelData { capacity = 30 })
+                })
+            });
+            var inventory = new InventoryManager();
+            SetPrivateField(inventory, "dataCatalog", catalog);
+            string diagnostic;
+            Assert(inventory.TryRebuildFromDataCatalog(out diagnostic), diagnostic);
+            var slots = new FridgeSlot[30];
+            for (var index = 0; index < slots.Length; index++) slots[index] = new FridgeSlot();
+            var binder = new ShortCycleFridgeBinder();
+            SetPrivateField(binder, "slots", slots);
+            var context = new ShortCycleContext();
+            context.Enter("recipe", ShortCycleTriggerContext.FreeTry);
+            Assert(context.SelectRecipe("recipe", false) && context.EnterPhase1(),
+                "Filter fixture must enter Phase1 through the real context.");
+            var trace = new List<string>();
+            var save = new TraceSaveBoundary(trace);
+            var machine = new ShortCycleStateMachine(context, save,
+                new ShortCycleDataProcessor(new TraceInventory(trace), save, new TraceHandoff(trace)),
+                new TraceExit());
+            var session = new ShortCycleSessionManager();
+            SetPrivateField(session, "stateMachine", machine);
+            SetPrivateField(session, "dataCatalog", catalog);
+            SetPrivateField(session, "inventoryManager", inventory);
+            SetPrivateField(session, "fridgeBinder", binder);
+            for (var index = 0; index < ids.Length; index++)
+            {
+                Assert(session.TryFilterFridge(ids[index]).Succeeded &&
+                    context.current_filter_tag == ids[index] && slots[0].ItemId == "item_" + index &&
+                    !slots[1].gameObject.activeSelf,
+                    "Session/TagFilter/Binder must map each of seven real ingredient IDs to its item.");
+                Assert(inventory.GetQuantity("item_" + index) == 1,
+                    "Filtering must not mutate inventory quantities.");
+            }
+            Assert(session.TryFilterFridge(ids[6]).Succeeded && context.current_filter_tag == null &&
+                slots[0].ItemId == "item_0" && slots[6].gameObject.activeSelf,
+                "Repeating the selected tag must clear the filter and restore all seven items.");
+            Assert(!session.TryFilterFridge("tag_other").Succeeded &&
+                !session.TryFilterFridge("tag_unknown").Succeeded && context.current_filter_tag == null,
+                "Recipe and unknown tags must be rejected without changing selection.");
+            context.active_modal = ShortCycleModalId.StepDetail;
+            Assert(!session.TryFilterFridge(ids[0]).Succeeded && context.current_filter_tag == null,
+                "An active modal must block fridge filtering.");
+            context.active_modal = null;
+            for (var index = 0; index < ids.Length; index++)
+                Assert(inventory.GetQuantity("item_" + index) == 1,
+                    "Seven-tag filtering must leave all stock and ownership unchanged.");
+        }
+
         public static string Run()
         {
             VerifyTransitionTableAndContextSemantics();
@@ -53,11 +213,50 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             VerifyModalScrollVerificationControl();
             VerifyDirectorLayerOwnership();
             VerifyGeneratedDataCatalogAndInventory();
+            RunInventoryReflowAdapter();
             VerifyCarrierResolverAndWarning();
             VerifyTrayControllerRequiresHost();
             return "PASS: CK01-C pure logic tests (FSM/session/presentation/actions/grid/data + v2.2 contracts + fridge-cat rig/blink/discrete scroll/real-wheel trace).";
         }
 
+
+        public static string RunInventoryReflowAdapter()
+        {
+            var adapter = new ShortCycleInventoryReflowAdapter();
+            var notifications = 0;
+            Action listener = () => notifications++;
+            adapter.Requested += listener;
+            adapter.RequestTightReflow();
+            adapter.RequestTightReflow();
+            Assert(adapter.RequestCount == 2 && notifications == 2,
+                "Adapter must count each request and notify its current subscriber once.");
+            adapter.Requested -= listener;
+            adapter.RequestTightReflow();
+            Assert(adapter.RequestCount == 3 && notifications == 2,
+                "Adapter must keep counting after the subscriber is removed without notifying it.");
+
+            var inventory = new InventoryManager();
+            var quantities = (Dictionary<string, int>)GetPrivateField(inventory, "quantities");
+            quantities.Add("ing_test_egg", 2);
+            inventory.SetRuntimeTightReflow(adapter);
+            var rejected = inventory.TryCommitPlaceholderStates(new List<PlaceholderState>
+            {
+                new PlaceholderState { instance_id = "unknown", item_id = "ing_unknown", taken_count = 1 }
+            });
+            Assert(!rejected.Succeeded && adapter.RequestCount == 3 && quantities["ing_test_egg"] == 2,
+                "Rejected inventory commit must neither deduct stock nor request reflow.");
+
+            adapter.Requested += listener;
+            var committed = inventory.TryCommitPlaceholderStates(new List<PlaceholderState>
+            {
+                new PlaceholderState { instance_id = "egg", item_id = "ing_test_egg", taken_count = 1 }
+            });
+            Assert(committed.Succeeded && committed.ConsumedQuantity == 1 && quantities["ing_test_egg"] == 1 &&
+                adapter.RequestCount == 4 && notifications == 3,
+                "Successful inventory deduction must request exactly one adapter reflow after consuming stock.");
+            adapter.Requested -= listener;
+            return "PASS: standalone adapter subscription, release, request count, and inventory commit boundary.";
+        }
 
         private static void VerifyBeginSessionSequence()
         {
@@ -744,7 +943,7 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             Assert(typeof(ShortCycleActionRequest).GetField("delta").FieldType == typeof(float),
                 "inventory and scroll actions must carry a numeric delta through ShortCycleActionRequest.");
 
-            var notImplementedActions = new[]
+            var phase1Actions = new[]
             {
                 ShortCycleActionNames.TrayHighlightEnter,
                 ShortCycleActionNames.TrayHighlightExit,
@@ -755,11 +954,11 @@ namespace EatWhat.Cooking.ShortCycle.Tests
                 ShortCycleActionNames.InventoryPutBack,
                 ShortCycleActionNames.EquipmentOpenEntry
             };
-            for (var index = 0; index < notImplementedActions.Length; index++)
+            for (var index = 0; index < phase1Actions.Length; index++)
             {
-                var result = router.DispatchAction(new ShortCycleActionRequest { ActionName = notImplementedActions[index] });
-                Assert(!result.Succeeded && result.ErrorCode == ShortCycleActionErrorCode.NotImplemented,
-                    notImplementedActions[index] + " must remain an explicit NotImplemented stub.");
+                var result = router.DispatchAction(new ShortCycleActionRequest { ActionName = phase1Actions[index] });
+                Assert(!result.Succeeded && result.ErrorCode == ShortCycleActionErrorCode.Rejected,
+                    phase1Actions[index] + " must use its real handler and reject a disconnected session.");
             }
             var disconnectedFridgeScroll = router.DispatchAction(new ShortCycleActionRequest
             {
@@ -2895,7 +3094,8 @@ namespace EatWhat.Cooking.ShortCycle.Tests
             var itemAsset = new CK01ItemData
             {
                 name = "asset_name_is_not_the_runtime_id",
-                name_key = "item.test.egg"
+                name_key = "item.test.egg",
+                stack_type = "stack"
             };
             var unknownItem = new CK01ItemData
             {

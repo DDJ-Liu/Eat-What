@@ -89,7 +89,7 @@ public static class ShortCyclePhase2TransitionTests
     }
     // Fixture construction only. All probe state transitions and binding below use real public APIs.
     private static CK01GeneratedDataTable CsvTable<T>(string root,string name,string key) where T: ScriptableObject,new()
-    { return (CK01GeneratedDataTable)typeof(ShortCycleRecipeBookTests).GetMethod("Table",BindingFlags.Static|BindingFlags.NonPublic).MakeGenericMethod(typeof(T)).Invoke(null,new object[]{root,name,key}); }
+    { return (CK01GeneratedDataTable)typeof(ShortCycleRecipeBookTests).GetMethod("Table",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).MakeGenericMethod(typeof(T)).Invoke(null,new object[]{root,name,key}); }
     private static void ConfigureProbeHarness(Harness h,string root)
     {
         var catalog=new CK01GeneratedDataCatalog(); catalog.ReplaceTables(new[]{
@@ -358,5 +358,318 @@ public static class ShortCyclePhase2TransitionTests
         Check(Application.PersistentPathReads==reads,"actual appended probe also avoids all real user path reads");
         Debug.WarningMessages.Clear(); Debug.Messages.Clear();
         return "PASS: AI281 P2S transition "+PassedCases.Count+" assertions";
+    }
+    public static IList<string> ProductionCases { get; private set; }
+    private static void ProductCheck(bool condition, string message)
+    { if (!condition) throw new Exception("P2-C11: " + message); ProductionCases.Add(message); }
+    private sealed class ProductTexts : IPhase2TextResolver
+    {
+        private readonly Dictionary<string,string> values=new Dictionary<string,string>(StringComparer.Ordinal);
+        public void Add(string key,string value) { values.Add(key,value); }
+        public bool TryResolve(string key,out string value) { return values.TryGetValue(key,out value); }
+    }
+    private static CK01GeneratedDataCatalog ProductionCatalog(string root)
+    {
+        var catalog=new CK01GeneratedDataCatalog();
+        catalog.ReplaceTables(new[]{
+            ShortCyclePhase2Tests.Table<CK01RecipeData>(root,"Recipes","recipe_id"),
+            ShortCyclePhase2Tests.Table<CK01RecipeStepData>(root,"RecipeSteps","step_id"),
+            ShortCyclePhase2Tests.Table<CK01ProcessingRecordData>(root,"ProcessingRecords","proc_id"),
+            ShortCyclePhase2Tests.Table<CK01ToolData>(root,"Tools","tool_id"),
+            ShortCyclePhase2Tests.Table<CK01ProcessActionData>(root,"ProcessActions","act_id"),
+            ShortCyclePhase2Tests.Table<KitchenAreaData>(root,"KitchenAreas","id"),
+            ShortCyclePhase2Tests.Table<CK01ItemData>(root,"Items","item_id"),
+            ShortCyclePhase2Tests.Table<CK01CookingGameConfigData>(root,"CookingGameConfig","key")});
+        return catalog;
+    }
+    private static void Name(CK01GeneratedDataCatalog catalog, ProductTexts names, string table, string id, string value)
+    {
+        string diagnostic;
+        if(table=="Items"){CK01ItemData item; if(!catalog.TryGetItem(id,out item,out diagnostic))throw new Exception(diagnostic);names.Add(item.name_key,value);}
+        else if(table=="Tools"){CK01ToolData tool;if(!catalog.TryGetTool(id,out tool,out diagnostic))throw new Exception(diagnostic);names.Add(tool.name_key,value);}
+        else {CK01ProcessActionData action;if(!catalog.TryGetRow("ProcessActions",id,out action,out diagnostic))throw new Exception(diagnostic);names.Add(action.name_key,value);}
+    }
+    public static string RunProductionIntegration(string root)
+    {
+        ProductionCases=new List<string>();
+        var catalog=ProductionCatalog(root);string error;
+        RecipeWhitelist whitelist=null;IList<ProcessingRecordView> records=null;AreaConstraint area=null;
+        ProductCheck(catalog.TryGetRecipeWhitelist("rcp_tomato_egg",out whitelist,out error) &&
+            catalog.TryGetProcessingRecords(whitelist.ProcessingRecordIds,out records,out error) &&
+            catalog.TryGetAreaConstraint("kitchen-prep-counter",out area,out error),
+            "Current recipe, T12 and T14 snapshots resolve");
+        var names=new ProductTexts();
+        Name(catalog,names,"Items","ing_egg","Egg");
+        Name(catalog,names,"Items","prd_unknown","Unknown");
+        Name(catalog,names,"Tools","tool_chopsticks","Chopsticks");
+        Name(catalog,names,"Tools","tool_knife","Knife");
+        Name(catalog,names,"Actions","act_whisk","Whisk");
+        Name(catalog,names,"Actions","act_cut","Cut");
+        var inventory=new InventoryManager();
+        Field(inventory,"dataCatalog",catalog);
+        Read<Dictionary<string,int>>(inventory,"quantities")["ing_egg"]=9;
+        var entry=new Phase2SceneEntry();
+        ProductCheck(entry.TryConsume(new ShortCycleDataHandoff("rcp_tomato_egg",
+            new List<PrepZoneItem>{new PrepZoneItem{item_id="ing_egg",instance_id="prep-egg",quantity=1,
+                drag_order=0,state="prepared"}}),inventory,out error) &&
+            ReferenceEquals(inventory.Phase2Owner,entry) && inventory.GetQuantity("ing_egg")==9,
+            "Current P2 entry owns the original inventory and detached P1 prep");
+        ProductCheck(entry.TryBindProduction(names,out error) &&
+            entry.CurrentStepProgress.GetStates()[0].State==StepCompletionState.None,
+            "Current recipe T3 and T8 unknown bind without mutating initial step");
+        var updates=0;var finals=0;entry.PrepZoneChanged+=_=>updates++;entry.FinalDishReady+=_=>finals++;
+        var carriers=new[]{"tool_bowl","tool_board"};
+        var zone=new OperationZoneSession(whitelist,area,records,carriers);
+        ProductCheck(zone.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg").Accepted &&
+            zone.GetSnapshot().CarrierId=="tool_bowl","C10 first input holds current-area bowl");
+        var matcher=new ProcessingMatcher(whitelist,area,records,"prd_unknown");
+        ProcessingToolView chopsticks=null,knife=null;
+        ProductCheck(catalog.TryGetProcessingTool("tool_chopsticks",out chopsticks,out error) &&
+            catalog.TryGetProcessingTool("tool_knife",out knife,out error),"Current tool action snapshots resolve");
+        Phase2ProductReceipt receipt;
+        ProductCheck(!entry.TryProduce(zone,matcher,chopsticks,"kitchen-prep-counter",
+            new string[0],"product-1",1,out receipt,out error) &&
+            entry.PrepZoneContents.Count==1 && zone.GetSnapshot().HasInputs && updates==0,
+            "Missing current-area carrier rejects without prep/step/session mutation");
+        ProductCheck(entry.TryProduce(zone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"product-1",1,out receipt,out error) &&
+            receipt.Draft.SourceRecordId=="proc_egg_liquid" && !receipt.Draft.IsUnknown &&
+            receipt.Product.item_id=="prd_egg_liquid" &&
+            receipt.Product.display_name=="Egg · Chopsticks · Whisk" &&
+            receipt.Product.instance_id=="product-1" && receipt.Product.quantity==1,
+            "Actual matcher output enters owned prep with composed name and instance identity");
+        ProductCheck(entry.PrepZoneContents.Count==2 &&
+            entry.PrepZoneContents[1].display_name=="Egg · Chopsticks · Whisk" &&
+            entry.CurrentStepProgress.GetStates()[0].State==StepCompletionState.Dynamic &&
+            updates==1 && finals==0 && !zone.GetSnapshot().HasInputs &&
+            inventory.GetQuantity("ing_egg")==9,
+            "One commit changes prep and T3 once, clears C10 and never deducts P1 inventory again");
+        var detached=entry.PrepZoneContents;detached[1].display_name="changed";
+        ProductCheck(entry.PrepZoneContents[1].display_name=="Egg · Chopsticks · Whisk" &&
+            !entry.TryProduce(zone,matcher,chopsticks,"kitchen-prep-counter",
+                carriers,"product-1",1,out receipt,out error) && updates==1,
+            "Readback is detached and repeated cleared session cannot submit");
+        var retry=new OperationZoneSession(whitelist,area,records,carriers);
+        retry.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg");
+        ProductCheck(!entry.TryProduce(retry,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"product-1",1,out receipt,out error) &&
+            retry.GetSnapshot().HasInputs && entry.PrepZoneContents.Count==2 && updates==1,
+            "Duplicate product instance rejects atomically and retains C10 input");
+        var other=new Phase2SceneEntry();
+        ProductCheck(!inventory.TryCommitPhase2Product(other,new PrepZoneItem{
+            item_id="prd_egg_liquid",instance_id="foreign",quantity=1}).Succeeded &&
+            entry.PrepZoneContents.Count==2,"Foreign owner cannot write existing prep");
+        entry.Teardown();
+        ProductCheck(inventory.Phase2Owner==null &&
+            !entry.TryProduce(retry,matcher,chopsticks,"kitchen-prep-counter",
+                carriers,"post-teardown",1,out receipt,out error) && retry.GetSnapshot().HasInputs,
+            "Teardown releases owner and rejects later production without clearing inputs");
+        var unknownInventory=new InventoryManager();Field(unknownInventory,"dataCatalog",catalog);
+        var unknownEntry=new Phase2SceneEntry();
+        ProductCheck(unknownEntry.TryConsume(new ShortCycleDataHandoff("rcp_tomato_egg",
+            new List<PrepZoneItem>{new PrepZoneItem{item_id="prd_scrambled_egg",instance_id="unknown-input",quantity=1}}),
+            unknownInventory,out error) && unknownEntry.TryBindProduction(names,out error),
+            "Unknown fixture uses a distinct owned current-recipe entry");
+        AreaConstraint stove=null;ProcessingToolView spatula=null;
+        ProductCheck(catalog.TryGetAreaConstraint("kitchen-stove",out stove,out error) &&
+            catalog.TryGetProcessingTool("tool_spatula",out spatula,out error),
+            "Stove constraint and valid stir-fry tool resolve");
+        var stoveCarriers=new[]{"tool_pan"};
+        var unknownZone=new OperationZoneSession(whitelist,stove,records,stoveCarriers);
+        ProductCheck(unknownZone.TryAdd("rcp_tomato_egg","kitchen-stove","prd_scrambled_egg").Accepted,
+            "Whitelisted partial T12 input remains legal before tool application");
+        var stoveMatcher=new ProcessingMatcher(whitelist,stove,records,"prd_unknown");
+        var priorStates=unknownEntry.CurrentStepProgress.GetStates();
+        var unknownUpdates=0;unknownEntry.PrepZoneChanged+=_=>unknownUpdates++;
+        var unknownCommitted=unknownEntry.TryProduce(unknownZone,stoveMatcher,spatula,"kitchen-stove",
+            stoveCarriers,"unknown-1",1,out receipt,out error);
+        var laterStates=unknownEntry.CurrentStepProgress.GetStates();
+        var sameStates=priorStates.Count==laterStates.Count;
+        for(var i=0;i<priorStates.Count && sameStates;i++)
+            sameStates=priorStates[i].State==laterStates[i].State;
+        ProductCheck(unknownCommitted &&
+            receipt.Draft.IsUnknown && receipt.Product.item_id=="prd_unknown" &&
+            receipt.Product.display_name=="Unknown" && receipt.Product.instance_id=="unknown-1" &&
+            sameStates && unknownEntry.PrepZoneContents.Count==2 && unknownUpdates==1 &&
+            !unknownZone.GetSnapshot().HasInputs,
+            "Actual T8/T4 unknown enters prep but does not advance T3 or gain composite name");
+        unknownEntry.Teardown();
+        Name(catalog,names,"Items","prd_scrambled_egg","Scrambled Egg");
+        Name(catalog,names,"Items","prd_tomato_cut","Cut Tomato");
+        Name(catalog,names,"Tools","tool_spatula","Spatula");
+        Name(catalog,names,"Actions","act_stirfry","Stir Fry");
+        var finalInventory=new InventoryManager();Field(finalInventory,"dataCatalog",catalog);
+        var finalEntry=new Phase2SceneEntry();
+        ProductCheck(finalEntry.TryConsume(new ShortCycleDataHandoff("rcp_tomato_egg",
+            new List<PrepZoneItem>{
+                new PrepZoneItem{item_id="prd_scrambled_egg",instance_id="final-input-1",quantity=1},
+                new PrepZoneItem{item_id="prd_tomato_cut",instance_id="final-input-2",quantity=1}}),
+            finalInventory,out error) && finalEntry.TryBindProduction(names,out error) &&
+            !finalEntry.CurrentStepProgress.IsFinalDishReady,
+            "Current recipe tail starts incomplete before final product commit");
+        var finalEvents=0;FinalDishReadyEvent finalSignal=null;
+        finalEntry.FinalDishReady+=value=>{finalEvents++;finalSignal=value;};
+        var finalZone=new OperationZoneSession(whitelist,stove,records,stoveCarriers);
+        ProductCheck(finalZone.TryAdd("rcp_tomato_egg","kitchen-stove","prd_scrambled_egg").Accepted &&
+            finalZone.TryAdd("rcp_tomato_egg","kitchen-stove","prd_tomato_cut").Accepted &&
+            finalEntry.TryProduce(finalZone,stoveMatcher,spatula,"kitchen-stove",stoveCarriers,
+                "final-1",1,out receipt,out error) && receipt.Product.item_id=="prd_tomato_egg_dish" &&
+            finalEntry.CurrentStepProgress.IsFinalDishReady && finalEvents==1 &&
+            finalSignal.RecipeId=="rcp_tomato_egg" && finalSignal.TailStepId=="step_te_04",
+            "Actual final product raises the current recipe tail edge once");
+        ProductCheck(!finalEntry.TryProduce(finalZone,stoveMatcher,spatula,"kitchen-stove",
+                stoveCarriers,"final-1",1,out receipt,out error) && finalEvents==1,
+            "Cleared session cannot duplicate the final dish edge");
+        finalEntry.Teardown();
+        var switched=new Phase2SceneEntry();
+        ProductCheck(switched.TryConsume(new ShortCycleDataHandoff("rcp_qingtang_noodle",
+            new List<PrepZoneItem>()),inventory,out error) &&
+            switched.TryBindProduction(names,out error) &&
+            switched.CurrentStepProgress.GetStates()[0].StepId=="step_qt_01",
+            "Released inventory can bind a different recipe's explicit T3 chain");
+        switched.Teardown();
+        return "PASS: P2-C11 "+ProductionCases.Count+" actual owner/prep/step assertions.";
+    }
+
+    public static IList<string> ReentrancyCases { get; private set; }
+    private static void RepairCheck(bool condition, string message)
+    { if (!condition) throw new Exception("P2-C11R: " + message); ReentrancyCases.Add(message); }
+
+    public static string RunProductionReentrancy(string root)
+    {
+        ReentrancyCases=new List<string>();
+        var catalog=ProductionCatalog(root);string error;
+        RecipeWhitelist whitelist=null;IList<ProcessingRecordView> records=null;AreaConstraint prep=null;
+        ProcessingToolView chopsticks=null;
+        RepairCheck(catalog.TryGetRecipeWhitelist("rcp_tomato_egg",out whitelist,out error) &&
+            catalog.TryGetProcessingRecords(whitelist.ProcessingRecordIds,out records,out error) &&
+            catalog.TryGetAreaConstraint("kitchen-prep-counter",out prep,out error) &&
+            catalog.TryGetProcessingTool("tool_chopsticks",out chopsticks,out error),
+            "Actual recipe, records, area and tool resolve for reentrant fixture");
+        var names=new ProductTexts();
+        Name(catalog,names,"Items","ing_egg","Egg");
+        Name(catalog,names,"Items","prd_unknown","Unknown");
+        Name(catalog,names,"Tools","tool_chopsticks","Chopsticks");
+        Name(catalog,names,"Actions","act_whisk","Whisk");
+        var inventory=new InventoryManager();Field(inventory,"dataCatalog",catalog);
+        Read<Dictionary<string,int>>(inventory,"quantities")["ing_egg"]=9;
+        var entry=new Phase2SceneEntry();
+        RepairCheck(entry.TryConsume(new ShortCycleDataHandoff("rcp_tomato_egg",
+            new List<PrepZoneItem>{new PrepZoneItem{item_id="ing_egg",instance_id="repair-egg",quantity=1}}),
+            inventory,out error) && entry.TryBindProduction(names,out error),
+            "Current owner and T3 chain bind before reentrant observation");
+        var carriers=new[]{"tool_bowl","tool_board"};
+        var zone=new OperationZoneSession(whitelist,prep,records,carriers);
+        var matcher=new ProcessingMatcher(whitelist,prep,records,"prd_unknown");
+        RepairCheck(zone.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg").Accepted,
+            "One held input starts the first operation");
+        var changes=0;var sawCompleted=false;var nestedSucceeded=false;var directSucceeded=false;
+        var nextAdded=false;string nestedError=null;
+        entry.PrepZoneChanged+=_=>{
+            changes++;
+            if(changes!=1)return;
+            sawCompleted=!zone.GetSnapshot().HasInputs;
+            Phase2ProductReceipt nestedReceipt;string nestedDiagnostic;
+            nestedSucceeded=entry.TryProduce(zone,matcher,chopsticks,"kitchen-prep-counter",
+                carriers,"repair-nested",1,out nestedReceipt,out nestedDiagnostic);
+            nestedError=nestedDiagnostic;
+            directSucceeded=inventory.TryCommitPhase2Product(entry,new PrepZoneItem{
+                item_id="prd_egg_liquid",instance_id="repair-direct",quantity=1}).Succeeded;
+            nextAdded=zone.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg").Accepted;
+        };
+        Phase2ProductReceipt receipt;
+        var first=entry.TryProduce(zone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"repair-first",1,out receipt,out error);
+        RepairCheck(first && !nestedSucceeded && !directSucceeded && sawCompleted && nextAdded &&
+            nestedError!=null && nestedError.Contains("in progress") && changes==1 &&
+            entry.PrepZoneContents.Count==2 && zone.GetSnapshot().HasInputs &&
+            entry.CurrentStepProgress.GetStates()[0].State==StepCompletionState.Dynamic &&
+            inventory.GetQuantity("ing_egg")==9 && !Read<bool>(entry,"productionBusy"),
+            "Public callback sees completed first operation, cannot double commit, and retains its new input");
+        RepairCheck(entry.TryProduce(zone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"repair-second",1,out receipt,out error) && changes==2 &&
+            entry.PrepZoneContents.Count==3 && !zone.GetSnapshot().HasInputs &&
+            inventory.GetQuantity("ing_egg")==9 && !Read<bool>(entry,"productionBusy"),
+            "New operation after callback commits exactly once after outer transaction ends");
+        var duplicateZone=new OperationZoneSession(whitelist,prep,records,carriers);
+        duplicateZone.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg");
+        RepairCheck(!entry.TryProduce(duplicateZone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"repair-second",1,out receipt,out error) &&
+            duplicateZone.GetSnapshot().HasInputs && entry.PrepZoneContents.Count==3 && changes==2 &&
+            !Read<bool>(entry,"productionBusy"),
+            "Rejected duplicate instance retains held input and releases the busy gate");
+        entry.Teardown();
+
+        Name(catalog,names,"Items","prd_scrambled_egg","Scrambled Egg");
+        Name(catalog,names,"Items","prd_tomato_cut","Cut Tomato");
+        Name(catalog,names,"Tools","tool_spatula","Spatula");
+        Name(catalog,names,"Actions","act_stirfry","Stir Fry");
+        AreaConstraint stove=null;ProcessingToolView spatula=null;
+        RepairCheck(catalog.TryGetAreaConstraint("kitchen-stove",out stove,out error) &&
+            catalog.TryGetProcessingTool("tool_spatula",out spatula,out error),
+            "Actual final-product stove and tool resolve");
+        var finalInventory=new InventoryManager();Field(finalInventory,"dataCatalog",catalog);
+        var finalEntry=new Phase2SceneEntry();
+        RepairCheck(finalEntry.TryConsume(new ShortCycleDataHandoff("rcp_tomato_egg",
+            new List<PrepZoneItem>{
+                new PrepZoneItem{item_id="prd_scrambled_egg",instance_id="repair-final-a",quantity=1},
+                new PrepZoneItem{item_id="prd_tomato_cut",instance_id="repair-final-b",quantity=1}}),
+            finalInventory,out error) && finalEntry.TryBindProduction(names,out error),
+            "Actual final-product entry owns seeded prep");
+        var stoveCarriers=new[]{"tool_pan"};
+        var finalZone=new OperationZoneSession(whitelist,stove,records,stoveCarriers);
+        finalZone.TryAdd("rcp_tomato_egg","kitchen-stove","prd_scrambled_egg");
+        finalZone.TryAdd("rcp_tomato_egg","kitchen-stove","prd_tomato_cut");
+        var finalMatcher=new ProcessingMatcher(whitelist,stove,records,"prd_unknown");
+        var finalEvents=0;var finalPrepEvents=0;var finalSawCompleted=false;var finalNested=false;
+        finalEntry.PrepZoneChanged+=_=>finalPrepEvents++;
+        finalEntry.FinalDishReady+=_=>{
+            finalEvents++;finalSawCompleted=!finalZone.GetSnapshot().HasInputs;
+            Phase2ProductReceipt nestedReceipt;string nestedDiagnostic;
+            finalNested=finalEntry.TryProduce(finalZone,finalMatcher,spatula,"kitchen-stove",
+                stoveCarriers,"repair-final-nested",1,out nestedReceipt,out nestedDiagnostic);
+        };
+        RepairCheck(finalEntry.TryProduce(finalZone,finalMatcher,spatula,"kitchen-stove",
+            stoveCarriers,"repair-final",1,out receipt,out error) &&
+            receipt.Product.item_id=="prd_tomato_egg_dish" && finalSawCompleted && !finalNested &&
+            finalEvents==1 && finalPrepEvents==1 && finalEntry.PrepZoneContents.Count==3 &&
+            finalEntry.CurrentStepProgress.IsFinalDishReady,
+            "FinalDishReady callback sees completed operation and cannot produce a second final dish");
+        RepairCheck(!finalEntry.TryProduce(finalZone,finalMatcher,spatula,"kitchen-stove",
+            stoveCarriers,"repair-final-nested",1,out receipt,out error) &&
+            finalEvents==1 && finalPrepEvents==1,
+            "Cleared final operation cannot emit a second tail edge");
+        finalEntry.Teardown();
+
+        var teardownInventory=new InventoryManager();Field(teardownInventory,"dataCatalog",catalog);
+        var teardownEntry=new Phase2SceneEntry();
+        RepairCheck(teardownEntry.TryConsume(new ShortCycleDataHandoff("rcp_tomato_egg",
+            new List<PrepZoneItem>{new PrepZoneItem{item_id="ing_egg",instance_id="repair-teardown-seed",quantity=1}}),
+            teardownInventory,out error) && teardownEntry.TryBindProduction(names,out error),
+            "Observer-exception entry binds current owner");
+        var teardownZone=new OperationZoneSession(whitelist,prep,records,carriers);
+        teardownZone.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg");
+        var survivingObservers=0;var afterTeardownObservers=0;
+        teardownEntry.PrepZoneChanged+=_=>{throw new InvalidOperationException("fixture observer");};
+        teardownEntry.PrepZoneChanged+=_=>survivingObservers++;
+        RepairCheck(teardownEntry.TryProduce(teardownZone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"repair-throw-first",1,out receipt,out error) && survivingObservers==1 &&
+            !teardownZone.GetSnapshot().HasInputs && !Read<bool>(teardownEntry,"productionBusy"),
+            "Throwing observer cannot roll back committed product or leave busy gate set");
+        teardownEntry.PrepZoneChanged+=_=>teardownEntry.Teardown();
+        teardownEntry.PrepZoneChanged+=_=>afterTeardownObservers++;
+        teardownZone.TryAdd("rcp_tomato_egg","kitchen-prep-counter","ing_egg");
+        RepairCheck(teardownEntry.TryProduce(teardownZone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"repair-teardown-product",1,out receipt,out error) &&
+            teardownInventory.Phase2Owner==null && !teardownEntry.IsReady &&
+            teardownEntry.PrepZoneContents.Count==0 && !teardownZone.GetSnapshot().HasInputs &&
+            survivingObservers==2 && afterTeardownObservers==0 &&
+            !Read<bool>(teardownEntry,"productionBusy"),
+            "Callback Teardown releases owner and skips stale later observers without ghost prep");
+        RepairCheck(!teardownEntry.TryProduce(teardownZone,matcher,chopsticks,"kitchen-prep-counter",
+            carriers,"repair-after-teardown",1,out receipt,out error) &&
+            teardownInventory.Phase2Owner==null,
+            "After Teardown no new product can enter the released owner");
+        return "PASS: P2-C11R "+ReentrancyCases.Count+" reentrancy and observer assertions.";
     }
 }

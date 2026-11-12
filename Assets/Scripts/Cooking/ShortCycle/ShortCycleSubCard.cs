@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EatWhat.Toolkit;
 using TMPro;
 using UnityEngine;
 
@@ -43,9 +44,11 @@ namespace EatWhat.Cooking.ShortCycle
 
     public sealed class ShortCycleSlotBlockBinding
     {
+        public string StandardItemId;
         public CK01ItemData StandardItem;
         public int StandardHeldCount;
         public int StandardRequiredCount;
+        public string StandardActionId;
         public Sprite ActionIcon;
         public IList<ShortCycleSubCardBinding> Substitutes = new List<ShortCycleSubCardBinding>().AsReadOnly();
     }
@@ -86,7 +89,7 @@ namespace EatWhat.Cooking.ShortCycle
             out string diagnostic)
         {
             return TryResolveCore(slot == null ? null : slot.standard_ingredient, slot == null ? 0 : slot.required_count, ReadRequirements(slot), itemResolver, tagResolver,
-                heldCountResolver, unlockResolver, actionIcon, out binding, out diagnostic);
+                heldCountResolver, unlockResolver, actionIcon, slot == null ? null : slot.standard_action, out binding, out diagnostic);
         }
 
         public static bool TryResolve(
@@ -103,7 +106,7 @@ namespace EatWhat.Cooking.ShortCycle
             if (slot != null) foreach (var sub in slot.substitutes)
                 requirements.Add(new ShortCycleSubstituteRequirement(sub.anchor_index, sub.item_id, sub.required_count));
             return TryResolveCore(slot == null ? null : slot.standard_ingredient.item_id, slot == null ? 0 : slot.standard_ingredient.required_count, requirements, itemResolver, tagResolver,
-                heldCountResolver, unlockResolver, actionIcon, out binding, out diagnostic);
+                heldCountResolver, unlockResolver, actionIcon, slot == null ? null : slot.standard_action, out binding, out diagnostic);
         }
 
         private static bool TryResolveCore(
@@ -112,7 +115,7 @@ namespace EatWhat.Cooking.ShortCycle
             Func<string, CK01TagData> tagResolver,
             Func<string, int> heldCountResolver,
             Func<string, bool> unlockResolver,
-            Sprite actionIcon,
+            Sprite actionIcon, string standardActionId,
             out ShortCycleSlotBlockBinding binding,
             out string diagnostic)
         {
@@ -158,9 +161,11 @@ namespace EatWhat.Cooking.ShortCycle
 
             binding = new ShortCycleSlotBlockBinding
             {
+                StandardItemId = standardId,
                 StandardItem = standard,
                 StandardHeldCount = Math.Max(0, heldCountResolver(standardId)),
                 StandardRequiredCount = Math.Max(1, requiredCount),
+                StandardActionId = standardActionId,
                 ActionIcon = actionIcon,
                 Substitutes = cards.AsReadOnly()
             };
@@ -205,34 +210,67 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private Material lockedSilhouetteMaterial = null;
 
         public ShortCycleSubCardBinding Binding { get; private set; }
+        public ToolkitPlaceholderState? IconState { get; private set; }
+        public string IconConfigurationDiagnostic { get; private set; }
 
         public void Configure(ShortCycleSubCardBinding binding)
+        { Configure(binding, null, null); }
+
+        public void Configure(ShortCycleSubCardBinding binding, Sprite generatedMissingSprite,
+            Sprite missingIconReplacement)
         {
             Binding = binding;
+            IconState = null;
+            IconConfigurationDiagnostic = null;
             var visible = binding != null;
-            if (cardRoot != null)
-            {
-                cardRoot.SetActive(visible);
-            }
-            if (node != null)
-            {
-                node.SetActive(visible);
-            }
+            if (cardRoot != null) cardRoot.SetActive(visible);
+            if (node != null) node.SetActive(visible);
             if (!visible)
             {
+                if (iconRenderer != null)
+                {
+                    iconRenderer.sprite = null;
+                    iconRenderer.enabled = false;
+                    iconRenderer.sharedMaterial = unlockedMaterial;
+                }
+                if (countLabel != null) countLabel.text = string.Empty;
                 if (link != null) link.enabled = false;
                 return;
             }
 
+            var sprite = binding.DisplayIcon;
+            var knownMissing = sprite == null ||
+                generatedMissingSprite != null && sprite == generatedMissingSprite;
+            if (knownMissing)
+            {
+                IconState = PlaceholderRule.Classify(false, sprite == null ? null : sprite.name);
+                if (missingIconReplacement == null ||
+                    generatedMissingSprite != null && missingIconReplacement == generatedMissingSprite)
+                {
+                    sprite = null;
+                    IconConfigurationDiagnostic = "SubCard icon has no distinct missing replacement Sprite.";
+                }
+                else sprite = missingIconReplacement;
+            }
+            else
+            {
+                var state = PlaceholderRule.Classify(true, sprite.name);
+                IconState = generatedMissingSprite == null && state == ToolkitPlaceholderState.Ready
+                    ? (ToolkitPlaceholderState?)null : state;
+                if (!IconState.HasValue)
+                    IconConfigurationDiagnostic = "CK01-MissingSprite identity is not bound; SubCard art is unverified.";
+            }
+            if (!binding.IsUnlocked && lockedSilhouetteMaterial == null)
+                IconConfigurationDiagnostic = "Locked SubCard silhouette Material is not connected.";
             if (iconRenderer != null)
             {
-                iconRenderer.sprite = binding.DisplayIcon;
+                iconRenderer.sprite = sprite;
+                iconRenderer.enabled = sprite != null;
                 iconRenderer.sharedMaterial = binding.IsUnlocked ? unlockedMaterial : lockedSilhouetteMaterial;
             }
-            if (countLabel != null)
-            {
-                countLabel.text = binding.HeldCount + "/" + binding.RequiredCount;
-            }
+            else if (IconConfigurationDiagnostic == null)
+                IconConfigurationDiagnostic = "SubCard icon Renderer is not connected.";
+            if (countLabel != null) countLabel.text = binding.HeldCount + "/" + binding.RequiredCount;
             if (link != null)
             {
                 link.enabled = true;
@@ -240,9 +278,15 @@ namespace EatWhat.Cooking.ShortCycle
             }
         }
 
-        public void Clear()
+        public void ApplyContentPresentationVisibility(bool presentationVisible)
         {
-            Configure(null);
+            var visible = presentationVisible && Binding != null;
+            if (iconRenderer != null) iconRenderer.enabled = visible && iconRenderer.sprite != null;
+            if (countLabel != null) countLabel.enabled = visible;
+            if (link != null) link.enabled = visible;
         }
+
+        public void Clear()
+        { Configure(null); ApplyContentPresentationVisibility(false); }
     }
 }

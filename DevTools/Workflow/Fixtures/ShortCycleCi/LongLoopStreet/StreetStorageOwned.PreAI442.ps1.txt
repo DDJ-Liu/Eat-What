@@ -1,0 +1,1 @@
+function Owned($p){$p=[IO.Path]::GetFullPath($p);Need ($p.StartsWith($o+'\',[StringComparison]::OrdinalIgnoreCase)) 'Outside current attempt';for($a=$p;$a-and$a.Length-ge$r.Length;$a=Split-Path -Parent $a){if(Test-Path -LiteralPath $a){Need (-not((Get-Item -LiteralPath $a -Force).Attributes-band[IO.FileAttributes]::ReparsePoint)) 'Reparse refused'}};return$p}

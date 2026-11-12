@@ -1,0 +1,25 @@
+{
+  "sourceExecutionId": "4727a2bdff6040208bd2f758a31b9699",
+  "sourceTask": "AI-000426",
+  "purpose": "Immutable rejected production sources for real-code facing baseline lifecycle counterexamples; no Unity execution.",
+  "files": [
+    {
+      "sourcePath": "D:\\GameProject\\Eat-What\\Assets\\Scripts\\LongLoop\\DepthScale.cs",
+      "fixtureSha256": "A7E65EE9AF4FD65C9AA22475D68206BA100671D2144207FC4D6FC18828094FA4",
+      "sourceSha256": "A7E65EE9AF4FD65C9AA22475D68206BA100671D2144207FC4D6FC18828094FA4",
+      "fixturePath": "DevTools\\LongLoop\\Fixtures\\DepthScaleFacingBaselineAI426\\DepthScale.cs"
+    },
+    {
+      "sourcePath": "D:\\GameProject\\Eat-What\\Assets\\Scripts\\LongLoop\\LongLoopPlayerController.cs",
+      "fixtureSha256": "F201612596A4FE2C065EDED82D844EC94EB929870B062E2602A9FEA8B57D31C9",
+      "sourceSha256": "F201612596A4FE2C065EDED82D844EC94EB929870B062E2602A9FEA8B57D31C9",
+      "fixturePath": "DevTools\\LongLoop\\Fixtures\\DepthScaleFacingBaselineAI426\\LongLoopPlayerController.cs"
+    },
+    {
+      "sourcePath": "D:\\GameProject\\Eat-What\\Assets\\Scripts\\LongLoop\\TomatoSpineAvatar.cs",
+      "fixtureSha256": "5D561E1355F54BFB738A91490C96EEE2F6FBE0F03D8581A4C1D5985BCF5A78DE",
+      "sourceSha256": "5D561E1355F54BFB738A91490C96EEE2F6FBE0F03D8581A4C1D5985BCF5A78DE",
+      "fixturePath": "DevTools\\LongLoop\\Fixtures\\DepthScaleFacingBaselineAI426\\TomatoSpineAvatar.cs"
+    }
+  ]
+}

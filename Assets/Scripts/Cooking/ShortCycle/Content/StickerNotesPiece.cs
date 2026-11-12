@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using EatWhat.Toolkit;
 namespace EatWhat.Cooking.ShortCycle
 {
     public sealed class StickerNotesPiece : MonoBehaviour
@@ -8,8 +8,15 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private Sticker[] notes = new Sticker[5];
         [SerializeField] private Sprite genericNoteTemplate = null;
         public static ArtState GetArtState(Sprite sprite)
-        { return sprite == null ? ArtState.Missing : !string.IsNullOrEmpty(sprite.name) &&
-            sprite.name.EndsWith("_AIGC", StringComparison.OrdinalIgnoreCase) ? ArtState.Aigc : ArtState.Ready; }
+        {
+            var hasSprite = sprite != null;
+            switch (PlaceholderRule.Classify(hasSprite, hasSprite ? sprite.name : null))
+            {
+                case ToolkitPlaceholderState.Missing: return ArtState.Missing;
+                case ToolkitPlaceholderState.Aigc: return ArtState.Aigc;
+                default: return ArtState.Ready;
+            }
+        }
         public bool CanBind(int count)
         {
             if (count > 5 || count > notes.Length) return false;

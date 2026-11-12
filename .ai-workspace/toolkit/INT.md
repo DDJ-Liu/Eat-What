@@ -1,6 +1,14 @@
 # 工具库 · INT
 
+2026-10-28 AI380 TK-INT-19 局部扩展：`INavigationInput.BackPressed` 是同一 `IGameInput.cs` 中的可选导航接口，`LegacyInputProvider` 在启用且有焦点时提供 Escape 按下帧；原 `IGameInput` 的 Horizontal/Interact/MouseScreenPos 不变。LongLoop `SceneFlow` 通过 Inspector 的 `navigationInputProvider` 消费，可绑定 Boot 持久节点上的 LegacyInputProvider。离线编译与控制流测试完成，Boot 场景和实际按键待 ENGINE。
+
 > 从 [INDEX.md](INDEX.md) 定位；状态与公开面沿用原登记。
+
+2026-10-27 AI375 TK-INT-19 局部新增：Toolkit 的 IGameInput 暴露 Horizontal/Interact/MouseScreenPos；LegacyInputProvider 封装 UnityEngine.Input 老后端，A/D 与方向键同义、两边同按中性，Interact 默认 E 按下帧。LongLoop 正式控制器通过接口读取；原型组件保旧 InputAction/InputManager/Keyboard 路径作为兼容适配。真实场景绑定与 Play 仍待 ENGINE，详见 AI375 ENGINE-HANDOFF。
+
+2026-10-24 AI326 TK-INT-04/05/16 局部修复（覆盖下方 AI325 事件建议）：ShortCycleMouseActionBinding 的托盘源 hit/miss 通过显式 trayDropRegion: Collider2D 与释放点判定内外；内侧取消，外侧经现有 inventory.put_back 只退一单位，位置未知时失败保守回弹。托盘 DropZone.onDropEvent 只给冰箱源 inventory.take；MouseManager 先 zone.OnDrop 后 source.onDropHitEvent，目标拒绝回弹仅处理冰箱源，托盘源数据由 source hit/miss 唯一处理。冰箱占位右键需同组件 sessionManager 引用，按 FridgeSlot 的 item_id/instance_id、可见占位及 Context 真实预留匹配后通过 Router/InputGate/Session 退回；左键仍 take。具体唯一接线与未原生验证边界见 AI326 ENGINE-HANDOFF。
+
+2026-10-24 AI325 TK-INT-04/05/16 局部消费：ShortCycleMouseActionBinding 保留原 Configure/Dispatch/UnityEvent 入口，并从 FridgeSlot/TraySlot 读取 item_id/instance_id、从 Inspector tagId 传单选筛选、从 scrollStepEvent 传 delta；DropZone.onDropEvent 与 MouseDraggableObject.onDropHitEvent 只能择一接同次接受投放，拒绝/落空只触发返回预设。所有业务动作仍由 ActionRouter→InputGate→Session；新增右键退回订阅既有 MouseManager.OnMouseCancel，按当前层悬停 TraySlot 且未拖动进入 inventory.put_back 同一入口，真实场景接线归 AI325 TRAY-02，详见该卡 ENGINE-HANDOFF。
 
 <a id="tk-int-01"></a>
 <a id="tk-dbg-07"></a>
@@ -21,6 +29,7 @@
 <a id="tk-int-16"></a>
 <a id="tk-int-17"></a>
 <a id="tk-int-18"></a>
+<a id="tk-int-19"></a>
 
 ## 1. INT · 交互（MouseInteractive 框架栈）
 
@@ -44,4 +53,5 @@
 | TK-INT-16 | `ShortCycleMouseActionBinding` `Cooking/ShortCycle/` | 框架事件→具名动作（含 `recipeId` 参数） | `actionName` `recipeId` | 沿用 | 13 按钮 | C-T4 / C-T8 | 通用化候选：去 ShortCycle 前缀迁 Tools |
 | TK-INT-17 | `ShortCycleInteractionLayerStack` | 层栈推拉封装 | `Push` / `Pop` / `Remove` / `Contains` / `Restore` | 沿用·扩充 | `ShortCyclePresentationDirector` 的 Space/Modal 接管；VERIFY-TEMP 专用层清理 | K-T2b / K-T3 / AI-000153 | 正式业务仍由 Director 调用 Push/Pop；`Remove` 只供显式拥有者清理自己的非 base 瞬态层，不改变真实 Modal 行为 |
 | TK-INT-18 | `ShortCycleStateGatedInteraction` | 按所属 PresentationSet/FSM 状态启停并恢复 MouseInteract，可叠加已选菜条件 | `SetInteractionAllowed(bool)`；Inspector `sessionManager` / `requireSelectedRecipe` | 沿用 | 既有具名按钮 Gate；`shortcycle.close_catalog` 已落地选菜门禁 | K-T2 / K-T3 / AI-000071 / AI-000072 / AI-000222 | Presentation 门禁为外层条件，与视觉 active 分离：镜头移动起点准备目标视觉，完成时才给目标焦点/交互；跨区常驻视觉不等于后台可点。选菜条件读取唯一 Session Context；AI-000072 已实测空选菜拒绝、选菜后可返回 Browse；禁用/销毁恢复原状态 |
+| TK-INT-19 | `IGameInput` / 可选 `INavigationInput` / `LegacyInputProvider`，`Assets/Scripts/Tools/Input/` | 横移、交互按下帧、鼠标屏幕坐标及可选返回键的旧 Input 适配 | 原三属性不变；`INavigationInput.BackPressed` 为 Escape 按下帧；交互默认 E | CODE 离线完成，Boot 原生待核 | `LongLoopPlayerController`、`SceneFlow`；原型兼容组件 | AI-000375 / AI-000380 V01-01 | UnityEngine.Input 仅在 LegacyInputProvider 内；焦点和启停守卫同原属性；不改 InputManager / Active Input Handling Both |
 

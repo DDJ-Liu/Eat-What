@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using EatWhat.DataTables;
 using EatWhat.Cooking.ShortCycle;
+using EatWhat.Toolkit;
 using UnityEngine;
 using TMPro;
 
@@ -32,7 +33,7 @@ public static class ShortCycleRecipeBookTests
           result.Add(values); }
         return result;
     }
-    private static CK01GeneratedDataTable Table<T>(string root, string name, string primaryKey) where T : ScriptableObject, new()
+    public static CK01GeneratedDataTable Table<T>(string root, string name, string primaryKey) where T : ScriptableObject, new()
     {
         var result = new List<CK01GeneratedDataRowReference>();
         foreach (var row in Csv(root, name))
@@ -149,6 +150,157 @@ public static class ShortCycleRecipeBookTests
             !tape01.enabled && !tape02.enabled && !tagIcon.enabled && !favoriteStar.enabled,
             "legacy empty call clears content and decoration without stale tag/star");
         return "PASS: Catalog feedback " + checks + " assertions";
+    }
+    private static readonly List<string> stepIconCases = new List<string>();
+    public static IReadOnlyList<string> StepIconCases { get { return stepIconCases.AsReadOnly(); } }
+    private static void StepIconCheck(bool value, string message)
+    {
+        Check(value, message);
+        stepIconCases.Add(message);
+    }
+    public static string RunStepIconFeedback()
+    {
+        checks = 0;
+        stepIconCases.Clear();
+        var row = new StepDetailRowPiece();
+        var surface = row.gameObject.AddComponent<SpriteRenderer>();
+        var description = new TextMeshPro();
+        var ingredients = new[] { new SpriteRenderer(), new SpriteRenderer(), new SpriteRenderer(), new SpriteRenderer() };
+        var tools = new[] { new SpriteRenderer(), new SpriteRenderer(), new SpriteRenderer() };
+        var generatedMissing = new Sprite { name = "CK01-MissingSprite", rect = new Rect(0f, 0f, 1f, 1f), pixelsPerUnit = 100f };
+        var replacement = new Sprite { name = "existing-question-mark", rect = new Rect(0f, 0f, 86f, 100f), pixelsPerUnit = 100f };
+        var real = new Sprite { name = "real-art", rect = new Rect(0f, 0f, 512f, 512f), pixelsPerUnit = 100f };
+        var aigc = new Sprite { name = "concept_AIGC", rect = new Rect(0f, 0f, 200f, 100f), pixelsPerUnit = 50f };
+        tools[0].transform.localScale = new Vector3(60f, 60f, 3f);
+        tools[0].transform.localPosition = new Vector3(7f, 8f, 9f);
+        tools[0].transform.localEulerAngles = new Vector3(0f, 0f, 23f);
+        Field(row, "description", description);
+        Field(row, "ingredientIcons", ingredients);
+        Field(row, "toolIcons", tools);
+        Field(row, "generatedMissingSprite", generatedMissing);
+        Field(row, "missingIconReplacement", replacement);
+        var mixed = new RecipeStepView("step", "step.key", new[] {
+            new RecipeIconView("real", "real.key", real),
+            new RecipeIconView("generated", "generated.key", generatedMissing),
+            new RecipeIconView("aigc", "aigc.key", aigc)
+        }, new[] {
+            new RecipeIconView("null", "null.key", null),
+            new RecipeIconView("generated-tool", "generated.key", generatedMissing)
+        });
+        StepIconCheck(row.CanBind(mixed) && row.HasMissingSpriteBindings,
+            "existing CanBind accepts both icon groups with exact source and distinct replacement");
+        row.Apply(mixed);
+        StepIconCheck(surface.enabled && ReferenceEquals(row.View, mixed) &&
+            ReferenceEquals(ingredients[0].sprite, real) && ingredients[0].enabled &&
+            row.IngredientIconStates[0] == ToolkitPlaceholderState.Ready,
+            "ready ingredient keeps real source art and explicit Ready state");
+        StepIconCheck(ReferenceEquals(ingredients[1].sprite, replacement) && ingredients[1].enabled &&
+            row.IngredientIconStates[1] == ToolkitPlaceholderState.Missing,
+            "exact generated MissingSprite ingredient uses distinct nonmagenta replacement");
+        StepIconCheck(ReferenceEquals(ingredients[2].sprite, aigc) && ingredients[2].enabled &&
+            row.IngredientIconStates[2] == ToolkitPlaceholderState.Aigc,
+            "AIGC ingredient preserves source art and explicit Aigc state");
+        StepIconCheck(ReferenceEquals(tools[0].sprite, replacement) && tools[0].enabled &&
+            row.ToolIconStates[0] == ToolkitPlaceholderState.Missing &&
+            ReferenceEquals(tools[1].sprite, replacement) && tools[1].enabled &&
+            row.ToolIconStates[1] == ToolkitPlaceholderState.Missing,
+            "null and generated MissingSprite tools both use explicit Missing replacement");
+        StepIconCheck(!ingredients[3].enabled && ingredients[3].sprite == null &&
+            !row.IngredientIconStates[3].HasValue && !tools[2].enabled && tools[2].sprite == null &&
+            !row.ToolIconStates[2].HasValue && row.IconConfigurationDiagnostic == null,
+            "unused icon slots stay empty and fully configured row has no diagnostic");
+
+        var ready = new RecipeStepView("ready", "ready.key", new[] {
+            new RecipeIconView("ready", "ready.key", real)
+        }, new[] { new RecipeIconView("aigc", "aigc.key", aigc) });
+        row.Apply(ready);
+        StepIconCheck(ReferenceEquals(ingredients[0].sprite, real) &&
+            row.IngredientIconStates[0] == ToolkitPlaceholderState.Ready &&
+            !ingredients[1].enabled && ingredients[1].sprite == null &&
+            ReferenceEquals(tools[0].sprite, aigc) &&
+            row.ToolIconStates[0] == ToolkitPlaceholderState.Aigc &&
+            !tools[1].enabled && tools[1].sprite == null,
+            "Missing to Ready or Aigc rebind clears former replacement and surplus slots");
+        row.Apply(null);
+        StepIconCheck(row.View == null && !surface.enabled &&
+            !ingredients[0].enabled && ingredients[0].sprite == null &&
+            !tools[0].enabled && tools[0].sprite == null &&
+            !row.IngredientIconStates[0].HasValue && !row.ToolIconStates[0].HasValue &&
+            row.IconConfigurationDiagnostic == null,
+            "empty view clears both groups, state and diagnostic without retaining art");
+        row.Apply(mixed);
+        StepIconCheck(ReferenceEquals(ingredients[1].sprite, replacement) &&
+            row.IngredientIconStates[1] == ToolkitPlaceholderState.Missing &&
+            ReferenceEquals(tools[1].sprite, replacement) &&
+            row.ToolIconStates[1] == ToolkitPlaceholderState.Missing,
+            "rebind after empty restores only current Missing icons in both groups");
+
+        Field(row, "missingIconReplacement", null);
+        row.Apply(mixed);
+        StepIconCheck(!row.HasMissingSpriteBindings &&
+            !ingredients[1].enabled && ingredients[1].sprite == null &&
+            !tools[0].enabled && tools[0].sprite == null &&
+            row.IngredientIconStates[1] == ToolkitPlaceholderState.Missing &&
+            row.ToolIconStates[0] == ToolkitPlaceholderState.Missing &&
+            row.IconConfigurationDiagnostic != null,
+            "missing replacement hides missing icons and exposes binding diagnostic");
+        Field(row, "missingIconReplacement", generatedMissing);
+        row.Apply(mixed);
+        StepIconCheck(!row.HasMissingSpriteBindings && !ingredients[1].enabled &&
+            ingredients[1].sprite == null && row.IconConfigurationDiagnostic != null,
+            "generated MissingSprite cannot be reused as its own replacement");
+        Field(row, "generatedMissingSprite", null);
+        Field(row, "missingIconReplacement", replacement);
+        row.Apply(mixed);
+        StepIconCheck(ReferenceEquals(ingredients[0].sprite, real) &&
+            !row.IngredientIconStates[0].HasValue &&
+            row.IconConfigurationDiagnostic != null &&
+            ReferenceEquals(ingredients[1].sprite, generatedMissing) &&
+            !row.IngredientIconStates[1].HasValue,
+            "unbound source identity preserves legacy visible art but does not certify Ready");
+        StepIconCheck(!row.CanBind(new RecipeStepView("overflow", "key",
+            new RecipeIconView[5], new RecipeIconView[0])),
+            "existing CanBind capacity guard still rejects oversized ingredient group");
+
+        Field(row, "generatedMissingSprite", generatedMissing);
+        row.Apply(mixed);
+        var questionScale = tools[0].transform.localScale;
+        StepIconCheck(ReferenceEquals(tools[0].sprite, replacement) && tools[0].enabled &&
+            Math.Abs(questionScale.x - 0.6f) < 0.00001f && Math.Abs(questionScale.y - 0.6f) < 0.00001f && questionScale.z == 3f &&
+            Math.Abs(replacement.rect.width / replacement.pixelsPerUnit * questionScale.x - 0.516f) < 0.00001f &&
+            Math.Abs(replacement.rect.height / replacement.pixelsPerUnit * questionScale.y - 0.6f) < 0.00001f &&
+            tools[0].transform.localPosition.Equals(new Vector3(7f, 8f, 9f)) && tools[0].transform.localEulerAngles.z == 23f,
+            "old scale 60 becomes 0.516x0.6 question rectangle while preserving position, rotation and Z scale");
+        StepIconCheck(Math.Abs(ingredients[0].transform.localScale.x - 0.1171875f) < 0.00001f &&
+            Math.Abs(ingredients[0].transform.localScale.y - 0.1171875f) < 0.00001f &&
+            Math.Abs(ingredients[2].transform.localScale.x - 0.15f) < 0.00001f,
+            "Ready 512 PPU100 and rectangular AIGC 200x100 PPU50 use their own sprite dimensions");
+        row.Apply(mixed);
+        StepIconCheck(Math.Abs(tools[0].transform.localScale.x - 0.6f) < 0.00001f &&
+            Math.Abs(ingredients[0].transform.localScale.x - 0.1171875f) < 0.00001f,
+            "repeated binding recomputes absolute scale without accumulating scale");
+        var invalid = new Sprite { name = "invalid-art", rect = new Rect(0f, 0f, float.NaN, 512f), pixelsPerUnit = 100f };
+        row.Apply(new RecipeStepView("invalid", "key", new[] { new RecipeIconView("invalid", "key", invalid) },
+            new RecipeIconView[0]));
+        StepIconCheck(!ingredients[0].enabled && ingredients[0].sprite == null && row.IconConfigurationDiagnostic != null &&
+            !tools[0].enabled && tools[0].sprite == null,
+            "invalid source size hides art with a diagnostic and empty slots remain hidden");
+        var zeroPpu = new Sprite { name = "zero-ppu", rect = new Rect(0f, 0f, 512f, 512f), pixelsPerUnit = 0f };
+        Field(row, "missingIconReplacement", zeroPpu);
+        row.Apply(mixed);
+        StepIconCheck(!tools[0].enabled && tools[0].sprite == null && row.IconConfigurationDiagnostic != null,
+            "zero PPU replacement cannot leave an oversized icon visible");
+        var infinitePpu = new Sprite { name = "infinite-ppu", rect = new Rect(0f, 0f, 512f, 512f), pixelsPerUnit = float.PositiveInfinity };
+        Field(row, "missingIconReplacement", infinitePpu);
+        row.Apply(mixed);
+        StepIconCheck(!tools[0].enabled && tools[0].sprite == null && row.IconConfigurationDiagnostic != null,
+            "nonfinite PPU cannot produce an infinite icon");
+        Field(row, "missingIconReplacement", replacement);
+        row.Apply(mixed);
+        StepIconCheck(tools[0].enabled && Math.Abs(tools[0].transform.localScale.x - 0.6f) < 0.00001f &&
+            row.IconConfigurationDiagnostic == null,
+            "valid rebind after invalid art restores bounded Missing icon and clears diagnostics");
+        return "PASS: step icon feedback " + checks + " assertions";
     }
     public static string Run(string root)
     {

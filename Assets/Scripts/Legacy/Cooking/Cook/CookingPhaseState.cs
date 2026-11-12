@@ -1,4 +1,8 @@
+#if CINEMACHINE_3_OR_NEWER
+using Unity.Cinemachine;
+#else
 using Cinemachine;
+#endif
 using UnityEngine;
 
 public abstract class CookingPhaseStateBase

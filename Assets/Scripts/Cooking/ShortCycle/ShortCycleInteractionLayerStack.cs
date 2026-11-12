@@ -58,9 +58,14 @@ namespace EatWhat.Cooking.ShortCycle
 
         private void Start()
         {
-            if (baseLayer != null)
+            PushActiveLayers();
+        }
+
+        private void PushActiveLayers()
+        {
+            for (var index = 0; index < activeLayers.Count; index++)
             {
-                baseLayer.OnPushLayer();
+                if (activeLayers[index] != null) activeLayers[index].OnPushLayer();
             }
         }
 
@@ -74,6 +79,7 @@ namespace EatWhat.Cooking.ShortCycle
         {
             if (target == null || (activeLayers.Count == 1 && activeLayers[0] == target))
             {
+                if (target != null) PushActiveLayers();
                 return;
             }
 
@@ -103,6 +109,8 @@ namespace EatWhat.Cooking.ShortCycle
                 return false;
             }
 
+            // A handoff can push its space before Start; register the owned base first.
+            PushActiveLayers();
             layer.manualStackLayer = true;
             activeLayers.Add(layer);
             layer.OnPushLayer();

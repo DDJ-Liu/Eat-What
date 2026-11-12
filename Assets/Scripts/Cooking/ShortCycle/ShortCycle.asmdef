@@ -3,10 +3,12 @@
   "rootNamespace": "",
   "references": [
     "Generated.DataTables",
+    "ShortCycle.Core",
     "Toolkit",
     "Unity.InputSystem",
     "Unity.TextMeshPro",
-    "UnityEngine.UI"
+    "UnityEngine.UI",
+    "MiniGames.Core"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

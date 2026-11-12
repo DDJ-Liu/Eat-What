@@ -1,0 +1,87 @@
+param([Parameter(Mandatory)][string]$Name,[string]$Payload,[ValidateSet("Capture","Terminal")][string]$WaitFor,[Parameter(Mandatory)][string]$ScheduleInputPath)
+$ErrorActionPreference='Stop'
+. "$PSScriptRoot/native.ps1";EnsureLiveLease;AwaitTransitionReady
+. "$PSScriptRoot/import-consumer.ps1"
+$schedule=LLJson ([IO.File]::ReadAllBytes((LLWithin $ScheduleInputPath $out)))
+Need ($schedule.taskId-ceq'AI-000435'-and$schedule.attempt-eq3-and$schedule.executionId-ceq$ex-and$schedule.runId-ceq'a3_street435') 'Exact current same-path scheduling input'
+function SavedNative([string]$role,[switch]$WithApp){
+ $info=LLJson ([IO.File]::ReadAllBytes((LLWithin "$out/$role-info.json" $out)))
+ $receipt=LLJson ([IO.File]::ReadAllBytes((LLWithin $info.receiptPath $out)))
+ Need ($receipt.taskId-ceq'AI-000435'-and$receipt.attempt-eq3-and$receipt.executionId-ceq$ex-and$receipt.exitCode-eq0) 'Prior real managed receipt identity/exit'
+ $account=LLJson ([IO.File]::ReadAllBytes([IO.Path]::ChangeExtension($info.receiptPath,'accounting.json')))
+ Need ($account.status-ceq'RECORDED'-and$account.usageStatus-ceq'RECORDED'-and$account.finishStatus-ceq'RECORDED') 'Prior real process/usage/finish must already be recorded'
+ if($WithApp){
+  $app=LLJson ([IO.File]::ReadAllBytes((LLWithin "$out/$role-app-response.json" $out)))
+  Need ($app.exit_code-is[int]-and$app.exit_code-eq0-and$null-eq$app.session_id) 'Previous actual app object must be on disk before this native call'
+  $original=LLJson ([Text.Encoding]::UTF8.GetBytes($app.output))
+  Need ((LLCanonical $original)-ceq(LLCanonical $receipt)) 'Previous actual app output must equal real wrapper receipt'
+ }
+ $sdk=LLJson ([IO.File]::ReadAllBytes((LLWithin $receipt.stdoutPath $out)))
+ Need ((LLTrue $sdk.success)-and@($sdk.errors).Count-eq0) 'Prior actual SDK outer success required'
+ $value=$sdk.data.result
+ if($sdk.data.command-ceq'eval_file'){Need (LLTrue $value.success) 'Prior actual eval failed';$value=$value.result}
+ if($value-is[string]){$value=LLJson ([Text.Encoding]::UTF8.GetBytes($value))}
+ return [pscustomobject]@{receipt=$receipt;value=$value;sha256=(Get-FileHash $info.receiptPath).Hash}
+}
+$waitElapsed=0
+if($WaitFor){
+ Need (($Name-ceq'pendingRead'-and$WaitFor-ceq'Capture')-or($Name-ceq'complete'-and$WaitFor-ceq'Terminal')) 'Only pendingRead/complete may locally wait'
+ $localWait=[Diagnostics.Stopwatch]::StartNew()
+ . "$PSScriptRoot/wait-hint.ps1" -Until $WaitFor
+ $waitElapsed=$localWait.Elapsed.TotalSeconds
+ if($streetWaitResult.action-ceq'LOCAL_WAIT'){$streetWaitResult|ConvertTo-Json -Compress;return}
+}
+$identity=$null;$request=$null;$notice=$null;$noticeSha=$null;$capturePrior=$null
+if($Name-cin@('register','pendingRead','capture','captureAck','complete','cleanup','cancel','failureCleanup0','failureCleanup1')){
+ $identity=LLJson ([IO.File]::ReadAllBytes("$out/hint-expected.json"));$request=LLJson ([IO.File]::ReadAllBytes("$out/ci-contexts/a3_street435.request.json"))
+}
+if($Name-cin@('pendingRead','capture','captureAck')){
+ $noticePath=Join-Path $identity.probeRoot 'capture-pending.json';$noticeBytes=[IO.File]::ReadAllBytes((LLWithin $noticePath $out));$notice=LLJson $noticeBytes;$noticeSha=LLHash $noticeBytes
+ LLValidateCapturePending $notice $identity $request
+ $remaining=switch($Name){'pendingRead'{3}'capture'{2}'captureAck'{1}}
+ Street-AssertAdmission $notice $schedule $remaining
+ if($Name-cin@('capture','captureAck')){$pending=SavedNative 'pendingRead' -WithApp;Street-AssertPending $pending.value $notice $noticeSha $identity $request}
+ if($Name-ceq'captureAck'){
+  $capturePrior=SavedNative 'capture' -WithApp;$png=$capturePrior.receipt.capturePng
+  Need ($png.width-eq1024-and$png.height-eq576-and$png.source-ceq'screen'-and$png.encoding-ceq'png'-and[IO.File]::Exists($png.path)-and(Get-FileHash $png.path).Hash-ceq$png.sha256) 'Original unique native PNG must exist before ACK'
+  Need ([DateTimeOffset]::Parse($capturePrior.receipt.startedAt)-ge[DateTimeOffset]::Parse($notice.createdAt)-and[DateTimeOffset]::Parse($capturePrior.receipt.finishedAt)-le[DateTimeOffset]::Parse($notice.stageDeadlineAt)-and[DateTimeOffset]::Parse($capturePrior.receipt.finishedAt)-le[DateTimeOffset]::Parse($notice.totalDeadlineAt)) 'Actual capture outside original hold/deadline'
+ }
+}
+Need (([Security.Principal.WindowsIdentity]::GetCurrent().User.Value)-ceq'S-1-5-21-390812430-152752441-1544640939-1001') 'Approved DDJ context'
+Need (-not(Test-Path "$out/$Name-parameters.json")) 'No repeat native role'
+$argv=switch -CaseSensitive ($Name){
+ 'status' {@('status','--format','json','--non-interactive');break}
+ 'editorStatus' {@('command','editor_status','--project-path','D:\GameProject\Eat-What','--timeout','30','--format','json','--non-interactive');break}
+ 'play' {@('command','editor_play','--project-path','D:\GameProject\Eat-What','--timeout','30','--format','json','--non-interactive');break}
+ 'stop' {@('command','editor_stop','--project-path','D:\GameProject\Eat-What','--timeout','30','--format','json','--non-interactive');break}
+ 'capture' {@('command','capture_game_view','--source','screen','--width','1024','--height','576','--project-path','D:\GameProject\Eat-What','--timeout','30','--format','json','--non-interactive');break}
+ {$_-in@('consoleBefore0','consoleAfter0')} {@('command','console','--tail','2000','--since','0','--project-path','D:\GameProject\Eat-What','--timeout','30','--format','json','--non-interactive');break}
+ default {Need ($Payload-in@('preflight','savesBefore','savesAfter','ready','register','read','captureAck','postStop','cancel')) 'Fixed payload only';AssertCompiled $Payload;@('command','eval_file',"$out/$Payload.eval.cs",'--project-path','D:\GameProject\Eat-What','--timeout','30','--format','json','--non-interactive')}
+}
+$calls=@(Get-ChildItem "$out/tool-calls" -Filter '*.stdout.bin' -ErrorAction SilentlyContinue);Need ($calls.Count-lt60) 'Official total60 gate; orchestration additionally limits success57'
+if($Name-cne'status'){$target=ReadJ "$out/target.json";$p=Get-Process -Id $target.pid;$d=ReadJ 'Library/Pipeline/.unity-pipeline-port';Need ($p.StartTime.ToUniversalTime().ToString('o')-ceq$target.osStartUtc-and$d.pid-eq$target.pid-and$d.projectPath.Replace('\','/')-ceq'D:/GameProject/Eat-What'-and$d.unityVersion-ceq'6000.3.24f1'-and$d.port-eq$target.port) 'Same current Editor/descriptor';SaveJ "$out/$Name-target-proof.json" @{pid=$p.Id;osStartUtc=$target.osStartUtc;port=$target.port;at=[DateTimeOffset]::UtcNow.ToString('o')};}
+$params=@{TaskId='AI-000435';Lane='ENGINE_CLI';OwnerThreadId=$owner;ExecutionId=$ex;CommandPath='C:/Users/DDJ/AppData/Local/Unity/bin/unity.exe';ArgumentList=$argv;ToolSource='unity-official-cli';UsageCategory='task';ProgressKind=$(if($Name-in@('play','register','capture','captureAck','stop')){'WorkCompleted'}else{'Observation'});CaptureOutput=$true;OutputRoot="$out/tool-calls"}
+if($Name-ceq'capture'){$params.CapturePng=$true;$params.CaptureTargetPort=$target.port;$params.CaptureTaskOutputRoot=$taskRoot;$params.CaptureSavePath="$out/sorting.png"}
+SaveJ "$out/$Name-parameters.json" $params
+$inner='$ErrorActionPreference="Stop";$p=Get-Content -LiteralPath "'+$out+'/'+$Name+'-parameters.json" -Raw|ConvertFrom-Json -AsHashtable; & "D:/GameProject/Eat-What/DevTools/Workflow/Invoke-TaskTool.ps1" @p'
+$pi=[Diagnostics.ProcessStartInfo]::new();$pi.FileName=$ps7;$pi.UseShellExecute=$false;$pi.CreateNoWindow=$true;$pi.RedirectStandardOutput=$true;$pi.RedirectStandardError=$true;$pi.WorkingDirectory='D:/GameProject/Eat-What';foreach($a in @('-NoProfile','-Command',$inner)){$pi.ArgumentList.Add($a)}
+$p=[Diagnostics.Process]::new();$p.StartInfo=$pi;$at=[DateTimeOffset]::UtcNow;Need ($p.Start()) 'Host start';$so=[IO.File]::Create("$out/$Name-host.stdout.txt");$se=[IO.File]::Create("$out/$Name-host.stderr.txt")
+try{$co=$p.StandardOutput.BaseStream.CopyToAsync($so);$ce=$p.StandardError.BaseStream.CopyToAsync($se);$timeout=-not$p.WaitForExit(35000);if($timeout){$p.Kill();$p.WaitForExit()};[void]$co.GetAwaiter().GetResult();[void]$ce.GetAwaiter().GetResult();$exit=$p.ExitCode}finally{$so.Dispose();$se.Dispose()}
+SaveJ "$out/$Name-watchdog.json" @{startedAt=$at.ToString('o');observedAt=[DateTimeOffset]::UtcNow.ToString('o');maximumSeconds=35;timedOut=$timeout;hostExitCode=$exit}
+Need (-not$timeout-and$exit-eq0) 'STREET_NATIVE_UNKNOWN: Host failed; never replay'
+$receiptText=[IO.File]::ReadAllText("$out/$Name-host.stdout.txt");$r=$receiptText|ConvertFrom-Json -AsHashtable -DateKind String;SaveJ "$out/$Name-receipt.json" $r
+Need ($r.exitCode-eq0-and$r.taskId-ceq'AI-000435'-and$r.attempt-eq3-and$r.executionId-ceq$ex) 'STREET_NATIVE_UNKNOWN: Actual native child failure'
+$actualReceipt=$r.stdoutPath.Substring(0,$r.stdoutPath.Length-'.stdout.bin'.Length)+'.json'
+$raw=ReadCli $r.stdoutPath;Need ($raw.success-eq$true-and@($raw.errors).Count-eq0) 'Official outer failure'
+if($Name-ceq'status'){$v=$raw.data}else{Need ($raw.data.target.projectPath-ceq'D:\GameProject\Eat-What'-and$raw.data.target.host-in@('127.0.0.1','::1','localhost')-and$raw.data.target.port-eq$target.port-and$raw.command-ceq('command '+$raw.data.command)) 'Exact official target';$v=$raw.data.result}
+if($Payload){Need ($raw.data.command-ceq'eval_file'-and$v.success-eq$true-and@($v.diagnostics).Count-eq0-and$raw.data.parameters.file.Replace('\','/')-ceq"$out/$Payload.eval.cs") 'Exact eval failure';$v=$v.result}
+SaveJ "$out/$Name-result.json" $v
+$checked=$v;if($checked-is[string]){$checked=LLJson ([Text.Encoding]::UTF8.GetBytes($checked))}
+if($Name-cin@('register','pendingRead','captureAck','complete','cleanup','cancel','failureCleanup0','failureCleanup1')){Street-AssertRolePayload $Name $checked $identity $request $notice $noticeSha $r $capturePrior}
+if($Payload-ceq'ready'){Need ($checked.ready-is[bool]-and$checked.projectPath-ceq'D:\GameProject\Eat-What'-and$checked.editorPid-eq$target.pid-and$checked.editorStartedAt-ceq$target.osStartUtc) 'Actual typed current readiness result'}
+SaveJ "$out/$Name-stage-timing.json" @{nativeStartedAt=$r.startedAt;nativeFinishedAt=$r.finishedAt;hostStartedAt=$at.ToString('o');hostFinishedAt=[DateTimeOffset]::UtcNow.ToString('o');deliberateLocalWaitSeconds=$waitElapsed;forecastAppSeconds=$schedule.forecastAppSeconds;allWaitAndPersistenceStillCountInNativeOriginal120=$true;localHintProvenNativeSuccess=$false}
+$summary=@{name=$Name;receiptPath=$actualReceipt;receiptSha256=(Get-FileHash $actualReceipt).Hash;wrapperResponsePath="$out/$Name-app-response.json";resultPath="$out/$Name-result.json";nativeExitCode=$r.exitCode}
+if($Payload-in@('register','read','cancel','captureAck')){$j=if($v-is[string]){$v|ConvertFrom-Json -AsHashtable -DateKind String}else{$v};$summary.status=$j.status;$summary.pendingCapture=$j.pendingCapture;$summary.samplesSaved=$j.samplesSaved;$summary.passed=$j.passed;$summary.error=$j.error}
+SaveJ "$out/$Name-info.json" $summary
+if($Name-ceq'capture'){[IO.File]::WriteAllText("$out/capture-receipt.sha256",$summary.receiptSha256,$utf)}
+Write-Output $receiptText

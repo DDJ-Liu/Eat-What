@@ -65,6 +65,7 @@ namespace EatWhat.Cooking.ShortCycle
         public string recipe_id;
         public string tag_id;
         public string item_id;
+        public string instance_id;
         public float delta;
     }
 

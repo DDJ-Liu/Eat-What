@@ -1,5 +1,15 @@
 # 工具库 · SEC
 
+2026-11-03 AI417局部验证补齐：稳定FullProof夹具精确抽取并离线执行当前生产Request/ClaimGate/RegisterPhase/ConfirmPhase，隔离队列/监管/租约文件和模拟EditorApplication事件验证一发一回调、stop/lease/身份/PID/源码漂移、重载及异常；耗时work为桩，不代表真实Unity调度。67项Final通过，416原50项消费链与真实Editor.Project闭包编译0继续有效；生产C#/PS未改。完整证据.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000417/attempt1/。
+
+2026-11-03 AI416局部协议修复：Stage/Prepare/Readback仅以官方RPC登记一次性Editor.update主线程回调，完整四SHA、直接Authenticate/三方graph、资源输入与版本门在回调实际使用前核；另一次轻量ConfirmPhase以受管真实成功进程和固定登记/终态/结果SHA确认，注册或晚到文件不冒成功。离线Bind/Seal/Inspect同时核registration+completion双层官方envelope、原双流和RECORDED会计；Build注册前重核移入BuildPrepared回调。RPC5000ms/CLI30s/host35s不扩，耗时阶段共享600秒后继观察。合成夹具不代表Unity原生通过，证据.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000416/attempt1/。
+
+2026-11-03 AI414 BUILD-RELEASE-01 局部工具修复：`BuildReleaseEntry.SelectBuildInputFiles` 精确识别根及嵌套 Resources、StreamingAssets 的构建可见文件，并在场景/动态资源传递依赖入口统一跳过目录、拒绝缺失或链接文件；选中资源及必要 meta 进入原有 SHA 输入清单，后续 Bind/Seal/Inspect 复核不变。`FullProof.ps1` 离线编译该生产方法并在合成小目录验证覆盖与同路径字节漂移；不代表原生 Unity 依赖查询或 Build。AI413 审查缺口和旧失败保留，完整本轮证据见 `.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000414/attempt1/`。
+
+2026-11-03 AI413局部工具修复候选：AI412认证四件封存与直接Authenticate保留；新增有界编译源码/实际场景依赖/Resources/StreamingAssets及配置输入清单，Stage固定输入SHA，Build回调重核版本、准备结果、Editor PID和ProjectSettings后态；离线Seal在真实受管最终readback回执/原流/会计状态均通过后封存完成SHA，Inspect只读复核当前输入、包体与报告再返回REUSED。离线合成Fixture不等于Unity Build；原AI412独立0/3拒验保留，AI413机器结果和ENGINE交接见.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000413/attempt1/，不提升完整核验日期。
+
+2026-11-03 AI412 attempt2 BUILD-RELEASE-01 局部工具候选：`DevTools/Build-Release.ps1` 仅离线 Plan/Bind/Inspect；Unity 阶段由 `Assets/Editor/Build/BuildReleaseEntry.cs` 的 Stage/Prepare/RegisterBuild/Readback 承载，固定 ENGINE_CLI 须另获正式派发。Stage 用现 `CatalogBlobBuildProcessor.PrepareSnapshot` 后直接 `CatalogBlobSerializer.Authenticate`，与当前 Capture、staged graph、已加载 Expected 核对，封存 graph/bin/g.cs/export 四份逐字 SHA/长度；Bind 需真实受管 Stage 进程与官方 eval 回执才固定清单 SHA。准备、异步 Build 前和最终读回均复查四项及认证；Release 仅走 `BuildPrepared`。原 AI291 旧 SHA 只读保留，本轮随机 IV 不使旧 staging 成为本轮输入。CODE 真引用离线编译及隔离 runner 只能证明源码候选，尚无本卡 Unity 原生 Build/包验收；证据与完整 ENGINE 候选在 `.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000412/attempt2/`。不提升完整核验日期。
+
 2026-10-23 AI292 attempt3原生机器结果：人批四件范围+一轮续行后，Release/Dev各一次Windows x64 Mono Build成功（0 Error）；Release实际包体排除170源SO GUID、保留13 Sprite与MissingSprite，291认证blob未变。三个fresh隔离Player均受控exit0：Release169全量/Dev155可达对169基线PASS，坏副本单密文字节改动仅认证拒绝、decoded0/无fallback；数据宿主在Start前结束，存储factory实际0，不冒称业务探针或真实存档验证。四性能文件经精确初清及正常Postprocess清理，Resources目录/meta保留；5组自有pair/journal清理、10个审定源/设置文件SHA不变，删除后GUID缓存仍非空如实保留。七合同机器材料齐备，待CONTROL独立验收；A+C/USER-U5仍待人工，不提高完整核验日期。原两Fail/本根used2of5及318根因unknown保留。报告.ai-workspace/outputs/DETACH-B13-20261019/AI-000292/attempt3/REPORT.md。
 
 <a id="tk-sec-01"></a>

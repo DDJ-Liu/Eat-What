@@ -1,31 +1,23 @@
-# HorizontalPlayerController 接线说明
+# HorizontalPlayerController 与 LongLoop 行走配置说明
 
-## 用途和边界
+最后实际核对：2026-10-27；范围为 AI375 源码、旧测试场景序列化字段、番茄骨骼二进制离线解析、AI376 适配器回归，以及 AI378 实际 asmref/asmdef 归属和 Bee Legacy 编译配置的离线重放。正式街景接线与 Play 仍待 ENGINE。
 
-HorizontalPlayerController 只改世界坐标 X；它不实现跳跃、重力、平台碰撞或相机跟随。未配置 Rigidbody2D 时在 Update 中移动 Transform；配置 Rigidbody2D 时在 FixedUpdate 中调用 MovePosition，并在启用期间可冻结 Y 与旋转。
+## 正式街景入口
 
-当前 PlayerControl.inputactions 只有鼠标与 KeyboardAnyKey，没有横向移动 Action。因此无需改 Input Asset 就能先通过 InputManager 的 A/D、左右方向键事件运行；后续测试场景应优先增加并接入专用 Value Action。
+在角色根挂 LongLoopPlayerController 与 LegacyInputProvider；在使用同一番茄 SkeletonAnimation 的视觉对象挂 TomatoSpineAvatar。控制器只通过 IGameInput 读横移，只通过 IPlayerAvatar 调朝向与移动状态。StreetSceneEntry 挂在既有 Managers，显式绑定 playerController、playerSpawn_TUNE、boundaryL_TUNE、boundaryR_TUNE、gameInputProvider 和 playerAvatar；placePlayerAtSpawnOnStart 默认开启。出生时仅将角色运行时世界 X/Y 放到 Spawn，保留原 Z，不改场景里用户保存的 Transform 和任何 TUNE 标记。
 
-## Inspector 最小接线
+控制器 moveSpeed_TUNE 默认 4 世界单位/秒，非负；从旧 moveSpeed 字段通过 FormerlySerializedAs 保留已序列化值。未接 Rigidbody2D 时按 Update 的 deltaTime 只改世界 X；接入时在 FixedUpdate 调 MovePosition，可选择沿原字段冻结 Y 和旋转。边界优先读两个 TUNE Transform 的世界 X，反向摆放也归一化；缺一边时回退原型 useHorizontalBounds/minX/maxX，若也未启用则不限制。出生在界外、停止时均夹到最近边界，向外顶边视为静止，反向可离开。
 
-1. 把脚本挂到测试角色根节点。visualRoot 留空时翻转根节点；角色视觉在子节点时，把该子节点赋给 visualRoot。
-2. 设置 moveSpeed。若使用 Rigidbody2D，把同节点的 Rigidbody2D 赋给 targetRigidbody；默认冻结 Y 与旋转，保证控制器不引入垂直位移。
-3. 可选开启 useHorizontalBounds，并设置 minX/maxX。SetHorizontalBounds 可由测试代码或场景事件设置。
-4. 优先把一个 Value InputActionReference 赋给 horizontalMoveAction。该 Action 可输出 float Axis 或 Vector2，控制器只读取 X；它不要求固定 Action 名称。
-5. 未赋 Action 时，保留 useProjectInputManagerFallback 可复用现有 InputManager 的 KeyboardAnyKey 分发。仅在 InputManager 不存在时，useKeyboardFallbackWhenInputManagerMissing 才直接读取 A/D、左右键。
+将控制器 visualRoot 指向角色的视觉子对象；它按初始绝对 X 幅度切换正负，不逐帧相乘，Y/Z 缩放保持。TomatoSpineAvatar.facingVisualRoot 可留空，由控制器负责翻转；若填写，应与控制器 visualRoot 指向同一对象，避免在父子两级同时翻转。适配器首次朝向调用或自身 Awake 会只捕获一次该对象当时的绝对 X 幅度，因此两种 Awake 先后顺序均可保持非 1 幅度和 Y/Z；不需要设置脚本执行顺序。一个骨骼资源承担左右两个朝向，不复制两套；真实场景表现仍待 ENGINE Play 核。
 
-## Animator 与 Spine
+LegacyInputProvider 是新输入的旧 Input 后端：A/左箭头为 -1，D/右箭头为 +1；全松或两边同时按为 0。Interact 是按下帧，interactKey 默认 E，可在该组件 Inspector 改；MouseScreenPos 为屏幕像素坐标。UnityEngine.Input 读取仅在此后端。项目 Active Input Handling 仍为 Both，原 InputManager 与 InputAction 配置均未改。
 
-- 现有 Assets/Scripts/Spine_Package/Avatars/Sample.prefab 使用 SkeletonMecanim 与 Animator；输出角色 O4 还带 CharacterTestController。对这一路径，把 Animator 赋给 animator，按控制器实际参数配置 movingBoolName，或启用 crossFadeAnimatorStates 并填写真实 Idle/Walk 状态名。脚本不会硬编码 Sample 名称或状态名。
-- SkeletonAnimation 角色可把组件赋给 spineAnimation，再填写真实 spineIdleAnimation/spineWalkAnimation。动画名为空时该可选集成不会执行。
-- Assets/Scripts/Spine_Package/Avatars/output4/ReferenceAssets 中的 idle/walk 引用资产只是可核实的素材线索；是否与目标 SkeletonData 匹配，须在 Unity 中确认。
+TomatoSpineAvatar 的 skeletonAnimation 须接真实番茄 SkeletonData；idleAnimation 默认 idle，walkAnimation 默认 walk，trackIndex 默认 0。项目现有 skeleton.skel.bytes 用随工程的 Spine 解析器离线读取为 3.8.99，动画列表 idle/kick/walk；kick 本轮不使用。缺组件、空名或骨骼不存在该动画会明确警告，不把请求记为已切换；移动状态未变化时不会每帧重调 SetAnimation。真正加载、播放、材质和版本兼容仍需 Editor/Play 核。
 
-## ENGINE_MCP 测试场景建议
+角色整体建议挂 SortingGroup：LL_Characters / Order 500；把脚底与 PlayerSpawn_TUNE 对齐，保持角色内部 Spine draw order。NPC 预留同层 100～490 与 510～900、步长 10。以上为 ENGINE 接线建议，本 CODE 卡没有创建角色对象、改场景或移动用户建筑。
 
-1. 由后续 ENGINE_MCP 任务创建独立测试场景，不修改 Assets/Scenes/Spine Sample.unity，也不加入正式 Build Settings。
-2. 放置角色、可见背景或地面、相机、InputManager/PlayerInput 与 HorizontalPlayerController；给角色设定清晰的左右边界。
-3. 验证 A/D 和左右键：左/右移动、同时按键停止、松开停止、方向翻转；失去焦点或禁用组件后也应停止。
-4. 对 Rigidbody2D 模式检查 Y 坐标与 Rotation 不变化；对 Transform 模式检查脚本只写 position.x。
-5. 若接 Animator 或 Spine，分别检查 Idle/Walk 切换、缺失可选引用不会报 NullReference，以及 Console 没有新增 Error。
+## 旧原型入口
 
-`Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity` 对 `Sample.prefab` 的 `SampleAvatar/MeshRenderer` 使用 `SpineRuntimeMeshRendererBootstrap`：Renderer 在场景中序列化为禁用，组件在 `Start` 再启用。这样可以避开 Unity 进入 Play 时恢复场景备份、但 Spine 尚未重建编辑态动态网格的短暂窗口。该门控仅用于测试场景实例，不应回写共享 `Sample.prefab`。
+原 Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity 仍以 GUID 9891532ed6bf1f74b88fae5197cae55b 引用全局 HorizontalPlayerController。该类留在原路径，受 Controller/Legacy.asmref 归入 Legacy 程序集；Legacy.asmdef 现显式引用 LongLoop，继承 LongLoopPlayerController，旧 InputAction、InputManager 事件、Keyboard 回退和 Animator/可选 Spine 字段保留；运动与边界计算只用正式基类。旧测试场景的 Animator 指向 Sample.prefab，状态字段为 idle/walk；spineAnimation 和两 Spine 名字段为空，不能称已接番茄动画。SampleAvatar/MeshRenderer 的 SpineRuntimeMeshRendererBootstrap 仅供该原型场景使用，不回写共享 Sample.prefab。AI378 的49源真实 Legacy 编译配置离线通过，Unity 实际导入、旧字段反序列化及 Play 尚待原 AI377 正式续行核验。
+
+ENGINE 需在 Editor 核旧 GUID 组件与 moveSpeed 6.5 等已存字段由基类/FormerlySerializedAs 正确读取；Play 检查 A/D、方向键、双键中性、松键停、失焦/禁用停、左右夹紧、世界 Y/Z 与非 X 缩放、idle/walk 转换及 Console。正式街景另核新脚本 meta 导入、真实 Tomato 骨骼引用、SortingGroup/Spawn/Boundaries 和一次截图。

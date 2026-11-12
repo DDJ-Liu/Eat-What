@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a992866c94a4283938b94488664eae7, type: 3}
+  m_Name: CameraFollowConfig
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.Configuration.CameraFollowConfig
+  deadZoneWidth: 0.05
+  deadZoneHeight: 0.2
+  dampingX: 0.4
+  dampingY: 0.25
+  stoppedSpeedMultiplier: 0.6
+  lookahead: 3.5
+  lookaheadTime: 0.8
+  maxHorizontalOffset: 8
+  recenterDelay: 0.8
+  recenterSpeed: 0.65
+  recenterRampTime: 0.25
+  recenterCurve: 2
+  verticalSpeedThreshold: 1
+  maxVerticalOffset: 1.5
+  verticalOffsetInTime: 0.3
+  verticalOffsetOutTime: 0.4
+  verticalOffsetCurve: 2
+  dynamicZoomEnabled: 1
+  orthoSizeMin: 7.2
+  orthoSizeMax: 8.3
+  moveSpeedThreshold: 0.5
+  expandTime: 1.2
+  expandCurve: 3
+  shrinkTime: 1.5
+  shrinkCurve: 3
+  freezeOnOverride: 1
+  lookFloatEnabled: 1
+  edgeZoneRatio: 0.25
+  lookResponseCurve: 1
+  lookInTime: 0.35
+  lookOutTime: 0.5
+  gamepadLookAxis: 0

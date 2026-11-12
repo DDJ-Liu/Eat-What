@@ -33,15 +33,15 @@ namespace EatWhat.Cooking.ShortCycle
             registry.Register(ShortCycleActionNames.Return, HandleReturn);
             registry.Register(ShortCycleActionNames.AdvanceToPhase2, HandleAdvanceToPhase2);
             registry.Register(ShortCycleActionNames.Escape, HandleEscape);
-            registry.Register(ShortCycleActionNames.TrayHighlightEnter, HandleNotImplemented);
-            registry.Register(ShortCycleActionNames.TrayHighlightExit, HandleNotImplemented);
-            registry.Register(ShortCycleActionNames.TrayToggleDetail, HandleNotImplemented);
-            registry.Register(ShortCycleActionNames.FridgeFilter, HandleNotImplemented);
-            registry.Register(ShortCycleActionNames.FridgeTidy, HandleNotImplemented);
+            registry.Register(ShortCycleActionNames.TrayHighlightEnter, HandleTrayHighlightEnter);
+            registry.Register(ShortCycleActionNames.TrayHighlightExit, HandleTrayHighlightExit);
+            registry.Register(ShortCycleActionNames.TrayToggleDetail, HandleTrayToggleDetail);
+            registry.Register(ShortCycleActionNames.FridgeFilter, HandleFridgeFilter);
+            registry.Register(ShortCycleActionNames.FridgeTidy, HandleFridgeTidy);
             registry.Register(ShortCycleActionNames.FridgeScroll, HandleFridgeScroll);
-            registry.Register(ShortCycleActionNames.InventoryTake, HandleNotImplemented);
-            registry.Register(ShortCycleActionNames.InventoryPutBack, HandleNotImplemented);
-            registry.Register(ShortCycleActionNames.EquipmentOpenEntry, HandleNotImplemented);
+            registry.Register(ShortCycleActionNames.InventoryTake, HandleInventoryTake);
+            registry.Register(ShortCycleActionNames.InventoryPutBack, HandleInventoryPutBack);
+            registry.Register(ShortCycleActionNames.EquipmentOpenEntry, HandleEquipmentOpenEntry);
             var gate = inputLockController == null ? new ShortCycleInputGate() : inputLockController.Gate;
             dispatcher = new ShortCycleActionDispatcher(registry, gate);
         }
@@ -165,13 +165,22 @@ namespace EatWhat.Cooking.ShortCycle
             return coordinator.ScrollFridgeTier(request.delta < 0f ? -1 : 1);
         }
 
-        private ShortCycleActionResult HandleNotImplemented(ShortCycleActionRequest request)
-        {
-            var actionName = request == null ? string.Empty : request.ActionName;
-            Debug.LogWarning("CK01-K NOT_IMPLEMENTED action=" + actionName, this);
-            return ShortCycleActionResult.NotImplemented(actionName);
-        }
-
+        private ShortCycleActionResult HandleTrayHighlightEnter(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TrySetTrayView(ShortCycleTrayView.Highlight); }
+        private ShortCycleActionResult HandleTrayHighlightExit(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TrySetTrayView(ShortCycleTrayView.Collapsed); }
+        private ShortCycleActionResult HandleTrayToggleDetail(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TryToggleTrayDetail(); }
+        private ShortCycleActionResult HandleFridgeFilter(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TryFilterFridge(request == null ? null : request.tag_id); }
+        private ShortCycleActionResult HandleFridgeTidy(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TryTidyFridge(); }
+        private ShortCycleActionResult HandleInventoryTake(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TryTakeItem(request == null ? null : request.item_id, request == null ? null : request.instance_id); }
+        private ShortCycleActionResult HandleInventoryPutBack(ShortCycleActionRequest request)
+        { return coordinator == null ? ShortCycleActionResult.Failure("Coordinator unavailable.") : coordinator.TryPutBackItem(request == null ? null : request.item_id, request == null ? null : request.instance_id); }
+        private ShortCycleActionResult HandleEquipmentOpenEntry(ShortCycleActionRequest request)
+        { return ToActionResult(coordinator == null ? null : coordinator.TryOpenEquipmentEntry()); }
         private static ShortCycleActionResult ToActionResult(ShortCycleTransitionResult transition)
         {
             if (transition == null) return ShortCycleActionResult.Failure("Short-cycle session coordinator is unavailable.");

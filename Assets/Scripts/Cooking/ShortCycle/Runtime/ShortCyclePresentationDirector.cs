@@ -43,7 +43,13 @@ namespace EatWhat.Cooking.ShortCycle
             new Dictionary<ShortCyclePresentationSet, VisibilityChange>();
         private int presentationChangeDepth;
 
+        private ShortCycleSpace phase2Owner;
+        private ShortCyclePhase2View phase2BaseBeforeModal;
+        private bool phase2StapleBeforeModal;
         public bool Phase2TransitionActive { get; private set; }
+        public bool Phase2ViewActive { get { return phase2Owner != null; } }
+        public ShortCyclePhase2View Phase2View { get { return phase2Owner == null ? ShortCyclePhase2View.Overview : phase2Owner.Phase2View; } }
+        public ShortCyclePhase2Overlay Phase2Overlay { get { return phase2Owner == null ? ShortCyclePhase2Overlay.None : phase2Owner.Phase2Overlay; } }
         public int Generation { get { return generation; } }
         public void BeginPresentationChange()
         {
@@ -63,6 +69,13 @@ namespace EatWhat.Cooking.ShortCycle
 
         public void LeaveSpace(ShortCycleSpaceId space)
         {
+            if (space == ShortCycleSpaceId.Phase2 && phase2Owner != null)
+            {
+                if (interactionLayerStack != null && interactionLayerStack.IsTop(phase2Owner.Phase2ModalLayer))
+                    interactionLayerStack.Pop(phase2Owner.Phase2ModalLayer);
+                phase2Owner.ClearPhase2State();
+                phase2Owner = null;
+            }
             OwnVisibility();
             generation++;
             pendingDeparture = space;
@@ -85,7 +98,8 @@ namespace EatWhat.Cooking.ShortCycle
             var isCrossSpace = pendingDeparture.HasValue && pendingDeparture.Value != space;
             pendingDeparture = null;
 
-            if (target != null && interactionLayerStack != null)
+            if (target != null && interactionLayerStack != null &&
+                !interactionLayerStack.Contains(target.SpaceLayer))
                 interactionLayerStack.Push(target.SpaceLayer);
 
             if (target == null)
@@ -97,6 +111,14 @@ namespace EatWhat.Cooking.ShortCycle
             if (!hadDeparture)
                 foreach (var traveler in travelingElements ?? new ShortCycleTravelingElement[0])
                     if (traveler != null) traveler.SnapTo(space);
+
+            if (space == ShortCycleSpaceId.Phase2)
+            {
+                // P2 is a separate one-camera scene; its view changes never request a P0 slot.
+                target.ArriveFocus();
+                MergeVisibility();
+                return;
+            }
 
             if (!isCrossSpace)
             {
@@ -121,6 +143,155 @@ namespace EatWhat.Cooking.ShortCycle
             MergeVisibility();
             if (!RequestPan(target.CameraSlot, () => CompleteArrival(requestGeneration, target)))
                 CompleteArrival(requestGeneration, target);
+        }
+
+        public bool TryValidatePhase2Configuration(ShortCyclePresentationSet detailSet, out string error)
+        {
+            ShortCycleSpace target = null;
+            foreach (var candidate in spaces ?? new ShortCycleSpace[0])
+            {
+                if (candidate == null || candidate.SpaceId != ShortCycleSpaceId.Phase2) continue;
+                if (target != null) { error = "P2 has duplicate Space bindings."; return false; }
+                target = candidate;
+            }
+            if (target == null) { error = "P2 Space binding is missing."; return false; }
+            if (!target.TryValidatePhase2Table(out error)) return false;
+            ShortCyclePresentationSet configuredDetail;
+            if (!target.TryGetPhase2Set(ShortCyclePhase2SetRole.AreaDetail, out configuredDetail) ||
+                configuredDetail != detailSet)
+            { error = "P2 AreaDetail binding does not match the single viewTable Set."; return false; }
+            if (interactionLayerStack == null || interactionLayerStack.Count < 1 ||
+                interactionLayerStack.Top == null)
+            { error = "P2 input layer stack requires a live base layer."; return false; }
+            error = null; return true;
+        }
+
+        public bool TryEnterPhase2(out string error)
+        {
+            if (phase2Owner != null)
+            { error = "P2 presentation is already active."; return false; }
+            ShortCycleSpace target = null;
+            foreach (var candidate in spaces ?? new ShortCycleSpace[0])
+            {
+                if (candidate == null || candidate.SpaceId != ShortCycleSpaceId.Phase2) continue;
+                if (target != null) { error = "P2 has duplicate Space bindings."; return false; }
+                target = candidate;
+            }
+            if (target == null) { error = "P2 Space binding is missing."; return false; }
+            if (!target.TryValidatePhase2Table(out error)) return false;
+            if (interactionLayerStack == null || interactionLayerStack.Count < 1 ||
+                !interactionLayerStack.Push(target.SpaceLayer))
+            { error = "P2 input layer is unavailable or already stacked."; return false; }
+            phase2Owner = target;
+            target.SetPhase2State(ShortCyclePhase2View.Overview, ShortCyclePhase2Overlay.None, false, false);
+            EnterSpace(ShortCycleSpaceId.Phase2);
+            error = null; return true;
+        }
+
+        public bool TrySetPhase2View(ShortCyclePhase2View next, out string error)
+        {
+            if (!Phase2Ready(out error)) return false;
+            if (!Enum.IsDefined(typeof(ShortCyclePhase2View), next))
+            { error = "Invalid P2 view."; return false; }
+            var current = phase2Owner.Phase2View;
+            if (current == next)
+            { error = "P2 view is already active."; return false; }
+            if (next == ShortCyclePhase2View.Interaction || next == ShortCyclePhase2View.MiniGame)
+            {
+                if (current != ShortCyclePhase2View.AreaDetail ||
+                    !interactionLayerStack.Push(phase2Owner.Phase2ModalLayer))
+                { error = "P2 processing modal requires AreaDetail and a free modal layer."; return false; }
+                phase2BaseBeforeModal = current;
+                phase2StapleBeforeModal = phase2Owner.Phase2Staple;
+            }
+            else if (current == ShortCyclePhase2View.Interaction || current == ShortCyclePhase2View.MiniGame)
+            {
+                if (next != phase2BaseBeforeModal ||
+                    !interactionLayerStack.Pop(phase2Owner.Phase2ModalLayer))
+                { error = "P2 processing modal must finish to its original base view."; return false; }
+            }
+            else if (current != ShortCyclePhase2View.Overview && current != ShortCyclePhase2View.AreaDetail)
+            { error = "P2 view cannot change from an invalid base."; return false; }
+            OwnVisibility();
+            phase2Owner.SetPhase2State(next, ShortCyclePhase2Overlay.None, false,
+                next == ShortCyclePhase2View.AreaDetail &&
+                    (current == ShortCyclePhase2View.Interaction || current == ShortCyclePhase2View.MiniGame) &&
+                    phase2StapleBeforeModal);
+            MergeVisibility();
+            error = null; return true;
+        }
+
+        public bool TrySetPhase2Overlay(ShortCyclePhase2Overlay overlay, out string error)
+        {
+            if (!Phase2Ready(out error, true)) return false;
+            if (!Enum.IsDefined(typeof(ShortCyclePhase2Overlay), overlay))
+            { error = "Invalid P2 overlay."; return false; }
+            var current = phase2Owner.Phase2Overlay;
+            if (overlay == current)
+            { error = "P2 overlay is already in that state."; return false; }
+            if (overlay != ShortCyclePhase2Overlay.None)
+            {
+                if (current != ShortCyclePhase2Overlay.None ||
+                    !interactionLayerStack.Push(phase2Owner.Phase2ModalLayer))
+                { error = "P2 overlay requires a free modal layer."; return false; }
+            }
+            else if (!interactionLayerStack.Pop(phase2Owner.Phase2ModalLayer))
+            { error = "P2 overlay is not the top input layer."; return false; }
+            OwnVisibility();
+            phase2Owner.SetPhase2State(phase2Owner.Phase2View, overlay, false, phase2Owner.Phase2Staple);
+            MergeVisibility();
+            error = null; return true;
+        }
+
+        public bool TrySetPhase2Transition(bool active, out string error)
+        {
+            if (phase2Owner == null || interactionLayerStack == null)
+            { error = "P2 presentation is not active."; return false; }
+            if (!phase2Owner.TryValidatePhase2Table(out error)) return false;
+            if (phase2Owner.Phase2Transition == active ||
+                phase2Owner.Phase2Overlay != ShortCyclePhase2Overlay.None ||
+                phase2Owner.Phase2View == ShortCyclePhase2View.Interaction ||
+                phase2Owner.Phase2View == ShortCyclePhase2View.MiniGame)
+            { error = "P2 transition is reentrant or blocked by a modal."; return false; }
+            if (active ? !interactionLayerStack.Push(phase2Owner.Phase2ModalLayer) :
+                !interactionLayerStack.Pop(phase2Owner.Phase2ModalLayer))
+            { error = "P2 transition input layer is unavailable."; return false; }
+            OwnVisibility();
+            phase2Owner.SetPhase2State(phase2Owner.Phase2View, ShortCyclePhase2Overlay.None, active, phase2Owner.Phase2Staple);
+            MergeVisibility();
+            error = null; return true;
+        }
+
+        public bool TrySetPhase2StapleBubble(bool visible, out string error)
+        {
+            if (!Phase2Ready(out error)) return false;
+            if (phase2Owner.Phase2View != ShortCyclePhase2View.AreaDetail)
+            { error = "P2 staple condition is only valid in AreaDetail."; return false; }
+            OwnVisibility();
+            phase2Owner.SetPhase2State(phase2Owner.Phase2View, ShortCyclePhase2Overlay.None, false, visible);
+            MergeVisibility();
+            error = null; return true;
+        }
+
+        public bool TryCanNavigatePhase2(out string error)
+        {
+            return Phase2Ready(out error);
+        }
+
+        private bool Phase2Ready(out string error, bool allowOverlay = false)
+        {
+            if (phase2Owner == null || interactionLayerStack == null)
+            { error = "P2 presentation is not active."; return false; }
+            if (!phase2Owner.TryValidatePhase2Table(out error)) return false;
+            if (phase2Owner.Phase2Transition ||
+                (!allowOverlay && phase2Owner.Phase2Overlay != ShortCyclePhase2Overlay.None) ||
+                !interactionLayerStack.Contains(phase2Owner.SpaceLayer) ||
+                (phase2Owner.Phase2Overlay == ShortCyclePhase2Overlay.None &&
+                 (phase2Owner.Phase2View == ShortCyclePhase2View.Overview ||
+                  phase2Owner.Phase2View == ShortCyclePhase2View.AreaDetail) &&
+                 !interactionLayerStack.IsTop(phase2Owner.SpaceLayer)))
+            { error = "P2 view is blocked by a transition, overlay or lost input layer."; return false; }
+            error = null; return true;
         }
 
         public void ShowView(ShortCycleSpaceId space, ShortCyclePhase0View view)
@@ -181,6 +352,7 @@ namespace EatWhat.Cooking.ShortCycle
         public void ClearSessionPresentation()
         {
             Phase2TransitionActive = false;
+            if (phase2Owner != null) { phase2Owner.ClearPhase2State(); phase2Owner = null; }
             generation++;
             CancelTimedVisibility();
             presentationChangeDepth = 0;
@@ -269,7 +441,8 @@ namespace EatWhat.Cooking.ShortCycle
             }
             foreach (var request in activationRequests)
             {
-                var persistentVisual = request.Key.KeepVisualActiveAcrossSpaces;
+                var persistentVisual = request.Key.KeepVisualActiveAcrossSpaces &&
+                    (phase2Owner == null || !phase2Owner.IsPhase2Set(request.Key));
                 var visible = !Phase2TransitionActive && (request.Value || persistentVisual) &&
                     (persistentVisual || visualOnlyRequests.Contains(request.Key) ||
                         preparingRequests.Contains(request.Key) ||
@@ -306,7 +479,8 @@ namespace EatWhat.Cooking.ShortCycle
             foreach (var request in activationRequests)
             {
                 var set = request.Key;
-                var desired = request.Value || set.KeepVisualActiveAcrossSpaces;
+                var desired = request.Value || (set.KeepVisualActiveAcrossSpaces &&
+                    (phase2Owner == null || !phase2Owner.IsPhase2Set(set)));
                 if (!set.HasVisibilityRequest || set.IsVisibilityRequested == desired)
                 {
                     set.ApplyVisibility(desired, false);

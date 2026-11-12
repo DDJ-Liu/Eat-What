@@ -18,6 +18,41 @@ public static class ShortCycleLayoutAudit
 {
     private const string ShortCycleStaticFontPath =
         "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset";
+    private const string ShortCycleFallbackFontPath =
+        "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
+
+    // These paths are the set-owned interaction contract, including the clue-board
+    // hit area added after the original thirteen-gate takeover audit.
+    private static readonly string[] ExpectedStateGatePaths =
+    {
+        "Shared/StepDetailModal/CloseStepDetail_Button_AIGC",
+        "Shared/ClueBoard_Group/ClueBoard_HitArea",
+        "Shared/ClueBoard_Group/Expand_Group/CloseClueBoard_Button_AIGC",
+        "Spaces/Phase0_RecipeBook/Browse_Group/LeftPage/StepDetail_Button",
+        "Spaces/Phase0_RecipeBook/CatalogTab_Button_TUNE",
+        "Spaces/Phase0_RecipeBook/Cover_Group/OpenCover_Button_AIGC",
+        "Spaces/Phase0_RecipeBook/Browse_Group/LeftPage/StartCooking_Button",
+        "Spaces/Phase0_RecipeBook/Browse_Group/LeftPage/Favorite_Button_AIGC",
+        "Spaces/Phase0_RecipeBook/Escape_Button_TUNE",
+        "Spaces/Phase0_RecipeBook/ClueBoardShell_PageGuardSet/OutsideClose_HitArea",
+        "Spaces/Phase0_RecipeBook/Catalog_Group/CatalogGrid_Left/CatalogCard_02",
+        "Spaces/Phase0_RecipeBook/Catalog_Group/CloseCatalog_Button_AIGC",
+        "Spaces/Phase1_Kitchen/Tray_Group/GoDog_Button_TUNE",
+        "Spaces/Phase1_Kitchen/Return_Button_TUNE"
+    };
+
+    // GRID-01 explicitly retained these seven Phase1 filter gates. Other instances
+    // of the pre-takeover component remain a conflict.
+    private static readonly string[] ExpectedFilterGatePaths =
+    {
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_01",
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_02",
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_03",
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_04",
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_05",
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_05/FilterTag_06_TUNE",
+        "Spaces/Phase1_Kitchen/FridgeCat_Group/FilterBar_TUNE/FilterTag_05/FilterTag_07_TUNE"
+    };
 
     private static readonly string[] ExpectedRoots =
     {
@@ -96,22 +131,22 @@ public static class ShortCycleLayoutAudit
         var spacesStaticFontValid = spacesTmp.Length > 0 &&
             AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(ShortCycleStaticFontPath) != null &&
             spacesStaticFontMismatchPaths.Length == 0;
-        var heavyTmp = tmpScopeObjects
-            .SelectMany(go => go.GetComponents<TextMeshPro>())
-            .Where(label => label != null && label.font != null &&
-                label.font.name == "ShortCycle_Heavy_WithFallback")
-            .Distinct()
-            .ToArray();
         var allWorldTmp = tmpScopeObjects
             .SelectMany(go => go.GetComponents<TextMeshPro>())
             .Where(label => label != null)
             .Distinct()
             .ToArray();
-        var heavyTmpRenderers = heavyTmp
+        var worldTmpFontMismatchPaths = allWorldTmp
+            .Where(label => !WorldTmpFontAllowed(GetPath(label.gameObject),
+                AssetDatabase.GetAssetPath(label.font)))
+            .Select(label => GetPath(label.gameObject))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        var heavyTmpRenderers = allWorldTmp
             .Select(label => label.GetComponent<MeshRenderer>())
             .ToArray();
         var heavyTmpRendererMissing = heavyTmpRenderers.Count(renderer => renderer == null);
-        var heavyTmpRendererDisabledPaths = heavyTmp
+        var heavyTmpRendererDisabledPaths = allWorldTmp
             .Where(label =>
             {
                 var renderer = label.GetComponent<MeshRenderer>();
@@ -121,10 +156,10 @@ public static class ShortCycleLayoutAudit
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
         var heavyTmpRendererEnabled = heavyTmpRenderers.Count(renderer => renderer != null && renderer.enabled);
-        var heavyTmpRendererEnabledValid = heavyTmp.Length > 0 &&
-            heavyTmp.Length == allWorldTmp.Length &&
-            heavyTmpRendererMissing == 0 && heavyTmpRendererDisabledPaths.Length == 0 &&
-            heavyTmpRendererEnabled == heavyTmp.Length;
+        var heavyTmpRendererEnabledValid = WorldTmpRendererContractValid(
+            allWorldTmp.Length, worldTmpFontMismatchPaths.Length,
+            heavyTmpRendererMissing, heavyTmpRendererDisabledPaths.Length,
+            heavyTmpRendererEnabled);
 
         var director = all.Select(go => go.GetComponent<EatWhat.Cooking.ShortCycle.ShortCyclePresentationDirector>())
             .FirstOrDefault(component => component != null);
@@ -155,19 +190,18 @@ public static class ShortCycleLayoutAudit
             "CameraAndStageMarkers/CamMarker_Phase0_Center_TUNE");
         var rightMarker = all.SingleOrDefault(go => GetPath(go) ==
             "CameraAndStageMarkers/CamMarker_RightReserved_TUNE");
-        var fourMarkerPositionsValid =
-            HasWorldX(phase1Marker, -25.6f) &&
-            HasWorldX(phase0LeftMarker, -12.8f) &&
-            HasWorldX(phase0CenterMarker, 0f) &&
-            HasWorldX(rightMarker, 25.6f);
+        var fourMarkerPositionsValid = phase1Marker != null && phase0LeftMarker != null &&
+            phase0CenterMarker != null && rightMarker != null &&
+            MarkerCoordinatesValid(phase1Marker.transform.position.x,
+                phase0LeftMarker.transform.position.x, phase0CenterMarker.transform.position.x,
+                rightMarker.transform.position.x);
         var clueAnchorPhase0 = all.SingleOrDefault(go => GetPath(go) ==
             "CameraAndStageMarkers/ClueBoardAnchor_Phase0_TUNE");
         var clueAnchorPhase1 = all.SingleOrDefault(go => GetPath(go) ==
             "CameraAndStageMarkers/ClueBoardAnchor_Phase1");
-        var clueAnchorsValid = HasWorldX(clueAnchorPhase0, -19.2f) &&
-            HasWorldX(clueAnchorPhase1, -19.2f) &&
-            Vector3.Distance(clueAnchorPhase0.transform.position,
-                clueAnchorPhase1.transform.position) <= 0.0001f;
+        var clueAnchorsValid = clueAnchorPhase0 != null && clueAnchorPhase1 != null &&
+            ClueAnchorCoordinatesValid(clueAnchorPhase0.transform.position,
+                clueAnchorPhase1.transform.position);
         var clueHitArea = all.SingleOrDefault(go => GetPath(go) ==
             "Shared/ClueBoard_Group/ClueBoard_HitArea");
         var clueHitBinding = clueHitArea == null
@@ -189,12 +223,26 @@ public static class ShortCycleLayoutAudit
         var legacyOpenButtonRetired = legacyOpenButton != null &&
             legacyOpenButton.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleMouseActionBinding>() == null &&
             legacyOpenButton.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleStateGatedInteraction>() == null;
+        var filterGates = all.SelectMany(go =>
+            go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleActionButtonStateGate>()).ToArray();
+        var filterGatePaths = filterGates.Select(gate => GetPath(gate.gameObject)).ToArray();
+        var filterGatePathsValid = HasExactPaths(filterGatePaths, ExpectedFilterGatePaths);
+        var filterGateWiringValid = filterGates.All(gate => gate.enabled &&
+            IsConnected(gate, "sessionManager") &&
+            GetArraySize(gate, "gatedBehaviours") == 2 &&
+            GetConnectedArrayCount(gate, "gatedBehaviours") == 2 &&
+            GetEnumValue(gate, "requiredPhase") == (int)EatWhat.Cooking.ShortCycle.ShortCyclePhase.Phase1 &&
+            !GetBool(gate, "requirePhase0View") &&
+            gate.GetComponent<Button_MouseInteract>() != null &&
+            gate.GetComponent<EatWhat.Cooking.ShortCycle.ShortCycleMouseActionBinding>() != null);
         var legacyGateCount = all.Sum(go =>
-            go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleActionButtonStateGate>().Length +
             go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleOverflowVisibilityGate>().Length +
             go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleScenePresenter>().Length);
-        var stateGateCount = all.Sum(go =>
-            go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleStateGatedInteraction>().Length);
+        var stateGates = all.SelectMany(go =>
+            go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCycleStateGatedInteraction>()).ToArray();
+        var stateGateCount = stateGates.Length;
+        var stateGatePathsValid = HasExactPaths(stateGates.Select(gate => GetPath(gate.gameObject)),
+            ExpectedStateGatePaths) && stateGates.All(gate => gate.enabled);
         var presentationSets = all
             .SelectMany(go => go.GetComponents<EatWhat.Cooking.ShortCycle.ShortCyclePresentationSet>())
             .Where(component => component != null)
@@ -279,7 +327,8 @@ public static class ShortCycleLayoutAudit
             IsConnected(session, "clueBoardBinder");
         var layerTakeoverValid = layerStack != null && !IsConnected(layerStack, "sessionManager");
         var takeoverValid = rootOrderValid && targetSetsValid && clueParentValid &&
-            legacyGateCount == 0 && stateGateCount == 13 && presentationSetsValid &&
+            GateContractsValid(legacyGateCount, filterGatePathsValid,
+                filterGateWiringValid, stateGatePathsValid) && presentationSetsValid &&
             spaceCount == 4 && localizedTextCount >= 19 && hostCount == 1 &&
             directorWiringValid && sessionWiringValid && layerTakeoverValid &&
             heavyTmpRendererEnabledValid && tmpOverflowValid && fridgeCapacityValid &&
@@ -301,7 +350,9 @@ public static class ShortCycleLayoutAudit
             " spacesStaticFontMismatches=" + spacesStaticFontMismatchPaths.Length +
             " spacesStaticFontMismatchPaths=" + string.Join("|", spacesStaticFontMismatchPaths) +
             " spacesStaticFontValid=" + spacesStaticFontValid +
-            " heavyTMP=" + heavyTmp.Length +
+            " heavyTMP=" + allWorldTmp.Length +
+            " worldTmpFontMismatch=" + worldTmpFontMismatchPaths.Length +
+            " worldTmpFontMismatchPaths=" + string.Join("|", worldTmpFontMismatchPaths) +
             " heavyTMPRenderersEnabled=" + heavyTmpRendererEnabled +
             " heavyTMPRendererMissing=" + heavyTmpRendererMissing +
             " heavyTMPRendererDisabled=" + heavyTmpRendererDisabledPaths.Length +
@@ -330,6 +381,10 @@ public static class ShortCycleLayoutAudit
             " fixT5ViewportAnchorInvalidPaths=" + string.Join("|", invalidViewportAnchorPaths) +
             " kTargetSets=" + string.Join("|", targetSetCounts) +
             " kStateGates=" + stateGateCount +
+            " kStateGatePathsValid=" + stateGatePathsValid +
+            " kApprovedFilterGates=" + filterGates.Length +
+            " kFilterGatePathsValid=" + filterGatePathsValid +
+            " kFilterGateWiringValid=" + filterGateWiringValid +
             " kLegacyG26=" + legacyGateCount +
             " kLocalizedText=" + localizedTextCount +
             " kDemoFridgeCapacity=" + demoCapacity +
@@ -416,6 +471,59 @@ public static class ShortCycleLayoutAudit
         var property = new SerializedObject(target).FindProperty(propertyName);
         return property != null && property.propertyType == SerializedPropertyType.Boolean &&
             property.boolValue;
+    }
+
+    private static int GetEnumValue(UnityEngine.Object target, string propertyName)
+    {
+        if (target == null) return -1;
+        var property = new SerializedObject(target).FindProperty(propertyName);
+        return property != null && property.propertyType == SerializedPropertyType.Enum
+            ? property.intValue : -1;
+    }
+
+    internal static bool WorldTmpFontAllowed(string objectPath, string fontPath)
+    {
+        if (string.IsNullOrEmpty(objectPath)) return false;
+        if (objectPath.StartsWith("Spaces/", StringComparison.Ordinal))
+            return fontPath == ShortCycleStaticFontPath;
+        return objectPath.StartsWith("Shared/", StringComparison.Ordinal) &&
+            (fontPath == ShortCycleStaticFontPath || fontPath == ShortCycleFallbackFontPath);
+    }
+
+    internal static bool WorldTmpRendererContractValid(
+        int worldCount, int fontMismatches, int missing, int disabled, int enabled)
+    {
+        return worldCount > 0 && fontMismatches == 0 && missing == 0 &&
+            disabled == 0 && enabled == worldCount;
+    }
+
+    internal static bool HasExactPaths(IEnumerable<string> actual, IEnumerable<string> expected)
+    {
+        var actualPaths = actual.OrderBy(path => path, StringComparer.Ordinal).ToArray();
+        var expectedPaths = expected.OrderBy(path => path, StringComparer.Ordinal).ToArray();
+        return actualPaths.SequenceEqual(expectedPaths, StringComparer.Ordinal);
+    }
+
+    internal static bool GateContractsValid(int legacyCount, bool filterPaths,
+        bool filterWiring, bool statePaths)
+    {
+        return legacyCount == 0 && filterPaths && filterWiring && statePaths;
+    }
+
+    internal static bool MarkerCoordinatesValid(float phase1, float phase0Left,
+        float phase0Center, float right)
+    {
+        return Math.Abs(phase1 + 25.6f) <= 0.0001f &&
+            Math.Abs(phase0Left + 9.6f) <= 0.0001f &&
+            Math.Abs(phase0Center) <= 0.0001f &&
+            Math.Abs(right - 25.6f) <= 0.0001f;
+    }
+
+    internal static bool ClueAnchorCoordinatesValid(Vector3 phase0, Vector3 phase1)
+    {
+        return Math.Abs(phase0.x + 16.39f) <= 0.0001f &&
+            Math.Abs(phase1.x + 16.39f) <= 0.0001f &&
+            Vector3.Distance(phase0, phase1) <= 0.0001f;
     }
 
     private static bool HasValidViewportCoordinates(CameraViewportAnchor anchor)

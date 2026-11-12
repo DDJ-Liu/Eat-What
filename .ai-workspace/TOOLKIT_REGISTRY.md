@@ -1,6 +1,20 @@
+2026-11-12 AI480局部交付：TK-WF-03既有Invoke-TaskTool新增StandardPreflightPath，实际复用Preflight-Standard.ps1五组及场景/指定SHA/Console守卫；旧对象dirty/逐字/时间戳字面/listener/Begin仅warning。正式停止、错误目标、未知未保存成果和平台拒绝不降级。没有新TK/队列/身份框架；Case StandardPreflight与CLI黄金/Grant/QueueWriter/FailureUsage定向回归，原生待独立AI481。具体源映射、缺口及schema见outputs/INFRA-011-20261109/AI-000480/attempt1/ENGINE-HANDOFF.md、ROUTE-MAP.md和toolkit/WF.md；不宣全仓旧历史比较器已移除。
+
+2026-11-12 AI478局部交付：TK-WF-03既有Invoke-TaskTool新增显式ProjectGrantPath/WriteIntentPath项目层校验；正式pin/原文完整性/当前执行/scope及原479动作名兼容，非平台批准，不防未声明写集合。原共享传输计量保持，独立S40前不作其他新写入口；Case Grant及CLI黄金/QueueWriter/FailureUsage离线通过。schema/具体SDK/API载体见outputs/INFRA-011-20261109/AI-000478/attempt1/ENGINE-HANDOFF.md与toolkit/WF.md，不新TK/框架。
+
 # 可复用工具库登记表 · 兼容入口
 
+2026-10-28 AI380 局部扩展 [TK-INT-19](toolkit/INT.md#tk-int-19)：同一输入文件新增可选 `INavigationInput.BackPressed`，`LegacyInputProvider` 将 Escape 按下帧映射到该接口；原 `IGameInput` 三属性未改。`SceneFlow` 只消费接口，真实 Boot 接线和 Play 待 ENGINE。
+
+2026-10-24 AI349 续修 PROBE-CI-01 Editor 会话归属：既有 ShortCycleProbeCi 现将结果路径归属与 Launcher 清理归属分开，凭本次 Arm 尝试及 Launcher 的 task/run/root/活动证据才 Stop，身份未知或改变时保全。既有 Test-EngineCli ShortCycleCi 定向检查35项通过，含真实 CI 源码的隔离可执行生命周期测试；Unity6真引用离线编译通过。仅 CODE 候选，原生验收和 AI339 HARD_STOP 不变。详见 [WF](toolkit/WF.md#tk-wf-03) 与 [报告](outputs/BATCH2-INDEPENDENT-20261023/AI-000349/REPORT.md)。
+
+2026-10-24 AI348 修复 ShortCycleNativeCi 结果归属与任务身份：Verify-All 先绑定 TaskId/上下文再计 Final；宿主仅认领精确新 run 根，既有完整结果只读，不覆盖失败、损坏或不匹配证据；Editor 结果仍 CreateNew 且须先验证路径。既有 ShortCycleCi 定向夹具扩至 24 项，真实 Unity6 引用离线编译通过。仅 CODE 候选，后续 CONTROL/ENGINE 验收与 AI339 HARD_STOP 不变。详见 [WF](toolkit/WF.md#tk-wf-03) 与 [报告](outputs/BATCH2-INDEPENDENT-20261023/AI-000348/REPORT.md)。
+
+2026-10-24 AI347 复用 TK-WF-03/04：新增显式 ShortCycleNativeCi profile、正式 batchmode 宿主/Editor 聚合入口和既有 Test-EngineCli 的 ShortCycleCi 隔离 Case；默认离线、无新 TK/runner/队列。仅 CODE 离线候选，原生两次连续及负例交固定 ENGINE 验收，339 HARD_STOP 不变。详见 [WF](toolkit/WF.md#tk-wf-03) 与 [报告](outputs/BATCH2-INDEPENDENT-20261023/AI-000347/REPORT.md)。
+
 > 完整名称、状态和域正文见 [toolkit/INDEX.md](toolkit/INDEX.md)。本页只保留旧路径的 TK 编号解析映射。
+
+2026-10-24 AI323：既有编号 TK-DAT-05/06、TK-LAY-06/07 已从“拟”转为 CODE 离线实现；四个公开入口位于 Assets/Scripts/Tools/{TagFilter,TidyLayout,StackedIcon,PlaceholderRule}.cs，详细使用限制见 DAT/LAY。StickerNotesPiece 仅消费 PlaceholderRule 的分类，原生格架/布局接线仍待后续窗口。无新 TK 编号。
 
 - TK-CMD-01: [CMD.md](toolkit/CMD.md#tk-cmd-01)
 - TK-CMD-02: [CMD.md](toolkit/CMD.md#tk-cmd-02)
@@ -14,6 +28,7 @@
 - TK-DAT-07: [DAT.md](toolkit/DAT.md#tk-dat-07)
 - TK-DAT-09: [PST.md](toolkit/PST.md#tk-dat-09)
 - TK-DAT-08: [DAT.md](toolkit/DAT.md#tk-dat-08)
+- TK-DAT-10: [DAT.md](toolkit/DAT.md#tk-dat-10)
 - TK-DBG-01: [DBG.md](toolkit/DBG.md#tk-dbg-01)
 - TK-DBG-02: [DBG.md](toolkit/DBG.md#tk-dbg-02)
 - TK-DBG-03: [DBG.md](toolkit/DBG.md#tk-dbg-03)
@@ -41,6 +56,7 @@
 - TK-INT-16: [INT.md](toolkit/INT.md#tk-int-16)
 - TK-INT-17: [INT.md](toolkit/INT.md#tk-int-17)
 - TK-INT-18: [INT.md](toolkit/INT.md#tk-int-18)
+- TK-INT-19: [INT.md](toolkit/INT.md#tk-int-19)
 - TK-LAY-01: [LAY.md](toolkit/LAY.md#tk-lay-01)
 - TK-LAY-02: [LAY.md](toolkit/LAY.md#tk-lay-02)
 - TK-LAY-03: [LAY.md](toolkit/LAY.md#tk-lay-03)

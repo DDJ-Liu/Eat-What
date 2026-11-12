@@ -7,7 +7,16 @@ function Resolve-ArchivePath([string]$Root,[string]$Path){
 }
 function Get-ArchiveRelative($Root,$Path){[IO.Path]::GetRelativePath([IO.Path]::GetFullPath($Root),(Resolve-ArchivePath $Root $Path)).Replace('\','/')}
 function Test-ArchiveWithin([string]$Path,[string]$Parent){$Path -ieq $Parent -or $Path.StartsWith($Parent.TrimEnd('/')+'/',[StringComparison]::OrdinalIgnoreCase)}
-function Read-ArchiveJson($Path){Get-Content -LiteralPath $Path -Raw|ConvertFrom-Json -DateKind String}
+function Read-ArchiveJson($Path){
+ $share=[IO.FileShare]([IO.FileShare]::Read -bor [IO.FileShare]::Delete)
+ $stream=[IO.FileStream]::new($Path,[IO.FileMode]::Open,[IO.FileAccess]::Read,$share)
+ try{
+  $reader=[IO.StreamReader]::new($stream,$script:ArchiveUtf8,$true)
+  try{$json=$reader.ReadToEnd()}finally{$reader.Dispose()}
+ }finally{$stream.Dispose()}
+ if([string]::IsNullOrWhiteSpace($json)){throw "Empty archive JSON: $Path"}
+ ConvertFrom-Json -InputObject $json -DateKind String
+}
 function Save-ArchiveJson($Path,$Value){[void][IO.Directory]::CreateDirectory((Split-Path -Parent $Path));$temp="$Path.pending-$([guid]::NewGuid().ToString('N'))";[IO.File]::WriteAllText($temp,($Value|ConvertTo-Json -Depth 40),$script:ArchiveUtf8);[IO.File]::Move($temp,$Path,$true)}
 function Get-ArchiveStringHash([string]$Value){[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($script:ArchiveUtf8.GetBytes($Value)))}
 function Get-ArchiveFileHash($Path){(Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash}

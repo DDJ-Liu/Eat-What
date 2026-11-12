@@ -2,6 +2,8 @@
 
 > 从 [INDEX.md](INDEX.md) 定位；状态与公开面沿用原登记。
 
+2026-10-24 AI325 TK-MOT-07 局部消费：ShortCycleMouseActionBinding.rejectedDropTransition/rejectedDropPreset 默认 Return 调用既有 TransitionController.GoTo；拖入成功、失败、无效区域均让拖动视觉回到原锚点，不由预留数据层写 Transform。预设协程宿主须常驻 active，指向可恢复的拖动视觉；当前仅 CODE 入口和离线编译，TRAY-02 在 Editor 绑定并实测，不宣告已完成原生回弹。
+
 <a id="tk-mot-01"></a>
 <a id="tk-mot-02"></a>
 <a id="tk-dbg-07"></a>

@@ -2,7 +2,8 @@
   "name": "Generated.DataTables",
   "rootNamespace": "",
   "references": [
-    "Toolkit"
+    "Toolkit",
+    "ShortCycle.Core"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

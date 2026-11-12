@@ -5,6 +5,7 @@
     "Editor.DataTables",
     "Generated.DataTables",
     "ShortCycle",
+    "ShortCycle.Core",
     "Toolkit",
     "Unity.InputSystem",
     "Unity.RenderPipelines.Universal.2D.Runtime",

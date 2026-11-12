@@ -53,6 +53,7 @@ function Use-BoundedResume($Task,$Grant,$QueueState,$Mode) {
     if(Get-RetryValue $Grant 'cycleIds'){
         $cycleId=$Grant.cycleIds[[int]$Grant.usedRuns]
         $root=Get-RepairRootTask $QueueState $Task
+        $assignment=Assert-ReservedCycleClaimOwner $QueueState $root $Task $Grant $cycleId
         $cycles=@(Get-RetryCycles $QueueState $root)
         $cycle=@($cycles|Where-Object cycleId -ceq $cycleId)[0]
         Assert-Value ($null -ne $cycle) 'Missing retry cycle.'
@@ -66,6 +67,7 @@ function Use-BoundedResume($Task,$Grant,$QueueState,$Mode) {
         $cycle.consumed=$true;$cycle.reserved=$false
         Set-RetryValue $root 'retryCycles' $cycles
         Set-RetryValue $Task.execution 'retryCycleId' $cycleId
+        if($assignment){Set-RetryValue $root 'reservationClaimAudit' (@(Get-RetryValue $root 'reservationClaimAudit'|Where-Object{$_})+[pscustomobject]@{assignmentId=$assignment.assignmentId;cycleId=$cycleId;taskId=$Task.id;grantId=$Grant.grantId;executionId=$Task.execution.executionId;attempt=$Task.attempts;at=Get-NowIso})}
     }
     $Grant.usedRuns=[int]$Grant.usedRuns+1
     $Grant.claims=@($Grant.claims)+[pscustomobject]@{at=Get-NowIso;attempt=$Task.attempts;executionId=$Task.execution.executionId;retryCycleId=$cycleId}
@@ -267,9 +269,281 @@ function Invoke-RevalidateUnusedGrant($Task,$Queue,$Workers,$Mode) {
         reused=($prior.Count -gt 0);runs=$g.runs;usedRuns=$g.usedRuns;rootRetry=(Get-RootRetryState $Queue $root $Mode.mode)}
 }
 
-function Invoke-ApproveResume {
+function Assert-ReviewedResumeInstruction($Task,$Root,$Old,$Mode,$ScopeValue,$Queue) {
+    Assert-Value ($AuthorizationSource -ceq 'HUMAN' -and $Old -and [int]$Old.runs -gt 0 -and
+        [int]$Old.usedRuns -eq [int]$Old.runs -and @($Old.claims).Count -eq [int]$Old.runs) 'Instruction revision needs a new HUMAN approval after the old grant is fully consumed.'
+    if($Task.id -cne $Root.id){
+        $repair=Get-RetryValue $Task 'repairContext'
+        Assert-Value ($Task.workKind -ceq 'REPAIR' -and $repair -and $repair.nature -ceq 'REPAIR' -and
+            $repair.rootTaskId -ceq $Root.id -and $repair.parentTaskId -ceq $Root.id -and
+            $Root.status -in @('SUCCEEDED','NEEDS_USER','PAUSED_CIRCUIT') -and
+            -not (Get-RetryValue $Root 'retryHardStop') -and -not (Get-RetryValue $Task 'retryHardStop')) 'Only a failed REPAIR child of the retained, unstopped root may revise its instruction.'
+        $route=Get-PipelineExecutionTarget $Task.pipeline
+        Assert-Value (-not $Old.revokedAt -and -not $Old.blockedReason -and
+            $Old.taskId -ceq $Task.id -and $Old.rootTaskId -ceq $Root.id -and
+            $Old.mode -ceq 'SUPERVISED' -and $Old.sessionId -ceq $Mode.supervised.sessionId -and
+            $Old.controllerThreadId -ceq $Mode.supervised.controllerThreadId -and $Old.controllerThreadId -ceq $ControllerThreadId -and
+            $Old.ownerThreadId -ceq $Task.execution.ownerThreadId -and $Old.ownerThreadId -ceq $OwnerThreadId -and
+            $Old.ownerThreadId -ceq $route.threadId -and $Old.routeKey -ceq (Get-PipelineRouteKey $route) -and
+            $Old.failureHistorySha256 -ceq (Get-ResumeDigest @($Task.errorHistory)) -and
+            $Old.expectedAttempt -eq ([int]$Task.attempts+1)) 'The consumed child grant must retain its original session, route, owner, controller and failure binding.'
+        Assert-Value (@($Old.cycleIds).Count -eq [int]$Old.runs -and
+            @($Old.cycleIds|Select-Object -Unique).Count -eq [int]$Old.runs) 'Consumed child grant cycles differ.'
+        $cycles=@(Get-RetryCycles $Queue $Root)
+        $executions=@($Task.executionHistory|Where-Object{$_})+@($Task.execution)
+        for($i=0;$i -lt [int]$Old.runs;$i++){
+            $claim=$Old.claims[$i]
+            $cycle=@($cycles|Where-Object cycleId -ceq $Old.cycleIds[$i])
+            $execution=@($executions|Where-Object {$_.attempt -eq $claim.attempt -and $_.executionId -ceq $claim.executionId})
+            $failure=@($Task.errorHistory|Where-Object {$_.attempt -eq $claim.attempt -and $_.executionId -ceq $claim.executionId})
+            Assert-Value ($claim.retryCycleId -ceq $Old.cycleIds[$i] -and
+                $cycle.Count -eq 1 -and $cycle[0].consumed -and -not $cycle[0].reserved -and
+                $cycle[0].repairTaskId -ceq $Task.id -and @($cycle[0].rootExecutionIds).Count -eq 0 -and
+                $execution.Count -eq 1 -and $execution[0].retryCycleId -ceq $claim.retryCycleId -and
+                $execution[0].resumeGrantId -ceq $Old.grantId -and $failure.Count -eq 1) 'A child claim must match one consumed root cycle, real execution and formal failure.'
+        }
+        $latestChild=@($Task.errorHistory|Where-Object{$_ -and $_.at}|Sort-Object {[DateTimeOffset]::Parse($_.at)} -Descending|Select-Object -First 1)[0]
+        Assert-Value ($latestChild -and $latestChild.kind -notin @('PERMISSION','UNKNOWN') -and
+            $latestChild.attempt -eq $Task.attempts -and $latestChild.executionId -ceq $Task.execution.executionId -and
+            $latestChild.ownerThreadId -ceq $Task.execution.ownerThreadId -and
+            $Task.execution.resumeGrantId -ceq $Old.grantId -and
+            $Task.execution.retryCycleId -ceq $Old.cycleIds[-1]) 'Latest child failure must belong to the exhausted grant and current execution without a permission or unknown stop.'
+        $rootState=Get-RootRetryState $Queue $Root $Mode.mode
+        Assert-Value ($rootState.used+$rootState.reserved -le $rootState.limit) 'Root retry accounting differs before child approval.'
+    }
+    Assert-Value (-not [string]::IsNullOrWhiteSpace($Instruction)) 'Reviewed Instruction is required.'
+    Assert-Value ((Get-ResumeDigest $Old.scope) -ceq (Get-ResumeDigest $ScopeValue)) 'Instruction revision cannot change the previous approved scope.'
+    Assert-Value ($Task.status -ceq 'NEEDS_USER' -and $Mode.mode -ceq 'SUPERVISED') 'Reviewed instruction revision requires an inactive supervised root.'
+    $worker=Get-Worker $w $Task.pipeline
+    Assert-Value ($worker.status -ceq 'IDLE' -and -not $worker.activeTaskId -and -not $worker.leaseUntil -and
+        $worker.circuit.state -ceq 'CLOSED') 'Reviewed instruction revision requires a fresh idle lane and closed circuit.'
+    foreach($reservation in @($Mode.supervised.reservations)){
+        $reservedTask=Get-Task $q ([string]$reservation.taskId)
+        Assert-Value ($reservation.taskId -and $reservedTask -and $reservedTask.pipeline -cne $Task.pipeline) 'Same-lane or unknown reservation blocks instruction revision.'
+    }
+    $turnTask=$Task|ConvertTo-Json -Depth 50|ConvertFrom-Json -DateKind String
+    Assert-Value ((Sync-TaskTurnGate $turnTask) -ceq 'CONTINUE') 'Cumulative turn gate blocks instruction revision.'
+    $inputs=[IO.Path]::GetFullPath((Join-Path $workspaceRoot 'inputs')).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
+    $approvalPath=Assert-ResumeFile @{path=$InstructionApprovalPath;sha256=$InstructionApprovalSha256}
+    $evidencePath=Assert-ResumeFile @{path=$InstructionEvidencePath;sha256=$InstructionEvidenceSha256}
+    Assert-Value ($approvalPath.StartsWith($inputs,[StringComparison]::OrdinalIgnoreCase) -and
+        $evidencePath.StartsWith($inputs,[StringComparison]::OrdinalIgnoreCase)) 'Reviewed instruction evidence must be under inputs.'
+    Assert-Value ((Get-Item -LiteralPath $approvalPath).Length -le 1MB -and (Get-Item -LiteralPath $evidencePath).Length -le 1MB) 'Reviewed instruction evidence exceeds 1MiB.'
+    $approval=[IO.File]::ReadAllText($approvalPath,[Text.UTF8Encoding]::new($false,$true))|ConvertFrom-Json -DateKind String
+    Assert-Value ($approval.schemaVersion -eq 1 -and $approval.taskId -ceq $Task.id -and $approval.rootTaskId -ceq $Root.id -and
+        $approval.authorizationSource -ceq 'HUMAN' -and $approval.approvalId -ceq $ApprovalId -and
+        $approval.sourceMessageId -ceq $ApprovalId -and $approval.userQuote -ceq $UserDecision -and
+        $approval.additionalRuns -eq $Runs -and $approval.includesReviewedRecovery -eq $true) 'Human approval does not bind this reviewed recovery and run count.'
+    [void](Assert-ResumeFile @{path=$approval.reviewPath;sha256=$approval.reviewSha256})
+    [void](Assert-ResumeFile @{path=$approval.sourceEvidence;sha256=$approval.sourceEvidenceSha256})
+    $latest=@($Task.errorHistory|Where-Object {$_ -and $_.at}|Sort-Object {[DateTimeOffset]::Parse($_.at)} -Descending|Select-Object -First 1)[0]
+    Assert-Value ($latest -and [DateTimeOffset]::Parse($approval.recordedAt) -gt [DateTimeOffset]::Parse($latest.at)) 'Human instruction approval predates the latest failure.'
+    $reviewed=[IO.File]::ReadAllText($evidencePath,[Text.UTF8Encoding]::new($false,$true)).Trim()
+    Assert-Value ($reviewed -ceq $Instruction.Trim()) 'Instruction differs from the fixed-SHA reviewed text.'
+    return [pscustomobject][ordered]@{
+        approvalPath=$approvalPath;approvalSha256=$InstructionApprovalSha256
+        evidencePath=$evidencePath;evidenceSha256=$InstructionEvidenceSha256
+        reviewPath=$approval.reviewPath;reviewSha256=$approval.reviewSha256
+    }
+}
+function Get-InstructionTextSha256([string]$Value) {
+    return [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.UTF8Encoding]::new($false,$true).GetBytes($Value)))
+}
+function Invoke-AmendReviewedInstruction {
     $m=Read-ModeState;$q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath
     $t=Get-Task $q $TaskId
+    Assert-Value ($t -and $t.status -in @('NEEDS_USER','QUEUED') -and -not $t.result -and @($t.errorHistory|Where-Object{$_}).Count -gt 0) 'Only a failed, unfinished task can amend its reviewed instruction.'
+    $root=Get-RepairRootTask $q $t
+    $g=Get-BoundedResume $t
+    Assert-Value ($m.mode -ceq 'SUPERVISED' -and $m.supervised.status -ceq 'ACTIVE' -and
+        -not $m.supervised.stopRequested -and -not $m.supervised.exitRequested -and
+        $m.supervised.taskIds -ccontains $t.id -and $m.supervised.sessionId -ceq $g.sessionId) 'Active original supervision session required.'
+    Assert-Value ($g -and $g.authorizationSource -ceq 'HUMAN' -and -not $g.revokedAt -and -not $g.blockedReason -and
+        $g.taskId -ceq $t.id -and $g.rootTaskId -ceq $root.id -and
+        [int]$g.usedRuns -gt 0 -and [int]$g.usedRuns -lt [int]$g.runs -and
+        @($g.claims).Count -eq [int]$g.usedRuns -and @($g.cycleIds).Count -eq [int]$g.runs) 'Only a partially consumed, still reserved HUMAN grant may be amended.'
+    Assert-Value ($AuthorizationSource -ceq 'HUMAN' -and $ApprovalId -ceq $g.approvalId -and
+        $UserDecision -ceq $g.userDecision -and $Runs -eq $g.runs -and
+        -not $PairedRepairTaskId -and -not $RetryCycleId) 'Original HUMAN approval, run count and unpaired grant must remain exact.'
+    Assert-Value ($ControllerThreadId -ceq $m.supervised.controllerThreadId -and
+        $ControllerThreadId -ceq $g.controllerThreadId -and $OwnerThreadId -ceq $g.ownerThreadId -and
+        $OwnerThreadId -ceq $t.execution.ownerThreadId -and
+        $OwnerThreadId -ceq (Get-PipelineExecutionTarget $t.pipeline).threadId -and
+        $g.routeKey -ceq (Get-PipelineRouteKey (Get-PipelineExecutionTarget $t.pipeline))) 'Original controller, owner and route must remain bound.'
+    Assert-Value ($Verification -and $IdlePipelines -ccontains $t.pipeline -and
+        @($q.tasks|Where-Object {$_.pipeline -ceq $t.pipeline -and $_.status -ceq 'RUNNING'}).Count -eq 0) 'Fresh idle verification and no running lane task required.'
+    $worker=Get-Worker $w $t.pipeline
+    Assert-Value ($worker.status -ceq 'IDLE' -and -not $worker.activeTaskId -and -not $worker.leaseUntil -and
+        $worker.circuit.state -ceq 'CLOSED') 'Fresh idle worker with closed circuit required.'
+    Assert-Value ($m.supervised.reservations -is [array]) 'Unknown reservation state.'
+    foreach($reservation in $m.supervised.reservations){
+        $reservedTask=Get-Task $q ([string]$reservation.taskId)
+        Assert-Value ($reservation.taskId -and $reservedTask -and $reservedTask.pipeline -cne $t.pipeline) 'Same-lane or unknown reservation blocks amendment.'
+    }
+    $turnCopy=$t|ConvertTo-Json -Depth 50|ConvertFrom-Json -DateKind String
+    Assert-Value ((Sync-TaskTurnGate $turnCopy) -ceq 'CONTINUE') 'Cumulative turn stop blocks amendment.'
+    Assert-Value (-not (Get-RetryValue $root 'retryHardStop')) 'Root hard stop blocks amendment.'
+    $latest=@($t.errorHistory|Where-Object{$_ -and $_.at}|Select-Object -Last 1)[0]
+    Assert-Value ($latest -and $latest.kind -notin @('PERMISSION','UNKNOWN') -and
+        $latest.executionId -ceq $t.execution.executionId -and $latest.attempt -eq $t.attempts) 'Latest real failure is unavailable or a new permission/unknown stop.'
+    Assert-Value (-not [string]::IsNullOrWhiteSpace($Instruction) -and
+        $g.instructionRevision -and $g.instructionRevision.approvalId -ceq $g.approvalId -and
+        $g.instructionRevision.userDecision -ceq $g.userDecision) 'Original reviewed HUMAN instruction provenance is required.'
+    $scopeValue=ConvertTo-ResumeScope $Scope
+    Assert-Value ((Get-UnusedGrantDigest $scopeValue) -ceq (Get-UnusedGrantDigest $g.scope)) 'Exact approved scope changed.'
+    if($t.id -ceq $root.id){
+        Assert-Value ((Get-UnusedGrantDigest $t.businessScope) -ceq (Get-UnusedGrantDigest $root.businessScope)) 'Original business scope changed.'
+    } else {
+        $repair=Get-RetryValue $t 'repairContext'
+        Assert-Value ($t.workKind -ceq 'REPAIR' -and $repair -and $repair.nature -ceq 'REPAIR' -and
+            $repair.rootTaskId -ceq $root.id -and $repair.parentTaskId -ceq $root.id -and
+            $root.status -in @('SUCCEEDED','NEEDS_USER','PAUSED_CIRCUIT') -and
+            -not (Get-RetryValue $t 'retryHardStop')) 'Only a formal direct REPAIR child of the retained, inactive root may amend.'
+        Assert-Value ($repair.repairScope -and $t.execution.approvedScope -and
+            (Get-UnusedGrantDigest $scopeValue) -ceq (Get-UnusedGrantDigest $repair.repairScope) -and
+            (Get-UnusedGrantDigest $scopeValue) -ceq (Get-UnusedGrantDigest $t.execution.approvedScope)) 'Child repair and executed approved scope must remain exact.'
+        if($t.businessScope){Assert-ResumeScope $t.businessScope $Scope}
+        Assert-Value ($g.mode -ceq 'SUPERVISED' -and
+            @($g.cycleIds|Select-Object -Unique).Count -eq [int]$g.runs -and
+            $latest.ownerThreadId -ceq $g.ownerThreadId -and
+            $t.execution.resumeGrantId -ceq $g.grantId -and
+            $t.execution.retryCycleId -ceq $g.cycleIds[[int]$g.usedRuns-1]) 'Child latest execution/failure must belong to the same partial grant.'
+        $childCycles=@(Get-RetryCycles $q $root)
+        $childExecutions=@($t.executionHistory|Where-Object{$_})+@($t.execution)
+        for($i=0;$i -lt [int]$g.usedRuns;$i++){
+            $claim=$g.claims[$i]
+            $cycle=@($childCycles|Where-Object cycleId -ceq $g.cycleIds[$i])
+            $execution=@($childExecutions|Where-Object {$_.attempt -eq $claim.attempt -and $_.executionId -ceq $claim.executionId})
+            $failure=@($t.errorHistory|Where-Object {$_.attempt -eq $claim.attempt -and $_.executionId -ceq $claim.executionId})
+            Assert-Value ($claim.retryCycleId -ceq $g.cycleIds[$i] -and
+                $cycle.Count -eq 1 -and $cycle[0].consumed -and -not $cycle[0].reserved -and
+                $cycle[0].repairTaskId -ceq $t.id -and @($cycle[0].rootExecutionIds).Count -eq 0 -and
+                $execution.Count -eq 1 -and $execution[0].retryCycleId -ceq $claim.retryCycleId -and
+                $execution[0].resumeGrantId -ceq $g.grantId -and $failure.Count -eq 1 -and
+                $failure[0].ownerThreadId -ceq $g.ownerThreadId) 'Consumed child claims must bind real executions, formal failures and same-root cycles.'
+        }
+        for($i=[int]$g.usedRuns;$i -lt [int]$g.runs;$i++){
+            $cycle=@($childCycles|Where-Object cycleId -ceq $g.cycleIds[$i])
+            Assert-Value ($cycle.Count -eq 1 -and -not $cycle[0].consumed -and $cycle[0].reserved -and
+                -not $cycle[0].repairTaskId -and @($cycle[0].rootExecutionIds).Count -eq 0) 'Remaining child grant cycles must be unclaimed reservations.'
+        }
+    }
+    [void](Assert-BoundedResume $t $m $Scope)
+    $cycles=@(Get-RetryCycles $q $root)
+    foreach($i in 0..([int]$g.runs-1)){
+        $matching=@($cycles|Where-Object cycleId -ceq $g.cycleIds[$i])
+        Assert-Value ($matching.Count -eq 1 -and
+            $(if($i -lt [int]$g.usedRuns){$matching[0].consumed -and -not $matching[0].reserved}else{$matching[0].reserved -and -not $matching[0].consumed})) 'Grant claim/reservation cycles differ.'
+    }
+    $state=Get-RootRetryState $q $root $m.mode
+    Assert-Value ($state.used+$state.reserved -le $state.limit -and
+        $state.reserved -ge ([int]$g.runs-[int]$g.usedRuns)) 'Root quota or remaining reservations differ.'
+    $original=$g.instructionRevision.proof
+    Assert-Value ($InstructionApprovalPath -and $InstructionApprovalSha256 -ceq $original.approvalSha256 -and
+        [IO.Path]::GetFullPath($InstructionApprovalPath) -ceq [IO.Path]::GetFullPath($original.approvalPath)) 'Original HUMAN source proof changed.'
+    $originalPath=Assert-ResumeFile @{path=$InstructionApprovalPath;sha256=$InstructionApprovalSha256}
+    [void](Assert-ResumeFile @{path=$original.evidencePath;sha256=$original.evidenceSha256})
+    $human=Read-UnusedGrantJson $originalPath
+    Assert-Value ($human.taskId -ceq $t.id -and $human.approvalId -ceq $g.approvalId -and
+        $human.sourceMessageId -ceq $g.approvalId -and $human.userQuote -ceq $g.userDecision -and
+        $human.additionalRuns -eq $g.runs -and $human.authorizationSource -ceq 'HUMAN') 'Original human decision source no longer binds the grant.'
+    $candidatePath=Assert-ResumeFile @{path=$InstructionEvidencePath;sha256=$InstructionEvidenceSha256}
+    Assert-Value ((Get-Item -LiteralPath $candidatePath).Length -le 1MB -and
+        ([IO.File]::ReadAllText($candidatePath,[Text.UTF8Encoding]::new($false,$true))).Trim() -ceq $Instruction.Trim()) 'Fixed-SHA reviewed candidate differs from requested full instruction.'
+    $reviewPath=Assert-ResumeFile @{path=$AmendmentReviewPath;sha256=$AmendmentReviewSha256}
+    $controlRoot=[IO.Path]::GetFullPath((Join-Path $workspaceRoot 'outputs/control')).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
+    Assert-Value ($reviewPath.StartsWith($controlRoot,[StringComparison]::OrdinalIgnoreCase) -and
+        (Get-Item -LiteralPath $reviewPath).Length -le 1MB) 'Independent amendment review must be a bounded CONTROL output.'
+    $proof=Read-UnusedGrantJson $reviewPath
+    Assert-UnusedGrantShape $proof @('schemaVersion','decision','taskId','grantId','approvalId','userDecision','sessionId','controllerThreadId','ownerThreadId','routeKey','runs','usedRuns','rootUsed','rootReserved','rootLimit','scopeSha256','oldFingerprint','oldInstructionSha256','newInstructionSha256','instructionEvidencePath','instructionEvidenceSha256','originalApprovalPath','originalApprovalSha256','failureReceiptPath','failureReceiptSha256','failureReviewPath','failureReviewSha256','reviewedAt','scopeUnchanged','executionDetailOnly','permissionOrUnknownWrite') 'instruction amendment review'
+    Assert-Value ($proof.schemaVersion -eq 1 -and $proof.decision -ceq 'APPROVED_SAME_GRANT_INSTRUCTION_AMENDMENT' -and
+        $proof.taskId -ceq $t.id -and $proof.grantId -ceq $g.grantId -and
+        $proof.approvalId -ceq $g.approvalId -and $proof.userDecision -ceq $g.userDecision -and
+        $proof.sessionId -ceq $g.sessionId -and $proof.controllerThreadId -ceq $g.controllerThreadId -and
+        $proof.ownerThreadId -ceq $g.ownerThreadId -and $proof.routeKey -ceq $g.routeKey -and
+        $proof.runs -eq $g.runs -and $proof.usedRuns -eq $g.usedRuns -and
+        $proof.rootUsed -eq $state.used -and $proof.rootReserved -eq $state.reserved -and
+        $proof.rootLimit -eq $state.limit -and $proof.scopeSha256 -ceq (Get-UnusedGrantDigest $g.scope) -and
+        $proof.instructionEvidenceSha256 -ceq $InstructionEvidenceSha256 -and
+        [IO.Path]::GetFullPath($proof.instructionEvidencePath) -ceq $candidatePath -and
+        $proof.originalApprovalSha256 -ceq $original.approvalSha256 -and
+        [IO.Path]::GetFullPath($proof.originalApprovalPath) -ceq $originalPath -and
+        $proof.scopeUnchanged -eq $true -and $proof.executionDetailOnly -eq $true -and
+        $proof.permissionOrUnknownWrite -eq $false) 'Independent review does not bind the exact same-grant correction.'
+    $failureReceiptPath=Assert-ResumeFile @{path=$proof.failureReceiptPath;sha256=$proof.failureReceiptSha256}
+    $failureReviewPath=Assert-ResumeFile @{path=$proof.failureReviewPath;sha256=$proof.failureReviewSha256}
+    $failureReceipt=Read-UnusedGrantJson $failureReceiptPath
+    $failureReview=Read-UnusedGrantJson $failureReviewPath
+    Assert-Value ($failureReceipt.action -like 'FAILED*' -and $failureReceipt.task.id -ceq $t.id -and
+        $failureReceipt.task.attempts -eq $t.attempts -and
+        $failureReceipt.task.execution.executionId -ceq $t.execution.executionId -and
+        (Get-ResumeDigest @($failureReceipt.task.errorHistory)) -ceq (Get-ResumeDigest @($t.errorHistory)) -and
+        (Get-UnusedGrantDigest $failureReceipt.task.businessScope) -ceq (Get-UnusedGrantDigest $t.businessScope) -and
+        $failureReview.decision -ceq 'FAILURE_FACTS_VERIFIED_NOT_ACCEPTED' -and
+        $failureReview.taskId -ceq $t.id -and $failureReview.attempt -eq $t.attempts -and
+        $failureReview.executionId -ceq $t.execution.executionId -and
+        $failureReview.receiptSha256 -ceq $proof.failureReceiptSha256 -and
+        [IO.Path]::GetFullPath($failureReview.receiptPath) -ceq $failureReceiptPath -and
+        $failureReview.approvedRemaining -eq ([int]$g.runs-[int]$g.usedRuns) -and
+        $failureReview.newGrant -eq $false -and $failureReview.humanAccepted -eq $false -and
+        $failureReview.factCount -eq @($failureReview.facts).Count -and
+        @($failureReview.facts|Where-Object {$_.passed -ne $true}).Count -eq 0) 'Latest formal Fail and independent fact review do not match.'
+    $reviewedAt=[DateTimeOffset]::Parse($proof.reviewedAt)
+    Assert-Value ($reviewedAt -gt [DateTimeOffset]::Parse($latest.at) -and
+        $reviewedAt -le [DateTimeOffset]::UtcNow.AddMinutes(5)) 'Amendment review predates failure or lies in the future.'
+    $amendments=@(Get-RetryValue $g 'instructionAmendments'|Where-Object{$_})
+    $prior=@($amendments|Where-Object {$_.reviewSha256 -ceq $AmendmentReviewSha256})
+    Assert-Value (@($amendments|Where-Object {$_.reviewPath -ceq $reviewPath -and $_.reviewSha256 -cne $AmendmentReviewSha256}).Count -eq 0) 'Same review path changed its content.'
+    $currentFingerprint=Get-SupervisionFingerprint $t
+    Assert-Value ($currentFingerprint -ceq $g.taskFingerprint) 'Current task definition differs from its live grant.'
+    if($prior.Count){
+        Assert-Value ($prior.Count -eq 1 -and $amendments[-1].reviewSha256 -ceq $AmendmentReviewSha256 -and
+            $t.status -ceq 'QUEUED' -and $t.instruction -ceq $Instruction.Trim() -and
+            $prior[0].newFingerprint -ceq $currentFingerprint -and
+            $prior[0].reviewPath -ceq $reviewPath -and
+            $prior[0].candidatePath -ceq $candidatePath -and
+            $prior[0].candidateSha256 -ceq $InstructionEvidenceSha256) 'Reviewed amendment replay changed or is stale.'
+        Write-Result @{action='INSTRUCTION_AMENDMENT_REUSED';taskId=$t.id;grantId=$g.grantId;remainingRuns=([int]$g.runs-[int]$g.usedRuns);rootRetry=$state;reviewSha256=$AmendmentReviewSha256}
+        return
+    }
+    Assert-Value ($t.status -ceq 'NEEDS_USER' -and
+        $proof.oldFingerprint -ceq $currentFingerprint -and
+        $proof.oldInstructionSha256 -ceq (Get-InstructionTextSha256 $t.instruction) -and
+        $proof.newInstructionSha256 -ceq (Get-InstructionTextSha256 $Instruction.Trim()) -and
+        $t.instruction -cne $Instruction.Trim()) 'Old/new full instructions or fingerprint differ from independent review.'
+    $oldInstruction=$t.instruction
+    $t.instruction=$Instruction.Trim()
+    $newFingerprint=Get-SupervisionFingerprint $t
+    $revision=[pscustomobject][ordered]@{
+        at=Get-NowIso;reviewPath=$reviewPath;reviewSha256=$AmendmentReviewSha256
+        candidatePath=$candidatePath;candidateSha256=$InstructionEvidenceSha256
+        oldInstruction=$oldInstruction;newInstruction=$t.instruction
+        oldFingerprint=$currentFingerprint;newFingerprint=$newFingerprint
+        approvalId=$g.approvalId;userDecision=$g.userDecision
+        failureReceiptPath=$failureReceiptPath;failureReceiptSha256=$proof.failureReceiptSha256
+        failureReviewPath=$failureReviewPath;failureReviewSha256=$proof.failureReviewSha256
+        failureHistorySha256=$g.failureHistorySha256;scopeSha256=$proof.scopeSha256
+        rootUsed=$state.used;rootReserved=$state.reserved;rootLimit=$state.limit
+    }
+    Set-RetryValue $g 'instructionAmendments' (@($amendments)+@($revision))
+    $g.taskFingerprint=$newFingerprint
+    $t.status='QUEUED';$t.claimedAt=$null
+    Clear-SupervisionWorker $worker
+    Save-JsonFile $queuePath $q;Save-JsonFile $workerPath $w
+    Write-SupervisionAudit 'RESUME_INSTRUCTION_AMENDED' @{taskId=$t.id;grantId=$g.grantId;approvalId=$g.approvalId;reviewPath=$reviewPath;reviewSha256=$AmendmentReviewSha256;oldFingerprint=$currentFingerprint;newFingerprint=$newFingerprint;used=$state.used;reserved=$state.reserved;limit=$state.limit}
+    Write-Result @{action='INSTRUCTION_AMENDED';taskId=$t.id;grantId=$g.grantId;remainingRuns=([int]$g.runs-[int]$g.usedRuns);rootRetry=$state;reviewSha256=$AmendmentReviewSha256;oldFingerprint=$currentFingerprint;newFingerprint=$newFingerprint}
+}
+function Invoke-ApproveResume {
+    param([switch]$ReviseInstruction)
+    if($ReassignReservedCycle){Invoke-ReassignReservedCycle;return}
+    if($AmendReviewedInstruction){
+        Assert-Value ($ReviseInstruction -and -not $RevalidateUnusedGrant) 'Same-grant amendment requires Instruction and cannot revalidate an unused grant.'
+        Invoke-AmendReviewedInstruction
+        return
+    }
+    $m=Read-ModeState;$q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath
+    $t=Get-Task $q $TaskId
+    if($ReviseInstruction -and $RevalidateUnusedGrant){throw 'Reviewed instruction revision cannot revalidate an existing grant.'}
     if($RevalidateUnusedGrant){Invoke-RevalidateUnusedGrant $t $q $w $m;return}
     Assert-Value ($t -and $t.status -in @('NEEDS_USER','PAUSED_CIRCUIT','QUEUED') -and -not $t.result -and @($t.errorHistory|Where-Object {$_}).Count -gt 0) 'Only an inactive, uncompleted failed task can resume.'
     Assert-Value ($Runs -gt 0 -and $UserDecision -and $ApprovalId -cmatch '^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$') 'Runs, actual user decision and stable user-message ApprovalId are required.'
@@ -296,14 +570,61 @@ function Invoke-ApproveResume {
         # A first typed scope is established by the bound controller against the immutable task fingerprint and recorded verification.
     }
     $old=Get-BoundedResume $t
+    $instructionRevision=$null
+    if($ReviseInstruction){
+        Assert-Value ($AuthorizationSource -ceq 'HUMAN') 'POLICY cannot revise an instruction.'
+        if($old -and $old.approvalId -ceq $ApprovalId){
+            Assert-Value ($null -ne $old.instructionRevision) 'Existing approval has no reviewed instruction revision.'
+            [void](Assert-ResumeFile @{path=$InstructionApprovalPath;sha256=$InstructionApprovalSha256})
+            [void](Assert-ResumeFile @{path=$InstructionEvidencePath;sha256=$InstructionEvidenceSha256})
+        } else {
+            $proof=Assert-ReviewedResumeInstruction $t $root $old $m $scopeValue $q
+            $revisedTask=$t|ConvertTo-Json -Depth 50|ConvertFrom-Json -DateKind String
+            $revisedTask.instruction=$Instruction.Trim()
+            $instructionRevision=[pscustomobject][ordered]@{
+                oldInstruction=$t.instruction;newInstruction=$Instruction.Trim()
+                oldFingerprint=(Get-SupervisionFingerprint $t);newFingerprint=(Get-SupervisionFingerprint $revisedTask)
+                approvalId=$ApprovalId;userDecision=$UserDecision;proof=$proof
+            }
+        }
+    }
     $history=@(Get-ObjectPropertyValue $t 'resumeApprovalHistory'|Where-Object {$_})
     if($AuthorizationSource -eq 'HUMAN'){
         Assert-Value (@($history|Where-Object {$_.approvalId -ceq $ApprovalId -and (Get-RetryValue $_ 'authorizationSource') -ne 'POLICY'}).Count -eq 0) 'Old approval cannot be replayed.'
     }
     $same=$old -and $old.approvalId -ceq $ApprovalId -and
         ($AuthorizationSource -eq 'HUMAN' -or $RetryCycleId -cin @($old.cycleIds))
+    $pairBinding=$null
+    if($same -and $PairedRepairTaskId){
+        $sameCard=Get-Task $q $PairedRepairTaskId
+        Assert-Value ($Runs -eq 1 -and $t.id -ceq $root.id -and $sameCard -and $sameCard.repairContext.rootTaskId -ceq $root.id -and $sameCard.status -ceq 'SUCCEEDED' -and $sameCard.result.verificationStatus -ceq 'VERIFIED') 'Repeated pairing must retain one verified repair and the original root.'
+        $sameBinding=Get-RepairGrantClaimCycle $q $sameCard $m
+        if($sameBinding){
+            Assert-Value (-not (Get-RetryValue $root 'retryHardStop') -and -not (Get-RetryValue $sameCard 'retryHardStop') -and -not (Test-TaskFailureStopped $root) -and -not (Test-TaskFailureStopped $sameCard)) 'Independent stop also blocks a repeated current-claim pairing.'
+            if($sameBinding.legacyDerivedCacheMismatch){Assert-Value ($AuthorizationSource -ceq 'HUMAN' -and $ApprovalId -ceq $sameBinding.approvalId -and $UserDecision -ceq $sameBinding.userDecision) 'Repeated legacy pairing cannot change the exact HUMAN source.'}
+        }
+        $sameCycle=if($sameBinding){$sameBinding.cycleId}else{Get-RetryValue $sameCard.repairContext 'retryCycleId'}
+        Assert-Value (@($old.cycleIds).Count -eq 1 -and $old.cycleIds[0] -ceq $sameCycle -and (-not $RetryCycleId -or $RetryCycleId -ceq $sameCycle)) 'Repeated pairing cannot substitute a failed or foreign cycle.'
+        $pairBinding=$sameBinding
+    }
     if($same){
         Assert-Value ($old.runs -eq $Runs -and $old.userDecision -ceq $UserDecision -and (Get-ResumeDigest $old.scope) -ceq (Get-ResumeDigest $scopeValue)) 'An approval ID cannot change its runs, scope or user decision.'
+        if($ReviseInstruction){
+            $amendments=@(Get-RetryValue $old 'instructionAmendments'|Where-Object{$_})
+            $currentRevision=if($amendments.Count){$amendments[-1]}else{$old.instructionRevision}
+            $currentEvidencePath=if($amendments.Count){$currentRevision.candidatePath}else{$old.instructionRevision.proof.evidencePath}
+            $currentEvidenceSha=if($amendments.Count){$currentRevision.candidateSha256}else{$old.instructionRevision.proof.evidenceSha256}
+            Assert-Value ($t.instruction -ceq $Instruction.Trim() -and
+                $old.instructionRevision -and
+                $currentRevision.newFingerprint -ceq (Get-SupervisionFingerprint $t) -and
+                $old.instructionRevision.approvalId -ceq $ApprovalId -and
+                $old.instructionRevision.proof.approvalPath -ceq ([IO.Path]::GetFullPath($InstructionApprovalPath)) -and
+                $old.instructionRevision.proof.approvalSha256 -ceq $InstructionApprovalSha256 -and
+                $currentEvidencePath -ceq ([IO.Path]::GetFullPath($InstructionEvidencePath)) -and
+                $currentEvidenceSha -ceq $InstructionEvidenceSha256) 'Replayed approval cannot change its current reviewed instruction or proof.'
+        } else {
+            Assert-Value (-not $old.instructionRevision) 'Reviewed instruction approval must replay with its original Instruction and proof.'
+        }
         $g=Assert-BoundedResume $t $m $Scope
     } else {
         Assert-Value ($t.status -ne 'QUEUED') 'Cannot replace an already queued approval.'
@@ -321,9 +642,27 @@ function Invoke-ApproveResume {
                 $card.repairContext.nature -eq 'REPAIR' -and $card.result.verificationStatus -eq 'VERIFIED') 'Paired repair must be independently verified for this root and one run.'
             $latest=@($root.errorHistory|Sort-Object {[DateTimeOffset]::Parse($_.at)} -Descending|Select-Object -First 1)[0]
             Assert-Value ([DateTimeOffset]::Parse($card.completedAt) -gt [DateTimeOffset]::Parse($latest.at)) 'Paired repair predates latest root failure.'
-            $pair=Get-RetryValue $card.repairContext 'retryCycleId'
-            $completedCycle=Get-RetryValue $card.execution 'retryCycleId'
-            if($pair){Assert-Value ($completedCycle -ceq $pair) 'Paired cycle must belong to the latest successful repair execution.'}
+            $pairBinding=Get-RepairGrantClaimCycle $q $card $m
+            if($pairBinding){
+                Assert-Value ($t.id -ceq $root.id -and -not (Get-RetryValue $root 'retryHardStop') -and -not (Get-RetryValue $card 'retryHardStop') -and
+                    -not (Test-TaskFailureStopped $root) -and -not (Test-TaskFailureStopped $card) -and $latest.kind -notin @('PERMISSION','UNKNOWN')) 'Independent root/repair failure or hard stop blocks current-claim pairing.'
+                foreach($stopped in @($root,$card)){
+                    $turnCopy=$stopped|ConvertTo-Json -Depth 100 -Compress|ConvertFrom-Json -DateKind String
+                    Assert-Value (-not $stopped.execution.hardStopAt -and -not $stopped.execution.limitReached -and (Sync-TaskTurnGate $turnCopy) -ceq 'CONTINUE') 'Current pairing cannot bypass an execution turn stop.'
+                }
+                if($pairBinding.legacyDerivedCacheMismatch){
+                    Assert-Value ($AuthorizationSource -ceq 'HUMAN' -and $ApprovalId -ceq $pairBinding.approvalId -and $UserDecision -ceq $pairBinding.userDecision) 'Recorded legacy cache correction requires the exact current HUMAN grant source.'
+                    $businessAnchor=Get-RetryValue $root 'retryBusinessScope'
+                    if(-not $businessAnchor){$businessAnchor=Get-RetryValue $root 'businessScope'}
+                    Assert-Value ($null -ne $businessAnchor) 'Recorded legacy pairing needs the retained root business Scope.'
+                    Assert-ResumeScope $businessAnchor $Scope
+                }
+                $pair=$pairBinding.cycleId # Closed repair caches/receipts/history remain untouched.
+            }else{
+                $pair=Get-RetryValue $card.repairContext 'retryCycleId'
+                $completedCycle=Get-RetryValue $card.execution 'retryCycleId'
+                if($pair){Assert-Value ($completedCycle -ceq $pair) 'Paired cycle must belong to the latest successful repair execution.'}
+            }
             if(-not $pair){
                 # Transition from a repair already claimed under the previous schema.
                 $a=Get-RetryAuthority
@@ -362,6 +701,7 @@ function Invoke-ApproveResume {
         if($t.id -cne $root.id){Set-RetryValue $t.repairContext 'retryCycleId' $cycleIds[0]}
         if($t.id -ceq $root.id){Set-RetryValue $root 'retryBusinessScope' $scopeValue}
         $a=Get-RetryAuthority
+        if($ReviseInstruction){$t.instruction=$Instruction.Trim()}
         $g=[pscustomobject][ordered]@{
             schemaVersion=2;approvalId=$ApprovalId;grantId=[guid]::NewGuid().ToString('N');authorizationSource=$AuthorizationSource
             sourceSha256=$(if($a){'541E77E1B69FCD634479F1211A024FCA9A308592CA3B29E8619C28DEC009C8C0'}else{$null});taskId=$t.id;rootTaskId=$root.id;userDecision=$UserDecision;approvedAt=Get-NowIso
@@ -371,6 +711,8 @@ function Invoke-ApproveResume {
             taskFingerprint=Get-SupervisionFingerprint $t;failureHistorySha256=Get-ResumeDigest @($t.errorHistory)
             expectedAttempt=([int]$t.attempts+1);verification=$Verification
         }
+        if($ReviseInstruction){Set-ObjectPropertyValue $g 'instructionRevision' $instructionRevision}
+        if($pairBinding){Set-ObjectPropertyValue $g 'pairedRepairBinding' $pairBinding}
         Set-ObjectPropertyValue $t 'resumeApproval' $g
     }
     $t.status='QUEUED';$t.claimedAt=$null
@@ -382,11 +724,108 @@ function Invoke-ApproveResume {
         Save-JsonFile $modePath $m;$autoHandoff=Get-AutomaticHandoff $m $q
     }
     $state=Get-RootRetryState $q $root $m.mode
-    Write-SupervisionAudit 'RESUME_APPROVED' @{taskId=$t.id;rootTaskId=$root.id;grantId=$g.grantId;authorizationSource=$g.authorizationSource;sourceApprovalId=$ApprovalId;cycles=$g.cycleIds;used=$state.used;reserved=$state.reserved;remaining=$state.remaining;scope=$g.scope;verification=$Verification}
-    Write-Result @{action='RESUME_APPROVED';taskId=$t.id;approvalId=$ApprovalId;grantId=$g.grantId;runs=$g.runs;remainingRuns=([int]$g.runs-[int]$g.usedRuns);rootRetry=$state;scope=$g.scope;idempotenceIncluded=$true;autoHandoff=$autoHandoff}
+    $auditFields=@{taskId=$t.id;rootTaskId=$root.id;grantId=$g.grantId;authorizationSource=$g.authorizationSource;sourceApprovalId=$ApprovalId;cycles=$g.cycleIds;used=$state.used;reserved=$state.reserved;remaining=$state.remaining;scope=$g.scope;verification=$Verification}
+    if($pairBinding){$auditFields.pairedRepairBinding=$pairBinding}
+    if($ReviseInstruction){$auditFields.instructionRevision=$g.instructionRevision}
+    Write-SupervisionAudit 'RESUME_APPROVED' $auditFields
+    Write-Result @{action='RESUME_APPROVED';taskId=$t.id;approvalId=$ApprovalId;grantId=$g.grantId;runs=$g.runs;remainingRuns=([int]$g.runs-[int]$g.usedRuns);rootRetry=$state;scope=$g.scope;idempotenceIncluded=$true;autoHandoff=$autoHandoff;pairedRepairBinding=$pairBinding}
 }
 
 
+function Get-ReservedResumeBinding($Queue,$Root,$Source,$Grant,$Mode,$ScopeValue){
+    $budget=Get-RootRetryState $Queue $Root $Mode.mode
+    [pscustomobject][ordered]@{
+        rootTaskId=$Root.id;sourceTaskId=$Source.id;sourceGrantId=$Grant.grantId
+        sourceTaskSha256=(Get-UnusedGrantDigest $Source);sourceGrantSha256=(Get-UnusedGrantDigest $Grant)
+        sourceResultSha256=(Get-UnusedGrantDigest $Source.result);sourceClaimsSha256=(Get-UnusedGrantDigest @($Grant.claims))
+        sourceFingerprint=$Grant.taskFingerprint;sourceOwner=$Source.execution.ownerThreadId
+        sourceRoute=$Grant.routeKey;sourceScopeSha256=(Get-UnusedGrantDigest $Grant.scope)
+        targetTaskSha256=(Get-UnusedGrantDigest $Root);targetFingerprint=$Root.resumeApproval.taskFingerprint
+        targetGrantSha256=(Get-UnusedGrantDigest $Root.resumeApproval);targetFailureHistorySha256=(Get-UnusedGrantDigest @($Root.errorHistory))
+        targetOwner=$Root.execution.ownerThreadId;targetRoute=$Root.resumeApproval.routeKey
+        targetScopeSha256=(Get-UnusedGrantDigest $ScopeValue);sessionId=$Mode.supervised.sessionId;controllerThreadId=$Mode.supervised.controllerThreadId
+        rootRetry=[pscustomobject][ordered]@{used=$budget.used;reserved=$budget.reserved;limit=$budget.limit}
+    }
+}
+function Invoke-ReassignReservedCycle {
+    Assert-Value ($AuthorizationSource-ceq'HUMAN'-and$Runs-eq1-and$Instruction-and$Instruction.Contains('[NO_NORMAL_IMPORT]')-and$RetryCycleId-and-not$PairedRepairTaskId-and-not$AllowBypass-and-not$RevalidateUnusedGrant-and-not$AmendReviewedInstruction) 'Reserved reassignment requires one explicit HUMAN cycle, reviewed no-import instruction and no alternate resume flags.'
+    $m=Read-ModeState;$q=Read-JsonFile $queuePath;$w=Read-JsonFile $workerPath;$s=$m.supervised
+    Assert-Value ($m.mode-ceq'SUPERVISED'-and$s.status-ceq'ACTIVE'-and-not$s.stopRequested-and-not$s.exitRequested-and$ControllerThreadId-ceq$s.controllerThreadId-and$s.reservations-is[array]-and$s.reservations.Count-eq0) 'Active bound supervision without outstanding dispatch required.'
+    $root=Get-Task $q $TaskId
+    Assert-Value ($root-and(Get-RepairRootTask $q $root).id-ceq$root.id-and$root.pipeline-cin@('ENGINE_MCP','ENGINE_CLI')-and$root.status-cin@('NEEDS_USER','PAUSED_CIRCUIT','QUEUED')-and-not$root.result-and$root.errorHistory.Count-gt0-and$s.taskIds-ccontains$root.id) 'Only the original inactive failed ENGINE root can receive a reservation.'
+    $proofPath=Assert-ResumeFile @{path=$ReservationReviewPath;sha256=$ReservationReviewSha256}
+    $control=[IO.Path]::GetFullPath((Join-Path $workspaceRoot 'outputs/control')).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
+    Assert-Value ($proofPath.StartsWith($control,[StringComparison]::OrdinalIgnoreCase)) 'Reservation review must be fixed-SHA CONTROL output.'
+    $p=Read-UnusedGrantJson $proofPath
+    Assert-UnusedGrantShape $p @('schemaVersion','kind','decision','reviewId','controllerThreadId','sessionId','targetTaskId','sourceTaskId','sourceGrantId','cycleId','runs','approvalId','userDecision','totalAuthorizedRuns','originalApprovedAt','human','latestFailure','sourceCompletion','instruction','instructionBoundary','snapshot','reviewedAt') 'reservation review'
+    Assert-Value ($p.schemaVersion-eq1-and$p.kind-ceq'CONTROL_RESERVED_RESUME_REVIEW'-and$p.decision-ceq'APPROVED_ONE_EXISTING_RESERVATION'-and$p.reviewId-cmatch'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$'-and$p.controllerThreadId-ceq$ControllerThreadId-and$p.sessionId-ceq$s.sessionId-and$p.targetTaskId-ceq$root.id-and$p.cycleId-ceq$RetryCycleId-and$p.runs-is[long]-and$p.runs-eq1-and$p.approvalId-ceq$ApprovalId-and$p.userDecision-ceq$UserDecision-and$p.instructionBoundary-ceq'CURRENT_ATTEMPT_EVIDENCE_ONLY_NO_IMPORT') 'Reservation review identity, source or bounded operation differs.'
+    $reviewed=ConvertTo-WorkflowUtcInstant $p.reviewedAt
+    Assert-Value ($reviewed-le[DateTimeOffset]::UtcNow.AddSeconds(5)-and$reviewed-ge[DateTimeOffset]::UtcNow.AddMinutes(-15)) 'Reservation review is expired or future-dated.'
+    $source=Get-Task $q $p.sourceTaskId
+    Assert-Value ($source-and$source.id-cne$root.id-and$source.pipeline-ceq'CODE'-and$source.workKind-ceq'REPAIR'-and$source.repairContext.nature-ceq'REPAIR'-and$source.repairContext.rootTaskId-ceq$root.id-and$source.repairContext.parentTaskId-ceq$root.id-and$source.status-ceq'SUCCEEDED'-and$source.result.verificationStatus-ceq'VERIFIED'-and$s.taskIds-ccontains$source.id) 'Source must remain the independently verified direct CODE repair for this same root.'
+    $grants=@(@(Get-RetryValue $source 'resumeApprovalHistory')+@(Get-RetryValue $source 'resumeApproval')|Where-Object {$_.grantId-ceq$p.sourceGrantId})
+    Assert-Value ($grants.Count-eq1) 'One immutable source grant required.';$g=$grants[0]
+    Assert-Value ($g.schemaVersion-eq2-and$g.authorizationSource-ceq'HUMAN'-and-not$g.revokedAt-and-not$g.blockedReason-and$g.taskId-ceq$source.id-and$g.rootTaskId-ceq$root.id-and$g.approvalId-ceq$ApprovalId-and$g.userDecision-ceq$UserDecision-and$g.mode-ceq'SUPERVISED'-and$g.sessionId-ceq$s.sessionId-and$g.controllerThreadId-ceq$ControllerThreadId-and$g.approvedAt-ceq$p.originalApprovedAt-and$g.usedRuns-gt0-and$g.usedRuns-lt$g.runs-and@($g.claims).Count-eq$g.usedRuns-and@($g.cycleIds).Count-eq$g.runs-and@($g.cycleIds|Sort-Object -Unique).Count-eq$g.runs) 'Original partially consumed HUMAN grant or claim cardinality differs.'
+    foreach($member in @($root,$source)){
+        $turnCopy=$member|ConvertTo-Json -Depth 100|ConvertFrom-Json -DateKind String
+        $lane=Get-Worker $w $member.pipeline;$route=Get-PipelineExecutionTarget $member.pipeline
+        Assert-Value ($IdlePipelines-ccontains$member.pipeline-and$Verification-and$lane.status-ceq'IDLE'-and-not$lane.activeTaskId-and-not$lane.leaseUntil-and$lane.circuit.state-ceq'CLOSED'-and@($q.tasks|Where-Object {$_.pipeline-ceq$member.pipeline-and$_.status-ceq'RUNNING'}).Count-eq0) 'Both original lanes must be freshly idle with closed circuits.'
+        Assert-Value ($member.execution.ownerThreadId-ceq$route.threadId-and-not(Get-RetryValue $member 'retryHardStop')-and-not(Test-TaskFailureStopped $member)-and-not$member.execution.hardStopAt-and-not$member.execution.limitReached-and(Sync-TaskTurnGate $turnCopy)-ceq'CONTINUE') 'Original owner, independent failure or cumulative hard stop blocks reservation use.'
+    }
+    Assert-Value ($OwnerThreadId-ceq$root.execution.ownerThreadId-and$g.ownerThreadId-ceq$source.execution.ownerThreadId-and$g.routeKey-ceq(Get-PipelineRouteKey (Get-PipelineExecutionTarget 'CODE'))-and-not(Get-BoundedResume $root).blockedReason) 'Original grant or ENGINE owner/route changed.'
+    $sourceFingerprint=Get-SupervisionFingerprint $source
+    if($g.taskFingerprint-cne$sourceFingerprint-and(Get-SupervisionPolicy $source).gateApproved){$copy=$source|ConvertTo-Json -Depth 100|ConvertFrom-Json -DateKind String;$copy.supervisionPolicy.gateApproved=$false;$sourceFingerprint=Get-SupervisionFingerprint $copy}
+    Assert-Value ($g.taskFingerprint-ceq$sourceFingerprint-and$root.resumeApproval.taskFingerprint-ceq(Get-SupervisionFingerprint $root)) 'Retained source or target definition fingerprint changed.'
+    $last=@($root.errorHistory|Where-Object {$_}|Select-Object -Last 1)[0]
+    Assert-Value ($last.kind-cnotin@('PERMISSION','UNKNOWN')-and$last.ownerThreadId-ceq$OwnerThreadId) 'Permission, unknown or foreign failure requires its own human gate.'
+    $scopeValue=ConvertTo-ResumeScope $Scope;$anchor=Get-RetryValue $root 'retryBusinessScope';if(-not$anchor){$anchor=$root.businessScope}
+    Assert-Value ($anchor-and(Get-UnusedGrantDigest $scopeValue)-ceq(Get-UnusedGrantDigest $anchor)) 'Reservation reuse cannot change the retained root business Scope.'
+    $humanPath=Assert-ResumeFile $p.human;$inputs=[IO.Path]::GetFullPath((Join-Path $workspaceRoot 'inputs')).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
+    Assert-Value ($humanPath.StartsWith($inputs,[StringComparison]::OrdinalIgnoreCase)) 'Original user source must remain under inputs.'
+    $human=Read-UnusedGrantJson $humanPath;$origin=Get-RetryValue $source.repairContext 'controllerHumanReview'
+    $quote=(@($human.message.content|ForEach-Object {Assert-Value ($_.type-ceq'text'-and$_.text-is[string]) 'Actual user message text required.';$_.text})-join'').Trim()
+    Assert-Value ($origin-and$origin.approvalId-ceq$ApprovalId-and$origin.sourceSha256-ceq$p.human.sha256-and[IO.Path]::GetFullPath($origin.sourcePath)-ieq$humanPath-and$origin.rootTaskId-ceq$root.id-and$human.sourceKind-ceq'ACTUAL_APP_USER_MESSAGE'-and$human.threadId-ceq$ControllerThreadId-and$human.turnId-and$human.message.type-ceq'userMessage'-and$human.message.id-ceq$ApprovalId-and$human.approvalId-ceq$ApprovalId-and$human.userQuote-ceq$UserDecision-and$quote-ceq$UserDecision-and$human.controllerInterpretation.rootTaskId-ceq$root.id-and$human.controllerInterpretation.pairedRepairAndRootCountOnce-eq$true-and$human.controllerInterpretation.unlimitedAuthority-eq$false-and$human.authorizedAdditionalRootCycles-is[long]-and$p.totalAuthorizedRuns-is[long]-and$p.totalAuthorizedRuns-eq$human.authorizedAdditionalRootCycles-and([int]$g.runs+[int]$origin.additionalRuns)-eq$p.totalAuthorizedRuns) 'Original actual HUMAN authority, full text, root or total differs.'
+    $instructionPath=Assert-ResumeFile $p.instruction
+    Assert-Value (([IO.File]::ReadAllText($instructionPath)).Trim()-ceq$Instruction.Trim()) 'Complete reviewed instruction bytes differ.'
+    $argsHash=Get-UnusedGrantDigest ([pscustomobject][ordered]@{taskId=$TaskId;cycleId=$RetryCycleId;runs=$Runs;scope=$scopeValue;instruction=$Instruction.Trim();approvalId=$ApprovalId;userDecision=$UserDecision;owner=$OwnerThreadId;controller=$ControllerThreadId})
+    $replays=@(Get-RetryValue $root 'reservationAssignments'|Where-Object {$_.assignmentId-ceq$p.reviewId})
+    Assert-Value ($replays.Count-le1) 'Ambiguous reservation review ID.'
+    if($replays.Count){
+        $a=$replays[0];Assert-Value ($a.proofSha256-ceq$ReservationReviewSha256-and$a.argumentsSha256-ceq$argsHash-and$a.sourceTaskSha256-ceq(Get-UnusedGrantDigest $source)-and$a.sourceGrantSha256-ceq(Get-UnusedGrantDigest $g)) 'Repeated review ID has different bytes, source or arguments.'
+        $active=Get-BoundedResume $root;[void](Assert-ReservedCycleClaimOwner $q $root $root $active $RetryCycleId)
+        $cycle=@(Get-RetryCycles $q $root|Where-Object cycleId -CEQ $RetryCycleId)[0]
+        Assert-Value ($cycle-and@($cycle.rootExecutionIds).Count-le1-and$active.reservationAssignmentId-ceq$a.assignmentId) 'Replayed ownership or actual root consumption differs.'
+        Write-Result @{action=$(if($cycle.consumed){'RESERVATION_ALREADY_CONSUMED'}else{'RESERVATION_REASSIGNMENT_REUSED'});taskId=$root.id;assignmentId=$a.assignmentId;grantId=$a.targetGrantId;cycleId=$RetryCycleId;rootExecutionIds=@($cycle.rootExecutionIds);rootRetry=(Get-RootRetryState $q $root $m.mode)};return
+    }
+    Assert-Value ($root.status-cne'QUEUED'-and$reviewed-gt(ConvertTo-WorkflowUtcInstant $last.at)-and$reviewed-ge(ConvertTo-WorkflowUtcInstant $source.completedAt)) 'New reservation review requires the latest settled root failure.'
+    Assert-Value ((Get-UnusedGrantDigest $p.snapshot)-ceq(Get-UnusedGrantDigest (Get-ReservedResumeBinding $q $root $source $g $m $scopeValue))) 'Source/target/claims/result/Scope or quota changed since review.'
+    $failurePath=Assert-ResumeFile $p.latestFailure;$failure=Read-UnusedGrantJson $failurePath
+    Assert-Value ([IO.Path]::GetDirectoryName($failurePath)-ieq(Join-Path $workspaceRoot ('outputs/task-receipts/'+$root.id))-and$failure.action-cin@('FAILED_CIRCUIT_OPEN','CODE_VALIDATION_STOP','CONTROL_ACCEPTANCE_STOP')-and$failure.task.id-ceq$root.id-and$failure.task.execution.executionId-ceq$root.execution.executionId-and(Get-UnusedGrantDigest @($failure.task.errorHistory))-ceq(Get-UnusedGrantDigest @($root.errorHistory))-and$failure.supervisorHandoff.sessionId-ceq$s.sessionId-and$failure.supervisorHandoff.threadId-ceq$ControllerThreadId-and$failure.supervisorHandoff.sourceThreadId-ceq$OwnerThreadId) 'Review does not bind the current formal failure and controller.'
+    $completePath=Assert-ResumeFile $p.sourceCompletion;$complete=Read-UnusedGrantJson $completePath
+    Assert-Value ([IO.Path]::GetDirectoryName($completePath)-ieq(Join-Path $workspaceRoot ('outputs/task-receipts/'+$source.id))-and$complete.action-ceq'COMPLETED'-and$complete.task.id-ceq$source.id-and$complete.task.execution.executionId-ceq$source.execution.executionId-and$complete.task.completedAt-ceq$source.completedAt-and$complete.supervisorHandoff.sessionId-ceq$s.sessionId-and$complete.supervisorHandoff.sourceThreadId-ceq$source.execution.ownerThreadId) 'Current source completion receipt differs.'
+    Assert-Value ($source.execution.resumeGrantId-ceq$g.grantId-and$source.execution.resumeApprovalId-ceq$g.approvalId-and$complete.task.resumeApproval.grantId-ceq$g.grantId-and$g.claims[-1].executionId-ceq$source.execution.executionId-and$g.claims[-1].attempt-eq$source.attempts-and(Get-UnusedGrantDigest @($g.claims))-ceq(Get-UnusedGrantDigest @($complete.task.resumeApproval.claims))-and(Get-UnusedGrantDigest @($g.cycleIds))-ceq(Get-UnusedGrantDigest @($complete.task.resumeApproval.cycleIds))-and(Get-UnusedGrantDigest $g.scope)-ceq(Get-UnusedGrantDigest $complete.task.resumeApproval.scope)-and(Get-UnusedGrantDigest $origin)-ceq(Get-UnusedGrantDigest $complete.task.repairContext.controllerHumanReview)) 'Source claims, exact scope or original HUMAN provenance differ from its real completion.'
+    $slot=[array]::IndexOf(@($g.cycleIds),$RetryCycleId);$cycles=@(Get-RetryCycles $q $root);$cycle=@($cycles|Where-Object cycleId -CEQ $RetryCycleId);$raw=@(Get-RetryValue $root 'retryCycles'|Where-Object {$_.cycleId-ceq$RetryCycleId})
+    Assert-Value ($slot-ge[int]$g.usedRuns-and$cycle.Count-eq1-and$raw.Count-eq1-and$cycle[0].reserved-and-not$cycle[0].consumed-and-not$cycle[0].repairTaskId-and@($cycle[0].rootExecutionIds).Count-eq0-and-not(Get-ReservedCycleAssignment $root $RetryCycleId)) 'Only a unique unclaimed source reservation may be reassigned.'
+    $holders=@(foreach($t in $q.tasks){foreach($candidate in @((Get-RetryValue $t 'resumeApprovalHistory'))+@((Get-RetryValue $t 'resumeApproval'))){if($candidate-and$RetryCycleId-cin@($candidate.cycleIds)){@{taskId=$t.id;grantId=$candidate.grantId}}}})
+    Assert-Value ($holders.Count-eq1-and$holders[0].taskId-ceq$source.id-and$holders[0].grantId-ceq$g.grantId) 'Reservation has another grant holder.'
+    $budget=Get-RootRetryState $q $root $m.mode;Assert-Value ($budget.policyAvailable-and$budget.reserved-ge1-and$budget.used+$budget.reserved-le$budget.limit) 'Retained root quota is inconsistent.'
+    $beforeSource=Get-UnusedGrantDigest $source;$beforeGrant=Get-UnusedGrantDigest $g;$old=Get-BoundedResume $root
+    Assert-Value ($old-and$old.usedRuns-eq$old.runs-and-not$old.blockedReason) 'Previous root grant must be exhausted without an independent stop.'
+    $oldInstruction=$root.instruction;$oldFingerprint=Get-SupervisionFingerprint $root;$root.instruction=$Instruction.Trim()
+    $new=[pscustomobject][ordered]@{schemaVersion=2;approvalId=$ApprovalId;grantId=[guid]::NewGuid().ToString('N');authorizationSource='HUMAN';sourceSha256=$g.sourceSha256;taskId=$root.id;rootTaskId=$root.id;userDecision=$UserDecision;approvedAt=$g.approvedAt;reservationAssignedAt=Get-NowIso;controllerThreadId=$ControllerThreadId;ownerThreadId=$OwnerThreadId;mode=$m.mode;sessionId=$s.sessionId;runs=1;usedRuns=0;cycleIds=@($RetryCycleId);scope=$scopeValue;idempotenceIncluded=$true;claims=@();blockedReason=$null;routeKey=(Get-PipelineRouteKey (Get-PipelineExecutionTarget $root.pipeline));taskFingerprint=(Get-SupervisionFingerprint $root);failureHistorySha256=(Get-ResumeDigest @($root.errorHistory));expectedAttempt=([int]$root.attempts+1);verification=$Verification;reservationAssignmentId=$p.reviewId}
+    $revision=[pscustomobject]@{oldInstruction=$oldInstruction;newInstruction=$root.instruction;oldFingerprint=$oldFingerprint;newFingerprint=$new.taskFingerprint;approvalId=$ApprovalId;userDecision=$UserDecision;proof=[pscustomobject]@{approvalPath=$humanPath;approvalSha256=$p.human.sha256;evidencePath=$instructionPath;evidenceSha256=$p.instruction.sha256;reservationReviewPath=$proofPath;reservationReviewSha256=$ReservationReviewSha256}}
+    Set-RetryValue $new 'instructionRevision' $revision
+    $record=[pscustomobject][ordered]@{assignmentId=$p.reviewId;cycleId=$RetryCycleId;sourceTaskId=$source.id;sourceGrantId=$g.grantId;sourceTaskSha256=$beforeSource;sourceGrantSha256=$beforeGrant;targetTaskId=$root.id;targetGrantId=$new.grantId;proofPath=$proofPath;proofSha256=$ReservationReviewSha256;argumentsSha256=$argsHash;originalApprovedAt=$g.approvedAt;reviewedAt=$p.reviewedAt;assignedAt=Get-NowIso;approvalId=$ApprovalId;humanSourceSha256=$p.human.sha256;scopeSha256=(Get-UnusedGrantDigest $scopeValue);instructionRevision=$revision}
+    Set-RetryValue $root 'resumeApprovalHistory' (@(Get-RetryValue $root 'resumeApprovalHistory'|Where-Object{$_})+$old)
+    Set-RetryValue $root 'resumeApproval' $new;Set-RetryValue $root 'reservationAssignments' (@(Get-RetryValue $root 'reservationAssignments'|Where-Object{$_})+$record)
+    $root.status='QUEUED';$root.claimedAt=$null
+    $after=Get-RootRetryState $q $root $m.mode
+    Assert-Value ($after.used-eq$budget.used-and$after.reserved-eq$budget.reserved-and$after.limit-eq$budget.limit-and(Get-UnusedGrantDigest $source)-ceq$beforeSource-and(Get-UnusedGrantDigest $g)-ceq$beforeGrant) 'Reassignment cannot mutate source or quota.'
+    # Ownership and its immutable audit commit atomically in the same queue file.
+    Save-JsonFile $queuePath $q
+    Write-SupervisionAudit 'RESERVATION_REASSIGNED' @{taskId=$root.id;sourceTaskId=$source.id;sourceGrantId=$g.grantId;grantId=$new.grantId;cycleId=$RetryCycleId;assignmentId=$record.assignmentId;proofSha256=$ReservationReviewSha256;used=$after.used;reserved=$after.reserved;limit=$after.limit}
+    Write-Result @{action='RESERVATION_REASSIGNED';taskId=$root.id;grantId=$new.grantId;assignmentId=$record.assignmentId;cycleId=$RetryCycleId;sourceTaskId=$source.id;sourceGrantId=$g.grantId;rootRetry=$after;scope=$new.scope;restartsBusiness=$false}
+}
 function Get-ResumeDigest($Value) {
     [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8NoBom.GetBytes(($Value | ConvertTo-Json -Depth 50 -Compress))))
 }

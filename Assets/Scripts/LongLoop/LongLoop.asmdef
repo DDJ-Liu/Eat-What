@@ -2,7 +2,9 @@
   "name": "LongLoop",
   "rootNamespace": "",
   "references": [
-    "Toolkit"
+    "Toolkit",
+    "spine-unity",
+    "Unity.Cinemachine"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

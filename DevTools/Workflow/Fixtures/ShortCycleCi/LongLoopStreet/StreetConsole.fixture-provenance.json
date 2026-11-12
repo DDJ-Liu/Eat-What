@@ -1,0 +1,13 @@
+{
+  "baseline117": {
+    "source": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\PLAYABLE-DEMO011-20261104\\AI-000436\\attempt1\\handoff\\console-baseline434.json.gz",
+    "compressedSha256": "0049B5B3AA045C8D1535C20F7AC22686479F059D347416CB0B62BA71CAFB63B2"
+  },
+  "prefix121": {
+    "compressedSha256": "285F46D7445963A7D75D741A3A01847F4627609CD0EE126E66731DF21D2C949A",
+    "source": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\PLAYABLE-DEMO011-20261104\\AI-000435\\attempt2\\consoleBefore0-result.json",
+    "rawSha256": "425798D8132CB0E2A38FA640AA58792506BAF3B1D49915E72600645C3C2CB9EF"
+  },
+  "use": "Historical readonly regression data, never native evidence or new baseline",
+  "fixtureOnly": true
+}
