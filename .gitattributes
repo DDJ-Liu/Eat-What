@@ -21,6 +21,7 @@ Assets/TextMesh[[:space:]]Pro/Fonts/*.ttf filter=lfs diff=lfs merge=lfs -text
 Assets/TextMesh[[:space:]]Pro/Resources/Fonts[[:space:]]&[[:space:]]Materials/*.asset filter=lfs diff=lfs merge=lfs -text
 # Portable MIG63 hook sources (do not normalize unrelated files).
 DevTools/GitHooks/*.sh text eol=lf
+DevTools/GitHooks/*.py text eol=lf
 .ai-workspace/MIG63/pre-commit.sh text eol=lf
 
 # Preserve audited upstream package/server baseline bytes across clones.
@@ -31,6 +32,6 @@ DevTools/MCP/Coplay.LICENSE -text
 # Approval manifest is byte-compared by the font hook; preserve publication bytes.
 DevTools/Fonts/ShortCycleFontBuildManifest.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
 
-# Complete per-task and solid workflow archives use the existing LFS storage policy.
+# Historical archive pointers retain their storage attributes; new evidence is ignored/blocked.
 .ai-workspace/archive/**/*.zip filter=lfs diff=lfs merge=lfs -text
 .ai-workspace/archive/**/*.tar.xz filter=lfs diff=lfs merge=lfs -text

@@ -2,6 +2,30 @@
 
 2026-10-16：同族入口为 `Archive-Stage.ps1`、只读策略 `Archive-Policy.ps1`、派生表 `Get-TaskDigest.ps1`。唯一永久清单为 `.ai-workspace/PERMANENT_DOCUMENTS.json`。不改队列状态，不控制 Unity；正式 Create/Prune 由主控按当轮授权审查后执行。
 
+## 当次Context内的判定查找（AI518，2026-11-13）
+
+Get-ArchiveContext 仍逐次读取 queue、mode、实际 refs/ownedOutputs 与当前文档链接，保留所有原数组；仅由这些当次数据派生只读查找结构，生命周期限这个 Context。各 Action/计划复核重新建立 Context，不保留到下一次调用，不缓存文件存在、属性、源SHA或授权/资格结果。调用方将同一 Context 视为只读快照；旧无索引 Context 和不支持的旧数据形状继续走原扫描。
+
+完整相等沿 PowerShell 文化比较；真正前缀另用 OrdinalIgnoreCase 与 TrimEnd('/')，不混用同一比较器。所有者匹配保留原逐行/逐输出顺序、重复和跨任务精确共享，再走原 owners 排序/拒绝顺序；task-by-id 沿 -ceq 和第一个匹配。未结 refs/dependsOn 和当前文档引用仅减少重复查找，不替代原保护/关闭/人工门，也不跳过即时路径和当前状态复核。
+
+定向组 `context-index-decision-parity` 用显式 `-DecisionBaselinePath <本轮修改前Archive-Policy.ps1>` 的真实 Item/Document/Context 函数作完整返回值对照；不提供时用同一冻结旧函数，不依赖已归档任务目录。包括无索引回退、大小写/文化完整相等与前缀区别、共享/嵌套AI段、当前引用和重新读取变更后的队列。计时只是一小批相同判定，无固定速度通过阈值或全工程时长保证；Stage及原10MB/漂移/reparse/永久等门不变。
+
+## 路径查询开销（AI517，2026-11-13）
+
+`Resolve-ArchivePath` 保留原 GetFullPath、同根/越界与大小写规则，逐次从目标查到盘根；每一层用 `.NET File.GetAttributes` 即时读属性，以 `Path.GetDirectoryName` 找父级，替换逐祖先的 PowerShell 文件系统 cmdlet。目标不存在时仍继续核已有父级；仅 FileNotFoundException/DirectoryNotFoundException 视为不存在，其它权限/I/O/未知异常直接失败。所有 ReparsePoint 仍拒绝，不缓存属性、存在、哈希或授权状态，不跳过根外的祖先。
+
+定向测试 `resolver-dotnet-fresh-stat-parity` 读取显式 `-ResolverBaselinePath <本轮修改前Archive-Policy.ps1>` 中的真实原函数，与新函数对照、做少量同路径计时；常规回归未提供该参数时用相同冻结旧函数，不依赖会归档的任务目录。只用合成小夹具、真实本轮junction及祖先替换后的重查，链接记源/目标后只清理本体。耗时为当次小样本观测，不保证全工程Plan时长；原owner/closure/永久/包体积/模式/SHA/漂移规则不变。
+
+## 监管暂停窗口（AI515，2026-11-13）
+
+MANUAL 原调用方式和规则保持。保持 SUPERVISED 时，Plan、Create、Prune 三步均须显式传 `-ControllerThreadId <当前绑定控制台ID> -UserDecision '<本轮真实用户授权原意>'`，并实际处于 `status=PAUSED`、布尔 `stopRequested=true`、`exitRequested=false`；预约数组明确为空，全队列无 RUNNING，真实 worker-state 中所有车道 IDLE 且无 activeTaskId/lease。缺失、ACTIVE/CIRCUIT、错控制台、无授权或未知/忙状态均拒绝。工具不会自行暂停、切模式、恢复业务或改队列。
+
+Plan 自身及 Create/Prune 的计划复核共用同一内部窗口检查，不能只放开后两步。每步读取当前状态，不以调用者声明 idle 代替真实文件。Verify 保持原只读行为，不要求上述新参数，也不因监管 ACTIVE 被新增模式门阻断；Extract/SelfTest 原行为保持。新参数是当前操作的授权条件，不替代主控审查计划，也不把旧结果改成验收成功。
+
+暂停窗口仅放开模式资格；关闭/人工门、永久清单、未关闭依赖与链接、同任务完整包、1MB目标/10MB硬限、SHA/库存漂移/reparse/不覆写等原检查继续执行。超限整任务原件保留，不拆包。本条不改变面向用户的报告 ZIP 3MB目标/5MB硬限。配置与使用说明仍在项目既有目录，本文件只维护原归档工具说明。
+
+定向离线测试仍用 `Test-DocumentArchive.ps1 -CaseFilter ... -EvidenceRoot <本任务根>`，新增三组 `supervised-paused-archive-roundtrip-and-verify`、`supervised-paused-archive-window-rejections`、`supervised-paused-archive-safety-gates`；只操作合成隔离工程，不进行生产归档。
+
 ## 先 Plan，再审查
 
 使用 PowerShell 7，在工程根运行（示例任务号需换成本轮已批准对象）：

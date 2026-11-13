@@ -24,7 +24,7 @@ function Read-StandardToolProof([string]$Path,[string]$Root,[string]$Task,[strin
     if($native.success -isnot [bool] -or -not $native.success -or $native.command -cne $Command -or @($native.errors|Where-Object{$null -ne $_}).Count){
         throw 'STANDARD_PREFLIGHT_SOURCE: Native failure, denied permission or wrong observation role; preserve original error.'
     }
-    return [pscustomobject]@{value=$native;proofPath=$proofPath;proofSha256=(Get-FileHash -LiteralPath $proofPath).Hash;stdoutPath=$stdout;stdoutSha256=(Get-FileHash -LiteralPath $stdout).Hash}
+    return [pscustomobject]@{value=$native;record=$proof;proofPath=$proofPath;proofSha256=(Get-FileHash -LiteralPath $proofPath).Hash;stdoutPath=$stdout;stdoutSha256=(Get-FileHash -LiteralPath $stdout).Hash}
 }
 function Get-StandardPreflight {
     param([string]$Path,[string]$Root,$Managed,[string]$QueuePath,[string]$Task,[string]$Owner,[string]$Execution)
@@ -35,7 +35,7 @@ function Get-StandardPreflight {
     }
     $contextFile=ConvertTo-StandardPath $Path $Root
     $context=Get-Content -LiteralPath $contextFile -Raw|ConvertFrom-Json -Depth 50 -DateKind String
-    if($context.schemaVersion -ne 1 -or $context.intent -cnotin @('ReadOnly','Write') -or $context.files -isnot [array]){
+    if($context.schemaVersion -ne 1 -or $context.intent -cnotin @('ReadOnly','Write','EnterPlay','ExitPlay') -or $context.files -isnot [array]){
         throw 'STANDARD_PREFLIGHT_INPUT: schemaVersion=1, explicit intent and files array required.'
     }
     $warnings=[Collections.Generic.List[object]]::new()
@@ -73,7 +73,23 @@ function Get-StandardPreflight {
     $assemblyOk=$editor.compiling -is [bool] -and -not $editor.compiling -and $editor.domainReloadInProgress -is [bool] -and -not $editor.domainReloadInProgress -and
         $sceneData.compilationFailed -is [bool] -and -not $sceneData.compilationFailed -and $sceneData.isCompiling -is [bool] -and -not $sceneData.isCompiling -and
         $editor.playMode -in @('stopped','playing','paused')
-    if($context.intent -ceq 'Write' -and $editor.playMode -cne 'stopped'){$assemblyOk=$false}
+    if($context.intent -cin @('Write','EnterPlay') -and $editor.playMode -cne 'stopped'){$assemblyOk=$false}
+    if($context.intent -ceq 'ExitPlay'){
+        if($editor.playMode -cnotin @('playing','paused')){$assemblyOk=$false}
+        $entry=Read-StandardToolProof $context.proofs.playEntry $Root $Task $Owner $Execution 'command editor_play'
+        $entered=$entry.record.standardPreflight
+        $entryTarget=$entry.value.data.target
+        if($entered.passed -ne $true -or $entered.intent -cne 'EnterPlay' -or $entry.value.data.result -cne 'Entered play mode' -or
+            $entryTarget.port -ne $expected.port -or -not (ConvertTo-StandardPath $entryTarget.projectPath $Root).Equals($project,[StringComparison]::OrdinalIgnoreCase) -or
+            $entered.target.pid -ne $expected.pid -or $entered.target.unityVersion -cne $expected.unityVersion){
+            throw 'STANDARD_PREFLIGHT_PLAY_OWNER: Exit requires this execution to have entered this Editor through EnterPlay.'
+        }
+        foreach($role in @('editorStatus','scenes','consoleAfter')){
+            try{$fresh=[DateTimeOffset]::Parse($proofs[$role].record.finishedAt) -ge [DateTimeOffset]::Parse($entry.record.finishedAt)}catch{$fresh=$false}
+            if(-not $fresh){throw 'STANDARD_PREFLIGHT_PLAY_OWNER: Exit observations must follow the owned entry; old Edit evidence cannot be reused.'}
+        }
+        $proofs.playEntry=$entry
+    }
     if($sceneData.scenes -isnot [array] -or $sceneData.scenes.Count -eq 0){throw 'STANDARD_PREFLIGHT_SCENE: Explicit current scene observations required.'}
     $dirty=@();$unsaved=@()
     foreach($scene in $sceneData.scenes){
@@ -103,6 +119,7 @@ function Get-StandardPreflight {
     foreach($entry in $new){if(-not (Test-StandardInteger $entry.seq) -or $entry.seq -ne $next){$consoleOk=$false};$next++}
     if($next -ne [long]$after.cursor+1){$consoleOk=$false}
     $errors=@($new|Where-Object {$_.level -in @('error','assert','exception') -or $_.logType -in @('Error','Assert','Exception')})
+    $consoleComplete=[bool]$consoleOk
     if($errors.Count){$consoleOk=$false}
     if($before.reset -or $before.dropped){Warn 'CONSOLE_OLD_GAP' 'Baseline historical visibility; only current increment is evaluated' $before.cursor}
     $legacy=$context.legacy
@@ -117,12 +134,17 @@ function Get-StandardPreflight {
         [pscustomobject]@{id='sceneSafety';passed=[bool]($sceneSafe -or $context.intent -ceq 'ReadOnly')},
         [pscustomobject]@{id='consoleBaseline';passed=[bool]$consoleOk})
     $passed=@($checks|Where-Object{-not $_.passed}).Count -eq 0 -and $filesOk
+    # Only new Console errors may leave a failed business preflight eligible for
+    # an owned Stop. Missing sequences, dirty scenes and all independent gates stay closed.
+    $stopCleanupOnly=$context.intent -ceq 'ExitPlay' -and -not $passed -and $consoleComplete -and $errors.Count -gt 0 -and
+        $targetOk -and $assemblyOk -and $sceneSafe -and $filesOk
     $proofMetadata=[ordered]@{}
     foreach($role in $proofs.Keys){$p=$proofs[$role];$proofMetadata[$role]=[pscustomobject]@{proofPath=$p.proofPath;proofSha256=$p.proofSha256;stdoutPath=$p.stdoutPath;stdoutSha256=$p.stdoutSha256}}
     return [pscustomobject]@{schemaVersion=1;source='Preflight-Standard.ps1';taskId=$Task;ownerThreadId=$Owner;executionId=$Execution;intent=$context.intent;
         passed=[bool]$passed;checkCount=5;checks=$checks;writeAllowed=[bool]($passed -and $context.intent -ceq 'Write' -and $sceneSafe);
+        target=$expected;playMode=$editor.playMode;stopCleanupOnly=[bool]$stopCleanupOnly;
         contextPath=$contextFile;contextSha256=(Get-FileHash -LiteralPath $contextFile).Hash;proofs=$proofMetadata;
-        guards=@{sceneIsDirty=@{dirty=$dirty;unsavedCount=$unsaved.Count;safeToWrite=$sceneSafe};specifiedFileSha=@{passed=$filesOk;files=$fileChecks};consoleIncrement=@{session=$after.session;from=$before.cursor;to=$after.cursor;newRecords=$new.Count;newErrors=$errors.Count;complete=[bool]$consoleOk}};
+        guards=@{sceneIsDirty=@{dirty=$dirty;unsavedCount=$unsaved.Count;safeToWrite=$sceneSafe};specifiedFileSha=@{passed=$filesOk;files=$fileChecks};consoleIncrement=@{session=$after.session;from=$before.cursor;to=$after.cursor;newRecords=$new.Count;newErrors=$errors.Count;complete=[bool]$consoleOk;sequenceComplete=$consoleComplete}};
         warnings=@($warnings);heartbeatAgeSeconds=$age;platformApprovalProvided=$false}
 }
 

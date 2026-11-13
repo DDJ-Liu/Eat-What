@@ -72,6 +72,8 @@ with tempfile.TemporaryDirectory(prefix='mig63-font-') as tmp:
     original = b'isolated historical legacy font baseline\n'
     (repo / LEGACY).write_bytes(original)
     (repo / 'DevTools/GitHooks').mkdir(parents=True)
+    shutil.copy2(ROOT / 'DevTools/GitHooks/check-repo-content.py',
+                 repo / 'DevTools/GitHooks/check-repo-content.py')
     shutil.copy2(
         ROOT / 'DevTools/GitHooks/check-mig63-font.sh',
         repo / 'DevTools/GitHooks/check-mig63-font.sh'

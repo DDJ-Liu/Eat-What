@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$EvidenceRoot=$(if($env:EATWHAT_ARCHIVE_TEST_ROOT){$env:EATWHAT_ARCHIVE_TEST_ROOT}else{Join-Path $PSScriptRoot '../../.ai-workspace/outputs/control/DOC-SLIM-20261016/AI-000254/tests'}),[string[]]$CaseFilter=$(if($env:EATWHAT_ARCHIVE_TEST_CASES){$env:EATWHAT_ARCHIVE_TEST_CASES.Split(',')}else{@()}))
+param([string]$EvidenceRoot=$(if($env:EATWHAT_ARCHIVE_TEST_ROOT){$env:EATWHAT_ARCHIVE_TEST_ROOT}else{Join-Path $PSScriptRoot '../../.ai-workspace/outputs/control/DOC-SLIM-20261016/AI-000254/tests'}),[string[]]$CaseFilter=$(if($env:EATWHAT_ARCHIVE_TEST_CASES){$env:EATWHAT_ARCHIVE_TEST_CASES.Split(',')}else{@()}),[string]$ResolverBaselinePath,[string]$DecisionBaselinePath)
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'Archive-Policy.ps1')
 $archiveScript=Join-Path $PSScriptRoot 'Archive-Stage.ps1';$digestScript=Join-Path $PSScriptRoot 'Get-TaskDigest.ps1'
@@ -632,7 +632,367 @@ Case 'digest-classification-source-bound-line-tool-separate' {
  $outputMap='.ai-workspace/outputs/AI-000001/unapproved-map.json';Save-ArchiveJson (Join-Path $root $outputMap) $map;$bad.ClassificationMapPath=$outputMap;$bad.ClassificationMapSha256=Get-ArchiveFileHash (Join-Path $root $outputMap);Reject {& $digestScript @bad} 'Output-local map cannot self-authorize classification'
  Check ((Get-ArchiveFileHash (Join-Path $root '.ai-workspace/runtime/queue-state.json')) -ceq $queueHash -and (Get-ArchiveFileHash (Join-Path $root '.ai-workspace/runtime/usage-fixture.jsonl')) -ceq $usageHash) 'Classification never rewrites queue histories or original usage bytes'
 }
-$report=@{passed=(@($results|Where-Object {-not $_.passed}).Count -eq 0);assertions=$assertions;cases=$results.ToArray();fixtureRoot=$runRoot;productionCreatePrune=$false}
+# AI515: reuse the existing fixture/policy/tool family; never operate on production records.
+function Enable-PausedArchive($Root){
+ $mode=@{mode='SUPERVISED';supervised=@{sessionId='fixture-paused-archive';status='PAUSED';controllerThreadId='00000000-0000-0000-0000-000000000001';stopRequested=$true;exitRequested=$false;taskIds=@('AI-000001');reservations=@()}}
+ $workers=[ordered]@{}
+ foreach($lane in @('CODE','ENGINE_MCP','ENGINE_CLI','DATA','ART_AIGC','ART_ASSET')){$workers[$lane]=@{status='IDLE';activeTaskId=$null;leaseUntil=$null}}
+ Save-ArchiveJson (Join-Path $Root '.ai-workspace/runtime/mode-state.json') $mode
+ Save-ArchiveJson (Join-Path $Root '.ai-workspace/runtime/worker-state.json') @{workers=$workers}
+ @{ControllerThreadId=$mode.supervised.controllerThreadId;UserDecision='Fixture explicit user authorization for closed-record archive maintenance only'}
+}
+function Invoke-PausedArchive($Root,[string]$Operation,$Authorization){
+ $arguments=@{Action=$Operation;ProjectRoot=$Root}
+ if($Operation -eq 'Plan'){$arguments.TaskIds=@('AI-000001');$arguments.OutputPath='plan.json'}
+ if($Operation -in @('Create','Prune')){$arguments.PlanPath='plan.json'}
+ & $archiveScript @arguments @Authorization
+}
+function Get-PausedArchiveSnapshot($Root){
+ $files=[ordered]@{}
+ foreach($file in @(Get-ChildItem -LiteralPath $Root -Recurse -File -Force|Sort-Object FullName)){$files[[IO.Path]::GetRelativePath($Root,$file.FullName)]=Get-ArchiveFileHash $file.FullName}
+ ConvertTo-Json -InputObject $files -Depth 5 -Compress
+}
+Case 'supervised-paused-archive-roundtrip-and-verify' {
+ $root=Fixture 'supervised-roundtrip';$auth=Enable-PausedArchive $root
+ $source=Join-Path $root '.ai-workspace/outputs/AI-000001/report.md';$sha=Get-ArchiveFileHash $source
+ $state=@{};foreach($p in @('queue','mode','worker')){$state[$p]=Get-ArchiveFileHash (Join-Path $root ".ai-workspace/runtime/$p-state.json")}
+ $planned=Invoke-PausedArchive $root 'Plan' $auth|ConvertFrom-Json
+ Check ($planned.action -eq 'ARCHIVE_PLANNED' -and $planned.ready -eq 1) 'Explicit paused Plan works through its own mode gate'
+ $created=Invoke-PausedArchive $root 'Create' $auth|ConvertFrom-Json;Check $created.verified 'Paused Create actual tool succeeds'
+ $mode=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/mode-state.json');$mode.supervised.status='ACTIVE';$mode.supervised.stopRequested=$false
+ Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/mode-state.json') $mode
+ $snapshot=Get-PausedArchiveSnapshot $root
+ $verified=& $archiveScript -Action Verify -ProjectRoot $root|ConvertFrom-Json
+ Check $verified.verified 'Verify remains read-only and works without new authorization even in ACTIVE'
+ Check ((Get-PausedArchiveSnapshot $root) -ceq $snapshot) 'Verify does not change any fixture file'
+ $mode.supervised.status='PAUSED';$mode.supervised.stopRequested=$true;Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/mode-state.json') $mode
+ $before=Get-PausedArchiveSnapshot $root
+ Reject {Invoke-PausedArchive $root 'Create' $auth} 'Existing archive is not overwritten in paused mode'
+ Check ((Get-PausedArchiveSnapshot $root) -ceq $before) 'Duplicate Create leaves all files unchanged'
+ $pruned=Invoke-PausedArchive $root 'Prune' $auth|ConvertFrom-Json;Check ($pruned.archivedFiles -eq 1 -and $pruned.queueUnchanged) 'Paused Prune actual tool succeeds'
+ Check (-not(Test-Path -LiteralPath $source)) 'Only verified synthetic record is pruned'
+ foreach($p in @('queue','mode','worker')){Check ((Get-ArchiveFileHash (Join-Path $root ".ai-workspace/runtime/$p-state.json")) -ceq $state[$p]) "Paused archive leaves $p state unchanged"}
+ $extract=& $archiveScript -Action Extract -ProjectRoot $root -OriginalPath '.ai-workspace/outputs/AI-000001/report.md'|ConvertFrom-Json
+ Check ((Get-ArchiveFileHash $extract.path) -ceq $sha) 'Paused archived text extracts byte-exactly'
+ $again=& $archiveScript -Action Extract -ProjectRoot $root -OriginalPath '.ai-workspace/outputs/AI-000001/report.md'|ConvertFrom-Json
+ Check ($again.path -ceq $extract.path) 'Original matching Extract remains idempotent'
+}
+Case 'supervised-paused-archive-window-rejections' {
+ foreach($operation in @('Plan','Create','Prune')){
+  foreach($kind in @('active','circuit','stop-false','exit-true','string-stop','string-exit','wrong-controller','no-controller','no-decision','running','busy','active-worker','lease','unknown-worker','reservation','unknown-reservations','missing-workers','empty-workers')){
+   $root=Fixture "supervised-$operation-$kind";$auth=Enable-PausedArchive $root
+   if($operation -in @('Create','Prune')){[void](Invoke-PausedArchive $root 'Plan' $auth)}
+   if($operation -eq 'Prune'){[void](Invoke-PausedArchive $root 'Create' $auth)}
+   $mode=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/mode-state.json')
+   $worker=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/worker-state.json')
+   switch($kind){
+    active {$mode.supervised.status='ACTIVE'}
+    circuit {$mode.supervised.status='PAUSED_CIRCUIT'}
+    stop-false {$mode.supervised.stopRequested=$false}
+    exit-true {$mode.supervised.exitRequested=$true}
+    string-stop {$mode.supervised.stopRequested='true'}
+    string-exit {$mode.supervised.exitRequested='false'}
+    wrong-controller {$auth.ControllerThreadId='foreign-controller'}
+    no-controller {$auth.ControllerThreadId=''}
+    no-decision {$auth.UserDecision=''}
+    running {$q=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json');$q.tasks+=@((Task 'AI-000002' 'RUNNING' ''));Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json') $q}
+    busy {$worker.workers.CODE.status='BUSY'}
+    active-worker {$worker.workers.ENGINE_CLI.activeTaskId='AI-000002'}
+    lease {$worker.workers.CODE.leaseUntil='2099-01-01T00:00:00Z'}
+    unknown-worker {$worker.workers.CODE.status='UNKNOWN'}
+    reservation {$mode.supervised.reservations=@(@{taskId='AI-000002';dispatchToken='held'})}
+    unknown-reservations {$mode.supervised.reservations=$null}
+    missing-workers {$worker.PSObject.Properties.Remove('workers')}
+    empty-workers {$worker.workers=[pscustomobject]@{}}
+   }
+   Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/mode-state.json') $mode
+   Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/worker-state.json') $worker
+   $before=Get-PausedArchiveSnapshot $root
+   Reject {Invoke-PausedArchive $root $operation $auth} "$operation rejects $kind"
+   Check ((Get-PausedArchiveSnapshot $root) -ceq $before) "$operation/$kind denial changes no fixture file"
+  }
+ }
+}
+Case 'supervised-paused-archive-safety-gates' {
+ foreach($kind in @('unreviewed','permanent','open-dependency')){
+  $root=Fixture "supervised-retain-$kind";$auth=Enable-PausedArchive $root
+  switch($kind){
+   unreviewed {$q=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json');$q.tasks[0].result.verificationStatus='PENDING_USER';Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json') $q}
+   permanent {$p=Read-ArchiveJson (Join-Path $root '.ai-workspace/PERMANENT_DOCUMENTS.json');$p.exactPaths+=@('.ai-workspace/outputs/AI-000001/report.md');Save-ArchiveJson (Join-Path $root '.ai-workspace/PERMANENT_DOCUMENTS.json') $p}
+   open-dependency {$q=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json');$t=Task 'AI-000002' 'QUEUED' '';$t.dependsOn=@('AI-000001');$q.tasks+=@($t);Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json') $q}
+  }
+  [void](Invoke-PausedArchive $root 'Plan' $auth);$plan=Read-ArchiveJson (Join-Path $root 'plan.json')
+  Check (@($plan.files|Where-Object disposition -ne retain).Count -eq 0) "Paused authorization does not bypass $kind source protection"
+  [void](Invoke-PausedArchive $root 'Create' $auth);[void](Invoke-PausedArchive $root 'Prune' $auth)
+  Check (Test-Path -LiteralPath (Join-Path $root '.ai-workspace/outputs/AI-000001/report.md')) "Paused $kind source remains"
+ }
+ $root=Fixture 'supervised-hard-limit';$auth=Enable-PausedArchive $root;$raw=[byte[]]::new(11000000);[Security.Cryptography.RandomNumberGenerator]::Fill($raw)
+ $path=Write-Text $root '.ai-workspace/outputs/AI-000001/large.txt' ([Convert]::ToBase64String($raw));$raw=$null
+ [void](Invoke-PausedArchive $root 'Plan' $auth);$plan=Read-ArchiveJson (Join-Path $root 'plan.json')
+ Check ($plan.packages[0].status -eq 'BLOCKED' -and $plan.packages[0].packedLowerBound -gt 10000000) 'Paused mode keeps the exact complete-task10MB hard limit'
+ [void](Invoke-PausedArchive $root 'Create' $auth);[void](Invoke-PausedArchive $root 'Prune' $auth)
+ Check ((Test-Path -LiteralPath $path) -and (Test-Path -LiteralPath (Join-Path $root '.ai-workspace/outputs/AI-000001/report.md'))) 'Entire oversized synthetic task stays at source'
+ Check (@(Get-ChildItem (Join-Path $root '.ai-workspace/archive/2026-09-17') -Filter '*.zip').Count -eq 0) 'No split/sidecar package bypass'
+ foreach($kind in @('content','permanent','open-dependency','reparse')){
+  $root=Fixture "supervised-prune-$kind";$auth=Enable-PausedArchive $root
+  [void](Invoke-PausedArchive $root 'Plan' $auth);[void](Invoke-PausedArchive $root 'Create' $auth)
+  switch($kind){
+   content {[void](Write-Text $root '.ai-workspace/outputs/AI-000001/report.md' 'changed after Plan')}
+   permanent {$p=Read-ArchiveJson (Join-Path $root '.ai-workspace/PERMANENT_DOCUMENTS.json');$p.exactPaths+=@('.ai-workspace/outputs/AI-000001/report.md');Save-ArchiveJson (Join-Path $root '.ai-workspace/PERMANENT_DOCUMENTS.json') $p}
+   open-dependency {$q=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json');$t=Task 'AI-000002' 'QUEUED' '';$t.dependsOn=@('AI-000001');$q.tasks+=@($t);Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json') $q}
+   reparse {$p=Join-Path $root '.ai-workspace/outputs/AI-000001/linked-source';[void](New-Item -ItemType Junction -Path $p -Target $runRoot);Reject {Resolve-ArchivePath $root '.ai-workspace/outputs/AI-000001/linked-source'} 'Actual candidate reparse is rejected'}
+  }
+  Reject {Invoke-PausedArchive $root 'Prune' $auth} "Paused Prune retains original $kind guard"
+  Check (Test-Path -LiteralPath (Join-Path $root '.ai-workspace/outputs/AI-000001/report.md')) "No prune after $kind drift"
+ }
+}
+
+# AI517: compare the real pre-task resolver with current immediate-stat behavior.
+$script:resolverObservations517=[Collections.Generic.List[object]]::new()
+$script:resolverTiming517=$null;$script:resolverBaseline517=$null
+Case 'resolver-dotnet-fresh-stat-parity' {
+ $frozenLegacy='function Resolve-ArchivePath([string]$Root,[string]$Path){
+ $base=[IO.Path]::GetFullPath($Root).TrimEnd(''\'',''/'');$full=[IO.Path]::GetFullPath($(if([IO.Path]::IsPathRooted($Path)){$Path}else{Join-Path $base $Path}))
+ if($full -ne $base -and -not $full.StartsWith($base+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw "Path escapes project/fixture: $Path"}
+ $probe=$full;while($probe){if((Test-Path -LiteralPath $probe) -and ((Get-Item -LiteralPath $probe -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw "Reparse path rejected: $Path"};$parent=Split-Path -Parent $probe;if($parent -eq $probe){break};$probe=$parent};$full
+}'
+ $legacy=$frozenLegacy
+ if($ResolverBaselinePath){
+  $tokens517=$null;$errors517=$null
+  $ast517=[Management.Automation.Language.Parser]::ParseFile([IO.Path]::GetFullPath($ResolverBaselinePath),[ref]$tokens517,[ref]$errors517)
+  $functions517=@($ast517.FindAll({param($node)$node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq 'Resolve-ArchivePath'},$true))
+  Check ($errors517.Count -eq 0 -and $functions517.Count -eq 1) 'Real task-before source has one parseable resolver'
+  $legacy=$functions517[0].Extent.Text.Replace("`r`n","`n")
+  Check ($legacy.Trim() -ceq $frozenLegacy.Trim()) 'Frozen baseline is exactly the actual task-before resolver'
+  $script:resolverBaseline517=@{source=[IO.Path]::GetFullPath($ResolverBaselinePath);sha256=Get-ArchiveFileHash $ResolverBaselinePath;functionSha256=Get-ArchiveStringHash $legacy.Trim();kind='Actual pre-task source AST'}
+ }else{$script:resolverBaseline517=@{source='Frozen previous resolver in this case';functionSha256=Get-ArchiveStringHash $legacy.Trim();kind='Stable fixture with no archived-task dependency'}}
+ . ([scriptblock]::Create($legacy.Replace('function Resolve-ArchivePath(','function Resolve-ArchivePathBefore517(')))
+ function Compare-Resolver517([string]$BoundRoot,[string]$BoundPath,[bool]$Expected,[string]$Label){
+  $outcomes=@()
+  foreach($resolverName in @('Resolve-ArchivePathBefore517','Resolve-ArchivePath')){
+   try{$value=& $resolverName $BoundRoot $BoundPath;$outcomes+=@([pscustomobject]@{allowed=$true;path=[string]$value;error=$null})}
+   catch{$outcomes+=@([pscustomobject]@{allowed=$false;path=$null;error=$_.Exception.GetBaseException().GetType().FullName})}
+  }
+  Check ($outcomes[0].allowed -eq $outcomes[1].allowed) "$Label old/new decision parity"
+  Check ($outcomes[1].allowed -eq $Expected) "$Label expected path boundary"
+  if($Expected){Check ($outcomes[0].path -ceq $outcomes[1].path) "$Label byte-exact returned path parity"}
+  $script:resolverObservations517.Add(@{label=$Label;root=$BoundRoot;inputPath=$BoundPath;expectedAllowed=$Expected;old=$outcomes[0];current=$outcomes[1]})
+ }
+ $root=Fixture 'resolver-dotnet'
+ $file=Write-Text $root '中文 目录/file with spaces.txt' 'small source bytes'
+ [void][IO.Directory]::CreateDirectory((Join-Path $root 'nested'))
+ Compare-Resolver517 $root '.' $true 'root-directory'
+ Compare-Resolver517 $root '中文 目录' $true 'existing-directory'
+ Compare-Resolver517 $root '中文 目录/file with spaces.txt' $true 'existing-Unicode-space-file'
+ Compare-Resolver517 $root $file $true 'absolute-path'
+ Compare-Resolver517 $root 'missing.txt' $true 'missing-file'
+ Compare-Resolver517 $root 'absent/deep/child.txt' $true 'missing-directory-and-descendant'
+ Compare-Resolver517 $root 'nested/../中文 目录/file with spaces.txt' $true 'normalized-relative-path'
+ Compare-Resolver517 $root.ToUpperInvariant() '中文 目录/file with spaces.txt' $true 'case-insensitive-root'
+ Compare-Resolver517 $root '中文 目录/FILE WITH SPACES.TXT' $true 'case-insensitive-file'
+ Compare-Resolver517 $root '../outside.txt' $false 'relative-traversal'
+ Compare-Resolver517 $root ($root+'-sibling/file.txt') $false 'sibling-prefix-boundary'
+ Compare-Resolver517 $root ('bad'+[char]0+'path') $false 'invalid-path-error-propagates'
+ $timingPaths=@('中文 目录/file with spaces.txt','中文 目录',$file,'absent/deep/child.txt')
+ $times=@{}
+ foreach($resolverName in @('Resolve-ArchivePathBefore517','Resolve-ArchivePath')){
+  $watch=[Diagnostics.Stopwatch]::StartNew()
+  foreach($iteration in 1..10){foreach($smallPath in $timingPaths){[void](& $resolverName $root $smallPath)}}
+  $watch.Stop();$times[$resolverName]=$watch.Elapsed.TotalMilliseconds
+ }
+ $script:resolverTiming517=@{callsPerResolver=40;pathCount=4;iterations=10;oldMilliseconds=$times['Resolve-ArchivePathBefore517'];currentMilliseconds=$times['Resolve-ArchivePath'];speedRatio=$(if($times['Resolve-ArchivePath'] -gt 0){$times['Resolve-ArchivePathBefore517']/$times['Resolve-ArchivePath']}else{$null});scope='One small identical path batch, real filesystem stats, no performance pass threshold or full-project claim'}
+ $mutable=Join-Path $root 'mutate/ancestor';[void][IO.Directory]::CreateDirectory($mutable)
+ Compare-Resolver517 $root 'mutate/ancestor' $true 'ordinary-ancestor-first-call'
+ Compare-Resolver517 $root 'mutate/ancestor/missing-leaf.txt' $true 'ordinary-ancestor-missing-descendant-first-call'
+ $absoluteMutable=[IO.Path]::GetFullPath($mutable)
+ Check ($absoluteMutable.StartsWith($root+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase) -and
+        -not([IO.File]::GetAttributes($absoluteMutable) -band [IO.FileAttributes]::ReparsePoint) -and
+        @([IO.Directory]::EnumerateFileSystemEntries($absoluteMutable)).Count -eq 0) 'Only own empty normal fixture directory may be replaced'
+ [IO.Directory]::Delete($absoluteMutable,$false)
+ [void](New-Item -ItemType Junction -Path $absoluteMutable -Target $runRoot)
+ Compare-Resolver517 $root 'mutate/ancestor' $false 'same-ancestor-replaced-by-real-junction'
+ Compare-Resolver517 $root 'mutate/ancestor/missing-leaf.txt' $false 'missing-leaf-still-checks-changed-ancestor'
+ Compare-Resolver517 (Join-Path $mutable 'nested-root') 'leaf.txt' $false 'checks-reparse-ancestor-outside-lexical-root'
+ Check (Test-Path -LiteralPath $file) 'Real junction tests retain original target/source files'
+}
+
+# AI518: full decisions from the real before-functions are the parity oracle.
+$script:decisionComparisons518=[Collections.Generic.List[object]]::new();$script:decisionTiming518=$null;$script:decisionBaseline518=$null
+Case 'context-index-decision-parity' {
+ $frozenBefore='function Get-ArchiveContext($Root,$Policy){
+ $queue=Read-ArchiveJson (Resolve-ArchivePath $Root ''.ai-workspace/runtime/queue-state.json'');$mode=Read-ArchiveJson (Resolve-ArchivePath $Root ''.ai-workspace/runtime/mode-state.json'')
+ $tasks=@();foreach($t in $queue.tasks){$tasks+=@{task=$t;closure=(Get-ArchiveClosure $t $Root);refs=@(Get-ArchiveReferences $t $Root);ownedOutputs=@(Get-ArchiveReferences ([pscustomobject]@{artifacts=$t.artifacts;result=@{artifacts=$t.result.artifacts};outputRoot=$t.outputRoot;outputPaths=$t.outputPaths}) $Root)}};$activeLinks=@()
+ foreach($p in @($Policy.data.referenceDocuments)){foreach($file in @(Get-ArchiveFiles $Root $p|Where-Object Extension -eq ''.md'')){
+  if(Test-ArchiveReferenceExcluded (Get-ArchiveRelative $Root $file.FullName) $Policy){continue}
+  $docText=[IO.File]::ReadAllText($file.FullName)
+  foreach($m in [regex]::Matches($docText,''\]\(([^\s)]+)(?:\s+"[^"]*")?\)'')){$link=$m.Groups[1].Value.Split(''#'')[0];if(-not $link -or $link -match ''^[a-zA-Z]+:''){continue};try{$target=Resolve-ArchivePath $Root (Join-Path $file.DirectoryName ([uri]::UnescapeDataString($link)));if(Test-Path -LiteralPath $target){$relative=(Get-ArchiveRelative $Root $target).TrimEnd(''/'');if($relative -notin @($Policy.data.recordRoots) -and $relative -notin @(''.'',''.ai-workspace'')){$activeLinks+=$relative}}}catch{continue}}
+  # Root-relative code paths also express live dependencies in project documents.
+  foreach($m in [regex]::Matches($docText,''`((?:\.ai-workspace/|outputs/|inputs/|DevTools/|Captures/)[^`\r\n]+)`'')){
+   $link=$m.Groups[1].Value.TrimEnd(''/'');if($link -match ''^(outputs|inputs)/''){$link=''.ai-workspace/''+$link}
+   try{$target=Resolve-ArchivePath $Root $link;if(Test-Path -LiteralPath $target){$relative=(Get-ArchiveRelative $Root $target).TrimEnd(''/'');if($relative -notin @($Policy.data.recordRoots) -and $relative -notin @(''.'',''.ai-workspace'')){$activeLinks+=$relative}}}catch{continue}
+  }
+ }};[pscustomobject]@{queue=$queue;mode=$mode;tasks=$tasks;activeLinks=@($activeLinks|Sort-Object -Unique)}
+}
+function Get-ArchiveItemDecision($Root,$Path,$Context,$Policy,[string[]]$ExtraPatterns=@()){
+ $parts=@($Path -split ''/''|Where-Object {$_ -match ''^AI-\d{6}$''}|Sort-Object -Unique)
+  if($parts.Count){
+  $owners=@($parts)
+  foreach($row in $Context.tasks){foreach($p in $row.ownedOutputs){if($p -ieq $Path -or ((Test-ArchiveWithin $Path $p) -and $row.task.id -in @($p -split ''/''))){$owners+=$row.task.id}}}
+ }else{$owners=@($Context.tasks|Where-Object {$row=$_;@($row.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count -gt 0}|ForEach-Object {$_.task.id})}
+ $owners=@($owners|Sort-Object -Unique)
+ $reason=Get-ArchiveProtection $Path $Policy $ExtraPatterns;$owner=$null;$closed=''OPEN''
+ if(-not $reason){$reason=Get-ArchiveBatchProtection $Path $Context $Policy}
+ if(-not $reason){if($owners.Count -ne 1){$reason=if($owners.Count){''SHARED_OR_MIXED_OWNERSHIP''}else{''UNKNOWN_OWNERSHIP''}}else{
+  $owner=$owners[0];$row=@($Context.tasks|Where-Object {$_.task.id -ceq $owner})[0]
+  if(-not $row){$reason=''UNKNOWN_TASK''}else{$closed=$row.closure.view;if(-not $row.closure.closed){$reason=''TASK_NOT_CLOSED''}
+   elseif(@($Context.tasks|Where-Object {-not $_.closure.closed -and (@($_.task.dependsOn) -contains $owner -or @($_.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count)}).Count){$reason=''UNCLOSED_DEPENDENCY_OR_REFERENCE''}
+   elseif(@($Context.activeLinks|Where-Object {Test-ArchiveWithin $Path $_}).Count){$reason=''ACTIVE_DOCUMENT_REFERENCE''}
+  }
+ }};if(-not $owner -and $owners.Count -eq 1){$owner=$owners[0]};[pscustomobject]@{path=$Path;taskId=$owner;owners=$owners;eligible=(-not $reason);reason=$(if($reason){$reason}else{''CLOSED_EXCLUSIVE''});closure=$closed}
+}
+function Get-ArchiveDocumentDecision($Root,$Path,$Context,$Policy,$FamilyIds,$ExtraPatterns=@()){
+ $matches=@($Policy.families|Where-Object {$_.id -in $FamilyIds -and $Path -match $_.pattern})
+ $reason=Get-ArchiveProtection $Path $Policy $ExtraPatterns;$unit=$null;$family=$null
+ if($matches.Count -ne 1){$reason=''DOCUMENT_FAMILY_NOT_EXPLICITLY_SELECTED''}else{
+  $family=$matches[0];$member=@($family.members|Where-Object path -ceq $Path)
+  if($member.Count -ne 1){$reason=''UNKNOWN_DOCUMENT_VERSION''}else{$unit=$member[0].unitId}
+  if(-not $reason){$reason=Get-ArchiveBatchProtection $Path $Context $Policy}
+  if(-not $reason -and @($Context.tasks|Where-Object {-not $_.closure.closed -and @($_.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count}).Count){$reason=''UNCLOSED_DOCUMENT_REFERENCE''}
+  if(-not $reason -and @($Context.activeLinks|Where-Object {Test-ArchiveWithin $Path $_}).Count){$reason=''ACTIVE_DOCUMENT_REFERENCE''}
+ }
+ [pscustomobject]@{taskId=$null;archiveUnitId=$unit;owners=@();eligible=(-not $reason);closure=''SUPERSEDED_DOCUMENT_VERSION'';reason=$(if($reason){$reason}else{''CONFIRMED_OLDER_DOCUMENT_VERSION''});family=$(if($family){$family.id}else{$null})}
+}
+# Explicit disposition review is an additional gate, never an override of closure/permanence.'
+ $baselineSource=$frozenBefore
+ if($DecisionBaselinePath){$baselineSource=[IO.File]::ReadAllText([IO.Path]::GetFullPath($DecisionBaselinePath));$script:decisionBaseline518=@{source=[IO.Path]::GetFullPath($DecisionBaselinePath);sha256=Get-ArchiveFileHash $DecisionBaselinePath}}
+ else{$script:decisionBaseline518=@{source='Stable frozen pre-index functions in this case';sha256=Get-ArchiveStringHash $frozenBefore}}
+ $token518=$null;$error518=$null;$ast518=[Management.Automation.Language.Parser]::ParseInput($baselineSource,[ref]$token518,[ref]$error518)
+ Check ($error518.Count -eq 0) 'Decision baseline parses without errors'
+ foreach($name518 in @('Get-ArchiveContext','Get-ArchiveItemDecision','Get-ArchiveDocumentDecision')){
+  $fn518=@($ast518.FindAll({param($node)$node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name518},$true))
+  Check ($fn518.Count -eq 1) "One real baseline $name518"
+  . ([scriptblock]::Create($fn518[0].Extent.Text.Replace(('function '+$name518+'('),('function '+$name518+'Before518('))))
+ }
+ function Plain-Context518($Context){[pscustomobject]@{queue=$Context.queue;mode=$Context.mode;tasks=$Context.tasks;activeLinks=$Context.activeLinks}}
+ function Synthetic-Context518($Rows,$Links=@()){
+  [pscustomobject]@{queue=@{tasks=@($Rows|ForEach-Object task)};mode=@{mode='MANUAL'};tasks=$Rows;activeLinks=$Links;lookups=(New-ArchiveContextLookup $Rows $Links)}
+ }
+ function Row518([string]$Id,$References=@(),$Outputs=@(),[bool]$Closed=$true,$Dependencies=@()){
+  [pscustomobject]@{task=[pscustomobject]@{id=$Id;dependsOn=$Dependencies};closure=@{closed=$Closed;view=$(if($Closed){'CLOSED_VERIFIED'}else{'OPEN'})};refs=$References;ownedOutputs=$Outputs}
+ }
+ function Compare-Item518($Root,[string]$Path,$Context,$Policy,[string]$Label,[string]$Expected=''){
+  $old=Get-ArchiveItemDecisionBefore518 $Root $Path $Context $Policy;$current=Get-ArchiveItemDecision $Root $Path $Context $Policy
+  $fallback=Get-ArchiveItemDecision $Root $Path (Plain-Context518 $Context) $Policy
+  $oldJson=ConvertTo-Json -InputObject $old -Depth 14 -Compress
+  Check ($oldJson -ceq (ConvertTo-Json -InputObject $current -Depth 14 -Compress)) "$Label complete indexed Item result matches real old function"
+  Check ($oldJson -ceq (ConvertTo-Json -InputObject $fallback -Depth 14 -Compress)) "$Label complete no-index fallback matches real old function"
+  if($Expected){Check ($current.reason -ceq $Expected) "$Label expected decision reason"}
+  $script:decisionComparisons518.Add(@{kind='Item';label=$Label;path=$Path;old=$old;current=$current;fallback=$fallback})
+ }
+ function Compare-Document518($Root,[string]$Path,$Context,$Policy,$Families,[string]$Label){
+  $old=Get-ArchiveDocumentDecisionBefore518 $Root $Path $Context $Policy $Families;$current=Get-ArchiveDocumentDecision $Root $Path $Context $Policy $Families
+  $fallback=Get-ArchiveDocumentDecision $Root $Path (Plain-Context518 $Context) $Policy $Families
+  $oldJson=ConvertTo-Json -InputObject $old -Depth 14 -Compress
+  Check ($oldJson -ceq (ConvertTo-Json -InputObject $current -Depth 14 -Compress)) "$Label complete indexed Document result matches real old function"
+  Check ($oldJson -ceq (ConvertTo-Json -InputObject $fallback -Depth 14 -Compress)) "$Label complete no-index Document fallback matches real old function"
+  $script:decisionComparisons518.Add(@{kind='Document';label=$Label;path=$Path;old=$old;current=$current;fallback=$fallback})
+ }
+ $root=Fixture 'context-index';$tasks518=@()
+ foreach($n518 in 1..40){$id518='AI-'+$n518.ToString('D6');$t518=Task $id518;$path518=".ai-workspace/outputs/$id518/report.md";[void](Write-Text $root $path518 "small fixture$n518");$t518.result.artifacts=@($path518);$tasks518+=@($t518)}
+ $tasks518[1].status='QUEUED';$tasks518[1].dependsOn=@('AI-000004')
+ $tasks518[4].status='QUEUED';$tasks518[4].inputPaths=@('.ai-workspace/outputs/AI-000006/report.md')
+ $tasks518[6].result.artifacts+=@('.ai-workspace/outputs/AI-000001/report.md')
+ [void](Write-Text $root 'shared/data.txt' 'shared');$tasks518[7].result.artifacts+=@('shared/data.txt');$tasks518[8].result.artifacts+=@('shared/data.txt')
+ [void](Write-Text $root 'unique/note.txt' 'one reader');$tasks518[9].inputPaths=@('unique/note.txt')
+ [void](Write-Text $root 'AGENTS.md' '[live](.ai-workspace/outputs/AI-000003/report.md)')
+ Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json') @{tasks=$tasks518;nextSequence=41}
+ $policy=Policy $root;$oldContext=Get-ArchiveContextBefore518 $root $policy;$context=Get-ArchiveContext $root $policy
+ foreach($field518 in @('queue','mode','tasks','activeLinks')){Check ((ConvertTo-Json -InputObject $oldContext.$field518 -Depth 40 -Compress) -ceq (ConvertTo-Json -InputObject $context.$field518 -Depth 40 -Compress)) "Original Context $field518 retained exactly"}
+ Check ($null -ne $context.lookups) 'Actual GetContext creates lookup data from the same rows and links'
+ Reject {([Collections.IDictionary]$context.lookups.firstById).Clear()} 'Task lookup dictionary is read-only'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000020/report.md' $context $policy 'actual-exclusive' 'CLOSED_EXCLUSIVE'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000001/report.md' $context $policy 'actual-cross-owner-exact' 'SHARED_OR_MIXED_OWNERSHIP'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000003/report.md' $context $policy 'actual-current-link' 'ACTIVE_DOCUMENT_REFERENCE'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000004/report.md' $context $policy 'actual-open-dependent' 'UNCLOSED_DEPENDENCY_OR_REFERENCE'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000006/report.md' $context $policy 'actual-open-reference' 'UNCLOSED_DEPENDENCY_OR_REFERENCE'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000002/report.md' $context $policy 'actual-unclosed-owner' 'TASK_NOT_CLOSED'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-999999/report.md' $context $policy 'unknown-task' 'UNKNOWN_TASK'
+ Compare-Item518 $root 'shared/data.txt' $context $policy 'no-AI-shared-reference' 'SHARED_OR_MIXED_OWNERSHIP'
+ Compare-Item518 $root 'unique/note.txt' $context $policy 'no-AI-exclusive-reference' 'CLOSED_EXCLUSIVE'
+ Compare-Item518 $root 'unowned/file.txt' $context $policy 'no-AI-unknown' 'UNKNOWN_OWNERSHIP'
+ Compare-Item518 $root 'AI-000001/nested/AI-000020/leaf.txt' $context $policy 'nested-AI-parts' 'SHARED_OR_MIXED_OWNERSHIP'
+ $timedPath='.ai-workspace/outputs/AI-000020/report.md';$times518=@{}
+ foreach($fnName518 in @('Get-ArchiveItemDecisionBefore518','Get-ArchiveItemDecision')){
+  $watch518=[Diagnostics.Stopwatch]::StartNew();foreach($n518 in 1..20){[void](& $fnName518 $root $timedPath $context $policy)};$watch518.Stop();$times518[$fnName518]=$watch518.Elapsed.TotalMilliseconds
+ }
+ $script:decisionTiming518=@{sourceRows=$context.tasks.Count;openRows=$context.lookups.openRows.Count;activeLinks=$context.activeLinks.Count;callsPerFunction=20;oldMilliseconds=$times518['Get-ArchiveItemDecisionBefore518'];currentMilliseconds=$times518['Get-ArchiveItemDecision'];scope='Same real40-row Context/path,20 decisions each, excludes index build; no fixed speed threshold or full Plan claim'}
+ $mutated518=Read-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json');$mutated518.tasks[19].result.verificationStatus='PENDING_USER';Save-ArchiveJson (Join-Path $root '.ai-workspace/runtime/queue-state.json') $mutated518
+ [void](Write-Text $root 'AGENTS.md' '[new-live](.ai-workspace/outputs/AI-000011/report.md)')
+ $fresh518=Get-ArchiveContext $root $policy
+ Check (-not [object]::ReferenceEquals($fresh518.lookups,$context.lookups)) 'New GetContext creates new lookup identity'
+ Compare-Item518 $root $timedPath $fresh518 $policy 'fresh-queue-reloaded' 'TASK_NOT_CLOSED'
+ Compare-Item518 $root $timedPath $context $policy 'old-snapshot-stays-old' 'CLOSED_EXCLUSIVE'
+ Compare-Item518 $root '.ai-workspace/outputs/AI-000011/report.md' $fresh518 $policy 'fresh-document-links-reloaded' 'ACTIVE_DOCUMENT_REFERENCE'
+ $rowA518=Row518 'AI-000001' @() @('AI-000001','AI-000001/','AI-000001//','AI-000001')
+ $rowB518=Row518 'AI-000002' @() @('AI-000001/exact.txt')
+ $synth518=Synthetic-Context518 @($rowA518,$rowB518)
+ Compare-Item518 $root 'AI-000001/exact.txt' $synth518 $policy 'exact-cross-owner-plus-parent-duplicates' 'SHARED_OR_MIXED_OWNERSHIP'
+ Compare-Item518 $root 'AI-000001/child.txt' $synth518 $policy 'duplicate-own-prefixes' 'CLOSED_EXCLUSIVE'
+ Compare-Item518 $root 'AI-000001//child.txt' $synth518 $policy 'double-slash-prefixes'
+ $caseRow518=Row518 'ai-000001' @() @('ai-000001')
+ Compare-Item518 $root 'AI-000001/child.txt' (Synthetic-Context518 @($caseRow518)) $policy 'owner-id-case-and-original-sort'
+ foreach($firstClosed518 in @($true,$false)){
+  $first518=Row518 'AI-000001' @() @() $firstClosed518;$second518=Row518 'AI-000001' @() @() (-not $firstClosed518)
+  Compare-Item518 $root 'AI-000001/leaf.txt' (Synthetic-Context518 @($first518,$second518)) $policy "duplicate-id-first-match-$firstClosed518"
+ }
+ $cultureId518=Row518 ('AI-000001'+[char]0) @() @() $false
+ Compare-Item518 $root 'AI-000001/leaf.txt' (Synthetic-Context518 @($cultureId518,(Row518 'AI-000001'))) $policy 'task-id-ceq-culture-first-match'
+ $cafe518='café';$decomposed518='cafe'+[char]0x301;$soft518='a'+[char]0xAD+'b'
+ foreach($ref518 in @($cafe518,$soft518,'scope///','中文/空间','/','')){
+  $ctx518=Synthetic-Context518 @((Row518 'AI-000001' @($ref518) @()))
+  foreach($path518 in @($ref518,($ref518.TrimEnd('/')+'/leaf'),$decomposed518,($decomposed518+'/leaf'),'ab','ab/leaf','scope','scope/','中文/空间/叶')){
+   Compare-Item518 $root $path518 $ctx518 $policy ('mixed-within-'+$ref518+'-'+$path518)
+  }
+ }
+ $open518=Row518 'AI-000002' @('AI-000001/') @() $false @('ai-000001')
+ Compare-Item518 $root 'AI-000001/leaf' (Synthetic-Context518 @((Row518 'AI-000001'),$open518)) $policy 'open-dep-case-and-trailing-ref' 'UNCLOSED_DEPENDENCY_OR_REFERENCE'
+ $nullShape518=Row518 'AI-000001';$nullShape518.refs=$null;$unsupported518=Synthetic-Context518 @($nullShape518)
+ Check ($null -eq $unsupported518.lookups) 'Unsupported legacy row shape keeps old scan fallback'
+ Compare-Item518 $root 'AI-000001/leaf' $unsupported518 $policy 'unsupported-shape-fallback'
+ $docPath518='.ai-workspace/inputs/Guide_v1.md';$currentDoc518='.ai-workspace/inputs/Guide_v2.md'
+ $docPolicy518=Policy $root
+ $docPolicy518.families=@([pscustomobject]@{id='guide';pattern='^\.ai-workspace/inputs/Guide_v\d+\.md$';requiresClosedBatch=$false;directoryVersionExceptions=@();currentPaths=@($currentDoc518);members=@([pscustomobject]@{path=$docPath518;unitId='DOC-guide-v1';current=$false;ambiguous=$false},[pscustomobject]@{path=$currentDoc518;unitId='DOC-guide-v2';current=$true;ambiguous=$false})})
+ Compare-Document518 $root $docPath518 (Synthetic-Context518 @()) $docPolicy518 @('guide') 'older-family-clear'
+ Compare-Document518 $root $currentDoc518 (Synthetic-Context518 @()) $docPolicy518 @('guide') 'current-family-permanent'
+ Compare-Document518 $root $docPath518 (Synthetic-Context518 @((Row518 'AI-000001' @('.ai-workspace/inputs') @() $false))) $docPolicy518 @('guide') 'unclosed-document-reader'
+ Compare-Document518 $root $docPath518 (Synthetic-Context518 @() @($docPath518)) $docPolicy518 @('guide') 'active-document-reference'
+ Compare-Document518 $root $docPath518 (Synthetic-Context518 @()) $docPolicy518 @('other') 'family-not-selected'
+ $docPolicy518.data.exactPaths+=@($docPath518)
+ Compare-Document518 $root $docPath518 (Synthetic-Context518 @()) $docPolicy518 @('guide') 'explicit-permanent-path'
+}
+
+# Record and remove only junction objects created in this fresh fixture run.
+$junctionCleanupPath=Join-Path $runRoot 'fixture-junction-cleanup.json'
+try{
+ $links=@(Get-ChildItem -LiteralPath $runRoot -Recurse -Force -Attributes ReparsePoint)
+ $cleanup=@(foreach($link in $links){
+  $full=[IO.Path]::GetFullPath($link.FullName);$targets=@($link.Target)
+  $known=@((Join-Path $runRoot 'escape/junction'),(Join-Path $runRoot 'supervised-prune-reparse/.ai-workspace/outputs/AI-000001/linked-source'),(Join-Path $runRoot 'resolver-dotnet/mutate/ancestor'))
+  if($link.LinkType -cne 'Junction' -or $targets.Count -ne 1 -or $full -notin $known -or
+     -not $full.StartsWith($runRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase) -or
+     [IO.Path]::GetFullPath($targets[0]) -ine $runRoot){throw 'Unexpected reparse fixture; preserve for review'}
+  [pscustomobject]@{path=$full;linkType=$link.LinkType;target=$targets[0];scopeVerified=$true;createdByThisRun=$true;validation='Known creation site under this runRoot; reparse negative assertions retained';removed=$false;targetRetained=$false;recursiveDelete=$false}
+ })
+ Save-ArchiveJson $junctionCleanupPath $cleanup
+ foreach($entry in $cleanup){
+  [IO.Directory]::Delete($entry.path,$false)
+  $entry.removed=-not(Test-Path -LiteralPath $entry.path);$entry.targetRetained=Test-Path -LiteralPath $entry.target -PathType Container
+  Check ($entry.removed -and $entry.targetRetained) 'Only owned junction removed; target remains'
+ }
+ Save-ArchiveJson $junctionCleanupPath $cleanup
+ Check (@(Get-ChildItem -LiteralPath $runRoot -Recurse -Force -Attributes ReparsePoint).Count -eq 0) 'No owned reparse remains after fixture cleanup'
+}catch{$results.Add(@{name='fixture-junction-cleanup';passed=$false;error=$_.Exception.Message;stack=$_.ScriptStackTrace})}
+$report=@{passed=(@($results|Where-Object {-not $_.passed}).Count -eq 0);assertions=$assertions;cases=$results.ToArray();fixtureRoot=$runRoot;productionCreatePrune=$false;junctionCleanupPath=$junctionCleanupPath;resolverObservations=$script:resolverObservations517.ToArray();resolverTiming=$script:resolverTiming517;resolverBaseline=$script:resolverBaseline517;decisionComparisons=$script:decisionComparisons518.ToArray();decisionTiming=$script:decisionTiming518;decisionBaseline=$script:decisionBaseline518}
 Save-ArchiveJson (Join-Path $runRoot 'results.json') $report
 $report|ConvertTo-Json -Depth 6
 if(-not $report.passed){exit 1}

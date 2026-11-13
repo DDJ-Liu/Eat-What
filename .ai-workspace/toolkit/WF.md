@@ -1,3 +1,13 @@
+<!-- AI507-PLAY-CONTROL-20261112 -->
+2026-11-12 AI507 局部离线修复：schemaVersion=1 新增明确 intent=EnterPlay / ExitPlay。普通 ReadOnly / Write 语义保持，Write 在 playing/paused 仍失败。EnterPlay 要求当前 stopped、clean 和全部原守卫通过；ExitPlay 要求当前 playing/paused，并以 proofs.playEntry 引用本 task/owner/execution 通过 EnterPlay 真正返回“Entered play mode”的官方调用摘要。同目标 PID/版本及原生项目/端口必须匹配；退出的 editorStatus/scenes/consoleAfter 必须在进入调用之后真实采集，不能复用进入前 stopped 证据。
+
+既有 wrapper 的 Assert-StandardPreflightCommand 消费状态意图：只允许本机现有 `%LOCALAPPDATA%/Unity/bin/unity.exe` 的精确 `command editor_play` / `command editor_stop`，匹配项目及显式 `--timeout 30 --format json --non-interactive`。拒绝额外/重复参数、GRANT 持久写、StartupReady/Capture 或其它可执行文件替代；ReadOnly/Write 不能伪装这两个命令。未声明标准参数的旧路由保持兼容，不表示授权任意业务绕过标准入口。
+
+退出专用 stopCleanupOnly 只有在“本任务已进入、当前其它所有守卫通过、Console 增量完整且仅新增 Error/Assert/Exception 导致失败”时为 true；passed 仍 false、原错误及 consoleBaseline 失败保持。只有官方 Stop 可消费；Stop 进程结束后 wrapper 仍以 STANDARD_PREFLIGHT_CLEANUP_ONLY 记录 failure 并抛错，保留实际 native exit/原流，不可当验收成功。Console 缺口、错误目标、dirty/untitled、文件漂移、编译/重载、失租、正式停止或平台拒绝不放宽。独立脚本仍输出失败结果并抛错，不能用 standalone 成功冒 Stop 许可。
+
+完整调用链、schema 与失败清理见 [AI507 ENGINE 交接](../outputs/PLAYABLE-DEMO012-20261112/AI-000507/attempt1/ENGINE-HANDOFF.md)。本卡仅离线；未执行 Unity/Play，AI506 原验收累计 2/3、实际 Play0 保持，只有 CONTROL 独审后可安排最后第3轮；不得第四轮/配对续验。完整项目核验日期不提高。
+<!-- /AI507-PLAY-CONTROL-20261112 -->
+
 <!-- AI480-STANDARD-PREFLIGHT-20261112 -->
 2026-11-12 TK-WF-03局部补充：Preflight-Standard.ps1是新标准预检唯一逻辑来源。Invoke-TaskTool.ps1新增可选StandardPreflightPath，在原CheckManagedTool/GRANT之后、progress start与进程启动之前实际消费；Capture只为声明调用附standardPreflight（源proof/SHA、五组、四类守卫和warning），原stdout/stderr/参数/计量保持。独立AI481只读SMOKE前其它ENGINE任务不消费新封装。
 
@@ -32,6 +42,15 @@ Capture的可选projectGrant是项目校验证明，platformApprovalProvided=fal
 2026-11-05 AI443 attempt2局部机制验证通过（不提高完整核验日期）：Get-RepairGrantClaimCycle 共用于两个既有领取入口，以当前 task/attempt/execution/grant 的唯一正式claim为准，核原源/owner/route/Scope/次数/root cycle；合法领取只更新当前派生字段，保bounded Scope。已成功 HUMAN 多轮grant仅在可证同grant首失败周期覆盖模式时按实际成功claim配对，回执/audit分列raw/effective，不改旧成功卡；旧正确单轮/POLICY分支保留。现Test-ApprovedResume用既有BuildAutoChain核实际AUTO子卡READY，完整911项Final exit0（真实原源反例、两实际入口、旧成功配对/rootclaim10/0/10、六Fail及全部负例）；首轮三exit1和CONTROL独立0/3不倒改。本轮AI443:retry1为技术根1/0/5，不消费435；5/3/1和全部独立停止门保持。仅CODE机制通过，CONTROL独立后才原435配对442实际0e257周期，生产未调用。证据与完整调用候选见 [AI443 attempt2报告](../outputs/PLAYABLE-DEMO011-20261104/AI-000443/attempt2/REPORT.md)。AI389旧报告局限保留为历史，不把本轮领取验证扩大为所有指令修订情形已验。
 
 # 工具库 · WF
+
+## AI514 · 暂停监管窗口中的行政关闭（2026-11-13）
+
+沿用 `queue.ps1 -Action CloseWithoutAcceptance`：MANUAL 原语义保持；SUPERVISED 只接受 `status=PAUSED`、布尔 `stopRequested=true`、`exitRequested=false` 的显式暂停窗口。调用须提供当前绑定 `ControllerThreadId`，目标在该 session 的 `taskIds` 数组内，预约数组明确为空、全队列无 RUNNING、所有 worker 为 IDLE 且无 activeTaskId/lease；缺失或未知状态拒绝。不会切模式、领取任务或恢复停止业务。
+
+原 `UserDecision`/Reason/ClosureReason、SUCCEEDED+result、已批准人工门、PENDING_USER/REJECTED 与幂等关闭条件全部保留。结果仍为 `CLOSED_WITHOUT_ACCEPTANCE`、`accepted=false`，不把旧失败或被替代执行改成产品验收成功；原结果、错误/许可/历史及证据保留。最终产品签收由 CONTROL 分开记录。真实关闭只由获授权 CONTROL 在满足上述条件后执行。
+
+定向离线入口 `DevTools/Workflow/Test-SupervisedClosure.ps1 -EvidenceRoot <本任务输出根>` 只复制现有 queue 和必要库、构造隔离状态并实际调用同一 API；不对生产 runtime 关闭任务或归档。此项不改变 SupersedeTask、续行/额度或其它行政入口，不新增通用管理 API。
+
 
 2026-10-30 AI393 / TK-WF-03/04 局部管线修复（独立 pipeline-repair，关联原 AI392）：`UsageMetrics.ps1` 的 writer 在原 20 秒 mutex 总预算内只对尚未打开的 JSONL 文件做共享/锁冲突有界等待，打开后一次 Write+Flush，写后未知绝不重放；`Read-TaskUsageRecords` 同 mutex 短时读取完整月文件快照，再解锁解析，完成的坏行仍报错、历史行/时间筛选/null 语义保留。`Invoke-TaskTool.ps1` CaptureOutput 将真实子进程 PID/退出/耗时/原始双流和摘要以 CreateNew proof 先落盘，再做 usage/finish；任一记账失败保留 FAILED/UNKNOWN 状态及原异常，host 仍失败，不补发原生调用。旧 AI392 第七 Console 的真实 exit/正式回执仍 UNKNOWN，既有 Build 成功子项不撤销。既有 Test-UsageMetrics Concurrency 与 Test-EngineCli CaptureAccounting 隔离定向通过，旧源拒绝、有限占用/持久冲突/写后未知和一次进程 proof 均有原流；首个夹具布局失败已留史并按稳定 key 解决。无 Unity/Player/生产 runtime 写；完整无重建续行候选与离线编译只读 eval 见 [AI393 输出](../outputs/PLAYABLE-DEMO01-20261026/AI-000393/)。原 AI392 三合同、SUP5 与停止门不改，须 CONTROL 独立审查及正式 ApproveResume，不能由 CODE 自续。
 

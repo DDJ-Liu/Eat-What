@@ -20,7 +20,7 @@
 | 活动追加账本 | [INSTRUCTIONS.md](INSTRUCTIONS.md)（日常追加；已关闭历史按瘦身规范第16条有证轮转） |
 | 当前验收与人工项 | [当前索引](outputs/control/人工处理索引.md) · [USER_WORK_STATUS](inputs/USER_WORK_STATUS.md) |
 | 固定职能chat | [PIPELINES.md](PIPELINES.md) |
-| 历史与恢复 | [本轮整理归档](archive/2026-10-12-workflow-closeout/README.md) · [2026-09-17](archive/2026-09-17/README.md) |
+| 历史与恢复 | [本轮整理归档](archive/2026-11-13/README.md) · [2026-09-17](archive/2026-09-17/README.md) |
 
 项目状态读根目录 `项目整体阅读理解与推进基线_2026-08-14.md` 的页首和相关专项；代码、数据、场景定位读根目录 `CODEBASE_MAP.md` 的模块索引与相关节。Unity 固定为 6000.3.24f1，当前开发分支为 `codex/unity6-followup`；实际任务卡、源码、序列化资源和 Editor 状态优先。
 

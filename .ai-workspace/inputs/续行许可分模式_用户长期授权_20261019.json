@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-19T16:59:50.576198+08:00",
+  "source": "当前CONTROL用户直接回复",
+  "approvalId": "call_37410ba043344e9f81b4ce3ef3472a18:0",
+  "controllerThreadId": "01a13ef5-eda9-7882-b1c9-eca47a6470d9",
+  "userQuote": "批准本次修复和续行，另外，对相关的续行许可次数限制进行放宽：手动模式时，每次需要人工续行不变，上限保持为1；自动模式时，允许3次的重复修复尝试后，再进行人工询问和额外次数的批准；监管模式下则默认允许5次自主重复尝试",
+  "currentApproval": {
+    "rootTaskId": "AI-000266",
+    "fixedCodeRepair": true,
+    "resumeRuns": 1,
+    "scope": "固定CODE最小修复报告目录校验并离线验证，再原固定DATA按原隔离CurrentCsvValidation范围续行1次，正常权限升级审查，无Publish/ACL/认证/许可配置/生产数据修改"
+  },
+  "standingPolicy": {
+    "MANUAL": {
+      "humanApprovalEachResume": true,
+      "maxRunsPerApproval": 1
+    },
+    "AUTOMATIC": {
+      "defaultRetryLimit": 3,
+      "additionalRunsRequireHumanApproval": true
+    },
+    "SUPERVISED": {
+      "defaultRetryLimit": 5,
+      "additionalRunsRequireHumanApproval": true
+    },
+    "SCHEDULED": "未扩大原授权"
+  },
+  "implementationRequirements": [
+    "首次执行不计重试；原任务及修复链累计，不因任务/线程/错误key/模式变化清零",
+    "现有已消费续行计入累计，本次明确批准不与默认额度重复叠加",
+    "同一轮CODE修复与对应原任务续行配对计数，不重复扣减",
+    "仍使用ApproveResume正式入口；区分本次人类批准与长期策略授权来源",
+    "失败先正式结算并回传，CONTROL判断原scope内修复/续行；无余量才询问追加",
+    "停止/退出、人工业务闸门、未知写入、真实平台权限拒绝及累计回合保护保持；正常提权审查不等于绕过拒绝"
+  ],
+  "implementationStatus": "待固定CODE实现及独立验收；禁止直接改runtime冒充生效"
+}

@@ -157,6 +157,36 @@ function Assert-TaskToolProjectGrant {
         taskId=$Task;ownerThreadId=$Owner;executionId=$Execution;scope=$intent.scope;platformApprovalProvided=$false}
 }
 
+function Assert-StandardPreflightCommand {
+    param($Proof,[string]$Executable,[string[]]$Arguments,[bool]$HasGrant,[bool]$AlternateMode)
+    $transition=$Proof.intent -cin @('EnterPlay','ExitPlay')
+    $playCommand=$Arguments.Count -ge 2 -and $Arguments[0] -ceq 'command' -and $Arguments[1] -cin @('editor_play','editor_stop')
+    if($transition -or $playCommand){
+        $command=if($Proof.intent -ceq 'EnterPlay'){'editor_play'}elseif($Proof.intent -ceq 'ExitPlay'){'editor_stop'}else{''}
+        $official=Join-Path $env:LOCALAPPDATA 'Unity/bin/unity.exe'
+        if(-not $transition -or -not $playCommand -or $Arguments[1] -cne $command -or
+            -not [IO.Path]::GetFullPath($Executable).Equals([IO.Path]::GetFullPath($official),[StringComparison]::OrdinalIgnoreCase) -or $HasGrant -or $AlternateMode){
+            throw 'STANDARD_PREFLIGHT_INTENT: Play transitions require the matching official CLI command, without grant/capture/startup substitution.'
+        }
+        # Same narrow option parsing as the existing capture command boundary.
+        $options=@{}
+        for($i=2;$i -lt $Arguments.Count;$i++){
+            $key=$Arguments[$i]
+            if($key -ceq '--non-interactive'){if($options.ContainsKey($key)){throw 'STANDARD_PREFLIGHT_INTENT: Duplicate option.'};$options[$key]=$true;continue}
+            if($key -cnotin @('--project-path','--format','--timeout') -or $options.ContainsKey($key) -or ++$i -ge $Arguments.Count){throw 'STANDARD_PREFLIGHT_INTENT: Unsupported, duplicate or missing transition option.'}
+            $options[$key]=$Arguments[$i]
+        }
+        if(-not $options['--project-path'] -or -not [IO.Path]::GetFullPath($options['--project-path']).Equals([IO.Path]::GetFullPath($Proof.target.projectPath),[StringComparison]::OrdinalIgnoreCase) -or
+            $options['--format'] -cne 'json' -or $options['--timeout'] -cne '30' -or -not $options['--non-interactive']){
+            throw 'STANDARD_PREFLIGHT_INTENT: Explicit matching project, JSON, timeout=30 and non-interactive required.'
+        }
+    }
+    if(-not $Proof.passed -and -not ($transition -and $Proof.intent -ceq 'ExitPlay' -and $Proof.stopCleanupOnly)){
+        throw ('STANDARD_PREFLIGHT_STOP: '+(($Proof.checks|Where-Object{-not $_.passed}|ForEach-Object id)-join ',')+'; specifiedFileSha='+$Proof.guards.specifiedFileSha.passed)
+    }
+    if($HasGrant -and -not $Proof.writeAllowed){throw 'STANDARD_PREFLIGHT_INTENT: A declared grant write requires Write preflight.'}
+}
+
 function Get-PowerShell7Path {
     $candidate = if ($PSVersionTable.PSEdition -eq 'Core') {
         Join-Path $PSHOME 'pwsh.exe'
@@ -670,8 +700,7 @@ if($PSBoundParameters.ContainsKey('StandardPreflightPath')){
         . (Join-Path $PSScriptRoot 'Preflight-Standard.ps1') -ContextPath $StandardPreflightPath -TaskId $TaskId -OwnerThreadId $OwnerThreadId -ExecutionId $ExecutionId
         Get-StandardPreflight -Path $StandardPreflightPath -Root (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) -Managed $preflight -QueuePath $QueueScriptPath -Task $TaskId -Owner $OwnerThreadId -Execution $ExecutionId
     }
-    if(-not $standardPreflightProof.passed){throw ('STANDARD_PREFLIGHT_STOP: '+(($standardPreflightProof.checks|Where-Object{-not $_.passed}|ForEach-Object id)-join ',')+'; specifiedFileSha='+$standardPreflightProof.guards.specifiedFileSha.passed)}
-    if($projectGrantProof -and -not $standardPreflightProof.writeAllowed){throw 'STANDARD_PREFLIGHT_INTENT: A declared grant write cannot consume a read-only preflight.'}
+    Assert-StandardPreflightCommand -Proof $standardPreflightProof -Executable $CommandPath -Arguments $ArgumentList -HasGrant ([bool]$projectGrantProof) -AlternateMode ([bool]($StartupReadyContextPath -or $CapturePng))
 }
 if ($Lane -eq 'ENGINE_CLI') {
     $CaptureOutput=$true
@@ -747,6 +776,7 @@ if ($CaptureOutput) {
         try{$pngEvidence=Save-CaptureEvidencePng -StdoutPath $stdoutPath -Plan $capturePlan}
         catch{$failure='Capture PNG validation/save failed: '+$_.Exception.Message}
     }
+    if($standardPreflightProof.stopCleanupOnly -and -not $failure){$failure='STANDARD_PREFLIGHT_CLEANUP_ONLY: Stop process completed; original Console errors still fail business preflight. Inspect native result and post-exit observations.'}
     $finishedAt=[DateTimeOffset]::Now
     $summary=[ordered]@{action='TOOL_CAPTURED';taskId=$TaskId;lane=$Lane;actualTool=$(if($ToolSource){$ToolSource}else{$null});category=$UsageCategory;attempt=$attempt;executionId=$ExecutionId;threadId=$OwnerThreadId;commandPath=$CommandPath;processId=$nativeProcessId;startedAt=$startedAt.ToString('o');finishedAt=$finishedAt.ToString('o');exitCode=$exitCode;failure=$failure;durationMs=[Math]::Round(($finishedAt-$startedAt).TotalMilliseconds,3);stdoutBytes=$stdoutBytes;stderrBytes=$stderrBytes;stdoutPath=$stdoutPath;stderrPath=$stderrPath}
     if($capturePlan){$summary.capturePng=$pngEvidence;$summary.captureRequestedPath=$capturePlan.path}

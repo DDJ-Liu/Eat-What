@@ -187,6 +187,87 @@ function Test-StandardPreflight {
  Check ($p.platformApprovalProvided -eq $false -and -not $p.proofs.consoleBefore.PSObject.Properties['value']) 'Proof records source hashes without claiming platform approval or copying raw Console into summary'
  $standalone=(& (Join-Path $tools 'Preflight-Standard.ps1') -ContextPath $contextPath -TaskId $t.id -OwnerThreadId $cli -ExecutionId $t.execution.executionId|Out-String)|ConvertFrom-Json -DateKind String
  Check ($standalone.passed -and $standalone.checkCount -eq 5) 'Standalone entry uses the same production function and actual managed gate'
+ # Play semantics: real current functions, synthetic wrapped observations, never Unity.
+ $parserTokens=$null;$parserErrors=$null
+ $wrapperAst=[Management.Automation.Language.Parser]::ParseFile($wrapper,[ref]$parserTokens,[ref]$parserErrors)
+ $consumer=@($wrapperAst.FindAll({param($n)$n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -ceq 'Assert-StandardPreflightCommand'},$false))
+ Check ($parserErrors.Count -eq 0 -and $consumer.Count -eq 1) 'One current transition consumer parses'
+ . ([scriptblock]::Create($consumer[0].Extent.Text))
+ Check (@($wrapperAst.FindAll({param($n)$n -is [Management.Automation.Language.CommandAst] -and $n.GetCommandName() -ceq 'Assert-StandardPreflightCommand'},$true)).Count -eq 1) 'Actual wrapper calls the tested consumer before launching a process'
+ $official=Join-Path $env:LOCALAPPDATA 'Unity/bin/unity.exe'
+ $common=@('--project-path',$project,'--timeout','30','--format','json','--non-interactive')
+ $managedArgs=ArgsFor $t 'CheckManagedTool'
+ function ReadStandard {
+  Save $contextPath $context;$managed=Q $managedArgs
+  return (& {
+   . (Join-Path $tools 'Preflight-Standard.ps1') -ContextPath $contextPath
+   Get-StandardPreflight -Path $contextPath -Root $project -Managed $managed -QueuePath "$ws/queue.ps1" -Task $t.id -Owner $cli -Execution $t.execution.executionId
+  })
+ }
+ function Consume($proof,[string[]]$argv,[string]$exe=$official,[bool]$grant=$false,[bool]$alternate=$false){Assert-StandardPreflightCommand -Proof $proof -Executable $exe -Arguments $argv -HasGrant $grant -AlternateMode $alternate}
+ function FreshState([string]$mode){$native.editorStatus.data.result.playMode=$mode;$native.editorStatus.data.result.lastHeartbeat=[DateTimeOffset]::UtcNow.ToString('o');Observe 'editorStatus';Observe 'scenes';Observe 'consoleAfter'}
+ FreshState 'playing';$context.intent='Write'
+ if($BaselineToolsRoot){
+  $old=Join-Path $BaselineToolsRoot 'Preflight-Standard.ps1';$managed=Q $managedArgs;Save $contextPath $context
+  $oldResult=& { . $old -ContextPath $contextPath;Get-StandardPreflight -Path $contextPath -Root $project -Managed $managed -QueuePath "$ws/queue.ps1" -Task $t.id -Owner $cli -Execution $t.execution.executionId }
+  Check (-not $oldResult.passed -and -not @($oldResult.checks|Where-Object id -eq 'assemblyState')[0].passed) 'Exact original source reproduces Write/playing Stop declaration deadlock'
+  Save (Join-Path $root 'old-write-playing-counterexample.json') @{source=$old;sha256=(Get-FileHash -LiteralPath $old).Hash;fixtureOnly=$true;result=$oldResult;nativeUnityInvoked=$false}
+ }
+ StandardReject 'Ordinary Write still rejects playing'
+ $context.intent='ReadOnly';$readPlaying=ReadStandard
+ Consume $readPlaying (@('command','editor_status')+$common)
+ Check ($readPlaying.passed -and -not $readPlaying.writeAllowed -and -not $readPlaying.stopCleanupOnly) 'ReadOnly observes playing without transition or persistent-write permission'
+ Reject {Consume $readPlaying (@('command','editor_stop')+$common)} 'ReadOnly cannot disguise Stop'
+ $context.intent='EnterPlay';Reject {Consume (ReadStandard) (@('command','editor_play')+$common)} 'EnterPlay rejects already playing'
+ FreshState 'stopped';$enter=ReadStandard;Consume $enter (@('command','editor_play')+$common)
+ Check ($enter.passed -and -not $enter.writeAllowed -and -not $enter.stopCleanupOnly) 'EnterPlay accepts current clean stopped state without persistent grant'
+ Reject {Consume $enter (@('command','editor_stop')+$common)} 'EnterPlay cannot consume Stop'
+ Reject {Consume $enter (@('command','editor_play')+$common) $official $true} 'Play cannot be disguised as a project grant write'
+ $native.playEntry=@{success=$true;command='command editor_play';data=@{target=$target;result='Entered play mode'};errors=@()};Observe 'playEntry'
+ $entryPath=$context.proofs.playEntry;$entryRecord=ReadJson $entryPath;$entryRecord|Add-Member standardPreflight $enter -Force;Save $entryPath $entryRecord
+ $entryBytes=[IO.File]::ReadAllBytes($entryPath)
+ $context.intent='ExitPlay';FreshState 'playing';$exit=ReadStandard;Consume $exit (@('command','editor_stop')+$common)
+ Check ($exit.passed -and -not $exit.writeAllowed -and -not $exit.stopCleanupOnly) 'ExitPlay accepts owned current playing state'
+ FreshState 'paused';$paused=ReadStandard;Consume $paused (@('command','editor_stop')+$common)
+ Check $paused.passed 'ExitPlay also accepts owned current paused state'
+ FreshState 'stopped';Reject {Consume (ReadStandard) (@('command','editor_stop')+$common)} 'ExitPlay rejects old stopped evidence'
+ FreshState 'playing';$entryRecord.threadId=$code;Save $entryPath $entryRecord
+ Reject {ReadStandard} 'ExitPlay rejects another owner entry'
+ [IO.File]::WriteAllBytes($entryPath,$entryBytes);$entryRecord=ReadJson $entryPath;$entryRecord.executionId='old-execution';Save $entryPath $entryRecord
+ Reject {ReadStandard} 'ExitPlay rejects another execution entry'
+ [IO.File]::WriteAllBytes($entryPath,$entryBytes);$entryRecord=ReadJson $entryPath;$entryRecord.standardPreflight.intent='ReadOnly';Save $entryPath $entryRecord
+ Reject {ReadStandard} 'ExitPlay requires an explicit successful EnterPlay predecessor'
+ [IO.File]::WriteAllBytes($entryPath,$entryBytes);$entryRecord=ReadJson $entryPath;$entryRecord.finishedAt=[DateTimeOffset]::UtcNow.AddMinutes(1).ToString('o');Save $entryPath $entryRecord
+ Reject {ReadStandard} 'ExitPlay rejects observations from before its entry'
+ [IO.File]::WriteAllBytes($entryPath,$entryBytes)
+ $native.consoleAfter.data.result.entries[1].logType='Error';$native.consoleAfter.data.result.entries[1].level='error';Observe 'consoleAfter'
+ $cleanup=ReadStandard;Consume $cleanup (@('command','editor_stop')+$common)
+ Check (-not $cleanup.passed -and $cleanup.stopCleanupOnly -and $cleanup.guards.consoleIncrement.newErrors -eq 1 -and -not $cleanup.guards.consoleIncrement.complete) 'New Error stays failed while owned Stop alone remains eligible'
+ foreach($case in @(@{argv=@('command','eval_file','arbitrary.cs')+$common},@{argv=@('command','editor_play')+$common},@{argv=@('command','editor_status')+$common})){
+  Reject {Consume $cleanup $case.argv} ('Cleanup cannot be consumed by '+($case.argv -join ' '))
+ }
+ Reject {Consume $cleanup (@('command','editor_stop')+$common) $noop} 'Cleanup rejects a substituted executable'
+ Reject {Consume $cleanup (@('command','editor_stop')+$common) $official $false $true} 'Cleanup cannot use startup/capture substitution'
+ Reject {Consume $cleanup (@('command','editor_stop')+$common+@('--project-path',$project))} 'Cleanup rejects duplicate target options'
+ Reject {Consume $cleanup (@('command','editor_stop')+$common+@('--code','arbitrary'))} 'Cleanup rejects extra command payload'
+ $cleanupFailure=@($wrapperAst.FindAll({param($n)$n -is [Management.Automation.Language.IfStatementAst] -and $n.Extent.Text.StartsWith('if($standardPreflightProof.stopCleanupOnly')},$true))
+ $failure=$null;$standardPreflightProof=$cleanup
+ # The production assignment is a wrapper-level failure.
+ . ([scriptblock]::Create($cleanupFailure[0].Extent.Text))
+ Check ($failure -like 'STANDARD_PREFLIGHT_CLEANUP_ONLY:*') 'Actual post-process source retains business failure even if native Stop exits zero'
+ $failure='native failure';. ([scriptblock]::Create($cleanupFailure[0].Extent.Text));Check ($failure -ceq 'native failure') 'Cleanup never replaces an actual process failure'
+ Save (Join-Path $root 'play-transition-proof.json') @{fixtureOnly=$true;nativeUnityInvoked=$false;enter=$enter;exit=$exit;paused=$paused;cleanup=$cleanup;consumer='Actual source function, process never launched'}
+ $native.scenes.data.result.result.scenes[0].isDirty=$true;Observe 'scenes';Reject {Consume (ReadStandard) (@('command','editor_stop')+$common)} 'Cleanup cannot bypass unknown dirty scene protection'
+ $native.scenes.data.result.result.scenes[0].isDirty=$false;Observe 'scenes'
+ [IO.File]::AppendAllText($ownedFile,'drift');Reject {Consume (ReadStandard) (@('command','editor_stop')+$common)} 'Cleanup cannot bypass file drift';[IO.File]::WriteAllText($ownedFile,'synthetic saved bytes',$utf8)
+ $native.consoleAfter.data.result.cursor=3;Observe 'consoleAfter';Reject {Consume (ReadStandard) (@('command','editor_stop')+$common)} 'Cleanup cannot bypass missing Console sequences'
+ $native.consoleAfter.data.result.cursor=2;$native.consoleAfter.data.result.entries[1].logType='Log';$native.consoleAfter.data.result.entries[1].level='log';Observe 'consoleAfter'
+ FreshState 'stopped';$context.intent='Write'
+ $wrong=$wrap.Clone();$wrong.StandardPreflightPath=$contextPath;$wrong.ArgumentList=@('command','editor_stop')+$common;Save $contextPath $context
+ Reject {& $wrapper @wrong} 'Full actual wrapper refuses ordinary Write used as Stop'
+ $badOwner=$wrap.Clone();$badOwner.OwnerThreadId=$code;Reject {& $wrapper @badOwner} 'Actual managed gate rejects wrong owner before launch'
+ $queueBytes=[IO.File]::ReadAllBytes("$state/worker-state.json");$workerState=ReadJson "$state/worker-state.json";$workerState.workers.ENGINE_CLI.leaseUntil=[DateTimeOffset]::Now.AddMinutes(-1).ToString('o');Save "$state/worker-state.json" $workerState
+ try{Reject {& $wrapper @wrap} 'Actual managed gate rejects an expired lease'}finally{[IO.File]::WriteAllBytes("$state/worker-state.json",$queueBytes)}
  $native.scenes.data.result.result.scenes[0].isDirty=$true;Observe 'scenes';StandardReject 'Scene isDirty blocks declared write despite all obsolete warnings'
  $context.intent='ReadOnly';$read=InvokeStandard
  Check ($read.standardPreflight.passed -and -not $read.standardPreflight.writeAllowed -and -not $read.standardPreflight.guards.sceneIsDirty.safeToWrite) 'Read-only dirty observation never grants write permission'

@@ -2176,8 +2176,27 @@ $($Instruction.Trim())
         Assert-Value (-not [string]::IsNullOrWhiteSpace($ClosureReason)) 'ClosureReason is required.'
         Assert-Value (-not [string]::IsNullOrWhiteSpace($UserDecision)) 'Explicit user authorization is required; closure is not acceptance.'
         $closureMode = Read-JsonFile $modePath
-        Assert-Value ($closureMode.mode -eq 'MANUAL') 'Administrative closure requires MANUAL mode; it must not dispatch work.'
         $queue = Read-JsonFile $queuePath
+        if ($closureMode.mode -ne 'MANUAL') {
+            $closureSession = Get-ObjectPropertyValue $closureMode 'supervised'
+            Assert-Value ($closureMode.mode -ceq 'SUPERVISED' -and $closureSession.status -ceq 'PAUSED' -and
+                $closureSession.stopRequested -is [bool] -and $closureSession.stopRequested -and
+                $closureSession.exitRequested -is [bool] -and -not $closureSession.exitRequested) 'Administrative closure requires MANUAL or explicitly paused, non-exiting SUPERVISED mode.'
+            Assert-Value (-not [string]::IsNullOrWhiteSpace($ControllerThreadId) -and
+                $ControllerThreadId -ceq $closureSession.controllerThreadId) 'Paused administrative closure requires the bound controller.'
+            Assert-Value ($closureSession.taskIds -is [array] -and
+                $closureSession.taskIds -ccontains $TaskId) 'Target must be explicitly included in the paused session.'
+            Assert-Value ($closureSession.reservations -is [array] -and
+                $closureSession.reservations.Count -eq 0) 'Pending or unknown supervision reservations prevent administrative closure.'
+            Assert-Value (@($queue.tasks | Where-Object { $_.status -eq 'RUNNING' }).Count -eq 0) 'Running tasks prevent paused administrative closure.'
+            $closureWorkers = Get-ObjectPropertyValue (Read-JsonFile $workerPath) 'workers'
+            Assert-Value ($closureWorkers -is [pscustomobject] -and
+                @($closureWorkers.PSObject.Properties).Count -gt 0) 'Worker state must be available for paused administrative closure.'
+            foreach ($closureWorker in $closureWorkers.PSObject.Properties.Value) {
+                Assert-Value ($closureWorker.status -ceq 'IDLE' -and -not $closureWorker.activeTaskId -and
+                    -not $closureWorker.leaseUntil) 'All workers must be idle and released before paused administrative closure.'
+            }
+        }
         $task = Get-Task $queue $TaskId
         Assert-Value ($null -ne $task) "Task not found: $TaskId"
         Assert-Value ($task.status -eq 'SUCCEEDED' -and $null -ne $task.result) 'Only a completed execution with a result can be administratively closed.'

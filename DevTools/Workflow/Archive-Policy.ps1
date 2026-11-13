@@ -3,7 +3,18 @@ $script:ArchiveUtf8=[Text.UTF8Encoding]::new($false)
 function Resolve-ArchivePath([string]$Root,[string]$Path){
  $base=[IO.Path]::GetFullPath($Root).TrimEnd('\','/');$full=[IO.Path]::GetFullPath($(if([IO.Path]::IsPathRooted($Path)){$Path}else{Join-Path $base $Path}))
  if($full -ne $base -and -not $full.StartsWith($base+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw "Path escapes project/fixture: $Path"}
- $probe=$full;while($probe){if((Test-Path -LiteralPath $probe) -and ((Get-Item -LiteralPath $probe -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw "Reparse path rejected: $Path"};$parent=Split-Path -Parent $probe;if($parent -eq $probe){break};$probe=$parent};$full
+ $probe=$full
+ while($probe){
+  $attributes=$null
+  try{$attributes=[IO.File]::GetAttributes($probe)}
+  catch [IO.FileNotFoundException]{}
+  catch [IO.DirectoryNotFoundException]{}
+  if($null -ne $attributes -and ($attributes -band [IO.FileAttributes]::ReparsePoint)){throw "Reparse path rejected: $Path"}
+  $parent=[IO.Path]::GetDirectoryName($probe)
+  if($parent -eq $probe){break}
+  $probe=$parent
+ }
+ $full
 }
 function Get-ArchiveRelative($Root,$Path){[IO.Path]::GetRelativePath([IO.Path]::GetFullPath($Root),(Resolve-ArchivePath $Root $Path)).Replace('\','/')}
 function Test-ArchiveWithin([string]$Path,[string]$Parent){$Path -ieq $Parent -or $Path.StartsWith($Parent.TrimEnd('/')+'/',[StringComparison]::OrdinalIgnoreCase)}
@@ -97,6 +108,56 @@ function Get-ArchiveProtection($Path,$Policy,[string[]]$ExtraPatterns=@()){
 function Test-ArchiveReferenceExcluded($Path,$Policy){
  foreach($rule in @($Policy.data.referenceExclusions)){if($rule.pattern -and [regex]::IsMatch($Path,$rule.pattern)){return $true}};return $false
 }
+# Context-local data lookups only. No filesystem or authorization values are cached.
+function New-ArchivePathLookup($Entries){
+ $equal=[Collections.Generic.Dictionary[string,object]]::new([StringComparer]::InvariantCultureIgnoreCase)
+ $prefix=[Collections.Generic.Dictionary[string,object]]::new([StringComparer]::OrdinalIgnoreCase)
+ foreach($entry in $Entries){
+  if(-not $equal.ContainsKey($entry.path)){$equal.Add($entry.path,[Collections.Generic.List[object]]::new())};$equal[$entry.path].Add($entry)
+  if($entry.prefix){$key=$entry.path.TrimEnd('/');if(-not $prefix.ContainsKey($key)){$prefix.Add($key,[Collections.Generic.List[object]]::new())};$prefix[$key].Add($entry)}
+ }
+ foreach($map in @($equal,$prefix)){foreach($key in @($map.Keys)){$map[$key]=[Collections.ObjectModel.ReadOnlyCollection[object]]::new($map[$key])}}
+ [pscustomobject]@{equal=[Collections.ObjectModel.ReadOnlyDictionary[string,object]]::new($equal);prefix=[Collections.ObjectModel.ReadOnlyDictionary[string,object]]::new($prefix)}
+}
+function Get-ArchivePathLookupValues([string]$Path,$Lookup){
+ $hits=[Collections.Generic.SortedDictionary[int,object]]::new();$bucket=$null
+ if($Lookup.equal.TryGetValue($Path,[ref]$bucket)){foreach($entry in $bucket){$hits[$entry.order]=$entry.value}}
+ $slash=$Path.IndexOf([char]'/')
+ while($slash -ge 0){
+  if($Lookup.prefix.TryGetValue($Path.Substring(0,$slash),[ref]$bucket)){foreach($entry in $bucket){$hits[$entry.order]=$entry.value}}
+  $slash=$Path.IndexOf([char]'/',($slash+1))
+ }
+ $hits.Values
+}
+function New-ArchiveContextLookup($Rows,$Links){
+ $first=[Collections.Generic.Dictionary[string,object]]::new([StringComparer]::InvariantCulture)
+ $owned=[Collections.Generic.List[object]]::new();$refs=[Collections.Generic.List[object]]::new();$openRefs=[Collections.Generic.List[object]]::new();$active=[Collections.Generic.List[object]]::new();$open=[Collections.Generic.List[object]]::new()
+ $rowOrder=0;$ownedOrder=0;$linkOrder=0
+ foreach($row in $Rows){
+  # Unsupported legacy shapes use the unchanged scans instead of a lossy index.
+  if($row.task.id -isnot [string] -or $null -eq $row.refs -or $null -eq $row.ownedOutputs){return $null}
+  foreach($p in @($row.refs)+@($row.ownedOutputs)){if($p -isnot [string]){return $null}}
+  if(-not $first.ContainsKey($row.task.id)){$first.Add($row.task.id,$row)}
+  foreach($p in $row.ownedOutputs){$owned.Add([pscustomobject]@{path=$p;prefix=($row.task.id -in @($p -split '/'));value=$row.task.id;order=$ownedOrder});$ownedOrder++}
+  foreach($p in $row.refs){$entry=[pscustomobject]@{path=$p;prefix=$true;value=$row;order=$rowOrder};$refs.Add($entry);if(-not $row.closure.closed){$openRefs.Add($entry)}}
+  if(-not $row.closure.closed){$open.Add($row)}
+  $rowOrder++
+ }
+ foreach($p in $Links){if($p -isnot [string]){return $null};$active.Add([pscustomobject]@{path=$p;prefix=$true;value=$p;order=$linkOrder});$linkOrder++}
+ [pscustomobject]@{firstById=[Collections.ObjectModel.ReadOnlyDictionary[string,object]]::new($first);ownedPaths=(New-ArchivePathLookup $owned);referencePaths=(New-ArchivePathLookup $refs);openReferencePaths=(New-ArchivePathLookup $openRefs);activePaths=(New-ArchivePathLookup $active);openRows=[Collections.ObjectModel.ReadOnlyCollection[object]]::new($open)}
+}
+function Test-ArchiveOpenReference($Path,$Context,$Owner,[bool]$WithDependency){
+ if($Context.lookups -and $Path -is [string]){
+  if($WithDependency){foreach($row in $Context.lookups.openRows){if(@($row.task.dependsOn) -contains $Owner){return $true}}}
+  return (@(Get-ArchivePathLookupValues $Path $Context.lookups.openReferencePaths).Count -gt 0)
+ }
+ return (@($Context.tasks|Where-Object {-not $_.closure.closed -and (($WithDependency -and @($_.task.dependsOn) -contains $Owner) -or @($_.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count)}).Count -gt 0)
+}
+function Test-ArchiveActiveReference($Path,$Context){
+ if($Context.lookups -and $Path -is [string]){return (@(Get-ArchivePathLookupValues $Path $Context.lookups.activePaths).Count -gt 0)}
+ return (@($Context.activeLinks|Where-Object {Test-ArchiveWithin $Path $_}).Count -gt 0)
+}
+
 function Get-ArchiveContext($Root,$Policy){
  $queue=Read-ArchiveJson (Resolve-ArchivePath $Root '.ai-workspace/runtime/queue-state.json');$mode=Read-ArchiveJson (Resolve-ArchivePath $Root '.ai-workspace/runtime/mode-state.json')
  $tasks=@();foreach($t in $queue.tasks){$tasks+=@{task=$t;closure=(Get-ArchiveClosure $t $Root);refs=@(Get-ArchiveReferences $t $Root);ownedOutputs=@(Get-ArchiveReferences ([pscustomobject]@{artifacts=$t.artifacts;result=@{artifacts=$t.result.artifacts};outputRoot=$t.outputRoot;outputPaths=$t.outputPaths}) $Root)}};$activeLinks=@()
@@ -109,22 +170,25 @@ function Get-ArchiveContext($Root,$Policy){
    $link=$m.Groups[1].Value.TrimEnd('/');if($link -match '^(outputs|inputs)/'){$link='.ai-workspace/'+$link}
    try{$target=Resolve-ArchivePath $Root $link;if(Test-Path -LiteralPath $target){$relative=(Get-ArchiveRelative $Root $target).TrimEnd('/');if($relative -notin @($Policy.data.recordRoots) -and $relative -notin @('.','.ai-workspace')){$activeLinks+=$relative}}}catch{continue}
   }
- }};[pscustomobject]@{queue=$queue;mode=$mode;tasks=$tasks;activeLinks=@($activeLinks|Sort-Object -Unique)}
+ }};$links=@($activeLinks|Sort-Object -Unique);[pscustomobject]@{queue=$queue;mode=$mode;tasks=$tasks;activeLinks=$links;lookups=(New-ArchiveContextLookup $tasks $links)}
 }
 function Get-ArchiveItemDecision($Root,$Path,$Context,$Policy,[string[]]$ExtraPatterns=@()){
+ $lookup=if($Path -is [string]){$Context.lookups}else{$null}
  $parts=@($Path -split '/'|Where-Object {$_ -match '^AI-\d{6}$'}|Sort-Object -Unique)
   if($parts.Count){
   $owners=@($parts)
-  foreach($row in $Context.tasks){foreach($p in $row.ownedOutputs){if($p -ieq $Path -or ((Test-ArchiveWithin $Path $p) -and $row.task.id -in @($p -split '/'))){$owners+=$row.task.id}}}
- }else{$owners=@($Context.tasks|Where-Object {$row=$_;@($row.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count -gt 0}|ForEach-Object {$_.task.id})}
+  if($lookup){$owners+=@(Get-ArchivePathLookupValues $Path $lookup.ownedPaths)}
+  else{foreach($row in $Context.tasks){foreach($p in $row.ownedOutputs){if($p -ieq $Path -or ((Test-ArchiveWithin $Path $p) -and $row.task.id -in @($p -split '/'))){$owners+=$row.task.id}}}}
+ }elseif($lookup){$owners=@(Get-ArchivePathLookupValues $Path $lookup.referencePaths|ForEach-Object {$_.task.id})}
+ else{$owners=@($Context.tasks|Where-Object {$row=$_;@($row.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count -gt 0}|ForEach-Object {$_.task.id})}
  $owners=@($owners|Sort-Object -Unique)
  $reason=Get-ArchiveProtection $Path $Policy $ExtraPatterns;$owner=$null;$closed='OPEN'
  if(-not $reason){$reason=Get-ArchiveBatchProtection $Path $Context $Policy}
  if(-not $reason){if($owners.Count -ne 1){$reason=if($owners.Count){'SHARED_OR_MIXED_OWNERSHIP'}else{'UNKNOWN_OWNERSHIP'}}else{
-  $owner=$owners[0];$row=@($Context.tasks|Where-Object {$_.task.id -ceq $owner})[0]
+  $owner=$owners[0];$row=$null;if($lookup){[void]$lookup.firstById.TryGetValue($owner,[ref]$row)}else{$row=@($Context.tasks|Where-Object {$_.task.id -ceq $owner})[0]}
   if(-not $row){$reason='UNKNOWN_TASK'}else{$closed=$row.closure.view;if(-not $row.closure.closed){$reason='TASK_NOT_CLOSED'}
-   elseif(@($Context.tasks|Where-Object {-not $_.closure.closed -and (@($_.task.dependsOn) -contains $owner -or @($_.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count)}).Count){$reason='UNCLOSED_DEPENDENCY_OR_REFERENCE'}
-   elseif(@($Context.activeLinks|Where-Object {Test-ArchiveWithin $Path $_}).Count){$reason='ACTIVE_DOCUMENT_REFERENCE'}
+   elseif(Test-ArchiveOpenReference $Path $Context $owner $true){$reason='UNCLOSED_DEPENDENCY_OR_REFERENCE'}
+   elseif(Test-ArchiveActiveReference $Path $Context){$reason='ACTIVE_DOCUMENT_REFERENCE'}
   }
  }};if(-not $owner -and $owners.Count -eq 1){$owner=$owners[0]};[pscustomobject]@{path=$Path;taskId=$owner;owners=$owners;eligible=(-not $reason);reason=$(if($reason){$reason}else{'CLOSED_EXCLUSIVE'});closure=$closed}
 }
@@ -143,8 +207,8 @@ function Get-ArchiveDocumentDecision($Root,$Path,$Context,$Policy,$FamilyIds,$Ex
   $family=$matches[0];$member=@($family.members|Where-Object path -ceq $Path)
   if($member.Count -ne 1){$reason='UNKNOWN_DOCUMENT_VERSION'}else{$unit=$member[0].unitId}
   if(-not $reason){$reason=Get-ArchiveBatchProtection $Path $Context $Policy}
-  if(-not $reason -and @($Context.tasks|Where-Object {-not $_.closure.closed -and @($_.refs|Where-Object {Test-ArchiveWithin $Path $_}).Count}).Count){$reason='UNCLOSED_DOCUMENT_REFERENCE'}
-  if(-not $reason -and @($Context.activeLinks|Where-Object {Test-ArchiveWithin $Path $_}).Count){$reason='ACTIVE_DOCUMENT_REFERENCE'}
+  if(-not $reason -and (Test-ArchiveOpenReference $Path $Context $null $false)){$reason='UNCLOSED_DOCUMENT_REFERENCE'}
+  if(-not $reason -and (Test-ArchiveActiveReference $Path $Context)){$reason='ACTIVE_DOCUMENT_REFERENCE'}
  }
  [pscustomobject]@{taskId=$null;archiveUnitId=$unit;owners=@();eligible=(-not $reason);closure='SUPERSEDED_DOCUMENT_VERSION';reason=$(if($reason){$reason}else{'CONFIRMED_OLDER_DOCUMENT_VERSION'});family=$(if($family){$family.id}else{$null})}
 }

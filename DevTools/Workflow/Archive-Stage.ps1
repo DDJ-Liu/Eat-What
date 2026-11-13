@@ -5,7 +5,8 @@ param(
  [string]$OriginalPath,[string[]]$PermanentInputPatterns=@(),
  [string]$ProjectRoot=(Join-Path $PSScriptRoot '../..'),[string[]]$TaskIds=@(),[string[]]$SelectionPath=@(),
  [string]$PlanPath,[string]$OutputPath,[string]$DispositionPath,[string[]]$DocumentFamilyIds=@(),
- [string]$PermanentManifestPath='.ai-workspace/PERMANENT_DOCUMENTS.json'
+ [string]$PermanentManifestPath='.ai-workspace/PERMANENT_DOCUMENTS.json',
+ [string]$ControllerThreadId,[string]$UserDecision
 )
 $ErrorActionPreference='Stop';. (Join-Path $PSScriptRoot 'Archive-Policy.ps1')
 $ProjectRoot=Resolve-ArchivePath $ProjectRoot $ProjectRoot
@@ -34,9 +35,26 @@ function Get-ScopeFiles($Context,$Ids,$Selections,$Policy,$FamilyIds=@()){
  if(-not @($Selections).Count){foreach($family in @($Policy.families|Where-Object {$_.id -in $FamilyIds})){foreach($member in $family.members){$path=Resolve-ArchivePath $ProjectRoot $member.path;$map[$member.path]=Get-Item -LiteralPath $path}}}
  return $map
 }
+function Assert-ArchiveMaintenanceWindow($Context){
+ if($Context.mode.mode -eq 'MANUAL'){return}
+ $session=$Context.mode.supervised
+ if($Context.mode.mode -cne 'SUPERVISED' -or $session.status -cne 'PAUSED' -or
+    $session.stopRequested -isnot [bool] -or -not $session.stopRequested -or
+    $session.exitRequested -isnot [bool] -or $session.exitRequested){throw 'Archive maintenance requires MANUAL or explicitly paused, non-exiting SUPERVISED mode'}
+ if([string]::IsNullOrWhiteSpace($ControllerThreadId) -or $ControllerThreadId -cne $session.controllerThreadId -or
+    [string]::IsNullOrWhiteSpace($UserDecision)){throw 'Paused archive maintenance requires the bound controller and explicit user decision'}
+ if($session.reservations -isnot [array] -or $session.reservations.Count -ne 0){throw 'Pending or unknown reservations prevent archive maintenance'}
+ if(@($Context.queue.tasks|Where-Object status -eq 'RUNNING').Count){throw 'Running tasks prevent paused archive maintenance'}
+ $workerState=Read-ArchiveJson (Resolve-ArchivePath $ProjectRoot '.ai-workspace/runtime/worker-state.json')
+ $workers=$workerState.workers
+ if($workers -isnot [pscustomobject] -or @($workers.PSObject.Properties).Count -eq 0){throw 'Known worker state is required for paused archive maintenance'}
+ foreach($worker in $workers.PSObject.Properties.Value){
+  if($worker.status -cne 'IDLE' -or $worker.activeTaskId -or $worker.leaseUntil){throw 'All workers must be idle and released before archive maintenance'}
+ }
+}
 function New-ArchivePlan {
  $policy=Get-ArchivePolicy $ProjectRoot $PermanentManifestPath;$context=Get-ArchiveContext $ProjectRoot $policy
- if($context.mode.mode -ne 'MANUAL'){throw 'Plan/Create require MANUAL mode'}
+ Assert-ArchiveMaintenanceWindow $context
  $ids=if($TaskIds.Count){@($TaskIds|Sort-Object -Unique)}elseif($DocumentFamilyIds.Count){@()}else{@($context.tasks|Where-Object {$_.closure.closed}|ForEach-Object {$_.task.id})}
  foreach($familyId in $DocumentFamilyIds){if($familyId -notin $policy.families.id){throw 'Unknown document family'}}
  foreach($id in $ids){if($id -notmatch '^AI-\d{6}$' -or -not @($context.tasks|Where-Object {$_.task.id -eq $id}).Count){throw "Unknown task selection: $id"}}
@@ -89,7 +107,7 @@ function Assert-PlanCurrent($Plan,[switch]$AllowMissing){
  Assert-ArchiveDispositionProofs $Plan.files $Plan.packages
  if($Plan.schemaVersion -ne 2 -or $Plan.sourceRoot -ine $ProjectRoot -or $Plan.stage -cne $Stage){throw 'Plan identity/root/stage mismatch'}
  $policy=Get-ArchivePolicy $ProjectRoot $Plan.policyPath;if($policy.sha256 -cne $Plan.policySha256){throw 'Permanent policy changed since Plan'}
- $context=Get-ArchiveContext $ProjectRoot $policy;if($context.mode.mode -ne 'MANUAL'){throw 'Prune/Create require MANUAL mode'}
+ $context=Get-ArchiveContext $ProjectRoot $policy;Assert-ArchiveMaintenanceWindow $context
  $files=Get-ScopeFiles $context $Plan.taskIds $Plan.selectionPaths $policy $Plan.documentFamilyIds
  $inventory=[Collections.Generic.HashSet[string]]::new([string[]]@($Plan.inventoryPaths),[StringComparer]::InvariantCultureIgnoreCase)
  $unexpected=@($files.Keys|Where-Object {-not $inventory.Contains([string]$_)});if($unexpected.Count){throw 'New files/references since Plan; retain sources and replan'}

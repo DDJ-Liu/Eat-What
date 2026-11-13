@@ -1,3 +1,13 @@
+<!-- AI507-PLAY-CONTROL-20261112 -->
+2026-11-12 AI507 局部离线交付：标准预检新增 EnterPlay / ExitPlay 意图；普通 Write 仍只在 stopped 可写，ReadOnly 不授予切换权限。Play/Stop 不使用可选 ProjectGrant/WriteIntent，也不伪称作者 setup 恢复。原五组、指定 SHA、平台审批与正式停止门保持；完整项目核验日期不提高。
+
+进入：当前 clean Edit 的五份真实观测，intent=EnterPlay，经 wrapper 调用本机官方 `command editor_play --project-path <当前工程> --timeout 30 --format json --non-interactive`。正常运行观察仍是 ReadOnly。退出：更新本轮真实 status/editorStatus/scenes/consoleAfter，保留进入前 Console 基线，intent=ExitPlay、proofs.playEntry 指向当前成功 EnterPlay 的 wrapper 摘要；当前必须 playing/paused。wrapper 仅允许同项目官方 editor_stop 消费退出意图，拒绝旧 stopped 证据、其它 owner/execution、额外/重复选项、eval_file、再次 Play、GRANT、Capture/StartupReady 替代。CLI 仍需正常平台批准。
+
+失败清理：若完整 Console 增量新增 Error 是唯一失败，结果仍 passed=false，stopCleanupOnly=true 仅准上述一次真实 Stop。wrapper 保留原错误，记录 STANDARD_PREFLIGHT_CLEANUP_ONLY failure 并抛错；必须检查实际 Stop 原流及退出后的 stopped/Console/scene 状态，不能将清理回执当验收通过或重新建立无错基线。其它守卫失败不放行，不自动重试 Stop/再次 Play、保存或丢弃用户成果。退出后常规 ReadOnly 复核；真实作者 setup 恢复仍须另有原范围授权、当前 stopped/clean、普通 Write 和实际 restore grant，原失败不得清除；若被原门阻断则如实交接，不能借 Stop 许可恢复。
+
+精确逐步调用表及 bootstrap 观测边界见 [AI507 ENGINE-HANDOFF](../outputs/PLAYABLE-DEMO012-20261112/AI-000507/attempt1/ENGINE-HANDOFF.md)。仅隔离离线通过，不是原生通过；AI506 2/3、Play0 及既有失败保持，原卡最后一轮仅 CONTROL 独审后正式安排，不新增验收轮。
+<!-- /AI507-PLAY-CONTROL-20261112 -->
+
 <!-- AI480-STANDARD-PREFLIGHT-20261112 -->
 2026-11-12 AI480局部CODE交付：标准入口为DevTools/Workflow/Preflight-Standard.ps1，经既有Invoke-TaskTool.ps1的StandardPreflightPath消费。独立AI481 Edit只读SMOKE通过前仅该SMOKE使用新路由，不向其它ENGINE业务推广；不把CODE离线结果称为原生通过。具体schema/准确角色/现有源映射见outputs/INFRA-011-20261109/AI-000480/attempt1/ENGINE-HANDOFF.md与ROUTE-MAP.md。
 
