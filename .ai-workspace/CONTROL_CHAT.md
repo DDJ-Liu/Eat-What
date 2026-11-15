@@ -1,5 +1,9 @@
 # 控制台入口
 
+2026-11-15补充：用户已签收N0-OPT视觉/Excel，已完成[N012-P1顺序补丁](inputs/派发/NARRATIVE-N012P1-20261115/AI546_N012P1执行补充.md)，固定CODE/监管独审2合同/8事实通过，只相关Narrative离线入口；session正常COMPLETE，无Unity/新版本/Git许可。附件K25～27作为本补丁规划依据，未据附件自动替换全局规范；未来CG退场提议留待设计裁决。
+
+2026-11-13新业务：用户接收剧情底座批14卡并明确将N0-OPT补丁转正式，共15逻辑卡；[执行登记](inputs/派发/NARRATIVE-FOUNDATION-20261113/执行登记.md)保完整依赖/原件与正式号。首批AI519/520/521已注册，按固定CODE串行推进，目录设计人工门保留；本批不进引擎、不导入、不打包，不沿用前一轮Git提交/推送许可。下方整体验收和整理指此前阶段，不扩大到新批。
+
 2026-11-13：用户已确认长循环与全部可玩包整体完成验收；角色描边仍暂停，不关闭或恢复。本轮完成Git内容规范、旧任务关闭与资料归档，实际提交/main结果见归档Git回执，模式保持SUPERVISED；不续做短循环。0.1.2已交付新两场景Windows64 Mono包，原AI512机器2/2通过；用户本轮明确签收包体。
 
 控制台01a1ceb8-6581-7cb1-9e94-7e747f457ec2；固定执行线和正式绑定见[PIPELINES](PIPELINES.md)。任务开始先读CORE、两项目文档页首和相关模块，再查Git/实际源与资源。当前任务范围和模式只认正式queue，不从旧报告、任务号或上下文压缩推定。
@@ -13,7 +17,7 @@
 
 ## 派发与接收
 
-实际app读取fresh idle与正式worker IDLE均核实，使用完整scope、明确OwnerThreadId和唯一正式DispatchToken领取；运行中不重复Poll。CODE Assets写与ENGINE共享锁，DATA/引擎互斥。不靠新号/换工具/模式清累计。
+实际app读取fresh idle与正式worker IDLE均核实，使用完整scope、明确OwnerThreadId和唯一正式DispatchToken领取；运行中不重复Poll。CODE Assets写与ENGINE共享锁，DATA/引擎互斥。不靠新号/换工具/模式清累计。 REPAIR首次Poll也须显式传入正式repairScope，不只续行才传；参数拒绝且核实尚未领取时，保同一令牌/原完整范围补齐，领取后不二次Poll。
 
 SUP结算沿Prepare→一次真实send_message_to_thread→Record→CONTROL Receive。传输SENT后再Receive，UNKNOWN/拒绝/NO_RESEND不重发。独立验收不等于Receive；核完整scope、mode、根预算、fresh app与队列后再Reconcile/派后继。正式通知只向session绑定控制台，用户长期授权见AGENTS。
 

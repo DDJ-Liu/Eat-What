@@ -1,5 +1,9 @@
 # AI 工作区 CORE
 
+2026-11-15补充：[N012-P1接收](inputs/派发/NARRATIVE-N012P1-20261115/接收清单.json)及补丁已完成：AI546固定CODE/监管独审2合同/8事实通过，story黑边完成→镜头完成→入场，FSM99/整链114与102行新基准通过，其它行为保持。该session正常COMPLETE自动回MANUAL，无剩余补丁工作；用户已签收N0-OPT视觉与新增八页Excel，AI520正式结清；Schema现行v2.5.1仅文字规范补正。下段为原批签收前历史收口，不再作为待人工门。
+
+2026-11-15：[剧情底座15卡](inputs/派发/NARRATIVE-FOUNDATION-20261113/执行登记.md)原离线范围已收口，14主卡独审通过（N014目录已用户确认），正式N0-OPT机器通过/视觉待用户；空表导出/四旧回归及N013整链114检查、102行冻结基准通过。无剩余原业务，session已正常COMPLETE自动回MANUAL，非额度耗尽或无反馈停止；旧WATCH仍暂停。只代码/数据/离线，无Unity/Build/Git提交；旧短循环/描边仍暂停。结论见[批次审查](outputs/control/NARRATIVE-FOUNDATION-20261113/批次完成审查报告.md)。
+
 2026-11-13：长循环与可玩包已用户验收；角色描边仍暂停。本轮完成Git内容规范、旧任务关闭与资料归档，实际提交/main结果见归档Git回执，模式保持SUPERVISED；不续做短循环。
 
 当前工程Unity6000.3.24f1，开发分支codex/unity6-followup；main只接已完成内容集成，操作不切开发分支。固定CODE/ENGINE/CONTROL见[PIPELINES](PIPELINES.md)。

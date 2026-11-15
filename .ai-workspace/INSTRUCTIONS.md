@@ -2201,3 +2201,703 @@ AI518 / WF-ARCHIVE-DECISION-PERFORMANCE，独立M80小目标，依517独审后�
 > SUPERVISED PauseSupervision at 2026-11-13T08:21:55.3559716+08:00: {"userDecision":"用户本轮要求保持监管并完成Git/工作区清理，未恢复描边或短循环。","reason":"Fresh idle administrative archive/Git closeout window under current user instruction, no business execution"}
 
 > SUPERVISED ResumeSupervision at 2026-11-13T08:53:21.9937837+08:00: {"reason":"Authorized repository/workspace maintenance completed; retain supervised mode idle for final Git integration, no new business","userDecision":"用户本轮明确保持监管，并持续推进直到已授权Git和工作区整理全部完成；描边与短循环仍按原暂停边界。"}
+## AI-000519 | [CODE] [N0-01] [NARRATIVE-FOUNDATION-20261113] N0-01
+
+- 序号：519
+- 提交时间：2026-11-13T15:55:45.4128817+08:00
+- 模块 ID：N0-01
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+用户2026-11-13明确接收剧情底座批并要求开始开发，N0-OPT由可选提升正式卡。原件、逐文件SHA与用户覆盖在.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/接收清单.json；领取仅单读本卡与索引所需节，不通读无关历史。保持SUPERVISED、固定CODE与CONTROL；本批引擎验收/Unity调用/导入/Build均0，不创建配置资产，不写场景/Prefab/现有.meta，不提交推送或切分支。新源码、目录、asmdef的必要新.meta按C10交付；不改用户已保存镜头参数。除正式N0-OPT外，0.1.2行为保持；旧短循环/描边/后台全量探针与定时回归保持暂停。范围冲突停受影响项、如实回传，不自建替代架构。每批写前Checkpoint，超20分钟续租；初次与SUP默认5同根续行分列，失败不清账，续行唯一ApproveResume。报告六要素、相称离线验证、证据/完整失败保留；不每卡生成报告压缩包或新打包脚本。结算即时Prepare→一次实际app Send绑定本CONTROL→Record，用户长期授权见AGENTS及HANDOFF.md；执行线不能自领后继。
+
+原始卡：.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/cards/N0-01.md，索引的2.1与[核]先读并按实际源核对。先只读确认纯程序集/Toolkit实际引擎引用、Generated.DataTables及实际导表/schema/本地化/资源契约和现runner接法；若假设不成立先报，不猜。建立Narrative.Core(noEngineReferences=true，绝无Unity/LongLoop/短循环依赖)与Narrative.Unity(Core/Toolkit/Generated.DataTables)两个asmdef及最小标记类型、正确新meta；离线真实编译两个程序集并运行一个示例测试，复用现Verify-All新增Narrative入口，不新通用测试框架。CODEBASE_MAP同卡登记职责/引用，完整核验日期不抬高。本卡涉及新增目录/meta/asmdef/编译和测试入口预计>10文件，按实际GOV05 L120，仅建议预算，不扩范围。既有业务离线编译/测试入口按卡各一次，保原断言，先核实际相关ShortCycle/DataTables/LongLoop入口；不运行暂停的全量后台探针、原生CI或Build，不借新增profile触发整仓Workflow/Fonts等无关回归。若原卡要求与现行成本/暂停规则不可兼容，先保留已完成的只读结论和阻断项回传CONTROL裁决。保留真实编译命令/输入清单/原stdout、stderr/exitcode，不能以stub标记成功冒称整个依赖图编译或Unity导入通过。固定3合同evidence.json顶层assembliesCompile/coreEngineFree/offlineEntryRegression；需证明实际两个输出DLL/纯引用和新增示例及相关既有入口原断言结果。
+
+> SUPERVISED POLICY at 2026-11-13T15:55:46.7621916+08:00: {"taskId":"AI-000519","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮明确接收；固定CODE离线，设计人工门保留","updatedAt":"2026-11-13T15:55:46.4584206+08:00","supervisionLevel":"full"}}
+## AI-000520 | [CODE] [N0-OPT] [NARRATIVE-FOUNDATION-20261113] N0-OPT
+
+- 序号：520
+- 提交时间：2026-11-13T15:55:47.3929281+08:00
+- 模块 ID：N0-OPT
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户2026-11-13明确接收剧情底座批并要求开始开发，N0-OPT由可选提升正式卡。原件、逐文件SHA与用户覆盖在.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/接收清单.json；领取仅单读本卡与索引所需节，不通读无关历史。保持SUPERVISED、固定CODE与CONTROL；本批引擎验收/Unity调用/导入/Build均0，不创建配置资产，不写场景/Prefab/现有.meta，不提交推送或切分支。新源码、目录、asmdef的必要新.meta按C10交付；不改用户已保存镜头参数。除正式N0-OPT外，0.1.2行为保持；旧短循环/描边/后台全量探针与定时回归保持暂停。范围冲突停受影响项、如实回传，不自建替代架构。每批写前Checkpoint，超20分钟续租；初次与SUP默认5同根续行分列，失败不清账，续行唯一ApproveResume。报告六要素、相称离线验证、证据/完整失败保留；不每卡生成报告压缩包或新打包脚本。结算即时Prepare→一次实际app Send绑定本CONTROL→Record，用户长期授权见AGENTS及HANDOFF.md；执行线不能自领后继。
+
+原始卡：.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/optional/N0-OPT_默认不投放_需用户确认.md。用户本轮已明确确认并要求正式投放，原卡默认不投放/需确认条款已满足，不能再次索取相同许可。一个目标：浮动径向最大距离在使用时乘当前同帧视野比例；最大速度不缩放；ratio=1输出逐值相同；已有偏移越新上限遵原越界纠正。先查当前Driver→LookFloat→Composition和原全部相关测试，不凭旧快照改；最小必要方法/参数转接，不另改鼠标屏幕算法或原曲线/Delay/速度、不改任何配置资产和值。实现源码允许Driver/LookFloat/Composition中最少必要文件；未改的白名单项仍保持。原浮动/合成/驱动全部现有断言不改并通过，新增2.5×0.75=1.875、连续ratio、越界纠正和ratio1逐值回归。更新现有项目docs两个说明中的距离含义，并给五列人工检查表(场景/操作/预期/通过标准/状态)，人工视觉未执行如实待用户，不代签，不因此请求引擎验证或打包。预计3生产+测试+两说明，M80。固定3合同scaledDistanceLimit/ratioOneRegression/savedConfigurationPreserved，附对应实际证据。
+
+> SUPERVISED POLICY at 2026-11-13T15:55:48.5261420+08:00: {"taskId":"AI-000520","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮明确接收；固定CODE离线，设计人工门保留","updatedAt":"2026-11-13T15:55:48.2057094+08:00","supervisionLevel":"full"}}
+## AI-000521 | [CODE] [N0-14] [NARRATIVE-FOUNDATION-20261113] N0-14
+
+- 序号：521
+- 提交时间：2026-11-13T15:55:49.0527188+08:00
+- 模块 ID：N0-14
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户2026-11-13明确接收剧情底座批并要求开始开发，N0-OPT由可选提升正式卡。原件、逐文件SHA与用户覆盖在.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/接收清单.json；领取仅单读本卡与索引所需节，不通读无关历史。保持SUPERVISED、固定CODE与CONTROL；本批引擎验收/Unity调用/导入/Build均0，不创建配置资产，不写场景/Prefab/现有.meta，不提交推送或切分支。新源码、目录、asmdef的必要新.meta按C10交付；不改用户已保存镜头参数。除正式N0-OPT外，0.1.2行为保持；旧短循环/描边/后台全量探针与定时回归保持暂停。范围冲突停受影响项、如实回传，不自建替代架构。每批写前Checkpoint，超20分钟续租；初次与SUP默认5同根续行分列，失败不清账，续行唯一ApproveResume。报告六要素、相称离线验证、证据/完整失败保留；不每卡生成报告压缩包或新打包脚本。结算即时Prepare→一次实际app Send绑定本CONTROL→Record，用户长期授权见AGENTS及HANDOFF.md；执行线不能自领后继。
+
+原始卡：.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/cards/N0-14.md；只读现Assets美术结构/导表解析契约，向项目固定docs/剧情资源目录方案.md交付三类目录/文件名/占位目录/按名解析/用户直接放置与按路径迁移两流程、引用和冲突处置。仅文档方案，无任何资产移动、导入或目录绑定动作；不在AI区建立第二份配置权威。方案必须等用户设计确认；本卡设置HumanGateAfter=true，报告明确待确认的三类最终路径，不能替用户签收、改Schema宣称确认。未确认前N0-04按原卡可配置占位目录，不写死本建议。固定三合同证明方案齐全、实际契约有据、资产未动；机器Complete只代表方案交付，保PENDING_USER及人工门。S40，仅一份正式文档和任务证据，不写重复测试。
+
+> SUPERVISED POLICY at 2026-11-13T15:55:50.2598692+08:00: {"taskId":"AI-000521","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":true,"gateApproved":false,"reason":"用户本轮明确接收；固定CODE离线，设计人工门保留","updatedAt":"2026-11-13T15:55:49.9398014+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-11-13T15:55:50.7956480+08:00: {"reason":"用户2026-11-13新批次授权；N0-OPT正式卡，不恢复旧业务","taskIds":["AI-000519","AI-000520","AI-000521"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T16:23:36.3281929+08:00: {"reserved":1,"grantId":"e23b5654a51e4dd1a444650f89a4f75c","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000519","Assets/Scripts/Narrative","Assets/Scripts/Narrative.meta","CODEBASE_MAP.md","DevTools/Narrative","DevTools/Verify-All.ps1"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["AI-000519:17b23f70d9a5436087f32aa9330f4d69"],"authorizationSource":"POLICY","rootTaskId":"AI-000519","verification":"Fresh app: CODE idle latest turn01a1d3e8-7b03-7b50-990e-a0d83071ee09 completed/error=null, ENGINE_CLI notLoaded completed/error=null; raw lanes idle/no lease/no running. Fail1 transport SENT received. Independent review .ai-workspace/outputs/control/NARRATIVE-FOUNDATION-20261113/AI519-attempt1-independent-review.json: legacy loc regex clause identical in v2.4.1/v2.5 and unused by skeleton. No source fix, scope/contract/instruction unchanged, original failure retained.","remaining":4,"used":0,"taskId":"AI-000519"}
+## AI-000522 | [CODE] [N0-01-IMPORT-ENTRY] [剧情底座] 既有导入测试编译输入修复
+
+- 序号：522
+- 提交时间：2026-11-13T16:43:21.5057835+08:00
+- 模块 ID：N0-01-IMPORT-ENTRY
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI522 / N0-01-IMPORT-ENTRY，独立S40离线REPAIR，原根AI519/最新Fail execution09831db7a6fc44f098f52f5cad9d8d4e。不是新业务根，不复活暂停的短循环开发。用户已授权剧情底座开发及正常范围内必要修复，按2026-10-19 SUP默认5同根政策；首个续行周期已用1，本修复另保留一个真实同根周期，失败/历史不重置。固定CODE串行，先完成当前AI520/AI521后由CONTROL正式派发，不自行领取。
+
+唯一目标：修复既有Test-CK01BImportContracts.ps1的Add-Type编译输入遗漏，使现存ICatalogSource及其实际必要当前源被编译，保留全部现有Assert原文/调用/预期不变。已证首错为CK01GeneratedDataCatalog.cs:172找不到ICatalogSource，接口文件Assets/Scripts/DataBase/CookingData/ICatalogSource.cs真实存在，使用现有CK01GeneratedDataTable。先读相关真实类/引用和已有runner输入，再在本单文件compileSources中最小补充已有源路径；不改运行生产接口、schema、CSV、工作簿、冻结Fixtures、UnityStubs、任何断言或注册表。若发现确需改断言/其它源/现配置，保留真实错误回传，不能扩大白名单。两处其它过期断言仍由用户裁决，不在本卡处理。
+
+相称验证：既有入口仅一次Final，通过原CompileOnly或实际同一入口全量断言需取全入口为准，不把编译成功当全部规则通过。失败按真实RecordCodeValidation，同key最多两次自修，保所有失败/输出/exit；没新变化不重跑已成功组。保所有原断言字节一致的diff证明；只对触及的旧生产/配置源在提交边界一次核SHA，不全仓反复哈希。三个固定合同importEntryPass/originalAssertionsPreserved/productionUntouched，evidence.json顶层布尔与canonical acceptance一致；存在失败不得写true。
+
+每批写入前Checkpoint带scope，必要RenewLease；引擎/导入/Build/运行全量后台探针均0，不提交推送、不切分支、不创建新chat/子代理或通用框架。六要素REPORT、源diff/原日志/失败和实际合同保存在本卡输出，不生成任务ZIP。Complete/Fail即时Manage-SupervisionHandoff Prepare→一次真实app Send绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，长期用户已授权；执行线不自领原根或后继。CONTROL独审修复后，根519仍须原范围唯一ApproveResume；本卡成功不能伪造根回归成功或自动放行其它两处失败。
+
+> SUPERVISED POLICY at 2026-11-13T16:43:22.9862379+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI519同根独立离线测试入口修复，仅编译清单，无断言/生产修改","updatedAt":"2026-11-13T16:43:22.7083294+08:00","supervisionLevel":"light"},"taskId":"AI-000522"}
+
+> SUPERVISED EXTEND at 2026-11-13T16:43:23.3870414+08:00: {"taskIds":["AI-000522"],"reason":"原根AI519必要编译入口修复；原根失败与政策计数保持，不消费或覆盖其它人工门"}
+## AI-000523 | [CODE] [N0-01-EMPTY-RECIPE-TEST] [剧情底座] N0-01-EMPTY-RECIPE-TEST
+
+- 序号：523
+- 提交时间：2026-11-13T17:04:00.3574538+08:00
+- 模块 ID：N0-01-EMPTY-RECIPE-TEST
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户本轮已明确批准两处过期断言修复，原话、问题与候选diff SHA见.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI519_用户批准两处过期断言修复.json，精确回答“允许修复两处过期断言，保留业务覆盖与失败记录（推荐）”。这是原N0-01“原断言不改”条件的两处限定例外，不是放开其它断言，也不准改生产/配置/冻结夹具。新卡均为原AI519直接REPAIR，保首轮与attempt2正式Fail、原CODE自验证失败/Issue、原scope和各根累计。SUP默认5根周期，按既有POLICY每卡一个真实修复周期，首次Claim才消费，不能换根/换key清零；这次产品条件裁决不增加额度。固定CODE串行，不新chat或子代理，不自领其它卡。源改动前核实际相关实现与用例，不能用报告代源码。
+
+本卡不调用Unity/导表/Play/Build/提交/推送，不修改Assets/正式DataTables/工作簿/冻结v1.2或其它Fixtures；原短循环业务仍暂停，仅本批必要离线测试维护。每批Checkpoint带实际scope，必要续租。只跑受影响既有入口一次Final，真实失败按同key登记并最多两次内部修复；不得删除失败或增删其它断言来凑通过，范围外实际新失败回传CONTROL。保完整前后diff/原stdout/stderr/exit以及准确断言变化范围，机器合同≤3。六要素REPORT+证据，不制任务ZIP、不加通用框架/探针/守卫/比较器。Complete/Fail即时Prepare→一次真实app Send绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，长期用户已授权；执行线不自领后继。修复成功仅代表本目标，原AI519须CONTROL独审全部修复后唯一ApproveResume收口，不能改写原根失败或先宣称总回归通过。
+
+唯一目标：修正Test-CK01CShortCycle.ps1:569过期emptyBlocks文本哨兵。当前Content/ShortCycleClueBoardBinder.cs空recipe分支调用ClearExcess(blocks,names,0)，该函数从first至blocks.Length逐项ClearSlot并处理名字/可见性。用户已审候选diff在.ai-workspace/outputs/control/NARRATIVE-FOUNDATION-20261113/AI519-旧回归断言修复_待用户裁决.diff，仅应用ShortCycle这半：同时证明空recipe进入从0开始的共享清空路径、该路径对全部剩余块调用ClearSlot。不要为匹配旧变量名改生产，不只删除旧断言或用无关字符串替代；按实际格式可最小调整正则但不能缩弱批准语义。先读现ShortCycleClueBoardTests的hidden empty recipe清空/渲染恢复用例（约201/210行），其原行为断言完整保留；已有覆盖可直接使用，不额外造重复实现测试。允许唯一源文件是本卡path；不改C#测试或其它旧断言。相称验证为原默认ShortCycle入口真实全套一次；若其它旧哨兵或工具失败，保新错误、已修这一处及原用例证据，不能扩用户仅两处的例外。S40。固定三合同emptyRecipeCoverage（新两层文本与实际既有行为用例成立）、otherAssertionsPreserved（除批准此处外全部断言原文不变）、productionUntouched。
+
+> SUPERVISED POLICY at 2026-11-13T17:04:01.9164296+08:00: {"taskId":"AI-000523","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮明确批准仅两处过期断言；本卡仅DevTools/ShortCycle/Test-CK01CShortCycle.ps1，保其它断言/生产/夹具","updatedAt":"2026-11-13T17:04:01.5923814+08:00","supervisionLevel":"light"}}
+## AI-000524 | [CODE] [N0-01-SCHEMA-BASELINE-TEST] [剧情底座] N0-01-SCHEMA-BASELINE-TEST
+
+- 序号：524
+- 提交时间：2026-11-13T17:04:02.3977914+08:00
+- 模块 ID：N0-01-SCHEMA-BASELINE-TEST
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+用户本轮已明确批准两处过期断言修复，原话、问题与候选diff SHA见.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI519_用户批准两处过期断言修复.json，精确回答“允许修复两处过期断言，保留业务覆盖与失败记录（推荐）”。这是原N0-01“原断言不改”条件的两处限定例外，不是放开其它断言，也不准改生产/配置/冻结夹具。新卡均为原AI519直接REPAIR，保首轮与attempt2正式Fail、原CODE自验证失败/Issue、原scope和各根累计。SUP默认5根周期，按既有POLICY每卡一个真实修复周期，首次Claim才消费，不能换根/换key清零；这次产品条件裁决不增加额度。固定CODE串行，不新chat或子代理，不自领其它卡。源改动前核实际相关实现与用例，不能用报告代源码。
+
+本卡不调用Unity/导表/Play/Build/提交/推送，不修改Assets/正式DataTables/工作簿/冻结v1.2或其它Fixtures；原短循环业务仍暂停，仅本批必要离线测试维护。每批Checkpoint带实际scope，必要续租。只跑受影响既有入口一次Final，真实失败按同key登记并最多两次内部修复；不得删除失败或增删其它断言来凑通过，范围外实际新失败回传CONTROL。保完整前后diff/原stdout/stderr/exit以及准确断言变化范围，机器合同≤3。六要素REPORT+证据，不制任务ZIP、不加通用框架/探针/守卫/比较器。Complete/Fail即时Prepare→一次真实app Send绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，长期用户已授权；执行线不自领后继。修复成功仅代表本目标，原AI519须CONTROL独审全部修复后唯一ApproveResume收口，不能改写原根失败或先宣称总回归通过。
+
+唯一目标：修正Test-CK01BSchemas.ps1:146-148把当前正式表全文锁到v1.2旧包的断言。用户已审候选diff在.ai-workspace/outputs/control/NARRATIVE-FOUNDATION-20261113/AI519-旧回归断言修复_待用户裁决.diff，仅应用Schemas这半：对原列出的七表，当前正式CSV表头与当前对应schema的csvColumn/name按原序精确一致，保入口前面的完整当前数据验证（必填/类型/范围/唯一/引用及业务规则）与其它全部断言。不能拿当前表自身产生预期、不能把比较两端指向同一文件、不能用旧CSV/修改冻结夹具或用户非空值凑相等。冻结v1.2内容保留原字节作历史证据，原失败与提案留档；当前正式源/schema在真实受测入口中读取，不代称生成发布完成。允许唯一源文件是本卡path，按现有schema结构最小实现批准含义，不另加通用对比器。相称验证为原Schemas入口一次Final，必须审完整exit/结论；其它数据断言若失败如实回传，不擅改新值或追加例外。S40。固定三合同currentSchemaValidation（七表结构及原当前全数据校验均通过）、otherAssertionsPreserved（除批准相等块外其余断言不改）、productionAndFixturesUntouched（正式表/工作簿/原冻结夹具不动）。
+
+> SUPERVISED POLICY at 2026-11-13T17:04:03.7656096+08:00: {"taskId":"AI-000524","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户本轮明确批准仅两处过期断言；本卡仅DevTools/DataTables/Test-CK01BSchemas.ps1，保其它断言/生产/夹具","updatedAt":"2026-11-13T17:04:03.4277930+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-11-13T17:04:04.3061607+08:00: {"taskIds":["AI-000523","AI-000524"],"reason":"用户已批准两处限定断言例外，分两个独立小目标原根续行，保持现运行所有权"}
+
+> Verification resolved for AI-000521 at 2026-11-13T17:10:43.6910562+08:00: decision=VERIFIED; summary=用户明确确认三类资源目录、命名与占位方案，目录方案人工签收完成; evidence=2026-11-13 当前用户直接回复call_f50e7dffcaae4002b8dafc4d09459636:0：确认这套目录、命名与占位方案（推荐）。原方案SHA E6B737908F0266459B5E1BA7580D8FF85A6D4AED8D6CDAFDFB8E5C514A7ADB05，独审3/3及完整用户回答见.ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI521_用户确认资源目录方案.json。只确认设计；不代任意素材迁移/导入批准。
+
+> SUPERVISED USER_GATE_APPROVED at 2026-11-13T17:10:45.2741751+08:00: {"userDecision":"确认这套目录、命名与占位方案（推荐）；当前用户回复call_f50e7dffcaae4002b8dafc4d09459636:0，精确方案SHA/三类根/占位/边界见inputs/派发/NARRATIVE-FOUNDATION-20261113/AI521_用户确认资源目录方案.json，具体素材迁移仍逐文件审定。","taskId":"AI-000521"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T17:22:35.3929375+08:00: {"used":2,"rootTaskId":"AI-000519","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000522","DevTools/DataTables/Test-CK01BImportContracts.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"cycles":["AI-000519:AI-000522:d186eaa9f5ac47a48769cd04e2fd6f03"],"verification":"Fresh actual app CODE idle/completed turn01a1d42a-f351-7660-82e4-c5d1968018d5/error=null, ENGINE_CLI notLoaded completed/error=null; raw lanes idle/no running/no reservation. Fail1 SENT/Received. CONTROL review AI522-attempt1-independent-review.json confirms original same-file Add-Type compile-input objective includes minimal existing Newtonsoft assembly references, not user/product scope expansion; all original assertions and production/fixtures preserved. Original instruction/Scope/contracts/failures unchanged. Root before used2/reserved2/limit5/remaining1.","remaining":0,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","grantId":"c0b2c7a72ded430b91a3aaa56531864f","authorizationSource":"POLICY","reserved":3,"taskId":"AI-000522"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T17:37:43.7211941+08:00: {"verification":"Actual user direct approval call_071d952a9caa4f03b5342b010d941e42:0 permits one extra AI522 same-task operation run, root ceiling5 to6. Concrete static-input patch and independent review AI522-attempt2-independent-review.json prepared; original assertions/scope/production unchanged. Fresh just-read CODE idle completed turn01a1d438-05e1-76d1-93cc-ecf063cdcdb1/error=null, ENGINE_CLI notLoaded/completed; no running lane. Existing unclaimed AI523 reservation retained and will be delivered first, no ownership/runs reset.","cycles":["AI-000519:AI-000522:4873b886d3874929bd2eed8d8f89b5ed"],"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000522","DevTools/DataTables/Test-CK01BImportContracts.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"sourceApprovalId":"call_071d952a9caa4f03b5342b010d941e42:0","grantId":"169316bcc7e3401283a33d20c506a67f","rootTaskId":"AI-000519","reserved":3,"authorizationSource":"HUMAN","remaining":0,"used":3,"taskId":"AI-000522"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T17:57:45.4397786+08:00: {"sourceApprovalId":"call_4dbf4f03f82e4e8394877bfc735ea970:0","authorizationSource":"HUMAN","cycles":["AI-000519:AI-000523:35752f73477643109075721a23705b32"],"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000523","DevTools/ShortCycle/Test-CK01CShortCycle.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"reserved":2,"rootTaskId":"AI-000519","remaining":0,"taskId":"AI-000523","used":5,"grantId":"160438ce42444bd6855bc76fb539d8da","verification":"User direct call_4dbf4f03f82e4e8394877bfc735ea970:0 approves exact4 static assertion groups and extra1 AI523 run, root ceiling6 to7. Approval/proposal SHA and CONTROL independent review stored in batch. Fresh app CODE idle/completed turn01a1d44d-dc40-79f2-abb5-2b415af542a8/error=null, ENGINE_CLI notLoaded/completed; no lane run or reservation. AI522 third fail received, field-LF issue held; production/behavior tests and other assertions unchanged. Original failures and existing AI524 cycle retained."}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T18:14:52.4108112+08:00: {"authorizationSource":"HUMAN","used":6,"cycles":["AI-000519:AI-000522:812635366c4d4dc09e1250a817f0b44f"],"taskId":"AI-000522","verification":"User direct call_15a3a7c94b2c4d3c92506e0e36946c4c:0 explicitly permits one CRLF assertion-scope exception and extra1 AI522 operation, ceiling7 to8. Concrete diff/source parser+authoring and exact CSV21-value independent review prepared, same file/Scope. Fresh actual CODE idle after turn01a1d458-098c-7fe0-a889-bfbefdc7416a completed/error=null; ENGINE_CLI notLoaded completed/error=null. Fail3 SENT received. Preserve all failures, actual default AI523 Final2 PASS and unmet targeted behavior coverage, all histories and AI524 reserved cycle.","remaining":0,"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000522","DevTools/DataTables/Test-CK01BImportContracts.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"sourceApprovalId":"call_15a3a7c94b2c4d3c92506e0e36946c4c:0","rootTaskId":"AI-000519","grantId":"78ee4606294349359848ce17c365a4a0","reserved":2}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T18:25:00.4343083+08:00: {"sourceApprovalId":"call_6bff8ed46a7f4f5f8db1eefbc77448b3:0","authorizationSource":"HUMAN","cycles":["AI-000519:AI-000523:9f307c9621184b2c904fc931ad381a1c"],"remaining":0,"reserved":2,"grantId":"4761b025e7f94241a22207dfe6425a88","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000523","DevTools/ShortCycle/Test-CK01CShortCycle.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"rootTaskId":"AI-000519","taskId":"AI-000523","used":7,"verification":"Actual user direct call_6bff8ed46a7f4f5f8db1eefbc77448b3:0 approves same-file existing Clue Run/RunVisibility entry for real currentAI523/output and extra1 operation, ceiling8 to9. Concrete diff/proposal SHA and independent AI523-attempt2 review retained, default Final2 PASS and target gap both preserved. Fresh CODE idle/completed turn01a1d468-3217-7ee3-a19c-7cfef3cc12f8/error=null; ENGINE_CLI notLoaded/completed; no run/lease/reservation. AI522 Complete SENT/Received independently3of3 accepted; CSV unchanged. Original scope, history and AI524 cycle preserved."}
+
+> Verification resolved for AI-000523 at 2026-11-13T18:38:26.8544247+08:00: decision=VERIFIED; summary=CONTROL后续机器核验补齐历史TEST_TRIGGER：当前合法AI523入口已实际运行原空配方及隐藏恢复用例，独审3/3通过; evidence=非用户业务/视觉代签：唯一PENDING原因是attempt2 TEST_TRIGGER目标未执行，humanGateAfter=false。用户已批准当前合法入口接线，attempt3实际Run37/RunVisibility20及148源编译PASS，当前taskId/报告根、原C#SHA、严格未知身份拒绝、环境清理独审通过。证据.ai-workspace/outputs/control/NARRATIVE-FOUNDATION-20261113/AI523-independent-final-review.json及attempt3/clue-repair/result.json。原Issue/失败/默认成功/许可保留，仅追加补验解除。
+## AI-000525 | [CODE] [N0-03] [剧情底座] N0-03 命令语法与签名表
+
+- 序号：525
+- 提交时间：2026-11-13T18:59:35.2927219+08:00
+- 模块 ID：N0-03
+- 初始状态：QUEUED
+- 前置依赖：AI-000519
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI525 / N0-03 命令语法与签名表，新的明确业务FEATURE，M80：原卡四项认领、预计不超过10源/测试/说明文件；不是把AI519失败换号重试。原根519及522/523/524全部旧失败/周期/许可保持，只有AI519正式成功并经CONTROL独审后才能派发本卡，严禁绕过未完前置。用户2026-11-13已直接接收14底座卡及正式N0-OPT补丁并要求开发；固定CODE、原CONTROL、监管模式不变，不新chat或子代理。
+
+必读本卡原件 inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/cards/N0-03.md（相对.ai-workspace），本批索引2.1/2.2/2.3及Schema v2.5“对话命令”（现约419～445行）、全局ID/多实例规则及本卡相关节。完整原件/SHA在接收清单.json；当前永久原件inputs/CK01-B_配表Schema_v2_5.md与附件逐字节一致。先核实际Core标记/asmdef、Narrative编译入口和示例，再写业务源码。旧本地化正则差异已独审与本纯命令目标无消费关系，不重复为旧差异停卡；用户批准的旧回归例外只限原修复，不扩其它新断言。
+
+唯一目标按原卡：在Narrative.Core实现命令语法+集中数据签名表及目标解析，供后续校验/调度共用，不写任何真实命令处理器。1) cmd(arg,arg);cmd(arg)，空白容忍、空串空列表；非法输入返回位置和原因，不能用异常中断；保原始参数和诊断方便后续消费。2) 14命令单一数据表，每条含参数名/数量/语义类型、三个等级可用性、瞬时性、截断类别、on_end限制；逐格按Schema，包含actor_emote预留且本版不可用，不实现其效果。3) 目标actor:<角色id>（含#2一类实例后缀）、anchor:<锚点id>、player及非法目标。类型/值约束只按原件明示语义：如seconds/size数值、object_active的bool、shake的三档；set_flag.value未指定具体标量种类时保留原始字面量/语义类别，不自造布尔专有业务或存档含义。任何实际矛盾先保存具体依据报告，不另建替代架构。
+
+保持Core无Unity/LongLoop/ShortCycle直接或传递引用，现两asmdef和GUID不改，必要新.cs交正确新.meta；优先两Core源文件集中模型/签名与解析，避免为每枚举另建文件。原NarrativeAssemblyTests三个断言原文不改；现Core示例要求实际引用mscorlib，可用现BCL字符/字符串/集合/数值接口完成，不能为通过而删纯度门或引入引擎上游。现Test-Narrative.py已按Core目录rglob真实编译所有.cs，只需在既有测试编译/调用入口纳入新命令测试，保原示例运行；不造新测试框架、探针/守卫/通用比较器。夹具独立放DevTools/Narrative/Fixtures（可用BCL易读TSV），记录源Schema SHA/表位置，预期不得从生产签名表自动生成冒充独立验证，长期测试不依临时attempt路径。
+
+固定3合同：grammarAndTargets（合法/非法语法、位置诊断、三种目标及实例后缀）；schemaSignatureMatrix（14行参数/三等级/瞬时/截断/on_end逐项对Schema独立夹具）；pureAssemblyAndRegression（真实Core/Unity新编译、原三示例断言及新增命令测试通过，Core无引擎）。证据evidence.json顶层布尔+canonical acceptance。只跑本受影响Narrative入口一次相称Final；不要重跑已经独审通过的ShortCycle/DataTables/LongLoop或全仓回归，不运行Unity/导入/Play/Build。原断言未改；若现测试真与目标冲突，报具体原断言及实现依据，不伪报成功或静默降门。失败同key按现CODE自验证上限记录，不换key/根清账。
+
+文档影响：新公开业务入口/职责在CODEBASE_MAP原Narrative节登记，基线只改相应局部完成度，不提高2026-09-17完整核验日期；DevTools/Narrative README同卡维护用法。配置说明仍项目docs固定位置，不在AI区另建权威副本。每批Checkpoint带实际scope，必要RenewLease。新根首次与SUP默认5续行分列，普通失败CONTROL独审后唯一ApproveResume，超额如实汇报已用/上限/下一轮并申请，不静默停开发。原短循环/描边/后台探针/定时回归继续暂停；不改任何现配置、表/CSV/工作簿/生成资产或其它0.1.2源码，不提交/推送/切分支。
+
+六要素REPORT、准确输入/编译/RSP/原流/exit/差异与所有失败保留，不每卡生成ZIP或新打包脚本。CodeValidation/usage未知值如实null+原因，不能用工具调用或上下文代理量冒充实际app turn/billing。Complete/Fail即时Prepare→一次真实app Send绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，用户长期已授权；执行线不自领后继。无实际画面变化，五列运行视觉检查记不适用。
+
+> SUPERVISED POLICY at 2026-11-13T18:59:36.8714348+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已接收N0-03新业务；严格依赖原N0-01成功与CONTROL独审，不借新编号重试旧回归","updatedAt":"2026-11-13T18:59:36.5703287+08:00","supervisionLevel":"full"},"taskId":"AI-000525"}
+
+> SUPERVISED EXTEND at 2026-11-13T18:59:37.4274953+08:00: {"reason":"本批真实已授权N0-03后继，前置519未过不派发；保原模式/停止/失败额度，避免完成前置后遗漏已接收业务","taskIds":["AI-000525"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T19:21:00.8454576+08:00: {"used":9,"sourceApprovalId":"call_a2918f03d3a84e499c7cf826c235ea94:0","authorizationSource":"HUMAN","verification":"Fresh app CODE idle/completed/errornull turn01a1d47e-5819-7533-b67b-b7dead93b9d4 cursor77; ENGINE_CLI notLoaded/completed/errornull turn01a1d192-2e2b-7fb0-93ad-a95b9e3c7912. Formal both IDLE no leases; ACTIVE no stop/reservations. Explicit user call_a2918f03d3a84e499c7cf826c235ea94:0 approved fixture/input-source scope and +1 limit10. Review AI524-attempt1-independent-review.json and proposal SHA F872AADCEE0A9CC6A10C270864C99B4EF1A4C0BFC1AB4FA37C7D8A2E698ED09B; current supplement input recorded, original instructions/failures preserved.","remaining":0,"cycles":["AI-000519:AI-000524:b4fdf50d682d4d1db865cc1bc7429122"],"reserved":1,"grantId":"8b0d33c300674d59b3ba9e69b6634d28","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000524","DevTools/DataTables/Fixtures/CK01BSchemasRegression","DevTools/DataTables/Test-CK01BSchemas.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"rootTaskId":"AI-000519","taskId":"AI-000524"}
+## AI-000526 | [CODE] [WF-HUMAN-REPAIR-SCOPE] [PIPELINE-REPAIR] 当前HUMAN修复范围与旧POLICY范围衔接
+
+- 序号：526
+- 提交时间：2026-11-13T19:35:33.1544305+08:00
+- 模块 ID：WF-HUMAN-REPAIR-SCOPE
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+独立管线源码修复 WF-HUMAN-REPAIR-SCOPE；按AGENTS G87与protocol/WORKFLOW_FULL.md“管线修复可独立修管线本身，先离线”推进。用户最新已明确批准AI524扩大固定夹具范围及同根1轮，但正式HUMAN ApproveResume已成功、Poll在旧POLICY repairScope检查前失败。只修此机制；本卡是独立workflow技术工作，不是519/524失败换号再做业务。519实际9已用/1预留/上限10保持，524未领取/未安装/attempt1与所有旧失败保持。固定CODE/CONTROL监管，不新chat；无Unity/业务/配表写、Build、Git、背景全量。
+
+先读CORE、CONTROL/SUPERVISED、G87条款和toolkit/WF.md相关续行，AI524-未领取范围拒绝复核.json、AI524_用户批准固定样例及追加一轮_根上限10.json、当前真实grant与实际三个scope函数。只读当前真实状态，不用生产runtime做测试。当前CODE已回传Requested path exceeds approved scope，原消息保留，不再次Poll AI524。
+
+低难度目标两项：1) 在.ai-workspace/repair-budget.ps1修正Use-RepairRetryCycle及Get-RepairGrantClaimCycle对现行正式HUMAN scope与历史POLICY repairScope的衔接。只能当当前execution/唯一grant/同root/owner/route/session/controller/实际claim/原失败指纹/未撤销许可/精确execution.approvedScope==grant.scope均真实有效，当前授权source=HUMAN时，允许其明确新scope，不用旧POLICY范围覆盖真人新增许可；历史repairScope/source不得改写。现行POLICY及旧first-repair仍严格受旧scope，未授权路径/改变grant/假claim/跨根/历史失败cycle/硬停/计量/权限门继续拒绝。不能只删scope门、统一把POLICY当HUMAN、放大目录或复制新scope进runtime凑一致。当前HUMAN真实批准是允许范围依据，不新增通用权限系统/绕行入口。2) 复用DevTools/Workflow/Test-ApprovedResume.ps1既有隔离queue夹具，增加一个窄入口覆盖真实初始POLICY子修复→失败→正式HUMAN扩大scope→正确领取及成功后root配对不重复计数，并验证POLICY越界、超出现HUMANgrant、篡改绑定/硬停拒绝和队列不写。原用例原断言不改，不运行整个历史重型矩阵；可在既有runner增加只跑该组的明确switch，不新测试框架/守卫/比较器。只运行该受影响隔离组一次相称Final；原实测拒绝证据保持。必要的旧相关小场景在该组复用，不扩大后台探针。所有夹具runtime只写新的任务自有隔离目录，绝不写生产runtime或构造生产授权。
+
+允许源仅repair-budget.ps1、现有Test-ApprovedResume.ps1、toolkit/WF.md局部更新和本卡输出；两个源码预计加现成测试少量，按3文件/2认领S40。若实际更复杂先报告具体边界，不架构重构、不动approved-resume.ps1/queue.ps1/其它源。修补不得改变原ApproveResume唯一入口及其正式HUMAN审批语义，不伪造或变更实际用户许可/错误/状态。修改前Checkpoint，必要RenewLease。独立三合同currentHumanScopeApplied、policyAndStopsPreserved、originalAccountingPreserved，evidence顶层bool；严格真值来源为实际隔离API原流与旧当前生产根9/1/10只读比对。无视觉检查项。
+
+Complete/Fail即时Prepare→一次真实app Send绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record。CODE绝不自领AI524或525，CONTROL独审后才恢复原任务。原新增夹具/PS候选尚未安装，本卡不能趁机做其业务。文档只维护WF这项机制事实，不抬项目完整核验日期，不把本次新独立管线根当作原519追加额度。
+
+> SUPERVISED POLICY at 2026-11-13T19:35:34.3951465+08:00: {"policy":{"resourceKeys":["workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"G87独立管线源码修复，只修明确用户当前HUMAN scope的正式领取，不执行原519/524业务、原额度不退款","updatedAt":"2026-11-13T19:35:34.1421102+08:00","supervisionLevel":"light"},"taskId":"AI-000526"}
+
+> SUPERVISED EXTEND at 2026-11-13T19:35:34.6993230+08:00: {"reason":"必要的独立管线机制修复，原业务历史和9/1/10保持","taskIds":["AI-000526"]}
+
+> Dependency correction for AI-000524 at 2026-11-13T19:35:35.3534874+08:00: AI-000526
+
+> SUPERVISED RECONCILE at 2026-11-13T19:36:47.0323689+08:00: {"inspection":[],"repairs":["REVOKED_STALE_DISPATCH:AI-000524"],"evidence":"Fresh CODE idle/completed/errornull turn01a1d4a6-1122-7a53-b155-8a9933c14a93 cursor80 confirms one failed Poll and no claim. ENGINE_CLI notLoaded/completed/errornull cursor1. Formal workers IDLE, no RUNNING. AI524 new temporary dependency526 correctly invalidates the failed outstanding dispatch only; actual HUMAN grant unused9/1/10 unchanged. Schedule only independent pipeline526 while524/525 remain prerequisite blocked."}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-13T20:16:52.4705097+08:00: {"remaining":4,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000526",".ai-workspace/repair-budget.ps1",".ai-workspace/toolkit/WF.md","DevTools/Workflow/Test-ApprovedResume.ps1"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"used":0,"taskId":"AI-000526","cycles":["AI-000526:3a9b1509efbf4417a134a9e833f4f928"],"reserved":1,"verification":"Independent review AI526-attempt1-independent-review.json confirms new stopped/paused expectation error and preserved failed Final1. Fresh CODE idle/completed/errornull cursor94 turn01a1d4b2-60c4-7f11-9cd8-d7b958bc4b0b; ENGINE_CLI notLoaded/completed/errornull cursor1. Mode SUPERVISED ACTIVE no stop, formal both IDLE no leases/RUNNING. Same source/tests/WF scope, verify existing HUMAN permission-resume compatibility before one new narrow Final. Original business519 budget unchanged9/1/10; independent526 default policy0/5 before this reservation.","grantId":"3c01f0ad2f014330854be19099838fbd","rootTaskId":"AI-000526"}
+
+> Dependency correction for AI-000524 at 2026-11-13T20:38:34.3414128+08:00: none
+
+> SUPERVISED RESUME_APPROVED at 2026-11-14T03:00:16.2238543+08:00: {"used":10,"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000524","DevTools/DataTables/Fixtures/CK01BSchemasRegression","DevTools/DataTables/Test-CK01BSchemas.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"authorizationSource":"HUMAN","rootTaskId":"AI-000519","verification":"2026-11-14 direct current user reply call_a440e74c52ac42358666100866111291:0 新增5轮 supersedes requested1 with5, same exact reviewed fixture/config/diagnostic scope SHA2324E0C804B824423C79BEC70BA6ACC7D944D4D5CB9F95568FC7A287E7C7BEAF. Original524 source ECE488... unchanged, previous two Finals/failures and allrootcycles retained. Fresh CODE notLoaded/completed/errornull cursor108 turn01a1d4eb-263e-73b2-85fe-d32be32ec094; ENGINE_CLI notLoaded/completed/errornull cursor1. Raw bothIDLE no leases, no RUNNING/reservation, original SUP ACTIVE session no stop/exit. Independent attempt2 review already received/retained. Add5 to actual10/10 total15 only; no new production/asset/engine business.","sourceApprovalId":"call_a440e74c52ac42358666100866111291:0","reserved":5,"grantId":"42271c547fbc4470abfe2322262c9a8a","cycles":["grant:2ae90e6255fe409b823130ecd9e2e7a7","grant:5e04731b70f7423eaa7336664e2ba417","grant:7bba8d0bc3524a39b033fd0ba784edcb","grant:0073c16623354d18aeaf445b0d9b67e6","grant:913c9683fe86425fbd8956bee5669d67"],"remaining":0,"taskId":"AI-000524"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-14T13:58:41.1254593+08:00: {"used":11,"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000524","DevTools/DataTables/Fixtures/CK01BSchemasRegression","DevTools/DataTables/Test-CK01BSchemas.ps1"],"operations":["evidence","idempotence-check","offline-regression","source-edit"]},"rootTaskId":"AI-000519","cycles":["grant:2ae90e6255fe409b823130ecd9e2e7a7","grant:5e04731b70f7423eaa7336664e2ba417","grant:7bba8d0bc3524a39b033fd0ba784edcb","grant:0073c16623354d18aeaf445b0d9b67e6","grant:913c9683fe86425fbd8956bee5669d67"],"verification":"Original HUMAN grant42271c547fbc4470abfe2322262c9a8a exact source call_a440e74c52ac42358666100866111291:0/userQuote add5/Runs5/Scope replay; 1 consumed4 remaining, no new quota. Actual new human scope-only approval call_060dd1f4cb0040a7b3369326dc47a522:0 permits reviewed V09 temp-input/scene wiring only, diff SHA12322AFD446989359C4F22DAF4D16D9519F460396ADAE2A44EC2149DD96DD54D; recorded input JSON and independent attempt3 review. Source015D145... unchanged, original data/schema/14fixtures/assertions preserved. Fresh appCODE notLoaded/completed/errornull cursor114 turn01a1d649-eb60-7812-a5d4-480488069c62, ENGINE_CLI notLoaded/completed/errornull cursor1. Raw bothIDLE noleases/RUNNING/reservations; original SUP ACTIVE no stop/exit. Original three Finals/fails retained; next one fullSchemas Final4, root11/4/15 unchanged before claim.","grantId":"42271c547fbc4470abfe2322262c9a8a","authorizationSource":"HUMAN","remaining":0,"sourceApprovalId":"call_a440e74c52ac42358666100866111291:0","reserved":4,"taskId":"AI-000524"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-14T14:16:16.0278720+08:00: {"remaining":0,"verification":"Original519 same business scope/owner/session and all failures retained. Direct repair524 actual attempt4 exec5cb942e1c0844e81b3a754cc74bb2dd9 Complete-736c99dd2c5c SUCCEEDED/VERIFIED; CONTROL AI524-independent-final-review.json 3contracts5facts PASS, original fullSchemas Final4 executed1/reused0 exit0 and original44/permanent16 preserved, actual SENT Receive. Other direct repairs522/523 independently verified. Pair only unique successful current524 grant claim cycle grant:5e04731b70f7423eaa7336664e2ba417; no new/refunded cycle and keep original HUMAN unused3. Fresh CODE idle/completed/errornull cursor119 turn01a1d8a4-1de3-7d90-af42-e1851c2641c0, ENGINE_CLI notLoaded/completed/errornull cursor1; raw both IDLE noleases/RUNNING/reservations, SUP ACTIVE no stop. Next source-current Narrative compile/sample and changed LongLoop default entry, real no-drift reuse of successful repaired entries only, no Unity/build/full background or old business changes.","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000519","Assets/Scripts/Narrative","Assets/Scripts/Narrative.meta","CODEBASE_MAP.md","DevTools/Narrative","DevTools/Verify-All.ps1"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"cycles":["grant:5e04731b70f7423eaa7336664e2ba417"],"pairedRepairBinding":{"authority":"UNIQUE_CURRENT_GRANT_CLAIM","authorizationSource":"HUMAN","repairTaskId":"AI-000524","attempt":4,"executionId":"5cb942e1c0844e81b3a754cc74bb2dd9","grantId":"42271c547fbc4470abfe2322262c9a8a","approvalId":"call_a440e74c52ac42358666100866111291:0","userDecision":"新增5轮","scopeSha256":"10D9AECBA0F480149E86A7936F5C2723D4278347684EBF2CE563B7779AAA9CEB","claimSha256":"8943D833E4339AE50CEC44BA3EBBD5A8C966FA12D0442DE61363FBF4A75175AC","claimIndex":1,"cycleId":"grant:5e04731b70f7423eaa7336664e2ba417","rawExecutionCycleId":"grant:5e04731b70f7423eaa7336664e2ba417","rawRepairContextCycleId":"grant:5e04731b70f7423eaa7336664e2ba417","legacyDerivedCacheMismatch":false},"rootTaskId":"AI-000519","grantId":"68b160f12da54d0e80a13ce17e8c2454","used":12,"reserved":3,"taskId":"AI-000519","authorizationSource":"POLICY","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0"}
+## AI-000527 | [CODE] [N0-11] 剧情推进输入与独立冷却模型
+
+- 序号：527
+- 提交时间：2026-11-14T15:00:42.2400078+08:00
+- 模块 ID：N0-11
+- 初始状态：QUEUED
+- 前置依赖：AI-000519
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+2026-11-13用户已接收剧情底座批14逻辑卡和正式OPT并要求持续开发；本卡是原包独立新功能，不是519/524失败换号重试。Root519已真实SUCCEEDED/VERIFIED并经CONTROL独审3合同+6事实PASSED，旧全部失败与root12已用/3预留/15上限保留，不挪其余额。本卡新根首次与SUP默认5续行分列，普通失败CONTROL独审后现额度内唯一ApproveResume；真正人工/权限/停止门保持。固定CODE/CONTROL，原监管session，不新chat/子代理、不自领后继。每批生产写前Checkpoint，必要续租；引擎/Unity导入/Play/Build/原生CI/背景全量0，旧短循环/描边仍暂停，不提交推送、不改场景/Prefab/配置asset/原meta/用户正式表或工作簿。
+
+必读CORE、相应原始单卡及索引2.1～2.4、原Schema v2.5和D5参数附录本模块相关节；原件/逐文件SHA在批次接收清单。以实际当前Core及既有Test-Narrative为准，避免重复类型/职责，不从未实现的未来卡猜接口。Core仅BCL无Unity/LongLoop/ShortCycle直接或传递引用；现两asmdef/原GUID/原3示例断言保持，新增普通C#文件及新目录交正确新meta。模型不挂真实场景，不创建配置资产。复用现Narrative真实Mono/csc编译与测试入口，在已有测试EXE调用新Run组；不新通用框架/探针/guard/比较器，不加外部库或原生验收。当前Core示例实际refs仅mscorlib；新实现用已有BCL即可，不为通过删纯度门。独立测试预期来自原卡/Schema，不能从被测实现生成同一套预期冒充验证。
+
+验证只本受影响Narrative入口一次相称Final，真失败按稳定key留史，CODE正常自验证限保持；不重跑已收口ShortCycle/DataTables/LongLoop或全仓其它模块。原所有示例/既有Narrative用例断言保留。三合同预先固定，evidence顶层boolean和canonical acceptance，保真实编译输入/原流/exit/源码差异及失败。六要素REPORT，不每卡ZIP。公开入口/职责变化在原CODEBASE_MAP相关节和项目基线局部维护，完整核验仍2026-09-17；DevTools/Narrative README更新调用。使用/配置说明长期在项目docs，AI输出不是新配置权威。纯逻辑无画面，五列视觉检查不适用。四类空转/appTurn/token/cost取不到如实null+原因，工具数不冒充app轮。完成/失败即时正式Prepare→一次真实app发送绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，用户AGENTS长期已授权。执行线只交当前卡，不自领后继。
+唯一目标N0-11推进输入模型。原件 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/cards/N0-11.md，依赖仅N0-01。读原表四行与当前Schema相关参数。点击：未快进出字中按参数补全本句(预设)/跳下一句；已快进出字中按参数跳下一句(预设)/补全本句；已出完下一句；入场中跳过入场直接出字。AUTO与快进独立可同开，无长按；快进只改出字速度，整句出完仍等点击，AUTO只在出完并等其参数时长后自动下一句。模型不实际渲染字速，把快进状态供调用方消费。
+
+只拥有冷却计时/两个切换态/本输入所需等待信息，不接管未来状态机的段句进度或可结束状态，不读真实设备，不引Toolkit/IGameInput。用调用方提供的纯状态/时间上下文或已有纯clock接口，避免实时sleep、轮询或全局状态。手动点击接受后进入advanceCooldown（跳入场也算接受）；CG出现/收起/切换通知触发独立CG点击冷却；边界到时可接受，差一点拒绝；AUTO推进不受两冷却影响，快进手动点击仍受限。参数名/秒单位/预设按原卡和实际Schema，不猜场景值，不让未来Config资产成为本卡前置。
+
+M80按源码/测试/meta/文档4～10文件与5内容条目，优先1个Core源集中模型与必要上下文/结果类型，测试同文件组。固定三合同clickTransitionMatrix（四行及两个参数另值结果）、independentAutoFastForward（AUTO等待/同时开/快进不自动下一句）、cooldownAndPureRegression（手动与CG边界/AUTO豁免/入场接受后冷却，真实程序集+原示例和已有测试全通过）。模型输出意图由未来N012消费，不能写真实视图/命令处理器/FSM。
+
+> SUPERVISED POLICY at 2026-11-14T15:00:43.8736675+08:00: {"taskId":"AI-000527","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已接收原剧情底座新业务，严格原前置与CONTROL独审；新根不替代或清零旧519/524，固定CODE串行，原暂停业务保持","updatedAt":"2026-11-14T15:00:43.5199549+08:00","supervisionLevel":"full"}}
+## AI-000528 | [CODE] [N0-10] 剧情命令调度器与假处理器契约
+
+- 序号：528
+- 提交时间：2026-11-14T15:00:44.2464860+08:00
+- 模块 ID：N0-10
+- 初始状态：QUEUED
+- 前置依赖：AI-000525
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+2026-11-13用户已接收剧情底座批14逻辑卡和正式OPT并要求持续开发；本卡是原包独立新功能，不是519/524失败换号重试。Root519已真实SUCCEEDED/VERIFIED并经CONTROL独审3合同+6事实PASSED，旧全部失败与root12已用/3预留/15上限保留，不挪其余额。本卡新根首次与SUP默认5续行分列，普通失败CONTROL独审后现额度内唯一ApproveResume；真正人工/权限/停止门保持。固定CODE/CONTROL，原监管session，不新chat/子代理、不自领后继。每批生产写前Checkpoint，必要续租；引擎/Unity导入/Play/Build/原生CI/背景全量0，旧短循环/描边仍暂停，不提交推送、不改场景/Prefab/配置asset/原meta/用户正式表或工作簿。
+
+必读CORE、相应原始单卡及索引2.1～2.4、原Schema v2.5和D5参数附录本模块相关节；原件/逐文件SHA在批次接收清单。以实际当前Core及既有Test-Narrative为准，避免重复类型/职责，不从未实现的未来卡猜接口。Core仅BCL无Unity/LongLoop/ShortCycle直接或传递引用；现两asmdef/原GUID/原3示例断言保持，新增普通C#文件及新目录交正确新meta。模型不挂真实场景，不创建配置资产。复用现Narrative真实Mono/csc编译与测试入口，在已有测试EXE调用新Run组；不新通用框架/探针/guard/比较器，不加外部库或原生验收。当前Core示例实际refs仅mscorlib；新实现用已有BCL即可，不为通过删纯度门。独立测试预期来自原卡/Schema，不能从被测实现生成同一套预期冒充验证。
+
+验证只本受影响Narrative入口一次相称Final，真失败按稳定key留史，CODE正常自验证限保持；不重跑已收口ShortCycle/DataTables/LongLoop或全仓其它模块。原所有示例/既有Narrative用例断言保留。三合同预先固定，evidence顶层boolean和canonical acceptance，保真实编译输入/原流/exit/源码差异及失败。六要素REPORT，不每卡ZIP。公开入口/职责变化在原CODEBASE_MAP相关节和项目基线局部维护，完整核验仍2026-09-17；DevTools/Narrative README更新调用。使用/配置说明长期在项目docs，AI输出不是新配置权威。纯逻辑无画面，五列视觉检查不适用。四类空转/appTurn/token/cost取不到如实null+原因，工具数不冒充app轮。完成/失败即时正式Prepare→一次真实app发送绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，用户AGENTS长期已授权。执行线只交当前卡，不自领后继。
+唯一目标N0-10命令调度器，依赖实际N0-03=AI525成功与CONTROL独审，不提前实现或重复其语法/签名。原件 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/cards/N0-10.md，必须逐条读规则表及当前Core命令公开类型，复用签名单一数据源与诊断/目标类型；不改其已接受语法或旧测试断言。
+
+实现处理器开始/是否完成/立即完成/取消接口；本卡所有真实效果由DevTools假实现给，不写真实14处理器、不读引擎/Assets/配表。调度器拥有本句或段末命令执行状态，状态机在开始出字时调用它，出字不等待命令。并行全部同一时刻开始；顺序前一完成再后一开始，wait由调度器用纯时钟计时。推进截断时按签名类别收尾，尚未轮到的顺序命令也按原序立即落实最终结果；对话结束不截断，剩余链仍能Tick至完成；提供取消镜头类入口，保其它命令；scene_switch后发结束本段信号由未来FSM处理。等级不可用运行时跳过并诊断，不改签名表的等级规则。执行方式是传入参数，由未来快照给，不让未完成N008成为额外前置。不接管整个对话进度/输入冷却/真实操作锁或镜头。
+
+M80按约4～10源/测试/meta/说明文件，优先1～2Core源集中状态/接口，DevTools一组假处理器/clock测试。固定三合同startAndTiming（并行同刻/顺序/真实wait计时）、cutoffAndLifecycle（各类别截断/未开始顺序结果且保序/结束后继续/只取消镜头/切场景信号）、availabilityAndPureRegression（不可用跳过诊断、真实Core/Unity编译及原示例/当前命令用例保持）。只新增本模块需要的测试，不为测原层重复全套工程，不改现库架构或引入通用消息框架。
+
+> SUPERVISED POLICY at 2026-11-14T15:00:45.5801650+08:00: {"taskId":"AI-000528","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户已接收原剧情底座新业务，严格原前置与CONTROL独审；新根不替代或清零旧519/524，固定CODE串行，原暂停业务保持","updatedAt":"2026-11-14T15:00:45.2978982+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-14T15:00:46.1756757+08:00: {"reason":"原批已授权N011与N010两条新功能根按原依赖注册，先525再527/528；不接替原失败，不加旧根预算、不自动启动未就绪卡","taskIds":["AI-000527","AI-000528"]}
+## AI-000529 | [CODE] [N0-02] 纯曲线工具抽取与旧镜头等值回归
+
+- 序号：529
+- 提交时间：2026-11-14T15:20:21.0352458+08:00
+- 模块 ID：N0-02
+- 初始状态：QUEUED
+- 前置依赖：AI-000519
+- 允许越过：False
+- 最大尝试次数：6
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原包N0-02曲线工具，新的独立FEATURE，不是519/524重试换号。用户已接收全批并要求持续开发；N001父519已真实成功和CONTROL独审，旧全部失败和根12/3/15保留，不挪旧Human余3。本卡依原仅519；固定CODE串行，排当前525/已注册527/528之后，不自领。首次与本新根SUP默认5续行分列，普通失败CONTROL在现权限/范围/额度内唯一ApproveResume；真实权限/停止/未批准条件保持。大于10文件（数学源/新meta/桥/asmdef/两既有runner和测试/文档）按L120建议预算，非实际app轮硬上限，不因新号清旧记录。
+
+必读原 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/原始派发包/cards/N0-02.md、索引2.1/2.3、Schema全局规范15与N001核对结论；先读实际StreetFollowPipeline.CurveValue/CurveIntegral/Clamp、StreetCurvePreset定义/使用点、Toolkit/Narrative.Core/LongLoop asmdef与两个离线编译器的真实来源。唯一目标：四曲线取值和积分公式原样迁出成纯模块，保StreetFollowPipeline这两个原签名，只把函数体变委托，原StreetCurvePreset序列化enum及其它调用方/配置/LongLoop.asmdef引用不动；新模块自有同序枚举，转换逐一对应，非法enum/u越界/非有限输入与原函数一致。
+
+放置按N001实际结论：Toolkit本身有引擎依赖，不能让纯Core引用它；ShortCycle.Core虽纯，但叙事禁止依赖短循环，不塞去短循环或第三方vendor。优先在既有Narrative.Core放独立数学文件/自有枚举（仍仅BCL），Toolkit用新增薄桥以int/基础数值映射到纯模块，并在Toolkit.asmdef新增引用该现有纯Core，LongLoop依旧只引用原Toolkit、不改其asmdef。必须检查真实DAG无循环、桥的公开/调用参数不迫使LongLoop改程序集引用，保非法值异常类型/ParamName与旧函数，不用重复生产公式或通过反射偷偷调用。新文件路径建议Core/NarrativeCurves.cs、Tools/NarrativeCurveBridge.cs及各新meta，既有GUID/meta不动。若实际发现该最小放置与硬约束冲突，报具体引用/源码事实给CONTROL，不自建额外程序集/替代架构或删原例子门。
+
+已有Test-Narrative.py/Test-LongLoopPlayer.py的Toolkit编译目前可能早于Core且Bee响应文件没有新桥/新ref。仅按真实新DAG补纯Core先编译/必要桥源与新ref，准确捕获输入/命令/原流；不执行Unity来刷新RSP，不声称发生引擎导入，不用stub代编生产依赖闭包。复用现source closure/编译入口，不写新调度器/通用框架/比较器，不动其它核心工具。现Core原三示例（实际仅mscorlib）及后续已完成Narrative业务测试保持，代码可用mscorlib.Math等完成，不为通过删/放宽既有纯度门。
+
+验证三合同：bitExactCurves（独立保留旧公式oracle，4曲线各u=i/1000d共1001点，Value/Integral按BitConverter双精度位比较；预期不从新实现生成）；mappingAndBoundaryCompatibility（两enum4项序/映射、u<0/>1/非有限以及非法enum，与原返回/异常匹配；旧配置enum/asset/LongLoop引用不变）；existingOfflineRegression（真实Core/Unity与原例子/当前Narrative测试通过，当前LongLoop既有业务纯逻辑测试原断言全过）。以现有Narrative入口跑新曲线测试，LongLoop复用Test-LongLoopPlayer.py当前业务模式，先列实际模式/覆盖；不把历史反例、闭包打包/恢复、一次性native payload编译、被冻结原生探针当业务曲线验收，不重复新补丁三模式子组。可按现成runner分别调用并保原流，禁止为凑全量新建通用聚合/比较框架或修改旧断言。一次相称收口，不因成功重复跑；新的失败原scope内按真实稳定key和现CODE自验证限留史，不换key清账。
+
+本批Unity/导入/Play/Build/原生CI/截图/后台全量0，不修改镜头当前参数/场景/Prefab/asset/原meta、现非空用户配表/工作簿，不提交推送。纯数学抽取必须不改变0.1.2表现，原已撤销Game裁切误报不复活，角色描边/短循环业务仍暂停。源码写前Checkpoint实际scope，必要续租。允许源仅Core数学/Tools薄桥+新meta/Toolkit.asmdef/StreetFollowPipeline两body、现两个runner/新DevTools Narrative测试夹具与README/项目Map和基线局部；其它变化回报。CodeMap登记真实引用方向/工具入口，完整核验日期不抬；没有参数/Inspector变化记无需改配置使用说明，不复制到AI区新权威文档。六要素REPORT/3合同/完整失败与原编译流，不ZIP；机器等值不冒称新视觉验收。实际appTurn/token/cost取不到null+原因，不用工具数代替。结算即正式Prepare→一次真实app通知CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，长期用户已授权；不得自领后继。
+
+> SUPERVISED POLICY at 2026-11-14T15:20:22.3836729+08:00: {"taskId":"AI-000529","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原批已授权N002新模块，依519真实成功/独审；保持LongLoop引用和表现，用既有纯Core与薄桥最小抽取，当前CODE任务所有权不变","updatedAt":"2026-11-14T15:20:22.0147560+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-14T15:20:22.8137507+08:00: {"reason":"保原N002曲线分支实际根/依赖，注册不抢当前525所有权，后续固定CODE串行按原卡推进","taskIds":["AI-000529"]}
+## AI-000530 | [CODE] [WF-HUMAN-REPAIR-SCOPE] 管线小修复：未领取范围登记纠正（保原领取历史）
+
+- 序号：530
+- 提交时间：2026-11-14T16:34:44.7425526+08:00
+- 模块 ID：WF-HUMAN-REPAIR-SCOPE
+- 初始状态：QUEUED
+- 前置依赖：AI-000527
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+# AI530 · 未领取任务范围登记纠正（独立管线小修复）
+
+CONTROL在AI527独审时发现：先前Enqueue参数组装把AI527/528的五条允许路径序列化为一个空格串；实际原指令和AI527两次Checkpoint都明确五条路径。AI527真实8文件均在文本范围内，3合同/6事实独审通过；原领取记录和观察保留，不能倒改已领取历史。AI529实际十条路径数组正确，可正常推进。AI528尚未领取，唯一需要纠正的真实待办在执行前加本卡依赖，保原AI525依赖。
+
+本卡只修原工作流的未领取登记能力，不是重试AI519/524或重开其根额度，独立FEATURE技术管线根；SUP首次执行与默认5续行分列。用户已授权本批正常推进和必要管线维护，不新增人工门、不换固定CODE、不手改runtime。原业务失败、许可、尝试、scope历史不清零、不退款。S40：3个既有源/文档文件，无Unity、场景、Play、Build、DATA或其它业务回归。
+
+唯一目标：在既有正式queue入口支持这一次类型的“未领取且原路径被空格拼接”的登记纠正，CONTROL在本卡成功独审后再实际调用于AI528。优先扩展现有ReviseInstruction的可选Scope参数，不新Action/新状态文件/通用框架/比较器。先核实际queue、supervised、approved-resume辅助函数与现有测试，不凭本文猜代码。
+
+- 仅未领取QUEUED/BLOCKED_DEPENDENCY、attempts=0的FEATURE根，没有execution/领取/失败史/续行grant/修复family、未派发预约；实际SUP ACTIVE、无stop/exit，当前绑定CONTROL明确调用，任务在当前session完整scope。不能用于已领取/失败/成功、独立硬停或其它controller/session，不走ApproveResume伪造失败。
+- 必须保持原Instruction逐字及等级/前置/模式/职能/全部历史不变。纠正前只有一条字符串路径；候选为同一原文本清单的多个字面路径，按原顺序空格拼接须与旧串精确一致；operations完全不变。不能把此入口用成正常scope扩大器，也不能无证明拆分合法含空格的单路径。
+- 复用已有控制审查文件+SHA参数/现有摘要辅助函数，绑定当前taskId、controller、原instruction/旧businessScope和明确审定后的Scope；当前任务定义漂移、审查SHA不匹配或未独审不允许写入。证明路径须自有项目outputs/control，不能信任任意外部路径。选择最少现有参数接法，README/WF说明实际字段；不得新框架。原Scope规范化/路径保护继续使用既有ConvertTo-ResumeScope，旧严格边界不能削弱。
+- 通过正式API保存businessScope，原/新scope、理由、审查来源追加原ledger/audit，不删除旧登记。不得由执行线修改实际528：本卡只交付源代码与隔离API测试，CONTROL独审、fresh idle后按正式入口实际安装这次元数据纠正。实际527历史一字不改。
+
+只允许：`.ai-workspace/queue.ps1`、`DevTools/Workflow/Test-ApprovedResume.ps1`、`.ai-workspace/toolkit/WF.md`，以及本卡outputs目录。优先3文件内最小补丁；若真实实现需要额外生产脚本，先回报CONTROL，不以新临时入口绕限制。不会改全项目验证日期，不改产品文档/生产配置/旧任务定义。已有源码基线526已独审，CurrentHumanRepairScope窄组及默认旧矩阵保持原断言。
+
+验证：扩展既有Test-ApprovedResume的一个可选窄组，复用其真实隔离queue API，不增新测试工具，不跑整套旧大矩阵。覆盖1个合法空格拼接登记纠正（正式API实际回读正确多路径，指令/历史/额度不变），以及有代表性的实际拒绝：缺失/漂移审查、普通合法含空格路径未获明确列表证明、路径或operation超出审定/拼接不一致、已领取或有grant、非当前CONTROL/停止session。非法请求必须无实际task定义改变，正式停止回执与异常按实际分类，不预设都throw。选择有实际意义的有限案例，不为每字段堆镜像断言。
+
+固定3合同：formalUnclaimedCorrection、rejectIllegalChanges、preservedHistoryAndRegression。每项evidence顶层boolean配canonical acceptance，报告列真实API/检查数、源字节保护和所有失败。只一次本窄组Final；真实失败正常限内稳定key留史再修，不套其它业务或引擎3轮。原大矩阵未跑如实说明，不冒充全量工作流验收。无当前运行态手工写入、真实528更改、用户功能代签或Git操作。
+
+交付六要素REPORT、task.diff、原始调用流/exit/检查摘要和可审查的CONTROL实际纠正调用示例/证明格式。用量未知null+原因。正式Complete/Fail后按长期授权Prepare→一次真实app通知绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，不自领后继。当前原N002/AI529先安全执行，本卡随后，最后原N010/AI528安装纠正后续行；其它15逻辑卡/暂停业务保持。
+
+> SUPERVISED POLICY at 2026-11-14T16:34:46.1674064+08:00: {"policy":{"resourceKeys":["workflow-devtools","documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"独立修复CONTROL未领取范围登记拼接错误，不改原领取/失败/额度；当前授权业务依原依赖继续，正式API后CONTROL实际安装","updatedAt":"2026-11-14T16:34:45.8362790+08:00","supervisionLevel":"full"},"taskId":"AI-000530"}
+
+> Dependency correction for AI-000528 at 2026-11-14T16:34:47.0688198+08:00: AI-000525, AI-000530
+
+> SUPERVISED EXTEND at 2026-11-14T16:35:56.6733811+08:00: {"reason":"原剧情底座正常推进的独立小型管线修复：仅纠正未领取528误拼接scope，保原领取/历史/额度；原529正常范围继续，不扩大产品业务","taskIds":["AI-000530"]}
+## AI-000531 | [CODE] [N0-02] 529直属修复：Avatar旧编译闭包与缺席依赖边界（原断言保持）
+
+- 序号：531
+- 提交时间：2026-11-14T17:22:31.8171558+08:00
+- 模块 ID：N0-02
+- 初始状态：QUEUED
+- 前置依赖：AI-000530
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+# AI531 · 原AI529直属REPAIR：Avatar旧离线接线修复
+
+来源：AI529首次真实Fail，稳定key `NARRATIVE_CURVE_OFFLINE_REGRESSION`。CONTROL独审见C/AI529-attempt1-independent-review.json。当前根529首次1、同根续行已用0/默认5，本卡正式POLICY登记预留1轮、实际Claim消费；本卡与原根随后续行按真实claim周期正式配对，不双扣、不清旧失败。不是换号重试整卡或重做曲线；原519/524历史和Human余3完全无关。固定CODE/SUP；只有确需用户/权限/耗尽才停报。S40，2个既有源文件，无Unity/场景/Play/Build。
+
+唯一目标：恢复旧 `--avatar-init` 入口的真实当前生产编译和原初始化控制流用例，保持全部原断言、值、输入顺序和预期，原529仍未通过，后续13未跑模式由原529收口。
+
+只写 `DevTools/LongLoop/Test-LongLoopPlayer.py`、`DevTools/LongLoop/TomatoAvatarInitializationTests.cs` 和本卡自有outputs；不改生产源码、其它测试/夹具、配置、schema、Unity资源、root529/其它runtime。正式直属529修复scope，不扩大已失败根原10路径，不改根原Instruction。读CORE/原529卡、本独审、实际runner/fixture、实际DepthScale95～125行和现有编译辅助函数。
+
+1. `--avatar-init` 当前先编译5个旧源，缺WalkArea。复用本runner现有build_bee及529已接入的真实Core→Toolkit→LongLoop闭包；必要将此分支移到build_bee已定义的执行位置，不新编译框架、不追加一串临时独立生产替身。当前LongLoop完整编译必须包含实际DepthScale及当前引用，真实Spine/Unity DLL。原其它mode和根529已通过结果保留，不把第一阶段真生产编译换成fixture编译。
+2. 原TomatoAvatarInitializationTests已经明确使用Unity/Spine微型替身，测试的是**从未挂DepthScale的visualRoot**上的Avatar初始化/朝向控制流。当前生产Avatar新增两次DepthScale调用，而旧fixture缺该依赖。CONTROL已读实际DepthScale：GetComponent为空时TrySetFacing返回false；ResolveFacingMagnitude在hasDepthBaseline从未置true时返回legacyMagnitude。允许仅在此现有fixture补一个清楚标注“无DepthScale组件边界”的依赖类型，提供这两个签名及上述缺席结果；不能模拟/声称DepthScale组件、缩放或生命周期实现，不能复制一套生产计算。整个原fixture内容/全部原断言/值/顺序字节保持（优先末尾附加单一小类型），不新增替代Avatar或吞错误。此类型只参与原headless控制流EXE，真实生产DLL编译必须使用物理DepthScale源码，不能把两种编译混报。后续原depth-scale组仍须跑真实DepthScale与生命周期用例。
+
+这是缺失测试依赖的限定接线维护，不是更改业务断言或用户配置，不需新的人批断言例外。若核实实际缺席语义/签名已漂移，或确实必须改原断言、期望值/其它原文件，保留原失败回报CONTROL，不自行扩范围。本次静态发现DepthScale缺口此前未执行，不冒记第二次历史失败。
+
+验证只修好后的同一 `--avatar-init` 入口一次（新自有目录，不覆盖529失败证据）：真实当前完整生产闭包exit0 + 原控制流EXE/全部原断言实际执行exit0；原命令、曲线、默认、13其它模式不在本卡重跑。保存RSP/输入SHA/原始stdout/stderr/exit、根529生产和原断言保护、原fixture字节仅附加边界的证据。有限增量编译正常限内，稳定key失败留史；不新探针/守卫/通用比较器。原529随后唯一ApproveResume配对本卡实际成功claim周期，复用已过Narrative/default/本卡Avatar，先静态核剩余13旧入口依赖再按原清单执行，不为凑全量重跑成功项。
+
+固定3合同：currentAvatarCompile、originalAvatarAssertions、preservedBoundaries；evidence顶层boolean + canonical acceptance，报告真实断言数/真实生产与headless编译边界，不把替身称Unity原生。六要素REPORT、task.diff及失败史，纯测试接线无项目文档结构影响，完整核验日期不改；无需修改用户配置说明。无提交/暂存/推送/ZIP、旧后台探针/一次性工具或暂停业务。
+
+本卡排独立管线530实际成功/CONTROL独审后，执行线不自领；绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2，结算即时Prepare→一次实际app通知→Record。后续必须由CONTROL独审并正式配对原529，不替根签收。用量未知如实null，工具数/provider样本不冒充app回合或账单。
+
+> SUPERVISED POLICY at 2026-11-14T17:22:32.7792936+08:00: {"taskId":"AI-000531","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原529同根额度内直属测试编译依赖修复，保全部原断言/失败/范围，实际claim消费预留周期，不扩大原根scope","updatedAt":"2026-11-14T17:22:32.5161662+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-14T17:22:33.1891828+08:00: {"taskIds":["AI-000531"],"reason":"原529失败的直接窄修复，根SUP默认5内预留1，同一成功周期配对原根不双扣；530当前所有权保持，未派发531"}
+
+> SUPERVISED UNCLAIMED_SCOPE_CORRECTED at 2026-11-14T17:46:26.3645446+08:00: {"oldTaskSha256":"295F92E0B870E1E6E22872151182C7E5F6B8B3A31068E0A635C96B96E9BB9C8B","reason":"CONTROL independently confirmed the original ordered five literal paths after AI530 independent review; only malformed joined registration is corrected. No instruction, business acceptance, history, quota or permission change.","sessionId":"b6ed2dce289848548dbe89c17b63d12d","taskId":"AI-000528","newScope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000528","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scripts/Narrative/Core","CODEBASE_MAP.md","DevTools/Narrative"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"literalPaths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000528","Assets/Scripts/Narrative/Core","DevTools/Narrative","CODEBASE_MAP.md","项目整体阅读理解与推进基线_2026-08-14.md"],"reviewSha256":"1CC4FCEB07180CED7CD75057D10D692ECCAE91E24C1B4B0216A80A5CDA0F30FC","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","reviewPath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\NARRATIVE-FOUNDATION-20261113\\AI528-unclaimed-scope-review.json","oldScope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000528 Assets/Scripts/Narrative/Core DevTools/Narrative CODEBASE_MAP.md 项目整体阅读理解与推进基线_2026-08-14.md"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]}}
+## AI-000532 | [CODE] [N0-10] N0-06：单资产十组演出配置数据类型与参数说明
+
+- 序号：532
+- 提交时间：2026-11-14T18:51:38.7298452+08:00
+- 模块 ID：N0-10
+- 初始状态：QUEUED
+- 前置依赖：AI-000519, AI-000529
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+# AI532 · 原包N0-06 演出配置类型与参数说明
+
+用户2026-11-13已接收剧情底座14卡+正式OPT，共15逻辑卡。本卡就是原N0-06，不是额外业务/旧卡换号；前置N001=AI519、N002=AI529，后者必须实际成功且CONTROL独审才派发。当前531是529直属修复，不抢运行所有权。本卡新FEATURE根首次/默认SUP5续行分列，不挪519/524Human余3或529周期。固定CODE/原CONTROL/原SUP，不新chat/子代理，不自领后继。按已授权正常推进，只有真实人工/权限/停止/额度耗尽门才停报。
+
+先读CORE、原始 `cards/N0-06.md` 全文与共享2.1～2.4、原 `attachments/D5_附录C_参数表_摘录.md`、Schema v2.5相关配置/共同约定及七项增改。原件与SHA在接收清单。实际核现Narrative/Core、Unity和Test-Narrative入口；StreetConfigAsset仅只读参考变更通知，不引LongLoop依赖。完整核验日期仍2026-09-17，不据本卡改日期。预检目前只有Core语法/签名/输入/调度/曲线与Unity标记，无同名演出配置类型；正式领取仍以当前源码为准。
+
+唯一目标严格原N006：**一个配置资产类型，内含十个分组，各组为命名模板集合且有default**。不是十个配置资产。资产类型在Narrative.Unity、对应纯数据/查找/校验在Narrative.Core；按当前实际类型复用曲线枚举、命令执行方式、出字点击动作等已有公共枚举，避免再建平行类型/第二权威。本卡无任何表现逻辑、真实输入/处理器/FSM、Resolver或override解析/全局参数注册表（后面原N007/008所有）。
+
+字段/预设逐项对应D5 C.1～C.10，并以页首说明/Schema覆盖七项：分级命令执行方式默认Parallel；退场续接方式完整走；文字推进冷却0.3s；CG点击冷却1.5s；原kenBurnsPan水平预设迁横向、纵向0；CG推镜8s；CG推镜曲线Linear（复用N002）。C.6完整版与C.8两项围观字段也只存字段，不被任何逻辑消费。显示锚点/四种曲线等页首覆盖要落实，不能把摘录旧词当现规范。D5值为开发期预设，不能冒称当前场景终调。
+
+Core必须实际仍只引用mscorlib，不引Unity/Toolkit/LongLoop/ShortCycle或新包。纯数据必须能表达原数组/位置/颜色等语义，现有纯类型能复用则复用，确需最小值类型只为这份数据建；不建通用序列化/配置框架。Unity公开的单ScriptableObject类型与文件同名、按真实Unity可序列化结构持有数据；无需复制出两套易漂移默认表。源文件交正确新.meta，旧GUID/asmdef及原全部测试保持。不得为了资产方便在Core用引擎向量/颜色，或继承LongLoop的StreetConfigAsset。通知方式参考既有Changed/OnEnable/OnValidate的实际语义，源/编译可核，不声称未做的原生Inspector行为。
+
+按名取模板：找到用指定模板，缺失时fallback到default并给可读诊断；default本身缺失也要清楚报告，不静默构造/改写用户原值。非法时长/距离非负、全部数值有限、枚举合法；报告具体组/模板/字段，不钳制、自动修值或改名字。区分允许有符号的位置/偏移分量与非负时长/距离，不对所有数值盲加>=0。若原文有真实无法兼容的边界/缺失预设，带最小事实回报CONTROL，不猜设计值或先反复试失败。
+
+原卡“脚本逐项比对”在现Narrative测试组内做：根据独立原D5/Schema手写永久小夹具，比较完整字段清单/语义类型/预设及七项覆盖，不能从被测类型自动生成同一预期。10组/default/自定义模板精确查找及缺失fallback诊断，非法数值/枚举的字段定位和校验前后原值不变都要真实测。测试预期/样例只放DevTools/Narrative/Fixtures，不在正式表/用户资产造行。可以在现EXE增加Run组与必要真实编译引用，旧3/621/87/16861/111等当前已过组原文保持；只一次本受影响Narrative Final。无新增测试运维入口/通用比较器/guard/探针、无整仓其它旧业务回归。Unity层实际DLL编译，不在离线Mono中调用CreateInstance/JsonUtility等native入口制造伪引擎验证；Core逻辑用纯数据实际运行，未做的资产生命周期验证如实列后续。
+
+交付项目固定 `docs/参数调整说明_对话.md` 初版，并更新docs/README索引：每个参数写分组/实际字段/开发期预设/单位/作用、调大调小、联动与限制；资产入口/当前仅有类型而未创建资产的事实明确，不声称当前场景已配置。数据说明长期维护此项目文档，不另在AI区固化第二配置权威。README/CodeMap/基线只更新本模块实际入口、依赖和完成度，不抬完整核验日期或改旧529失败史。
+
+允许路径：本卡outputs、Assets/Scripts/Narrative/Core、Assets/Scripts/Narrative/Unity、DevTools/Narrative、docs/参数调整说明_对话.md、docs/README.md、CODEBASE_MAP.md、项目整体阅读理解与推进基线_2026-08-14.md。原有文件只必要接线与说明，新脚本正确.meta；不改Toolkit/LongLoop/用户正式CSV/xlsx/schema、场景/Prefab/.asset、旧meta/asmdef，不调用Unity导入/CLI/MCP/Play/Build/原生CI/后台全量，不提交/推送/暂存/ZIP。不创建实际配置资产文件；保所有用户与前卡当前变更。
+
+L120按预期类型/测试/独立夹具/多份项目说明加meta超过10文件，不是额外120次重试；仍单一配置数据目标。固定3合同：tenGroupsAndTemplateFallback、schemaFieldDefaultsAndValidation、pureAssetContractsAndRegression。顶层boolean和canonical acceptance；报告实际字段/默认/测试数、真实程序集/引用/输入SHA/原始流/exit和全部失败，不伪报原生或其它模块验证。内部正常失败按稳定key留史，额度内CONTROL独审后唯一ApproveResume，耗尽主动申请，不静默停止。
+
+六要素REPORT，纯数据/未创建资产无新增表现五列视觉验收，原参数说明不能被报告替代。四类空转/app轮/token/cost无确切来源null+原因，provider样本/工具数不冒充用量；不因STRONG自动换chat/模式/Yield。每写批Checkpoint、必要续租。Complete/Fail即时Prepare→一次实际app通知绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，不自领后继。旧短循环/U5/描边和暂停探针不恢复。
+
+> SUPERVISED POLICY at 2026-11-14T18:51:39.8571495+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原15逻辑卡N006依519和529，原529必须实际成功/CONTROL独审才派发；单配置资产类型/十组纯数据与原参数说明，不创建asset或扩大引擎业务","updatedAt":"2026-11-14T18:51:39.6102933+08:00","supervisionLevel":"full"},"taskId":"AI-000532"}
+
+> SUPERVISED EXTEND at 2026-11-14T18:51:40.2670554+08:00: {"taskIds":["AI-000532"],"reason":"将已接收原N006按原529依赖纳入监管后继，确保原15逻辑卡未完成时持续推进；当前531所有权不变、不提前派发或恢复旧业务"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-14T19:15:58.8019273+08:00: {"rootTaskId":"AI-000529","remaining":4,"reserved":0,"taskId":"AI-000529","used":1,"grantId":"f8c6bafde7734db19486a7390ffc69f2","authorizationSource":"POLICY","cycles":["AI-000529:AI-000531:avatar-compile-v1"],"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000529","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Scripts/LongLoop/StreetFollowPipeline.cs","Assets/Scripts/Narrative/Core","Assets/Scripts/Tools/NarrativeCurveBridge.cs","Assets/Scripts/Tools/NarrativeCurveBridge.cs.meta","Assets/Scripts/Tools/Toolkit.asmdef","CODEBASE_MAP.md","DevTools/LongLoop/Test-LongLoopPlayer.py","DevTools/Narrative"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"verification":"CONTROL531 independent3contracts5facts PASSED actualCore6Toolkit140LongLoop40/currentphysicalDepthScale/nofixture production,old24headlessasserts0,fixture5605exactprefix,25currenthashesmatched;SENTnoticeReceived. SuccessactualclaimcycleAI-000529:AI-000531:avatar-compile-v1 consumed1/root5,0reserved4remaining;pair this existing cycle not newcharge. Original529 remainsstableVERIFICATION/TASK firstFail/keyandScope10/Instruction unchanged, nohardstop. Fresh C/AI529-paired-resume-fresh-idle.json CODEidle141/completed01a1d9a6 errornull ENGINEnotLoaded1/completed01a1d192 errornull,actualtwo workersIDLE/nolease/RUNNING/reservation. OriginalSUP ACTIVE20scope nostop/exit;532queued depends529. Continue originalremaining13oldbusinessmodes afterstaticprecheck,retain successful528Narrative/default/531Avatar,nounneededrepeat/native/Git/pausedbusiness."}
+## AI-000533 | [CODE] [N0-10] N0-07：同源参数注册表与覆盖集类型解析
+
+- 序号：533
+- 提交时间：2026-11-14T20:34:16.3870078+08:00
+- 模块 ID：N0-10
+- 初始状态：QUEUED
+- 前置依赖：AI-000532
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+# AI533 · 原包N0-07 参数注册表与覆盖集解析
+
+这是用户已接收的15逻辑卡中的原N007，不是额外业务或旧失败换号；前置N006=AI532必须真实成功并CONTROL独审后才派发。当前532运行所有权保持，不提前领取。本卡新FEATURE根首次与SUP默认5续行分列，不挪519/524旧许可或529已收口周期。固定CODE/CONTROL/原session，正常授权内推进；真实人工/权限/停止/额度耗尽才停报，唯一ApproveResume，不手改runtime、换号或清失败史。
+
+领取前读CORE、原始cards/N0-07.md及共享2.1～2.4、N006实际交付的Core配置结构/声明/字段清单和现测试入口、D5 C与页首覆盖、Schema v2.5覆盖集规则。必须复用前置真实API，不凭本规划猜尚未交付的类型或建第二套配置数据。原N007权威内容只有：参数名→分组/类型/单位的注册表，与N006同一来源；key=value;key=value按类型解析；CG横纵两个key；未知/类型错误/重复给明确key和问题；注册表与配置结构逐项一致测试。不能另加未获设计来源的禁写分组、默认值或优先级规则。
+
+唯一目标是纯Core注册与覆盖集语法/类型结果，不实现Resolver/覆盖优先级/快照（原N008）、FSM/真实表现/资产接线。优先从N006现有声明/元数据建立同一来源；若需手写映射，必须通过完整字段/分组/类型/单位一致性测试，不能复制一套无核对的默认值、从被测表反推期望或漏掉不方便的字段。确需给N006声明补少量注册元数据只能添加必要声明，保原数据、预设、查找/验证/通知语义及全部断言；不重构其模型或扩大资产功能。
+
+按注册类型覆盖合法数值/布尔/枚举等原定义值，使用实际现有值类型和N006字段约束，数值文化/有限性/枚举合法性与现契约一致，二维CG漂移分两键。诊断至少包括key和具体原因，覆盖未知key、类型不符、重复；不静默最后值覆盖重复，不对无效值钳制/篡改原配置。不把解析结果直接写回模板/资产或触发演出。对于实际字段命名/重复名/结构值的真正文法歧义，先核现字段与权威原文，带最小事实回CONTROL处理，不先自创设计或盲跑失败；不把普通实现选择/旧状态标签本身变成要用户重新授权的门。
+
+优先1个Core源集中该目标必要类型及正确新.meta、1个测试Run组；复用当前Narrative测试EXE/真实Mono-csc入口，保原全部用例和原三示例/纯度门。Core实际仍只mscorlib，不用Unity/Toolkit/LongLoop/ShortCycle、外部库、动态执行或新配置/序列化框架；旧asmdef/GUID不变。小型一致性测试只做原卡要求，不新探针/guard/通用比较器/运维入口。合法每种实际支持类型、类型错误/未知/重复、结构逐项一致均真实测试；预期依据原规格及前卡独立字段夹具，不能为通过改N006原断言。只一次受影响Narrative Final；真实失败稳定key留史，在正常限内修复后收口，不重跑已过LongLoop/ShortCycle/DataTables/全仓或引擎。
+
+允许：本卡outputs、Assets/Scripts/Narrative/Core、DevTools/Narrative、项目docs/参数调整说明_对话.md、CODEBASE_MAP.md、原项目整体阅读理解与推进基线。使用说明在N006固定项目文档原位追加实际key/类型/覆盖写法/重复和错误示例，明确当前只是数据解析、无表现消费；AI输出不成为第二参数权威。README/导航/基线只跟实际入口/模块完成度局部维护，完整核验仍2026-09-17。原532独审/529已收口事实及其它已有变更保留。没有Unity目录/Toolkit/LongLoop、旧meta/asmdef、CSV/xlsx/schema/用户配置或资产文件写范围；零Unity/CLI/MCP/导入/Play/Build/原生CI/截图/旧后台探针、Git提交推送暂存或用户ZIP，不恢复短循环/描边。
+
+M80按预计新源/meta/测试+既有Main/Python和4说明文件不超过10文件，单一注册/解析目标；正式复杂度及实际范围以领取卡为准。固定3合同：registryModelParity、typedOverrideValues、diagnosticsAndRegression。evidence顶层boolean/canonical acceptance，实际编译输入/RSP/原流/exit、保护/精确diff/所有失败完整留存。纯逻辑无画面五列检查不适用，不代签原用户人工或本批OPT视觉。
+
+六要素REPORT，实际app轮/空转/token/cost取不到null+原因，工具数/provider样本不冒充计量，不因压缩或上下文提示换chat/模式/Yield。每写批Checkpoint和必要续租。Complete/Fail后即时Prepare→一次实际app通知绑定CONTROL01a1ceb8-6581-7cb1-9e94-7e747f457ec2→Record，执行线结束不自领后继。原15卡其余规划及未关闭任务保持，不因当前执行子集结束便假称批次完成。
+
+> SUPERVISED POLICY at 2026-11-14T20:34:17.4493369+08:00: {"taskId":"AI-000533","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原15卡N007依532真实成功/CONTROL独审，保同源注册与纯类型解析，不提前抢当前532或扩大后续Resolver/引擎业务","updatedAt":"2026-11-14T20:34:17.2370776+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-14T20:34:17.8782649+08:00: {"taskIds":["AI-000533"],"reason":"将原N007按原532依赖纳入监管后继，未完成原15卡持续推进；当前532所有权不变，533只排队不提前派发"}
+## AI-000534 | [CODE] [N0-04] N0-04 A 八表数据管线代码与离线夹具
+
+- 序号：534
+- 提交时间：2026-11-14T22:28:45.8653981+08:00
+- 模块 ID：N0-04
+- 初始状态：QUEUED
+- 前置依赖：AI-000519
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+读取 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI534_N004八表管线代码与离线夹具_执行补充.md 和原始 N0-04/Schema。仅原N004 CODE前半：八表schema/导入/只读查询及Excel入口代码与离线夹具，生产空CSV/xlsx由后继DATA处理。严格保旧定义/数据/查询行为；未获真实用户裁决不改四个旧PS断言。本卡完成不代表原N004全完成。canonical三合同见 .ai-workspace/inputs/acceptance/AI-000534.json。禁止Unity/正式CSV/xlsx写/Build/Git/旧暂停业务；新根SUP默认5续行。
+
+> SUPERVISED POLICY at 2026-11-14T22:29:21.8228021+08:00: {"taskId":"AI-000534","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N004代码/配表分车道，CODE仅代码和测试夹具；旧数量断言例外待用户，先排队不抢533。","updatedAt":"2026-11-14T22:29:21.5141996+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-14T22:29:22.3980850+08:00: {"taskIds":["AI-000534"],"reason":"用户原15逻辑卡尚未全做完，原N004 CODE前半注册后继，不把533完成当全批完成；业务范围/暂停与未批旧断言门保持。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-15T00:49:17.1896165+08:00: {"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000534","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/DataTables","Assets/Scripts/DataBase","CODEBASE_MAP.md","DataTables/Schemas/Narrative","DataTables/Schemas/Street","DevTools/DataTables","DevTools/Narrative","docs"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"remaining":4,"authorizationSource":"POLICY","cycles":["AI-000534:controller-resume1:zip-create-mode"],"used":0,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","reserved":1,"grantId":"12dd3efa71f049e0971ca8648e31ed18","taskId":"AI-000534","rootTaskId":"AI-000534","verification":"CONTROL已独审首轮实际2PASS1FAIL，ZIP Create/GetEntry夹具错误与exit1原流吻合；10DLL阶段0/旧Narrative+1141通过仅部分事实。真实根0/0/5，首轮3内部失败全保留，same key/scope/owner/session。fresh app CODE151/ENGINE1 completed/error null且正式IDLE无RUNNING。修helper及临时xlsx/必需文档并一次新Final，用户call_47b67093...仅16行数量候选已另存原话与SHA，不新加额度或其它断言授权。"}
+## AI-000535 | [DATA] [N0-04] N0-04 B 正式八份空表与既有工作簿扩表
+
+- 序号：535
+- 提交时间：2026-11-15T00:59:09.0874707+08:00
+- 模块 ID：N0-04
+- 初始状态：QUEUED
+- 前置依赖：AI-000534
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+读取 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI535_N004正式空表与工作簿扩表_DATA执行补充.md 和原N0-04/Schema/534实际交付。原先规划的DATA后半首次步骤，非重试534或消费旧USER-U1轮。仅在534真实成功且CONTROL独审通过后投放：新八份正式仅表头CSV、现有主xlsx保旧值类型公式及未知页追加八页，整体格式/注释、正式22表离线校验及四旧数据入口真实回归。禁止改代码/旧断言/14旧CSV与schema/Unity/导表batch/资产发布/字体/Git。三合同见 .ai-workspace/inputs/acceptance/AI-000535.json。现仅排队，不得提前执行未通过工具，失败交CONTROL分车道并按正式账本续行。
+
+> SUPERVISED POLICY at 2026-11-15T00:59:28.8887195+08:00: {"taskId":"AI-000535","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N004未执行的DATA结构后半，等待534成功独审；固定DATA离线空表/xlsx，CODE和ENGINE全互斥，禁止默认原生batch和提前消费未过工具。","updatedAt":"2026-11-15T00:59:28.6682109+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T00:59:29.4828688+08:00: {"taskIds":["AI-000535"],"reason":"原15逻辑卡N004后半已明确规划且未执行，534代码阶段成功不能等同整N004或全批完成；535等534独审再派，原534根账/失败/许可不改。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-15T01:11:15.9310375+08:00: {"rootTaskId":"AI-000534","remaining":3,"cycles":["AI-000534:controller-resume2:format-column-int"],"used":1,"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000534","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/DataTables","Assets/Scripts/DataBase","CODEBASE_MAP.md","DataTables/Schemas/Narrative","DataTables/Schemas/Street","DevTools/DataTables","DevTools/Narrative","docs"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"verification":"CONTROL第二失败独审：2true/1false，生产Format第37行Double->Char原流/单行[int]候选相符，原6失败/首轮唯一aggregate exit1/已过部分事实保留；16行数量逆向4文件逐字节相同。真实root1/0/5余4，continuation CONTROL_REPAIR_ELIGIBLE，NEEDS_USER标签非独立人工门。fresh app CODE154/ENGINE1 completed无error且正式IDLE无RUNNING，原SUP ACTIVE无stop/exit/Scope23包含依赖535。原Scope/key/owner/指令/业务边界保持，仅修格式行、同Excel夹具/必需文档和第二Final，无新额度。","grantId":"a91f02b8a04348f28d5258bcbacd4ec0","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","taskId":"AI-000534","reserved":1,"authorizationSource":"POLICY"}
+## AI-000536 | [CODE] [N0-05] N0-05 只读模型与数据目录适配
+
+- 序号：536
+- 提交时间：2026-11-15T02:15:47.2787533+08:00
+- 模块 ID：N0-05
+- 初始状态：QUEUED
+- 前置依赖：AI-000525, AI-000535
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+读取 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI536_N005只读模型与目录适配_执行补充.md 及原N0-05/Schema/实际N003和N004 API。原批次未执行N005：Core八类只读模型和数据目录/链环保护，Unity生成行适配，命令解析一次保原文整体状态/诊断；CG空值留待Resolver、显式角色默认按Schema。依赖AI525及DATA535，后者真实成功且CONTROL汇总独审后才派，不抢当前DATA。3合同见 .ai-workspace/inputs/acceptance/AI-000536.json。禁止Unity/资产配置/正式数据/既有生成行或旧断言修改/真实表现/FSM/Resolver/Git/暂停业务。
+
+> SUPERVISED POLICY at 2026-11-15T02:16:25.5340756+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N005依赖525与535，模型/适配低难度单目标，仅排队不抢DATA；535完整独审后才投CODE，不把现子集完成当15卡全完。","updatedAt":"2026-11-15T02:16:25.2206626+08:00","supervisionLevel":"full"},"taskId":"AI-000536"}
+
+> SUPERVISED EXTEND at 2026-11-15T02:16:26.1729553+08:00: {"reason":"用户原15卡N005未执行依赖已明确，正式注册等待535；保原批次连续推进/旧额度失败/人工门，不自动结束或复活暂停业务。","taskIds":["AI-000536"]}
+## AI-000537 | [CODE] [WF-AUTHORING-SCOPE] 作者注释工具按表范围更新_独立管线修复
+
+- 序号：537
+- 提交时间：2026-11-15T02:34:35.7834283+08:00
+- 模块 ID：WF-AUTHORING-SCOPE
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+依据AGENTS G87/K4独立CODE离线管线修复，读取 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI537_注释工具显式表范围_独立管线修复.md。关联535首次VERIFICATION失败，不借新号重试数据/不清其0/5或534旧账。现Updater只限制初始化、仍全22更新，旧Items!M1完整备注与当前动态示例不匹配但不必改。仅加可选更新表范围，DATA只选新8；默认、已选未知/人工备注拒绝及全内容/注释审计全部保持，不能改归属识别或重分类旧备注。现PS夹具补范围测试保原49，三合同见 .ai-workspace/inputs/acceptance/AI-000537.json。禁止正式xlsx/CSV/source schema/C#/四旧PS/Unity/Build/Git；独审后CONTROL才恢复535。
+
+> SUPERVISED POLICY at 2026-11-15T02:34:36.9843126+08:00: {"taskId":"AI-000537","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"独立注释工具范围修复，临时夹具验证；原535已正式失败等待，不修改用户备注或借新号重试业务。","updatedAt":"2026-11-15T02:34:36.6973329+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T02:34:37.3538579+08:00: {"reason":"535实际失败需要独立CODE源修复选表功能，依G87/K4；原535/534额度失败保留，原15业务卡不新增、不恢复暂停业务。","taskIds":["AI-000537"]}
+
+> Dependency correction for AI-000535 at 2026-11-15T02:35:43.9188644+08:00: AI-000534, AI-000537
+
+> Dependency correction for AI-000535 at 2026-11-15T03:07:20.3083347+08:00: AI-000534
+
+> SUPERVISED RESUME_APPROVED at 2026-11-15T03:08:09.4786967+08:00: {"taskId":"AI-000535","used":0,"cycles":["AI-000535:controller-resume1:scoped-eight-comment-update"],"verification":"535原1PASS2FAIL/VERIFICATION已独审并Receive，8空CSV105列/22页已落地且旧内容/备份保全；537独立源修复PASSED3合同5事实，66=49+17/8输入preflight/4保护函数与原49源码字节不变、正式9SHA相同，默认与选中人工拒绝保持，不重认M1。已正式恢复535仅依赖534，无unused grant，实际根0/0/5。fresh app CODE158/DATA3/ENGINE1完成无error、正式三线IDLE无RUNNING、SUP ACTIVE scope25/no stop exit。原4路径/6操作/owner/route2/指令保持；仅用新UpdateSchemaTables+InitializeSchemaTables同选8恢复注释/格式/验证，保原失败及534旧2/5不挪，不改其它旧断言。","grantId":"27b0395c2e264b738259682a5418d42e","remaining":4,"rootTaskId":"AI-000535","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000535","DataTables/Narrative","DataTables/Street","DevTools/DataTables/Authoring"],"operations":["data-edit","documentation","evidence","idempotence-check","offline-regression","spreadsheet-authoring"]},"authorizationSource":"POLICY","reserved":1}
+## AI-000538 | [CODE] [WF-TABLE-REFERENCE-PATH] 正式校验入口引用路径归一化_独立修复
+
+- 序号：538
+- 提交时间：2026-11-15T03:26:09.9806024+08:00
+- 模块 ID：WF-TABLE-REFERENCE-PATH
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+依据G87/K4独立CODE离线管线修复，读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI538_正式校验引用路径归一化_独立管线修复.md。535第二次失败已独审，主EE4F...1FF安全发布/8CSV保持，实际Validate:956空oldValue在报告前异常。仅修该一行反斜杠单字符归一化，不吞错误/跳引用，不改规则/数据/其它断言。必须实际现22表只读入口生成报告，再同入口临时跨scene状态引用正负例，输出真实warning/audit。S40两合同见 .ai-workspace/inputs/acceptance/AI-000538.json。原535根1/5失败不清，536依赖不动；无Unity/正式数据/Git/新框架/全量。
+
+> SUPERVISED POLICY at 2026-11-15T03:27:38.4132613+08:00: {"taskId":"AI-000538","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"独立一行PS路径接线修复；535已正式失败等待，不重试DATA，必须实际22表入口和作用域正负验证，保所有数据/规则。","updatedAt":"2026-11-15T03:27:38.1136766+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T03:27:38.9444448+08:00: {"taskIds":["AI-000538"],"reason":"535正式入口实际新错误，G87/K4独立CODE修复一行；原5351/5、5342/5、旧失败/部分发布及原15卡不重置，scope延伸仅该技术修复。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-15T03:48:08.8663627+08:00: {"cycles":["AI-000535:controller-resume2:fixed-live-validator"],"authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000535","DataTables/Narrative","DataTables/Street","DevTools/DataTables/Authoring"],"operations":["data-edit","documentation","evidence","idempotence-check","offline-regression","spreadsheet-authoring"]},"reserved":1,"taskId":"AI-000535","verification":"538已独审PASSED2合同5事实，整文件仅空Replace→char92/47，实当前22表0err44warn1info/exit0与临时单cell错scene唯一错误exit1，三preflight/原流/9正式SHA当前一致，SENT Receive。535真实1/0/5余4，NEEDS_USER标签下CONTROLELIGIBLE非独立人工门，原4路径6操作/ownerData/route2/指令依赖保持。fresh CODE160/DATA5/ENGINE1完成无error、正式三线IDLE无RUNNING、SUP ACTIVE scope26无stop/exit。仅核已发布主EE4F/CSV不漂移后真实校验与四旧入口，不重放修改、不改旧断言；canonical必须原535固定三id/root bool/checks schema，旧失败原件保留。","grantId":"266706012ea442e28d06e1744ad256e0","used":1,"rootTaskId":"AI-000535","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","remaining":3}
+## AI-000539 | [CODE] [WF-AUTHORING-EMPTY] 缺失空表CSV表头导出_独立管线修复
+
+- 序号：539
+- 提交时间：2026-11-15T04:21:21.7379024+08:00
+- 模块 ID：WF-AUTHORING-EMPTY
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+按G87/K4及用户2026-11-15继续修复指示，固定CODE独立离线修复。先读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI539_空表导出到缺失目标_独立管线修复.md 与 inputs/acceptance/AI-000539.json。现535 attempt3原Authoring失败确因零行sheet全skip导致隔离目标缺新8CSV；正式22表、ImportContracts、Schemas已通过，HeaderComments未运行。仅使缺失且无baseline配置数据的CSV可生成合法表头，已有目标与baseline非空保护/源SHA/事务/原49+17断言全部保持；现宿主追加最小实际Node+PS包装往返/保护例，4文件M80三合同。禁止改四旧PS/原断言/用户主xlsx或CSV/schema/C#/meta、原生/Unity/Build/Git/暂停业务。原535根2/5余3及三失败不清，不借新卡重试DATA；后段真实旧夹具失败如实报CONTROL，不私自扩大修复。
+
+> SUPERVISED POLICY at 2026-11-15T04:21:22.9378725+08:00: {"taskId":"AI-000539","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"独立空表导出管线修复；原535失败与预算不清，不触正式数据或原断言","updatedAt":"2026-11-15T04:21:22.6571789+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T04:21:23.3105976+08:00: {"reason":"用户要求继续修复空表导出并监管推进；G87/K4独立技术修复不增15逻辑卡，不改535原根2/5","taskIds":["AI-000539"]}
+## AI-000540 | [CODE] [WF-AUTHORING-FIXTURE] 两旧回归输入确定化_保原断言
+
+- 序号：540
+- 提交时间：2026-11-15T04:53:32.8655631+08:00
+- 模块 ID：WF-AUTHORING-FIXTURE
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+按G87/K4及用户2026-11-15继续修复/保数据和原断言要求，先读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI540_作者工具旧回归输入确定化_独立管线修复.md 和 inputs/acceptance/AI-000540.json。539空表已CONTROL独审3合同6事实通过；未重跑旧整套。只读预检已证旧Authoring依赖真实主表恰26 style0而当前2196cells零缺失/零style0，HeaderComments依赖旧主M1可更新而真实未知备注必须拒绝。仅两旧入口的TEMP夹具输入准备和README，全部原Assert条件/消息/次序完整保留、AST证明，实际两个原完整入口各一次。用可控26损坏样式/可识别legacy注释测试，主表仍只读SHA保护，不改原冻结夹具/生产工具/用户数据或原断言；禁止26改0或跳例。S40两合同，535根2/5余3/三失败不清，536依赖535；其它真错结算交CONTROL，不私扩范围。无原生/Unity/Build/Git/其它全量。
+
+> SUPERVISED POLICY at 2026-11-15T04:53:34.1205475+08:00: {"taskId":"AI-000540","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"已知旧回归输入确定化、原断言字节语义保持；不消耗535数据续行或改生产数据","updatedAt":"2026-11-15T04:53:33.8166237+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T04:53:34.5686877+08:00: {"taskIds":["AI-000540"],"reason":"539已独审通过；独立修两旧入口TEMP输入，原15业务卡和535根预算不变"}
+## AI-000541 | [CODE] [WF-OPC-PATH] 注释工具包根绝对关系路径_独立修复
+
+- 序号：541
+- 提交时间：2026-11-15T05:21:56.7446354+08:00
+- 模块 ID：WF-OPC-PATH
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+按G87/K4独立CODE离线修复540真实第二失败，读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI541_注释工具OPC绝对关系路径_独立管线修复.md 和 inputs/acceptance/AI-000541.json。仅Update-HeaderComments Resolve-Part区分包根absolute与relative，保原归属/审计/其它函数/默认guard/相对与越根语义。现NarrativeTableAuthoringTests追加最小实际两种关系ZIP正例与越根负例，原86源码保持；现Test-HeaderComments完整入口实际一次，legacy224Type+69Reference合并/224解释/幂等/人工备注不能只测字符串。预计3源S40两合同，不改四旧PS/冻结夹具/原断言或正式数据/原生/Git。540首败0/5余5、5352/5余3及全部失败不清，不自恢复或领取后继；另有真缺陷按卡Fail交CONTROL。
+
+> SUPERVISED POLICY at 2026-11-15T05:21:58.0810667+08:00: {"taskId":"AI-000541","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"仅Resolve-Part生产缺陷及原宿主实际absolute/relative回归，原归属/正式数据保持","updatedAt":"2026-11-15T05:21:57.7659897+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T05:21:58.5514822+08:00: {"reason":"540首败独审后独立修生产OPC路径，原业务15卡与各根历史预算不清","taskIds":["AI-000541"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-15T05:47:06.9130077+08:00: {"used":0,"grantId":"b497410ef9de4799be194349fcec7bc4","verification":"540首败已独审/Receive，90原Assert AST/正式9数据保持。541已Complete并独审2合同6事实，唯一Resolve-Part生产修改、原86/四旧PS不变，真实absolute/relative ZIP及越根、Header原完整入口0，首败新增断言/一次重试保留；C/AI541-independent-final-review.json。5400/0/5余5，原两失败保持；原scope内TEMP G10固定无效样例澄清已备，注入后再冻结内容，不改生产值/Assert。fresh实际CODE165/DATA7/ENGINE1 completed/error null及正式三IDLE/noRUNNING、原SUP ACTIVE/no stop exit/full scope29，AI540-resume1-fresh-app.json。","rootTaskId":"AI-000540","scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000540","DevTools/DataTables/Authoring/README.md","DevTools/DataTables/Test-Authoring.ps1","DevTools/DataTables/Test-HeaderComments.ps1"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["AI-000540:controller-resume1:fixed-opc-and-invalid-temp-input"],"reserved":1,"taskId":"AI-000540","authorizationSource":"POLICY","remaining":4}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-15T06:06:47.3066308+08:00: {"taskId":"AI-000535","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":2,"cycles":["AI-000535:controller-resume3:empty-export-and-original-regressions-fixed"],"rootTaskId":"AI-000535","remaining":2,"scope":{"paths":[".ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000535","DataTables/Narrative","DataTables/Street","DevTools/DataTables/Authoring"],"operations":["data-edit","documentation","evidence","idempotence-check","offline-regression","spreadsheet-authoring"]},"authorizationSource":"POLICY","verification":"535三真实失败已独审/Receive、原根2/0/5余3。539空表3合同6事实、541路径2合同6事实、原540同卡两旧入口2合同6事实均已CONTROL独审，540 Complete/notice0DC7...2C6E SENT一次已Receive。旧90Assert AST精确、TEMP仅G10一cell预置/注入后再冻style基线、26style损坏/修复内容结构0，两个原完整入口本轮各一次exit0，正式9数据/attempt1五canonical SHA保持，旧报告字面14如实留且不作22证据。fresh实际CODE166 DATA7 ENGINE1完成无error，正式三IDLE/noRUNNING、原SUP ACTIVE/no stop exit/full29，AI535-resume3-fresh-app.json。只原535原scope只读核已发布成果/正式22表及四旧入口，不重放创建/注释/格式/发布。","grantId":"06f522565d664621a5436c5bb4270b6c","reserved":1}
+## AI-000542 | [CODE] [NARRATIVE-N008] 取值优先级与不可变演出快照
+
+- 序号：542
+- 提交时间：2026-11-15T06:23:53.6584460+08:00
+- 模块 ID：NARRATIVE-N008
+- 初始状态：QUEUED
+- 前置依赖：AI-000536, AI-000533
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原15逻辑卡N008预注册，不抢跑536。仅536/N005真实成功并CONTROL独审后才投放。读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI542_N008取值优先级与不可变快照_执行补充.md 和原cards/N0-08.md、inputs/acceptance/AI-000542.json。按实际536模型/533注册解析接口实现default→整组具名模板→逐项override及trigger单独选择、诊断回落和深层不可变本段快照；原N007 Parse原子失败/旧行为保持，可最小兼容扩展复用同词法逐项解析供原N008错误项跳过而其它项生效，禁止另写分割语法或改用户默认/配表/原断言。预计meta/测试宿主/说明>10文件L120三合同，原Narrative宿主一次相关Final，无Unity/真实配置asset/四旧数据全量/LongLoop/Git/暂停业务。独立原未执行目标不清此前失败额度。
+
+> SUPERVISED POLICY at 2026-11-15T06:23:54.9270905+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N008预注册，原依赖536+533；仅原Scope纯Core取值/快照，无引擎或新业务卡","updatedAt":"2026-11-15T06:23:54.5795563+08:00","supervisionLevel":"full"},"taskId":"AI-000542"}
+
+> SUPERVISED EXTEND at 2026-11-15T06:23:55.4503619+08:00: {"reason":"原N008保原依赖预排队；原15卡未完，536完成不应误结束整批；不改变历史预算/暂停业务","taskIds":["AI-000542"]}
+## AI-000543 | [CODE] [NARRATIVE-N012] 纯对话状态机与外部能力契约
+
+- 序号：543
+- 提交时间：2026-11-15T07:13:13.5217260+08:00
+- 模块 ID：NARRATIVE-N012
+- 初始状态：QUEUED
+- 前置依赖：AI-000536, AI-000542, AI-000528, AI-000527
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原15逻辑卡N012仅预注册，依赖536+542+528+527，542真实成功且CONTROL独审后才投放，不抢跑/猜快照API。读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI543_N012纯对话状态机_执行补充.md、原cards/N0-12.md和inputs/acceptance/AI-000543.json。按原十步/fake外部能力实现普通与剧情纯Core FSM、同一时刻命令和出字/名字及全灰标志、完整/无缝/跨级续接、切场景余句截断和外部完成通知、ambient不适用/恰一次记录；复用N005目录/命令缓存、N008快照、N010调度和N011输入，旧语义/断言/默认不改。只定义外部接口不真实现，预估meta/宿主/说明>10文件L120/3合同/5路径。无Unity/asset/场景/生成数据/四旧PS/新框架/发布/Git/暂停业务，不代整批。
+
+> SUPERVISED POLICY at 2026-11-15T07:13:14.8300144+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N012依赖预排队，纯Core十步FSM及小外部契约，无原生或新业务","updatedAt":"2026-11-15T07:13:14.5239699+08:00","supervisionLevel":"full"},"taskId":"AI-000543"}
+
+> SUPERVISED EXTEND at 2026-11-15T07:13:15.3425083+08:00: {"taskIds":["AI-000543"],"reason":"原N012预排队保完整依赖；15卡未完，防止542完成就误结束scope，不清历史/额"}
+## AI-000544 | [CODE] [NARRATIVE-N009] 剧情静态规则与既有报告接入
+
+- 序号：544
+- 提交时间：2026-11-15T08:06:38.4868136+08:00
+- 模块 ID：NARRATIVE-N009
+- 初始状态：QUEUED
+- 前置依赖：AI-000525, AI-000535, AI-000533
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原N009剧情静态校验，仅预注册，原依赖525+535+533；固定CODE修工具/只读数据，不授权DATA改代码或正式表内容。读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI544_N009剧情静态校验_执行补充.md、原cards/N0-09.md及inputs/acceptance/AI-000544.json。实现V13～24/14b16b按Schema规则级别与现报告、干净0告警/逐规则孤立坏例、旧T1～15结果不变。CONTROL已核原1141直接generic Validate的严格error断言；保其旧通用API行为，正式导入/CLI显式业务上下文默认启用新剧情专项warning/info，旧新调用各真实验证，不按task/test路径分支/改断言/生产默认关闭。复用N003/N007解析签名/注册/N006真实配置与N014资源契约，缺上下文如实未核，不实施V25或Unity。允许最小现上下文/新schema规则元数据/Editor必要Core依赖及编译清单接入，保旧定义/原断言/原生资产。预计>10文件L120三合同9路径；无新框架/正式CSV xlsx/发布/Git/暂停业务。
+
+> SUPERVISED POLICY at 2026-11-15T08:06:39.8445715+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N009预排队；显式新剧情校验上下文/旧严格API兼容，原数据/断言/框架保持","updatedAt":"2026-11-15T08:06:39.5508950+08:00","supervisionLevel":"full"},"taskId":"AI-000544"}
+
+> SUPERVISED EXTEND at 2026-11-15T08:06:40.3887467+08:00: {"reason":"原15卡未完，N009保原依赖排队并保留N013规划；不清旧失败额度，不让543完成误结束批次","taskIds":["AI-000544"]}
+## AI-000545 | [CODE] [NARRATIVE-N013] 无界面整链与仓库文字基准
+
+- 序号：545
+- 提交时间：2026-11-15T08:58:59.5221123+08:00
+- 模块 ID：NARRATIVE-N013
+- 初始状态：QUEUED
+- 前置依赖：AI-000535, AI-000544, AI-000543
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原N013收口测试/夹具开发仅预注册，原依赖535+544+543，544真实成功CONTROL独审后才投，不抢跑。读 .ai-workspace/inputs/派发/NARRATIVE-FOUNDATION-20261113/AI545_N013无界面整链与文字基准_执行补充.md、原cards/N0-13.md及inputs/acceptance/AI-000545.json。自属两个角色旁白/普通三句命令/story镜头CG段末状态接后段/ambient与pool夹具，同原字节同正式N009上下文0告警；真实导入方法/生成行→适配目录→Resolver→FSM配fake能力，输出时刻事件speaker/text/command文字与仓库手写先冻结基准精确比较，REPORT附全文。复用现Narrative宿主/原组，不新框架/比较器或修producer过门。预计>10文件L120两合同5路径；.gitattributes只必要确切baseline LF行，保所有旧规则，不Git提交。无Assets/正式工具/数据/旧断言/冻结Fixtures/Unity/Build/发布/暂停业务写。
+
+> SUPERVISED POLICY at 2026-11-15T08:59:00.8983710+08:00: {"taskId":"AI-000545","policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原N013测试/夹具及文字基准预排队，原依赖保留，不做原生或producer修复","updatedAt":"2026-11-15T08:59:00.6234345+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-15T08:59:01.4536906+08:00: {"reason":"原最后N013依赖预排，15卡未完，防止544完成误结束批次；不清旧账/扩暂停业务","taskIds":["AI-000545"]}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-15T10:38:30.3956614+08:00: {"at":"2026-11-15T10:38:30.2148293+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000513","AI-000514","AI-000515","AI-000516","AI-000517","AI-000518","AI-000519","AI-000520","AI-000521","AI-000522","AI-000523","AI-000524","AI-000525","AI-000526","AI-000527","AI-000528","AI-000529","AI-000530","AI-000531","AI-000532","AI-000533","AI-000534","AI-000535","AI-000536","AI-000537","AI-000538","AI-000539","AI-000540","AI-000541","AI-000542","AI-000543","AI-000544","AI-000545"],"cancelledTaskIds":[],"pendingUserTaskIds":["AI-000520"]}
+
+> Verification resolved for AI-000520 at 2026-11-15T22:00:37.1934745+08:00: decision=VERIFIED; summary=用户2026-11-15明确确认视觉卡验收通过，结清N0-OPT四项视觉检查；保留原机器结果与历史。; evidence=Current direct user: 视觉卡和excel表都已经验收通过。原话与范围记录 .ai-workspace/inputs/派发/NARRATIVE-N012P1-20261115/用户验收与补丁授权.json；不重跑Unity、不代签其它功能。
+## AI-000546 | [CODE] [NARRATIVE-N012-P1] 剧情开场黑边完成后再准备镜头
+
+- 序号：546
+- 提交时间：2026-11-15T22:02:00.5921378+08:00
+- 模块 ID：NARRATIVE-N012-P1
+- 初始状态：QUEUED
+- 前置依赖：AI-000543, AI-000545
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户2026-11-15明确授权原设计补丁N0-12-P1。读 .ai-workspace/inputs/派发/NARRATIVE-N012P1-20261115/AI546_N012P1执行补充.md、用户原件补丁/接收清单/验收授权及inputs/acceptance/AI-000546.json。story完整开场只先发黑边请求，黑边有效完成才请求镜头，镜头有效完成才入场，提前镜头完成不得消费。普通/无缝/撤黑边/退出/调度/输入其它行为保持。只改依赖旧并行准备的断言/辅助回报顺序，逐项列差异，其余原断言不改；增加黑边前无camera、完成即时camera、camera完成才enter检查。手写修订一次基准先冻结，普通段不改；保持CSV/config/context/动作值顺序与能力持续时间，按补充计划仅顺延camera及其后时刻0.250。保旧新基准原文/diff，禁止actual回填。仅既有Narrative入口一次相关Final，当前545成功Final与六输入SHA证明绿色基线，不额外重跑基线/四旧数据/LongLoop/暂停短循环。M80，两固定合同，七现有文件加own output共八literal路径；无新文件/框架/程序集/资产/配置默认/数据/旧schema/Meta/Git/Unity操作。每批Checkpoint，真实失败同根正式结算；普通SUP5额度内CONTROL独审后唯一ApproveResume，耗尽主动汇报申请；最终即时Prepare-一次实际回传-Record给CONTROL，不自派后继。
+
+> SUPERVISED POLICY at 2026-11-15T22:02:01.7595593+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户明确授权N012-P1新顺序补丁；固定CODE纯逻辑/相关Narrative回归，旧失败/许可保持，无原生或新人工门。","updatedAt":"2026-11-15T22:02:01.4857875+08:00","supervisionLevel":"full"},"taskId":"AI-000546"}
+
+> SUPERVISED START at 2026-11-15T22:02:02.2965271+08:00: {"sessionId":"0feffeabf69043ca8cfb355cd6a0c63b","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000546"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-15T22:02:02.2954005+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-15T22:27:53.3512835+08:00: {"at":"2026-11-15T22:27:53.3202647+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000546"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}

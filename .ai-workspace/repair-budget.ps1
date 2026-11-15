@@ -282,7 +282,26 @@ function Get-RepairGrantClaimCycle($QueueState,$Task,$Mode,[switch]$Claiming) {
     Assert-Value ((-not $authority -and -not $g.sourceSha256) -or ($authority -and $g.sourceSha256 -ceq '541E77E1B69FCD634479F1211A024FCA9A308592CA3B29E8619C28DEC009C8C0')) 'Recorded repair source authority differs.'
     if($g.authorizationSource -ceq 'POLICY'){Assert-Value ($authority -and $g.approvalId -ceq $authority.approvalId -and $g.userDecision -ceq $authority.userQuote -and $g.runs -eq 1) 'Recorded POLICY repair grant differs.'}
     Assert-Value ((Get-ResumeDigest $execution.approvedScope) -ceq (Get-ResumeDigest $g.scope) -and $g.scope -and $Task.repairContext.repairScope) 'Current repair execution/grant Scope differs.'
-    Assert-ResumeScope $Task.repairContext.repairScope ($g.scope|ConvertTo-Json -Depth 20 -Compress)
+    # Reuse the existing scope rule to distinguish expansion from unchanged-scope recovery.
+    $expandedHumanScope=$false
+    try {Assert-ResumeScope $Task.repairContext.repairScope ($g.scope|ConvertTo-Json -Depth 20 -Compress)}
+    catch {
+        if($g.authorizationSource -cne 'HUMAN' -or $_.Exception.Message -cnotin @('Requested path exceeds approved scope.','Requested operation exceeds approved scope.')){throw}
+        $expandedHumanScope=$true
+    }
+    if($g.authorizationSource -ceq 'HUMAN'){
+        Assert-Value ((Get-RetryValue $Task.resumeApproval 'grantId') -ceq $g.grantId) 'HUMAN repair requires the current grant.'
+    }
+    if($expandedHumanScope){
+        Assert-Value ($Mode.mode -ne 'SUPERVISED' -or ($Mode.supervised.status -ceq 'ACTIVE' -and -not $Mode.supervised.stopRequested -and -not $Mode.supervised.exitRequested)) 'Current HUMAN repair cannot bypass supervision stops.'
+        foreach($member in @($root,$Task)){
+            $turnCopy=$member|ConvertTo-Json -Depth 100 -Compress|ConvertFrom-Json -DateKind String
+            $last=@($member.errorHistory|Where-Object {$_ -and $_.at}|Sort-Object {[DateTimeOffset]::Parse($_.at)} -Descending|Select-Object -First 1)
+            Assert-Value (-not (Get-RetryValue $member 'retryHardStop') -and -not (Test-TaskFailureStopped $member) -and
+                -not $member.execution.hardStopAt -and -not $member.execution.limitReached -and (Sync-TaskTurnGate $turnCopy) -ceq 'CONTINUE' -and
+                @($last|Where-Object {$_.kind -cin @('PERMISSION','UNKNOWN')}).Count -eq 0) 'Current HUMAN repair cannot bypass independent permission, failure or turn stops.'
+        }
+    }
     if($Task.businessScope){Assert-ResumeScope $Task.businessScope ($g.scope|ConvertTo-Json -Depth 20 -Compress)}
     $fingerprint=Get-SupervisionFingerprint $Task
     if(-not $Claiming -and $g.taskFingerprint -cne $fingerprint -and (Get-SupervisionPolicy $Task).gateApproved){
@@ -342,13 +361,14 @@ function Get-RepairGrantClaimCycle($QueueState,$Task,$Mode,[switch]$Claiming) {
     }
     $state=Get-RootRetryState $QueueState $root $Mode.mode
     Assert-Value ($state.used+$state.reserved -le $state.limit) 'Current repair family exceeds retained retry ceiling.'
-    return [pscustomobject]@{authority='UNIQUE_CURRENT_GRANT_CLAIM';repairTaskId=$Task.id;attempt=$Task.attempts;executionId=$execution.executionId;grantId=$g.grantId;approvalId=$g.approvalId;userDecision=$g.userDecision;scopeSha256=(Get-ResumeDigest $g.scope);claimSha256=(Get-ResumeDigest $claim);claimIndex=$slot;cycleId=$id;rawExecutionCycleId=$rawExecution;rawRepairContextCycleId=$rawContext;legacyDerivedCacheMismatch=$legacy}
+    return [pscustomobject]@{authority='UNIQUE_CURRENT_GRANT_CLAIM';authorizationSource=$g.authorizationSource;repairTaskId=$Task.id;attempt=$Task.attempts;executionId=$execution.executionId;grantId=$g.grantId;approvalId=$g.approvalId;userDecision=$g.userDecision;scopeSha256=(Get-ResumeDigest $g.scope);claimSha256=(Get-ResumeDigest $claim);claimIndex=$slot;cycleId=$id;rawExecutionCycleId=$rawExecution;rawRepairContextCycleId=$rawContext;legacyDerivedCacheMismatch=$legacy}
 }
 function Use-RepairRetryCycle($QueueState,$Task,$Mode,[string]$RequestedScope) {
     $id=Get-RetryValue $Task.repairContext 'retryCycleId'
     if(-not $id -and -not ($Task.workKind -ceq 'REPAIR' -and (Get-RetryValue $Task.execution 'resumeGrantId'))){return}
     $root=Get-RepairRootTask $QueueState $Task
     $source=Get-RetryValue $Task.repairContext 'authorizationSource'
+    $current=Get-RepairGrantClaimCycle $QueueState $Task $Mode -Claiming
     $review=Get-RetryValue $Task.repairContext 'controllerHumanReview'
     if($review){
         Assert-Value ($source -ceq 'HUMAN' -and $Mode.mode -ceq 'SUPERVISED' -and $Mode.supervised.status -ceq 'ACTIVE' -and -not $Mode.supervised.stopRequested -and -not $Mode.supervised.exitRequested -and $review.sessionId -ceq $Mode.supervised.sessionId -and $review.controllerThreadId -ceq $Mode.supervised.controllerThreadId -and -not(Get-RetryValue $root 'retryHardStop') -and -not(Test-TaskFailureStopped $root)) 'Human local review no longer eligible at claim.'
@@ -360,12 +380,12 @@ function Use-RepairRetryCycle($QueueState,$Task,$Mode,[string]$RequestedScope) {
     }
     if($source -eq 'POLICY'){
         Assert-RetryAuthorization $Mode $root 'POLICY' $Task.repairContext.sourceApprovalId $Task.repairContext.userDecision 1
-        Assert-ResumeScope $Task.repairContext.repairScope $RequestedScope
+        if(-not ($current -and $current.authorizationSource -ceq 'HUMAN')){Assert-ResumeScope $Task.repairContext.repairScope $RequestedScope}
         $s=Get-RootRetryState $QueueState $root $Mode.mode
         if($s.used+$s.reserved -gt $s.limit){throw 'Repair claim exceeds root retry quota.'}
     }
-    $current=Get-RepairGrantClaimCycle $QueueState $Task $Mode -Claiming
     if($current){
+        Assert-ResumeScope $Task.execution.approvedScope $RequestedScope
         Set-RetryValue $Task.repairContext 'retryCycleId' $current.cycleId
         Set-RetryValue $Task.execution 'retryCycleBinding' $current
         return # Retain the current bounded grant Scope and cycle, not old repair cache.

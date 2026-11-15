@@ -2062,6 +2062,46 @@ $($Instruction.Trim())
         $task = Get-Task $queue $TaskId
         Assert-Value ($null -ne $task) "Task not found: $TaskId"
         Assert-Value ($task.status -in @('QUEUED', 'BLOCKED_DEPENDENCY', 'PAUSED_CIRCUIT', 'NEEDS_USER')) 'A running or succeeded task cannot be revised.'
+        if($PSBoundParameters.ContainsKey('Scope')){
+            $m=Read-ModeState;$s=$m.supervised
+            Assert-Value ($m.mode -ceq 'SUPERVISED' -and $s.status -ceq 'ACTIVE' -and -not $s.stopRequested -and -not $s.exitRequested -and
+                $ControllerThreadId -and $ControllerThreadId -ceq $s.controllerThreadId -and $s.taskIds -ccontains $task.id) 'Scope correction requires the active bound CONTROL and in-session task.'
+            Assert-Value ($task.status -in @('QUEUED','BLOCKED_DEPENDENCY') -and [int]$task.attempts -eq 0 -and $task.workKind -ceq 'FEATURE' -and
+                -not $task.execution -and -not $task.claimedAt -and -not $task.completedAt -and -not $task.result -and -not $task.repairContext -and
+                -not (Get-ObjectPropertyValue $task 'retryHardStop') -and -not (Test-TaskFailureStopped $task)) 'Only an unclaimed FEATURE root without execution or stop state can correct Scope.'
+            foreach($field in @('errorHistory','codeValidationHistory','executionHistory','resumeApproval','resumeApprovalHistory','retryCycles','retryCeilings','supervisionRepairs','failureAdjudications','parentTaskId')){
+                Assert-Value (@((Get-ObjectPropertyValue $task $field)|Where-Object{$null -ne $_}).Count -eq 0) 'Claim, failure, grant or repair history blocks Scope correction.'
+            }
+            Assert-Value (@($queue.tasks|Where-Object{$_.id -cne $task.id -and $_.repairContext.rootTaskId -ceq $task.id}).Count -eq 0 -and
+                @($s.reservations|Where-Object{$_.taskId -ceq $task.id}).Count -eq 0) 'Repair family or outstanding dispatch blocks Scope correction.'
+            Assert-Value (-not $PSBoundParameters.ContainsKey('Complexity') -and $Instruction -ceq $task.instruction) 'Scope correction must preserve the exact original instruction and tier.'
+            $oldScope=Get-ObjectPropertyValue $task 'businessScope'
+            $literal=$Scope|ConvertFrom-Json -DateKind String -ErrorAction Stop
+            $candidate=ConvertTo-ResumeScope $Scope
+            Assert-Value ($oldScope.paths -is [array] -and $oldScope.paths.Count -eq 1 -and $oldScope.paths[0] -is [string] -and
+                $literal.paths -is [array] -and $literal.paths.Count -gt 1 -and $candidate.paths.Count -eq $literal.paths.Count -and
+                [string]::Join(' ',[string[]]$literal.paths) -ceq $oldScope.paths[0] -and
+                (Get-ResumeDigest @($candidate.operations)) -ceq (Get-ResumeDigest @($oldScope.operations))) 'Only an exact ordered space-join with unchanged operations may be corrected.'
+            Assert-Value ($AmendmentReviewPath -and $AmendmentReviewSha256 -and -not [string]::IsNullOrWhiteSpace($UserDecision)) 'Explicit reviewed correction evidence and reason required.'
+            $reviewPath=Assert-ResumeFile @{path=$AmendmentReviewPath;sha256=$AmendmentReviewSha256}
+            $controlRoot=[IO.Path]::GetFullPath((Join-Path $workspaceRoot 'outputs/control'))+[IO.Path]::DirectorySeparatorChar
+            Assert-Value ($reviewPath.StartsWith($controlRoot,[StringComparison]::OrdinalIgnoreCase)) 'Scope correction proof must be owned outputs/control evidence.'
+            $review=Read-UnusedGrantJson $reviewPath
+            Assert-UnusedGrantShape $review @('schemaVersion','decision','taskId','sessionId','controllerThreadId','taskSha256','instructionSha256','oldScopeSha256','candidateScopeSha256','literalPaths','independentlyReviewed','reason') 'unclaimed Scope correction review'
+            $oldTaskHash=Get-ResumeDigest $task
+            Assert-Value ($review.schemaVersion -eq 1 -and $review.decision -ceq 'APPROVED_UNCLAIMED_SCOPE_CORRECTION' -and
+                $review.taskId -ceq $task.id -and $review.sessionId -ceq $s.sessionId -and $review.controllerThreadId -ceq $ControllerThreadId -and
+                $review.independentlyReviewed -is [bool] -and $review.independentlyReviewed -and $review.reason -ceq $UserDecision -and
+                $review.taskSha256 -ceq $oldTaskHash -and $review.instructionSha256 -ceq (Get-InstructionTextSha256 $task.instruction) -and
+                $review.oldScopeSha256 -ceq (Get-ResumeDigest $oldScope) -and $review.candidateScopeSha256 -ceq (Get-ResumeDigest $candidate) -and
+                $review.literalPaths -is [array] -and (Get-ResumeDigest @($review.literalPaths)) -ceq (Get-ResumeDigest @($literal.paths))) 'Scope correction review is stale, unreviewed or bound to a different definition/list/controller.'
+            Set-ObjectPropertyValue $task 'businessScope' $candidate
+            Save-JsonFile $queuePath $queue
+            Write-SupervisionAudit 'UNCLAIMED_SCOPE_CORRECTED' @{taskId=$task.id;controllerThreadId=$ControllerThreadId;sessionId=$s.sessionId;oldTaskSha256=$oldTaskHash;oldScope=$oldScope;newScope=$candidate;literalPaths=@($literal.paths);reason=$UserDecision;reviewPath=$reviewPath;reviewSha256=$AmendmentReviewSha256}
+            Write-Result ([ordered]@{action='INSTRUCTION_REVISED';task=$task;scopeCorrected=$true})
+            return
+        }
+
         $revisionRoot = Get-RepairRootTask $queue $task
         $revisionBudget = Get-RepairBudgetState $queue $revisionRoot
         if (((Test-TaskFailureStopped $revisionRoot) -or $revisionBudget.used -ge $revisionBudget.limit) -and

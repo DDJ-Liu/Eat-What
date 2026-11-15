@@ -109,6 +109,8 @@ Capture的可选projectGrant是项目校验证明，platformApprovalProvided=fal
 
 Status -TaskId <原卡> -FullStatus的rootRetry、ApproveResume回执与RESUME_APPROVED审计共用同一派生视图；scope/source仍绑定原grant。
 
+2026-11-13 AI526：初始POLICY子修复失败后，现行正式HUMAN ApproveResume可明确扩大本次修复scope。领取与后续配对核对唯一当前grant、实际claim、root/owner/route/session/controller、原失败指纹、许可状态及execution.approvedScope精确相等；旧repairScope/source留作历史，不覆盖此HUMAN新范围。原POLICY/首次修复仍受旧scope，越出当前grant及独立权限/失败/回合/监管停止门继续拒绝；修复与对应根续行仍只消费一个真实周期。新增的历史PERMISSION/UNKNOWN检查只针对HUMAN明确扩大旧范围；未扩大范围的旧合法HUMAN续行仍按原正式批准与实际停止门处理，不以历史错误种类永久阻断，也不代替平台审批。窄回归入口：Test-ApprovedResume.ps1 -CurrentHumanRepairScopeOnly（Verify-All可通过EATWHAT_APPROVED_RESUME_GROUP=CurrentHumanRepairScope选择同组）；仅使用新的自有隔离queue，既有默认矩阵不变，不以隔离结果代替业务领取或人工签收。
+
 当前政策（用户2026-10-19）：MANUAL每次真实人批且Runs=1；AUTOMATIC默认3、SUPERVISED默认5个失败后根周期，SCHEDULED无新默认。首次根执行/诊断0；修复和对应根续行在首次实际claim只消费一个周期，修复失败也消费。根家族跨key/卡/线程/模式累计；旧记录只按确证ID配对，不猜配或退款。
 
 2026-10-25用户再次明确上述5/3/1政策并批准AI339权限硬停后恢复1次，原问答见[重申与本次批准](../inputs/派发/BATCH2-INDEPENDENT-20261023/AI339_用户恢复批准与续行政策重申_20261025.json)。每次新链/修复下派必须按CONTROL规划入口核实时mode和rootRetry；POLICY逐轮Runs=1与SUPERVISED根默认5/AUTOMATIC根默认3分别记录。MANUAL的自主默认0表示必须每次人批1，不是禁止合法人工续行。旧session的maxRepairsPerProblem=3/maxRepairsPerTask=6不是当前消费上限，不手改runtime纠正历史元数据。原长期授权SHA固定，原件的“待实现”只保留接收时历史；当前实现由repair-budget/approved-resume和正式根视图证明，不改原件冒充新授权。
@@ -278,3 +280,44 @@ AI-000231 增量（同一 TK-WF-03/04，不另建工具）：`Status` 加状态�
 - preflight/prepare/cleanup/edit/readback/build是角色；现Street与Build路径多用command eval_file，启动Ready RPC用command eval。capture对应capture_game_view，play/stop对应editor_play/editor_stop；不编造prepare/build等CLI子命令。具体角色源仍由原任务审定，黄金argv不是执行许可，CapturePng等原门保持。
 
 聚焦离线入口：Test-EngineCli.ps1 -Case ArgumentGolden -OutputRoot <本任务输出>。黄金表保存参数数组、参数成功路径的期望exit和有来源的字段骨架；CLI参数错误由透明窄桩重现，模型不生成或验证CLI输出。已知JSON字段逐例引用历史真实成功原流SHA；只有SDK类型声明的例保留明确局部字段，CLI外层/位置及未列继承字段unknown。help/version未请求JSON，按默认文本面记录，精确布局/exit unknown待SMOKE，不能硬套JSON外壳。wrapper绑定用实际ParamBlock/PowerShell binder和无副作用桩体。没有运行官方CLI/Unity，也不证明当前原生数据/时序/截图/Build。G102：ENGINE独立SMOKE明确待用户手动调试结束，离线结果不得冒已过或作为新引擎门投入使用。旧失败/脚本原样保留，参见P-070与AI458交付。
+
+
+### 未领取的空格拼接 Scope 登记纠正（AI530，2026-11-14）
+
+沿用正式 `queue.ps1 -Action ReviseInstruction`，可选 `-Scope` 只用于已审定的“原多路径被登记成一个空格串”。不带Scope时仍是原正文修订行为。此分支不修正文、不改等级/前置/职能/模式/次数/历史；成功仍返回INSTRUCTION_REVISED，另有scopeCorrected=true。保存前后的Scope、原定义摘要、理由、当前controller/session及审查路径/SHA追加原INSTRUCTIONS ledger中的UNCLAIMED_SCOPE_CORRECTED审计。
+
+仅当前SUPERVISED ACTIVE、无stop/exit、绑定CONTROL显式调用，目标在session完整taskIds内；目标须QUEUED/BLOCKED_DEPENDENCY、FEATURE根、attempts=0，无领取/execution/失败/续行grant/修复family或派发预约、无独立停止。已领取527一律不倒改。不会通过本入口消费/重置重试额度或解除停止；不走ApproveResume伪造失败。CODE只交付本API和自有隔离测试，不实际纠正528；CONTROL独审、fresh idle后另行正式安装。
+
+公开参数示例（由CONTROL按当前原件填值）：
+
+```powershell
+& .ai-workspace/queue.ps1 -Action ReviseInstruction -TaskId $task.id `
+  -Instruction $task.instruction -ControllerThreadId $controllerId `
+  -Scope $candidateJson -AmendmentReviewPath $reviewPath `
+  -AmendmentReviewSha256 $reviewFileSha256 -UserDecision $review.reason
+```
+
+必须传原Instruction逐字全文，不可同时传Complexity。Scope的paths必须为审定的原顺序多个字面路径，按一个空格Join后与旧businessScope.paths唯一字符串逐字相同；各路径再走原ConvertTo-ResumeScope保护。候选规范化后不能去重缩为更少路径，operations必须与旧规范化列表一致。正常合法含空格的单路径不自动拆分；原顺序清单明确独审才可纠正，路径扩大/改operation/换正文均拒绝。
+
+复用AmendmentReviewPath/Sha256传审查JSON，文件必须在当前项目`.ai-workspace/outputs/control/`，SHA必须为真实文件大写SHA256；原Assert-ResumeFile拒绝漂移和重定向，原严格JSON读取拒绝重复/多余/缺失字段。证明恰含下列12字段：
+
+```json
+{
+  "schemaVersion": 1,
+  "decision": "APPROVED_UNCLAIMED_SCOPE_CORRECTION",
+  "taskId": "AI-000528",
+  "sessionId": "当前正式sessionId",
+  "controllerThreadId": "当前绑定CONTROL",
+  "taskSha256": "Get-ResumeDigest对当前完整task对象的摘要",
+  "instructionSha256": "Get-InstructionTextSha256对原Instruction UTF-8原文的摘要",
+  "oldScopeSha256": "Get-ResumeDigest对当前businessScope对象的摘要",
+  "candidateScopeSha256": "Get-ResumeDigest对候选ConvertTo-ResumeScope规范化输出的摘要",
+  "literalPaths": ["逐项原顺序字面路径，不由空格Split猜测"],
+  "independentlyReviewed": true,
+  "reason": "独立核对该字面清单的具体理由；必须与UserDecision相同"
+}
+```
+
+摘要沿用现有实现：Get-ResumeDigest是PowerShell7的`ConvertTo-Json -Depth 50 -Compress`所得UTF-8无BOM字节SHA256（保持对象属性/数组顺序），Instruction摘要直接取UTF-8原文字节；文件SHA是审查JSON落盘后的真实SHA。候选规范化会排序路径及operation并保留idempotence-check，所以literalPaths额外绑定原顺序；不据排序后清单反推旧串。应在正式queue锁外只读最新task、完成独审并保存证明，若调用前定义漂移则重审，不能替换摘要绕过门。证明只记录CONTROL的显式审查，不是平台签名或用户代签。
+
+窄回归：`Test-ApprovedResume.ps1 -UnclaimedScopeCorrectionOnly -FixtureRoot <本任务全新绝对路径>`，或既有环境变量EATWHAT_APPROVED_RESUME_GROUP=UnclaimedScopeCorrection；证据仍用EATWHAT_APPROVED_RESUME_EVIDENCE。真实调用隔离queue，不读写真实528/其它family；新组覆盖合法列表（含内部空格）、缺失/漂移审查、定义变化、越界候选、已有grant/领取/预约、错误controller/停止session和原无Scope修订兼容。原CurrentHumanRepairScope及默认大矩阵原断言保持，本卡未运行旧大矩阵，不冒称全量工作流验收。

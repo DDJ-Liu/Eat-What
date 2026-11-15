@@ -1,5 +1,9 @@
 # 当前输入入口
 
+2026-11-15新接收：[设计反馈/补丁及Schema v2.5.1清单](派发/NARRATIVE-N012P1-20261115/接收清单.json)、[用户验收与授权](派发/NARRATIVE-N012P1-20261115/用户验收与补丁授权.json)。N0-OPT视觉和Excel已通过，N012-P1已完成并独审通过；当前Schema原文v2.5.1，§二～六与v2.5相同，不改历史夹具或数据。
+
+2026-11-13新接收：[剧情底座批原始索引](派发/NARRATIVE-FOUNDATION-20261113/原始派发包/派发包索引_剧情底座批_v1.md)、[15卡编排登记](派发/NARRATIVE-FOUNDATION-20261113/编排登记.json)、[执行登记](派发/NARRATIVE-FOUNDATION-20261113/执行登记.md)。N0-OPT已由用户直接明确提升为正式卡；只做本批代码/数据/离线，不恢复旧暂停业务。Schema v2.5原文已投放核SHA，按新表与相关节读取。
+
 2026-11-13：长循环和全部可玩包已用户整体签收；角色描边暂停，短循环未关闭任务和未开始规划继续保留。本轮只整理，不恢复短循环或描边。最新模式、领取与额度以正式queue为准。
 
 常驻输入及最新有效版本按唯一[永久清单](../PERMANENT_DOCUMENTS.json)维护；旧任务输入按关闭/依赖检查后进入[归档](../archive/README.md)，完整原文保留。任务卡只点名需要读取的来源，不默认通读全部输入。
@@ -15,7 +19,7 @@
 | --- | --- |
 | design-master | [AI开发工作流总档_设计端_v1_5_4.md](AI开发工作流总档_设计端_v1_5_4.md) |
 | module-tracker | [P0-P1_模块拆分追踪表_v1_3_20261015.md](P0-P1_模块拆分追踪表_v1_3_20261015.md) |
-| schema | [CK01-B_配表Schema_v2_4_1.md](CK01-B_配表Schema_v2_4_1.md) |
+| schema | [CK01-B_配表Schema_v2_5.md](CK01-B_配表Schema_v2_5.md) |
 | layout | [排布指导书_ShortCycle_P0P1_v0_3_1.md](排布指导书_ShortCycle_P0P1_v0_3_1.md) |
 | development-plan | [P0-P1_开发路径规划_v2_3_20261014.md](P0-P1_开发路径规划_v2_3_20261014.md) |
 | p2-layout | [排布指导书_ShortCycle_P2_v0_1_1_20261015.md](排布指导书_ShortCycle_P2_v0_1_1_20261015.md) |

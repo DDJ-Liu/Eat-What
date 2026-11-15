@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$TaskId = 'UNSCOPED',
-    [ValidateSet('Auto', 'Workflow', 'ShortCycle', 'ShortCycleNativeCi', 'DataTables', 'Rendering', 'Fonts', 'Custom', 'All')][string]$Profile = 'Auto',
+    [ValidateSet('Auto', 'Workflow', 'ShortCycle', 'ShortCycleNativeCi', 'DataTables', 'Rendering', 'Fonts', 'Narrative', 'Custom', 'All')][string]$Profile = 'Auto',
     [ValidateSet('Incremental', 'Final')][string]$Mode = 'Final',
     [string]$RepeatReason,
     [string[]]$RunnerPath = @(),
@@ -134,6 +134,9 @@ $profileRunners = [ordered]@{
         'DevTools/DataTables/Test-SpineLegacyGate.ps1',
         'DevTools/DataTables/Test-NativeRootProof.ps1',
         '.ai-workspace/tests/Test-DataLane.ps1'
+    )
+    Narrative = @(
+        'DevTools/Narrative/Test-Narrative.ps1'
     )
     Rendering = @(
         'DevTools/Rendering/Test-SpriteOutlineShadow.ps1',

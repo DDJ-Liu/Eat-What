@@ -1,5 +1,7 @@
 [CmdletBinding()]
-param([string]$FixtureRoot=$env:EATWHAT_APPROVED_RESUME_ROOT)
+param([string]$FixtureRoot=$env:EATWHAT_APPROVED_RESUME_ROOT,
+    [switch]$CurrentHumanRepairScopeOnly=($env:EATWHAT_APPROVED_RESUME_GROUP -ceq 'CurrentHumanRepairScope'),
+    [switch]$UnclaimedScopeCorrectionOnly=($env:EATWHAT_APPROVED_RESUME_GROUP -ceq 'UnclaimedScopeCorrection'))
 $ErrorActionPreference='Stop'
 trap {
     if($env:EATWHAT_APPROVED_RESUME_EVIDENCE){[IO.File]::WriteAllText($env:EATWHAT_APPROVED_RESUME_EVIDENCE+'.failure.txt',($_|Format-List * -Force|Out-String)+[Environment]::NewLine+$_.ScriptStackTrace,[Text.UTF8Encoding]::new($false))}
@@ -122,6 +124,237 @@ function Claim($requestedScope){
     if($requestedScope){$a.Scope=$requestedScope}
     Q $a
 }
+# AI530: one isolated formal-API group; the existing default and AI526 assertions below remain unchanged.
+if($UnclaimedScopeCorrectionOnly){
+    if($CurrentHumanRepairScopeOnly){throw 'Select one narrow approved-resume group.'}
+    $proof530=Join-Path $ws 'outputs/control/unclaimed-scope-correction'
+    [void][IO.Directory]::CreateDirectory($proof530)
+    $script:entry530=0;$script:recordClaims443=$true
+    function Start-ClaimEntry443($arguments){
+        $script:entry530++;$entry=Join-Path $proof530 ('entry-{0:D3}' -f $script:entry530)
+        Save ($entry+'.before.json') @{arguments=$arguments;workspace=$ws;runner=$PSCommandPath;pid=$PID}
+        return $entry
+    }
+    function Seed530([string[]]$paths=@('Assets/A','DevTools/Fixture Files','docs/C')){
+        $workers=@{};foreach($l in @('CODE','ENGINE_MCP','ART_AIGC','ART_ASSET')){$workers[$l]=@{status='IDLE';activeTaskId=$null;leaseUntil=$null;lastPollAt=$null;circuit=@{state='CLOSED';reason=$null;openUntil=$null}}}
+        Save "$state/worker-state.json" @{schemaVersion=1;workers=$workers}
+        Save "$state/queue-state.json" @{schemaVersion=1;nextSequence=219;tasks=@()}
+        Save "$state/mode-state.json" @{schemaVersion=1;mode='MANUAL';updatedAt=[DateTimeOffset]::UtcNow.ToString('o');updatedBy='fixture';automatic=@{status='IDLE';taskIds=@();currentTaskId=$null}}
+        [IO.File]::WriteAllText("$ws/INSTRUCTIONS.md",'# isolated unclaimed correction fixture',$utf8)
+        Q @{Action='BindExecutionPipeline';Pipeline='CODE';PipelineThreadId=$engine;UserDecision='fixture route';Verification='synthetic idle'}|Out-Null
+        $malformed=@{paths=@([string]::Join(' ',$paths));operations=@('source-edit')}|ConvertTo-Json -Compress
+        $t=(Q @{Action='Enqueue';Pipeline='CODE';Title='space-joined scope fixture';Instruction="First line`nsecond literal line";Scope=$malformed;WorkKind='FEATURE'}).task
+        $script:id530=$t.id;$script:paths530=$paths
+        Q @{Action='ConfigureSupervisionTask';TaskId=$id530;ResourceKeys=@('fixture-scope');HumanGateAfter=$false;Reason='fixture'}|Out-Null
+        Q @{Action='SetMode';Mode='SUPERVISED';TaskIds=@($id530);ControllerThreadId=$controller}|Out-Null
+        $script:seed530=@{};foreach($file in @('queue-state.json','mode-state.json','worker-state.json')){$script:seed530[$file]=[IO.File]::ReadAllBytes((Join-Path $state $file))}
+    }
+    function Reset530 {foreach($file in $script:seed530.Keys){[IO.File]::WriteAllBytes((Join-Path $state $file),$script:seed530[$file])}}
+    function Task530 { (Read "$state/queue-state.json").tasks | Where-Object id -ceq $script:id530 }
+    function Proof530([bool]$reviewed=$true){
+        $t=Task530;$m=Read "$state/mode-state.json"
+        $script:candidate530=[pscustomobject][ordered]@{paths=@($script:paths530|Sort-Object -Unique);operations=@($t.businessScope.operations)}
+        $raw=[ordered]@{paths=@($script:paths530);operations=@($t.businessScope.operations)}|ConvertTo-Json -Compress
+        $review=[ordered]@{schemaVersion=1;decision='APPROVED_UNCLAIMED_SCOPE_CORRECTION';taskId=$t.id;sessionId=$m.supervised.sessionId;controllerThreadId=$controller;taskSha256=(Hash $t);instructionSha256=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($utf8.GetBytes($t.instruction)));oldScopeSha256=(Hash $t.businessScope);candidateScopeSha256=(Hash $candidate530);literalPaths=@($script:paths530);independentlyReviewed=$reviewed;reason='Independent fixture confirms the ordered literal path list, including internal spaces.'}
+        $path=Join-Path $proof530 'review.json';Save $path $review
+        return @{Action='ReviseInstruction';TaskId=$t.id;Instruction=$t.instruction;Scope=$raw;ControllerThreadId=$controller;AmendmentReviewPath=$path;AmendmentReviewSha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash;UserDecision=$review.reason}
+    }
+    function Refuse530($arguments,[string]$label){
+        $before=Hash (Task530);$refused=$false
+        try{$r=Q $arguments;$refused=$r.action -ceq 'SUPERVISION_PAUSED'}catch{$refused=$true}
+        Check $refused $label
+        Check ((Hash (Task530))-ceq$before) ($label+' preserves the full task definition and accounting')
+    }
+    Seed530
+    $before530=Task530;$a=Proof530;$ok=Q $a;$after530=Task530
+    Check ($ok.action-ceq'INSTRUCTION_REVISED'-and$ok.scopeCorrected-eq$true) 'formal optional-Scope API corrects an unclaimed root'
+    Check ((Hash $after530.businessScope)-ceq(Hash $candidate530)-and$after530.businessScope.paths.Count-eq3-and$after530.businessScope.paths-contains'DevTools/Fixture Files') 'literal reviewed list normalized and internal spaces preserved'
+    $copy530=$after530|ConvertTo-Json -Depth 50|ConvertFrom-Json -DateKind String;$copy530.businessScope=$before530.businessScope
+    Check ((Hash $copy530)-ceq(Hash $before530)) 'only businessScope changes; exact instruction/tier/dependencies/history/quota remain'
+    $ledger530=[IO.File]::ReadAllText("$ws/INSTRUCTIONS.md",$utf8)
+    Check ($ledger530.Contains('UNCLAIMED_SCOPE_CORRECTED')-and$ledger530.Contains('oldScope')-and$ledger530.Contains('newScope')-and$ledger530.Contains($a.AmendmentReviewSha256)) 'original ledger appends both scopes, source SHA and reason'
+    $negativeCases=@('missingReview','reviewShaDrift','definitionDrift','pathChange','operationChange','instructionChange','grant','claimed','reservation','wrongController','stopped','outsideControlEvidence')
+    foreach($case530 in $negativeCases){
+        Reset530;$a=Proof530
+        switch($case530){
+            'missingReview'{$a.Remove('AmendmentReviewPath')}
+            'reviewShaDrift'{$a.AmendmentReviewSha256='0'*64}
+            'definitionDrift'{$q530=Read "$state/queue-state.json";$q530.tasks[0].title='changed after review';Save "$state/queue-state.json" $q530}
+            'pathChange'{$a.Scope='{"paths":["Assets/A","DevTools/Unexpected"],"operations":["source-edit"]}'}
+            'operationChange'{$v=$a.Scope|ConvertFrom-Json;$v.operations+=@('delete');$a.Scope=$v|ConvertTo-Json -Compress}
+            'instructionChange'{$a.Instruction+=' changed'}
+            'grant'{$q530=Read "$state/queue-state.json";$q530.tasks[0]|Add-Member -NotePropertyName resumeApproval -NotePropertyValue @{grantId='fixture-existing';usedRuns=0} -Force;Save "$state/queue-state.json" $q530;$a=Proof530}
+            'claimed'{$dispatch530=Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')};Q @{Action='Poll';Pipeline='CODE';TaskId=$id530;TriggerSource='SUPERVISED';DispatchToken=$dispatch530.dispatches[0].token;OwnerThreadId=$engine}|Out-Null}
+            'reservation'{Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}|Out-Null}
+            'wrongController'{$a.ControllerThreadId=$engine}
+            'stopped'{$m530=Read "$state/mode-state.json";$m530.supervised.stopRequested=$true;Save "$state/mode-state.json" $m530}
+            'outsideControlEvidence'{$outside530=Join-Path $ws 'outputs/other-review.json';Copy-Item -LiteralPath $a.AmendmentReviewPath -Destination $outside530;$a.AmendmentReviewPath=$outside530}
+        }
+        Refuse530 $a $case530
+    }
+    Seed530 @('Assets/My','File.prefab');$a=Proof530 $false
+    Refuse530 $a 'ordinary space-bearing single path cannot be split without explicit independent list review'
+    # A no-Scope call still follows the untouched original ReviseInstruction behavior.
+    Reset530;$before530=Task530;$legacy530=Q @{Action='ReviseInstruction';TaskId=$id530;Instruction='legacy instruction revision'};$after530=Task530
+    Check ($legacy530.action-ceq'INSTRUCTION_REVISED'-and$after530.instruction-ceq'legacy instruction revision') 'legacy no-Scope instruction revision remains available'
+    Check ((Hash $before530.businessScope)-ceq(Hash $after530.businessScope)-and$after530.attempts-eq0) 'legacy no-Scope call preserves scope and accounting'
+    $result530=@{result='PASS';group='UnclaimedScopeCorrection';checks=$checks.Count;labels=@($checks);events=$events.ToArray();apiCalls=$script:entry530;fixture=$fixture;productionOperations=0;formalUnclaimedCorrection=$true;rejectIllegalChanges=$true;preservedHistoryAndRegression=$true;legacyDefaultAndAI526MatrixRun=$false}
+    if($env:EATWHAT_APPROVED_RESUME_EVIDENCE){Save $env:EATWHAT_APPROVED_RESUME_EVIDENCE $result530}
+    $result530|ConvertTo-Json -Depth 10
+    return
+}
+
+# AI526: bounded group in the existing isolated fixture; no legacy matrix or real queue calls.
+if($CurrentHumanRepairScopeOnly){
+    $proof526=Join-Path $ws 'outputs/current-human-repair-scope'
+    [void][IO.Directory]::CreateDirectory($proof526)
+    $script:entrySequence526=0;$script:recordClaims443=$true;$script:phase526='expanded-human-scope'
+    function Start-ClaimEntry443($arguments){
+        $script:entrySequence526++
+        $entry=Join-Path $proof526 ('entry-{0:D3}' -f $script:entrySequence526)
+        Save ($entry+'.before.json') @{arguments=$arguments;workspace=$ws;runner=$PSCommandPath;pid=$PID;phase=$script:phase526}
+        return $entry
+    }
+    function Snapshot-Group526 {
+        $copy=@{};foreach($p in @("$state/queue-state.json","$state/mode-state.json","$state/worker-state.json")){$copy[$p]=[IO.File]::ReadAllBytes($p)};return $copy
+    }
+    function Restore-Group526($copy){foreach($p in $copy.Keys){[IO.File]::WriteAllBytes($p,$copy[$p])}}
+    function Reject-Group526($arguments,[string]$label,[switch]$PauseResult){
+        $before=Snapshot-Group526
+        if($PauseResult){
+            $response=Q $arguments
+            Check ($response.action-ceq'SUPERVISION_PAUSED'-and-not$response.executionId) ($label+' returns explicit stopped/non-claim receipt')
+        }else{Reject {Q $arguments} $label}
+        foreach($p in $before.Keys){Check ([Convert]::ToBase64String([IO.File]::ReadAllBytes($p))-ceq[Convert]::ToBase64String($before[$p])) ($label+' keeps '+[IO.Path]::GetFileName($p))}
+    }
+    $policySource=Join-Path $repo '.ai-workspace/inputs/续行许可分模式_用户长期授权_20261019.json'
+    [void][IO.Directory]::CreateDirectory((Join-Path $ws 'inputs'))
+    Copy-Item -LiteralPath $policySource -Destination (Join-Path $ws 'inputs/续行许可分模式_用户长期授权_20261019.json')
+    $authority=Read $policySource
+    . (Join-Path $ws 'repair-budget.ps1')
+    $workspaceRoot=$ws
+    Seed 'SUPERVISED' 'ENGINE_MCP' 20
+    $root526=$id;$code526='5537cdd2-018a-4dc3-9ed1-12b054ac8326'
+    Q @{Action='BindExecutionPipeline';Pipeline='CODE';PipelineThreadId=$code526;UserDecision='isolated CODE route';Verification='fixture idle'}|Out-Null
+    $oldScope526='{"paths":["DevTools/ScopedTool.ps1"],"operations":["repair"]}'
+    $expanded526='{"paths":["DevTools/ScopedTool.ps1","DevTools/Fixtures/ScopedRegression"],"operations":["repair"]}'
+    $child526=(Q @{Action='Enqueue';Pipeline='CODE';Title='isolated POLICY child';Instruction='repair scoped test tool only';WorkKind='REPAIR';ParentTaskId=$root526;Scope=$oldScope526;AuthorizationSource='POLICY';ApprovalId=$authority.approvalId;UserDecision=$authority.userQuote;RetryCycleId='scope526:initial-policy';MaxAttempts=20;FailureStopLimit=20}).task.id
+    Q @{Action='ExtendSupervision';TaskIds=@($child526);Reason='isolated POLICY child'}|Out-Null
+    $d=@((Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches|Where-Object taskId -CEQ $child526)[0]
+    $poll526=@{Action='Poll';Pipeline='CODE';TaskId=$child526;TriggerSource='SUPERVISED';DispatchToken=$d.token;Scope=$oldScope526;OwnerThreadId=$code526}
+    $bad=$poll526.Clone();$bad.Scope=$expanded526
+    Reject-Group526 $bad 'initial POLICY expanded scope refused'
+    $first526=Q $poll526
+    Check ($first526.action-ceq'CLAIMED') 'initial POLICY original scope actually claimed'
+    Q @{Action='Fail';Pipeline='CODE';TaskId=$child526;OwnerThreadId=$code526;ExecutionId=$first526.task.execution.executionId;ErrorKind='VERIFICATION';ErrorMessage='isolated initial regression input mismatch';FailureScope='TASK'}|Out-Null
+    $q=Read "$state/queue-state.json";$c=@($q.tasks|Where-Object id -CEQ $child526)[0];$r=@($q.tasks|Where-Object id -CEQ $root526)[0]
+    $oldScopeHash526=Hash $c.repairContext.repairScope;$oldErrors526=Hash @($c.errorHistory);$oldRootErrors526=Hash @($r.errorHistory)
+    $human526=@{Action='ApproveResume';TaskId=$child526;Runs=1;Scope=$expanded526;AuthorizationSource='HUMAN';ApprovalId='fixture526-human-expanded';UserDecision='Synthetic approval of one expanded fixture repair cycle';ControllerThreadId=$controller;OwnerThreadId=$code526;IdlePipelines=@('CODE');Verification='isolated fresh idle'}
+    $grant526=Q $human526
+    Check ($grant526.rootRetry.used-eq1-and$grant526.rootRetry.reserved-eq1) 'HUMAN grant reserves one cycle without refunding initial failure'
+    $d=@((Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches|Where-Object taskId -CEQ $child526)[0]
+    $poll526.DispatchToken=$d.token;$poll526.Scope=$expanded526
+    $queued526=Snapshot-Group526
+    foreach($case in @('outsideGrant','wrongOwner','wrongRoute','wrongRoot','wrongSession','wrongController','revoked','blocked','wrongFailure','rootHardStop','childHardStop','rootTurnStop','rootPermission','childPermission','stopped','exiting','paused','POLICY')){
+        Restore-Group526 $queued526
+        $q=Read "$state/queue-state.json";$m=Read "$state/mode-state.json";$c=@($q.tasks|Where-Object id -CEQ $child526)[0];$r=@($q.tasks|Where-Object id -CEQ $root526)[0];$g=$c.resumeApproval;$a=$poll526.Clone()
+        switch($case){
+            'outsideGrant'{$a.Scope='{"paths":["DevTools/Unapproved.ps1"],"operations":["repair"]}'}
+            'wrongOwner'{$g.ownerThreadId='foreign'}
+            'wrongRoute'{$g.routeKey='foreign'}
+            'wrongRoot'{$g.rootTaskId='AI-999999'}
+            'wrongSession'{$g.sessionId='foreign'}
+            'wrongController'{$g.controllerThreadId='foreign'}
+            'revoked'{$g|Add-Member revokedAt 'now' -Force}
+            'blocked'{$g|Add-Member blockedReason 'permission' -Force}
+            'wrongFailure'{$g.failureHistorySha256='0'*64}
+            'rootHardStop'{$r|Add-Member retryHardStop @{kind='PERMISSION'} -Force}
+            'childHardStop'{$c|Add-Member retryHardStop @{kind='PERMISSION'} -Force}
+            'rootTurnStop'{$r.execution.limitReached=$true}
+            'rootPermission'{$r.errorHistory[-1].kind='PERMISSION'}
+            'childPermission'{$c.errorHistory[-1].kind='PERMISSION'}
+            'stopped'{$m.supervised.stopRequested=$true}
+            'exiting'{$m.supervised.exitRequested=$true}
+            'paused'{$m.supervised.status='PAUSED'}
+            'POLICY'{$g.authorizationSource='POLICY';$g.approvalId=$authority.approvalId;$g.userDecision=$authority.userQuote}
+        }
+        Save "$state/queue-state.json" $q;Save "$state/mode-state.json" $m
+        Reject-Group526 $a ('expanded claim rejects '+$case) -PauseResult:($case -cin @('stopped','paused'))
+    }
+    Restore-Group526 $queued526
+    $second526=Q $poll526
+    Check ($second526.action-ceq'CLAIMED'-and$second526.task.attempts-eq2-and$second526.task.resumeApproval.usedRuns-eq1) 'current HUMAN expanded scope actually claimed once'
+    $c=$second526.task
+    Check ((Hash $c.execution.approvedScope)-ceq(Hash $c.resumeApproval.scope)-and(Hash $c.repairContext.repairScope)-ceq$oldScopeHash526-and$c.repairContext.authorizationSource-ceq'POLICY') 'current HUMAN execution Scope is exact; historical POLICY scope/source unchanged'
+    Check ((Hash @($c.errorHistory))-ceq$oldErrors526-and$c.execution.retryCycleId-ceq$c.resumeApproval.claims[0].retryCycleId-and$c.execution.retryCycleId-cne$first526.task.execution.retryCycleId) 'new actual claim keeps failed execution/cycle and full error history'
+    Q @{Action='Complete';Pipeline='CODE';TaskId=$child526;OwnerThreadId=$code526;ExecutionId=$c.execution.executionId;Summary='isolated scoped repair';Verification='synthetic behavior complete'}|Out-Null
+    $q=Read "$state/queue-state.json";$c=@($q.tasks|Where-Object id -CEQ $child526)[0]
+    if($c.result.verificationStatus-ceq'PENDING_USER'){Q @{Action='ResolveVerification';TaskId=$child526;Summary='isolated independent review';Verification='actual fixture completion reviewed'}|Out-Null}
+    $pair526=$approval.Clone();$pair526.Runs=1;$pair526.AuthorizationSource='HUMAN';$pair526.ApprovalId=$human526.ApprovalId;$pair526.UserDecision=$human526.UserDecision;$pair526.PairedRepairTaskId=$child526;$pair526.RetryCycleId=$c.execution.retryCycleId
+    $completed526=Snapshot-Group526
+    foreach($case in @('scopeDrift','missingClaim','duplicateGrant','wrongExecution','failedCycle','claimRootUsed','wrongFailure','revoked','hardStop','turnStop','POLICY')){
+        Restore-Group526 $completed526
+        $q=Read "$state/queue-state.json";$c=@($q.tasks|Where-Object id -CEQ $child526)[0];$r=@($q.tasks|Where-Object id -CEQ $root526)[0];$g=$c.resumeApproval
+        switch($case){
+            'scopeDrift'{$g.scope.paths=@('DevTools/Unapproved.ps1')}
+            'missingClaim'{$g.claims=@()}
+            'duplicateGrant'{$c|Add-Member resumeApprovalHistory @($g) -Force}
+            'wrongExecution'{$g.claims[0].executionId='foreign'}
+            'failedCycle'{$g.claims[0].retryCycleId=$first526.task.execution.retryCycleId}
+            'claimRootUsed'{@($r.retryCycles|Where-Object cycleId -CEQ $g.cycleIds[0])[0].rootExecutionIds=@('foreign')}
+            'wrongFailure'{$c.errorHistory[0].message+=' drift'}
+            'revoked'{$g|Add-Member revokedAt 'now' -Force}
+            'hardStop'{$c|Add-Member retryHardStop @{kind='PERMISSION'} -Force}
+            'turnStop'{$c.execution.limitReached=$true}
+            'POLICY'{$g.authorizationSource='POLICY';$g.approvalId=$authority.approvalId;$g.userDecision=$authority.userQuote;$c.execution.resumeApprovalId=$authority.approvalId}
+        }
+        Save "$state/queue-state.json" $q
+        Reject-Group526 $pair526 ('completed pairing rejects '+$case)
+    }
+    Restore-Group526 $completed526
+    $paired526=Q $pair526
+    Check ($paired526.rootRetry.used-eq2-and$paired526.rootRetry.reserved-eq0-and$paired526.rootRetry.limit-eq$grant526.rootRetry.limit) 'successful expanded HUMAN repair pairs without an extra reservation or refund'
+    $rootClaim526=Claim $scope
+    $q=Read "$state/queue-state.json";$r=@($q.tasks|Where-Object id -CEQ $root526)[0];$c=@($q.tasks|Where-Object id -CEQ $child526)[0];$budget526=Get-RootRetryState $q $r 'SUPERVISED'
+    Check ($budget526.used-eq2-and$budget526.reserved-eq0-and$r.execution.retryCycleId-ceq$c.execution.retryCycleId) 'actual root claim uses the successful repair cycle without double charging'
+    Check ((Hash @($r.errorHistory))-ceq$oldRootErrors526-and(Hash @($c.errorHistory))-ceq$oldErrors526-and(Hash $c.repairContext.repairScope)-ceq$oldScopeHash526) 'original root/repair failures and historical repairScope preserved after pairing'
+    # Preserve existing same-scope HUMAN recovery after a real isolated formal failure.
+    Save (Join-Path $proof526 'expanded-scope-final-state.json') (Read "$state/queue-state.json")
+    $compatibility526=[Collections.Generic.List[object]]::new()
+    foreach($failureKind526 in @('PERMISSION','UNKNOWN')){
+        $script:phase526='same-scope-'+$failureKind526
+        Seed 'SUPERVISED' 'ENGINE_MCP' 20
+        $sameRoot526=$id
+        Q @{Action='BindExecutionPipeline';Pipeline='CODE';PipelineThreadId=$code526;UserDecision='isolated same-scope route';Verification='fixture idle'}|Out-Null
+        $sameChild526=(Q @{Action='Enqueue';Pipeline='CODE';Title='isolated same-scope POLICY repair';Instruction='repair only original scoped tool';WorkKind='REPAIR';ParentTaskId=$sameRoot526;Scope=$oldScope526;AuthorizationSource='POLICY';ApprovalId=$authority.approvalId;UserDecision=$authority.userQuote;RetryCycleId=('scope526:same-'+$failureKind526);MaxAttempts=20;FailureStopLimit=20}).task.id
+        Q @{Action='ExtendSupervision';TaskIds=@($sameChild526);Reason='isolated same-scope compatibility'}|Out-Null
+        $d=@((Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches|Where-Object taskId -CEQ $sameChild526)[0]
+        $a=@{Action='Poll';Pipeline='CODE';TaskId=$sameChild526;TriggerSource='SUPERVISED';DispatchToken=$d.token;Scope=$oldScope526;OwnerThreadId=$code526}
+        $initialSame526=Q $a
+        Q @{Action='Fail';Pipeline='CODE';TaskId=$sameChild526;OwnerThreadId=$code526;ExecutionId=$initialSame526.task.execution.executionId;ErrorKind=$failureKind526;ErrorMessage='isolated same-scope recovery fixture';FailureScope='TASK'}|Out-Null
+        $q=Read "$state/queue-state.json";$c=@($q.tasks|Where-Object id -CEQ $sameChild526)[0];$failureDigest526=Hash @($c.errorHistory)
+        if($failureKind526-ceq'PERMISSION'){
+            Reject-Group526 @{Action='ApproveResume';TaskId=$sameChild526;Runs=1;Scope=$oldScope526;AuthorizationSource='POLICY';ApprovalId=$authority.approvalId;UserDecision=$authority.userQuote;ControllerThreadId=$controller;OwnerThreadId=$code526;IdlePipelines=@('CODE');Verification='isolated no new human approval'} 'POLICY cannot clear the real permission stop'
+        }
+        Q @{Action='ApproveResume';TaskId=$sameChild526;Runs=1;Scope=$oldScope526;AuthorizationSource='HUMAN';ApprovalId=('fixture526-same-'+$failureKind526);UserDecision='Synthetic explicit approval for original scope; platform approval remains separate';ControllerThreadId=$controller;OwnerThreadId=$code526;IdlePipelines=@('CODE');Verification='isolated fresh human approval'}|Out-Null
+        $d=@((Q @{Action='DispatchSupervision';IdlePipelines=@('CODE')}).dispatches|Where-Object taskId -CEQ $sameChild526)[0];$a.DispatchToken=$d.token
+        $sameQueued526=Snapshot-Group526
+        $q=Read "$state/queue-state.json";$r=@($q.tasks|Where-Object id -CEQ $sameRoot526)[0];$r|Add-Member retryHardStop @{kind='PERMISSION'} -Force;Save "$state/queue-state.json" $q
+        Reject-Group526 $a ('same-scope current hard stop still refuses '+$failureKind526)
+        Restore-Group526 $sameQueued526
+        $allowed526=Q $a;$c=$allowed526.task
+        Check ($allowed526.action-ceq'CLAIMED'-and$c.attempts-eq2-and$c.resumeApproval.authorizationSource-ceq'HUMAN'-and(Hash $c.execution.approvedScope)-ceq(Hash $c.repairContext.repairScope)) ('fresh same-scope HUMAN '+$failureKind526+' actual claim remains allowed')
+        Check ((Hash @($c.errorHistory))-ceq$failureDigest526-and$c.errorHistory[-1].kind-ceq$failureKind526-and$c.repairContext.authorizationSource-ceq'POLICY') ('same-scope '+$failureKind526+' actual history and original POLICY source preserved')
+        $compatibility526.Add(@{failureKind=$failureKind526;action=$allowed526.action;scopeUnchanged=$true;failureHistoryPreserved=$true;currentHardStopRefused=$true;platformApprovalSimulated=$false})
+        Save (Join-Path $proof526 ('same-scope-'+$failureKind526+'-claimed-state.json')) (Read "$state/queue-state.json")
+    }
+    $result=@{result='PASS';group='CurrentHumanRepairScope';checks=$checks.Count;labels=@($checks);events=$events.ToArray();fixture=$fixture;currentHumanScopeApplied=$true;policyAndStopsPreserved=$true;originalAccountingPreserved=$true;beforeGrant=$grant526.rootRetry;afterPair=$paired526.rootRetry;afterRootClaim=$budget526;apiCalls=$script:entrySequence526;productionOperations=0;sameScopeHumanCompatibility=$compatibility526.ToArray()}
+    Save (Join-Path $proof526 'result.json') $result
+    if($env:EATWHAT_APPROVED_RESUME_EVIDENCE){Save $env:EATWHAT_APPROVED_RESUME_EVIDENCE $result}
+    $result|ConvertTo-Json -Depth 7 -Compress
+    return
+}
+
 Seed
 foreach($case in @('runs','emptyScope','escape','absolute','wildcard','runtime','windowsAlias','badOperation','approvalId','controller','owner','busy','paused')){
     ResetSeed;$a=$approval.Clone()
