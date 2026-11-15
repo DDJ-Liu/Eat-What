@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 2,
+  "tableName": "SceneStates",
+  "csvPath": "Street/SceneStates.csv",
+  "targetType": "CK01SceneStateData",
+  "outputDirectory": "Assets/Generated/DataTables/Street/SceneStates",
+  "assetNameField": "scene_id",
+  "primaryKeyField": "scene_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "scene_id",
+      "csvColumn": "scene_id",
+      "type": "ref",
+      "required": true,
+      "description": "所属场景ID，引用Scenes；与state_id共同构成主键。"
+    },
+    {
+      "name": "state_id",
+      "csvColumn": "state_id",
+      "type": "id",
+      "required": true,
+      "description": "场景内唯一的状态ID，不带统一前缀；可在不同场景使用同名状态。",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    {
+      "name": "story_stage",
+      "csvColumn": "story_stage",
+      "type": "string",
+      "required": false,
+      "description": "说明性剧情阶段，程序不读取。"
+    },
+    {
+      "name": "description",
+      "csvColumn": "description",
+      "type": "string",
+      "required": false,
+      "description": "状态说明，填写供策划阅读的文字。"
+    },
+    {
+      "name": "switch_source",
+      "csvColumn": "switch_source",
+      "type": "string",
+      "required": false,
+      "description": "说明性切换来源，程序不读取。"
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [
+    {
+      "field": "scene_id",
+      "targetSchema": "Street/Scenes.schema.json",
+      "targetField": "scene_id"
+    }
+  ],
+  "rules": [],
+  "primaryKeyFields": [
+    "scene_id",
+    "state_id"
+  ]
+}

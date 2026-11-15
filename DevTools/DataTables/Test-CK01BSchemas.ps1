@@ -3,12 +3,14 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$dataTablesRoot = Join-Path $repositoryRoot 'DataTables'
+$productionDataTablesRoot = Join-Path $repositoryRoot 'DataTables'
+$dataTablesRoot = $productionDataTablesRoot
 $contentPackageCandidates = @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'Fixtures') -Directory | Where-Object { $_.Name.EndsWith('CSV_v1_2', [System.StringComparison]::Ordinal) })
 if ($contentPackageCandidates.Count -ne 1) { throw 'Expected exactly one CK01 v1.2 CSV package directory.' }
 $contentPackageRoot = $contentPackageCandidates[0].FullName
 $validator = Join-Path $PSScriptRoot 'Validate-DataTables.ps1'
 $temporaryRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('eatwhat-ck01b-' + [guid]::NewGuid().ToString('N'))
+$diagnosticRoot = $env:EATWHAT_CK01B_SCHEMA_REPORT_ROOT
 
 function Assert-True {
     param([Parameter(Mandatory)][bool]$Condition, [Parameter(Mandatory)][string]$Message)
@@ -130,9 +132,29 @@ function Assert-ValidIngredientCase {
 }
 
 try {
+    # Validate current user data independently; never replace or modify its values.
+    $liveReportDirectory = Join-Path $temporaryRoot 'live-reports'
+    $live = & $validator -DataTablesRoot $productionDataTablesRoot -ReportDirectory $liveReportDirectory -NoExit -Quiet
+    if ($diagnosticRoot) {
+        [void][System.IO.Directory]::CreateDirectory($diagnosticRoot)
+        $live | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $diagnosticRoot 'live-validation.json') -Encoding utf8NoBOM
+    }
+    Assert-True $live.isValid 'The current configured DataTables source must pass full static validation.'
+    Assert-True ($live.schemaCount -eq 22) 'Current CK01-B must contain exactly twenty-two schema tables.'
+
+    # Original behavior assertions use a fixed sample with their original IDs and values.
+    # Current schemas/validator remain under test; only a task-owned temporary CSV copy is overlaid.
+    $dataTablesRoot = New-StagedDataTables
+    $regressionFixtureRoot = Join-Path $PSScriptRoot 'Fixtures/CK01BSchemasRegression'
+    foreach ($relativeDirectory in @('Cooking', 'Localization')) {
+        Copy-Item -Path (Join-Path $regressionFixtureRoot ($relativeDirectory + '/*')) -Destination (Join-Path $dataTablesRoot $relativeDirectory) -Recurse -Force
+    }
     $green = & $validator -DataTablesRoot (New-StagedDataTables) -NoExit -Quiet
+    if ($diagnosticRoot) {
+        $green | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $diagnosticRoot 'regression-validation.json') -Encoding utf8NoBOM
+    }
     Assert-True $green.isValid 'The checked-in CK01-B DataTables source must pass static validation.'
-    Assert-True ($green.schemaCount -eq 14) 'CK01-B must contain exactly fourteen schema tables.'
+    Assert-True ($green.schemaCount -eq 22) 'CK01-B must contain exactly twenty-two schema tables.'
 
     foreach ($relativePath in @(
         'Cooking/InitialInventory.csv',
@@ -143,9 +165,13 @@ try {
         'Cooking/Tags.csv',
         'Cooking/Tools.csv'
     )) {
-        $productionText = [System.IO.File]::ReadAllText((Join-Path $dataTablesRoot $relativePath)).Replace("`r`n", "`n")
-        $packageText = [System.IO.File]::ReadAllText((Join-Path $contentPackageRoot $relativePath)).Replace("`r`n", "`n")
-        Assert-True ($productionText -ceq $packageText) "Formal table does not match the v1.2 package: $relativePath"
+        $schemaRelative = 'Schemas/' + [System.IO.Path]::ChangeExtension($relativePath, '.schema.json')
+        $currentSchema = Get-Content -Raw -LiteralPath (Join-Path $productionDataTablesRoot $schemaRelative) | ConvertFrom-Json
+        $actualHeader = Get-Content -LiteralPath (Join-Path $productionDataTablesRoot $relativePath) -Encoding UTF8 -TotalCount 1
+        $expectedHeader = (@($currentSchema.columns | ForEach-Object { if ($_.csvColumn) { $_.csvColumn } else { $_.name } }) -join ',')
+        Assert-True ($actualHeader -ceq $expectedHeader) "Formal table header differs from its current schema: $relativePath"
+        # All current nonempty values, types, ranges and references are checked by $green above.
+        # Frozen v1.2 input remains unmodified as historical evidence, not a baseline for mutable user values.
     }
 
     $slotHeader = (Get-Content -LiteralPath (Join-Path $dataTablesRoot 'Cooking/RecipeSlots.csv') -Encoding UTF8 -TotalCount 1).Split(',')
@@ -332,9 +358,11 @@ try {
         param($root)
         Set-CsvField $root 'Cooking/KitchenAreas.csv' 'id' 'kitchen-prep-counter' 'allowed_carriers' 'tool_board|tool_bowl'
     }
-    Assert-WarningCase -Name 'V09UnsupportedRecord' -ExpectedEvidence '[V-09]' -Mutate {
+    # Keep the legacy test ID and warning assertions; exercise current G74 scene-bound carrier ambiguity.
+    Assert-WarningCase -Name 'V09UnsupportedRecord' -ExpectedEvidence '[V-09]' -WithSceneInventory -Mutate {
         param($root)
-        Set-CsvField $root 'Cooking/ProcessingRecords.csv' 'proc_id' 'proc_tomato_cut' 'action' 'act_stew'
+        Set-CsvField $root 'Cooking/ProcessingRecords.csv' 'proc_id' 'proc_noodle_boiled_alt' 'input_01' 'ing_noodle_dried'
+        Set-CsvField $root 'Cooking/ProcessingRecords.csv' 'proc_id' 'proc_noodle_boiled_alt' 'carrier' 'tool_stove'
     }
     Assert-WarningCase -Name 'V10UnreachableSlotIngredient' -ExpectedEvidence '[V-10]' -Mutate {
         param($root)
@@ -352,7 +380,15 @@ try {
     [pscustomobject]@{
         success = $true
         productionSource = 'PASS'
-        schemaCount = 14
+        currentSourceWarningCount = @($live.warnings).Count
+        currentSourceWarnings = @($live.warnings)
+        currentSourceRuleCounts = $live.v24RuleCounts
+        currentSourceAudits = $live.audits
+        regressionFixture = 'DevTools/DataTables/Fixtures/CK01BSchemasRegression'
+        regressionFixtureBaseSourceCommit = '170275321f31d15b0ec876838dcefa776108412e'
+        regressionFixtureSourceManifest = 'DevTools/DataTables/Fixtures/CK01BSchemasRegression/SOURCE-MANIFEST.json'
+        regressionFixtureSourceOverrides = @{ 'Cooking/CookingGameConfig.csv' = 'bb681b350671dd5bf5fb750c766eb3a43776305d' }
+        schemaCount = 22
         recipes = @($recipeIds)
         ingredientReferenceCases = 7
         isolatedNegativeCases = @('disconnect', 'cycle', 'prefix', 'dangling_reference', 'class_error', 'input_gap', 'slot_gap', 'slot_missing_count', 'slot_count_minimum', 'slot_orphan_count', 't14_id_exemption', 't14_separator_exemption', 't15_non_raw', 't15_quantity', 't15_duplicate', 'V-01', 'V-02', 'V-03', 'V-04', 'V-05', 'V-06', 'V-07', 'V-08', 'V-09', 'V-10', 'V-11', 'V-12')

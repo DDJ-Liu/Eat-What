@@ -17,7 +17,8 @@ $trayOnly=$env:EATWHAT_TRAY_TASK_ID -ceq 'AI-000325'
 $trayRepairOnly=$env:EATWHAT_TRAY_REPAIR_TASK_ID -ceq 'AI-000326'
 $trayCancelOnly=$env:EATWHAT_TRAY_CANCEL_TASK_ID -ceq 'AI-000395'
 $clueOnly=$env:EATWHAT_CLUE_TASK_ID -ceq 'AI-000327'
-$clueRepairOnly=$env:EATWHAT_CLUE_REPAIR_TASK_ID -ceq 'AI-000328'
+$clueRepairTaskId=$env:EATWHAT_CLUE_REPAIR_TASK_ID
+$clueRepairOnly=$clueRepairTaskId -cin @('AI-000328','AI-000523')
 $operationZoneOnly=$env:EATWHAT_OPERATION_ZONE_TASK_ID -ceq 'AI-000329'
 $productOnly=$env:EATWHAT_PRODUCT_TASK_ID -cin @('AI-000330','AI-000331')
 $productRepairOnly=$env:EATWHAT_PRODUCT_TASK_ID -ceq 'AI-000331'
@@ -566,10 +567,16 @@ Assert-SourceNotContains $clueBinderSource 'Instantiate\s*\(|new\s+GameObject\s*
     'Clue-board Binder must reuse serialized SlotBlocks instead of allocating scene instances.'
 Assert-SourceNotContains $clueBinderSource '\.SetActive\s*\(' `
     'Clue-board Binder must not own presentation activation.'
-Assert-SourceContains $clueBinderSource 'emptyBlocks\[index\]\.ClearSlot\s*\(\s*\)' `
-    'An empty recipe must clear existing clue blocks through their content API.'
-Assert-SourceNotContains ($fridgeBinderSource + $clueBinderSource) 'ShortCyclePresentation(?:Director|Set)|ShortCycleSpace' `
-    'Content Binders must not depend on Presentation types.'
+Assert-SourceContains $clueBinderSource '(?s)if\s*\(string\.IsNullOrEmpty\(recipeId\)\)\s*\{\s*ClearExcess\(blocks,\s*names,\s*0\)' `
+    'An empty recipe must clear every existing clue block through the shared clear path.'
+Assert-SourceContains $clueBinderSource '(?s)void\s+ClearExcess\(SlotBlock\[\]\s+blocks,.*?for\s*\(var index = first; index < blocks.Length; index\+\+\).*?blocks\[index\]\.ClearSlot\(\)' `
+    'The shared clear path must call the slot content API for each remaining block.'
+Assert-SourceNotContains ($fridgeBinderSource + $clueBinderSource) 'ShortCyclePresentationDirector|ShortCycleSpace' `
+    'Content Binders must not drive presentation navigation or own spaces.'
+Assert-SourceNotContains $clueBinderSource '\bset\s*\.\s*(?:Activate|Deactivate)\s*\(' `
+    'Clue content binding must not activate or deactivate its presentation set.'
+Assert-SourceContains $clueBinderSource '(?s)ApplyBoundPresentationVisibility\s*\(\s*\).*?GetComponent<ShortCyclePresentationSet>\s*\(\s*\).*?IsContentRendererHidden.*?set\.ReassertRendererHidden\s*\(' `
+    'Clue content binding must retain existing hidden-state coordination without changing set lifecycle.'
 # TMP 3D's existing rectTransform.pivot property is not a new UI container dependency.
 Assert-SourceNotContains $shortCycleProductionSource 'UnityEngine\.UI|TextMeshProUGUI|(?-i:\bRectTransform\b)|CanvasRenderer|GetComponent\s*<\s*Canvas\s*>' `
     'ShortCycle production code must remain world-space Sprite/TMP without UGUI or Canvas dependencies.'
@@ -583,8 +590,12 @@ foreach ($actionToken in @('OpenCover','CloseCover','OpenCatalog','CloseCatalog'
 }
 Assert-SourceContains $actionRouterSource 'Register\(ShortCycleActionNames\.FridgeScroll,\s*HandleFridgeScroll\)' `
     'fridge.scroll must use its real handler in the unique ActionRouter.'
-if ([regex]::Matches($actionRouterSource, 'registry\.Register\([^,]+,\s*HandleNotImplemented\)').Count -ne 8) {
-    throw 'Exactly the eight deferred actions other than fridge.scroll must remain NotImplemented.'
+foreach ($implementedAction in @('TrayHighlightEnter','TrayHighlightExit','TrayToggleDetail','FridgeFilter','FridgeTidy','InventoryTake','InventoryPutBack','EquipmentOpenEntry')) {
+    Assert-SourceContains $actionRouterSource ("registry\.Register\(ShortCycleActionNames\.{0},\s*Handle{0}\)" -f $implementedAction) `
+        "The implemented $implementedAction action must retain its real named handler."
+}
+if ([regex]::Matches($actionRouterSource, 'registry\.Register\([^,]+,\s*HandleNotImplemented\)').Count -ne 0) {
+    throw 'Implemented actions must not fall back to the old NotImplemented route.'
 }
 Assert-SourceContains $actionRouterSource '(?s)HandleFridgeScroll\s*\(\s*ShortCycleActionRequest\s+request\s*\).*?CurrentPhase\s*!=\s*ShortCyclePhase\.Phase1.*?coordinator\.ScrollFridgeTier\s*\(\s*request\.delta\s*<\s*0f\s*\?\s*-1\s*:\s*1\s*\)' `
     'The fridge.scroll handler must gate Phase1 and normalize into the coordinator proxy.'
@@ -739,8 +750,8 @@ Assert-SourceContains $fridgeBinderSource 'GetRequiredTierCount\s*\(\s*capacity\
     'Fridge Binder tier count must derive from configured capacity rather than inventory row count.'
 Assert-SourceNotContains $fridgeBinderSource 'GetRequiredTierCount\s*\(\s*records\.Count\s*\)' `
     'Fridge Binder must not treat the current inventory record count as capacity.'
-Assert-SourceContains $fridgeBinderSource 'inventory\.GetQuantity\s*\(\s*record\.ItemId\s*\)\s*>\s*0' `
-    'Fridge Binder must exclude zero-quantity records from occupied slots.'
+Assert-SourceContains $fridgeBinderSource '(?s)var\s+owned\s*=\s*inventory\.GetQuantity\s*\(\s*record\.ItemId\s*\)\s*;\s*if\s*\(\s*owned\s*<=\s*0\s*\)\s*continue\s*;' `
+    'Fridge Binder must exclude nonpositive inventory before creating occupied entries.'
 Assert-SourceContains $fridgeBinderSource '(?s)public\s+int\s+ApplyFilterView\s*\(\s*int\s+visibleCount\s*\).*?GetFilterTierCount\s*\(\s*visibleCount\s*\)' `
     'Fridge Binder must expose the reviewed filter-view tier contract without a production route.'
 if ([regex]::Matches($shortCycleProductionSource, '\.ApplyFilterView\s*\(').Count -ne 0) {
@@ -750,8 +761,10 @@ Assert-SourceContains $fridgeBinderSource 'boundCapacity\s*=\s*capacity' `
     'Successful binding must expose the resolved capacity for audit.'
 Assert-SourceContains $fridgeBinderSource 'GetShelfAnchor\s*\(' `
     'Fridge Binder must resolve each slot through the row/column rig contract.'
-Assert-SourceContains $fridgeBinderSource 'SetParent\s*\(\s*shelfAnchors\[index\]\s*,\s*false\s*\)' `
-    'Fridge Binder must parent configured pieces under explicit shelf anchors.'
+Assert-SourceContains $fridgeBinderSource '(?s)anchors\[index\]\s*=\s*fridgeCatRig\.GetShelfAnchor.*?TidyLayout\.Plan<FridgeEntry,\s*Transform>\(ordered,\s*entry\s*=>\s*true,\s*anchors\)' `
+    'Fridge layout points must derive from explicit rig shelf anchors.'
+Assert-SourceContains $fridgeBinderSource 'SetParent\s*\(\s*plan\[index\]\.Point\s*,\s*false\s*\)' `
+    'Fridge Binder must parent pieces to their explicit planned shelf point.'
 Assert-SourceContains $fridgeBinderSource '(?s)ShortCycleActionResult\s+ScrollTier\s*\(\s*int\s+sign\s*\).*?fridgeCatRig\.ScrollToTier\s*\(\s*targetTier\s*\).*?currentTier\s*=\s*targetTier' `
     'FridgeBinder scroll must use the typed rig API and update state only after an accepted move.'
 Assert-SourceContains $fridgeScrollAdapterSource 'MouseScrollableObject\s+scrollableObject' `
@@ -1110,9 +1123,11 @@ if($operationZoneOnly){
     $value|ConvertTo-Json -Depth 6;return
 }
 if($clueRepairOnly){
-    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000328'))
+    $clueRepairRelativeRoot=if($clueRepairTaskId -ceq 'AI-000523'){'.ai-workspace/outputs/NARRATIVE-FOUNDATION-20261113/AI-000523'}else{'.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000328'}
+    $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot $clueRepairRelativeRoot))
     $report=[IO.Path]::GetFullPath($env:EATWHAT_CLUE_REPAIR_REPORT_ROOT)
     if(-not $report.StartsWith($taskRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+        if($clueRepairTaskId -ceq 'AI-000523'){throw 'Current AI523 clue repair report root required.'}
         throw 'Current AI328 clue repair report root required.'
     }
     [void][IO.Directory]::CreateDirectory($report)
@@ -1123,7 +1138,7 @@ if($clueRepairOnly){
     $trayResult=[ShortCycleTrayTests]::Run()
     $phase2Result=[ShortCyclePhase2Tests]::Run($repoRoot)
     $recipeBookResult=[ShortCycleRecipeBookTests]::Run($repoRoot)
-    $value=@{taskId='AI-000328';success=$true;clue=$clueResult;visibility=$visibilityResult;
+    $value=@{taskId=$clueRepairTaskId;success=$true;clue=$clueResult;visibility=$visibilityResult;
         core=$coreResult;tray=$trayResult;phase2=$phase2Result;dt1a=$recipeBookResult;
         compiledSourceCount=$sourcePaths.Count;nativeInvocations=0;
         boundary='Actual current CSV, RendererHidden Set and Binder/Inventory composition with Unity stubs; existing Clue/Core/Tray/P2/D-T regression. Native Editor and scene execution remain ENGINE.'}

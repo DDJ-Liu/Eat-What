@@ -150,8 +150,8 @@ try {
     $worksheetXml = Read-ZipText -ZipPath $workbook -EntryPattern 'xl/worksheets/sheet*.xml'
     $commentXml = Read-ZipText -ZipPath $workbook -EntryPattern 'xl/comments*.xml'
     $stylesXml = Read-ZipText -ZipPath $workbook -EntryPattern 'xl/styles.xml'
-    Assert-True (([regex]::Matches($workbookXml, '<(?:[A-Za-z0-9]+:)?sheet ')).Count -eq 14) 'Workbook must contain exactly 14 sheets.'
-    Assert-True (([regex]::Matches($worksheetXml, 'ySplit="1"')).Count -eq 14) 'Every sheet must freeze its first row.'
+    Assert-True (([regex]::Matches($workbookXml, '<(?:[A-Za-z0-9]+:)?sheet ')).Count -eq 22) 'Workbook must contain exactly 22 sheets.'
+    Assert-True (([regex]::Matches($worksheetXml, 'ySplit="1"')).Count -eq 22) 'Every sheet must freeze its first row.'
     Assert-True ($worksheetXml.Contains('dataValidations')) 'Workbook must contain reference or enum data validation.'
     Assert-True ($worksheetXml.Contains('conditionalFormatting')) 'Workbook must contain invalid-reference conditional formatting.'
     Assert-True ($commentXml.Contains('多值分隔符：')) 'Workbook must document each schema list separator.'
@@ -334,6 +334,82 @@ try {
     $realSource=Join-Path $realFormatRoot 'source.xlsx'
     $realCandidate=Join-Path $realFormatRoot 'candidate.xlsx'
     Copy-Item (Join-Path $authoringRoot 'DataTables_Authoring.xlsx') $realSource
+    # AI540: deterministic TEMP-only style damage; old assertions below are unchanged.
+    $fixtureOriginal=Get-AuthoringWorkbookContentSnapshot $realSource
+    $fixtureCanonical=Join-Path $realFormatRoot 'canonical-baseline.xlsx'
+    & (Join-Path $authoringRoot 'Format-AuthoringWorkbook.ps1') -InputWorkbook $realSource -CandidateWorkbook $fixtureCanonical -ExpectedInputSha256 $fixtureOriginal.sourceSha256 | Out-Null
+    $fixtureRootPath=[IO.Path]::GetFullPath($tempRoot).TrimEnd([IO.Path]::DirectorySeparatorChar)+[IO.Path]::DirectorySeparatorChar
+    if(-not [IO.Path]::GetFullPath($realSource).StartsWith($fixtureRootPath,[StringComparison]::OrdinalIgnoreCase)){throw '[AUTHORING_FIXTURE_SCOPE] Style fixture must remain in its TEMP root.'}
+    [IO.File]::Copy($fixtureCanonical,$realSource,$true)
+    $fixtureBaseline=Get-AuthoringWorkbookContentSnapshot $realSource
+    if(-not (Compare-AuthoringWorkbookContent $fixtureOriginal $fixtureBaseline).isEqual -or -not (Compare-AuthoringWorkbookStructure $fixtureOriginal $fixtureBaseline).isEqual){throw '[AUTHORING_FIXTURE_CONTENT] Baseline preparation changed values/types/formulas/structure.'}
+    # AI540 resume: prepare the one declared invalid TEMP input before freezing the style baseline.
+    $fixtureConfigured=$fixtureBaseline;$fixtureInvalidId='prd_cabbage_washed'
+    $fixtureItems=@($fixtureConfigured.sheets|Where-Object name -CEQ 'Items')[0]
+    $fixtureItemIds=@($fixtureItems.cells|Where-Object column -EQ 'A'|ForEach-Object value)
+    if($fixtureItemIds -contains $fixtureInvalidId){throw '[AUTHORING_FIXTURE_INPUT_CONFLICT] Declared invalid ID exists in TEMP Items; no Items entry may be removed.'}
+    $fixtureInputZip=[IO.Compression.ZipFile]::Open($realSource,[IO.Compression.ZipArchiveMode]::Update)
+    try{
+        [xml]$fixtureInputBook=Read-AuthoringZipEntryText $fixtureInputZip 'xl/workbook.xml'
+        [xml]$fixtureInputRels=Read-AuthoringZipEntryText $fixtureInputZip 'xl/_rels/workbook.xml.rels'
+        $fixtureSteps=@($fixtureInputBook.SelectNodes('//*[local-name()="sheets"]/*[local-name()="sheet"]')|Where-Object{$_.GetAttribute('name') -ceq 'RecipeSteps'})[0]
+        $fixtureStepsId=$fixtureSteps.GetAttribute('id','http://schemas.openxmlformats.org/officeDocument/2006/relationships')
+        $fixtureStepsRel=@($fixtureInputRels.DocumentElement.ChildNodes|Where-Object{$_.GetAttribute('Id') -ceq $fixtureStepsId})[0]
+        $fixtureStepsPart=[Uri]::new([Uri]'http://fixture/xl/workbook.xml',$fixtureStepsRel.GetAttribute('Target')).AbsolutePath.TrimStart('/')
+        [xml]$fixtureStepsXml=Read-AuthoringZipEntryText $fixtureInputZip $fixtureStepsPart
+        $fixtureG10=$fixtureStepsXml.SelectSingleNode('//*[local-name()="sheetData"]/*[local-name()="row"]/*[local-name()="c" and @r="G10"]')
+        if($null -eq $fixtureG10 -or $fixtureG10.GetAttribute('t') -cne 's' -or $null -ne $fixtureG10.SelectSingleNode('./*[local-name()="f"]')){throw '[AUTHORING_FIXTURE_INPUT_CELL] Expected the existing shared-string G10 without a formula.'}
+        [xml]$fixtureStrings=Read-AuthoringZipEntryText $fixtureInputZip 'xl/sharedStrings.xml'
+        $fixtureStringIndex=@($fixtureStrings.SelectNodes('/*[local-name()="sst"]/*[local-name()="si"]')).Count
+        $fixtureString=$fixtureStrings.CreateElement('si',$fixtureStrings.DocumentElement.NamespaceURI);$fixtureText=$fixtureStrings.CreateElement('t',$fixtureStrings.DocumentElement.NamespaceURI);$fixtureText.InnerText=$fixtureInvalidId;[void]$fixtureString.AppendChild($fixtureText);[void]$fixtureStrings.DocumentElement.AppendChild($fixtureString)
+        if($fixtureStrings.DocumentElement.HasAttribute('uniqueCount')){$fixtureStrings.DocumentElement.SetAttribute('uniqueCount',[string]($fixtureStringIndex+1))}
+        $fixtureG10.SelectSingleNode('./*[local-name()="v"]').InnerText=[string]$fixtureStringIndex
+        Replace-ZipXmlEntry -Archive $fixtureInputZip -Name 'xl/sharedStrings.xml' -Document $fixtureStrings
+        Replace-ZipXmlEntry -Archive $fixtureInputZip -Name $fixtureStepsPart -Document $fixtureStepsXml
+    }finally{$fixtureInputZip.Dispose()}
+    $fixtureBaseline=Get-AuthoringWorkbookContentSnapshot $realSource
+    $fixtureInputDiff=Compare-AuthoringWorkbookContent $fixtureConfigured $fixtureBaseline;$fixtureInputStructure=Compare-AuthoringWorkbookStructure $fixtureConfigured $fixtureBaseline
+    $fixtureInputChange=@($fixtureInputDiff.differences)
+    $fixtureItemsAfter=@($fixtureBaseline.sheets|Where-Object name -CEQ 'Items')[0]
+    if($fixtureInputDiff.differenceCount -ne 1 -or $fixtureInputChange[0].kind -cne 'CELL_CHANGED' -or $fixtureInputChange[0].sheet -cne 'RecipeSteps' -or $fixtureInputChange[0].cell -cne 'G10' -or $fixtureInputChange[0].after.value -cne $fixtureInvalidId -or $fixtureInputChange[0].before.rawType -cne $fixtureInputChange[0].after.rawType -or $fixtureInputChange[0].before.formula -cne $fixtureInputChange[0].after.formula -or -not $fixtureInputStructure.isEqual -or @($fixtureItemsAfter.cells|Where-Object{$_.column -eq 'A' -and $_.value -eq $fixtureInvalidId}).Count -ne 0){throw '[AUTHORING_FIXTURE_INPUT_DIFF] Only the declared TEMP G10 value may change; Items, types, formulas and structure must remain.'}
+    [pscustomobject]@{action='AI540_INVALID_REFERENCE_FIXTURE';source=$realSource;sheet='RecipeSteps';cell='G10';beforeValue=$fixtureInputChange[0].before.value;afterValue=$fixtureInputChange[0].after.value;itemsContainInvalidIdBefore=$false;itemsContainInvalidIdAfter=$false;contentDifferenceCount=$fixtureInputDiff.differenceCount;differences=$fixtureInputDiff.differences;structureDifferenceCount=$fixtureInputStructure.differenceCount;configuredContentSha256=$fixtureConfigured.contentSha256;frozenStyleBaselineContentSha256=$fixtureBaseline.contentSha256;frozenStyleBaselineSha256=$fixtureBaseline.sourceSha256}|ConvertTo-Json -Depth 10 -Compress
+    $fixtureSchemas=@{};foreach($fixtureSchemaFile in Get-ChildItem (Join-Path $sourceRoot 'Schemas') -Recurse -File -Filter '*.schema.json'){$fixtureSchema=Get-Content $fixtureSchemaFile.FullName -Raw|ConvertFrom-Json;$fixtureSchemas[[string]$fixtureSchema.tableName]=$fixtureSchema}
+    $fixtureZip=[IO.Compression.ZipFile]::Open($realSource,[IO.Compression.ZipArchiveMode]::Update)
+    $fixtureCells=[Collections.Generic.List[Xml.XmlElement]]::new();$fixtureDialogues=$null;$fixtureDialoguesPart=$null
+    try{
+        [xml]$fixtureBook=Read-AuthoringZipEntryText $fixtureZip 'xl/workbook.xml'
+        [xml]$fixtureRels=Read-AuthoringZipEntryText $fixtureZip 'xl/_rels/workbook.xml.rels'
+        foreach($fixtureSheet in $fixtureBook.SelectNodes('//*[local-name()="sheets"]/*[local-name()="sheet"]')){
+            $fixtureName=$fixtureSheet.GetAttribute('name');if(-not $fixtureSchemas.ContainsKey($fixtureName)){continue}
+            $fixtureRelId=$fixtureSheet.GetAttribute('id','http://schemas.openxmlformats.org/officeDocument/2006/relationships')
+            $fixtureRel=@($fixtureRels.DocumentElement.ChildNodes|Where-Object{$_.GetAttribute('Id') -ceq $fixtureRelId})[0]
+            $fixturePart=[Uri]::new([Uri]'http://fixture/xl/workbook.xml',$fixtureRel.GetAttribute('Target')).AbsolutePath.TrimStart('/')
+            [xml]$fixtureSheetXml=Read-AuthoringZipEntryText $fixtureZip $fixturePart
+            foreach($fixtureCell in $fixtureSheetXml.SelectNodes('//*[local-name()="sheetData"]/*[local-name()="row"]/*[local-name()="c"]')){
+                if($fixtureCell.GetAttribute('r') -notmatch '^([A-Z]+)[0-9]+$'){continue}
+                $fixtureColumn=0;foreach($fixtureLetter in $Matches[1].ToCharArray()){$fixtureColumn=$fixtureColumn*26+([int][char]$fixtureLetter-64)}
+                if($fixtureColumn -le $fixtureSchemas[$fixtureName].columns.Count){[void]$fixtureCells.Add($fixtureCell)}
+            }
+            if($fixtureName -ceq 'Dialogues'){$fixtureDialogues=$fixtureSheetXml;$fixtureDialoguesPart=$fixturePart}
+        }
+        $fixtureZeroBefore=@($fixtureCells|Where-Object{-not $_.HasAttribute('s') -or $_.GetAttribute('s') -in @('','0')}).Count
+        if($fixtureZeroBefore -ne 0 -or $null -eq $fixtureDialogues){throw '[AUTHORING_FIXTURE_BASELINE] Expected a clean schema-cell baseline and the Dialogues sheet.'}
+        $fixtureAddresses=@('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.ToCharArray()|ForEach-Object{[string]$_+'1'})
+        for($fixtureIndex=0;$fixtureIndex -lt $fixtureAddresses.Count;$fixtureIndex++){
+            $fixtureCell=$fixtureDialogues.SelectSingleNode('//*[local-name()="c" and @r="'+$fixtureAddresses[$fixtureIndex]+'"]')
+            if($null -eq $fixtureCell){throw '[AUTHORING_FIXTURE_CELL] Declared header cell is missing.'}
+            if($fixtureIndex -lt 13){$fixtureCell.RemoveAttribute('s')}else{$fixtureCell.SetAttribute('s','0')}
+        }
+        $fixtureZeroAfter=@($fixtureCells|Where-Object{-not $_.HasAttribute('s') -or $_.GetAttribute('s') -in @('','0')}).Count
+        if($fixtureAddresses.Count -ne 26 -or $fixtureZeroAfter -ne 26){throw '[AUTHORING_FIXTURE_DAMAGE] Expected exactly the independently declared 26 damaged headers.'}
+        $fixtureZip.GetEntry($fixtureDialoguesPart).Delete();$fixtureEntry=$fixtureZip.CreateEntry($fixtureDialoguesPart)
+        $fixtureWriter=[IO.StreamWriter]::new($fixtureEntry.Open(),[Text.UTF8Encoding]::new($false))
+        try{$fixtureDialogues.Save($fixtureWriter)}finally{$fixtureWriter.Dispose()}
+    }finally{$fixtureZip.Dispose()}
+    $fixtureDamaged=Get-AuthoringWorkbookContentSnapshot $realSource
+    $fixtureContent=Compare-AuthoringWorkbookContent $fixtureBaseline $fixtureDamaged;$fixtureStructure=Compare-AuthoringWorkbookStructure $fixtureBaseline $fixtureDamaged
+    if(-not $fixtureContent.isEqual -or -not $fixtureStructure.isEqual){throw '[AUTHORING_FIXTURE_CONTENT] Style-only damage changed values/types/formulas/structure.'}
+    [pscustomobject]@{action='AI540_STYLE_FIXTURE';sheet='Dialogues';addresses=$fixtureAddresses;baselineRepairable=$fixtureZeroBefore;damagedRepairable=$fixtureZeroAfter;missingStyle=13;styleZero=13;contentDifferenceCount=$fixtureContent.differenceCount;structureDifferenceCount=$fixtureStructure.differenceCount;originalContentSha256=$fixtureBaseline.contentSha256;damagedContentSha256=$fixtureDamaged.contentSha256;productionCopyContentSha256=$fixtureOriginal.contentSha256;invalidReferenceInjectedBeforeBaseline=$true;fixtureSha256=$fixtureDamaged.sourceSha256}|ConvertTo-Json -Depth 6 -Compress
     $realHash=Get-AuthoringFileSha256 $realSource
     $formatReceipt=& (Join-Path $authoringRoot 'Format-AuthoringWorkbook.ps1') -InputWorkbook $realSource -CandidateWorkbook $realCandidate -ExpectedInputSha256 $realHash
     Assert-True ($formatReceipt.repairedStyleZero -eq 26) 'AI184 style0 loss count was not repaired.'
@@ -341,11 +417,13 @@ try {
     $realAfter=Get-AuthoringWorkbookContentSnapshot $realCandidate
     Assert-True ((Compare-AuthoringWorkbookContent $realBefore $realAfter).isEqual) 'Format candidate changed values/types/formulas.'
     Assert-True ((Compare-AuthoringWorkbookStructure $realBefore $realAfter).isEqual) 'Format candidate changed stored blank structure.'
+    $fixtureFormatContent=Compare-AuthoringWorkbookContent $realBefore $realAfter;$fixtureFormatStructure=Compare-AuthoringWorkbookStructure $realBefore $realAfter
+    [pscustomobject]@{action='AI540_STYLE_FORMAT_RESULT';repairedStyleZero=$formatReceipt.repairedStyleZero;contentDifferenceCount=$fixtureFormatContent.differenceCount;structureDifferenceCount=$fixtureFormatStructure.differenceCount;beforeContentSha256=$realBefore.contentSha256;afterContentSha256=$realAfter.contentSha256}|ConvertTo-Json -Compress
     $processingXml=Read-ZipText -ZipPath $realCandidate -EntryPattern 'xl/worksheets/sheet7.xml'
     Assert-True ($processingXml.Contains('sqref="B2:B5000"') -and $processingXml.Contains('B2)=0)')) 'ProcessingRecords output_item formula did not use B2.'
     $stepsXml=Read-ZipText -ZipPath $realCandidate -EntryPattern 'xl/worksheets/sheet10.xml'
     Assert-True ($stepsXml.Contains('TEXTSPLIT') -and $stepsXml.Contains('G2:G5000') -and -not $stepsXml.Contains('_xludf.TEXTSPLIT')) 'List reference rule is missing or still uses the stale per-cell formula.'
-    for($sheetIndex=1;$sheetIndex -le 14;$sheetIndex++){
+    for($sheetIndex=1;$sheetIndex -le 22;$sheetIndex++){
         $candidateSheet=Read-ZipText -ZipPath $realCandidate -EntryPattern "xl/worksheets/sheet$sheetIndex.xml"
         Assert-True (-not $candidateSheet.Contains('_xludf.TEXTSPLIT')) "Old skip-unchanged list rule remained in sheet$sheetIndex."
     }
@@ -395,7 +473,7 @@ try {
     $extraBefore=Get-AuthoringWorkbookContentSnapshot $extraSource
     $extraReceipt=& (Join-Path $authoringRoot 'Format-AuthoringWorkbook.ps1') -InputWorkbook $extraSource -CandidateWorkbook $extraCandidate -ExpectedInputSha256 (Get-AuthoringFileSha256 $extraSource)
     $extraAfter=Get-AuthoringWorkbookContentSnapshot $extraCandidate
-    Assert-True ($extraReceipt.sheetCount -eq 15 -and $extraAfter.sheets[14].state -eq 'hidden') 'Unknown hidden sheet was lost.'
+    Assert-True ($extraReceipt.sheetCount -eq 23 -and $extraAfter.sheets[22].state -eq 'hidden') 'Unknown hidden sheet was lost.'
     Assert-True ((Compare-AuthoringWorkbookContent $extraBefore $extraAfter).isEqual) 'Hidden text/formula contents changed.'
     Assert-True ((Compare-AuthoringWorkbookStructure $extraBefore $extraAfter).isEqual) 'Hidden sheet structure changed.'
 

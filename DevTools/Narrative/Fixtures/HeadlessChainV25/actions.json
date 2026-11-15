@@ -1,0 +1,145 @@
+{
+  "source": "Independent scheduled fake-capability plan; never derived from actual trace.",
+  "handlerDurationSeconds": 0.5,
+  "instantCommands": [
+    "set_flag",
+    "set_scene_state"
+  ],
+  "actions": [
+    {
+      "time": 0,
+      "action": "start",
+      "value": "dlg_normal"
+    },
+    {
+      "time": 1,
+      "action": "enter",
+      "value": ""
+    },
+    {
+      "time": 1.125,
+      "action": "click",
+      "value": "CompleteLine"
+    },
+    {
+      "time": 1.25,
+      "action": "text",
+      "value": ""
+    },
+    {
+      "time": 1.5,
+      "action": "tick",
+      "value": ""
+    },
+    {
+      "time": 2,
+      "action": "click",
+      "value": "SkipToNext"
+    },
+    {
+      "time": 2.25,
+      "action": "text",
+      "value": ""
+    },
+    {
+      "time": 3,
+      "action": "click",
+      "value": "SkipToNext"
+    },
+    {
+      "time": 3.25,
+      "action": "text",
+      "value": ""
+    },
+    {
+      "time": 4,
+      "action": "tick",
+      "value": ""
+    },
+    {
+      "time": 4.25,
+      "action": "click",
+      "value": "SkipToNext"
+    },
+    {
+      "time": 5,
+      "action": "exit",
+      "value": ""
+    },
+    {
+      "time": 6,
+      "action": "start",
+      "value": "dlg_story"
+    },
+    {
+      "time": 6.25,
+      "action": "bars",
+      "value": ""
+    },
+    {
+      "time": 6.75,
+      "action": "camera",
+      "value": ""
+    },
+    {
+      "time": 7.25,
+      "action": "enter",
+      "value": ""
+    },
+    {
+      "time": 7.5,
+      "action": "text",
+      "value": ""
+    },
+    {
+      "time": 7.75,
+      "action": "tick",
+      "value": ""
+    },
+    {
+      "time": 8.25,
+      "action": "tick",
+      "value": ""
+    },
+    {
+      "time": 8.75,
+      "action": "tick",
+      "value": ""
+    },
+    {
+      "time": 9.25,
+      "action": "click",
+      "value": "SkipToNext"
+    },
+    {
+      "time": 9.75,
+      "action": "exit",
+      "value": ""
+    },
+    {
+      "time": 10.25,
+      "action": "enter",
+      "value": ""
+    },
+    {
+      "time": 10.5,
+      "action": "text",
+      "value": ""
+    },
+    {
+      "time": 11.25,
+      "action": "click",
+      "value": "SkipToNext"
+    },
+    {
+      "time": 11.75,
+      "action": "exit",
+      "value": ""
+    },
+    {
+      "time": 12.25,
+      "action": "finish",
+      "value": ""
+    }
+  ]
+}

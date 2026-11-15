@@ -1,0 +1,2 @@
+scene_id,name_key,scene_type,is_small_room,scene_asset,default_state,comment
+scn_plaza,loc_scene_plaza,street,false,Plaza,morning,

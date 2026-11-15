@@ -1,0 +1,5 @@
+scene_id,state_id,kind,target,anchor_id,facing,active,dialogue_id,ambient_pool,marker,comment
+scn_plaza,morning,actor,chr_a,,,true,dlg_normal,amb_plaza,,
+scn_plaza,morning,actor,chr_b,,,true,dlg_normal,amb_plaza,,
+scn_plaza,evening,actor,chr_a,,,true,dlg_after,amb_plaza,,
+scn_plaza,evening,actor,chr_b,,,true,dlg_after,amb_plaza,,

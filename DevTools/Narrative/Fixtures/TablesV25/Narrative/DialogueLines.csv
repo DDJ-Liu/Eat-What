@@ -1,0 +1,5 @@
+line_id,dialogue_id,next_line,speaker,name_override_key,text_key,commands,expression,emotion,emphasis,scene_emote,comment
+ln_normal,dlg_normal,ln_story,chr_narrator,loc_name,loc_text,"wait(0.1);set_flag(chapter.ready,true)",smile,happy,strong,spark,原始命令不执行
+ln_story,dlg_story,,chr_narrator,,loc_text,,,,,,
+ln_ambient,dlg_ambient,,,,loc_text,,,,,,
+ln_ambient2,dlg_ambient2,,,,loc_text,,,,,,

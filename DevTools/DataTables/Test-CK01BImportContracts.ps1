@@ -1,5 +1,5 @@
 ﻿[CmdletBinding()]
-param([switch]$CompileOnly)
+param([switch]$CompileOnly, [string[]]$AdditionalCompileSources = @())
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -37,12 +37,40 @@ try {
         (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/CK01ProcessingRecordData.cs'),
         (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/CK01RecipeVariantData.cs'),
         (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/KitchenAreaData.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/ICatalogSource.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/ScriptableObjectSource.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/EncryptedBlobSource.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/CatalogBlobSerializer.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/RecipeView.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Cooking/ShortCycle/Core/Phase2/Phase2DataViews.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Cooking/ShortCycle/Core/Phase2/RecipeConstraints.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Persistence/SaveEnvelope.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/CatalogBlobCipher.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/IAuthenticatedCipher.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/IKeyProvider.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/AesCbcHmacCipher.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/DerivedKeyProvider.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/KeyDerivation.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Tools/Security/EncryptedBlob.cs'),
         $localizationContracts,
         $localizationTable,
         (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/CK01GeneratedDataCatalog.cs'),
         $importService
     )
-    if (-not ('EatWhat.DataTables.DataTableImportService' -as [type])) { Add-Type -Path $compileSources }
+    # New schema row inputs; existing assertions below are intentionally unchanged.
+    $compileSources += @('CK01CharacterData','CK01DialogueData','CK01DialogueLineData','CK01CGData','CK01SceneData','CK01SceneStateData','CK01SceneStatePlacementData','CK01AmbientPoolData','CK01OptionalValues') | ForEach-Object { Join-Path $repositoryRoot ("Assets/Scripts/DataBase/CookingData/" + $_ + ".cs") }
+    $compileSources += @($AdditionalCompileSources)
+    # Shared narrative authoring rules now depend on the existing pure Core assembly sources.
+    $compileSources += @((Join-Path $repositoryRoot 'Assets/Editor/DataTables/NarrativeTableValidation.cs')) + @(Get-ChildItem (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Core') -File -Filter '*.cs' | ForEach-Object FullName)
+    $compileSources = @($compileSources | Select-Object -Unique)
+    if (-not ('EatWhat.DataTables.DataTableImportService' -as [type])) {
+        $jsonRoots = @(Get-ChildItem (Join-Path $repositoryRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
+        if ($jsonRoots.Count -ne 1) { throw 'Expected installed Newtonsoft package.' }
+        $jsonAssembly = Join-Path $jsonRoots[0].FullName 'Runtime/Newtonsoft.Json.dll'
+        Add-Type -Path $jsonAssembly
+        $compileReferences = @(Get-ChildItem (Join-Path $PSHOME 'ref') -File -Filter '*.dll' | ForEach-Object FullName) + @($jsonAssembly)
+        Add-Type -Path $compileSources -ReferencedAssemblies $compileReferences
+    }
     if ($CompileOnly) {
         [pscustomobject]@{
             success=$true; mode='COMPILE_ONLY'; compiledSourceCount=$compileSources.Count
@@ -54,8 +82,8 @@ try {
     }
 
     $registrations = [EatWhat.DataTables.CK01ImportRegistry]::GetRegistrations()
-    Assert-True ($registrations.Count -eq 14) 'CK01 import registry must contain all fourteen tables.'
-    Assert-True ((@($registrations.TableName | Select-Object -Unique)).Count -eq 14) 'CK01 table registrations must be unique.'
+    Assert-True ($registrations.Count -eq 22) 'CK01 import registry must contain all twenty-two tables.'
+    Assert-True ((@($registrations.TableName | Select-Object -Unique)).Count -eq 22) 'CK01 table registrations must be unique.'
     Assert-True ([EatWhat.DataTables.CK01ImportRegistry]::DataCatalogAssetPath -eq 'Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset') `
         'CK01 must expose one stable generated-data catalog asset contract.'
     foreach ($registration in $registrations) {
@@ -68,7 +96,8 @@ try {
             ForEach-Object { Get-Content -Raw -LiteralPath $_.FullName }
     )) +
         (Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/KitchenAreaData.cs')) +
-        (Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/Localization/LocTableAsset.cs'))
+        (Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'Assets/Scripts/DataBase/Localization/LocTableAsset.cs')) +
+        (Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot 'Assets/Scripts/Cooking/ShortCycle/Core/Phase2/RecipeConstraints.cs'))
     foreach ($registration in $registrations) {
         $schema = Get-Content -Raw -LiteralPath (Join-Path (Split-Path $schemasRoot -Parent) $registration.SchemaPath) | ConvertFrom-Json
         Assert-True ($targetSource.Contains("class $($schema.targetType)")) "Target type is not declared for $($registration.TableName): $($schema.targetType)"
@@ -159,7 +188,9 @@ try {
     Assert-True (-not $hasUtf8Bom) 'Authoritative Localization.csv must be UTF-8 without BOM.'
     $strictUtf8 = [System.Text.UTF8Encoding]::new($false, $true)
     $localizationText = $strictUtf8.GetString($localizationBytes)
-    Assert-True (-not [regex]::IsMatch($localizationText, "(?<!`r)`n|`r(?!`n)")) 'Localization.csv must use CRLF line endings only.'
+    # Quoted field newlines are text; only record separators must be CRLF.
+    $localizationRecordText = [regex]::Replace($localizationText, '"(?:[^"]|"")*"', '""')
+    Assert-True (-not [regex]::IsMatch($localizationRecordText, "(?<!`r)`n|`r(?!`n)")) 'Localization.csv record separators outside quoted fields must use CRLF.'
     $localizationParse = [EatWhat.DataTables.DataTableCsvParser]::Parse($localizationText)
     Assert-True ($localizationParse.Errors.Count -eq 0) ('Localization.csv parse failed: ' + [string]::Join('; ', $localizationParse.Errors))
     Assert-True ($localizationParse.Table.Headers[0] -ceq 'loc_key') 'Localization.csv first header cell must be exactly loc_key.'

@@ -20,6 +20,7 @@ namespace EatWhat.DataTables
         public string outputDirectory;
         public string assetNameField;
         public string primaryKeyField;
+        public List<string> primaryKeyFields = new List<string>();
         public DataTableContractExemptions contractExemptions = new DataTableContractExemptions();
         public List<DataTableColumnSchema> columns = new List<DataTableColumnSchema>();
         public List<DataTableReferenceSchema> references = new List<DataTableReferenceSchema>();
@@ -40,6 +41,18 @@ namespace EatWhat.DataTables
         public string csvColumn;
         public string type;
         public bool required;
+        public string description;
+        public string requiredCondition;
+        public string requiredReferenceSchema;
+        public string requiredReferenceSourceField;
+        public string requiredReferenceTargetKey;
+        public string requiredReferenceValueField;
+        public bool preserveEmpty;
+        public bool nameOnly;
+        public string referenceRole;
+        public bool finite;
+        public string maximum;
+        public bool exclusiveMinimum;
         public string defaultValue;
         public string enumType;
         public string separator;
@@ -61,6 +74,10 @@ namespace EatWhat.DataTables
         public string field;
         public string targetSchema;
         public string targetField;
+        public string scopeField;
+        public string targetScopeField;
+        public string targetValueField;
+        public string targetValue;
         public bool isList;
         public string separator;
     }
@@ -110,8 +127,21 @@ namespace EatWhat.DataTables
         public bool IsValid { get { return Errors.Count == 0; } }
     }
 
+    public sealed class DataTableReferenceSource
+    {
+        public DataTableSchema Schema;
+        public DataTableCsvTable Table;
+        public DataTableReferenceSource(DataTableSchema schema, DataTableCsvTable table) { Schema = schema; Table = table; }
+    }
+
     public sealed class DataTableValidationContext
     {
+        // Explicit authoring-domain policy. Unconfigured generic callers retain strict validation.
+        public bool NarrativeV25;
+        public Action<DataTableSchema, DataTableCsvTable, DataTableValidationContext, DataTableValidationResult> NarrativeValidation;
+        public readonly Dictionary<string, DataTableReferenceSource> ReferenceTables =
+            new Dictionary<string, DataTableReferenceSource>(StringComparer.Ordinal);
+
         public readonly Dictionary<string, HashSet<string>> EnumValues =
             new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
         public readonly Dictionary<string, HashSet<string>> ReferenceValues =
@@ -123,6 +153,7 @@ namespace EatWhat.DataTables
         public DataTableCsvTable Table;
         public readonly List<string> Errors = new List<string>();
         public readonly List<string> Warnings = new List<string>();
+        public readonly List<string> Infos = new List<string>();
         public bool IsValid { get { return Errors.Count == 0; } }
     }
 
@@ -373,8 +404,22 @@ namespace EatWhat.DataTables
             foreach (var row in table.Rows)
             {
                 ValidateRow(schema, row, table, context, result);
-                ValidateUniqueValue(schema, row, table, schema.primaryKeyField, "primary key", primaryKeys, false, result);
-                ValidateUniqueValue(schema, row, table, schema.assetNameField, "asset name", assetNames, true, result);
+                if (schema.primaryKeyFields != null && schema.primaryKeyFields.Count > 0)
+                {
+                    var identity = GetRowIdentity(schema, row, table, false);
+                    if (string.IsNullOrEmpty(identity)) result.Errors.Add(RowPrefix(row) + "composite primary key has an empty component.");
+                    else
+                    {
+                        if (!primaryKeys.Add(identity)) result.Errors.Add(RowPrefix(row) + "duplicates composite primary key '" + identity + "'.");
+                        if (!assetNames.Add(identity)) result.Errors.Add(RowPrefix(row) + "duplicates composite asset name '" + identity + "'.");
+                        if (!DataTablePathRules.IsSafeAssetName(identity)) result.Errors.Add(RowPrefix(row) + "composite identity is not a safe asset name.");
+                    }
+                }
+                else
+                {
+                    ValidateUniqueValue(schema, row, table, schema.primaryKeyField, "primary key", primaryKeys, false, result);
+                    ValidateUniqueValue(schema, row, table, schema.assetNameField, "asset name", assetNames, true, result);
+                }
             }
 
             foreach (var column in schema.columns ?? new List<DataTableColumnSchema>())
@@ -394,6 +439,8 @@ namespace EatWhat.DataTables
             }
 
             ValidateReferences(schema, table, context, result);
+            if (context != null && context.NarrativeV25 && context.NarrativeValidation != null)
+                context.NarrativeValidation(schema, table, context, result);
             return result;
         }
 
@@ -407,6 +454,21 @@ namespace EatWhat.DataTables
             var index = table.GetHeaderIndex(column.csvColumn);
             var rawValue = index >= 0 && index < row.Values.Count ? row.Values[index] : string.Empty;
             return string.IsNullOrEmpty(rawValue) ? (column.defaultValue ?? string.Empty) : rawValue;
+        }
+
+        // Length prefixes preserve distinct composite IDs even when components contain underscores.
+        public static string GetRowIdentity(DataTableSchema schema, DataTableCsvRow row, DataTableCsvTable table, bool assetName)
+        {
+            if (schema.primaryKeyFields == null || schema.primaryKeyFields.Count == 0)
+                return GetEffectiveValue(FindColumn(schema, assetName ? schema.assetNameField : schema.primaryKeyField), row, table);
+            var parts = new List<string>();
+            foreach (var name in schema.primaryKeyFields)
+            {
+                var value = GetEffectiveValue(FindColumn(schema, name), row, table);
+                if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+                parts.Add(value.Length.ToString(CultureInfo.InvariantCulture) + "_" + value);
+            }
+            return string.Join("__", parts.ToArray());
         }
 
         public static DataTableColumnSchema FindColumn(DataTableSchema schema, string name)
@@ -499,6 +561,9 @@ namespace EatWhat.DataTables
                 result.Errors.Add("Schema assetNameField '" + schema.assetNameField + "' is not a column.");
             }
 
+            foreach (var keyField in schema.primaryKeyFields ?? new List<string>())
+                if (FindColumn(schema, keyField) == null) result.Errors.Add("Composite primary-key field is not a column: " + keyField);
+
             if (FindColumn(schema, schema.primaryKeyField) == null)
             {
                 result.Errors.Add("Schema primaryKeyField '" + schema.primaryKeyField + "' is not a column.");
@@ -521,6 +586,22 @@ namespace EatWhat.DataTables
 
                 var value = GetEffectiveValue(column, row, table);
                 var conditionRequiresValue = IsConditionMatched(column, row, table);
+                if (!string.IsNullOrEmpty(column.requiredReferenceSchema) && context != null)
+                {
+                    DataTableReferenceSource referenceSource;
+                    if (context.ReferenceTables.TryGetValue(column.requiredReferenceSchema.Replace('\\', '/'), out referenceSource))
+                    {
+                        var sourceKey = GetEffectiveValue(FindColumn(schema, column.requiredReferenceSourceField), row, table);
+                        foreach (var referenceRow in referenceSource.Table.Rows)
+                            if (string.Equals(GetEffectiveValue(FindColumn(referenceSource.Schema, column.requiredReferenceTargetKey), referenceRow, referenceSource.Table), sourceKey, StringComparison.Ordinal))
+                            {
+                                var condition = GetEffectiveValue(FindColumn(referenceSource.Schema, column.requiredReferenceValueField), referenceRow, referenceSource.Table);
+                                if (column.requiredWhenValues != null && column.requiredWhenValues.Contains(condition)) conditionRequiresValue = true;
+                            }
+                    }
+                }
+                if (NarrativePolicy(schema, context) && schema.tableName == "DialogueLines" && column.name == "speaker")
+                    conditionRequiresValue = false; // V-15 owns this conditional requirement and its warning.
                 if ((column.required || conditionRequiresValue) && string.IsNullOrWhiteSpace(value))
                 {
                     result.Errors.Add(RowPrefix(row) + "required field '" + column.name + "' is empty.");
@@ -532,7 +613,8 @@ namespace EatWhat.DataTables
                     continue;
                 }
 
-                ValidateTypedValue(column, value, row, context, result);
+                ValidateTypedValue(column, value, row, context, result,
+                    NarrativePolicy(schema, context) && IsNarrativeRange(schema.tableName, column.name));
                 ValidatePattern(column, value, row, result);
                 ValidateListCardinality(column, value, row, result);
             }
@@ -598,6 +680,9 @@ namespace EatWhat.DataTables
                     continue;
                 }
 
+                if (NarrativePolicy(schema, context) && field.type != "loc_key")
+                    continue; // V-13..24 own new-table references; localization remains a generic error.
+
                 var key = ReferenceKey(reference.targetSchema, reference.targetField);
                 HashSet<string> values;
                 if (context == null || !context.ReferenceValues.TryGetValue(key, out values))
@@ -623,7 +708,21 @@ namespace EatWhat.DataTables
                     foreach (var rawReference in valuesToCheck)
                     {
                         var referenceValue = rawReference.Trim();
-                        if (referenceValue.Length == 0 || values.Contains(referenceValue))
+                        bool contains = values.Contains(referenceValue);
+                        if (!string.IsNullOrEmpty(reference.scopeField) || !string.IsNullOrEmpty(reference.targetValueField))
+                        {
+                            DataTableReferenceSource target;
+                            contains = false;
+                            if (context.ReferenceTables.TryGetValue((reference.targetSchema ?? string.Empty).Replace('\\', '/'), out target))
+                            {
+                                var scope = string.IsNullOrEmpty(reference.scopeField) ? null : GetEffectiveValue(FindColumn(schema, reference.scopeField), row, table);
+                                foreach (var targetRow in target.Table.Rows)
+                                    if ((string.IsNullOrEmpty(reference.scopeField) || string.Equals(GetEffectiveValue(FindColumn(target.Schema, reference.targetScopeField), targetRow, target.Table), scope, StringComparison.Ordinal)) &&
+                                        (string.IsNullOrEmpty(reference.targetValueField) || string.Equals(GetEffectiveValue(FindColumn(target.Schema, reference.targetValueField), targetRow, target.Table), reference.targetValue, StringComparison.Ordinal)) &&
+                                        string.Equals(GetEffectiveValue(FindColumn(target.Schema, reference.targetField), targetRow, target.Table), referenceValue, StringComparison.Ordinal)) { contains = true; break; }
+                            }
+                        }
+                        if (referenceValue.Length == 0 || contains)
                         {
                             continue;
                         }
@@ -639,7 +738,8 @@ namespace EatWhat.DataTables
             string value,
             DataTableCsvRow row,
             DataTableValidationContext context,
-            DataTableValidationResult result)
+            DataTableValidationResult result,
+            bool narrativeRange = false)
         {
             if (string.Equals(column.type, "int", StringComparison.Ordinal))
             {
@@ -648,7 +748,7 @@ namespace EatWhat.DataTables
                 {
                     result.Errors.Add(RowPrefix(row) + "field '" + column.name + "' value '" + value + "' is not an int.");
                 }
-                else if (!string.IsNullOrWhiteSpace(column.minimum))
+                else if (!narrativeRange && !string.IsNullOrWhiteSpace(column.minimum))
                 {
                     int minimum;
                     if (!int.TryParse(column.minimum, NumberStyles.Integer, CultureInfo.InvariantCulture, out minimum))
@@ -671,19 +771,27 @@ namespace EatWhat.DataTables
                 {
                     result.Errors.Add(RowPrefix(row) + "field '" + column.name + "' value '" + value + "' is not a float.");
                 }
-                else if (!string.IsNullOrWhiteSpace(column.minimum))
+                else if (column.finite && (float.IsNaN(parsed) || float.IsInfinity(parsed)))
+                {
+                    result.Errors.Add(RowPrefix(row) + "field '" + column.name + "' must be finite.");
+                }
+                else if (!narrativeRange && !string.IsNullOrWhiteSpace(column.minimum))
                 {
                     float minimum;
                     if (!float.TryParse(column.minimum, NumberStyles.Float, CultureInfo.InvariantCulture, out minimum))
                     {
                         result.Errors.Add("Schema column '" + column.name + "' has invalid float minimum '" + column.minimum + "'.");
                     }
-                    else if (parsed < minimum)
+                    else if (parsed < minimum || (column.exclusiveMinimum && parsed == minimum))
                     {
-                        result.Errors.Add(RowPrefix(row) + "field '" + column.name + "' value '" + value + "' must be >= " + minimum.ToString(CultureInfo.InvariantCulture) + ".");
+                        result.Errors.Add(RowPrefix(row) + "field '" + column.name + "' value '" + value + "' must be " + (column.exclusiveMinimum ? "> " : ">= ") + minimum.ToString(CultureInfo.InvariantCulture) + ".");
                     }
                 }
 
+                float maximum;
+                if (!narrativeRange && !string.IsNullOrWhiteSpace(column.maximum) &&
+                    (!float.TryParse(column.maximum, NumberStyles.Float, CultureInfo.InvariantCulture, out maximum) || parsed > maximum))
+                    result.Errors.Add(RowPrefix(row) + "field '" + column.name + "' exceeds its maximum " + column.maximum + ".");
                 return;
             }
 
@@ -737,6 +845,23 @@ namespace EatWhat.DataTables
             }
         }
 
+        private static bool NarrativePolicy(DataTableSchema schema, DataTableValidationContext context)
+        {
+            if (context == null || !context.NarrativeV25 || context.NarrativeValidation == null) return false;
+            switch (schema.tableName)
+            {
+                case "Characters": case "Dialogues": case "DialogueLines": case "CGs":
+                case "Scenes": case "SceneStates": case "SceneStatePlacements": case "AmbientPools": return true;
+                default: return false;
+            }
+        }
+
+        private static bool IsNarrativeRange(string table, string field)
+        {
+            return table == "Characters" && (field == "portrait_offset_x" || field == "portrait_offset_y" || field == "portrait_scale") ||
+                table == "CGs" && (field == "fade_in" || field == "fade_out" || field == "ken_burns_duration");
+        }
+
         private static void ValidateEnumValue(
             DataTableColumnSchema column,
             string value,
@@ -778,6 +903,7 @@ namespace EatWhat.DataTables
                    string.Equals(value, "ref", StringComparison.Ordinal) ||
                    string.Equals(value, "list<ref>", StringComparison.Ordinal) ||
                    string.Equals(value, "sprite", StringComparison.Ordinal) ||
+                   string.Equals(value, "prefab", StringComparison.Ordinal) ||
                    string.Equals(value, "key", StringComparison.Ordinal) ||
                    string.Equals(value, "int", StringComparison.Ordinal) ||
                    string.Equals(value, "float", StringComparison.Ordinal) ||

@@ -1,0 +1,9 @@
+{
+  "source": "DevTools/DataTables/Authoring/DataTables_Authoring.xlsx",
+  "sourceWorkbookBaselineSha256": "90386736811A01DDF647C78E374DB457DD8E365D8270EB3159EEA30EEE2341B0",
+  "part": "xl/styles.xml",
+  "fixtureSha256": "CBAFE52D6D37EA4B748A3937F310B05968B0C5DBE8893457D95D29910DA1A970",
+  "bytes": 30671,
+  "purpose": "Existing approved body/header styles required by unchanged Format-AuthoringWorkbook STYLE_BASELINE guard; no workbook values copied",
+  "capturedAt": "2026-11-15"
+}

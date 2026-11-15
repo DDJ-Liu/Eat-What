@@ -241,7 +241,7 @@ namespace EatWhat.LongLoop
         {
             float ratio=frame.DynamicZoomEnabled?(float)((double)frame.Size/frame.MaxSize):1;
             return StreetLookFloat.LimitWorld(reset?default:lookWorldState,frame.LookFloat,
-                new Vector2(settings.MaxHorizontalOffset,settings.MaxVerticalOffset),ratio,lookMaxDistance,lookMaxSpeed,dt);
+                new Vector2(settings.MaxHorizontalOffset,settings.MaxVerticalOffset),ratio,lookMaxDistance*ratio,lookMaxSpeed,dt);
         }
         private static bool Positive(double value)=>StreetFollowPipeline.Finite(value)&&value>0&&value<=float.MaxValue;
         private static void SetSize(ref CameraState state,float size)

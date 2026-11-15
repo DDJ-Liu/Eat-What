@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "tableName": "AmbientPools",
+  "csvPath": "Street/AmbientPools.csv",
+  "targetType": "CK01AmbientPoolData",
+  "outputDirectory": "Assets/Generated/DataTables/Street/AmbientPools",
+  "assetNameField": "pool_id",
+  "primaryKeyField": "pool_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "pool_id",
+      "csvColumn": "pool_id",
+      "type": "id",
+      "required": true,
+      "description": "气泡池主键，填写amb_开头的小写ID。",
+      "unique": true,
+      "pattern": "^amb_[a-z0-9_]+$"
+    },
+    {
+      "name": "scope",
+      "csvColumn": "scope",
+      "type": "string",
+      "required": false,
+      "description": "说明性用途范围，供人工理解该池给谁用。"
+    },
+    {
+      "name": "dialogue_ids",
+      "csvColumn": "dialogue_ids",
+      "type": "list<ref>",
+      "required": true,
+      "description": "用分号;分隔的Dialogues ID，至少一条，每条应为ambient；本阶段不执行抽取逻辑。",
+      "separator": ";",
+      "minItems": 1
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [
+    {
+      "field": "dialogue_ids",
+      "targetSchema": "Narrative/Dialogues.schema.json",
+      "targetField": "dialogue_id",
+      "targetValueField": "tier",
+      "targetValue": "ambient",
+      "isList": true,
+      "separator": ";"
+    }
+  ],
+  "rules": []
+}

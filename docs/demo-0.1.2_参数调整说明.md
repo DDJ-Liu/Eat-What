@@ -37,7 +37,7 @@ Linear 匀速；Quadratic 前慢后快；SmoothStep 两端缓、中间快；Ease
 
 ## 视角浮动：距离、速度和右摇杆
 
-最后实际核对：2026-11-13，正式源码、现有Input System引用和离线消费链。配置入口为Project中的 `Assets/Settings/Street/CameraFollowConfig.asset` → **Camera Follow Config**。现有 **Street Follow Driver** 消费这些参数，无需新增组件；街景已保存的 **PlayerRoot_TUNE** 对象上，**Legacy Input Provider** 与正式 **Long Loop Player Controller** 同在一处，现提供键鼠和右摇杆视角。本轮用户整体确认通过；这不增加逐设备机器测试结论。
+最后实际核对：2026-11-13，正式源码、现有Input System引用和离线消费链。配置入口为Project中的 `Assets/Settings/Street/CameraFollowConfig.asset` → **Camera Follow Config**。现有 **Street Follow Driver** 消费这些参数，无需新增组件；街景已保存的 **PlayerRoot_TUNE** 对象上，**Legacy Input Provider** 与正式 **Long Loop Player Controller** 同在一处，现提供键鼠和右摇杆视角。原0.1.2用户整体通过结论保留。2026-11-13 N0-OPT补丁仅离线核对同帧比例限幅，下面的距离含义已同步，新增比例表现仍待用户人工检查；这不增加逐设备或引擎验证结论。
 
 | Inspector字段 | 单位/有效范围 | 源码默认值 | 当前磁盘保存值 | 调整效果及关系 |
 | --- | --- | --- | --- | --- |
@@ -46,13 +46,13 @@ Linear 匀速；Quadratic 前慢后快；SmoothStep 两端缓、中间快；Ease
 | Look Response Curve | 四种既有曲线枚举 | Quadratic | Quadratic | 鼠标入边缘深度或摇杆死区后的向量幅度映射为目标强度，摇杆方向保持；不是时间曲线。 |
 | Look In Time | 秒，有限非负 | 0.35 | 0.35 | 目标绝对幅度增大时的过渡时长；越大越慢，0仍受世界速度上限。 |
 | Look Out Time | 秒，有限非负 | 0.5 | 0.8 | 目标幅度减小或相等（含等幅反向）的过渡时长；越大退出越慢。 |
-| Look Max Distance | 世界单位，有限非负 | 2.5 | 2.5 | 浮动自身二维距离硬上限，斜角共用一个半径。0清除浮动距离，越大允许看得越远。 |
+| Look Max Distance | 最大视野下的世界单位，有限非负 | 2.5 | 2.5 | 浮动自身二维径向距离基准；实际硬上限为该值×同帧Size/Ortho Size Max，斜角共用半径。0清除浮动距离，越大允许看得越远。关闭动态视野时Ratio=1。 |
 | Look Max Speed | 世界单位/秒，有限非负 | 8 | 4 | 浮动世界偏移变化速度上限，进入、退出、反向与视野比例变化共用；0保持当前合法浮动量，包含暂停正常退出。 |
 | Gamepad Look Axis | RightStick | RightStick | RightStick | 已接真实右摇杆，不再只是预留；本次只接视角，不新增手柄移动或交互按键。 |
 
-鼠标归一化输入在窗口外仍按最近边缘处理，不会随移出距离增加继续加大力度。两轴空间映射仍独立；世界距离在乘既有Max Horizontal/Vertical Offset及Size/Max比例后，再做二维半径限制和速度限制，合成时不重复乘比例。最终同轴共享预算、安全区及Confiner仍可能进一步缩小实际可见移动。
+鼠标归一化输入在窗口外仍按最近边缘处理，不会随移出距离增加继续加大力度。两轴空间映射仍独立；世界目标在乘既有Max Horizontal/Vertical Offset及同帧Size/Max比例后，再按Look Max Distance×同一比例做二维半径限制；Look Max Speed不随比例缩放，合成时不重复乘比例。保存的2.5在Size=7.5、Max=10时对应1.875世界单位，在Size=10时对应2.5；这是基准值与实际半径的区别，保存值不变。最终同轴共享预算、安全区及Confiner仍可能进一步缩小实际可见移动。
 
-这两个新上限约束浮动通道，不是角色跟随、前视、瞬移或最终整台相机的总速度上限。运行中把距离上限调到比当前偏移更小，会立即压回新边界；重启、瞬移及最终门控清零也不按普通速度限制拖延。Look Max Speed=0会保留合法残余，想彻底禁止浮动距离应设Look Max Distance=0或按正常退出方式关闭浮动并保留正速度。
+这两个新上限约束浮动通道，不是角色跟随、前视、瞬移或最终整台相机的总速度上限。运行中调小距离上限，或视野缩小使实际半径小于当前偏移，都会按原越界纠正规则立即压回新边界（即使Look Max Speed=0）；重启、瞬移及最终门控清零也不按普通速度限制拖延。Look Max Speed=0会保留合法残余，想彻底禁止浮动距离应设Look Max Distance=0或按正常退出方式关闭浮动并保留正速度。
 
 右摇杆读取已有Unity Input System的Gamepad.current和rightStick.ReadValue，沿已有stickDeadzone处理；有效非零值直接表示方向/强度，经过响应曲线和同一浮动上限，不必先推到屏幕边缘对应阈值。有效摇杆输入优先；摇杆回中后保持手柄中立，不被停在边缘的鼠标立刻重新触发。实际移动鼠标才回到鼠标视角；同时有效输入以摇杆优先。无设备、断开/禁用、失焦/暂停及组件停用安全归中。这里不提供新的死区或绑定编辑器。
 

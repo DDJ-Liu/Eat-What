@@ -142,3 +142,18 @@ internal static class TomatoAvatarInitializationTests
         return 0;
     }
 }
+
+
+// AI531 fixture-only boundary: every visualRoot above has NEVER had a DepthScale component.
+// Mirrors only the two absent-component returns from the current production API.
+// Does not model a DepthScale component, depth scaling, registration, or its lifecycle.
+// The real production DLL compilation uses Assets/Scripts/LongLoop/DepthScale.cs instead.
+namespace EatWhat.LongLoop
+{
+    internal static class DepthScale
+    {
+        public static bool TrySetFacing(UnityEngine.Transform visual, bool right) => false;
+        public static float ResolveFacingMagnitude(UnityEngine.Transform visual, float legacyMagnitude,
+            ref bool hasDepthBaseline) => legacyMagnitude; // Fixture flag is never set true.
+    }
+}

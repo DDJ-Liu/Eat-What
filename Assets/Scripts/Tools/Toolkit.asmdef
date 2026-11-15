@@ -6,7 +6,8 @@
     "Unity.InputSystem",
     "Unity.RenderPipelines.Core.Runtime",
     "Unity.TextMeshPro",
-    "UnityEngine.UI"
+    "UnityEngine.UI",
+    "Narrative.Core"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

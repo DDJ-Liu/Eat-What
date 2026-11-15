@@ -35,3 +35,4 @@ DevTools/Fonts/ShortCycleFontBuildManifest.json -text whitespace=trailing-space,
 # Historical archive pointers retain their storage attributes; new evidence is ignored/blocked.
 .ai-workspace/archive/**/*.zip filter=lfs diff=lfs merge=lfs -text
 .ai-workspace/archive/**/*.tar.xz filter=lfs diff=lfs merge=lfs -text
+DevTools/Narrative/Fixtures/HeadlessChainV25/expected-trace.txt text eol=lf

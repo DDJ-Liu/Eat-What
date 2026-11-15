@@ -1,0 +1,13 @@
+proc_id,output_item,input_01,input_02,input_03,input_04,input_05,input_06,action,carrier,is_final_product,comment
+proc_noodle_boiled,prd_noodle_boiled,ing_noodle_dried,stp_water,,,,,act_boil,tool_pot,false,标准路径：挂面煮
+proc_noodle_boiled_alt,prd_noodle_boiled,ing_noodle_instant,stp_water,,,,,act_boil,tool_pot,false,替代路径：泡面饼煮（同产出物多记录示范）
+proc_qingtang_final,prd_qingtang_dish,prd_noodle_boiled,ing_scallion,stp_salt,,,,act_whisk,tool_pot,true,清汤面成品
+proc_egg_liquid,prd_egg_liquid,ing_egg,ing_egg,ing_egg,,,,act_whisk,tool_bowl,false,同 item 三列=需三枚蛋（多份示范）
+proc_egg_liquid_giant,prd_egg_liquid,ing_giant_egg,,,,,,act_whisk,tool_bowl,false,替代路径：巨蛋一颗顶三颗
+proc_tomato_cut,prd_tomato_cut,ing_tomato,,,,,,act_cut,tool_board,false,切番茄（菜刀/剪刀均可触发）
+proc_scrambled_egg,prd_scrambled_egg,prd_egg_liquid,stp_oil,,,,,act_stirfry,tool_pan,false,炒蛋
+proc_tomato_egg_final,prd_tomato_egg_dish,prd_scrambled_egg,prd_tomato_cut,stp_salt,,,,act_stirfry,tool_pan,true,标准成品：番茄炒蛋
+proc_tomato_egg_soup,prd_tomato_egg_soup,prd_egg_liquid,prd_tomato_cut,stp_water,,,,act_boil,tool_pot,true,变体成品：番茄蛋花汤（煮路线）
+proc_cabbage_washed,prd_cabbage_washed,ing_cabbage,stp_water,,,,,act_wash,,false,手洗（carrier 空示范）
+proc_clear_broth,prd_clear_broth,stp_water,ing_octopus_leg,,,,,act_stew,tool_stove,false,章鱼脚吊汤（等待处理+设施承载示范）
+proc_kaishui_final,prd_kaishui_dish,prd_cabbage_washed,prd_clear_broth,,,,,act_boil,tool_pot,true,开水白菜成品；T12 为全局字典，菜谱匹配受 T1 whitelist_proc_ids 限制

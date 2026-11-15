@@ -1,0 +1,118 @@
+{
+  "files": [
+    {
+      "sourceCommit": "bb681b350671dd5bf5fb750c766eb3a43776305d",
+      "sourcePath": "DataTables/Cooking/CookingGameConfig.csv",
+      "gitBlob": "d578f4ccf5bb300cd080e82e16604b270671b661",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/CookingGameConfig.csv",
+      "bytes": 371,
+      "sha256": "85472C3C05D042C99E52BC80B621DF4E1E7E4119801E808429F2C2409ED76D9A"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/FridgeCapacityLevels.csv",
+      "gitBlob": "650bca2adbc69100f5298925d5ed7536f54c73ea",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/FridgeCapacityLevels.csv",
+      "bytes": 231,
+      "sha256": "0EF1BB2DF2E14BF7F4908B53E93F2C1D516FBCACCBB19A48E983FBAD5CE86DA9"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/InitialInventory.csv",
+      "gitBlob": "4424eefaf4230c7e1d8fb128f1a4a32647c47fe8",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/InitialInventory.csv",
+      "bytes": 231,
+      "sha256": "0296B63161D1458BC9DCD97A3E35D0D065818EDFABFB9191FBDD01437DC26AA9"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/Items.csv",
+      "gitBlob": "740d289db5b720de016d932c8727af57ab1ef8e7",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/Items.csv",
+      "bytes": 2857,
+      "sha256": "3771CD4C3D3BABB5F4EAA4BB67E182A028698B1F4136F635F2C2C40E1D9381E8"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/KitchenAreas.csv",
+      "gitBlob": "785a5fb7d848c8c256c065611bd08b873f26371e",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/KitchenAreas.csv",
+      "bytes": 957,
+      "sha256": "35E3D6800E1642D553E457ADB60397680F717D9B2EE1F85095C617E36ABE8855"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/ProcessActions.csv",
+      "gitBlob": "9749b12c47e2e918a4b3275e464ab25d5d0aaf04",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/ProcessActions.csv",
+      "bytes": 546,
+      "sha256": "21D594CF760181D000DA24E5B60F8B48BDF8541761C29AC7468C3C4DB6178754"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/ProcessingRecords.csv",
+      "gitBlob": "0acfe0427dcb3a42eb38bbb474c621c6b26a0054",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/ProcessingRecords.csv",
+      "bytes": 1705,
+      "sha256": "06FB56276760E68D89C2C4FA0D617DCC5765882A8C19165BF6C489DC60EDD135"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/RecipeSlots.csv",
+      "gitBlob": "fa8341277199ab94adf32af6497dc2195d2750e7",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/RecipeSlots.csv",
+      "bytes": 722,
+      "sha256": "4BAC8F12D42C85D81E94DFBC58E855E53231841161D07386D6B65F78B40FB18D"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/RecipeSteps.csv",
+      "gitBlob": "d196b361388b5a8092ef8226cbb329b30b6f6a1e",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/RecipeSteps.csv",
+      "bytes": 1228,
+      "sha256": "6201ED49882EAA8084D628F31DA958E48CD9000B612D6BF507B5378A8A8CF1ED"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/RecipeVariants.csv",
+      "gitBlob": "fbbdd93cb5e29a1038dfee53876af1ba08f89a7e",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/RecipeVariants.csv",
+      "bytes": 626,
+      "sha256": "8D5F66F4E4DBE8FF6F3F2A72F011E99380CE51B7F8525A0D2AEEE3D54ED7B94F"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/Recipes.csv",
+      "gitBlob": "e71af0cd0fb2a77db9a6beabf653377081f10d76",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/Recipes.csv",
+      "bytes": 1073,
+      "sha256": "141BCC96C752BE298EFE5971E483F907ABB79B53A60AED6F89CA0ABE365F3BE6"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/Tags.csv",
+      "gitBlob": "3ed39205d9d14bb76d64d073249bee345bf94e13",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/Tags.csv",
+      "bytes": 1355,
+      "sha256": "2481BBAA2782B92AE0300C70ABD3E7999754C4FF87EDDE648E7F8E42A1701EE0"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Cooking/Tools.csv",
+      "gitBlob": "22246dfb1f15611f4204a1362e26f0dce40a9278",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Cooking/Tools.csv",
+      "bytes": 1351,
+      "sha256": "6468960CA5CC028EF307503539DB497BB20C4FF9633071FFE52C614992E99BFD"
+    },
+    {
+      "sourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+      "sourcePath": "DataTables/Localization/Localization.csv",
+      "gitBlob": "49d1d4e46256b7cdf6934bc888596407a140e638",
+      "targetPath": "DevTools/DataTables/Fixtures/CK01BSchemasRegression/Localization/Localization.csv",
+      "bytes": 3728,
+      "sha256": "2A5528AA986173D19938340DC68D5D2F4B8E99101075FE235C0AA78B491AE5CF"
+    }
+  ],
+  "baseSourceCommit": "170275321f31d15b0ec876838dcefa776108412e",
+  "provenance": "13 CSV retain the original base commit byte for byte; CookingGameConfig.csv uses the separately listed current-schema-compatible Git blob. Each files entry is authoritative."
+}

@@ -1,0 +1,616 @@
+{
+  "source": "SchemaV25-source.md; hand-expanded T16-T23, not generated from production schema; string(ID) maps to existing id schema token",
+  "tables": {
+    "Characters": [
+      {
+        "name": "character_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "name_key",
+        "type": "loc_key",
+        "required": false
+      },
+      {
+        "name": "portrait_sprite",
+        "type": "sprite",
+        "required": false
+      },
+      {
+        "name": "portrait_offset_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "portrait_offset_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "portrait_scale",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "street_visual_prefab",
+        "type": "prefab",
+        "required": false
+      },
+      {
+        "name": "expressions",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "emote_offset_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "emote_offset_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "Dialogues": [
+      {
+        "name": "dialogue_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "tier",
+        "type": "enum",
+        "required": true,
+        "enumValues": [
+          "ambient",
+          "normal",
+          "story"
+        ]
+      },
+      {
+        "name": "cast_01",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "cast_01_station",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cast_01_pos_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_01_pos_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_01_scale",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_01_order",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "cast_02",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "cast_02_station",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cast_02_pos_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_02_pos_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_02_scale",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_02_order",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "cast_03",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "cast_03_station",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cast_03_pos_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_03_pos_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_03_scale",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_03_order",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "cast_04",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "cast_04_station",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cast_04_pos_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_04_pos_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_04_scale",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "cast_04_order",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "tier_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "entrance_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "exit_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "layout_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "speaker_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "expression_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "text_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "reaction_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cg_profile",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "overrides",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "first_line",
+        "type": "ref",
+        "required": true
+      },
+      {
+        "name": "next_dialogue",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "on_end",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "DialogueLines": [
+      {
+        "name": "line_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "dialogue_id",
+        "type": "ref",
+        "required": true
+      },
+      {
+        "name": "next_line",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "speaker",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "name_override_key",
+        "type": "loc_key",
+        "required": false
+      },
+      {
+        "name": "text_key",
+        "type": "loc_key",
+        "required": true
+      },
+      {
+        "name": "commands",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "expression",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "emotion",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "emphasis",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "scene_emote",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "CGs": [
+      {
+        "name": "cg_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "cg_sprite",
+        "type": "sprite",
+        "required": true
+      },
+      {
+        "name": "transition_mode",
+        "type": "enum",
+        "required": false,
+        "enumValues": [
+          "black_fade",
+          "cross_fade"
+        ]
+      },
+      {
+        "name": "fade_in",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "fade_out",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "ken_burns_zoom",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "ken_burns_pan_x",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "ken_burns_pan_y",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "ken_burns_duration",
+        "type": "float",
+        "required": false
+      },
+      {
+        "name": "ken_burns_curve",
+        "type": "enum",
+        "required": false,
+        "enumValues": [
+          "linear",
+          "quadratic",
+          "smooth_step",
+          "ease_in_out"
+        ]
+      },
+      {
+        "name": "keep_box",
+        "type": "bool",
+        "required": false
+      },
+      {
+        "name": "keep_portraits",
+        "type": "bool",
+        "required": false
+      },
+      {
+        "name": "keep_name",
+        "type": "bool",
+        "required": false
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "Scenes": [
+      {
+        "name": "scene_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "name_key",
+        "type": "loc_key",
+        "required": true
+      },
+      {
+        "name": "scene_type",
+        "type": "enum",
+        "required": true,
+        "enumValues": [
+          "street",
+          "interior"
+        ]
+      },
+      {
+        "name": "is_small_room",
+        "type": "bool",
+        "required": true
+      },
+      {
+        "name": "scene_asset",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "default_state",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "SceneStates": [
+      {
+        "name": "scene_id",
+        "type": "ref",
+        "required": true
+      },
+      {
+        "name": "state_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "story_stage",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "switch_source",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "SceneStatePlacements": [
+      {
+        "name": "scene_id",
+        "type": "ref",
+        "required": true
+      },
+      {
+        "name": "state_id",
+        "type": "ref",
+        "required": true
+      },
+      {
+        "name": "kind",
+        "type": "enum",
+        "required": true,
+        "enumValues": [
+          "actor",
+          "object",
+          "exit"
+        ]
+      },
+      {
+        "name": "target",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "anchor_id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "facing",
+        "type": "enum",
+        "required": false,
+        "enumValues": [
+          "left",
+          "right"
+        ]
+      },
+      {
+        "name": "active",
+        "type": "bool",
+        "required": true
+      },
+      {
+        "name": "dialogue_id",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "ambient_pool",
+        "type": "ref",
+        "required": false
+      },
+      {
+        "name": "marker",
+        "type": "enum",
+        "required": false,
+        "enumValues": [
+          "none",
+          "talk",
+          "story"
+        ]
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "AmbientPools": [
+      {
+        "name": "pool_id",
+        "type": "id",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "dialogue_ids",
+        "type": "list<ref>",
+        "required": true
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  "references": {
+    "Characters": {
+      "name_key": "Localization/Localization:loc_key"
+    },
+    "Dialogues": {
+      "cast_01": "Narrative/Characters:character_id",
+      "cast_02": "Narrative/Characters:character_id",
+      "cast_03": "Narrative/Characters:character_id",
+      "cast_04": "Narrative/Characters:character_id",
+      "first_line": "Narrative/DialogueLines:line_id",
+      "next_dialogue": "Narrative/Dialogues:dialogue_id"
+    },
+    "DialogueLines": {
+      "dialogue_id": "Narrative/Dialogues:dialogue_id",
+      "next_line": "Narrative/DialogueLines:line_id",
+      "speaker": "Narrative/Characters:character_id",
+      "name_override_key": "Localization/Localization:loc_key",
+      "text_key": "Localization/Localization:loc_key"
+    },
+    "CGs": {},
+    "Scenes": {
+      "name_key": "Localization/Localization:loc_key",
+      "default_state": "Street/SceneStates:state_id"
+    },
+    "SceneStates": {
+      "scene_id": "Street/Scenes:scene_id"
+    },
+    "SceneStatePlacements": {
+      "scene_id": "Street/Scenes:scene_id",
+      "state_id": "Street/SceneStates:state_id",
+      "dialogue_id": "Narrative/Dialogues:dialogue_id",
+      "ambient_pool": "Street/AmbientPools:pool_id"
+    },
+    "AmbientPools": {
+      "dialogue_ids": "Narrative/Dialogues:dialogue_id"
+    }
+  }
+}

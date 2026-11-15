@@ -1,0 +1,7 @@
+line_id,dialogue_id,next_line,speaker,name_override_key,text_key,commands,expression,emotion,emphasis,scene_emote,comment
+ln_n1,dlg_normal,ln_n2,chr_a,,loc_text_n1,"actor_move(chr_a,anchor:meet)",,,,,
+ln_n2,dlg_normal,ln_n3,chr_narrator,,loc_text_n2,"set_flag(greeted,true)",,,,,
+ln_n3,dlg_normal,,chr_b,,loc_text_n3,shake(light),,,,,
+ln_s1,dlg_story,,chr_narrator,,loc_text_s1,"camera_pan(player,4);cg_show(cg_memory);cg_hide()",,,,,
+ln_after,dlg_after,,chr_a,,loc_text_after,,,,,,
+ln_ambient,dlg_ambient,,,,loc_text_ambient,,,,,,

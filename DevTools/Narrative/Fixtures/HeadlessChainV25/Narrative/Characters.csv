@@ -1,0 +1,4 @@
+character_id,name_key,portrait_sprite,portrait_offset_x,portrait_offset_y,portrait_scale,street_visual_prefab,expressions,emote_offset_x,emote_offset_y,comment
+chr_a,loc_name_a,portrait_a,,,,visual_a,,,,
+chr_b,loc_name_b,portrait_b,,,,visual_b,,,,
+chr_narrator,,,,,,,,,,

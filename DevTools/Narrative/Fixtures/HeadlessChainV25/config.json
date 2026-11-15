@@ -1,0 +1,21 @@
+{
+  "tier": [
+    {
+      "name": "default",
+      "commandExecutionMode": "Sequential"
+    }
+  ],
+  "text": [
+    {
+      "name": "default",
+      "advanceCooldown": 0.25,
+      "autoWait": 0.5
+    }
+  ],
+  "cg": [
+    {
+      "name": "default",
+      "cgAdvanceCooldown": 0.25
+    }
+  ]
+}

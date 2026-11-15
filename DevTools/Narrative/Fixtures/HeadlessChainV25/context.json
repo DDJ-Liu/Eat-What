@@ -1,0 +1,75 @@
+{
+  "source": "Synthetic HeadlessChainV25 only; no imported assets or saved scene attestation.",
+  "tables": [
+    {
+      "table": "Characters",
+      "schema": "Schemas/Narrative/Characters.schema.json",
+      "csv": "Narrative/Characters.csv",
+      "rows": 3
+    },
+    {
+      "table": "Dialogues",
+      "schema": "Schemas/Narrative/Dialogues.schema.json",
+      "csv": "Narrative/Dialogues.csv",
+      "rows": 4
+    },
+    {
+      "table": "DialogueLines",
+      "schema": "Schemas/Narrative/DialogueLines.schema.json",
+      "csv": "Narrative/DialogueLines.csv",
+      "rows": 6
+    },
+    {
+      "table": "CGs",
+      "schema": "Schemas/Narrative/CGs.schema.json",
+      "csv": "Narrative/CGs.csv",
+      "rows": 1
+    },
+    {
+      "table": "Scenes",
+      "schema": "Schemas/Street/Scenes.schema.json",
+      "csv": "Street/Scenes.csv",
+      "rows": 1
+    },
+    {
+      "table": "SceneStates",
+      "schema": "Schemas/Street/SceneStates.schema.json",
+      "csv": "Street/SceneStates.csv",
+      "rows": 2
+    },
+    {
+      "table": "SceneStatePlacements",
+      "schema": "Schemas/Street/SceneStatePlacements.schema.json",
+      "csv": "Street/SceneStatePlacements.csv",
+      "rows": 4
+    },
+    {
+      "table": "AmbientPools",
+      "schema": "Schemas/Street/AmbientPools.schema.json",
+      "csv": "Street/AmbientPools.csv",
+      "rows": 1
+    },
+    {
+      "table": "Localization",
+      "schema": "Schemas/Localization/Localization.schema.json",
+      "csv": "Localization/Localization.csv",
+      "rows": 9
+    }
+  ],
+  "files": {
+    "portrait": [
+      "Assets/Sprites/Narrative/Portraits/portrait_a.png",
+      "Assets/Sprites/Narrative/Portraits/portrait_b.png"
+    ],
+    "visual": [
+      "Assets/Prefabs/LongLoop/NPC/Visuals/visual_a.prefab",
+      "Assets/Prefabs/LongLoop/NPC/Visuals/visual_b.prefab"
+    ],
+    "cg": [
+      "Assets/Sprites/Narrative/CGs/cg_memory.png"
+    ],
+    "scene": [
+      "Assets/Scenes/Synthetic/Plaza.unity"
+    ]
+  }
+}

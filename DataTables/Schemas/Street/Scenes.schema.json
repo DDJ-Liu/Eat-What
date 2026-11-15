@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Scenes",
+  "csvPath": "Street/Scenes.csv",
+  "targetType": "CK01SceneData",
+  "outputDirectory": "Assets/Generated/DataTables/Street/Scenes",
+  "assetNameField": "scene_id",
+  "primaryKeyField": "scene_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "scene_id",
+      "csvColumn": "scene_id",
+      "type": "id",
+      "required": true,
+      "description": "场景主键，填写scn_开头小写ID，供scene_switch/set_scene_state引用。",
+      "unique": true,
+      "pattern": "^scn_[a-z0-9_]+$"
+    },
+    {
+      "name": "name_key",
+      "csvColumn": "name_key",
+      "type": "loc_key",
+      "required": true,
+      "description": "场景显示名本地化键。"
+    },
+    {
+      "name": "scene_type",
+      "csvColumn": "scene_type",
+      "type": "enum",
+      "required": true,
+      "description": "street街道或interior室内，填写对应小写枚举。",
+      "enumValues": [
+        "street",
+        "interior"
+      ]
+    },
+    {
+      "name": "is_small_room",
+      "csvColumn": "is_small_room",
+      "type": "bool",
+      "required": true,
+      "description": "是否按小房间规则取景，填写true或false。"
+    },
+    {
+      "name": "scene_asset",
+      "csvColumn": "scene_asset",
+      "type": "string",
+      "required": true,
+      "description": "实际场景文件基名，无路径/扩展名；本卡只存字段，不加载场景。"
+    },
+    {
+      "name": "default_state",
+      "csvColumn": "default_state",
+      "type": "string",
+      "required": true,
+      "description": "无存档记录时使用的状态ID，须在同场景SceneStates中存在。"
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [
+    {
+      "field": "name_key",
+      "targetSchema": "Localization/Localization.schema.json",
+      "targetField": "loc_key"
+    },
+    {
+      "field": "default_state",
+      "targetSchema": "Street/SceneStates.schema.json",
+      "targetField": "state_id",
+      "scopeField": "scene_id",
+      "targetScopeField": "scene_id"
+    }
+  ],
+  "rules": []
+}

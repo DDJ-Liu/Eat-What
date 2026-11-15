@@ -1,0 +1,18 @@
+{
+  "name": "Narrative.Unity",
+  "rootNamespace": "EatWhat.Narrative.Unity",
+  "references": [
+    "Narrative.Core",
+    "Toolkit",
+    "Generated.DataTables"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

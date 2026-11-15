@@ -644,6 +644,127 @@ function New-AuthoringPublishFailureException {
     return $exception
 }
 
+function Get-AuthoringColumnAddress {
+    param([Parameter(Mandatory)][int]$Number)
+    $address = ''
+    while ($Number -gt 0) { $Number--; $address = [char](65 + ($Number % 26)) + $address; $Number = [math]::Floor($Number / 26) }
+    return $address
+}
+
+function Test-AuthoringHeaderAdditionOnly {
+    param($ContentDiff, $StructureDiff, [object[]]$AllowedSheets = @())
+    if ($AllowedSheets.Count -eq 0 -or $ContentDiff.differenceCount -ne $AllowedSheets.Count) { return $false }
+    $expected = @{}
+    foreach ($sheet in $AllowedSheets) {
+        if ($expected.ContainsKey([string]$sheet.name) -or @($sheet.headers).Count -eq 0) { return $false }
+        $expected[[string]$sheet.name] = $sheet
+    }
+    foreach ($change in $ContentDiff.differences) {
+        if ($change.kind -ne 'SHEET_ADDED' -or -not $expected.ContainsKey([string]$change.sheet)) { return $false }
+        $headers = @($expected[[string]$change.sheet].headers)
+        $cells = @($change.after.cells)
+        if ($cells.Count -ne $headers.Count) { return $false }
+        for ($i = 0; $i -lt $headers.Count; $i++) {
+            $cell = $cells[$i]
+            if ($cell.cell -cne ((Get-AuthoringColumnAddress ($i + 1)) + '1') -or $cell.value -cne $headers[$i] -or $null -ne $cell.formula -or $cell.rawType -notin @('s','inlineStr','str')) { return $false }
+        }
+    }
+    foreach ($change in $StructureDiff.differences) {
+        if ($change.kind -ne 'SHEET_ADDED' -or -not $expected.ContainsKey([string]$change.sheet)) { return $false }
+    }
+    return $true
+}
+
+function New-AuthoringSchemaHeaderCandidate {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$SourceWorkbook,
+        [Parameter(Mandatory)][string]$CandidateWorkbook,
+        [Parameter(Mandatory)][string]$DataTablesRoot,
+        [Parameter(Mandatory)][string[]]$TableNames
+    )
+    $source = [IO.Path]::GetFullPath($SourceWorkbook)
+    $candidate = [IO.Path]::GetFullPath($CandidateWorkbook)
+    if ($source -eq $candidate -or (Test-Path -LiteralPath $candidate)) { throw '[AUTHORING_INVALID_TARGET] Header candidate must be a new file distinct from source.' }
+    $snapshot = Get-AuthoringWorkbookContentSnapshot -WorkbookPath $source
+    $schemas = @{}
+    foreach ($file in Get-ChildItem -LiteralPath (Join-Path $DataTablesRoot 'Schemas') -Recurse -File -Filter '*.schema.json') {
+        $schema = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
+        if ($schemas.ContainsKey([string]$schema.tableName)) { throw "Duplicate schema table name: $($schema.tableName)" }
+        $schemas[[string]$schema.tableName] = $schema
+    }
+    $requested = @{}
+    $additions = [Collections.Generic.List[object]]::new()
+    foreach ($name in $TableNames) {
+        if ($requested.ContainsKey($name) -or -not $schemas.ContainsKey($name)) { throw "Unknown or duplicate schema table: $name" }
+        $requested[$name] = $true
+        $headers = @($schemas[$name].columns | ForEach-Object { [string]$_.name })
+        $existing = @($snapshot.sheets | Where-Object { $_.name -ieq $name })
+        if ($existing.Count -gt 0) {
+            $headerCells = @($existing[0].cells | Where-Object { $_.row -eq 1 })
+            if ($existing[0].name -cne $name -or $headerCells.Count -ne $headers.Count) { throw "Existing sheet header differs from schema: $name" }
+            for ($i = 0; $i -lt $headers.Count; $i++) {
+                $cell = $headerCells[$i]
+                if ($cell.cell -cne ((Get-AuthoringColumnAddress ($i + 1)) + '1') -or $cell.value -cne $headers[$i] -or $null -ne $cell.formula) { throw "Existing sheet header differs from schema: $name" }
+            }
+            continue
+        }
+        if ($name.Length -gt 31 -or $name -match '[\\/\?\*\[\]:]') { throw "Invalid worksheet name: $name" }
+        [void]$additions.Add([pscustomobject]@{ name=$name; headers=$headers })
+    }
+    [IO.File]::Copy($source, $candidate, $false)
+    if ($additions.Count -eq 0) { return [pscustomobject]@{ addedSheets=@() } }
+    $archive = [IO.Compression.ZipFile]::Open($candidate, [IO.Compression.ZipArchiveMode]::Update)
+    try {
+        $xmls = @{}
+        foreach ($part in @('xl/workbook.xml','xl/_rels/workbook.xml.rels','[Content_Types].xml')) {
+            $document = [xml]::new(); $document.PreserveWhitespace = $true
+            $document.LoadXml((Read-AuthoringZipEntryText -Archive $archive -Name $part))
+            $xmls[$part] = $document
+        }
+        $spreadsheetNs = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+        $relationshipNs = 'http://schemas.openxmlformats.org/package/2006/relationships'
+        $officeRelNs = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+        $workbook = $xmls['xl/workbook.xml']; $relations = $xmls['xl/_rels/workbook.xml.rels']; $types = $xmls['[Content_Types].xml']
+        $sheetsNode = $workbook.DocumentElement.GetElementsByTagName('sheets', $spreadsheetNs)[0]
+        $sheetId = 0
+        foreach ($node in $sheetsNode.ChildNodes) { if ($node.LocalName -eq 'sheet') { $sheetId = [math]::Max($sheetId, [int]$node.sheetId) } }
+        $usedIds = @{}; foreach ($node in $relations.DocumentElement.ChildNodes) { if ($node.LocalName -eq 'Relationship') { $usedIds[[string]$node.Id] = $true } }
+        $partIndex = 0; $relIndex = 0
+        foreach ($addition in $additions) {
+            do { $partIndex++; $partName = "xl/worksheets/sheet$partIndex.xml" } while ($null -ne $archive.GetEntry($partName))
+            do { $relIndex++; $relId = "rId$relIndex" } while ($usedIds.ContainsKey($relId))
+            $usedIds[$relId] = $true; $sheetId++
+            $node = $workbook.CreateElement('sheet', $spreadsheetNs)
+            $node.SetAttribute('name', $addition.name); $node.SetAttribute('sheetId', [string]$sheetId)
+            [void]$node.SetAttribute('id', $officeRelNs, $relId); [void]$sheetsNode.AppendChild($node)
+            $rel = $relations.CreateElement('Relationship', $relationshipNs)
+            $rel.SetAttribute('Id', $relId); $rel.SetAttribute('Type', "$officeRelNs/worksheet"); $rel.SetAttribute('Target', "worksheets/sheet$partIndex.xml")
+            [void]$relations.DocumentElement.AppendChild($rel)
+            $type = $types.CreateElement('Override', $types.DocumentElement.NamespaceURI)
+            $type.SetAttribute('PartName', "/$partName"); $type.SetAttribute('ContentType','application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml')
+            [void]$types.DocumentElement.AppendChild($type)
+            $cells = [Text.StringBuilder]::new()
+            for ($i = 0; $i -lt $addition.headers.Count; $i++) {
+                $escaped = [Security.SecurityElement]::Escape([string]$addition.headers[$i])
+                [void]$cells.Append('<c r="' + (Get-AuthoringColumnAddress ($i + 1)) + '1" t="inlineStr"><is><t>' + $escaped + '</t></is></c>')
+            }
+            $lastColumn = Get-AuthoringColumnAddress $addition.headers.Count
+            $sheetText = '<?xml version="1.0" encoding="utf-8"?><worksheet xmlns="' + $spreadsheetNs + '"><dimension ref="A1:' + $lastColumn + '1"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetData><row r="1">' + $cells.ToString() + '</row></sheetData></worksheet>'
+            $entry = $archive.CreateEntry($partName)
+            $writer = [IO.StreamWriter]::new($entry.Open(), [Text.UTF8Encoding]::new($false))
+            try { $writer.Write($sheetText) } finally { $writer.Dispose() }
+        }
+        foreach ($part in $xmls.Keys) {
+            $archive.GetEntry($part).Delete(); $entry = $archive.CreateEntry($part)
+            $stream = $entry.Open()
+            try { $xmls[$part].Save($stream) } finally { $stream.Dispose() }
+        }
+    }
+    finally { $archive.Dispose() }
+    return [pscustomobject]@{ addedSheets=$additions.ToArray() }
+}
+
 function Publish-AuthoringWorkbookChange {
     [CmdletBinding()]
     param(
@@ -654,6 +775,7 @@ function Publish-AuthoringWorkbookChange {
         [Parameter(Mandatory)][string]$BackupPath,
         [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$TaskOrigin,
         [Parameter(Mandatory)][string]$AuditPath,
+        [object[]]$AllowedNewHeaderSheets = @(),
         [scriptblock]$TestFaultInjector,
         [string]$TestFixtureRoot
     )
@@ -679,7 +801,8 @@ function Publish-AuthoringWorkbookChange {
     $diff = Compare-AuthoringWorkbookContent -BaselineSnapshot $baselineSnapshot -CandidateSnapshot $candidateSnapshot
     $structureDiff = Compare-AuthoringWorkbookStructure -BaselineSnapshot $baselineSnapshot -CandidateSnapshot $candidateSnapshot
     $blankFillAllowed = $Mode -eq 'FillPreviouslyBlankCells' -and $structureDiff.isEqual -and (Test-AuthoringBlankFillOnly -BaselineSnapshot $baselineSnapshot -ContentDiff $diff)
-    if ($Mode -ne 'AuthorizedContent' -and -not $diff.isEqual -and -not $blankFillAllowed) {
+    $headerAdditionAllowed = $Mode -eq 'BlankStructureOnly' -and (Test-AuthoringHeaderAdditionOnly -ContentDiff $diff -StructureDiff $structureDiff -AllowedSheets $AllowedNewHeaderSheets)
+    if ($Mode -ne 'AuthorizedContent' -and -not $diff.isEqual -and -not $blankFillAllowed -and -not $headerAdditionAllowed) {
         Add-AuthoringAuditRecord -AuditPath $AuditPath -Record ([ordered]@{ at=[DateTimeOffset]::Now.ToString('o'); action='WORKBOOK_PUBLISH_REFUSED'; reason='NONEMPTY_CONTENT_CHANGE'; taskOrigin=$TaskOrigin; mode=$Mode; source=$source; candidate=$candidate; differenceCount=$diff.differenceCount; differences=$diff.differences })
         throw "[AUTHORING_CONTENT_PROTECTED] $($diff.differenceCount) non-empty cell/sheet association change(s) are not allowed in mode '$Mode'."
     }

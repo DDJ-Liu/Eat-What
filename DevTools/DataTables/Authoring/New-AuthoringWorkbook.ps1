@@ -3,6 +3,7 @@ param(
     [string]$DataTablesRoot,
     [string]$OutputWorkbook,
     [switch]$AllowContentReplacement,
+    [string[]]$AddSchemaTables = @(),
     [string]$TaskOrigin,
     [string]$AuditPath,
     [string]$BackupPath,
@@ -44,9 +45,21 @@ if ($existing) {
 }
 
 try {
-    $output = Invoke-AuthoringNode -Command 'build' -Arguments @{
-        'data-root' = $DataTablesRoot
-        output = $candidate
+    $headerAddition = $null
+    if ($AddSchemaTables.Count -gt 0) {
+        if (-not $existing -or $AllowContentReplacement) { throw '[AUTHORING_INVALID_TARGET] -AddSchemaTables requires an existing workbook and cannot replace content.' }
+        $headerAddition = New-AuthoringSchemaHeaderCandidate -SourceWorkbook $OutputWorkbook -CandidateWorkbook $candidate -DataTablesRoot $DataTablesRoot -TableNames $AddSchemaTables
+        if ($headerAddition.addedSheets.Count -eq 0) {
+            if ((Get-AuthoringFileSha256 -Path $OutputWorkbook) -ne $expected) { throw '[AUTHORING_EXTERNAL_DRIFT] Workbook changed during header inspection.' }
+            [pscustomobject]@{ action='WORKBOOK_HEADERS_ALREADY_PRESENT'; output=$OutputWorkbook; addedSheetCount=0 } | ConvertTo-Json -Compress
+            return
+        }
+    }
+    else {
+        $output = Invoke-AuthoringNode -Command 'build' -Arguments @{
+            'data-root' = $DataTablesRoot
+            output = $candidate
+        }
     }
     if (-not $existing) {
         if (Test-Path -LiteralPath $OutputWorkbook) {
@@ -61,8 +74,9 @@ try {
         $safeOrigin = $TaskOrigin -replace '[^A-Za-z0-9_.-]', '_'
         $BackupPath = Join-Path (Split-Path -Parent ([System.IO.Path]::GetFullPath($AuditPath))) ([System.IO.Path]::GetFileName($OutputWorkbook) + ".$safeOrigin.backup.xlsx")
     }
-    $mode = if ($AllowContentReplacement) { 'AuthorizedContent' } else { 'FormatOrCommentOnly' }
-    Publish-AuthoringWorkbookChange -SourceWorkbook $OutputWorkbook -CandidateWorkbook $candidate -Mode $mode -ExpectedSourceSha256 $expected -BackupPath $BackupPath -TaskOrigin $TaskOrigin -AuditPath $AuditPath | ConvertTo-Json -Depth 8 -Compress
+    $mode = if ($null -ne $headerAddition) { 'BlankStructureOnly' } elseif ($AllowContentReplacement) { 'AuthorizedContent' } else { 'FormatOrCommentOnly' }
+    $allowedHeaders = if ($null -eq $headerAddition) { @() } else { $headerAddition.addedSheets }
+    Publish-AuthoringWorkbookChange -SourceWorkbook $OutputWorkbook -CandidateWorkbook $candidate -Mode $mode -AllowedNewHeaderSheets $allowedHeaders -ExpectedSourceSha256 $expected -BackupPath $BackupPath -TaskOrigin $TaskOrigin -AuditPath $AuditPath | ConvertTo-Json -Depth 8 -Compress
 }
 finally {
     if (Test-Path -LiteralPath $candidate) { Remove-Item -LiteralPath $candidate -Force }

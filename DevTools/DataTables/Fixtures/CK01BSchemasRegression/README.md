@@ -1,0 +1,9 @@
+# CK01-B Schemas 固定回归样例
+
+本目录用于现有Test-CK01BSchemas.ps1的正例、负例和warning/audit回归，不能覆盖生产配表或用户工作簿。13个CSV逐字节保留提交170275321f31d15b0ec876838dcefa776108412e的历史样例；Cooking/CookingGameConfig.csv改用提交bb681b350671dd5bf5fb750c766eb3a43776305d的同路径Git blob，以符合现行schema的fridge_scroll_threshold/cooldown键。源路径、commit、blob与SHA-256按SOURCE-MANIFEST.json逐文件记录，不再把14文件描述成同一提交。
+
+生产数据权威仍为根DataTables和用户源工作簿。现有runner先独立完整校验当前正式数据及七表表头，再用当前schema/validator测试固定样例；全部原业务断言、白名单常量及正负warning/audit用例保持。固定样例的零警告要求不代替当前生产数据真实warning或用户短循环功能验收。
+
+调用方可将EATWHAT_CK01B_SCHEMA_REPORT_ROOT设为当前任务自有的新证据子目录。runner会在前置断言前写live-validation.json和regression-validation.json，包含该次真实完整errors/warnings/audits；即使后续失败，原finally仍仅清理原自有临时数据，已留出的证据不随之删除。未设置此可选环境变量时，原调用方式及成功输出保持。运行不依赖Git/AI归档或历史attempt。
+
+2026-11-14 用户已批准本轮限定修正并新增5轮操作续行（原根总上限15）；范围仅一份固定配置来源、逐文件说明及既有PS诊断保存。固定CODE逐次领取安装及运行原Schemas完整入口，实际执行、失败与额度消费以原任务正式回执为准；本目录不能代替生产或人工功能验收。

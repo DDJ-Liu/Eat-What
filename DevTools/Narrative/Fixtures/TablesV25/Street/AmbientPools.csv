@@ -1,0 +1,2 @@
+pool_id,scope,dialogue_ids,comment
+amb_pool,路人池,dlg_ambient;dlg_ambient2,至少一条，分号

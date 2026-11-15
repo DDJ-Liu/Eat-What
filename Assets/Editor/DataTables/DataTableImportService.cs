@@ -43,6 +43,7 @@ namespace EatWhat.DataTables
             public string schemaPath;
             public List<string> errors = new List<string>();
             public List<string> warnings = new List<string>();
+            public List<string> infos = new List<string>();
         }
 
         [Serializable]
@@ -52,6 +53,7 @@ namespace EatWhat.DataTables
             public string dataCatalogAsset = CK01ImportRegistry.DataCatalogAssetPath;
             public List<string> errors = new List<string>();
             public List<string> warnings = new List<string>();
+            public List<string> infos = new List<string>();
             public List<DataTableSchemaImportReport> schemas = new List<DataTableSchemaImportReport>();
             public List<string> createdAssets = new List<string>();
             public List<string> updatedAssets = new List<string>();
@@ -928,15 +930,18 @@ namespace EatWhat.DataTables
             }
 
             var context = BuildValidationContext(tables, report);
+            NarrativeTableValidation.EnableProject(context, ProjectRoot);
             foreach (var loaded in tables)
             {
                 loaded.Validation = DataTableValidator.Validate(loaded.Schema, loaded.ParseResult, context);
                 var schemaReport = new DataTableSchemaImportReport { schemaPath = loaded.SchemaPath };
                 schemaReport.errors.AddRange(loaded.Validation.Errors);
                 schemaReport.warnings.AddRange(loaded.Validation.Warnings);
+                schemaReport.infos.AddRange(loaded.Validation.Infos);
                 report.schemas.Add(schemaReport);
                 report.errors.AddRange(PrefixMessages(loaded.SchemaPath, loaded.Validation.Errors));
                 report.warnings.AddRange(PrefixMessages(loaded.SchemaPath, loaded.Validation.Warnings));
+                report.infos.AddRange(PrefixMessages(loaded.SchemaPath, loaded.Validation.Infos));
                 ValidateTargetContract(loaded, report, schemaReport);
             }
 
@@ -986,6 +991,9 @@ namespace EatWhat.DataTables
 
             foreach (var source in tables)
             {
+                if (source.Schema != null && source.ParseResult != null)
+                    context.ReferenceTables[source.SchemaPath.Replace('\\', '/').Replace("Schemas/", "")] =
+                        new DataTableReferenceSource(source.Schema, source.ParseResult.Table);
                 if (source.Schema == null || source.Schema.references == null)
                 {
                     continue;
@@ -1004,6 +1012,7 @@ namespace EatWhat.DataTables
                         continue;
                     }
 
+                    context.ReferenceTables[(reference.targetSchema ?? string.Empty).Replace('\\', '/')] = new DataTableReferenceSource(target.Schema, target.ParseResult.Table);
                     var targetColumn = DataTableValidator.FindColumn(target.Schema, reference.targetField);
                     if (targetColumn == null)
                     {
@@ -1121,7 +1130,7 @@ namespace EatWhat.DataTables
                 var assetNameColumn = DataTableValidator.FindColumn(loaded.Schema, loaded.Schema.assetNameField);
                 foreach (var row in loaded.Validation.Table.Rows)
                 {
-                    var assetName = DataTableValidator.GetEffectiveValue(assetNameColumn, row, loaded.Validation.Table);
+                    var assetName = DataTableValidator.GetRowIdentity(loaded.Schema, row, loaded.Validation.Table, true);
                     var assetPath = (loaded.Schema.outputDirectory.Replace('\\', '/').TrimEnd('/') + "/" + assetName + ".asset");
                     if (!assetPaths.Add(assetPath))
                     {
@@ -1192,10 +1201,7 @@ namespace EatWhat.DataTables
                         continue;
                     }
 
-                    var stableId = DataTableValidator.GetEffectiveValue(
-                        primaryKeyColumn,
-                        item.Row,
-                        loaded.Validation.Table);
+                    var stableId = DataTableValidator.GetRowIdentity(loaded.Schema, item.Row, loaded.Validation.Table, false);
                     rows.Add(new CK01GeneratedDataRowReference(stableId, item.ExistingAsset));
                 }
 
@@ -1257,7 +1263,14 @@ namespace EatWhat.DataTables
                 var field = asset.GetType().GetField(column.name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 object parsedValue;
                 var rawValue = DataTableValidator.GetEffectiveValue(column, row, table);
-                if (field.FieldType == typeof(Sprite))
+                if (column.nameOnly)
+                {
+                    parsedValue = rawValue;
+                    var lookup = NarrativeFilenameLookupPolicy.Resolve(column.referenceRole, rawValue,
+                        name => FindExactNarrativePaths(column.referenceRole, name));
+                    if (!string.IsNullOrEmpty(lookup.Warning)) warnings.Add(lookup.Warning);
+                }
+                else if (field.FieldType == typeof(Sprite))
                 {
                     string warning;
                     parsedValue = ResolveSprite(rawValue, out warning);
@@ -1300,6 +1313,10 @@ namespace EatWhat.DataTables
                     value = rawValue;
                     return true;
                 }
+
+                if (fieldType == typeof(CK01OptionalFloat)) { value = new CK01OptionalFloat(float.Parse(rawValue, NumberStyles.Float, CultureInfo.InvariantCulture)); return true; }
+                if (fieldType == typeof(CK01OptionalInt)) { value = new CK01OptionalInt(int.Parse(rawValue, NumberStyles.Integer, CultureInfo.InvariantCulture)); return true; }
+                if (fieldType == typeof(CK01OptionalBool)) { value = new CK01OptionalBool(ParseBool(rawValue)); return true; }
 
                 if (fieldType == typeof(int))
                 {
@@ -1395,6 +1412,13 @@ namespace EatWhat.DataTables
 
         private static bool IsMatchingFieldType(Type fieldType, DataTableColumnSchema column)
         {
+            if (column.nameOnly) return fieldType == typeof(string) && (column.type == "sprite" || column.type == "prefab");
+            if (column.preserveEmpty)
+            {
+                if (column.type == "float") return fieldType == typeof(CK01OptionalFloat);
+                if (column.type == "int") return fieldType == typeof(CK01OptionalInt);
+                if (column.type == "bool") return fieldType == typeof(CK01OptionalBool);
+            }
             if (string.Equals(column.type, "string", StringComparison.Ordinal)) return fieldType == typeof(string);
             if (string.Equals(column.type, "id", StringComparison.Ordinal) ||
                 string.Equals(column.type, "key", StringComparison.Ordinal) ||
@@ -1430,6 +1454,21 @@ namespace EatWhat.DataTables
         private static bool ShouldWriteColumn(DataTableColumnSchema column)
         {
             return column != null && column.writeToAsset && !string.Equals(column.name, "comment", StringComparison.Ordinal);
+        }
+
+        private static IList<string> FindExactNarrativePaths(string role, string name)
+        {
+            var roots = role == "portrait" ? CK01ImportRegistry.PortraitSearchDirectories : role == "cg" ? CK01ImportRegistry.CgSearchDirectories : role == "visual" ? CK01ImportRegistry.VisualSearchDirectories : new string[0];
+            var existing = new List<string>();
+            foreach (var root in roots ?? new string[0]) if (AssetDatabase.IsValidFolder(root)) existing.Add(root);
+            var paths = new List<string>();
+            if (existing.Count == 0) return paths;
+            foreach (var guid in AssetDatabase.FindAssets(role == "visual" ? "t:Prefab" : "t:Sprite", existing.ToArray()))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (string.Equals(Path.GetFileNameWithoutExtension(path), name, StringComparison.Ordinal) && !paths.Contains(path)) paths.Add(path);
+            }
+            return paths;
         }
 
         private static Sprite ResolveSprite(string spriteName, out string warning)

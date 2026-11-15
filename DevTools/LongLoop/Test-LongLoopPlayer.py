@@ -217,11 +217,18 @@ def main():
     common = [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll",
               fx / "Facades/netstandard.dll", ue / "UnityEngine.CoreModule.dll"]
     records = []
+    narrative_dependencies = []
+    narrative_core = None
+    narrative_toolkit = None
 
-    def build(name, sources, refs, target="library", main_type=None, language="latest", defines=()):
+    def build(name, sources, refs, target="library", main_type=None, language="latest", defines=(), record_list=None):
         # Existing old-suite fixtures compile the same expanded check source without stale runtime metadata.
         if any(p.name=="LongLoopProbeChecks.cs" for p in sources) and not any(p.name=="StreetFollowPipeline.cs" for p in sources):
             sources=list(sources)+[root/"Assets/Scripts/LongLoop/StreetFollowPipeline.cs",root/"Assets/Scripts/LongLoop/Configuration/CameraFollowConfig.cs",root/"Assets/Scripts/LongLoop/Configuration/StreetConfigAsset.cs"]
+        if any(p.name == "StreetFollowPipeline.cs" for p in sources):
+            bridge = root / "Assets/Scripts/Tools/NarrativeCurveBridge.cs"
+            sources = list(sources) + ([] if bridge in sources else [bridge])
+            refs = list(refs) + [ensure_narrative_core()]
         exe = out / (name + (".exe" if target == "exe" else ".dll"))
         rsp = out / (name + ".rsp")
         lines = ["/nologo", "/noconfig", "/langversion:" + language, "/target:" + target,
@@ -263,7 +270,7 @@ def main():
             "sources": [{"path": str(p), "sha256": digest(p)} for p in sources],
             "references": [{"path": str(p), "sha256": digest(p)} for p in refs]
         }
-        records.append(record)
+        (records if record_list is None else record_list).append(record)
         if result.returncode:
             print(result.stdout.decode("utf-8-sig", "replace"), file=sys.stderr)
             print(result.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
@@ -274,6 +281,17 @@ def main():
 
     def src(*paths):
         return [root / path for path in paths]
+
+    def write_narrative_dependencies():
+        (out / "narrative-dependencies.json").write_text(json.dumps(narrative_dependencies, indent=2), encoding="utf-8")
+
+    def ensure_narrative_core():
+        nonlocal narrative_core
+        if narrative_core is None:
+            narrative_core = build("Narrative.Core", sorted((root / "Assets/Scripts/Narrative/Core").rglob("*.cs")),
+                [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], record_list=narrative_dependencies)
+            write_narrative_dependencies()
+        return narrative_core
 
     if args.street_payload_directory:
         directory = Path(args.street_payload_directory).resolve()
@@ -465,42 +483,16 @@ def main():
             raise SystemExit(result.returncode)
         return
 
-    if args.avatar_init:
-        current_toolkit = sa / "Toolkit.dll"
-        build("LongLoopCurrent",
-              src("Assets/Scripts/LongLoop/HorizontalMotion.cs",
-                  "Assets/Scripts/LongLoop/IPlayerAvatar.cs",
-                  "Assets/Scripts/LongLoop/LongLoopPlayerController.cs",
-                  "Assets/Scripts/LongLoop/TomatoSpineAvatar.cs",
-                  "Assets/Scripts/LongLoop/StreetSceneEntry.cs"),
-              common + [ue / "UnityEngine.Physics2DModule.dll", sa / "spine-unity.dll",
-                        current_toolkit])
-        flow = build("AvatarControlFlowTests",
-                     src("Assets/Scripts/LongLoop/IPlayerAvatar.cs",
-                         "Assets/Scripts/LongLoop/TomatoSpineAvatar.cs",
-                         "DevTools/LongLoop/TomatoAvatarInitializationTests.cs"),
-                     [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
-        run = subprocess.run([str(mono), str(flow)], cwd=root, capture_output=True)
-        (out / "avatar-flow.stdout.bin").write_bytes(run.stdout)
-        (out / "avatar-flow.stderr.bin").write_bytes(run.stderr)
-        report = {"unityVersion": "6000.3.24f1", "unityNativeLaunched": False,
-                  "realCurrentToolkitAndSpineCompile": records[0],
-                  "controlFlowCompile": records[1],
-                  "controlFlowRunExitCode": run.returncode,
-                  "controlFlowStdout": str(out / "avatar-flow.stdout.bin"),
-                  "controlFlowStderr": str(out / "avatar-flow.stderr.bin"),
-                  "controlFlowText": run.stdout.decode("utf-8-sig", "replace").strip(),
-                  "controlFlowOnly": True}
-        (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
-        print(json.dumps({"realCompile": records[0]["exitCode"],
-                          "flowCompile": records[1]["exitCode"],
-                          "flowRun": run.returncode, "text": report["controlFlowText"]}))
-        if run.returncode: raise SystemExit(run.returncode)
-        return
-
     bee = root / "Library/Bee/artifacts/1900b0aP.dag"
 
-    def build_bee(name, replacements, extra_sources=(), extra_references=(), original_rsp=None):
+    def build_bee(name, replacements, extra_sources=(), extra_references=(), original_rsp=None, record_list=None):
+        nonlocal narrative_toolkit
+        if name == "Toolkit" and narrative_toolkit is not None:
+            return narrative_toolkit
+        if name in ("LongLoop", "Legacy") and "Toolkit" not in replacements:
+            replacements = dict(replacements)
+            replacements["Toolkit"] = build_bee("Toolkit", {}, record_list=narrative_dependencies)
+            write_narrative_dependencies()
         original = original_rsp if original_rsp is not None else bee / (name + ".rsp")
         original_snapshot = out / (name + ".original.rsp")
         shutil.copyfile(original, original_snapshot)
@@ -509,6 +501,17 @@ def main():
         removed=[line for line in lines if line.strip('"') in retired_follow]
         lines=[line for line in lines if line not in removed]
 
+        if name == "Toolkit":
+            current_core = ensure_narrative_core()
+            bridge = root / "Assets/Scripts/Tools/NarrativeCurveBridge.cs"
+            if '"' + bridge.relative_to(root).as_posix() + '"' not in lines and bridge not in extra_sources:
+                extra_sources = tuple(extra_sources) + (bridge,)
+            if any(line.startswith('-r:"') and Path(line[4:-1]).stem in ("Narrative.Core", "Narrative.Core.ref") for line in lines):
+                replacements = dict(replacements, **{"Narrative.Core": current_core})
+            else:
+                extra_references = tuple(extra_references) + (current_core,)
+        # Older business modes pass candidate additions that current Bee may already contain.
+        extra_sources = tuple(p for p in extra_sources if '"' + p.relative_to(root).as_posix() + '"' not in lines)
         source_lines = [line for line in lines if line.startswith('"Assets/') and line.endswith('.cs"')]
         sources = [root / line.strip('"') for line in source_lines] + list(extra_sources)
         if not sources or not all(path.is_file() for path in sources):
@@ -593,7 +596,7 @@ def main():
                   "stdout": str(stdout), "stderr": str(stderr), "sourceCount": len(sources),
                   "referenceCount": len(references), "assembly": str(out / (name + ".dll")),
                   "referenceAssembly": str(out / (name + ".ref.dll"))}
-        records.append(record)
+        (records if record_list is None else record_list).append(record)
         if result.returncode:
             (out / "offline-validation.json").write_text(json.dumps(records, indent=2), encoding="utf-8")
             print(result.stdout.decode("utf-8-sig", "replace"), file=sys.stderr)
@@ -601,7 +604,40 @@ def main():
             raise SystemExit("Compile failed: " + name)
         record["assemblySha256"] = digest(out / (name + ".dll"))
         record["referenceAssemblySha256"] = digest(out / (name + ".ref.dll"))
+        if name == "Toolkit":
+            narrative_toolkit = out / (name + ".ref.dll")
         return out / (name + ".ref.dll")
+
+    if args.avatar_init:
+        current_toolkit = build_bee("Toolkit", {})
+        current_lines = set((bee / "LongLoop.rsp").read_text(encoding="utf-8-sig").splitlines())
+        current_missing = [p for p in sorted((root / "Assets/Scripts/LongLoop").rglob("*.cs"))
+                           if '"' + p.relative_to(root).as_posix() + '"' not in current_lines]
+        build_bee("LongLoop", {"Toolkit": current_toolkit}, current_missing)
+        production = list(records)
+        flow = build("AvatarControlFlowTests",
+                     src("Assets/Scripts/LongLoop/IPlayerAvatar.cs",
+                         "Assets/Scripts/LongLoop/TomatoSpineAvatar.cs",
+                         "DevTools/LongLoop/TomatoAvatarInitializationTests.cs"),
+                     [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
+        run = subprocess.run([str(mono), str(flow)], cwd=root, capture_output=True)
+        (out / "avatar-flow.stdout.bin").write_bytes(run.stdout)
+        (out / "avatar-flow.stderr.bin").write_bytes(run.stderr)
+        report = {"unityVersion": "6000.3.24f1", "unityNativeLaunched": False,
+                  "productionCompiles": production, "pureDependencyCompiles": list(narrative_dependencies),
+                  "realCurrentToolkitAndSpineCompile": records[1],
+                  "controlFlowCompile": records[2],
+                  "controlFlowRunExitCode": run.returncode,
+                  "controlFlowStdout": str(out / "avatar-flow.stdout.bin"),
+                  "controlFlowStderr": str(out / "avatar-flow.stderr.bin"),
+                  "controlFlowText": run.stdout.decode("utf-8-sig", "replace").strip(),
+                  "controlFlowOnly": True}
+        (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(json.dumps({"realCompile": records[1]["exitCode"], "toolkitCompile": records[0]["exitCode"],
+                          "flowCompile": records[2]["exitCode"],
+                          "flowRun": run.returncode, "text": report["controlFlowText"]}))
+        if run.returncode: raise SystemExit(run.returncode)
+        return
 
     if args.street_state_read or args.street_frame_read:
         import time
@@ -1066,6 +1102,11 @@ try {
         return
 
 
+    # These older headless shims omit Inspector-only Tooltip metadata.
+    if args.y_sort or args.walk_area or args.depth_scale or args.ground_space or args.street_config:
+        config_metadata = out / "ConfigMetadataBoundary.cs"
+        config_metadata.write_text("namespace UnityEngine { [System.AttributeUsage(System.AttributeTargets.Field)] public sealed class TooltipAttribute : System.Attribute { public TooltipAttribute(string text) {} } }", encoding="utf-8")
+
     if args.y_sort:
         new_longloop = sorted((root / "Assets/Scripts/LongLoop/Configuration").glob("*.cs")) + src(
             "Assets/Scripts/LongLoop/GroundSpace.cs", "Assets/Scripts/LongLoop/WalkArea.cs",
@@ -1089,7 +1130,7 @@ try {
             "Assets/Scripts/LongLoop/Configuration/SceneBoundsConfig.cs",
             "Assets/Scripts/LongLoop/Configuration/StreetConfigs.cs",
             "DevTools/LongLoop/WalkAreaUnityShim.cs", "DevTools/LongLoop/YSortRenderingShim.cs",
-            "DevTools/LongLoop/YSorterLogicTests.cs"),
+            "DevTools/LongLoop/YSorterLogicTests.cs") + [config_metadata],
             [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
         command = [str(mono), str(logic)]
         before = {"capturedBeforeRun": True, "command": command,
@@ -1208,7 +1249,7 @@ try {
             "Assets/Scripts/LongLoop/Configuration/StreetConfigs.cs",
             "DevTools/LongLoop/WalkAreaLogicTests.cs",
             "DevTools/LongLoop/WalkAreaUnityShim.cs",
-            "DevTools/LongLoop/DepthScaleSpineShim.cs")
+            "DevTools/LongLoop/DepthScaleSpineShim.cs") + [config_metadata]
         if args.depth_scale:
             logic_sources += src("DevTools/LongLoop/DepthScaleLogicTests.cs",
                                  "DevTools/LongLoop/DepthScaleFacingLifecycleTests.cs")
@@ -1269,7 +1310,7 @@ namespace UnityEngine {
 }
 """, encoding="utf-8")
         logic = build("GroundSpaceLogicTests", [math, adapter] + config_sources +
-                      src("DevTools/LongLoop/GroundSpaceLogicTests.cs") + [shim],
+                      src("DevTools/LongLoop/GroundSpaceLogicTests.cs") + [shim, config_metadata],
                       [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
         run_preflight = out / "ground-run.preflight.json"
         run_preflight.write_text(json.dumps({"capturedBeforeRun": True,
@@ -1316,7 +1357,7 @@ namespace UnityEngine {
 }
 """, encoding="utf-8")
         logic = build("StreetConfigLogicTests", config_sources +
-                      src("DevTools/LongLoop/StreetConfigLogicTests.cs") + [shim],
+                      src("DevTools/LongLoop/StreetConfigLogicTests.cs") + [shim, config_metadata],
                       [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
         run_preflight = out / "config-run.preflight.json"
         run_preflight.write_text(json.dumps({"capturedBeforeRun": True,

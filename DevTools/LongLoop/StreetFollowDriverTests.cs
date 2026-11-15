@@ -556,9 +556,92 @@ internal static class StreetFollowDriverV012Tests
             Scenario("WorldLookLimitsAndLifecycle",WorldLookLimitsAndLifecycle);
             Scenario("LookIntentSuspendsRealReturnChannels",LookIntentSuspendsRealReturnChannels);
             Scenario("DirectGamepadUsesSharedLimitsAndReturn",DirectGamepadUsesSharedLimitsAndReturn);
+            Scenario("ScaledRadialLimitUsesSameFrameRatio",ScaledRadialLimitUsesSameFrameRatio);
+            Scenario("WorldSpeedIsIndependentOfLensRatio",WorldSpeedIsIndependentOfLensRatio);
+            Scenario("RatioOneMatchesUnchangedWorldLimiterBitForBit",RatioOneMatchesUnchangedWorldLimiterBitForBit);
             Console.WriteLine("DRIVER_V012 PASS scenarios="+scenarios+" assertions="+checks);return 0;
         }catch(Exception error){Console.Error.WriteLine(error);return 1;}
     }
+    private static InputSource ConfigureRatioLook(StreetFollowDriverTests.Fixture f)
+    {
+        Enable(f,true);
+        f.Config.OrthoSizeMin=7.5f;f.Config.OrthoSizeMax=10;
+        f.Config.LookInTime=f.Config.LookOutTime=0;
+        f.Config.MaxHorizontalOffset=f.Config.MaxVerticalOffset=100;
+        f.Config.LookMaxDistance=2.5f;f.Config.LookMaxSpeed=1000;
+        var input=new InputSource {Look=new Vector2(1,1)};
+        f.Foot.components[typeof(IGameInput)]=input;
+        return input;
+    }
+    private static void ScaledRadialLimitUsesSameFrameRatio()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            var input=ConfigureRatioLook(f);
+            Tick(f,0);Tick(f,.1f);
+            Near(f.Driver.LastRatio,.75,"same-frame minimum lens ratio");
+            Near(LookLength(f.Driver.LookWorldOffset),1.875,"2.5 times .75 is actual Driver radial cap");
+            float previousRatio=f.Driver.LastRatio;
+            double previousLimit=LookLength(f.Driver.LookWorldOffset);
+            for(int i=1;i<=10;i++) {
+                Tick(f,.1f+i*.1f,dx:.1f);
+                float ratio=f.Driver.LastRatio;
+                double limit=LookLength(f.Driver.LookWorldOffset);
+                Near(ratio,f.State.Lens.OrthographicSize/10,"cap uses this frame lens, not previous ratio");
+                Near(limit,2.5f*ratio,"increasing lens has proportional radial cap");
+                Near(limit-previousLimit,2.5*(ratio-previousRatio),"continuous increase follows linear ratio");
+                previousRatio=ratio;previousLimit=limit;
+            }
+            Near(previousRatio,1,"moving reaches maximum lens");
+            f.Config.LookMaxSpeed=0;
+            input.Look=new Vector2(-1,-1);
+            for(int i=1;i<=10;i++) {
+                Tick(f,1.1f+i*.1f);
+                float ratio=f.Driver.LastRatio;
+                double limit=LookLength(f.Driver.LookWorldOffset);
+                Near(limit,2.5f*ratio,"shrinking lens immediately corrects old out-of-bounds state");
+                Near(limit-previousLimit,2.5*(ratio-previousRatio),"continuous decrease follows linear ratio");
+                Check(f.Driver.LookWorldOffset.x>0&&f.Driver.LookWorldOffset.y>0,
+                    "zero-speed correction preserves old direction despite reversed target");
+                previousRatio=ratio;previousLimit=limit;
+            }
+            Near(previousRatio,.75,"stationary lens reaches minimum");
+        }
+    }
+    private static void WorldSpeedIsIndependentOfLensRatio()
+    {
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            ConfigureRatioLook(f);f.Config.LookMaxSpeed=.4f;
+            Tick(f,0);Tick(f,.1f);
+            Near(f.Driver.LastRatio,.75,"speed example uses reduced lens");
+            Near(LookLength(f.Driver.LookWorldOffset),.4f*.1f,"speed stays .4 world units per second");
+        }
+    }
+    private static void RatioOneMatchesUnchangedWorldLimiterBitForBit()
+    {
+        float[] distances={0,.25f,2.5f,2.5f},speeds={4,.4f,4,0};
+        foreach(StreetCurvePreset curve in Enum.GetValues(typeof(StreetCurvePreset)))
+        for(int sample=0;sample<distances.Length;sample++)
+        using(var f=new StreetFollowDriverTests.Fixture()) {
+            var input=ConfigureRatioLook(f);
+            f.Config.DynamicZoomEnabled=false;f.Config.LookResponseCurve=curve;
+            f.Config.LookInTime=.35f;f.Config.LookOutTime=.8f;
+            f.Config.LookMaxDistance=distances[sample];f.Config.LookMaxSpeed=speeds[sample];
+            for(int i=0;i<24;i++) {
+                var previous=new StreetLookFloatWorldState {Value=f.Driver.LookWorldOffset};
+                input.Look=i<8?new Vector2(1000,1000):i<16?new Vector2(-1,.75f):Vector2.zero;
+                Tick(f,i*.125f,dt:.125f);
+                var normalized=new Vector2((float)f.Driver.LookFloatState.X.Value,(float)f.Driver.LookFloatState.Y.Value);
+                var legacy=StreetLookFloat.LimitWorld(previous,normalized,new Vector2(100,100),1,
+                    distances[sample],speeds[sample],i==0?0:.125f);
+                Check(legacy.Valid&&f.Driver.LastRatio==1,"ratio-one legacy world result valid");
+                Check(BitConverter.ToInt32(BitConverter.GetBytes(legacy.Value.x),0)==
+                      BitConverter.ToInt32(BitConverter.GetBytes(f.Driver.LookWorldOffset.x),0),"ratio-one X exact float bits");
+                Check(BitConverter.ToInt32(BitConverter.GetBytes(legacy.Value.y),0)==
+                      BitConverter.ToInt32(BitConverter.GetBytes(f.Driver.LookWorldOffset.y),0),"ratio-one Y exact float bits");
+            }
+        }
+    }
+
     private static void SizeAndCache()
     {
         using(var f=new StreetFollowDriverTests.Fixture(true)) {

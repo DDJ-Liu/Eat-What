@@ -29,6 +29,11 @@ namespace EatWhat.DataTables
             "Assets/Sprites/Cooking/UI/Characters/FridgeCat"
         };
 
+        // Per-role roots are configurable and do not alter the six Cooking Sprite roots.
+        public static string[] PortraitSearchDirectories = { "Assets/Sprites/Narrative/Portraits", "Assets/Sprites/Narrative/Placeholders/Portraits" };
+        public static string[] CgSearchDirectories = { "Assets/Sprites/Narrative/CGs", "Assets/Sprites/Narrative/Placeholders/CGs" };
+        public static string[] VisualSearchDirectories = { "Assets/Prefabs/LongLoop/NPC/Visuals", "Assets/Prefabs/LongLoop/NPC/Visuals/Placeholders" };
+
         private static readonly DataTableImportRegistration[] Registrations =
         {
             new DataTableImportRegistration { TableName = "Recipes", SchemaPath = "Schemas/Cooking/Recipes.schema.json", OutputDirectory = "Assets/Generated/DataTables/Cooking/Recipes" },
@@ -44,7 +49,15 @@ namespace EatWhat.DataTables
             new DataTableImportRegistration { TableName = "ProcessActions", SchemaPath = "Schemas/Cooking/ProcessActions.schema.json", OutputDirectory = "Assets/Generated/DataTables/Cooking/ProcessActions" },
             new DataTableImportRegistration { TableName = "ProcessingRecords", SchemaPath = "Schemas/Cooking/ProcessingRecords.schema.json", OutputDirectory = "Assets/Generated/DataTables/Cooking/ProcessingRecords" },
             new DataTableImportRegistration { TableName = "RecipeVariants", SchemaPath = "Schemas/Cooking/RecipeVariants.schema.json", OutputDirectory = "Assets/Generated/DataTables/Cooking/RecipeVariants" },
-            new DataTableImportRegistration { TableName = "KitchenAreas", SchemaPath = "Schemas/Cooking/KitchenAreas.schema.json", OutputDirectory = "Assets/Generated/DataTables/Cooking/KitchenAreas" }
+            new DataTableImportRegistration { TableName = "KitchenAreas", SchemaPath = "Schemas/Cooking/KitchenAreas.schema.json", OutputDirectory = "Assets/Generated/DataTables/Cooking/KitchenAreas" },
+            new DataTableImportRegistration { TableName = "Characters", SchemaPath = "Schemas/Narrative/Characters.schema.json", OutputDirectory = "Assets/Generated/DataTables/Narrative/Characters" },
+            new DataTableImportRegistration { TableName = "Dialogues", SchemaPath = "Schemas/Narrative/Dialogues.schema.json", OutputDirectory = "Assets/Generated/DataTables/Narrative/Dialogues" },
+            new DataTableImportRegistration { TableName = "DialogueLines", SchemaPath = "Schemas/Narrative/DialogueLines.schema.json", OutputDirectory = "Assets/Generated/DataTables/Narrative/DialogueLines" },
+            new DataTableImportRegistration { TableName = "CGs", SchemaPath = "Schemas/Narrative/CGs.schema.json", OutputDirectory = "Assets/Generated/DataTables/Narrative/CGs" },
+            new DataTableImportRegistration { TableName = "Scenes", SchemaPath = "Schemas/Street/Scenes.schema.json", OutputDirectory = "Assets/Generated/DataTables/Street/Scenes" },
+            new DataTableImportRegistration { TableName = "SceneStates", SchemaPath = "Schemas/Street/SceneStates.schema.json", OutputDirectory = "Assets/Generated/DataTables/Street/SceneStates" },
+            new DataTableImportRegistration { TableName = "SceneStatePlacements", SchemaPath = "Schemas/Street/SceneStatePlacements.schema.json", OutputDirectory = "Assets/Generated/DataTables/Street/SceneStatePlacements" },
+            new DataTableImportRegistration { TableName = "AmbientPools", SchemaPath = "Schemas/Street/AmbientPools.schema.json", OutputDirectory = "Assets/Generated/DataTables/Street/AmbientPools" },
         };
 
         public static IList<DataTableImportRegistration> GetRegistrations()
@@ -103,6 +116,30 @@ namespace EatWhat.DataTables
                 UsesPlaceholder = true,
                 Warning = "Sprite '" + spriteName + "' uses the CK01 placeholder because " + reason + "."
             };
+        }
+    }
+
+    public sealed class FilenameLookupResult
+    {
+        public string AssetPath;
+        public string Warning;
+    }
+
+    // Filename resolution only, never creates a reference, placeholder or asset.
+    public static class NarrativeFilenameLookupPolicy
+    {
+        public static FilenameLookupResult Resolve(string role, string name, Func<string, IList<string>> findCandidates)
+        {
+            var normalized = (name ?? string.Empty).Trim();
+            if (normalized.Length == 0) return new FilenameLookupResult();
+            if (normalized.IndexOfAny(new[] { '/', '\\' }) >= 0 || !string.Equals(Path.GetFileNameWithoutExtension(normalized), normalized, StringComparison.Ordinal))
+                return new FilenameLookupResult { Warning = role + " '" + normalized + "' must be a basename without path or extension; reference remains unresolved." };
+            var exact = new List<string>();
+            var candidates = findCandidates == null ? null : findCandidates(normalized);
+            foreach (var path in candidates ?? new List<string>())
+                if (!string.IsNullOrWhiteSpace(path) && string.Equals(Path.GetFileNameWithoutExtension(path), normalized, StringComparison.Ordinal) && !exact.Contains(path)) exact.Add(path);
+            return exact.Count == 1 ? new FilenameLookupResult { AssetPath = exact[0] } : new FilenameLookupResult {
+                Warning = role + " '" + normalized + "' has " + exact.Count + " exact candidates; reference remains unresolved (no first-match selection)." };
         }
     }
 

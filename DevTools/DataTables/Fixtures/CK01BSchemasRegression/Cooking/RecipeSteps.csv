@@ -1,0 +1,10 @@
+step_id,recipe_id,next_step_id,display_text_key,standard_ingredients,standard_tools,trigger_items,permanent_trigger_items,comment
+step_qt_01,rcp_qingtang_noodle,step_qt_02,step_qt_01.text,ing_noodle_dried,tool_pot,prd_noodle_boiled,,煮面
+step_qt_02,rcp_qingtang_noodle,,step_qt_02.text,ing_scallion,tool_pot,prd_qingtang_dish,,队尾=最终成品步骤
+step_te_01,rcp_tomato_egg,step_te_02,step_te_01.text,ing_egg,tool_bowl;tool_chopsticks,prd_egg_liquid,,打蛋
+step_te_02,rcp_tomato_egg,step_te_03,step_te_02.text,ing_tomato,tool_board;tool_knife,prd_tomato_cut,,切番茄
+step_te_03,rcp_tomato_egg,step_te_04,step_te_03.text,ing_egg,tool_pan;tool_spatula,prd_scrambled_egg,prd_tomato_egg_soup,走蛋花汤路线时本步被永久折叠（永久置完成示范）
+step_te_04,rcp_tomato_egg,,step_te_04.text,ing_tomato,tool_pan,prd_tomato_egg_dish;prd_tomato_egg_soup,,队尾；两个成品任一命中
+step_kc_01,rcp_kaishui_cabbage,step_kc_02,step_kc_01.text,ing_cabbage,tool_hand,prd_cabbage_washed,,摘洗
+step_kc_02,rcp_kaishui_cabbage,step_kc_03,step_kc_02.text,ing_octopus_leg,tool_stove,prd_clear_broth,,等待处理示范
+step_kc_03,rcp_kaishui_cabbage,,step_kc_03.text,ing_cabbage,tool_pot,prd_kaishui_dish,,队尾

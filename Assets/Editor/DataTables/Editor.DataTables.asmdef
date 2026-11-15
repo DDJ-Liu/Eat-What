@@ -5,7 +5,8 @@
     "Generated.DataTables",
     "Legacy",
     "spine-unity",
-    "Toolkit"
+    "Toolkit",
+    "Narrative.Core"
   ],
   "includePlatforms": [
     "Editor"

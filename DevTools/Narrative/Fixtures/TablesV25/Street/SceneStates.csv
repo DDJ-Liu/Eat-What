@@ -1,0 +1,4 @@
+scene_id,state_id,story_stage,description,switch_source,comment
+scn_a,morning,chapter1,上午,剧情,A状态
+scn_b,morning,,,,
+scn_b,evening,,,,

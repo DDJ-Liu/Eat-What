@@ -222,27 +222,11 @@ namespace EatWhat.LongLoop
             curve==StreetCurvePreset.Quadratic||curve==StreetCurvePreset.SmoothStep||curve==StreetCurvePreset.EaseInOut;
         public static double CurveValue(StreetCurvePreset curve,double u)
         {
-            u=Clamp(u,0,1);
-            switch(curve)
-            {
-                case StreetCurvePreset.Linear:return u;
-                case StreetCurvePreset.Quadratic:return u*u;
-                case StreetCurvePreset.SmoothStep:return Clamp(u*u*(3-2*u),0,1);
-                case StreetCurvePreset.EaseInOut:return Clamp(u*u*u*(10+u*(-15+6*u)),0,1);
-                default:throw new ArgumentOutOfRangeException(nameof(curve));
-            }
+            return EatWhat.Toolkit.NarrativeCurveBridge.Value((int)curve,u);
         }
         public static double CurveIntegral(StreetCurvePreset curve,double u)
         {
-            u=Clamp(u,0,1);
-            switch(curve)
-            {
-                case StreetCurvePreset.Linear:return .5d*u*u;
-                case StreetCurvePreset.Quadratic:return u*u*u/3d;
-                case StreetCurvePreset.SmoothStep:return u*u*u*(1-.5d*u);
-                case StreetCurvePreset.EaseInOut:return u*u*u*u*(2.5d+u*(-3+u));
-                default:throw new ArgumentOutOfRangeException(nameof(curve));
-            }
+            return EatWhat.Toolkit.NarrativeCurveBridge.Integral((int)curve,u);
         }
 
         public static FollowHorizontalResult Horizontal(FollowLookaheadState previous,FollowGoalStep step,StreetFollowSettings s)

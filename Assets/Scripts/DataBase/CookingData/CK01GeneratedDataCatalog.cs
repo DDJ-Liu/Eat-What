@@ -163,6 +163,15 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
     public const string ProcessingRecordsTable = "ProcessingRecords";
     public const string KitchenAreasTable = "KitchenAreas";
     public const string ToolsTable = "Tools";
+    public const string CharactersTable = "Characters";
+    public const string DialoguesTable = "Dialogues";
+    public const string DialogueLinesTable = "DialogueLines";
+    public const string CGsTable = "CGs";
+    public const string ScenesTable = "Scenes";
+    public const string SceneStatesTable = "SceneStates";
+    public const string SceneStatePlacementsTable = "SceneStatePlacements";
+    public const string AmbientPoolsTable = "AmbientPools";
+
 
     [SerializeField] private List<CK01GeneratedDataTable> tables =
         new List<CK01GeneratedDataTable>();
@@ -703,6 +712,54 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
         orderedSteps = result.AsReadOnly();
         diagnostic = null;
         return true;
+    }
+
+    public bool TryGetCharacter(string characterId, out CK01CharacterData row, out string diagnostic)
+    { return TryGetRow(CharactersTable, characterId, out row, out diagnostic); }
+
+    public bool TryGetDialogue(string dialogueId, out CK01DialogueData row, out string diagnostic)
+    { return TryGetRow(DialoguesTable, dialogueId, out row, out diagnostic); }
+
+    public bool TryGetDialogueLine(string lineId, out CK01DialogueLineData row, out string diagnostic)
+    { return TryGetRow(DialogueLinesTable, lineId, out row, out diagnostic); }
+
+    public bool TryGetCG(string cgId, out CK01CGData row, out string diagnostic)
+    { return TryGetRow(CGsTable, cgId, out row, out diagnostic); }
+
+    public bool TryGetScene(string sceneId, out CK01SceneData row, out string diagnostic)
+    { return TryGetRow(ScenesTable, sceneId, out row, out diagnostic); }
+
+    public bool TryGetAmbientPool(string poolId, out CK01AmbientPoolData row, out string diagnostic)
+    { return TryGetRow(AmbientPoolsTable, poolId, out row, out diagnostic); }
+
+    public bool TryGetSceneState(string sceneId, string stateId, out CK01SceneStateData row, out string diagnostic)
+    {
+        row = null;
+        IList<CK01SceneStateData> values;
+        if (!TryGetRows(SceneStatesTable, out values, out diagnostic)) return false;
+        foreach (var item in values)
+        {
+            if (!(string.Equals(item.scene_id, sceneId, StringComparison.Ordinal) && string.Equals(item.state_id, stateId, StringComparison.Ordinal))) continue;
+            if (row != null) { row = null; diagnostic = "Duplicate composite row in SceneStates while querying complete key."; return false; }
+            row = item;
+        }
+        diagnostic = row == null ? "No matching complete key in SceneStates." : null;
+        return row != null;
+    }
+
+    public bool TryGetSceneStatePlacement(string sceneId, string stateId, string kind, string target, out CK01SceneStatePlacementData row, out string diagnostic)
+    {
+        row = null;
+        IList<CK01SceneStatePlacementData> values;
+        if (!TryGetRows(SceneStatePlacementsTable, out values, out diagnostic)) return false;
+        foreach (var item in values)
+        {
+            if (!(string.Equals(item.scene_id, sceneId, StringComparison.Ordinal) && string.Equals(item.state_id, stateId, StringComparison.Ordinal) && string.Equals(item.kind, kind, StringComparison.Ordinal) && string.Equals(item.target, target, StringComparison.Ordinal))) continue;
+            if (row != null) { row = null; diagnostic = "Duplicate composite row in SceneStatePlacements while querying complete key."; return false; }
+            row = item;
+        }
+        diagnostic = row == null ? "No matching complete key in SceneStatePlacements." : null;
+        return row != null;
     }
 
     public bool TryGetRows<T>(string tableName, out IList<T> rows, out string diagnostic)

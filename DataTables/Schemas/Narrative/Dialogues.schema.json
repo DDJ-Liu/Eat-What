@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Dialogues",
+  "csvPath": "Narrative/Dialogues.csv",
+  "targetType": "CK01DialogueData",
+  "outputDirectory": "Assets/Generated/DataTables/Narrative/Dialogues",
+  "assetNameField": "dialogue_id",
+  "primaryKeyField": "dialogue_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "dialogue_id",
+      "csvColumn": "dialogue_id",
+      "type": "id",
+      "required": true,
+      "description": "对话主键，填写dlg_开头的小写ID。",
+      "unique": true,
+      "pattern": "^dlg_[a-z0-9_]+$"
+    },
+    {
+      "name": "tier",
+      "csvColumn": "tier",
+      "type": "enum",
+      "required": true,
+      "description": "ambient路人气泡、normal普通、story剧情，填写对应小写枚举。",
+      "enumValues": [
+        "ambient",
+        "normal",
+        "story"
+      ]
+    },
+    {
+      "name": "cast_01",
+      "csvColumn": "cast_01",
+      "type": "ref",
+      "required": false,
+      "description": "出场角色ID，引用Characters；从01连续填，空表示本位置无立绘。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_01_station",
+      "csvColumn": "cast_01_station",
+      "type": "string",
+      "required": false,
+      "description": "站位模板中的站位ID；空按出场人数选择默认站位，显式位置优先。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_01_pos_x",
+      "csvColumn": "cast_01_pos_x",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的横向px偏移，2560×1440基准，向右为正；填写后优先于站位。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_01_pos_y",
+      "csvColumn": "cast_01_pos_y",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的纵向px偏移，2560×1440基准，向上为正；保留空与显式0的区别。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_01_scale",
+      "csvColumn": "cast_01_scale",
+      "type": "float",
+      "required": false,
+      "description": "本段额外缩放，与角色表缩放相乘；留空由后续适配处理。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_01_order",
+      "csvColumn": "cast_01_order",
+      "type": "int",
+      "required": false,
+      "description": "立绘前后层号，数字大在前，允许有符号整数；留空与0分别保存。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "cast_02",
+      "csvColumn": "cast_02",
+      "type": "ref",
+      "required": false,
+      "description": "出场角色ID，引用Characters；从01连续填，空表示本位置无立绘。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_02_station",
+      "csvColumn": "cast_02_station",
+      "type": "string",
+      "required": false,
+      "description": "站位模板中的站位ID；空按出场人数选择默认站位，显式位置优先。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_02_pos_x",
+      "csvColumn": "cast_02_pos_x",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的横向px偏移，2560×1440基准，向右为正；填写后优先于站位。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_02_pos_y",
+      "csvColumn": "cast_02_pos_y",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的纵向px偏移，2560×1440基准，向上为正；保留空与显式0的区别。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_02_scale",
+      "csvColumn": "cast_02_scale",
+      "type": "float",
+      "required": false,
+      "description": "本段额外缩放，与角色表缩放相乘；留空由后续适配处理。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_02_order",
+      "csvColumn": "cast_02_order",
+      "type": "int",
+      "required": false,
+      "description": "立绘前后层号，数字大在前，允许有符号整数；留空与0分别保存。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "cast_03",
+      "csvColumn": "cast_03",
+      "type": "ref",
+      "required": false,
+      "description": "出场角色ID，引用Characters；从01连续填，空表示本位置无立绘。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_03_station",
+      "csvColumn": "cast_03_station",
+      "type": "string",
+      "required": false,
+      "description": "站位模板中的站位ID；空按出场人数选择默认站位，显式位置优先。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_03_pos_x",
+      "csvColumn": "cast_03_pos_x",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的横向px偏移，2560×1440基准，向右为正；填写后优先于站位。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_03_pos_y",
+      "csvColumn": "cast_03_pos_y",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的纵向px偏移，2560×1440基准，向上为正；保留空与显式0的区别。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_03_scale",
+      "csvColumn": "cast_03_scale",
+      "type": "float",
+      "required": false,
+      "description": "本段额外缩放，与角色表缩放相乘；留空由后续适配处理。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_03_order",
+      "csvColumn": "cast_03_order",
+      "type": "int",
+      "required": false,
+      "description": "立绘前后层号，数字大在前，允许有符号整数；留空与0分别保存。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "cast_04",
+      "csvColumn": "cast_04",
+      "type": "ref",
+      "required": false,
+      "description": "出场角色ID，引用Characters；从01连续填，空表示本位置无立绘。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_04_station",
+      "csvColumn": "cast_04_station",
+      "type": "string",
+      "required": false,
+      "description": "站位模板中的站位ID；空按出场人数选择默认站位，显式位置优先。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。"
+    },
+    {
+      "name": "cast_04_pos_x",
+      "csvColumn": "cast_04_pos_x",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的横向px偏移，2560×1440基准，向右为正；填写后优先于站位。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_04_pos_y",
+      "csvColumn": "cast_04_pos_y",
+      "type": "float",
+      "required": false,
+      "description": "显示锚点相对屏幕底边中点的纵向px偏移，2560×1440基准，向上为正；保留空与显式0的区别。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_04_scale",
+      "csvColumn": "cast_04_scale",
+      "type": "float",
+      "required": false,
+      "description": "本段额外缩放，与角色表缩放相乘；留空由后续适配处理。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "cast_04_order",
+      "csvColumn": "cast_04_order",
+      "type": "int",
+      "required": false,
+      "description": "立绘前后层号，数字大在前，允许有符号整数；留空与0分别保存。 当前四组为本版列，人数增加时按同模式扩列，不设置永久四人上限。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "tier_profile",
+      "csvColumn": "tier_profile",
+      "type": "string",
+      "required": false,
+      "description": "tier组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "entrance_profile",
+      "csvColumn": "entrance_profile",
+      "type": "string",
+      "required": false,
+      "description": "entrance组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "exit_profile",
+      "csvColumn": "exit_profile",
+      "type": "string",
+      "required": false,
+      "description": "exit组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "layout_profile",
+      "csvColumn": "layout_profile",
+      "type": "string",
+      "required": false,
+      "description": "layout组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "speaker_profile",
+      "csvColumn": "speaker_profile",
+      "type": "string",
+      "required": false,
+      "description": "speaker组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "expression_profile",
+      "csvColumn": "expression_profile",
+      "type": "string",
+      "required": false,
+      "description": "expression组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "text_profile",
+      "csvColumn": "text_profile",
+      "type": "string",
+      "required": false,
+      "description": "text组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "reaction_profile",
+      "csvColumn": "reaction_profile",
+      "type": "string",
+      "required": false,
+      "description": "reaction组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "cg_profile",
+      "csvColumn": "cg_profile",
+      "type": "string",
+      "required": false,
+      "description": "cg组命名模板；留空选择default，本阶段只保存名字。"
+    },
+    {
+      "name": "overrides",
+      "csvColumn": "overrides",
+      "type": "string",
+      "required": false,
+      "description": "本段覆盖集key=value;key=value，key取演出参数注册表；只对本段生效，本卡不应用覆盖。"
+    },
+    {
+      "name": "first_line",
+      "csvColumn": "first_line",
+      "type": "ref",
+      "required": true,
+      "description": "台词链第一句，引用DialogueLines.line_id；顺序/归属由链定义。"
+    },
+    {
+      "name": "next_dialogue",
+      "csvColumn": "next_dialogue",
+      "type": "ref",
+      "required": false,
+      "description": "接续对话ID，引用Dialogues；有切场景命令时等切换完成后开始，气泡不使用。"
+    },
+    {
+      "name": "on_end",
+      "csvColumn": "on_end",
+      "type": "string",
+      "required": false,
+      "description": "结束命令cmd(arg);cmd(arg)，原样保存，后续调度消费。"
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [
+    {
+      "field": "cast_01",
+      "targetSchema": "Narrative/Characters.schema.json",
+      "targetField": "character_id"
+    },
+    {
+      "field": "cast_02",
+      "targetSchema": "Narrative/Characters.schema.json",
+      "targetField": "character_id"
+    },
+    {
+      "field": "cast_03",
+      "targetSchema": "Narrative/Characters.schema.json",
+      "targetField": "character_id"
+    },
+    {
+      "field": "cast_04",
+      "targetSchema": "Narrative/Characters.schema.json",
+      "targetField": "character_id"
+    },
+    {
+      "field": "first_line",
+      "targetSchema": "Narrative/DialogueLines.schema.json",
+      "targetField": "line_id"
+    },
+    {
+      "field": "next_dialogue",
+      "targetSchema": "Narrative/Dialogues.schema.json",
+      "targetField": "dialogue_id"
+    }
+  ],
+  "rules": []
+}

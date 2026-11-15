@@ -1,0 +1,17 @@
+tag_id,tag_class,name_key,icon_sprite,sticker_sprite,filter_order,comment
+tag_veg,ingredient,tag_veg.name,ui_tag_shucai,,1,食材类目
+tag_fruit,ingredient,tag_fruit.name,ui_tag_shuiguo,,2,食材类目
+tag_egg,ingredient,tag_egg.name,ui_tag_danlei,,3,食材类目
+tag_meat,ingredient,tag_meat.name,ui_tag_roulei,,4,食材类目
+tag_seafood,ingredient,tag_seafood.name,ui_tag_haixian,,5,食材类目
+tag_staplefood,ingredient,tag_staplefood.name,ui_tag_zhushi,,6,食材类目
+tag_dairy,ingredient,tag_dairy.name,ui_tag_nailei,,7,食材类目（测试容器食材用）
+tag_dish_boil,dish,tag_dish_boil.name,ui_tag_zhu,,,菜品分类彩签
+tag_dish_stirfry,dish,tag_dish_stirfry.name,ui_tag_chao,,,菜品分类彩签
+tag_dish_deepfry,dish,tag_dish_deepfry.name,ui_tag_zha,,,菜品分类彩签（demo 无菜使用，先立行）
+tag_dish_stew,dish,tag_dish_stew.name,ui_tag_dun,,,菜品分类彩签（demo 无菜使用，先立行）
+tag_flavor_yummy,flavor,tag_flavor_yummy.name,,ui_tiezhi_zhendihenxiang,,风味签（参考图2）
+tag_flavor_confused,flavor,tag_flavor_confused.name,,ui_tiezhi_chibudong,,风味签（参考图2）
+tag_flavor_spicy,flavor,tag_flavor_spicy.name,,,,风味签（参考图2；无专属贴纸走通用模板）
+tag_flavor_easy,flavor,tag_flavor_easy.name,,,,风味签
+tag_flavor_fancy,flavor,tag_flavor_fancy.name,,,,风味签

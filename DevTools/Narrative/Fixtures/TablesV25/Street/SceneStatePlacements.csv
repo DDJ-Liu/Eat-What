@@ -1,0 +1,3 @@
+scene_id,state_id,kind,target,anchor_id,facing,active,dialogue_id,ambient_pool,marker,comment
+scn_a,morning,actor,chr_cook#2,door,right,true,dlg_normal,amb_pool,talk,完整行
+scn_b,morning,actor,chr_cook#2,,,false,,,,

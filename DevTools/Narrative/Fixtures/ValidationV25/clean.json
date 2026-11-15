@@ -1,0 +1,36 @@
+{
+  "source": "Synthetic offline inputs only. No scene inventory or imported asset attestation.",
+  "tables": {
+    "Characters": [
+      {"character_id":"chr_hero","name_key":"loc_name","portrait_sprite":"hero","portrait_offset_x":"0","portrait_offset_y":"0","portrait_scale":"1","street_visual_prefab":"hero_visual"},
+      {"character_id":"chr_narrator"},
+      {"character_id":"chr_other","portrait_sprite":"other"}
+    ],
+    "Dialogues": [
+      {"dialogue_id":"dlg_normal","tier":"normal","cast_01":"chr_hero","first_line":"ln_normal","on_end":"set_flag(ready,true)"},
+      {"dialogue_id":"dlg_ambient","tier":"ambient","first_line":"ln_ambient"},
+      {"dialogue_id":"dlg_story","tier":"story","cast_01":"chr_hero","first_line":"ln_story"}
+    ],
+    "DialogueLines": [
+      {"line_id":"ln_normal","dialogue_id":"dlg_normal","speaker":"chr_narrator","text_key":"loc_text"},
+      {"line_id":"ln_ambient","dialogue_id":"dlg_ambient","text_key":"loc_text"},
+      {"line_id":"ln_story","dialogue_id":"dlg_story","speaker":"chr_narrator","text_key":"loc_text"}
+    ],
+    "CGs": [{"cg_id":"cg_one","cg_sprite":"background","fade_in":"0","fade_out":"0","ken_burns_duration":"0"}],
+    "Scenes": [
+      {"scene_id":"scn_a","name_key":"loc_scene","scene_type":"street","is_small_room":"false","scene_asset":"SceneA","default_state":"morning"},
+      {"scene_id":"scn_b","name_key":"loc_scene","scene_type":"interior","is_small_room":"true","scene_asset":"SceneB","default_state":"morning"}
+    ],
+    "SceneStates": [
+      {"scene_id":"scn_a","state_id":"morning"},
+      {"scene_id":"scn_a","state_id":"evening"},
+      {"scene_id":"scn_b","state_id":"morning"}
+    ],
+    "SceneStatePlacements": [
+      {"scene_id":"scn_a","state_id":"morning","kind":"actor","target":"chr_hero","active":"true","dialogue_id":"dlg_normal","ambient_pool":"amb_one"},
+      {"scene_id":"scn_a","state_id":"evening","kind":"actor","target":"chr_hero","active":"false","dialogue_id":"dlg_normal","ambient_pool":"amb_one"},
+      {"scene_id":"scn_b","state_id":"morning","kind":"actor","target":"chr_hero","active":"true","dialogue_id":"dlg_normal","ambient_pool":"amb_one"}
+    ],
+    "AmbientPools": [{"pool_id":"amb_one","dialogue_ids":"dlg_ambient"}]
+  }
+}

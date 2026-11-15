@@ -112,7 +112,7 @@ async function loadSchemas(dataRoot) {
     schema.__relativePath = path.relative(schemaRoot, file).replaceAll(path.sep, "/");
     schemas.push(schema);
   }
-  if (schemas.length !== 14) throw new Error(`Expected 14 schemas, found ${schemas.length}.`);
+  if (schemas.length !== 22) throw new Error(`Expected 22 schemas, found ${schemas.length}.`);
   return schemas;
 }
 
@@ -145,18 +145,19 @@ function resolveReference(reference, schemas) {
 
 function headerComment(schema, column, schemas, sample) {
   const table = headerDescriptions[schema.tableName];
-  const purpose = table?.fields?.[column.name];
+  const purpose = table?.fields?.[column.name] || column.description;
   if (!purpose) throw new Error("Missing header description: " + schema.tableName + "." + column.name);
   const reference = effectiveReferences(schema, schemas).find((entry) => entry.field === column.name);
   const lines = [
     "[AI189_HEADER_DOC]",
     "用途/填法：" + purpose,
-    "消费点：" + table.consumer + "；schema 校验与导表器。",
-    "类型：" + column.type + "；" + (column.required ? "必填" : "可留空") +
+    "消费点：" + (table?.consumer || schema.consumer || "生成行数据/只读查询") + "；schema 校验与导表器。",
+    "类型：" + column.type + "；" + (column.required ? "必填" : column.requiredCondition ? "条件必填：" + column.requiredCondition : "可留空") +
       (column.defaultValue === undefined ? "；schema 未声明默认值。" : "；schema 默认值：" + column.defaultValue + "（不自动改现有单元格）。"),
-    "单位：" + (/单位/.test(purpose) ? "见用途/填法；不要自行换算。" : ["int", "float"].includes(column.type) ? "schema 未明确，按业务确认。" : "不适用（标识、文本或枚举）。"),
+    "单位：" + (/单位/.test(purpose) || (!table && column.description && ["int", "float"].includes(column.type)) ? "见用途/填法；不要自行换算。" : ["int", "float"].includes(column.type) ? "schema 未明确，按业务确认。" : "不适用（标识、文本或枚举）。"),
     "示例：" + (sample ? String(sample).replaceAll(/\r?\n/g, " ↵ ").slice(0, 140) : "当前表无非空样例；按字段说明及 schema 填写。"),
   ];
+  if (!table) lines.splice(1, 0, "字段：" + schema.tableName + "." + column.name);
   if (column.separator) lines.push("多值分隔符：'" + column.separator + "'；逐项填写 ID/枚举，不把逗号当分隔符。");
   if (reference) {
     const { target } = resolveReference(reference, schemas);
@@ -173,7 +174,7 @@ function headerComment(schema, column, schemas, sample) {
   if (column.unique) rules.push("本表唯一");
   if (column.requiredWhenField) rules.push(column.requiredWhenField + "=" + (column.requiredWhenValues ?? []).join("/") + " 时必填");
   if (rules.length) lines.push("约束：" + rules.join("；") + "。");
-  if (column.type === "float" && !/单位/.test(purpose)) lines.push("单位：当前 schema 未定义，填写前需业务确认。");
+  if (column.type === "float" && (table || !column.description) && !/单位/.test(purpose)) lines.push("单位：当前 schema 未定义，填写前需业务确认。");
   return lines.join("\n");
 }
 
@@ -373,6 +374,8 @@ async function exportWorkbook() {
   const skipped = [];
   const pendingWrites = [];
   const provenanceCells = [];
+  const headerOnlyCsv = [];
+  const emptySheetSkips = [];
 
   for (const schema of schemas) {
     const sheet = workbook.worksheets.getItem(schema.tableName);
@@ -387,12 +390,39 @@ async function exportWorkbook() {
 
     const dataRows = values.slice(1).map((row) => headers.map((_, index) => valueText(row[index])));
     while (dataRows.length > 0 && dataRows[dataRows.length - 1].every((cell) => cell === "")) dataRows.pop();
+    const target = path.join(outputRoot, ...schema.csvPath.split("/"));
     if (dataRows.length === 0 || dataRows.every((row) => row.every((cell) => cell === ""))) {
-      skipped.push(schema.csvPath);
+      let targetState;
+      try { targetState = await fs.lstat(target); }
+      catch (error) { if (error.code !== "ENOENT") throw error; }
+      if (targetState) {
+        if (!targetState.isFile()) throw new Error(`[AUTHORING_EMPTY_TARGET_FILE] Expected a regular CSV file: ${target}`);
+        skipped.push(schema.csvPath);
+        emptySheetSkips.push({ csvPath: schema.csvPath, reason: "target-exists" });
+        continue;
+      }
+      const baselinePath = path.join(baselineRoot, ...schema.csvPath.split("/"));
+      let baselineBytes;
+      try { baselineBytes = await fs.readFile(baselinePath); }
+      catch (error) { if (error.code !== "ENOENT") throw error; }
+      if (baselineBytes !== undefined) {
+        const baselineText = new TextDecoder("utf-8", { fatal: true }).decode(baselineBytes);
+        const baselineRows = parseCsv(baselineText);
+        if ((baselineText.match(/"/g) ?? []).length % 2 !== 0 || JSON.stringify(baselineRows[0] ?? []) !== JSON.stringify(headers)) {
+          throw new Error(`[AUTHORING_EMPTY_BASELINE_HEADER] Invalid CSV or schema header mismatch: ${baselinePath}`);
+        }
+        if (baselineRows.slice(1).some((row) => row.some((cell) => cell !== ""))) {
+          skipped.push(schema.csvPath);
+          emptySheetSkips.push({ csvPath: schema.csvPath, reason: "baseline-contains-data" });
+          continue;
+        }
+      }
+      pendingWrites.push({ target, contents: serializeCsv([headers]), createOnly: true });
+      written.push(schema.csvPath);
+      headerOnlyCsv.push({ csvPath: schema.csvPath, sheet: schema.tableName, source: "workbook-schema-header", headers, dataRowCount: 0, baseline: baselineBytes === undefined ? "missing" : "header-only" });
       continue;
     }
 
-    const target = path.join(outputRoot, ...schema.csvPath.split("/"));
     pendingWrites.push({ target, contents: serializeCsv([headers, ...dataRows]) });
     written.push(schema.csvPath);
 
@@ -427,7 +457,7 @@ async function exportWorkbook() {
   }
   for (const pending of pendingWrites) {
     await fs.mkdir(path.dirname(pending.target), { recursive: true });
-    await fs.writeFile(pending.target, pending.contents, { encoding: "utf8" });
+    await fs.writeFile(pending.target, pending.contents, { encoding: "utf8", flag: pending.createOnly ? "wx" : "w" });
   }
 
   const glyphReport = options["glyph-report"]
@@ -445,9 +475,10 @@ async function exportWorkbook() {
       outputRoot,
       cellCount: provenanceCells.length,
       cells: provenanceCells,
+      headerOnlyCsv,
     }, null, 2), "utf8");
   }
-  console.log(JSON.stringify({ action: "export", input, inputSha256, outputRoot, written, skipped, glyphReport, provenanceOutput, provenanceCells: provenanceCells.length }));
+  console.log(JSON.stringify({ action: "export", input, inputSha256, outputRoot, written, skipped, headerOnlyCsv, emptySheetSkips, glyphReport, provenanceOutput, provenanceCells: provenanceCells.length }));
 }
 
 function localizationMap(rows) {
@@ -527,7 +558,7 @@ async function inspectWorkbook() {
   });
   await fs.mkdir(outputDir, { recursive: true });
   const sheetNames = [];
-  for (let index = 0; index < 14; index++) {
+  for (let index = 0; index < sheetSummary.recordCount; index++) {
     const sheet = workbook.worksheets.getItemAt(index);
     const name = sheet.name;
     sheetNames.push(name);

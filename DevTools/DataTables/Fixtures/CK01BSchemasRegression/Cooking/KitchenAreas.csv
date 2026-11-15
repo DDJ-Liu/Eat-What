@@ -1,0 +1,6 @@
+id,assetName,areaName,containerTags,core_facility,preset_tools,allowed_actions,allowed_carriers,is_unlocked_default,unlock_condition,comment
+kitchen-prep-counter,PrepCounter,Prep Counter,"ChopBoard|Bowl",tool_board_station,tool_board|tool_knife|tool_scissors|tool_bowl,act_whisk|act_cut|act_wash,tool_board_station|tool_board|tool_bowl,true,,测试分区；自动推导·待复核
+kitchen-stove,Stove,Stove,"Wok|Pan",tool_stove,tool_pot|tool_pan|tool_spatula|tool_chopsticks,act_boil|act_whisk|act_stirfry|act_wash|act_stew,tool_stove|tool_pot|tool_pan,true,,测试分区；自动推导·待复核
+kitchen-oven,Oven,Oven,None,tool_oven,,act_wash,tool_oven,false,,demo 未解锁；自动推导·待复核
+kitchen-salad,Salad,Salad,SaladBowl,tool_salad_station,,act_wash,tool_salad_station,false,,demo 未解锁；自动推导·待复核
+kitchen-freezer,Freezer,Freezer,None,tool_freezer,,act_wash,tool_freezer,false,,demo 未解锁；自动推导·待复核

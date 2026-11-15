@@ -1,0 +1,15 @@
+tool_id,name_key,tool_kind,supported_actions,mapped_dish_category,icon_sprite,comment
+tool_hand,tool_hand.name,hand,act_wash,,ui_chuju_shou,手兜底
+tool_knife,tool_knife.name,handheld,act_cut,,ui_chuju_caidao,
+tool_scissors,tool_scissors.name,handheld,act_cut,,ui_chuju_jiandao,多工具支持切割示范
+tool_spatula,tool_spatula.name,handheld,act_stirfry,,ui_chuju_guochan,
+tool_chopsticks,tool_chopsticks.name,handheld,act_whisk;act_stirfry,,ui_chuju_kuaizi,打蛋也能翻炒
+tool_bowl,tool_bowl.name,carrier,,,ui_chuju_wan,承载物
+tool_board,tool_board.name,carrier,,,ui_chuju_anban,承载物
+tool_pan,tool_pan.name,carrier,,tag_dish_stirfry,ui_chuju_chaoguo,最终步厨具→炒
+tool_pot,tool_pot.name,carrier,,tag_dish_boil,ui_chuju_tangguo,最终步厨具→煮
+tool_stove,tool_stove.name,facility,,,ui_chuju_zaotai,固定设施：灶台区核心
+tool_board_station,tool_board_station.name,facility,,,ui_chuju_anbantai,固定设施：操作台区核心（与手持案板 tool_board 区分）
+tool_oven,tool_oven.name,facility,,,ui_chuju_kaoxiang,固定设施：烤箱区核心（demo 未解锁）
+tool_salad_station,tool_salad_station.name,facility,,,ui_chuju_shalatai,固定设施：沙拉台区核心（demo 未解锁）
+tool_freezer,tool_freezer.name,facility,,,ui_chuju_xiaobinggui,固定设施：冷柜区核心（demo 未解锁）

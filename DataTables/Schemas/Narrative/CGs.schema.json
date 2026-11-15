@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 2,
+  "tableName": "CGs",
+  "csvPath": "Narrative/CGs.csv",
+  "targetType": "CK01CGData",
+  "outputDirectory": "Assets/Generated/DataTables/Narrative/CGs",
+  "assetNameField": "cg_id",
+  "primaryKeyField": "cg_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "cg_id",
+      "csvColumn": "cg_id",
+      "type": "id",
+      "required": true,
+      "description": "CG主键，填写cg_开头小写ID，供cg_show引用。",
+      "unique": true,
+      "pattern": "^cg_[a-z0-9_]+$"
+    },
+    {
+      "name": "cg_sprite",
+      "csvColumn": "cg_sprite",
+      "type": "sprite",
+      "required": true,
+      "description": "CG图片文件基名，无路径/扩展名；只查约定目录中的精确文件名，本阶段不绑定。",
+      "nameOnly": true,
+      "referenceRole": "cg"
+    },
+    {
+      "name": "transition_mode",
+      "csvColumn": "transition_mode",
+      "type": "enum",
+      "required": false,
+      "description": "black_fade黑幕或cross_fade交叉淡化；留空回落演出CG配置。",
+      "enumValues": [
+        "black_fade",
+        "cross_fade"
+      ]
+    },
+    {
+      "name": "fade_in",
+      "csvColumn": "fade_in",
+      "type": "float",
+      "required": false,
+      "description": "进入过渡时长，单位秒且非负；留空回落配置，显式0代表0时长。",
+      "preserveEmpty": true,
+      "finite": true,
+      "minimum": "0"
+    },
+    {
+      "name": "fade_out",
+      "csvColumn": "fade_out",
+      "type": "float",
+      "required": false,
+      "description": "退出过渡时长，单位秒且非负；留空回落配置。",
+      "preserveEmpty": true,
+      "finite": true,
+      "minimum": "0"
+    },
+    {
+      "name": "ken_burns_zoom",
+      "csvColumn": "ken_burns_zoom",
+      "type": "float",
+      "required": false,
+      "description": "图片自身目标缩放倍率；留空回落配置，不在本卡执行推镜。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "ken_burns_pan_x",
+      "csvColumn": "ken_burns_pan_x",
+      "type": "float",
+      "required": false,
+      "description": "CG总横向漂移量，单位px@2560×1440，向右为正，允许负值；独立留空回落。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "ken_burns_pan_y",
+      "csvColumn": "ken_burns_pan_y",
+      "type": "float",
+      "required": false,
+      "description": "CG总纵向漂移量，单位px@2560×1440，向上为正，允许负值；独立留空回落。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "ken_burns_duration",
+      "csvColumn": "ken_burns_duration",
+      "type": "float",
+      "required": false,
+      "description": "从完全显示开始到完整目标的时长，单位秒且非负；留空用配置。",
+      "preserveEmpty": true,
+      "finite": true,
+      "minimum": "0"
+    },
+    {
+      "name": "ken_burns_curve",
+      "csvColumn": "ken_burns_curve",
+      "type": "enum",
+      "required": false,
+      "description": "linear/quadratic/smooth_step/ease_in_out进度曲线，放大与漂移共用；留空用配置。",
+      "enumValues": [
+        "linear",
+        "quadratic",
+        "smooth_step",
+        "ease_in_out"
+      ]
+    },
+    {
+      "name": "keep_box",
+      "csvColumn": "keep_box",
+      "type": "bool",
+      "required": false,
+      "description": "CG期间保留对话框；空用配置，与显式false不同。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "keep_portraits",
+      "csvColumn": "keep_portraits",
+      "type": "bool",
+      "required": false,
+      "description": "CG期间保留立绘；空用配置，与显式false不同。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "keep_name",
+      "csvColumn": "keep_name",
+      "type": "bool",
+      "required": false,
+      "description": "CG期间保留名字框；空用配置，与显式false不同。",
+      "preserveEmpty": true
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [],
+  "rules": []
+}

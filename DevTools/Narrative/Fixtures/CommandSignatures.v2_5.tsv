@@ -1,0 +1,20 @@
+# Independent transcription of CK01-B Schema v2.5 dialogue command table, lines419-438.
+# Source SHA256:61CB6622AE5AE8AEC19C2A8B9B4ABAD5B72C5CBD593851932D5AF0A40F7E11C9
+# ID/boolean semantics: global rules1,6,11,12 plus N0-03 actor instance requirement.
+# Semantic kind labels are documented in Narrative README; reserved timing is unspecified, not false.
+# Hand-maintained expected data. Never generated from NarrativeCommandSignatures.
+command	parameters	kinds	options	ambient	normal	story	instant	truncation	on_end_only	available_in_version
+wait	seconds	Seconds		1	1	1	0	StopWaiting	0	1
+set_flag	key,value	FlagKey,ScalarLiteral	;	1	1	1	1	Instant	0	1
+actor_move	actor,target	ActorId,Target	;	1	1	1	0	SnapActorPosition	0	1
+actor_face	actor,target	ActorId,Target	;	1	1	1	0	SnapActorFacing	0	1
+object_active	object,bool	SceneObjectId,Boolean	;true|false	1	1	1	0	ApplyObjectActiveFinal	0	1
+shake	level	ShakeLevel	light|medium|heavy	1	1	1	0	StopShake	0	1
+start_dialogue	dialogue_id	DialogueId		0	1	1	1	Instant	0	1
+set_scene_state	scene,state	SceneId,SceneStateId	;	0	1	1	1	Instant	0	1
+scene_switch	scene,entry	SceneId,SceneObjectId	;	0	1	1	1	Instant	1	1
+camera_pan	target,size	Target,CameraSize	;	0	0	1	0	SnapCamera	0	1
+camera_return				0	0	1	0	SnapCamera	0	1
+cg_show	cg_id	CgId		0	0	1	0	FinishTransition	0	1
+cg_hide				0	0	1	0	FinishTransition	0	1
+actor_emote	actor,icon	ActorId,IconToken	;	0	0	0	reserved	Unavailable	0	0

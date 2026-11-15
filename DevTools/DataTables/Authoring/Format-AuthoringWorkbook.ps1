@@ -20,7 +20,7 @@ $schemas=@(Get-ChildItem (Join-Path $DataTablesRoot 'Schemas') -Recurse -File -F
     $schema | Add-Member -NotePropertyName schemaPath -NotePropertyValue $_.FullName
     $schema
 })
-if($schemas.Count -ne 14){throw "[AUTHORING_SCHEMA_COUNT] Expected 14, found $($schemas.Count)."}
+if($schemas.Count -ne 22){throw "[AUTHORING_SCHEMA_COUNT] Expected 22, found $($schemas.Count)."}
 $schemaByName=@{}
 foreach($schema in $schemas){$schemaByName[[string]$schema.tableName]=$schema}
 $main='http://schemas.openxmlformats.org/spreadsheetml/2006/main'
@@ -34,7 +34,7 @@ function Write-Xml($Archive,[string]$Name,[xml]$Document){
 }
 function Column-Name([int]$Index){
     $result=''
-    for($n=$Index+1;$n -gt 0;$n=[Math]::Floor(($n-1)/26)){$result=[char](65+(($n-1)%26))+$result}
+    for($n=$Index+1;$n -gt 0;$n=[int][Math]::Floor(($n-1)/26)){$result=[char](65+(($n-1)%26))+$result}
     $result
 }
 function Reference-Target($Reference){

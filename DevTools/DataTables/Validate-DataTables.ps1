@@ -21,7 +21,9 @@ if ($Quick -and [string]::IsNullOrWhiteSpace($ReportDirectory)) {
 }
 $corePath = Join-Path $repositoryRoot 'Assets/Editor/DataTables/DataTableValidationCore.cs'
 if (-not ('EatWhat.DataTables.DataTableSchema' -as [type])) {
-    Add-Type -Path $corePath
+    $narrativeSources = @(Get-ChildItem (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Core') -File -Filter '*.cs' | ForEach-Object FullName)
+    Add-Type -Path (@($corePath, (Join-Path $repositoryRoot 'Assets/Editor/DataTables/DataTableImportContracts.cs'),
+        (Join-Path $repositoryRoot 'Assets/Editor/DataTables/NarrativeTableValidation.cs')) + $narrativeSources)
 }
 $sceneCorePath = Join-Path $repositoryRoot 'Assets/Scripts/DataBase/CookingData/SceneToolInventory.cs'
 if (-not ('SceneToolInventory' -as [type])) { Add-Type -Path $sceneCorePath }
@@ -63,6 +65,7 @@ function ConvertTo-CoreSchema {
     $schema.outputDirectory = [string]$RawSchema.outputDirectory
     $schema.assetNameField = [string]$RawSchema.assetNameField
     $schema.primaryKeyField = [string]$RawSchema.primaryKeyField
+    foreach ($keyField in @($RawSchema.primaryKeyFields)) { if ($null -ne $keyField) { $schema.primaryKeyFields.Add([string]$keyField) } }
     if ($null -ne $RawSchema.contractExemptions) {
         $schema.contractExemptions.primaryKeyPattern = [string]$RawSchema.contractExemptions.primaryKeyPattern
         $schema.contractExemptions.listSeparator = [string]$RawSchema.contractExemptions.listSeparator
@@ -74,6 +77,8 @@ function ConvertTo-CoreSchema {
         $column.csvColumn = [string]$rawColumn.csvColumn
         $column.type = if ($rawColumn.deprecated) { 'string' } else { [string]$rawColumn.type }
         $column.required = [bool]$rawColumn.required
+        foreach ($field in @('description','requiredCondition','referenceRole','maximum','requiredReferenceSchema','requiredReferenceSourceField','requiredReferenceTargetKey','requiredReferenceValueField')) { $column.$field = [string]$rawColumn.$field }
+        foreach ($field in @('preserveEmpty','nameOnly','finite','exclusiveMinimum')) { $column.$field = [bool]$rawColumn.$field }
         $column.defaultValue = [string]$rawColumn.defaultValue
         $column.enumType = [string]$rawColumn.enumType
         $column.separator = [string]$rawColumn.separator
@@ -106,6 +111,10 @@ function ConvertTo-CoreSchema {
         $reference.field = [string]$rawReference.field
         $reference.targetSchema = [string]$rawReference.targetSchema
         $reference.targetField = [string]$rawReference.targetField
+        $reference.scopeField = [string]$rawReference.scopeField
+        $reference.targetScopeField = [string]$rawReference.targetScopeField
+        $reference.targetValueField = [string]$rawReference.targetValueField
+        $reference.targetValue = [string]$rawReference.targetValue
         $reference.isList = [bool]$rawReference.isList
         $reference.separator = [string]$rawReference.separator
         $schema.references.Add($reference)
@@ -928,11 +937,14 @@ foreach ($schemaFile in $schemaFiles) {
 }
 
 $context = [EatWhat.DataTables.DataTableValidationContext]::new()
+[EatWhat.DataTables.NarrativeTableValidation]::EnableProject($context, $repositoryRoot)
 Add-EnumValuesFromSource -Context $context
 foreach ($sourceRecord in $records) {
     if ($null -eq $sourceRecord.Schema) {
         continue
     }
+
+    $context.ReferenceTables[$sourceRecord.SchemaPath.Substring('Schemas/'.Length).Replace([char]92,[char]47)] = [EatWhat.DataTables.DataTableReferenceSource]::new($sourceRecord.Schema, $sourceRecord.Parse.Table)
 
     foreach ($reference in $sourceRecord.Schema.references) {
         $targetSchemaPath = if ($reference.targetSchema.StartsWith('Schemas/', [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -946,6 +958,7 @@ foreach ($sourceRecord in $records) {
             continue
         }
 
+        $context.ReferenceTables[([string]$reference.targetSchema).Replace([char]92,[char]47)] = [EatWhat.DataTables.DataTableReferenceSource]::new($targetRecord.Schema, $targetRecord.Parse.Table)
         $targetColumn = [EatWhat.DataTables.DataTableValidator]::FindColumn($targetRecord.Schema, $reference.targetField)
         if ($null -eq $targetColumn) {
             continue
@@ -1084,11 +1097,16 @@ foreach ($record in $records) {
         [void]$allWarnings.Add("$($record.SchemaPath): $warning")
     }
 
+    foreach ($info in $record.Result.Infos) {
+        [void]$allInfos.Add("$($record.SchemaPath): $info")
+    }
+
     [void]$reportRecords.Add([pscustomobject]@{
         schemaPath = $record.SchemaPath
         rowCount = $record.Result.Table.Rows.Count
         errors = @($record.Result.Errors)
         warnings = @($record.Result.Warnings)
+        infos = @($record.Result.Infos)
     })
 }
 if ($RequireSceneInventory -and

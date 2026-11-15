@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 2,
+  "tableName": "DialogueLines",
+  "csvPath": "Narrative/DialogueLines.csv",
+  "targetType": "CK01DialogueLineData",
+  "outputDirectory": "Assets/Generated/DataTables/Narrative/DialogueLines",
+  "assetNameField": "line_id",
+  "primaryKeyField": "line_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "line_id",
+      "csvColumn": "line_id",
+      "type": "id",
+      "required": true,
+      "description": "台词主键，填写ln_开头的小写ID。",
+      "unique": true,
+      "pattern": "^ln_[a-z0-9_]+$"
+    },
+    {
+      "name": "dialogue_id",
+      "csvColumn": "dialogue_id",
+      "type": "ref",
+      "required": true,
+      "description": "所属对话标签，引用Dialogues；链与标签不符由后续内容校验告警。"
+    },
+    {
+      "name": "next_line",
+      "csvColumn": "next_line",
+      "type": "ref",
+      "required": false,
+      "description": "下一句台词ID；留空表示最后一句，按链读取，不按CSV行序推进。"
+    },
+    {
+      "name": "speaker",
+      "csvColumn": "speaker",
+      "type": "ref",
+      "required": false,
+      "description": "普通/剧情对话必填角色ID（包含旁白），气泡类可空；空时使用挂载气泡池NPC，需场景时后续检查。",
+      "requiredCondition": "普通/剧情对话必填角色ID（包含旁白），气泡类可空；空时使用挂载气泡池NPC，需场景时后续检查。",
+      "requiredReferenceSchema": "Narrative/Dialogues.schema.json",
+      "requiredReferenceSourceField": "dialogue_id",
+      "requiredReferenceTargetKey": "dialogue_id",
+      "requiredReferenceValueField": "tier",
+      "requiredWhenValues": [
+        "normal",
+        "story"
+      ]
+    },
+    {
+      "name": "name_override_key",
+      "csvColumn": "name_override_key",
+      "type": "loc_key",
+      "required": false,
+      "description": "仅本句名字框覆盖本地化键；留空保留角色名字规则。"
+    },
+    {
+      "name": "text_key",
+      "csvColumn": "text_key",
+      "type": "loc_key",
+      "required": true,
+      "description": "台词正文的本地化键；在Localization中配置实际文字。"
+    },
+    {
+      "name": "commands",
+      "csvColumn": "commands",
+      "type": "string",
+      "required": false,
+      "description": "本句开始出字时执行的命令文本，原样保存，不在导入时执行。"
+    },
+    {
+      "name": "expression",
+      "csvColumn": "expression",
+      "type": "string",
+      "required": false,
+      "description": "完整版表情预留，本版不读。"
+    },
+    {
+      "name": "emotion",
+      "csvColumn": "emotion",
+      "type": "string",
+      "required": false,
+      "description": "完整版情绪预留，本版不读。"
+    },
+    {
+      "name": "emphasis",
+      "csvColumn": "emphasis",
+      "type": "string",
+      "required": false,
+      "description": "完整版强调预留，本版不读。"
+    },
+    {
+      "name": "scene_emote",
+      "csvColumn": "scene_emote",
+      "type": "string",
+      "required": false,
+      "description": "完整版场景情绪预留，本版不读。"
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [
+    {
+      "field": "dialogue_id",
+      "targetSchema": "Narrative/Dialogues.schema.json",
+      "targetField": "dialogue_id"
+    },
+    {
+      "field": "next_line",
+      "targetSchema": "Narrative/DialogueLines.schema.json",
+      "targetField": "line_id"
+    },
+    {
+      "field": "speaker",
+      "targetSchema": "Narrative/Characters.schema.json",
+      "targetField": "character_id"
+    },
+    {
+      "field": "name_override_key",
+      "targetSchema": "Localization/Localization.schema.json",
+      "targetField": "loc_key"
+    },
+    {
+      "field": "text_key",
+      "targetSchema": "Localization/Localization.schema.json",
+      "targetField": "loc_key"
+    }
+  ],
+  "rules": []
+}

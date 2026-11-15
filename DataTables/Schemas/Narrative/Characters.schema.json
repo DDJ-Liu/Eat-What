@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 2,
+  "tableName": "Characters",
+  "csvPath": "Narrative/Characters.csv",
+  "targetType": "CK01CharacterData",
+  "outputDirectory": "Assets/Generated/DataTables/Narrative/Characters",
+  "assetNameField": "character_id",
+  "primaryKeyField": "character_id",
+  "consumer": "后续Narrative.Unity适配/只读查询；本阶段不接真实表现",
+  "columns": [
+    {
+      "name": "character_id",
+      "csvColumn": "character_id",
+      "type": "id",
+      "required": true,
+      "description": "角色主键，填写chr_开头的小写ID；也是角色标记及actor:目标ID。",
+      "unique": true,
+      "pattern": "^chr_[a-z0-9_]+$"
+    },
+    {
+      "name": "name_key",
+      "csvColumn": "name_key",
+      "type": "loc_key",
+      "required": false,
+      "description": "名字框本地化键；留空不显示名字框，旁白也按此规则填写。"
+    },
+    {
+      "name": "portrait_sprite",
+      "csvColumn": "portrait_sprite",
+      "type": "sprite",
+      "required": false,
+      "description": "全身立绘文件基名，无路径/扩展名且保留大小写；留空不能进入立绘出场名单，本阶段只查文件名不绑定。",
+      "nameOnly": true,
+      "referenceRole": "portrait"
+    },
+    {
+      "name": "portrait_offset_x",
+      "csvColumn": "portrait_offset_x",
+      "type": "float",
+      "required": false,
+      "description": "原画布宽度比例，-0.5到0.5；指定对齐显示锚点的横向点，留空语义为0，不把空改成实际0。",
+      "preserveEmpty": true,
+      "finite": true,
+      "minimum": "-0.5",
+      "maximum": "0.5"
+    },
+    {
+      "name": "portrait_offset_y",
+      "csvColumn": "portrait_offset_y",
+      "type": "float",
+      "required": false,
+      "description": "原画布高度比例，0到1；0为底部，留空语义为0；先偏移再围绕显示锚点缩放。",
+      "preserveEmpty": true,
+      "finite": true,
+      "minimum": "0",
+      "maximum": "1"
+    },
+    {
+      "name": "portrait_scale",
+      "csvColumn": "portrait_scale",
+      "type": "float",
+      "required": false,
+      "description": "立绘缩放倍率，须大于0；留空语义为1，保留空值等待后续适配。",
+      "preserveEmpty": true,
+      "finite": true,
+      "minimum": "0",
+      "exclusiveMinimum": true
+    },
+    {
+      "name": "street_visual_prefab",
+      "csvColumn": "street_visual_prefab",
+      "type": "prefab",
+      "required": false,
+      "description": "街上形象Prefab文件基名，无路径/扩展名；留空表示配表不指定，回落到实例自身，无则没有形象。",
+      "nameOnly": true,
+      "referenceRole": "visual"
+    },
+    {
+      "name": "expressions",
+      "csvColumn": "expressions",
+      "type": "string",
+      "required": false,
+      "description": "完整版表情预留文本；本版存储但不消费。"
+    },
+    {
+      "name": "emote_offset_x",
+      "csvColumn": "emote_offset_x",
+      "type": "float",
+      "required": false,
+      "description": "情绪图标相对立绘的横向偏移，完整版预留，本阶段只存储。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "emote_offset_y",
+      "csvColumn": "emote_offset_y",
+      "type": "float",
+      "required": false,
+      "description": "情绪图标相对立绘的纵向偏移，完整版预留，本阶段只存储。",
+      "preserveEmpty": true,
+      "finite": true
+    },
+    {
+      "name": "comment",
+      "csvColumn": "comment",
+      "type": "string",
+      "required": false,
+      "description": "人工备注，不参与运行逻辑。"
+    }
+  ],
+  "references": [
+    {
+      "field": "name_key",
+      "targetSchema": "Localization/Localization.schema.json",
+      "targetField": "loc_key"
+    }
+  ],
+  "rules": []
+}
