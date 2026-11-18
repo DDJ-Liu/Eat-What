@@ -19,6 +19,20 @@ $modelSources = @(Get-ChildItem (Join-Path $repositoryRoot 'Assets/Scripts/Narra
     (Join-Path $PSScriptRoot 'NarrativeDataAdapterTests.cs'))
 $modelSources += (Join-Path $PSScriptRoot 'NarrativeValidationTests.cs')
 $modelSources += (Join-Path $PSScriptRoot 'NarrativeHeadlessChainTests.cs')
+# V013-06 new pure Core consumer; existing fixture sources remain unchanged.
+$modelSources += (Join-Path $PSScriptRoot 'NarrativeAmbientBubbleTests.cs')
+# V013-04: actual runtime access component; only component metadata is added to the retained boundary.
+$modelSources += @(
+    (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/DialoguePresentationConfig.cs'),
+    (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeRuntimeEntry.cs'),
+    (Join-Path $PSScriptRoot 'NarrativeRuntimeUnityBoundary.cs'),
+    (Join-Path $PSScriptRoot 'NarrativeRuntimeEntryTests.cs'))
+# V013-07 actual coordinator/view; external time/head/UI fixture capabilities only.
+$modelSources += @(
+    (Join-Path $repositoryRoot 'Assets/Scripts/LongLoop/NarrativeAmbientBubbleDriver.cs'),
+    (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeBubbleView.cs'),
+    (Join-Path $PSScriptRoot 'NarrativeBubbleUnityBoundary.cs'),
+    (Join-Path $PSScriptRoot 'NarrativeBubbleViewTests.cs'))
 $modelHost = Join-Path $repositoryRoot 'DevTools/DataTables/Test-CK01BImportContracts.ps1'
 $modelJsonRoots = @(Get-ChildItem (Join-Path $repositoryRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
 if ($modelJsonRoots.Count -ne 1) { throw 'Expected the retained StaticCompile Newtonsoft reference.' }
@@ -48,3 +62,15 @@ Invoke-NarrativeTableAuthoringTests -RepositoryRoot $repositoryRoot -OutputRoot 
 $chainReport = [NarrativeHeadlessChainTests]::Run($repositoryRoot, (Join-Path $OutputRoot 'headless-chain'))
 [IO.File]::WriteAllText((Join-Path $OutputRoot 'headless-chain.json'), $chainReport)
 Write-Output $chainReport
+# V013-04 new group; all preceding test calls and inputs remain unchanged.
+$runtimeReport = [NarrativeRuntimeEntryTests]::Run()
+[IO.File]::WriteAllText((Join-Path $OutputRoot 'runtime-entry.json'), $runtimeReport)
+Write-Output $runtimeReport
+# V013-06 actual pool/cooldown model tests, after all existing groups.
+$ambientReport = [NarrativeAmbientBubbleTests]::Run()
+[IO.File]::WriteAllText((Join-Path $OutputRoot 'ambient-bubble.json'), $ambientReport)
+Write-Output $ambientReport
+# V013-07 appended after all original groups, including V013-04/06.
+$bubbleReport = [NarrativeBubbleViewTests]::Run()
+[IO.File]::WriteAllText((Join-Path $OutputRoot 'bubble-view-trigger.json'), $bubbleReport)
+Write-Output $bubbleReport

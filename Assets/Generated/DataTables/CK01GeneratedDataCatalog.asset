@@ -363,3 +363,91 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: 66503f94354470d4e85f02f5c3d599ab, type: 2}
     - stableId: kitchen-freezer
       asset: {fileID: 11400000, guid: ac0da91f83e409b4a8c20133c17a8888, type: 2}
+  - tableName: Characters
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: chr_test_tomato
+      asset: {fileID: 11400000, guid: 775e51f6b9f69c645be66dbca2eabebb, type: 2}
+    - stableId: chr_test_passer_a
+      asset: {fileID: 11400000, guid: 03129d41495f72f428bb75bfcf218912, type: 2}
+    - stableId: chr_test_passer_b
+      asset: {fileID: 11400000, guid: fe236a1b31676444dbb84a7fe8ef61a9, type: 2}
+    - stableId: chr_test_potato
+      asset: {fileID: 11400000, guid: 93139de9d03787b419ddb28c31da3cb7, type: 2}
+  - tableName: Dialogues
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: dlg_test_single_a
+      asset: {fileID: 11400000, guid: 509b3a2260d512543ba3ef22205f85f7, type: 2}
+    - stableId: dlg_test_single_b
+      asset: {fileID: 11400000, guid: 13a6b31dbe8c5904fbb55a68cdbec7f7, type: 2}
+    - stableId: dlg_test_three
+      asset: {fileID: 11400000, guid: acacafbc22d71b549b6def90e01a319d, type: 2}
+    - stableId: dlg_test_pair
+      asset: {fileID: 11400000, guid: 8813b279f9fe965499c89e0e71d2625e, type: 2}
+  - tableName: DialogueLines
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: ln_test_single_a_01
+      asset: {fileID: 11400000, guid: d36bfb7f94ff94549bcc728546293893, type: 2}
+    - stableId: ln_test_single_b_01
+      asset: {fileID: 11400000, guid: 9210e9ad455d6394990ea80d43a963ba, type: 2}
+    - stableId: ln_test_three_01
+      asset: {fileID: 11400000, guid: 2c5a5c9b16d2f31498d6be76eb4e45cf, type: 2}
+    - stableId: ln_test_three_02
+      asset: {fileID: 11400000, guid: b8c5ba3fe7a107a4baa8e008b8120486, type: 2}
+    - stableId: ln_test_three_03
+      asset: {fileID: 11400000, guid: 862a47c9d9612e54092537fc0211756b, type: 2}
+    - stableId: ln_test_pair_01
+      asset: {fileID: 11400000, guid: 50020ef0a90737241865725407582d34, type: 2}
+    - stableId: ln_test_pair_02
+      asset: {fileID: 11400000, guid: b7d3453e26248394d8eb9ad91f47adb1, type: 2}
+  - tableName: CGs
+    aggregateAsset: {fileID: 0}
+    rows: []
+  - tableName: Scenes
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: scn_test_street
+      asset: {fileID: 11400000, guid: a54950e3dca2271408a3e4e535b4ef49, type: 2}
+  - tableName: SceneStates
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: 15_scn_test_street__12_test_default
+      asset: {fileID: 11400000, guid: 84bf8ab3f5047b94c9137afd3b731e84, type: 2}
+    - stableId: 15_scn_test_street__11_test_second
+      asset: {fileID: 11400000, guid: 8a6aeef6d0021784bb3ca67e9b555fdc, type: 2}
+  - tableName: SceneStatePlacements
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: 15_scn_test_street__12_test_default__5_actor__15_chr_test_tomato
+      asset: {fileID: 11400000, guid: 4937c90ca81e9d746b96800a412e55fd, type: 2}
+    - stableId: 15_scn_test_street__12_test_default__5_actor__17_chr_test_passer_a
+      asset: {fileID: 11400000, guid: cb2e6435dda679c48ab177a6fa862d03, type: 2}
+    - stableId: 15_scn_test_street__12_test_default__5_actor__19_chr_test_passer_a#2
+      asset: {fileID: 11400000, guid: 94d595b06ed24e045aa45887ec3cddae, type: 2}
+    - stableId: 15_scn_test_street__12_test_default__5_actor__17_chr_test_passer_b
+      asset: {fileID: 11400000, guid: b0f65af0943ccc041b906eed53df4b64, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__15_chr_test_tomato
+      asset: {fileID: 11400000, guid: fc00d795a11718b41a1144974e9057ef, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__15_chr_test_potato
+      asset: {fileID: 11400000, guid: ce495da08a679e541abc893445125e10, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__19_chr_test_passer_a#2
+      asset: {fileID: 11400000, guid: bfc0d58ad8888ca409abb270a685c9f6, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__17_chr_test_passer_b
+      asset: {fileID: 11400000, guid: 9662132df171022448c7ff272677bbf1, type: 2}
+    - stableId: 15_scn_test_street__12_test_default__5_actor__15_chr_test_potato
+      asset: {fileID: 11400000, guid: 0e6a7aa319baafb43b4c2c9175013e25, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__17_chr_test_passer_a
+      asset: {fileID: 11400000, guid: 72a9db9008c69b04f9f6c318d42201e9, type: 2}
+  - tableName: AmbientPools
+    aggregateAsset: {fileID: 0}
+    rows:
+    - stableId: amb_test_a
+      asset: {fileID: 11400000, guid: b88281f7517fda249835c17c2e6fa8d6, type: 2}
+    - stableId: amb_test_b
+      asset: {fileID: 11400000, guid: dcfe91fc65f89e8448030b871a4ff95b, type: 2}
+    - stableId: amb_test_c
+      asset: {fileID: 11400000, guid: 158d409bcf126ac47942424f028dd58f, type: 2}
+  releaseSprites: []
+  releasePrefabs: []

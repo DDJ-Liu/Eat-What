@@ -1,12 +1,12 @@
 [CmdletBinding()]
-param([switch]$CatalogBlobOnly,[switch]$CatalogCompileOnly,[string]$CatalogReportRoot)
+param([switch]$CatalogBlobOnly,[switch]$CatalogCompileOnly,[string]$CatalogReportRoot,[string]$CatalogLegacy14Snapshot)
 
 $ErrorActionPreference = 'Stop'
 if ($CatalogBlobOnly -or $CatalogCompileOnly -or $env:EATWHAT_TEST_CATALOG_BLOB_ONLY -eq '1') {
     . (Join-Path $PSScriptRoot 'CatalogBlob.Common.ps1')
     if (-not $CatalogReportRoot) { $CatalogReportRoot=$env:EATWHAT_CATALOG_REPORT_ROOT }
     if (-not $CatalogReportRoot) { throw 'Catalog tests require an explicit isolated report root.' }
-    Invoke-CatalogBlobTests -ReportRoot $CatalogReportRoot -CompileOnly:$CatalogCompileOnly
+    Invoke-CatalogBlobTests -ReportRoot $CatalogReportRoot -CompileOnly:$CatalogCompileOnly -CatalogLegacy14Snapshot $CatalogLegacy14Snapshot
     return
 }
 

@@ -13,6 +13,21 @@ namespace EatWhat.Narrative.Unity
         static bool? Optional(CK01OptionalBool value) { return value.hasValue ? (bool?)value.value : null; }
         static void Required(object row) { if (row == null) throw new ArgumentNullException("row"); }
 
+        /// <summary>Exact base character id, using the catalog's current source. False + null diagnostic means no table override.</summary>
+        public static bool TryGetCharacterVisualPrefab(CK01GeneratedDataCatalog catalog, string characterId,
+            out GameObject prefab, out string diagnostic)
+        {
+            prefab = null; diagnostic = null;
+            if (catalog == null) { diagnostic = "Generated catalog is missing."; return false; }
+            CK01CharacterData row;
+            if (!catalog.TryGetCharacter(characterId, out row, out diagnostic)) return false;
+            // An empty source column explicitly preserves the instance visual, even if a stale derived field was authored.
+            if (string.IsNullOrEmpty(row.street_visual_prefab)) return false;
+            if (row.street_visual_prefab_asset == null)
+            { diagnostic = "Character '" + characterId + "' visual '" + row.street_visual_prefab + "' has no bound Prefab reference."; return false; }
+            prefab = row.street_visual_prefab_asset; return true;
+        }
+
         public static NarrativeCharacter FromRow(CK01CharacterData row)
         {
             Required(row);

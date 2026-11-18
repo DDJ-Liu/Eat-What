@@ -1,5 +1,27 @@
 # 剧情离线验证入口
 
+## V013-10 必要生产编译与引用查询（2026-11-16）
+
+原Python入口增加可选--compile-only：按原真实闭包构建Core/Toolkit/ShortCycle.Core/Generated/Editor.DataTables/Narrative.Unity，保存原源/引用/RSP记录后返回，不编译/运行后续Narrative用例；默认行为与所有旧断言/夹具不改。用于本工具卡必要真实DLL编译，已有UI/TMP引用保持。本卡原ImportContracts宿主最小加入现Adapter/RuntimeEntry/配置、原RuntimeUnityBoundary及新绑定用例，CompileOnly仍在旧位置返回，不把本卡扩大为整Narrative回归。
+
+实际Unity新增按基础角色id的TryGetCharacterVisualPrefab查询，Core只保原文件名；空列、缺引用、条目/源不可用的区别及05/11真实承接见原八表/Runtime说明。没有新框架、比较器或验收门；共享stub默认行为保留，仅新用例显式配置外部资产搜索。
+
+## V013-07 路人气泡显示/触发（2026-11-16）
+
+原入口末尾追加NarrativeBubbleViewTests，直接执行实际RuntimeEntry/Adapter/Resolver/Core模型、LongLoop的实际Driver及Unity View生命周期；新增NarrativeBubbleUnityBoundary仅补外部Head句柄与游戏时钟，UI表面/地面距离为外部fake。原共享边界、所有旧测试/冻结夹具和原调用次序不改，551/552新39/82保持。CanvasRenderer和实际NPC组件用当前真实DLL编译，不用UI fake冒充投屏/字体效果。Unity层显式单向增加UnityEngine.UI/Unity.TextMeshPro引用，两个现runner补当前UI DLL/UIModule；没有新框架或引擎门。
+
+配置说明固定在组件说明文档/视觉特效/剧情气泡配置与使用说明.md，13/14负责真实接线和人工路径；本卡无Unity/Play/Build。
+
+## V013-06 气泡取句/冷却（2026-11-16）
+
+原完整入口在保留551全部原组（含39接入检查）后追加 `NarrativeAmbientBubbleTests`，直接执行实际Core模型、目录/链与原ResolveTrigger；仅固定外部时间/地面距离/随机输入，不新增替代逻辑/宿主或修改冻结夹具。Core新源由原原生引用编译自动收录，仍以原程序集样例核无Unity和仅mscorlib；不跑其它LongLoop或全量门。原参数说明 `docs/参数调整说明_对话.md` 补同一实际消费与无表现边界。
+
+## V013-04 运行时配置/数据接入（2026-11-16）
+
+原入口保留全部Core、表/Adapter、作者工具与整链断言/夹具，在同一StaticCompile宿主追加 `NarrativeRuntimeEntryTests`，直接执行实际接入组件、Catalog、Adapter和Resolver。只在 `NarrativeRuntimeUnityBoundary.cs` 补原宿主缺少的MonoBehaviour/Inspector元数据，以及本测试Unity层的日志context重载，不改变UnityStubs；异常源用既有ICatalogSource验证入口投递外部读失败，保持生产源策略。配置Changed事件用例明确投递现有委托，因为原JsonUtility stub输出固定{}，不声称原生NotifyChanged检测已验。真实Unity层源码仍由原Python入口全量编译，未动该入口或原断言。
+
+配置说明在 `docs/剧情运行时接入说明.md`。LongLoop仅增加单向Narrative.Unity引用；其原默认入口编译当前Core→Toolkit/ShortCycle.Core→Generated→Narrative.Unity真实依赖，未以旧Bee的空标记替代。此卡不改数据源、加密包、业务状态或实际场景接线。
+
 ## N0-13 无界面整链（2026-11-15局部核对）
 
 N012-P1离线收口：唯一一次Narrative Final通过，FSM99检查、整链114检查/102行与执行前冻结新基准逐字节相同，十真实编译/运行阶段及其余原组全部通过。提前camera回报、串行请求、重复/迟到/外来消息和story无缝路径已覆盖；仅原并行断言和辅助回报顺序按新授权替代，未动调度/输入或其它实现。无基准执行后修订、无原生/新人工门，待CONTROL独审；完整项目核验仍2026-09-17。

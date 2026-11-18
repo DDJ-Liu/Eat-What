@@ -1,5 +1,39 @@
 # 《是啊，吃什么》代码结构与修改导航
 
+2026-11-19 0.1.3 发布数据可随 Windows 成品加载。`CatalogBlobBuildProcessor` 将已保存生成资产的序列化信息与磁盘字段交叉核对，`CatalogBlobSerializer` 据此保留合法空角色形象。已绑定的形象沿稳定引用导出，无法证明为空的损坏引用会报错。`DevTools/Build-Demo.ps1` 使用当前快照和 `BuildPrepared` 构建启动页与街景。此次局部核对覆盖发布调用链和普通成品启动退出，详见[发布数据说明](DevTools/BuildRelease/README.md)。
+
+2026-11-19 局部核对了 Street 剧情气泡。`NarrativeBubbleCanvasRenderer` 在停用的气泡节点上创建 `TextMeshProUGUI`，先设定 UI 正交测量，再按 `Max Text Width` 获取首选尺寸。自然触发的冷却归发起者，`DialogueLines.speaker` 决定显示角色。当前工作簿与正式 CSV 的 `test_default` 保留 `chr_test_passer_a#2` 的双人池，番茄与基础路人的池留空，土豆保自身池。`test_second` 为番茄指定单人三句池，土豆使用 `test_street_03`。本次核对范围为气泡渲染、两状态及配表，完整工程核验日期沿用原记录。见[两项复测说明](docs/demo-0.1.3_人工检查说明.md)。
+
+2026-11-17 AI565/V013-16局部原生复核：用户已完成手工并新增Street直接预摆GenericNPC/chr_test_potato，引用同场景Runtime/Registry/View、同根Marker/Shell及三挂点，自身npc_visual_tomato和amb_test_a有效且Play保留；无Characters/placement行合法。自然scn_test_street/test_default受管精确tomato、passer_a、passer_a#2三者各活动形象1，Registry活动actor5含extra和无Shell主角，全部Shell5含inactive passer_b/活动4。第2轮原3合同CONTROL独审通过，Console新Error0/Warning6，停止后clean，14限定文件不变；第1轮CLI超时FAIL保留，验收累计2/3、根续行1/5，无生产修复。新增五列[人工检查说明](docs/demo-0.1.3_人工检查说明.md)；HeadAnchor局部0及表现、状态切换/气泡/F8仍由用户检查。原17须用户明确体验通过，未Build。完整核验日期仍2026-09-17。
+
+2026-11-16 AI563/V013-14已完成Street原生保存与原三合同读回：24源/meta对应12主资产导入；正式22表ImportAll一次0error/56warning/4info，新增28生成资产，八新表行数3/4/7/0/1/2/8/3。Street根新增NarrativeRuntime_TUNE（RuntimeEntry＋BubbleView/Renderer）、NarrativeTargetRegistry_TUNE、NarrativeSceneStateApplier_TUNE、NarrativeSceneDebugPanel_TUNE；依次显式接config/Catalog、真实PlayerRoot_TUNE/Foot_TUNE、GenericNPC/placeholder/View、Applier/Registry。View序列化surfaceProvider接Renderer，Renderer明确Cam_Street和现WithFallback字体，非TMP_Settings回落。玩家Marker=chr_test_player；原TomatoIdleNPC_TUNE Marker=chr_test_tomato，原位加一个自身番茄形象，Trigger场景引用齐全、池空；三test_street_01/02/03新锚点为_TUNE初值。37原对象父级/位置保持，字体/Prefab/配置参数及源表未改，Scene clean。未Initialize/ApplyState/Play或签收表现，V25/模板UNVERIFIED原报告保留；USER/15～17另行推进。实际对象表/初值/五列说明见[街景状态配置](docs/街景场景状态配置与使用说明.md#v013-14-street实际接线2026-11-16)，完整核验仍2026-09-17；下文原14待做文字属于各卡当时范围。
+
+2026-11-16 AI562/V013-12局部数据入口：`DevTools/DataTables/Authoring/DataTables_Authoring.xlsx` 已成为 22 页含测试占位的权威源；新增 3 角色、4 ambient 段/7 句、1 场景/2 完整状态/8 placement、3 池及 11 本地化 key。对应 8 份 CSV 由现 Authoring 出口忠实派生，CGs 和 13 份 Cooking CSV 未改。正式 22 表 0 error/46 warning，新增两条 V-25 为 Street 场景标记尚未接线的 UNVERIFIED；V013-14 原生导入/接线和用户体验仍待。字段与清理路径见[八表说明](docs/剧情八表配表说明.md)，完整核验仍2026-09-17。
+
+2026-11-16 AI561/V013-09局部入口：现 Editor/DataTables/NarrativeTableValidation.cs 内新增纯离线 NarrativeSceneContentAudit，经原 EnableProject→SceneStates 结果追加 V-25 warning。沿原 CSV/schema/有效值与精确场景名读取，只核 actor 的缺锚点、空锚点无完整ID预摆、预摆无状态条目；当前一层 GenericNPC PrefabInstance 的 GUID+整数localID/角色ID覆盖可读，空坏或超支持表示明确未核。原 valid/sceneInventory 门和 V13～V24 保持，专用长期文本夹具及真实报告回归见 [DataTables入口](DevTools/DataTables/README.md)。无场景/Prefab/表写入或 Unity 操作，14/USER未代签，完整核验仍2026-09-17。
+
+2026-11-16 AI560/V013-08局部入口：LongLoop新增条件编译NarrativeSceneDebugPanel及meta，InputSystem F8/IMGUI路由到原Applier.ApplyState与Trigger→Driver→Model共享取句；强制只跳准入，保正常截止，不重建模型。Application发布最后成功scene/state，目录可选INarrativeSceneStateList与Registry.GetActiveActors提供真实只读列表，不建并行权威状态。三个专用强制入口与面板在Release确实不存在，原业务API保持；26路由/原Model82/三组合各6元数据及原LongLoop四门通过。见[配置与五列后验](docs/街景场景状态配置与使用说明.md)，无原生接线/GUI或包体验收，完整核验仍2026-09-17。
+
+2026-11-16 AI556/V013-05局部入口：LongLoop新增NarrativeSceneStateApplication（唯一九步/重应用所有者）和同名可挂载NarrativeSceneStateApplier组件及meta；经原Runtime/目录的可选INarrativeSceneStateDirectory查场景/全部placement，原主接口保持。Registry兼容追加停用预摆查找，Shell追加单所有者原形象保留/恢复，Trigger公开Configure在首次Update前接场景依赖并保原模型。原默认LongLoop末尾追加实际34/6/11用例，原四模式/断言保持；[固定说明与五列人工路径](docs/街景场景状态配置与使用说明.md)。只源码/离线，无场景/Prefab/数据写，14实际接线及USER仍待；完整核验仍2026-09-17。
+
+2026-11-16 AI559/V013-13已完成原生NPC壳/形象分层：原TomatoIdleNPC经MoveAsset改为`Assets/Prefabs/LongLoop/NPC/GenericNPC.prefab`，原GUID18482e8563931f945979fc4facbec5b8及meta字节保持；Foot/Visual原变换、DepthScale/SortingGroup/YSorter及引用保持。根已挂NpcShell/ActorMarker/AmbientBubbleTrigger，三个稳定引用绑定，HeadAnchor_TUNE默认零点待用户调，Visual挂点子数0；Trigger仅接同根marker/shell，场景引用和id/池默认空。两新形象为Visuals/npc_visual_tomato.prefab与Visuals/Placeholders/npc_visual_placeholder.prefab，番茄保原Spine/装备/材质/idle，Square占位最小白块。原三合同原生3/3、Console新增Error0、Street clean且磁盘未改；未Play/视觉签收，14场景接入未完成。当前配置入口见[街景NPC说明](组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md)，完整核验仍2026-09-17。
+
+2026-11-16 AI555/V013-11局部入口：CookingData/CatalogBlobSerializer写2.5.1并读旧2.4.1，AssetTypes纳入八表、ValueTypes纳入三Optional；GameObject用prefab稳定键。EncryptedBlobSource新增双resolver，Catalog新增releasePrefabs与ConfigureBuildReferences；Editor/Build原Capture兼容壳转CaptureReferences，快照校验、build-only引用及linker同步扩展，四阶段PS入口保持。原ImportContracts新增实际22非空往返/Runtime查询和旧169资产/14表/Sprite导出冻结比对；原Blob显式Legacy14与BuildRelease仍独立。见[BuildRelease](DevTools/BuildRelease/README.md)及八表/运行时说明；仅源码/离线，原生导入/包体待14/17，完整核验仍2026-09-17。
+
+2026-11-16 AI554/V013-10局部入口：CK01CharacterData保原street_visual_prefab字符串，仅加派生GameObject street_visual_prefab_asset；DataTableImportService.TryApplyRow沿原精确基名/批准Visuals目录把唯一候选绑定，缺失/歧义/不可加载警告并清引用，空列无警告。NarrativeDataAdapter与RuntimeEntry新增TryGetCharacterVisualPrefab按基础角色id读当前Catalog源；Core无Unity/无反向依赖。实际字段/API、空值矩阵及05/11承接见[八表说明](docs/剧情八表配表说明.md)，原ImportContracts追加真实绑定用例，原Narrative Python仅新增可选生产compile-only。只源码/离线，无生成资产或原生导入，11打包恢复/14保存另做；完整核验仍2026-09-17。
+
+2026-11-16 AI553/V013-07局部入口：LongLoop新增NarrativeAmbientBubbleTrigger（同NPC根组件）与Driver（实际协调类），调用04/06、Registry/Shell及原GroundSpace，单NPC单模型、池setter保冷却、speaker缺失跳句。Narrative.Unity新增NarrativeBubbleView生命周期及CanvasRenderer运行时Overlay/TMP实现，只新增单向UI/TMP引用，不反向依赖LongLoop；tier四字段驱动淡入/存活/上漂淡出，同NPC替换/其它独立。原Narrative入口追加实际联测，LongLoop当前依赖编译；[配置及五列人工说明](组件说明文档/视觉特效/剧情气泡配置与使用说明.md)。只源码/离线，尚未实际挂载/画面验收，13/14及USER保持；下文早期“无消费者”属当时边界，完整核验仍2026-09-17。
+
+2026-11-16 AI552/V013-06局部入口：`Narrative/Core/NarrativeAmbientBubbleModel.cs`为每NPC唯一气泡取句/冷却所有者，复用INarrativeDataDirectory/链及Resolver trigger快照，外部传秒数、地面距离、随机能力；严格消费autoBubbleRadius/autoBubbleCooldown，换池清进度保截止时间，坏池/非ambient拒绝并去重诊断，命令忽略但照常发句。结果只含文本key/说话者等纯数据，无Unity/视图/LongLoop/普通剧情FSM或业务状态策略。原Narrative入口追加真实模型测试；说明原位补[对话参数](docs/参数调整说明_对话.md)，后续07/05消费实际接口。完整核验仍2026-09-17。
+
+2026-11-16 AI551/V013-04局部入口：`Assets/Scripts/Narrative/Unity/NarrativeRuntimeEntry.cs`持显式演出配置/Catalog引用和必要目录快照，通过原NarrativeDataAdapter/Resolver提供目录、对话与独立trigger取值；缺失/读失败明确不可用、无业务进度状态。LongLoop只追加单向Narrative.Unity引用，Unity/Core不反向引用街道；Catalog既有编辑/开发SO与加密发布源策略、Core/Adapter及配置资产保持。原Narrative入口追加实际组件用例，原LongLoop默认入口补当前真实Unity依赖编译。说明见[运行时接入](docs/剧情运行时接入说明.md)；未做14场景接线、11八表发布或17包体，完整核验仍2026-09-17。
+
+2026-11-16 AI550/V013-03局部入口：`Assets/Scripts/LongLoop/NpcShell.cs`及新meta仅管理稳定Foot/Visual Mount/Head Anchor引用、运行时非空形象子对象替换/null保持及朝向；直接复用原DepthScale的ResolveFacingMagnitude/TrySetFacing，保主角、缩放/排序源码和配置。默认LongLoop入口追加实际壳+DepthScale用例，原四模式及548新增44保持。AI550原交付仅代码/离线；随后AI559已原生完成通用壳和两形象Prefab，当前资产按页首及原[街景NPC说明](组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md)，14场景接线仍未完成。完整核验仍2026-09-17。
+
+2026-11-16 AI548/V013-02局部入口：LongLoop新增 `NarrativeActorMarker.cs`、`NarrativeAnchorMarker.cs`、`NarrativeTargetRegistry.cs`，三个同名可挂载组件及新meta。Registry独占本场景角色/锚点清单，按启停收集/注销、重复保先登记、显式本场景Player Transform及缺失诊断；LongLoop新增单向Narrative.Core引用，直接复用NarrativeCommandTargetParser，不反向引用LongLoop。原StreetSceneEntry、主角/镜头、Core语法与数据不改。默认LongLoop离线入口追加实际组件测试，原四模式保留；配置见[目标说明](docs/剧情目标标记与注册说明.md)。未做场景接线、NPC壳/状态/气泡或原生验收，完整核验仍2026-09-17；机器结果另见本卡报告。
+
+2026-11-16 AI547 attempt2完成V013-01原生操作及原三项检查：仅导入AI549已独审的导表服务修复，正式ImportAll成功读取22表（0error/54warning/0info），Catalog含八个零行新表入口；创建并保存Assets/Settings/Narrative/DialoguePresentationConfig.asset，十组均只有一个default，数值取类型默认。编译无错误，Narrative.Core/Unity、Toolkit、LongLoop及Editor.DataTables已加载，Street仍stopped/clean、Console无新增Error。首轮旧14表硬门失败及修复/许可完整保留，旧scene UNVERIFIED未解除。证据见.ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000547/attempt2/REPORT.md；不代表NPC/气泡或0.1.3完成，完整核验仍2026-09-17。
+
 2026-11-15局部补核N005/008/012数据模型、参数快照与纯对话状态机，以及N009专项静态校验、N013整链与N012-P1顺序补丁；完整核验仍2026-09-17。
 
 2026-11-15另补核N0-05的只读模型/目录/生成行适配与相关离线入口；仅此模块局部核对，最后完整核验仍为2026-09-17。
@@ -35,6 +69,8 @@ N012-P1仅修改原FSM的完整story开场/准备回报及相应单测，普通/
 N012-P1离线收口：唯一一次Narrative Final通过，FSM99检查、整链114检查/102行与执行前冻结新基准逐字节相同，十真实编译/运行阶段及其余原组全部通过。提前camera回报、串行请求、重复/迟到/外来消息和story无缝路径已覆盖；仅原并行断言和辅助回报顺序按新授权替代，未动调度/输入或其它实现。无基准执行后修订、无原生/新人工门，CONTROL已独审2合同/8事实通过；完整项目核验仍2026-09-17。
 
 ## 剧情底座（N0-01 / N0-02 / N0-03 / N0-04 / N0-05 / N0-06 / N0-07 / N0-08 / N0-09 / N0-10 / N0-11 / N0-12 / N0-13）
+
+当前原生状态（AI547，2026-11-16）：底座程序集已进引擎，正式22表Catalog已保存，新增八表均无业务行；唯一演出配置资产在`Assets/Settings/Narrative/DialoguePresentationConfig.asset`（GUID a5c9f5249dccc32429695e62f7c34de0），十组/default可原生读回。下文N0各卡的“未创建/未导入”描述是其原离线交付边界，当前以本段为准。尚无真实表现消费者、场景绑定或NPC/气泡效果验收；参数入口见原[对话参数说明](docs/参数调整说明_对话.md)。
 
 N0-13新增`DevTools/Narrative/NarrativeHeadlessChainTests.cs`和自属HeadlessChainV25九CSV/同一配置、合成文件与动作计划。原正式N009策略验证同CSV，再实际导入生成行/本地化聚合→原Adapter/Catalog/Directory→Resolver→FSM/Scheduler/Input；fake仅外部能力，旧源码/断言/夹具保持。仓库路径手写expected-trace在首次执行前冻结，102行初稿SHA AE4EE21FE0C5D5AB30610F17482C6C8D11DF0745707FB2EC52B5C64815BFA1B8，直接字节比较，actual另留输出。首次增量和唯一Final均114检查/零N009诊断通过，CONTROL已独审2合同/8事实；5条原静态宿主资源未绑定提示单列，非原生导入。详细动作时刻、完整基准及Final证据见该任务报告与原Narrative README，不代真实场景/整批或OPT视觉。
 

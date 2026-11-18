@@ -1,0 +1,2 @@
+scene_id,state_id,kind,target,anchor_id,facing,active,dialogue_id,ambient_pool,marker,comment
+scn_audit,day,actor,chr_vendor#2,,,true,,,,

@@ -1,0 +1,5390 @@
+{
+  "sceneReferences": [
+    {
+      "scene": "Assets/Scenes/Cooking/ShortCycle_P0P1.unity",
+      "line": 19355,
+      "guid": "9ca997eace167cf4c9672b6ac10ee4e2"
+    },
+    {
+      "scene": "Assets/Scenes/Cooking/ShortCycle_P0P1.unity",
+      "line": 69686,
+      "guid": "9ca997eace167cf4c9672b6ac10ee4e2"
+    },
+    {
+      "scene": "Assets/Scenes/ToolTests/FridgeScrollLab.unity",
+      "line": 6830,
+      "guid": "9ca997eace167cf4c9672b6ac10ee4e2"
+    },
+    {
+      "scene": "Assets/Scenes/ToolTests/FridgeScrollLab.unity",
+      "line": 6933,
+      "guid": "9ca997eace167cf4c9672b6ac10ee4e2"
+    }
+  ],
+  "catalog": {
+    "key": "9ca997eace167cf4c9672b6ac10ee4e2:11400000",
+    "guid": "9ca997eace167cf4c9672b6ac10ee4e2",
+    "path": "Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset",
+    "type": "CK01GeneratedDataCatalog",
+    "name": "CK01GeneratedDataCatalog",
+    "fields": {
+      "tables": [
+        {
+          "tableName": "Recipes",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "rcp_qingtang_noodle",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "bb77fd3089eb1df47b0ecea375efcb1e",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "rcp_tomato_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fa6d763fa0215cb41865b119011e0982",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "rcp_kaishui_cabbage",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "74b1c977a6747354587a5101fbbd0629",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "RecipeSlots",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "slot_noodle_1",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e46034d9bbc8aba4eadee27790843354",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "slot_broth_1",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "892d11ab46390b74b9723f08f5dd4667",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "slot_jiaotou_1",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ca2a4b90e817bcb4fbf2a06c13af99fd",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "slot_egg_3",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "5379ece23adfd1841a10c0ffea16c9b0",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "slot_tomato_2",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "9e5b7d480e8fe3442b72c613d4592a06",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "slot_cabbage_1",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "43abb765c41027149a5c75a03104e4ee",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "RecipeSteps",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "step_qt_01",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "a08c8f0c5ead0b34bb8d1f0bfe3a12d3",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_qt_02",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "a2c2fefa044e0ea4eb9df224f68aba9b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_qt_03",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e813a5ed00cac2b49a8aeebf16ff03e2",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_qt_04",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e9cdb7bf2bb8b5740bdfba279b0dd5b2",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_te_01",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "1f14f7bcfda148748ae98ae604e4486a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_te_02",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "6f3384c6091638b4eb187ea22d35ed58",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_te_03",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0b08ae2dcaf644b40b65333c7519787f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_te_04",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "6697092f2f10dc64bb1c290a8725366d",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_kc_01",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "42d613f53b3a1944eb1530b2f26c016f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_kc_02",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "56f9ae8adceaef44384bfc526c13827b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "step_kc_03",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "eb9c0adbbd3f8074697982241a9d523f",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "Items",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "ing_noodle_dried",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "26bd090f9ebfa7c4b82efedb9d604fc4",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_noodle_instant",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "89960b04ad4861247b0cc4729e83e80c",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "36094ac88636d064e95425c49f38ce84",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_danhuangpai",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "bda2a838bdc933d4a90bd17b8509712d",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_tomato",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0ae5cf637d6fc3648a283ee27a135994",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_ofanqie",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e59904671518c9549860c80f5c40a961",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_octopus_leg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "4555cc4084196074e8b35059199e5ff6",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_ham_sausage",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "b96c4d08c4acacc489ad5b64a9e8d494",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_milk_box",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e4cdde6f64dd9ce489e793181870f68f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_pidan",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "48e748daeeb5f4e48ae7cf8b18841455",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_noodle_rice",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "1ba4e543fbcef7e49a129a7e0e34cc3f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_nongtangbao",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "c63f337a3f873734d87fadff0352b282",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_milktea_fen",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fbec0190ba99aa343a51aeeaa95fdf4b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_paomianbao",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "6149a1d21755dc0418597f1777a8e3ce",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_cabbage",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "48979b6bec8636a48955db0e7603c8ff",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_clear_broth",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "b131d4ccc20f3904583e1622fdfc2377",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "stp_water",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "de47bce54771df6448c393b90ee7b72a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "stp_salt",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "4a4a1d8f95eaeaa4481285961b84d122",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "stp_oil",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ebca4a6b12ee1b14e8e2decee57f9f0a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_noodle_boiled",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "144f6803843422b4197b3a1b295fc85b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_instant_noodle_boiled",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "9f454dbeac313d641938a7024f95e176",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_rice_noodle_boiled",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "361b0fa14d90abe4da74d8213d6bb486",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_egg_liquid",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "533eb1817da929742a627d5eafd75f24",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_danhuangpai_sui",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "26ab31b1b32a4b643b39f5c7551d834a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_tomato_cut",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "337744c6c794dc6489d918af09f3a493",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_ofanqie_sui",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "f913c4fa225c6134795e10fbfa1e045e",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_fried_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "2aaf0b1c95c66b94e99d69c91c8c095b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_scrambled_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e09076b34edc3d9469dbe35d31fa4e6b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_clear_broth",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "8f4696e78911b564bbf92fb38c5c6063",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_nongtangbao_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ed7f6b0791a25874c9299aae8018d024",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_milktea_liquid",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "7ba2fe79e3aaac346b879312978a6d2c",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_paomian_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "59e90147fef6c0d4dad31562ea564cb1",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_qingtang_dish",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "8757cec613588b14ca8075fb1d25fc9f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_pidan_milktea_noodle",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "58739b0b5462b474e993493facf53416",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_tomato_egg_dish",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "cd828234091908446bebe0e0173c8fda",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_tomato_egg_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "05ef9c0bd779565468224e831dba8dd5",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_ofanqie_danhuangpai",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "930a93749a1826c439c3cdc821dd5524",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_kaishui_dish",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "f168a4e30b7ea404ab1ad52f95438e36",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "prd_unknown",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "d8c49c1c9217f6648bb80efee95aedd0",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "InitialInventory",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "ing_noodle_dried",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "aef2fba518da6ac4d96658f47b887210",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_noodle_instant",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "a31c7972d70293145bc130a888922885",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0d16bd8aab5d0154784e2825c7e6de97",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_danhuangpai",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ab86bf385966f4f458f4fbf1b7b19d85",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_tomato",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fc2bbc2c161b9c44ca387ef70658b28b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_ofanqie",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "4a63e5a7029f12344a62e42ead25f28a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_pidan",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "4dca6efbe586a67449974ff422f099e9",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_octopus_leg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e237ffafb7327f3418371b84378e43fe",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_ham_sausage",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "57e94612b95ff7a4d94193de898be92a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_milk_box",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "dbadcc09f442a4947933abacffd81d49",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_noodle_rice",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "53b706eb89b19524e8f11be1879c8ea7",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_nongtangbao",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "31e50bf3852133e45833057cd6372fa3",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_milktea_fen",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "dbed867b5e5cdde489bb8722effce34b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "ing_paomianbao",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "225e1a3094e265f4ea0ce3dda5ac7299",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "Tags",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "tag_veg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "753c8df4c32f74842aa024768c884992",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_fruit",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "4af22933d0c1ec94f961d32a6fb4eda5",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e7aa01c9645cbf748bd42d025e608db0",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_meat",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "eafe48ab3f0a31d49acf5b4bf6659fdd",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_seafood",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "d9e2d87344092ea49bed708558ae1ca6",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_staplefood",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "49f32d1e3dd8367459a60cd57797ab82",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_dairy",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "3a2ab6c4500c4aa46a86ebb56e790a4f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_dish_boil",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fbb62b60a01900d499dd073ea63cc83b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_dish_stirfry",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "6c4282bd1515fe046a96df117755ee93",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_dish_deepfry",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "1b3df9747e17fb34691023c36cee1319",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_dish_stew",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "9439341a691bd8444bec4305ed411183",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_dish_salad",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "7a8970b6381c78543b4772eefbaeeaf0",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_flavor_yummy",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "647b8f000193c1f4ca5dbce9c49dcbd2",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_flavor_confused",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "29514042597c0fc49902db7dfecab5b8",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_flavor_spicy",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "1c60b18fe3d18304da68131f2b619d72",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_flavor_easy",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "bed61cf70ec974a4690d0737987acba1",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tag_flavor_fancy",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "3ce0158ee1fe49a4bb62da70c0631c97",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "Tools",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "tool_hand",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fc3a34409140def46815f6b646f8b686",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_knife",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ccc3318a25133184b90ad278f1fe9f79",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_scissors",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e76936264892dde4eb3543395b8d3a62",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_spatula",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fa01fc414576bfe4dbf1f3dc0cbda95b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_chopsticks",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "b76459bc754a1be49afcf9afb18ec427",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_stick",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "bcf339b2a9b03fe4d851aacfaf9214a5",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_bowl",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "47750cf063ffde24a99e35675ce75836",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_saladbowl",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "adfb49e83e853f0488757416334aa284",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_board",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "cf230b5f49ec1c847b3e738403f368a0",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_pan",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "b3a58691ff238fe42b9d9f45faada8e1",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_pot",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "940f3eadfc545f2439f68fb74dc94140",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_stove",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "f4656800589a1b04494a2f7e4dcc5c43",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_board_station",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "029dbc26a4380b7438e8ffebf117c59d",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_oven",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "970fe1e3da377ce48b0e04093f2b6a5e",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_salad_station",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "230e6232a978589448a84185cd3e37b6",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "tool_freezer",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "f1aa1081804164846934155694adb342",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "CookingGameConfig",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "prep_zone_capacity",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0018bcac5487ca14d8ba6132c6016e85",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "fridge_scroll_threshold",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ef85a3fb0e566af45954d022be8fc7f7",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "fridge_scroll_cooldown",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e43b955f1eadab147ab2728c5709a4e8",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "unknown_product_item",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "c0665eee67ca1fb40af0b5b0daa7ee59",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "demo_fridge_capacity_level",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "78f789c286f97f74796ec0b31ecd9df6",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "Localization",
+          "aggregateAsset": {
+            "fileID": "11400000",
+            "guid": "9fdef0f87a5fdd242910d4cf9708994d",
+            "type": "2"
+          },
+          "rows": []
+        },
+        {
+          "tableName": "FridgeCapacityLevels",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "fcap_lv1",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e082a38105c18ce4ba218398bf201720",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "fcap_lv2",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "b8a382042b694af42949217e2f927559",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "fcap_lv3",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "12ea13862cb87e549abf714fb1e7230f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "fcap_lv4",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "af1d594869ade7441bc4ccf038ae2a8b",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "fcap_lv5",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "9bb4478dc20c12d40aed954a670d500b",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "ProcessActions",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "act_cut",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "a96240328bb35ad4ba91f8abbe769f22",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_whisk",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "396bef2961f7b284e84a0684be1f97cf",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_stirfry",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "207771b4864ad484eb49d615434e3271",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_wash",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "eac3170412e3a4042bfff2f18d0055c5",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_boil",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "f086c477695c4f84ab30e0fc6fd3b5e5",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_stew",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e5538726674178f489b2e15c9878cafb",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_no_process",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "8fd5bdd2f4f984d4fb35172fd9e53810",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_smash",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "5f57c771466e9294e85fc8e01faa9a0e",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_mix",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "8c1b9094f356d854b8d65bfd8cb2e77f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "act_fry",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "4c8321c4040808346b5380638b85f38b",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "ProcessingRecords",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "proc_noodle_boiled",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "74a9b1eaea7dcd14eb31a58d5e9d14d2",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_instant_noodle_boiled",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "16d11e28d9ab01b4c81941772d0acccc",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_rice_noodle_boiled",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "d2fce68667dc405419989b078e4d1e26",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_egg_liquid",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "efe282ab657a81a49b5a49a8c67191b5",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_danhuangpai_sui",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "c09d568209a41564bb0632c488b3cbe6",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_tomato_cut",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ac01906c1c723ff49bb95bf247adf2cb",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_ofanqie_sui",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "71959a0002c4d4249be0018ee7d85de8",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_fried_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ada218dcf90146b458ad2e266f165de7",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_scrambled_egg",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "fd81ea4188cc415498ffb2bebccef819",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_nongtangbao_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0767a18b82e460946ac86f4aa039a717",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_milktea_liquid",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "bb6debc470643254bb3934e345f4efe3",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_paomian_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "cc3bd45551b7f0f4d95f7b290599ce3f",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_qingtang_dish",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "77e815aff1b81e14cb7e92baa670e5f1",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_pidan_milktea_noodle",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "a41ed6bec01d76847ae5a4eac5441037",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_tomato_egg_dish",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e03f7fc72aa0df34f84e82e539921eb8",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_tomato_egg_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "a0d3c165132842f4ba20ecf67d97ccd4",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "proc_ofanqie_danhuangpai",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "6dc1168468b7f0549bc1285bed100f26",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "RecipeVariants",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "var_qingtang_std",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "9ea91814d56e4a842b0a7b3d96faf2b0",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "var_pidan_milktea_noodle",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "bc6eeafb1e85a1e469bf7612c9a8c74a",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "var_tomato_egg_std",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ca44f29dd79f3bb44afdac07447fa6ca",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "var_tomato_egg_soup",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0f30480ac9c2c5c43a00fac896a29325",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "var_ofanqie_danhuangpai",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "5906895cbcda05a41a37abb99f6b8f64",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "var_kaishui_std",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "330bb2f3b258d134ab1faa322bb9ec1f",
+                "type": "2"
+              }
+            }
+          ]
+        },
+        {
+          "tableName": "KitchenAreas",
+          "aggregateAsset": {
+            "fileID": "0"
+          },
+          "rows": [
+            {
+              "stableId": "kitchen-prep-counter",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "27fab27bb38b86744ac9d705ecc47af0",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "kitchen-stove",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "0cffdc34b982a3140abd7dbefc24074c",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "kitchen-oven",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "e391a2a0e7f17fd42b2eac9d8c5803f3",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "kitchen-salad",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "66503f94354470d4e85f02f5c3d599ab",
+                "type": "2"
+              }
+            },
+            {
+              "stableId": "kitchen-freezer",
+              "asset": {
+                "fileID": "11400000",
+                "guid": "ac0da91f83e409b4a8c20133c17a8888",
+                "type": "2"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "assets": [
+    {
+      "key": "78f789c286f97f74796ec0b31ecd9df6:11400000",
+      "guid": "78f789c286f97f74796ec0b31ecd9df6",
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/demo_fridge_capacity_level.asset",
+      "type": "CK01CookingGameConfigData",
+      "name": "demo_fridge_capacity_level",
+      "fields": {
+        "value": "fcap_lv2"
+      }
+    },
+    {
+      "key": "e43b955f1eadab147ab2728c5709a4e8:11400000",
+      "guid": "e43b955f1eadab147ab2728c5709a4e8",
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/fridge_scroll_cooldown.asset",
+      "type": "CK01CookingGameConfigData",
+      "name": "fridge_scroll_cooldown",
+      "fields": {
+        "value": "0.2"
+      }
+    },
+    {
+      "key": "ef85a3fb0e566af45954d022be8fc7f7:11400000",
+      "guid": "ef85a3fb0e566af45954d022be8fc7f7",
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/fridge_scroll_threshold.asset",
+      "type": "CK01CookingGameConfigData",
+      "name": "fridge_scroll_threshold",
+      "fields": {
+        "value": "1.0"
+      }
+    },
+    {
+      "key": "0018bcac5487ca14d8ba6132c6016e85:11400000",
+      "guid": "0018bcac5487ca14d8ba6132c6016e85",
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/prep_zone_capacity.asset",
+      "type": "CK01CookingGameConfigData",
+      "name": "prep_zone_capacity",
+      "fields": {
+        "value": "20"
+      }
+    },
+    {
+      "key": "c0665eee67ca1fb40af0b5b0daa7ee59:11400000",
+      "guid": "c0665eee67ca1fb40af0b5b0daa7ee59",
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/unknown_product_item.asset",
+      "type": "CK01CookingGameConfigData",
+      "name": "unknown_product_item",
+      "fields": {
+        "value": "prd_unknown"
+      }
+    },
+    {
+      "key": "e082a38105c18ce4ba218398bf201720:11400000",
+      "guid": "e082a38105c18ce4ba218398bf201720",
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv1.asset",
+      "type": "CK01FridgeCapacityLevelData",
+      "name": "fcap_lv1",
+      "fields": {
+        "level_index": "1",
+        "capacity": "20",
+        "upgrade_condition": ""
+      }
+    },
+    {
+      "key": "b8a382042b694af42949217e2f927559:11400000",
+      "guid": "b8a382042b694af42949217e2f927559",
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv2.asset",
+      "type": "CK01FridgeCapacityLevelData",
+      "name": "fcap_lv2",
+      "fields": {
+        "level_index": "2",
+        "capacity": "30",
+        "upgrade_condition": ""
+      }
+    },
+    {
+      "key": "12ea13862cb87e549abf714fb1e7230f:11400000",
+      "guid": "12ea13862cb87e549abf714fb1e7230f",
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv3.asset",
+      "type": "CK01FridgeCapacityLevelData",
+      "name": "fcap_lv3",
+      "fields": {
+        "level_index": "3",
+        "capacity": "40",
+        "upgrade_condition": ""
+      }
+    },
+    {
+      "key": "af1d594869ade7441bc4ccf038ae2a8b:11400000",
+      "guid": "af1d594869ade7441bc4ccf038ae2a8b",
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv4.asset",
+      "type": "CK01FridgeCapacityLevelData",
+      "name": "fcap_lv4",
+      "fields": {
+        "level_index": "4",
+        "capacity": "50",
+        "upgrade_condition": ""
+      }
+    },
+    {
+      "key": "9bb4478dc20c12d40aed954a670d500b:11400000",
+      "guid": "9bb4478dc20c12d40aed954a670d500b",
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv5.asset",
+      "type": "CK01FridgeCapacityLevelData",
+      "name": "fcap_lv5",
+      "fields": {
+        "level_index": "5",
+        "capacity": "60",
+        "upgrade_condition": ""
+      }
+    },
+    {
+      "key": "b0b57f0514ac6674cad231358adeb8db:11400000",
+      "guid": "b0b57f0514ac6674cad231358adeb8db",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_cabbage.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_cabbage",
+      "fields": {
+        "quantity": "2"
+      }
+    },
+    {
+      "key": "ab86bf385966f4f458f4fbf1b7b19d85:11400000",
+      "guid": "ab86bf385966f4f458f4fbf1b7b19d85",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_danhuangpai.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_danhuangpai",
+      "fields": {
+        "quantity": "2"
+      }
+    },
+    {
+      "key": "0d16bd8aab5d0154784e2825c7e6de97:11400000",
+      "guid": "0d16bd8aab5d0154784e2825c7e6de97",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_egg.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_egg",
+      "fields": {
+        "quantity": "6"
+      }
+    },
+    {
+      "key": "532201bf347ec674a8c912ddabd6f0c9:11400000",
+      "guid": "532201bf347ec674a8c912ddabd6f0c9",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_giant_egg.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_giant_egg",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "57e94612b95ff7a4d94193de898be92a:11400000",
+      "guid": "57e94612b95ff7a4d94193de898be92a",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_ham_sausage.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_ham_sausage",
+      "fields": {
+        "quantity": "2"
+      }
+    },
+    {
+      "key": "dbadcc09f442a4947933abacffd81d49:11400000",
+      "guid": "dbadcc09f442a4947933abacffd81d49",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_milk_box.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_milk_box",
+      "fields": {
+        "quantity": "2"
+      }
+    },
+    {
+      "key": "dbed867b5e5cdde489bb8722effce34b:11400000",
+      "guid": "dbed867b5e5cdde489bb8722effce34b",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_milktea_fen.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_milktea_fen",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "31e50bf3852133e45833057cd6372fa3:11400000",
+      "guid": "31e50bf3852133e45833057cd6372fa3",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_nongtangbao.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_nongtangbao",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "aef2fba518da6ac4d96658f47b887210:11400000",
+      "guid": "aef2fba518da6ac4d96658f47b887210",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_dried.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_noodle_dried",
+      "fields": {
+        "quantity": "3"
+      }
+    },
+    {
+      "key": "a31c7972d70293145bc130a888922885:11400000",
+      "guid": "a31c7972d70293145bc130a888922885",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_instant.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_noodle_instant",
+      "fields": {
+        "quantity": "2"
+      }
+    },
+    {
+      "key": "53b706eb89b19524e8f11be1879c8ea7:11400000",
+      "guid": "53b706eb89b19524e8f11be1879c8ea7",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_rice.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_noodle_rice",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "e237ffafb7327f3418371b84378e43fe:11400000",
+      "guid": "e237ffafb7327f3418371b84378e43fe",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_octopus_leg.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_octopus_leg",
+      "fields": {
+        "quantity": "2"
+      }
+    },
+    {
+      "key": "4a63e5a7029f12344a62e42ead25f28a:11400000",
+      "guid": "4a63e5a7029f12344a62e42ead25f28a",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_ofanqie.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_ofanqie",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "225e1a3094e265f4ea0ce3dda5ac7299:11400000",
+      "guid": "225e1a3094e265f4ea0ce3dda5ac7299",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_paomianbao.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_paomianbao",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "4dca6efbe586a67449974ff422f099e9:11400000",
+      "guid": "4dca6efbe586a67449974ff422f099e9",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_pidan.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_pidan",
+      "fields": {
+        "quantity": "1"
+      }
+    },
+    {
+      "key": "f01e2161845beee469f1d0698a9bf158:11400000",
+      "guid": "f01e2161845beee469f1d0698a9bf158",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_scallion.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_scallion",
+      "fields": {
+        "quantity": "3"
+      }
+    },
+    {
+      "key": "fc2bbc2c161b9c44ca387ef70658b28b:11400000",
+      "guid": "fc2bbc2c161b9c44ca387ef70658b28b",
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_tomato.asset",
+      "type": "CK01InitialInventoryData",
+      "name": "ing_tomato",
+      "fields": {
+        "quantity": "4"
+      }
+    },
+    {
+      "key": "48979b6bec8636a48955db0e7603c8ff:11400000",
+      "guid": "48979b6bec8636a48955db0e7603c8ff",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_cabbage.asset",
+      "type": "CK01ItemData",
+      "name": "ing_cabbage",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_cabbage.name",
+        "ingredient_categories": [
+          "tag_veg"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "111",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b604f096bc1fc234ead04f9b228ab33b",
+          "type": "3"
+        },
+        "flavor_key": "ing_cabbage.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "b131d4ccc20f3904583e1622fdfc2377:11400000",
+      "guid": "b131d4ccc20f3904583e1622fdfc2377",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_clear_broth.asset",
+      "type": "CK01ItemData",
+      "name": "ing_clear_broth",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "prd_clear_broth.name",
+        "ingredient_categories": [
+          "tag_meat"
+        ],
+        "stack_type": "single",
+        "display_order_in_fridge": "999",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "64487d8a9c535734485f55a5da4981a1",
+          "type": "3"
+        },
+        "flavor_key": "prd_clear_broth.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "bda2a838bdc933d4a90bd17b8509712d:11400000",
+      "guid": "bda2a838bdc933d4a90bd17b8509712d",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_danhuangpai.asset",
+      "type": "CK01ItemData",
+      "name": "ing_danhuangpai",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_danhuangpai.name",
+        "ingredient_categories": [
+          "tag_egg",
+          "tag_staplefood"
+        ],
+        "stack_type": "single",
+        "display_order_in_fridge": "40",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b604f096bc1fc234ead04f9b228ab33b",
+          "type": "3"
+        },
+        "flavor_key": "ing_danhuangpai.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "36094ac88636d064e95425c49f38ce84:11400000",
+      "guid": "36094ac88636d064e95425c49f38ce84",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_egg.asset",
+      "type": "CK01ItemData",
+      "name": "ing_egg",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_egg.name",
+        "ingredient_categories": [
+          "tag_egg"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "30",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "9dc5476efa38b724ca99fdf3cd6811f6",
+          "type": "3"
+        },
+        "flavor_key": "ing_egg.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "92b5d264a4aa5cd4ea4cdc2034975bf2:11400000",
+      "guid": "92b5d264a4aa5cd4ea4cdc2034975bf2",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_giant_egg.asset",
+      "type": "CK01ItemData",
+      "name": "ing_giant_egg",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_giant_egg.name",
+        "ingredient_categories": [
+          "tag_egg"
+        ],
+        "stack_type": "single",
+        "display_order_in_fridge": "40",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "ing_giant_egg.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "b96c4d08c4acacc489ad5b64a9e8d494:11400000",
+      "guid": "b96c4d08c4acacc489ad5b64a9e8d494",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_ham_sausage.asset",
+      "type": "CK01ItemData",
+      "name": "ing_ham_sausage",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_ham_sausage.name",
+        "ingredient_categories": [
+          "tag_meat"
+        ],
+        "stack_type": "pack",
+        "display_order_in_fridge": "90",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "55ec27f25225d2a44816f8318169cd6d",
+          "type": "3"
+        },
+        "flavor_key": "ing_ham_sausage.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "5",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "e4cdde6f64dd9ce489e793181870f68f:11400000",
+      "guid": "e4cdde6f64dd9ce489e793181870f68f",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_milk_box.asset",
+      "type": "CK01ItemData",
+      "name": "ing_milk_box",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_milk_box.name",
+        "ingredient_categories": [
+          "tag_dairy"
+        ],
+        "stack_type": "container",
+        "display_order_in_fridge": "100",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b604f096bc1fc234ead04f9b228ab33b",
+          "type": "3"
+        },
+        "flavor_key": "ing_milk_box.flavor",
+        "container_capacity": "1000",
+        "container_use_step": "200",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "fbec0190ba99aa343a51aeeaa95fdf4b:11400000",
+      "guid": "fbec0190ba99aa343a51aeeaa95fdf4b",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_milktea_fen.asset",
+      "type": "CK01ItemData",
+      "name": "ing_milktea_fen",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_milktea_fen.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "25",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "9afb76b3b5d3c7b40ac11df809b04fb4",
+          "type": "3"
+        },
+        "flavor_key": "ing_milktea_fen.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "c63f337a3f873734d87fadff0352b282:11400000",
+      "guid": "c63f337a3f873734d87fadff0352b282",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_nongtangbao.asset",
+      "type": "CK01ItemData",
+      "name": "ing_nongtangbao",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_nongtangbao.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "pack",
+        "display_order_in_fridge": "21",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "c2428b2b68e11594e8ed508ac440db24",
+          "type": "3"
+        },
+        "flavor_key": "ing_nongtangbao.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "6",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "26bd090f9ebfa7c4b82efedb9d604fc4:11400000",
+      "guid": "26bd090f9ebfa7c4b82efedb9d604fc4",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_dried.asset",
+      "type": "CK01ItemData",
+      "name": "ing_noodle_dried",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_noodle_dried.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "10",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b3f91c303b1e2854896359260755aa2e",
+          "type": "3"
+        },
+        "flavor_key": "ing_noodle_dried.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "89960b04ad4861247b0cc4729e83e80c:11400000",
+      "guid": "89960b04ad4861247b0cc4729e83e80c",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_instant.asset",
+      "type": "CK01ItemData",
+      "name": "ing_noodle_instant",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_noodle_instant.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "20",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "d17c99b290d4aaa44bbd6d5b1e6c6f86",
+          "type": "3"
+        },
+        "flavor_key": "ing_noodle_instant.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "1ba4e543fbcef7e49a129a7e0e34cc3f:11400000",
+      "guid": "1ba4e543fbcef7e49a129a7e0e34cc3f",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_rice.asset",
+      "type": "CK01ItemData",
+      "name": "ing_noodle_rice",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_noodle_rice.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "single",
+        "display_order_in_fridge": "15",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "0a7a8816761853d449e4046188ecec7c",
+          "type": "3"
+        },
+        "flavor_key": "ing_noodle_rice.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "4555cc4084196074e8b35059199e5ff6:11400000",
+      "guid": "4555cc4084196074e8b35059199e5ff6",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_octopus_leg.asset",
+      "type": "CK01ItemData",
+      "name": "ing_octopus_leg",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_octopus_leg.name",
+        "ingredient_categories": [
+          "tag_seafood"
+        ],
+        "stack_type": "single",
+        "display_order_in_fridge": "80",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b604f096bc1fc234ead04f9b228ab33b",
+          "type": "3"
+        },
+        "flavor_key": "ing_octopus_leg.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "e59904671518c9549860c80f5c40a961:11400000",
+      "guid": "e59904671518c9549860c80f5c40a961",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_ofanqie.asset",
+      "type": "CK01ItemData",
+      "name": "ing_ofanqie",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_ofanqie.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "single",
+        "display_order_in_fridge": "60",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b604f096bc1fc234ead04f9b228ab33b",
+          "type": "3"
+        },
+        "flavor_key": "ing_ofanqie.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "6149a1d21755dc0418597f1777a8e3ce:11400000",
+      "guid": "6149a1d21755dc0418597f1777a8e3ce",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_paomianbao.asset",
+      "type": "CK01ItemData",
+      "name": "ing_paomianbao",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_paomianbao.name",
+        "ingredient_categories": [
+          "tag_staplefood"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "22",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "751d4fb221c52724791b231dfa1212dd",
+          "type": "3"
+        },
+        "flavor_key": "ing_paomianbao.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "48e748daeeb5f4e48ae7cf8b18841455:11400000",
+      "guid": "48e748daeeb5f4e48ae7cf8b18841455",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_pidan.asset",
+      "type": "CK01ItemData",
+      "name": "ing_pidan",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_pidan.name",
+        "ingredient_categories": [
+          "tag_egg"
+        ],
+        "stack_type": "pack",
+        "display_order_in_fridge": "31",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "d7be8ac6c3309904b91f4bfb34118cb4",
+          "type": "3"
+        },
+        "flavor_key": "ing_pidan.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "8",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "2f8ebc15c9d173e448ac0e0691d0ca88:11400000",
+      "guid": "2f8ebc15c9d173e448ac0e0691d0ca88",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_scallion.asset",
+      "type": "CK01ItemData",
+      "name": "ing_scallion",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_scallion.name",
+        "ingredient_categories": [
+          "tag_veg"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "70",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "ing_scallion.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "0ae5cf637d6fc3648a283ee27a135994:11400000",
+      "guid": "0ae5cf637d6fc3648a283ee27a135994",
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_tomato.asset",
+      "type": "CK01ItemData",
+      "name": "ing_tomato",
+      "fields": {
+        "item_kind": "raw",
+        "name_key": "ing_tomato.name",
+        "ingredient_categories": [
+          "tag_veg",
+          "tag_fruit"
+        ],
+        "stack_type": "stack",
+        "display_order_in_fridge": "50",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "b604f096bc1fc234ead04f9b228ab33b",
+          "type": "3"
+        },
+        "flavor_key": "ing_tomato.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "9229815512cd7184e95e31c5792eb6ad:11400000",
+      "guid": "9229815512cd7184e95e31c5792eb6ad",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_cabbage_washed.asset",
+      "type": "CK01ItemData",
+      "name": "prd_cabbage_washed",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_cabbage_washed.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "8f4696e78911b564bbf92fb38c5c6063:11400000",
+      "guid": "8f4696e78911b564bbf92fb38c5c6063",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_clear_broth.asset",
+      "type": "CK01ItemData",
+      "name": "prd_clear_broth",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_clear_broth.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "64487d8a9c535734485f55a5da4981a1",
+          "type": "3"
+        },
+        "flavor_key": "prd_clear_broth.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "26ab31b1b32a4b643b39f5c7551d834a:11400000",
+      "guid": "26ab31b1b32a4b643b39f5c7551d834a",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_danhuangpai_sui.asset",
+      "type": "CK01ItemData",
+      "name": "prd_danhuangpai_sui",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_danhuangpai_sui.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_danhuangpai_sui.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "533eb1817da929742a627d5eafd75f24:11400000",
+      "guid": "533eb1817da929742a627d5eafd75f24",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_egg_liquid.asset",
+      "type": "CK01ItemData",
+      "name": "prd_egg_liquid",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_egg_liquid.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_egg_liquid.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "2aaf0b1c95c66b94e99d69c91c8c095b:11400000",
+      "guid": "2aaf0b1c95c66b94e99d69c91c8c095b",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_fried_egg.asset",
+      "type": "CK01ItemData",
+      "name": "prd_fried_egg",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_fried_egg.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_fried_egg.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "9f454dbeac313d641938a7024f95e176:11400000",
+      "guid": "9f454dbeac313d641938a7024f95e176",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_instant_noodle_boiled.asset",
+      "type": "CK01ItemData",
+      "name": "prd_instant_noodle_boiled",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_instant_noodle_boiled.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_instant_noodle_boiled.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "f168a4e30b7ea404ab1ad52f95438e36:11400000",
+      "guid": "f168a4e30b7ea404ab1ad52f95438e36",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_kaishui_dish.asset",
+      "type": "CK01ItemData",
+      "name": "prd_kaishui_dish",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_kaishui_dish.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_kaishui_dish.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "7ba2fe79e3aaac346b879312978a6d2c:11400000",
+      "guid": "7ba2fe79e3aaac346b879312978a6d2c",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_milktea_liquid.asset",
+      "type": "CK01ItemData",
+      "name": "prd_milktea_liquid",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_milktea_liquid.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_milktea_liquid.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "ed7f6b0791a25874c9299aae8018d024:11400000",
+      "guid": "ed7f6b0791a25874c9299aae8018d024",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_nongtangbao_soup.asset",
+      "type": "CK01ItemData",
+      "name": "prd_nongtangbao_soup",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_nongtangbao_soup.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "64487d8a9c535734485f55a5da4981a1",
+          "type": "3"
+        },
+        "flavor_key": "prd_nongtangbao_soup.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "144f6803843422b4197b3a1b295fc85b:11400000",
+      "guid": "144f6803843422b4197b3a1b295fc85b",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_noodle_boiled.asset",
+      "type": "CK01ItemData",
+      "name": "prd_noodle_boiled",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_noodle_boiled.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_noodle_boiled.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "930a93749a1826c439c3cdc821dd5524:11400000",
+      "guid": "930a93749a1826c439c3cdc821dd5524",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_ofanqie_danhuangpai.asset",
+      "type": "CK01ItemData",
+      "name": "prd_ofanqie_danhuangpai",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_ofanqie_danhuangpai.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_ofanqie_danhuangpai.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "f913c4fa225c6134795e10fbfa1e045e:11400000",
+      "guid": "f913c4fa225c6134795e10fbfa1e045e",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_ofanqie_sui.asset",
+      "type": "CK01ItemData",
+      "name": "prd_ofanqie_sui",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_ofanqie_sui.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_ofanqie_sui.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "59e90147fef6c0d4dad31562ea564cb1:11400000",
+      "guid": "59e90147fef6c0d4dad31562ea564cb1",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_paomian_soup.asset",
+      "type": "CK01ItemData",
+      "name": "prd_paomian_soup",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_paomian_soup.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "64487d8a9c535734485f55a5da4981a1",
+          "type": "3"
+        },
+        "flavor_key": "prd_paomian_soup.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "58739b0b5462b474e993493facf53416:11400000",
+      "guid": "58739b0b5462b474e993493facf53416",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_pidan_milktea_noodle.asset",
+      "type": "CK01ItemData",
+      "name": "prd_pidan_milktea_noodle",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_pidan_milktea_noodle.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_pidan_milktea_noodle.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "8757cec613588b14ca8075fb1d25fc9f:11400000",
+      "guid": "8757cec613588b14ca8075fb1d25fc9f",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_qingtang_dish.asset",
+      "type": "CK01ItemData",
+      "name": "prd_qingtang_dish",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_qingtang_dish.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "21300000",
+          "guid": "5ee211072528d8f41b4561dc38b8c7c5",
+          "type": "3"
+        },
+        "flavor_key": "prd_qingtang_dish.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "361b0fa14d90abe4da74d8213d6bb486:11400000",
+      "guid": "361b0fa14d90abe4da74d8213d6bb486",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_rice_noodle_boiled.asset",
+      "type": "CK01ItemData",
+      "name": "prd_rice_noodle_boiled",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_rice_noodle_boiled.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_rice_noodle_boiled.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "e09076b34edc3d9469dbe35d31fa4e6b:11400000",
+      "guid": "e09076b34edc3d9469dbe35d31fa4e6b",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_scrambled_egg.asset",
+      "type": "CK01ItemData",
+      "name": "prd_scrambled_egg",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_scrambled_egg.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_scrambled_egg.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "337744c6c794dc6489d918af09f3a493:11400000",
+      "guid": "337744c6c794dc6489d918af09f3a493",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_cut.asset",
+      "type": "CK01ItemData",
+      "name": "prd_tomato_cut",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_tomato_cut.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_tomato_cut.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "cd828234091908446bebe0e0173c8fda:11400000",
+      "guid": "cd828234091908446bebe0e0173c8fda",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_egg_dish.asset",
+      "type": "CK01ItemData",
+      "name": "prd_tomato_egg_dish",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_tomato_egg_dish.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_tomato_egg_dish.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "05ef9c0bd779565468224e831dba8dd5:11400000",
+      "guid": "05ef9c0bd779565468224e831dba8dd5",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_egg_soup.asset",
+      "type": "CK01ItemData",
+      "name": "prd_tomato_egg_soup",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_tomato_egg_soup.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_tomato_egg_soup.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "d8c49c1c9217f6648bb80efee95aedd0:11400000",
+      "guid": "d8c49c1c9217f6648bb80efee95aedd0",
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_unknown.asset",
+      "type": "CK01ItemData",
+      "name": "prd_unknown",
+      "fields": {
+        "item_kind": "product",
+        "name_key": "prd_unknown.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "prd_unknown.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "ebca4a6b12ee1b14e8e2decee57f9f0a:11400000",
+      "guid": "ebca4a6b12ee1b14e8e2decee57f9f0a",
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_oil.asset",
+      "type": "CK01ItemData",
+      "name": "stp_oil",
+      "fields": {
+        "item_kind": "staple",
+        "name_key": "stp_oil.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "stp_oil.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "4a4a1d8f95eaeaa4481285961b84d122:11400000",
+      "guid": "4a4a1d8f95eaeaa4481285961b84d122",
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_salt.asset",
+      "type": "CK01ItemData",
+      "name": "stp_salt",
+      "fields": {
+        "item_kind": "staple",
+        "name_key": "stp_salt.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "stp_salt.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "de47bce54771df6448c393b90ee7b72a:11400000",
+      "guid": "de47bce54771df6448c393b90ee7b72a",
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_water.asset",
+      "type": "CK01ItemData",
+      "name": "stp_water",
+      "fields": {
+        "item_kind": "staple",
+        "name_key": "stp_water.name",
+        "ingredient_categories": [],
+        "stack_type": "single",
+        "display_order_in_fridge": "0",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "flavor_key": "stp_water.flavor",
+        "container_capacity": "0",
+        "container_use_step": "0",
+        "pack_size": "0",
+        "shelf_life_days": "0"
+      }
+    },
+    {
+      "key": "ac0da91f83e409b4a8c20133c17a8888:11400000",
+      "guid": "ac0da91f83e409b4a8c20133c17a8888",
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Freezer.asset",
+      "type": "KitchenAreaData",
+      "name": "Freezer",
+      "fields": {
+        "areaName": "Freezer",
+        "containerTags": "00000000",
+        "core_facility": "tool_freezer",
+        "preset_tools": [],
+        "allowed_actions": [
+          "act_wash"
+        ],
+        "allowed_carriers": [
+          "tool_freezer"
+        ],
+        "is_unlocked_default": "0",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "e391a2a0e7f17fd42b2eac9d8c5803f3:11400000",
+      "guid": "e391a2a0e7f17fd42b2eac9d8c5803f3",
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Oven.asset",
+      "type": "KitchenAreaData",
+      "name": "Oven",
+      "fields": {
+        "areaName": "Oven",
+        "containerTags": "00000000",
+        "core_facility": "tool_oven",
+        "preset_tools": [],
+        "allowed_actions": [
+          "act_wash"
+        ],
+        "allowed_carriers": [
+          "tool_oven"
+        ],
+        "is_unlocked_default": "0",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "27fab27bb38b86744ac9d705ecc47af0:11400000",
+      "guid": "27fab27bb38b86744ac9d705ecc47af0",
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/PrepCounter.asset",
+      "type": "KitchenAreaData",
+      "name": "PrepCounter",
+      "fields": {
+        "areaName": "Prep Counter",
+        "containerTags": "0100000002000000",
+        "core_facility": "tool_board_station",
+        "preset_tools": [
+          "tool_board",
+          "tool_knife",
+          "tool_scissors",
+          "tool_bowl",
+          "tool_chopsticks",
+          "tool_saladbowl"
+        ],
+        "allowed_actions": [
+          "act_whisk",
+          "act_cut",
+          "act_wash"
+        ],
+        "allowed_carriers": [
+          "tool_board_station",
+          "tool_board",
+          "tool_bowl"
+        ],
+        "is_unlocked_default": "1",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "66503f94354470d4e85f02f5c3d599ab:11400000",
+      "guid": "66503f94354470d4e85f02f5c3d599ab",
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Salad.asset",
+      "type": "KitchenAreaData",
+      "name": "Salad",
+      "fields": {
+        "areaName": "Salad",
+        "containerTags": "05000000",
+        "core_facility": "tool_salad_station",
+        "preset_tools": [],
+        "allowed_actions": [
+          "act_wash"
+        ],
+        "allowed_carriers": [
+          "tool_salad_station"
+        ],
+        "is_unlocked_default": "0",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "0cffdc34b982a3140abd7dbefc24074c:11400000",
+      "guid": "0cffdc34b982a3140abd7dbefc24074c",
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Stove.asset",
+      "type": "KitchenAreaData",
+      "name": "Stove",
+      "fields": {
+        "areaName": "Stove",
+        "containerTags": "0300000004000000",
+        "core_facility": "tool_stove",
+        "preset_tools": [
+          "tool_pot",
+          "tool_pan",
+          "tool_spatula",
+          "tool_chopsticks"
+        ],
+        "allowed_actions": [
+          "act_boil",
+          "act_whisk",
+          "act_stirfry",
+          "act_wash",
+          "act_stew"
+        ],
+        "allowed_carriers": [
+          "tool_stove",
+          "tool_pot",
+          "tool_pan"
+        ],
+        "is_unlocked_default": "1",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "f086c477695c4f84ab30e0fc6fd3b5e5:11400000",
+      "guid": "f086c477695c4f84ab30e0fc6fd3b5e5",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_boil.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_boil",
+      "fields": {
+        "name_key": "act_boil.name",
+        "action_kind": "waiting",
+        "process_template": "tpl_wait_boil"
+      }
+    },
+    {
+      "key": "a96240328bb35ad4ba91f8abbe769f22:11400000",
+      "guid": "a96240328bb35ad4ba91f8abbe769f22",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_cut.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_cut",
+      "fields": {
+        "name_key": "act_cut.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_cut"
+      }
+    },
+    {
+      "key": "4c8321c4040808346b5380638b85f38b:11400000",
+      "guid": "4c8321c4040808346b5380638b85f38b",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_fry.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_fry",
+      "fields": {
+        "name_key": "act_fry.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_fry"
+      }
+    },
+    {
+      "key": "8c1b9094f356d854b8d65bfd8cb2e77f:11400000",
+      "guid": "8c1b9094f356d854b8d65bfd8cb2e77f",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_mix.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_mix",
+      "fields": {
+        "name_key": "act_mix.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_mix"
+      }
+    },
+    {
+      "key": "8fd5bdd2f4f984d4fb35172fd9e53810:11400000",
+      "guid": "8fd5bdd2f4f984d4fb35172fd9e53810",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_no_process.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_no_process",
+      "fields": {
+        "name_key": "act_no_process.name",
+        "action_kind": "regular",
+        "process_template": ""
+      }
+    },
+    {
+      "key": "5f57c771466e9294e85fc8e01faa9a0e:11400000",
+      "guid": "5f57c771466e9294e85fc8e01faa9a0e",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_smash.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_smash",
+      "fields": {
+        "name_key": "act_smash.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_smash"
+      }
+    },
+    {
+      "key": "e5538726674178f489b2e15c9878cafb:11400000",
+      "guid": "e5538726674178f489b2e15c9878cafb",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_stew.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_stew",
+      "fields": {
+        "name_key": "act_stew.name",
+        "action_kind": "waiting",
+        "process_template": "tpl_wait_stew"
+      }
+    },
+    {
+      "key": "207771b4864ad484eb49d615434e3271:11400000",
+      "guid": "207771b4864ad484eb49d615434e3271",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_stirfry.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_stirfry",
+      "fields": {
+        "name_key": "act_stirfry.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_stirfry"
+      }
+    },
+    {
+      "key": "eac3170412e3a4042bfff2f18d0055c5:11400000",
+      "guid": "eac3170412e3a4042bfff2f18d0055c5",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_wash.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_wash",
+      "fields": {
+        "name_key": "act_wash.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_wash"
+      }
+    },
+    {
+      "key": "396bef2961f7b284e84a0684be1f97cf:11400000",
+      "guid": "396bef2961f7b284e84a0684be1f97cf",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_whisk.asset",
+      "type": "CK01ProcessActionData",
+      "name": "act_whisk",
+      "fields": {
+        "name_key": "act_whisk.name",
+        "action_kind": "regular",
+        "process_template": "tpl_popup_whisk"
+      }
+    },
+    {
+      "key": "6268c01f5b8cd054d944ab1a815f889f:11400000",
+      "guid": "6268c01f5b8cd054d944ab1a815f889f",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_cabbage_washed.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_cabbage_washed",
+      "fields": {
+        "output_item": "prd_cabbage_washed",
+        "input_01": "ing_cabbage",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_wash",
+        "carrier": "",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "c5f901be67e870046a00d8f8328db2c3:11400000",
+      "guid": "c5f901be67e870046a00d8f8328db2c3",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_clear_broth.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_clear_broth",
+      "fields": {
+        "output_item": "prd_clear_broth",
+        "input_01": "stp_water",
+        "input_02": "ing_octopus_leg",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_stew",
+        "carrier": "tool_stove",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "c09d568209a41564bb0632c488b3cbe6:11400000",
+      "guid": "c09d568209a41564bb0632c488b3cbe6",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_danhuangpai_sui.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_danhuangpai_sui",
+      "fields": {
+        "output_item": "prd_danhuangpai_sui",
+        "input_01": "ing_danhuangpai",
+        "input_02": "",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_smash",
+        "carrier": "tool_board",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "efe282ab657a81a49b5a49a8c67191b5:11400000",
+      "guid": "efe282ab657a81a49b5a49a8c67191b5",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_egg_liquid.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_egg_liquid",
+      "fields": {
+        "output_item": "prd_egg_liquid",
+        "input_01": "ing_egg",
+        "input_02": "",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_whisk",
+        "carrier": "tool_bowl",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "05580c07095fee241b01ef8617d26af0:11400000",
+      "guid": "05580c07095fee241b01ef8617d26af0",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_egg_liquid_giant.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_egg_liquid_giant",
+      "fields": {
+        "output_item": "prd_egg_liquid",
+        "input_01": "ing_giant_egg",
+        "input_02": "",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_whisk",
+        "carrier": "tool_bowl",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "ada218dcf90146b458ad2e266f165de7:11400000",
+      "guid": "ada218dcf90146b458ad2e266f165de7",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_fried_egg.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_fried_egg",
+      "fields": {
+        "output_item": "prd_fried_egg",
+        "input_01": "ing_egg",
+        "input_02": "stp_oil",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_fry",
+        "carrier": "tool_pan",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "16d11e28d9ab01b4c81941772d0acccc:11400000",
+      "guid": "16d11e28d9ab01b4c81941772d0acccc",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_instant_noodle_boiled.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_instant_noodle_boiled",
+      "fields": {
+        "output_item": "prd_instant_noodle_boiled",
+        "input_01": "ing_noodle_instant",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "8b8434e3ad971524c8dfa8ff34a9b7e2:11400000",
+      "guid": "8b8434e3ad971524c8dfa8ff34a9b7e2",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_kaishui_final.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_kaishui_final",
+      "fields": {
+        "output_item": "prd_kaishui_dish",
+        "input_01": "prd_cabbage_washed",
+        "input_02": "prd_clear_broth",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "bb6debc470643254bb3934e345f4efe3:11400000",
+      "guid": "bb6debc470643254bb3934e345f4efe3",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_milktea_liquid.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_milktea_liquid",
+      "fields": {
+        "output_item": "prd_milktea_liquid",
+        "input_01": "ing_milktea_fen",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "0767a18b82e460946ac86f4aa039a717:11400000",
+      "guid": "0767a18b82e460946ac86f4aa039a717",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_nongtangbao_soup.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_nongtangbao_soup",
+      "fields": {
+        "output_item": "prd_nongtangbao_soup",
+        "input_01": "ing_nongtangbao",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "74a9b1eaea7dcd14eb31a58d5e9d14d2:11400000",
+      "guid": "74a9b1eaea7dcd14eb31a58d5e9d14d2",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_noodle_boiled.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_noodle_boiled",
+      "fields": {
+        "output_item": "prd_noodle_boiled",
+        "input_01": "ing_noodle_dried",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "22e8a34e9e7a6104a9312344afd22753:11400000",
+      "guid": "22e8a34e9e7a6104a9312344afd22753",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_noodle_boiled_alt.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_noodle_boiled_alt",
+      "fields": {
+        "output_item": "prd_noodle_boiled",
+        "input_01": "ing_noodle_instant",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "6dc1168468b7f0549bc1285bed100f26:11400000",
+      "guid": "6dc1168468b7f0549bc1285bed100f26",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_ofanqie_danhuangpai.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_ofanqie_danhuangpai",
+      "fields": {
+        "output_item": "prd_ofanqie_danhuangpai",
+        "input_01": "prd_danhuangpai_sui",
+        "input_02": "prd_ofanqie_sui",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_mix",
+        "carrier": "tool_saladbowl",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "71959a0002c4d4249be0018ee7d85de8:11400000",
+      "guid": "71959a0002c4d4249be0018ee7d85de8",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_ofanqie_sui.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_ofanqie_sui",
+      "fields": {
+        "output_item": "prd_ofanqie_sui",
+        "input_01": "ing_ofanqie",
+        "input_02": "",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_smash",
+        "carrier": "tool_board",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "cc3bd45551b7f0f4d95f7b290599ce3f:11400000",
+      "guid": "cc3bd45551b7f0f4d95f7b290599ce3f",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_paomian_soup.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_paomian_soup",
+      "fields": {
+        "output_item": "prd_paomian_soup",
+        "input_01": "ing_paomianbao",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "a41ed6bec01d76847ae5a4eac5441037:11400000",
+      "guid": "a41ed6bec01d76847ae5a4eac5441037",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_pidan_milktea_noodle.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_pidan_milktea_noodle",
+      "fields": {
+        "output_item": "prd_pidan_milktea_noodle",
+        "input_01": "ing_pidan",
+        "input_02": "prd_milktea_liquid",
+        "input_03": "prd_instant_noodle_boiled",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "77e815aff1b81e14cb7e92baa670e5f1:11400000",
+      "guid": "77e815aff1b81e14cb7e92baa670e5f1",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_qingtang_dish.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_qingtang_dish",
+      "fields": {
+        "output_item": "prd_qingtang_dish",
+        "input_01": "prd_noodle_boiled",
+        "input_02": "prd_fried_egg",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "7c332e9568ee89743bd1459273aeb4e9:11400000",
+      "guid": "7c332e9568ee89743bd1459273aeb4e9",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_qingtang_final.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_qingtang_final",
+      "fields": {
+        "output_item": "prd_qingtang_dish",
+        "input_01": "prd_noodle_boiled",
+        "input_02": "ing_scallion",
+        "input_03": "stp_salt",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_whisk",
+        "carrier": "tool_pot",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "d2fce68667dc405419989b078e4d1e26:11400000",
+      "guid": "d2fce68667dc405419989b078e4d1e26",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_rice_noodle_boiled.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_rice_noodle_boiled",
+      "fields": {
+        "output_item": "prd_rice_noodle_boiled",
+        "input_01": "ing_noodle_rice",
+        "input_02": "stp_water",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "fd81ea4188cc415498ffb2bebccef819:11400000",
+      "guid": "fd81ea4188cc415498ffb2bebccef819",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_scrambled_egg.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_scrambled_egg",
+      "fields": {
+        "output_item": "prd_scrambled_egg",
+        "input_01": "prd_egg_liquid",
+        "input_02": "stp_oil",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_stirfry",
+        "carrier": "tool_pan",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "ac01906c1c723ff49bb95bf247adf2cb:11400000",
+      "guid": "ac01906c1c723ff49bb95bf247adf2cb",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_cut.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_tomato_cut",
+      "fields": {
+        "output_item": "prd_tomato_cut",
+        "input_01": "ing_tomato",
+        "input_02": "",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_cut",
+        "carrier": "tool_board",
+        "is_final_product": "0"
+      }
+    },
+    {
+      "key": "e03f7fc72aa0df34f84e82e539921eb8:11400000",
+      "guid": "e03f7fc72aa0df34f84e82e539921eb8",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_dish.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_tomato_egg_dish",
+      "fields": {
+        "output_item": "prd_tomato_egg_dish",
+        "input_01": "prd_scrambled_egg",
+        "input_02": "prd_tomato_cut",
+        "input_03": "",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_stirfry",
+        "carrier": "tool_pan",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "3d9f768fbd1ca5a469d117ee5dc3622c:11400000",
+      "guid": "3d9f768fbd1ca5a469d117ee5dc3622c",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_final.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_tomato_egg_final",
+      "fields": {
+        "output_item": "prd_tomato_egg_dish",
+        "input_01": "prd_scrambled_egg",
+        "input_02": "prd_tomato_cut",
+        "input_03": "stp_salt",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_stirfry",
+        "carrier": "tool_pan",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "a0d3c165132842f4ba20ecf67d97ccd4:11400000",
+      "guid": "a0d3c165132842f4ba20ecf67d97ccd4",
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_soup.asset",
+      "type": "CK01ProcessingRecordData",
+      "name": "proc_tomato_egg_soup",
+      "fields": {
+        "output_item": "prd_tomato_egg_soup",
+        "input_01": "prd_egg_liquid",
+        "input_02": "prd_tomato_cut",
+        "input_03": "stp_water",
+        "input_04": "",
+        "input_05": "",
+        "input_06": "",
+        "action": "act_boil",
+        "carrier": "tool_pot",
+        "is_final_product": "1"
+      }
+    },
+    {
+      "key": "74b1c977a6747354587a5101fbbd0629:11400000",
+      "guid": "74b1c977a6747354587a5101fbbd0629",
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_kaishui_cabbage.asset",
+      "type": "CK01RecipeData",
+      "name": "rcp_kaishui_cabbage",
+      "fields": {
+        "name_key": "rcp_kaishui_cabbage.name",
+        "dish_category": "tag_dish_boil",
+        "display_order_in_menu": "30",
+        "is_unlocked_default": "0",
+        "standard_variant_id": "var_kaishui_std",
+        "note_tags": [
+          "tag_veg",
+          "tag_flavor_fancy"
+        ],
+        "slots": [
+          "slot_cabbage_1"
+        ],
+        "whitelist_proc_ids": [
+          "proc_noodle_boiled"
+        ],
+        "first_step_id": "step_kc_01",
+        "unlock_source": "",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "bb77fd3089eb1df47b0ecea375efcb1e:11400000",
+      "guid": "bb77fd3089eb1df47b0ecea375efcb1e",
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_qingtang_noodle.asset",
+      "type": "CK01RecipeData",
+      "name": "rcp_qingtang_noodle",
+      "fields": {
+        "name_key": "rcp_qingtang_noodle.name",
+        "dish_category": "tag_dish_boil",
+        "display_order_in_menu": "10",
+        "is_unlocked_default": "1",
+        "standard_variant_id": "var_qingtang_std",
+        "note_tags": [
+          "tag_staplefood",
+          "tag_flavor_easy",
+          "tag_flavor_yummy"
+        ],
+        "slots": [
+          "slot_noodle_1",
+          "slot_broth_1",
+          "slot_jiaotou_1"
+        ],
+        "whitelist_proc_ids": [
+          "proc_noodle_boiled",
+          "proc_instant_noodle_boiled",
+          "proc_rice_noodle_boiled",
+          "proc_fried_egg",
+          "proc_nongtangbao_soup",
+          "proc_milktea_liquid",
+          "proc_paomian_soup",
+          "proc_qingtang_dish",
+          "proc_pidan_milktea_noodle"
+        ],
+        "first_step_id": "step_qt_01",
+        "unlock_source": "",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "fa6d763fa0215cb41865b119011e0982:11400000",
+      "guid": "fa6d763fa0215cb41865b119011e0982",
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_tomato_egg.asset",
+      "type": "CK01RecipeData",
+      "name": "rcp_tomato_egg",
+      "fields": {
+        "name_key": "rcp_tomato_egg.name",
+        "dish_category": "tag_dish_stirfry",
+        "display_order_in_menu": "20",
+        "is_unlocked_default": "1",
+        "standard_variant_id": "var_tomato_egg_std",
+        "note_tags": [
+          "tag_veg",
+          "tag_egg",
+          "tag_flavor_yummy",
+          "tag_flavor_confused"
+        ],
+        "slots": [
+          "slot_tomato_2",
+          "slot_egg_3"
+        ],
+        "whitelist_proc_ids": [
+          "proc_egg_liquid",
+          "proc_danhuangpai_sui",
+          "proc_tomato_cut",
+          "proc_ofanqie_sui",
+          "proc_scrambled_egg",
+          "proc_tomato_egg_dish",
+          "proc_tomato_egg_soup",
+          "proc_ofanqie_danhuangpai"
+        ],
+        "first_step_id": "step_te_01",
+        "unlock_source": "",
+        "unlock_condition": ""
+      }
+    },
+    {
+      "key": "892d11ab46390b74b9723f08f5dd4667:11400000",
+      "guid": "892d11ab46390b74b9723f08f5dd4667",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_broth_1.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_broth_1",
+      "fields": {
+        "standard_ingredient": "ing_clear_broth",
+        "standard_action": "act_boil",
+        "required_count": "1",
+        "sub_01": "ing_nongtangbao",
+        "sub_02": "ing_milktea_fen",
+        "sub_03": "ing_paomianbao",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "1",
+        "sub_02_count": "1",
+        "sub_03_count": "1",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "43abb765c41027149a5c75a03104e4ee:11400000",
+      "guid": "43abb765c41027149a5c75a03104e4ee",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_cabbage_1.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_cabbage_1",
+      "fields": {
+        "standard_ingredient": "ing_cabbage",
+        "standard_action": "act_wash",
+        "required_count": "1",
+        "sub_01": "ing_octopus_leg",
+        "sub_02": "",
+        "sub_03": "",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "3",
+        "sub_02_count": "0",
+        "sub_03_count": "0",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "5379ece23adfd1841a10c0ffea16c9b0:11400000",
+      "guid": "5379ece23adfd1841a10c0ffea16c9b0",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_egg_3.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_egg_3",
+      "fields": {
+        "standard_ingredient": "ing_egg",
+        "standard_action": "act_whisk",
+        "required_count": "1",
+        "sub_01": "ing_danhuangpai",
+        "sub_02": "ing_pidan",
+        "sub_03": "",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "1",
+        "sub_02_count": "1",
+        "sub_03_count": "0",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "ca2a4b90e817bcb4fbf2a06c13af99fd:11400000",
+      "guid": "ca2a4b90e817bcb4fbf2a06c13af99fd",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_jiaotou_1.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_jiaotou_1",
+      "fields": {
+        "standard_ingredient": "ing_egg",
+        "standard_action": "act_fry",
+        "required_count": "1",
+        "sub_01": "ing_pidan",
+        "sub_02": "ing_octopus_leg",
+        "sub_03": "ing_ham_sausage",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "1",
+        "sub_02_count": "1",
+        "sub_03_count": "1",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "e46034d9bbc8aba4eadee27790843354:11400000",
+      "guid": "e46034d9bbc8aba4eadee27790843354",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_noodle_1.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_noodle_1",
+      "fields": {
+        "standard_ingredient": "ing_noodle_dried",
+        "standard_action": "act_boil",
+        "required_count": "1",
+        "sub_01": "ing_noodle_instant",
+        "sub_02": "ing_noodle_rice",
+        "sub_03": "",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "1",
+        "sub_02_count": "1",
+        "sub_03_count": "0",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "709058259c4893a4890017af38db6a82:11400000",
+      "guid": "709058259c4893a4890017af38db6a82",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_scallion_1.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_scallion_1",
+      "fields": {
+        "standard_ingredient": "ing_scallion",
+        "standard_action": "act_cut",
+        "required_count": "1",
+        "sub_01": "",
+        "sub_02": "",
+        "sub_03": "",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "0",
+        "sub_02_count": "0",
+        "sub_03_count": "0",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "9e5b7d480e8fe3442b72c613d4592a06:11400000",
+      "guid": "9e5b7d480e8fe3442b72c613d4592a06",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_tomato_2.asset",
+      "type": "CK01RecipeSlotData",
+      "name": "slot_tomato_2",
+      "fields": {
+        "standard_ingredient": "ing_tomato",
+        "standard_action": "act_cut",
+        "required_count": "1",
+        "sub_01": "ing_ofanqie",
+        "sub_02": "",
+        "sub_03": "",
+        "sub_04": "",
+        "sub_05": "",
+        "sub_06": "",
+        "sub_07": "",
+        "sub_08": "",
+        "sub_01_count": "1",
+        "sub_02_count": "0",
+        "sub_03_count": "0",
+        "sub_04_count": "0",
+        "sub_05_count": "0",
+        "sub_06_count": "0",
+        "sub_07_count": "0",
+        "sub_08_count": "0"
+      }
+    },
+    {
+      "key": "42d613f53b3a1944eb1530b2f26c016f:11400000",
+      "guid": "42d613f53b3a1944eb1530b2f26c016f",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_01.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_kc_01",
+      "fields": {
+        "recipe_id": "rcp_kaishui_cabbage",
+        "next_step_id": "step_kc_02",
+        "display_text_key": "step_kc_01.text",
+        "standard_ingredients": [
+          "ing_cabbage"
+        ],
+        "standard_tools": [
+          "tool_hand"
+        ],
+        "trigger_items": [
+          "ing_cabbage"
+        ],
+        "permanent_trigger_items": []
+      }
+    },
+    {
+      "key": "56f9ae8adceaef44384bfc526c13827b:11400000",
+      "guid": "56f9ae8adceaef44384bfc526c13827b",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_02.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_kc_02",
+      "fields": {
+        "recipe_id": "rcp_kaishui_cabbage",
+        "next_step_id": "step_kc_03",
+        "display_text_key": "step_kc_02.text",
+        "standard_ingredients": [
+          "ing_octopus_leg"
+        ],
+        "standard_tools": [
+          "tool_stove"
+        ],
+        "trigger_items": [
+          "prd_clear_broth"
+        ],
+        "permanent_trigger_items": []
+      }
+    },
+    {
+      "key": "eb9c0adbbd3f8074697982241a9d523f:11400000",
+      "guid": "eb9c0adbbd3f8074697982241a9d523f",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_03.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_kc_03",
+      "fields": {
+        "recipe_id": "rcp_kaishui_cabbage",
+        "next_step_id": "",
+        "display_text_key": "step_kc_03.text",
+        "standard_ingredients": [
+          "ing_cabbage"
+        ],
+        "standard_tools": [
+          "tool_pot"
+        ],
+        "trigger_items": [
+          "prd_kaishui_dish"
+        ],
+        "permanent_trigger_items": []
+      }
+    },
+    {
+      "key": "a08c8f0c5ead0b34bb8d1f0bfe3a12d3:11400000",
+      "guid": "a08c8f0c5ead0b34bb8d1f0bfe3a12d3",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_01.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_qt_01",
+      "fields": {
+        "recipe_id": "rcp_qingtang_noodle",
+        "next_step_id": "step_qt_02",
+        "display_text_key": "step_qt_01.text",
+        "standard_ingredients": [
+          "ing_noodle_dried"
+        ],
+        "standard_tools": [
+          "tool_pot"
+        ],
+        "trigger_items": [
+          "prd_noodle_boiled",
+          "prd_instant_noodle_boiled",
+          "prd_rice_noodle_boiled"
+        ],
+        "permanent_trigger_items": [
+          "prd_qingtang_dish",
+          "prd_qingtang_dish"
+        ]
+      }
+    },
+    {
+      "key": "a2c2fefa044e0ea4eb9df224f68aba9b:11400000",
+      "guid": "a2c2fefa044e0ea4eb9df224f68aba9b",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_02.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_qt_02",
+      "fields": {
+        "recipe_id": "rcp_qingtang_noodle",
+        "next_step_id": "step_qt_03",
+        "display_text_key": "step_qt_02.text",
+        "standard_ingredients": [
+          "ing_clear_broth"
+        ],
+        "standard_tools": [
+          "tool_pot"
+        ],
+        "trigger_items": [
+          "ing_clear_broth",
+          "prd_clear_broth",
+          "prd_nongtangbao_soup",
+          "prd_milktea_liquid",
+          "prd_paomian_soup"
+        ],
+        "permanent_trigger_items": [
+          "prd_qingtang_dish",
+          "prd_qingtang_dish"
+        ]
+      }
+    },
+    {
+      "key": "e813a5ed00cac2b49a8aeebf16ff03e2:11400000",
+      "guid": "e813a5ed00cac2b49a8aeebf16ff03e2",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_03.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_qt_03",
+      "fields": {
+        "recipe_id": "rcp_qingtang_noodle",
+        "next_step_id": "step_qt_04",
+        "display_text_key": "step_qt_03.text",
+        "standard_ingredients": [
+          "ing_egg"
+        ],
+        "standard_tools": [
+          "tool_pan"
+        ],
+        "trigger_items": [
+          "prd_fried_egg",
+          "ing_pidan",
+          "ing_octopus_leg",
+          "ing_ham_sausage"
+        ],
+        "permanent_trigger_items": [
+          "prd_qingtang_dish",
+          "prd_qingtang_dish"
+        ]
+      }
+    },
+    {
+      "key": "e9cdb7bf2bb8b5740bdfba279b0dd5b2:11400000",
+      "guid": "e9cdb7bf2bb8b5740bdfba279b0dd5b2",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_04.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_qt_04",
+      "fields": {
+        "recipe_id": "rcp_qingtang_noodle",
+        "next_step_id": "",
+        "display_text_key": "step_qt_04.text",
+        "standard_ingredients": [
+          "prd_noodle_boiled",
+          "ing_clear_broth",
+          "prd_fried_egg"
+        ],
+        "standard_tools": [
+          "tool_pot"
+        ],
+        "trigger_items": [
+          "prd_qingtang_dish",
+          "prd_qingtang_dish"
+        ],
+        "permanent_trigger_items": []
+      }
+    },
+    {
+      "key": "1f14f7bcfda148748ae98ae604e4486a:11400000",
+      "guid": "1f14f7bcfda148748ae98ae604e4486a",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_01.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_te_01",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "next_step_id": "step_te_02",
+        "display_text_key": "step_te_01.text",
+        "standard_ingredients": [
+          "ing_egg"
+        ],
+        "standard_tools": [
+          "tool_bowl",
+          "tool_chopsticks"
+        ],
+        "trigger_items": [
+          "prd_egg_liquid",
+          "prd_danhuangpai_sui"
+        ],
+        "permanent_trigger_items": [
+          "prd_tomato_egg_dish",
+          "prd_tomato_egg_soup",
+          "prd_ofanqie_danhuangpai"
+        ]
+      }
+    },
+    {
+      "key": "6f3384c6091638b4eb187ea22d35ed58:11400000",
+      "guid": "6f3384c6091638b4eb187ea22d35ed58",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_02.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_te_02",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "next_step_id": "step_te_03",
+        "display_text_key": "step_te_02.text",
+        "standard_ingredients": [
+          "ing_tomato"
+        ],
+        "standard_tools": [
+          "tool_board",
+          "tool_knife"
+        ],
+        "trigger_items": [
+          "prd_tomato_cut",
+          "prd_ofanqie_sui"
+        ],
+        "permanent_trigger_items": [
+          "prd_tomato_egg_dish",
+          "prd_tomato_egg_soup",
+          "prd_ofanqie_danhuangpai"
+        ]
+      }
+    },
+    {
+      "key": "0b08ae2dcaf644b40b65333c7519787f:11400000",
+      "guid": "0b08ae2dcaf644b40b65333c7519787f",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_03.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_te_03",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "next_step_id": "step_te_04",
+        "display_text_key": "step_te_03.text",
+        "standard_ingredients": [
+          "prd_egg_liquid"
+        ],
+        "standard_tools": [
+          "tool_pan",
+          "tool_spatula"
+        ],
+        "trigger_items": [
+          "prd_scrambled_egg",
+          "prd_danhuangpai_sui"
+        ],
+        "permanent_trigger_items": [
+          "prd_tomato_egg_dish",
+          "prd_tomato_egg_soup",
+          "prd_ofanqie_danhuangpai"
+        ]
+      }
+    },
+    {
+      "key": "6697092f2f10dc64bb1c290a8725366d:11400000",
+      "guid": "6697092f2f10dc64bb1c290a8725366d",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_04.asset",
+      "type": "CK01RecipeStepData",
+      "name": "step_te_04",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "next_step_id": "",
+        "display_text_key": "step_te_04.text",
+        "standard_ingredients": [
+          "ing_tomato"
+        ],
+        "standard_tools": [
+          "tool_pan"
+        ],
+        "trigger_items": [
+          "prd_tomato_egg_dish",
+          "prd_tomato_egg_soup",
+          "prd_ofanqie_danhuangpai"
+        ],
+        "permanent_trigger_items": []
+      }
+    },
+    {
+      "key": "330bb2f3b258d134ab1faa322bb9ec1f:11400000",
+      "guid": "330bb2f3b258d134ab1faa322bb9ec1f",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_kaishui_std.asset",
+      "type": "CK01RecipeVariantData",
+      "name": "var_kaishui_std",
+      "fields": {
+        "recipe_id": "rcp_kaishui_cabbage",
+        "final_item": "prd_kaishui_dish",
+        "name_key": "var_kaishui_std.name",
+        "actual_dish_category": "tag_dish_boil",
+        "display_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "5906895cbcda05a41a37abb99f6b8f64:11400000",
+      "guid": "5906895cbcda05a41a37abb99f6b8f64",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_ofanqie_danhuangpai.asset",
+      "type": "CK01RecipeVariantData",
+      "name": "var_ofanqie_danhuangpai",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "final_item": "prd_ofanqie_danhuangpai",
+        "name_key": "var_ofanqie_danhuangpai.name",
+        "actual_dish_category": "tag_dish_salad",
+        "display_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "bc6eeafb1e85a1e469bf7612c9a8c74a:11400000",
+      "guid": "bc6eeafb1e85a1e469bf7612c9a8c74a",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_pidan_milktea_noodle.asset",
+      "type": "CK01RecipeVariantData",
+      "name": "var_pidan_milktea_noodle",
+      "fields": {
+        "recipe_id": "rcp_qingtang_noodle",
+        "final_item": "prd_pidan_milktea_noodle",
+        "name_key": "var_pidan_milktea_noodle.name",
+        "actual_dish_category": "tag_dish_boil",
+        "display_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "9ea91814d56e4a842b0a7b3d96faf2b0:11400000",
+      "guid": "9ea91814d56e4a842b0a7b3d96faf2b0",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_qingtang_std.asset",
+      "type": "CK01RecipeVariantData",
+      "name": "var_qingtang_std",
+      "fields": {
+        "recipe_id": "rcp_qingtang_noodle",
+        "final_item": "prd_qingtang_dish",
+        "name_key": "var_qingtang_std.name",
+        "actual_dish_category": "tag_dish_boil",
+        "display_sprite": {
+          "fileID": "21300000",
+          "guid": "5ee211072528d8f41b4561dc38b8c7c5",
+          "type": "3"
+        }
+      }
+    },
+    {
+      "key": "0f30480ac9c2c5c43a00fac896a29325:11400000",
+      "guid": "0f30480ac9c2c5c43a00fac896a29325",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_tomato_egg_soup.asset",
+      "type": "CK01RecipeVariantData",
+      "name": "var_tomato_egg_soup",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "final_item": "prd_tomato_egg_soup",
+        "name_key": "var_tomato_egg_soup.name",
+        "actual_dish_category": "tag_dish_boil",
+        "display_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "ca44f29dd79f3bb44afdac07447fa6ca:11400000",
+      "guid": "ca44f29dd79f3bb44afdac07447fa6ca",
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_tomato_egg_std.asset",
+      "type": "CK01RecipeVariantData",
+      "name": "var_tomato_egg_std",
+      "fields": {
+        "recipe_id": "rcp_tomato_egg",
+        "final_item": "prd_tomato_egg_dish",
+        "name_key": "var_tomato_egg_std.name",
+        "actual_dish_category": "tag_dish_stirfry",
+        "display_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "3a2ab6c4500c4aa46a86ebb56e790a4f:11400000",
+      "guid": "3a2ab6c4500c4aa46a86ebb56e790a4f",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dairy.asset",
+      "type": "CK01TagData",
+      "name": "tag_dairy",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_dairy.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "7"
+      }
+    },
+    {
+      "key": "fbb62b60a01900d499dd073ea63cc83b:11400000",
+      "guid": "fbb62b60a01900d499dd073ea63cc83b",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_boil.asset",
+      "type": "CK01TagData",
+      "name": "tag_dish_boil",
+      "fields": {
+        "tag_class": "dish",
+        "name_key": "tag_dish_boil.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "1b3df9747e17fb34691023c36cee1319:11400000",
+      "guid": "1b3df9747e17fb34691023c36cee1319",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_deepfry.asset",
+      "type": "CK01TagData",
+      "name": "tag_dish_deepfry",
+      "fields": {
+        "tag_class": "dish",
+        "name_key": "tag_dish_deepfry.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "7a8970b6381c78543b4772eefbaeeaf0:11400000",
+      "guid": "7a8970b6381c78543b4772eefbaeeaf0",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_salad.asset",
+      "type": "CK01TagData",
+      "name": "tag_dish_salad",
+      "fields": {
+        "tag_class": "dish",
+        "name_key": "tag_dish_salad.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "9439341a691bd8444bec4305ed411183:11400000",
+      "guid": "9439341a691bd8444bec4305ed411183",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_stew.asset",
+      "type": "CK01TagData",
+      "name": "tag_dish_stew",
+      "fields": {
+        "tag_class": "dish",
+        "name_key": "tag_dish_stew.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "6c4282bd1515fe046a96df117755ee93:11400000",
+      "guid": "6c4282bd1515fe046a96df117755ee93",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_stirfry.asset",
+      "type": "CK01TagData",
+      "name": "tag_dish_stirfry",
+      "fields": {
+        "tag_class": "dish",
+        "name_key": "tag_dish_stirfry.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "e7aa01c9645cbf748bd42d025e608db0:11400000",
+      "guid": "e7aa01c9645cbf748bd42d025e608db0",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_egg.asset",
+      "type": "CK01TagData",
+      "name": "tag_egg",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_egg.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "3"
+      }
+    },
+    {
+      "key": "29514042597c0fc49902db7dfecab5b8:11400000",
+      "guid": "29514042597c0fc49902db7dfecab5b8",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_confused.asset",
+      "type": "CK01TagData",
+      "name": "tag_flavor_confused",
+      "fields": {
+        "tag_class": "flavor",
+        "name_key": "tag_flavor_confused.name",
+        "icon_sprite": {
+          "fileID": "0"
+        },
+        "sticker_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "bed61cf70ec974a4690d0737987acba1:11400000",
+      "guid": "bed61cf70ec974a4690d0737987acba1",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_easy.asset",
+      "type": "CK01TagData",
+      "name": "tag_flavor_easy",
+      "fields": {
+        "tag_class": "flavor",
+        "name_key": "tag_flavor_easy.name",
+        "icon_sprite": {
+          "fileID": "0"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "3ce0158ee1fe49a4bb62da70c0631c97:11400000",
+      "guid": "3ce0158ee1fe49a4bb62da70c0631c97",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_fancy.asset",
+      "type": "CK01TagData",
+      "name": "tag_flavor_fancy",
+      "fields": {
+        "tag_class": "flavor",
+        "name_key": "tag_flavor_fancy.name",
+        "icon_sprite": {
+          "fileID": "0"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "1c60b18fe3d18304da68131f2b619d72:11400000",
+      "guid": "1c60b18fe3d18304da68131f2b619d72",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_spicy.asset",
+      "type": "CK01TagData",
+      "name": "tag_flavor_spicy",
+      "fields": {
+        "tag_class": "flavor",
+        "name_key": "tag_flavor_spicy.name",
+        "icon_sprite": {
+          "fileID": "0"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "647b8f000193c1f4ca5dbce9c49dcbd2:11400000",
+      "guid": "647b8f000193c1f4ca5dbce9c49dcbd2",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_yummy.asset",
+      "type": "CK01TagData",
+      "name": "tag_flavor_yummy",
+      "fields": {
+        "tag_class": "flavor",
+        "name_key": "tag_flavor_yummy.name",
+        "icon_sprite": {
+          "fileID": "0"
+        },
+        "sticker_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "filter_order": "0"
+      }
+    },
+    {
+      "key": "4af22933d0c1ec94f961d32a6fb4eda5:11400000",
+      "guid": "4af22933d0c1ec94f961d32a6fb4eda5",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_fruit.asset",
+      "type": "CK01TagData",
+      "name": "tag_fruit",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_fruit.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "2"
+      }
+    },
+    {
+      "key": "eafe48ab3f0a31d49acf5b4bf6659fdd:11400000",
+      "guid": "eafe48ab3f0a31d49acf5b4bf6659fdd",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_meat.asset",
+      "type": "CK01TagData",
+      "name": "tag_meat",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_meat.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "4"
+      }
+    },
+    {
+      "key": "d9e2d87344092ea49bed708558ae1ca6:11400000",
+      "guid": "d9e2d87344092ea49bed708558ae1ca6",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_seafood.asset",
+      "type": "CK01TagData",
+      "name": "tag_seafood",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_seafood.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "5"
+      }
+    },
+    {
+      "key": "49f32d1e3dd8367459a60cd57797ab82:11400000",
+      "guid": "49f32d1e3dd8367459a60cd57797ab82",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_staplefood.asset",
+      "type": "CK01TagData",
+      "name": "tag_staplefood",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_staplefood.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "6"
+      }
+    },
+    {
+      "key": "753c8df4c32f74842aa024768c884992:11400000",
+      "guid": "753c8df4c32f74842aa024768c884992",
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_veg.asset",
+      "type": "CK01TagData",
+      "name": "tag_veg",
+      "fields": {
+        "tag_class": "ingredient",
+        "name_key": "tag_veg.name",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        },
+        "sticker_sprite": {
+          "fileID": "0"
+        },
+        "filter_order": "1"
+      }
+    },
+    {
+      "key": "cf230b5f49ec1c847b3e738403f368a0:11400000",
+      "guid": "cf230b5f49ec1c847b3e738403f368a0",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_board.asset",
+      "type": "CK01ToolData",
+      "name": "tool_board",
+      "fields": {
+        "name_key": "tool_board.name",
+        "tool_kind": "carrier",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "029dbc26a4380b7438e8ffebf117c59d:11400000",
+      "guid": "029dbc26a4380b7438e8ffebf117c59d",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_board_station.asset",
+      "type": "CK01ToolData",
+      "name": "tool_board_station",
+      "fields": {
+        "name_key": "tool_board_station.name",
+        "tool_kind": "facility",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "47750cf063ffde24a99e35675ce75836:11400000",
+      "guid": "47750cf063ffde24a99e35675ce75836",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_bowl.asset",
+      "type": "CK01ToolData",
+      "name": "tool_bowl",
+      "fields": {
+        "name_key": "tool_bowl.name",
+        "tool_kind": "carrier",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "b76459bc754a1be49afcf9afb18ec427:11400000",
+      "guid": "b76459bc754a1be49afcf9afb18ec427",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_chopsticks.asset",
+      "type": "CK01ToolData",
+      "name": "tool_chopsticks",
+      "fields": {
+        "name_key": "tool_chopsticks.name",
+        "tool_kind": "handheld",
+        "supported_actions": [
+          "act_whisk",
+          "act_stirfry",
+          "act_mix"
+        ],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "f1aa1081804164846934155694adb342:11400000",
+      "guid": "f1aa1081804164846934155694adb342",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_freezer.asset",
+      "type": "CK01ToolData",
+      "name": "tool_freezer",
+      "fields": {
+        "name_key": "tool_freezer.name",
+        "tool_kind": "facility",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "fc3a34409140def46815f6b646f8b686:11400000",
+      "guid": "fc3a34409140def46815f6b646f8b686",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_hand.asset",
+      "type": "CK01ToolData",
+      "name": "tool_hand",
+      "fields": {
+        "name_key": "tool_hand.name",
+        "tool_kind": "hand",
+        "supported_actions": [
+          "act_smash",
+          "act_whisk",
+          "act_stirfry",
+          "act_mix"
+        ],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "ccc3318a25133184b90ad278f1fe9f79:11400000",
+      "guid": "ccc3318a25133184b90ad278f1fe9f79",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_knife.asset",
+      "type": "CK01ToolData",
+      "name": "tool_knife",
+      "fields": {
+        "name_key": "tool_knife.name",
+        "tool_kind": "handheld",
+        "supported_actions": [
+          "act_cut"
+        ],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "970fe1e3da377ce48b0e04093f2b6a5e:11400000",
+      "guid": "970fe1e3da377ce48b0e04093f2b6a5e",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_oven.asset",
+      "type": "CK01ToolData",
+      "name": "tool_oven",
+      "fields": {
+        "name_key": "tool_oven.name",
+        "tool_kind": "facility",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "b3a58691ff238fe42b9d9f45faada8e1:11400000",
+      "guid": "b3a58691ff238fe42b9d9f45faada8e1",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_pan.asset",
+      "type": "CK01ToolData",
+      "name": "tool_pan",
+      "fields": {
+        "name_key": "tool_pan.name",
+        "tool_kind": "carrier",
+        "supported_actions": [],
+        "mapped_dish_category": "tag_dish_stirfry",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "940f3eadfc545f2439f68fb74dc94140:11400000",
+      "guid": "940f3eadfc545f2439f68fb74dc94140",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_pot.asset",
+      "type": "CK01ToolData",
+      "name": "tool_pot",
+      "fields": {
+        "name_key": "tool_pot.name",
+        "tool_kind": "carrier",
+        "supported_actions": [],
+        "mapped_dish_category": "tag_dish_boil",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "230e6232a978589448a84185cd3e37b6:11400000",
+      "guid": "230e6232a978589448a84185cd3e37b6",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_salad_station.asset",
+      "type": "CK01ToolData",
+      "name": "tool_salad_station",
+      "fields": {
+        "name_key": "tool_salad_station.name",
+        "tool_kind": "facility",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "adfb49e83e853f0488757416334aa284:11400000",
+      "guid": "adfb49e83e853f0488757416334aa284",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_saladbowl.asset",
+      "type": "CK01ToolData",
+      "name": "tool_saladbowl",
+      "fields": {
+        "name_key": "tool_saladbowl.name",
+        "tool_kind": "carrier",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "e76936264892dde4eb3543395b8d3a62:11400000",
+      "guid": "e76936264892dde4eb3543395b8d3a62",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_scissors.asset",
+      "type": "CK01ToolData",
+      "name": "tool_scissors",
+      "fields": {
+        "name_key": "tool_scissors.name",
+        "tool_kind": "handheld",
+        "supported_actions": [
+          "act_cut"
+        ],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "fa01fc414576bfe4dbf1f3dc0cbda95b:11400000",
+      "guid": "fa01fc414576bfe4dbf1f3dc0cbda95b",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_spatula.asset",
+      "type": "CK01ToolData",
+      "name": "tool_spatula",
+      "fields": {
+        "name_key": "tool_spatula.name",
+        "tool_kind": "handheld",
+        "supported_actions": [
+          "act_stirfry"
+        ],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "bcf339b2a9b03fe4d851aacfaf9214a5:11400000",
+      "guid": "bcf339b2a9b03fe4d851aacfaf9214a5",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_stick.asset",
+      "type": "CK01ToolData",
+      "name": "tool_stick",
+      "fields": {
+        "name_key": "tool_stick.name",
+        "tool_kind": "handheld",
+        "supported_actions": [
+          "act_smash"
+        ],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "f4656800589a1b04494a2f7e4dcc5c43:11400000",
+      "guid": "f4656800589a1b04494a2f7e4dcc5c43",
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_stove.asset",
+      "type": "CK01ToolData",
+      "name": "tool_stove",
+      "fields": {
+        "name_key": "tool_stove.name",
+        "tool_kind": "facility",
+        "supported_actions": [],
+        "mapped_dish_category": "",
+        "icon_sprite": {
+          "fileID": "-6724980738021171820",
+          "guid": "2ccbaeb7adbdb464c9db183d47a934aa",
+          "type": "2"
+        }
+      }
+    },
+    {
+      "key": "9fdef0f87a5fdd242910d4cf9708994d:11400000",
+      "guid": "9fdef0f87a5fdd242910d4cf9708994d",
+      "path": "Assets/Generated/DataTables/Localization/Localization/Localization.asset",
+      "type": "LocTableAsset",
+      "name": "Localization",
+      "fields": {
+        "entries": [
+          {
+            "key": "act_boil.name",
+            "zh_cn": "煮"
+          },
+          {
+            "key": "act_cut.name",
+            "zh_cn": "切割"
+          },
+          {
+            "key": "act_no_process.name",
+            "zh_cn": "直接放入"
+          },
+          {
+            "key": "act_stew.name",
+            "zh_cn": "炖"
+          },
+          {
+            "key": "act_stirfry.name",
+            "zh_cn": "翻炒"
+          },
+          {
+            "key": "act_wash.name",
+            "zh_cn": "摘洗"
+          },
+          {
+            "key": "act_whisk.name",
+            "zh_cn": "搅拌"
+          },
+          {
+            "key": "act_smash.name",
+            "zh_cn": "捣碎"
+          },
+          {
+            "key": "act_mix.name",
+            "zh_cn": "拌混"
+          },
+          {
+            "key": "act_fry.name",
+            "zh_cn": "煎炸"
+          },
+          {
+            "key": "ing_cabbage.flavor",
+            "zh_cn": "开水白菜的排面担当"
+          },
+          {
+            "key": "ing_cabbage.name",
+            "zh_cn": "白菜心"
+          },
+          {
+            "key": "ing_egg.flavor",
+            "zh_cn": "平平无奇，但谁也离不开它"
+          },
+          {
+            "key": "ing_egg.name",
+            "zh_cn": "鸡蛋"
+          },
+          {
+            "key": "ing_giant_egg.flavor",
+            "zh_cn": "一颗顶三颗，农场直送的自信"
+          },
+          {
+            "key": "ing_giant_egg.name",
+            "zh_cn": "超级有机农场巨蛋"
+          },
+          {
+            "key": "ing_ham_sausage.flavor",
+            "zh_cn": "五连装，掰一根少一根"
+          },
+          {
+            "key": "ing_ham_sausage.name",
+            "zh_cn": "好吃的金锣王"
+          },
+          {
+            "key": "ing_milk_box.flavor",
+            "zh_cn": "开盒后请尽快喝完"
+          },
+          {
+            "key": "ing_milk_box.name",
+            "zh_cn": "牛奶（盒）"
+          },
+          {
+            "key": "ing_noodle_dried.flavor",
+            "zh_cn": "抱成一捆才有安全感的面条们"
+          },
+          {
+            "key": "ing_noodle_dried.name",
+            "zh_cn": "一把挂面"
+          },
+          {
+            "key": "ing_noodle_instant.flavor",
+            "zh_cn": "长了脚也逃不掉被煮的命运"
+          },
+          {
+            "key": "ing_noodle_instant.name",
+            "zh_cn": "泡面饼"
+          },
+          {
+            "key": "ing_octopus_leg.flavor",
+            "zh_cn": "不知道本体去哪了，只剩一条"
+          },
+          {
+            "key": "ing_octopus_leg.name",
+            "zh_cn": "章鱼脚"
+          },
+          {
+            "key": "ing_scallion.flavor",
+            "zh_cn": "撒上就香，不撒就差点意思"
+          },
+          {
+            "key": "ing_scallion.name",
+            "zh_cn": "小葱"
+          },
+          {
+            "key": "ing_tomato.flavor",
+            "zh_cn": "巨好吃爽茄，本茄认证"
+          },
+          {
+            "key": "ing_tomato.name",
+            "zh_cn": "番茄"
+          },
+          {
+            "key": "ing_danhuangpai.flavor",
+            "zh_cn": "蛋黄派！！"
+          },
+          {
+            "key": "ing_danhuangpai.name",
+            "zh_cn": "蛋黄派"
+          },
+          {
+            "key": "ing_ofanqie.flavor",
+            "zh_cn": "哦！！！番茄！！！"
+          },
+          {
+            "key": "ing_ofanqie.name",
+            "zh_cn": "哦！番茄"
+          },
+          {
+            "key": "ing_pidan.flavor",
+            "zh_cn": "传说某个世界里它曾是超级反派"
+          },
+          {
+            "key": "ing_pidan.name",
+            "zh_cn": "皮蛋"
+          },
+          {
+            "key": "ing_noodle_rice.flavor",
+            "zh_cn": "过桥——"
+          },
+          {
+            "key": "ing_noodle_rice.name",
+            "zh_cn": "米线"
+          },
+          {
+            "key": "ing_nongtangbao.flavor",
+            "zh_cn": "浓汤宝——"
+          },
+          {
+            "key": "ing_nongtangbao.name",
+            "zh_cn": "浓汤宝"
+          },
+          {
+            "key": "ing_milktea_fen.flavor",
+            "zh_cn": "因为你是我的良乐美啊~~"
+          },
+          {
+            "key": "ing_milktea_fen.name",
+            "zh_cn": "奶茶粉包"
+          },
+          {
+            "key": "ing_paomianbao.flavor",
+            "zh_cn": "最恶毒的诅咒莫过于泡面没有调料包"
+          },
+          {
+            "key": "ing_paomianbao.name",
+            "zh_cn": "泡面调料包"
+          },
+          {
+            "key": "prd_instant_noodle_boiled.flavor",
+            "zh_cn": "煮好的泡面！"
+          },
+          {
+            "key": "prd_instant_noodle_boiled.name",
+            "zh_cn": "煮好的泡面"
+          },
+          {
+            "key": "prd_rice_noodle_boiled.flavor",
+            "zh_cn": "过桥的米线"
+          },
+          {
+            "key": "prd_rice_noodle_boiled.name",
+            "zh_cn": "煮好的米线"
+          },
+          {
+            "key": "prd_cabbage_washed.flavor",
+            "zh_cn": "摘好的白菜心！"
+          },
+          {
+            "key": "prd_cabbage_washed.name",
+            "zh_cn": "摘好的白菜心"
+          },
+          {
+            "key": "prd_clear_broth.flavor",
+            "zh_cn": "高汤！！！"
+          },
+          {
+            "key": "prd_clear_broth.name",
+            "zh_cn": "清亮高汤"
+          },
+          {
+            "key": "prd_egg_liquid.flavor",
+            "zh_cn": "蛋液！"
+          },
+          {
+            "key": "prd_egg_liquid.name",
+            "zh_cn": "蛋液"
+          },
+          {
+            "key": "prd_kaishui_dish.flavor",
+            "zh_cn": "开水白菜!"
+          },
+          {
+            "key": "prd_kaishui_dish.name",
+            "zh_cn": "开水白菜"
+          },
+          {
+            "key": "prd_unknown.name",
+            "zh_cn": "不明物体"
+          },
+          {
+            "key": "prd_unknown.flavor",
+            "zh_cn": "……这是什么？"
+          },
+          {
+            "key": "prd_noodle_boiled.flavor",
+            "zh_cn": "煮好的面!"
+          },
+          {
+            "key": "prd_noodle_boiled.name",
+            "zh_cn": "煮好的面"
+          },
+          {
+            "key": "prd_qingtang_dish.flavor",
+            "zh_cn": "清汤面!"
+          },
+          {
+            "key": "prd_qingtang_dish.name",
+            "zh_cn": "清汤面"
+          },
+          {
+            "key": "prd_fried_egg.flavor",
+            "zh_cn": "传说某个世界里对抗皮蛋大魔王的勇者"
+          },
+          {
+            "key": "prd_fried_egg.name",
+            "zh_cn": "煎蛋"
+          },
+          {
+            "key": "prd_scrambled_egg.flavor",
+            "zh_cn": "炒好的蛋!"
+          },
+          {
+            "key": "prd_scrambled_egg.name",
+            "zh_cn": "炒好的蛋"
+          },
+          {
+            "key": "prd_danhuangpai_sui.flavor",
+            "zh_cn": "蛋黄派碎！"
+          },
+          {
+            "key": "prd_danhuangpai_sui.name",
+            "zh_cn": "蛋黄派碎"
+          },
+          {
+            "key": "prd_tomato_cut.flavor",
+            "zh_cn": "切好的番茄!"
+          },
+          {
+            "key": "prd_tomato_cut.name",
+            "zh_cn": "切好的番茄"
+          },
+          {
+            "key": "prd_ofanqie_sui.flavor",
+            "zh_cn": "哦番茄碎！"
+          },
+          {
+            "key": "prd_ofanqie_sui.name",
+            "zh_cn": "哦番茄碎"
+          },
+          {
+            "key": "prd_nongtangbao_soup.flavor",
+            "zh_cn": "浓汤宝汤！"
+          },
+          {
+            "key": "prd_nongtangbao_soup.name",
+            "zh_cn": "浓汤宝汤"
+          },
+          {
+            "key": "prd_milktea_liquid.flavor",
+            "zh_cn": "冲泡奶茶！"
+          },
+          {
+            "key": "prd_milktea_liquid.name",
+            "zh_cn": "冲泡奶茶"
+          },
+          {
+            "key": "prd_paomian_soup.flavor",
+            "zh_cn": "泡面汤！"
+          },
+          {
+            "key": "prd_paomian_soup.name",
+            "zh_cn": "泡面汤"
+          },
+          {
+            "key": "prd_pidan_milktea_noodle.flavor",
+            "zh_cn": "皮蛋奶茶面！"
+          },
+          {
+            "key": "prd_pidan_milktea_noodle.name",
+            "zh_cn": "皮蛋奶茶面"
+          },
+          {
+            "key": "prd_ofanqie_danhuangpai.flavor",
+            "zh_cn": "哦番茄拌蛋黄派！"
+          },
+          {
+            "key": "prd_ofanqie_danhuangpai.name",
+            "zh_cn": "哦番茄拌蛋黄派"
+          },
+          {
+            "key": "prd_tomato_egg_dish.flavor",
+            "zh_cn": "番茄炒蛋!"
+          },
+          {
+            "key": "prd_tomato_egg_dish.name",
+            "zh_cn": "番茄炒蛋"
+          },
+          {
+            "key": "prd_tomato_egg_soup.flavor",
+            "zh_cn": "番茄蛋花汤!"
+          },
+          {
+            "key": "prd_tomato_egg_soup.name",
+            "zh_cn": "番茄蛋花汤"
+          },
+          {
+            "key": "rcp_kaishui_cabbage.flavor",
+            "zh_cn": "开水白菜!"
+          },
+          {
+            "key": "rcp_kaishui_cabbage.name",
+            "zh_cn": "开水白菜"
+          },
+          {
+            "key": "rcp_qingtang_noodle.flavor",
+            "zh_cn": "清汤面!"
+          },
+          {
+            "key": "rcp_qingtang_noodle.name",
+            "zh_cn": "清汤面"
+          },
+          {
+            "key": "rcp_tomato_egg.flavor",
+            "zh_cn": "番茄炒蛋!"
+          },
+          {
+            "key": "rcp_tomato_egg.name",
+            "zh_cn": "番茄炒蛋"
+          },
+          {
+            "key": "step_kc_01.text",
+            "zh_cn": "白菜心摘好洗干净"
+          },
+          {
+            "key": "step_kc_02.text",
+            "zh_cn": "慢慢炖一锅清汤"
+          },
+          {
+            "key": "step_kc_03.text",
+            "zh_cn": "白菜汆一下，浇上汤"
+          },
+          {
+            "key": "step_qt_01.text",
+            "zh_cn": "水开了就把面丢进去"
+          },
+          {
+            "key": "step_qt_02.text",
+            "zh_cn": "熬制高汤"
+          },
+          {
+            "key": "step_qt_03.text",
+            "zh_cn": "煎蛋，或炒制别的浇头"
+          },
+          {
+            "key": "step_qt_04.text",
+            "zh_cn": "煮好的面放入高汤，添加浇头，出锅"
+          },
+          {
+            "key": "step_te_01.text",
+            "zh_cn": "把蛋打成蛋液"
+          },
+          {
+            "key": "step_te_02.text",
+            "zh_cn": "番茄切成小块"
+          },
+          {
+            "key": "step_te_03.text",
+            "zh_cn": "热油下锅先炒蛋"
+          },
+          {
+            "key": "step_te_04.text",
+            "zh_cn": "番茄下锅一起炒，出锅"
+          },
+          {
+            "key": "stp_oil.flavor",
+            "zh_cn": "热锅冷油"
+          },
+          {
+            "key": "stp_oil.name",
+            "zh_cn": "食用油"
+          },
+          {
+            "key": "stp_salt.flavor",
+            "zh_cn": "咸味的来源"
+          },
+          {
+            "key": "stp_salt.name",
+            "zh_cn": "盐"
+          },
+          {
+            "key": "stp_water.flavor",
+            "zh_cn": "无限供应"
+          },
+          {
+            "key": "stp_water.name",
+            "zh_cn": "清水"
+          },
+          {
+            "key": "tag_dairy.name",
+            "zh_cn": "奶类"
+          },
+          {
+            "key": "tag_dish_boil.name",
+            "zh_cn": "煮"
+          },
+          {
+            "key": "tag_dish_deepfry.name",
+            "zh_cn": "炸"
+          },
+          {
+            "key": "tag_dish_stew.name",
+            "zh_cn": "炖"
+          },
+          {
+            "key": "tag_dish_stirfry.name",
+            "zh_cn": "炒"
+          },
+          {
+            "key": "tag_dish_salad.name",
+            "zh_cn": "沙拉台"
+          },
+          {
+            "key": "tag_egg.name",
+            "zh_cn": "蛋类"
+          },
+          {
+            "key": "tag_flavor_confused.name",
+            "zh_cn": "吃不懂"
+          },
+          {
+            "key": "tag_flavor_easy.name",
+            "zh_cn": "简单好做"
+          },
+          {
+            "key": "tag_flavor_fancy.name",
+            "zh_cn": "看着就贵"
+          },
+          {
+            "key": "tag_flavor_spicy.name",
+            "zh_cn": "辣爪"
+          },
+          {
+            "key": "tag_flavor_yummy.name",
+            "zh_cn": "真滴很香"
+          },
+          {
+            "key": "tag_fruit.name",
+            "zh_cn": "水果"
+          },
+          {
+            "key": "tag_meat.name",
+            "zh_cn": "肉类"
+          },
+          {
+            "key": "tag_seafood.name",
+            "zh_cn": "海鲜"
+          },
+          {
+            "key": "tag_staplefood.name",
+            "zh_cn": "主食"
+          },
+          {
+            "key": "tag_veg.name",
+            "zh_cn": "蔬菜"
+          },
+          {
+            "key": "tool_board.name",
+            "zh_cn": "案板"
+          },
+          {
+            "key": "tool_board_station.name",
+            "zh_cn": "砧板台"
+          },
+          {
+            "key": "tool_bowl.name",
+            "zh_cn": "碗"
+          },
+          {
+            "key": "tool_chopsticks.name",
+            "zh_cn": "筷子"
+          },
+          {
+            "key": "tool_freezer.name",
+            "zh_cn": "小冰柜"
+          },
+          {
+            "key": "tool_hand.name",
+            "zh_cn": "手"
+          },
+          {
+            "key": "tool_knife.name",
+            "zh_cn": "菜刀"
+          },
+          {
+            "key": "tool_oven.name",
+            "zh_cn": "烤箱"
+          },
+          {
+            "key": "tool_pan.name",
+            "zh_cn": "炒锅"
+          },
+          {
+            "key": "tool_pot.name",
+            "zh_cn": "汤锅"
+          },
+          {
+            "key": "tool_salad_station.name",
+            "zh_cn": "沙拉台"
+          },
+          {
+            "key": "tool_scissors.name",
+            "zh_cn": "剪刀"
+          },
+          {
+            "key": "tool_spatula.name",
+            "zh_cn": "锅铲"
+          },
+          {
+            "key": "tool_stove.name",
+            "zh_cn": "灶台"
+          },
+          {
+            "key": "tool_stick.name",
+            "zh_cn": "擀面杖"
+          },
+          {
+            "key": "tool_saladbowl.name",
+            "zh_cn": "沙拉碗"
+          },
+          {
+            "key": "ui_cook_pending_feature.text",
+            "zh_cn": "请期待正式版"
+          },
+          {
+            "key": "ui_p0_catalog_tab.text",
+            "zh_cn": "目录"
+          },
+          {
+            "key": "ui_p0_current_recipe_tab.text",
+            "zh_cn": "当前"
+          },
+          {
+            "key": "ui_p0_escape.text",
+            "zh_cn": "ESC"
+          },
+          {
+            "key": "ui_p0_favorite.text",
+            "zh_cn": "收藏"
+          },
+          {
+            "key": "ui_p0_ingredient_list_header.text",
+            "zh_cn": "所需食材"
+          },
+          {
+            "key": "ui_p0_start_cooking.text",
+            "zh_cn": "开始做饭"
+          },
+          {
+            "key": "ui_p1_clueboard_tips.text",
+            "zh_cn": "TIPS：人被杀就会死\n不知道怎么办的话：不妨尝试先放空大脑吧。"
+          },
+          {
+            "key": "ui_p1_return.text",
+            "zh_cn": "返回"
+          },
+          {
+            "key": "var_kaishui_std.name",
+            "zh_cn": "开水白菜"
+          },
+          {
+            "key": "var_qingtang_std.name",
+            "zh_cn": "清汤面"
+          },
+          {
+            "key": "var_tomato_egg_soup.name",
+            "zh_cn": "番茄蛋花汤"
+          },
+          {
+            "key": "var_tomato_egg_std.name",
+            "zh_cn": "番茄炒蛋"
+          },
+          {
+            "key": "var_pidan_milktea_noodle.name",
+            "zh_cn": "皮蛋奶茶面"
+          },
+          {
+            "key": "var_ofanqie_danhuangpai.name",
+            "zh_cn": "蛋黄番茄沙拉"
+          },
+          {
+            "key": "ui_p0_cover_bubble_a.text",
+            "zh_cn": "吃什么"
+          },
+          {
+            "key": "ui_p0_cover_bubble_b.text",
+            "zh_cn": "汪！"
+          }
+        ]
+      }
+    }
+  ],
+  "nativeAssets": [
+    "Assets/Generated/DataTables/Shared/CK01-MissingSpriteTexture.asset"
+  ],
+  "source": "Fixed Legacy14: historical Catalog blob fc4dc3726ef884e05e2b137305d0ff420eb51353; original Reader asset records independently proven unchanged against that commit. No current22 table filtering."
+}

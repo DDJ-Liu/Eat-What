@@ -177,6 +177,7 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
         new List<CK01GeneratedDataTable>();
 
     [SerializeField] private List<CatalogSpriteReference> releaseSprites = new List<CatalogSpriteReference>();
+    [SerializeField] private List<CatalogPrefabReference> releasePrefabs = new List<CatalogPrefabReference>();
     [NonSerialized] private ICatalogSource activeSource;
     private ICatalogSource Source
     {
@@ -187,8 +188,11 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
 #if CK01_ENCRYPTED_DATA && !UNITY_EDITOR && !DEVELOPMENT_BUILD
                 var sprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
                 foreach (var item in releaseSprites) { if (item == null || sprites.ContainsKey(item.key)) throw new FormatException("Invalid catalog sprite registry."); sprites.Add(item.key, item.sprite); }
+                var prefabs = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+                foreach (var item in releasePrefabs) { if (item == null || prefabs.ContainsKey(item.key)) throw new FormatException("Invalid catalog Prefab registry."); prefabs.Add(item.key, item.prefab); }
                 activeSource = new EncryptedBlobSource(() => System.IO.File.ReadAllBytes(System.IO.Path.Combine(Application.streamingAssetsPath, "data/catalog.bin")),
                     CatalogBuildFingerprint.Expected, key => { Sprite value; return sprites.TryGetValue(key, out value) ? value : null; },
+                    key => { GameObject value; return prefabs.TryGetValue(key, out value) ? value : null; },
                     new EatWhat.Tools.Security.CatalogBlobCipher(new EatWhat.Tools.Security.ObfuscatedStaticKeyProvider()));
 #else
                 activeSource = new ScriptableObjectSource(() => (tables ?? new List<CK01GeneratedDataTable>()).AsReadOnly());
@@ -201,9 +205,11 @@ public sealed class CK01GeneratedDataCatalog : ScriptableObject
     internal void InstallSourceForValidation(ICatalogSource source)
     { if (source == null || activeSource != null) throw new InvalidOperationException("Catalog already has its single source."); activeSource = source; InvalidateIndexes(); }
     public void ConfigureBuildSpriteReferences(IEnumerable<CatalogSpriteReference> sprites)
+    { ConfigureBuildReferences(sprites, new CatalogPrefabReference[0]); }
+    public void ConfigureBuildReferences(IEnumerable<CatalogSpriteReference> sprites, IEnumerable<CatalogPrefabReference> prefabs)
     {
         if (activeSource != null) throw new InvalidOperationException("Prepare a fresh build-only catalog before use.");
-        tables = new List<CK01GeneratedDataTable>(); releaseSprites = new List<CatalogSpriteReference>(sprites); InvalidateIndexes();
+        tables = new List<CK01GeneratedDataTable>(); releaseSprites = new List<CatalogSpriteReference>(sprites); releasePrefabs = new List<CatalogPrefabReference>(prefabs); InvalidateIndexes();
     }
     private void OnDisable() { var lifetime = activeSource as IDisposable; if (lifetime != null) lifetime.Dispose(); activeSource = null; InvalidateIndexes(); }
     [NonSerialized] private bool indexesReady;

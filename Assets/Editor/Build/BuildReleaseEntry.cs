@@ -262,7 +262,8 @@ public static class BuildReleaseEntry
         var export = Read(Path.Combine(stage, files[3]));
         if ((string)export["fingerprint"] != fingerprint || (bool?)export["authenticatedReadback"] != true ||
             (int?)export["dataAssets"] != ((JArray)staged["assets"]).Count ||
-            (int?)export["spriteKeys"] != ((JArray)staged["sprites"]).Count)
+            (int?)export["spriteKeys"] != ((JArray)staged["sprites"]).Count ||
+            (staged["prefabs"] is JArray && (int?)export["prefabKeys"] != ((JArray)staged["prefabs"]).Count))
             throw new BuildFailedException("Staging export metadata differs from authenticated graph.");
         return fingerprint;
     }

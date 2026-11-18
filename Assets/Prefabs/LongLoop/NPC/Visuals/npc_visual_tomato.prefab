@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2773048076578553077
+--- !u!1 &3921762816315963581
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,51 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5522576711385812021}
-  - component: {fileID: 3366478081098419212}
-  - component: {fileID: 1538268977877823302}
-  - component: {fileID: 6102780054733843030}
-  - component: {fileID: 7313961080762492979}
-  - component: {fileID: 5259857473410722450}
-  - component: {fileID: 7598721605950785767}
-  - component: {fileID: 5416792498230010654}
+  - component: {fileID: 8525502218129826215}
+  - component: {fileID: 4244434481210296733}
+  - component: {fileID: 5156318592847929087}
+  - component: {fileID: 6594278240911775379}
+  - component: {fileID: 8322616906115248589}
+  - component: {fileID: 7297155116870891295}
   m_Layer: 0
-  m_Name: Visual_TUNE
+  m_Name: npc_visual_tomato
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5522576711385812021
+--- !u!4 &8525502218129826215
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
+  m_GameObject: {fileID: 3921762816315963581}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7109614593853189022}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3366478081098419212
+--- !u!33 &4244434481210296733
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
+  m_GameObject: {fileID: 3921762816315963581}
   m_Mesh: {fileID: 0}
---- !u!23 &1538268977877823302
+--- !u!23 &5156318592847929087
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
+  m_GameObject: {fileID: 3921762816315963581}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -122,13 +120,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6102780054733843030
+--- !u!114 &6594278240911775379
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
+  m_GameObject: {fileID: 3921762816315963581}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
@@ -159,19 +157,19 @@ MonoBehaviour:
   _animationName: idle
   loop: 1
   timeScale: 1
---- !u!114 &7313961080762492979
+--- !u!114 &8322616906115248589
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
+  m_GameObject: {fileID: 3921762816315963581}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ea615798908efa4ea76f128532f2f96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Legacy::CharacterEquipment
-  skeletonRenderer: {fileID: 6102780054733843030}
+  skeletonRenderer: {fileID: 6594278240911775379}
   baseSkin: Tomato_Non
   applyDefaultEquipmentOnStart: 1
   equipmentSlots:
@@ -192,130 +190,15 @@ MonoBehaviour:
   autoOptimize: 0
   runtimeMaterial: {fileID: 0}
   runtimeAtlas: {fileID: 0}
---- !u!114 &5259857473410722450
+--- !u!114 &7297155116870891295
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
+  m_GameObject: {fileID: 3921762816315963581}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 157e21c04cb036d41a4122d0f9efb8ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Legacy::SpineRuntimeMeshRendererBootstrap
---- !u!210 &7598721605950785767
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
-  m_Enabled: 1
-  m_SortingLayerID: -150304867
-  m_SortingLayer: 4
-  m_SortingOrder: 499
-  m_SortAtRoot: 0
-  m_Sort3DAs2D: 0
---- !u!114 &5416792498230010654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773048076578553077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2fb718df6f74ddbb139a86cf3542d81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.DepthScale
-  groundLine: {fileID: 0}
-  localConfig: {fileID: 11400000, guid: f0b0bbb346ea37e49b13d61756b855fc, type: 2}
-  localFootOffset: {x: 0, y: 0, z: 0}
-  useOverrideFactor: 0
-  overrideFactor: 0.03
-  depthOverrideProvider: {fileID: 0}
---- !u!1 &5296198405415088969
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8766002855266049557}
-  m_Layer: 0
-  m_Name: Foot_TUNE
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8766002855266049557
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5296198405415088969}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7109614593853189022}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8512140760044370578
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7109614593853189022}
-  - component: {fileID: 8918411154485821361}
-  m_Layer: 0
-  m_Name: TomatoIdleNPC
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7109614593853189022
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8512140760044370578}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8766002855266049557}
-  - {fileID: 5522576711385812021}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8918411154485821361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8512140760044370578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d13ded1e7164e1086f708d5eeafbcee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.YSorter
-  targetRenderer: {fileID: 0}
-  targetSortingGroup: {fileID: 7598721605950785767}
-  foot: {fileID: 8766002855266049557}
-  baseOrder: 499
-  precision_TUNE: 100
-  depthOffset: 0
-  bakeOnStart: 0

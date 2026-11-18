@@ -1,1 +1,2 @@
 scene_id,name_key,scene_type,is_small_room,scene_asset,default_state,comment
+scn_test_street,test_scene_street.name,street,false,LongLoop_Street,test_default,

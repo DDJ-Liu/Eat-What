@@ -1,0 +1,2749 @@
+{
+  "schemaVersion": 1,
+  "commit": "fc4dc3726ef884e05e2b137305d0ff420eb51353",
+  "catalogPath": "Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset",
+  "historicalCatalogSha256": "C757F69A90C55415EC34396A407371C0F75525247C38B25A9D5B9D83E0CC9E41",
+  "snapshotSha256": "64BFBE0613BE7DD40D5C67327F2C1BD09CC5AC18FFF185E7CC9749EF6EAFADF8",
+  "readerSha256": "0F670CC4715BEE0E98D0E8E428F2A950BED52FB21566B481A24DF8C487D48B83",
+  "tables": 14,
+  "dataAssets": 169,
+  "currentTablesObserved": 22,
+  "records": [
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/demo_fridge_capacity_level.asset",
+      "gitBlob": "b2d8ccb974cb860d0fa4fc55d282a7d2b78bc83f",
+      "gitBlobSha256": "B362997F5FCACB0CEEA9DAA144B0A559BD4CC138B27384E3412048396F12A486",
+      "currentSha256": "B362997F5FCACB0CEEA9DAA144B0A559BD4CC138B27384E3412048396F12A486",
+      "bytes": 433,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/demo_fridge_capacity_level.asset.meta",
+      "gitBlob": "3810b7992f74a335fbdea214463b71cbe03a33da",
+      "gitBlobSha256": "233A92887B9FEE1FF66841124384DAAA677DF6F5059E4737D2E838FDC77AA1A8",
+      "currentSha256": "233A92887B9FEE1FF66841124384DAAA677DF6F5059E4737D2E838FDC77AA1A8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/fridge_scroll_cooldown.asset",
+      "gitBlob": "f0afdbc5f0ecc15e5ac04633bac10df4aaf1d66a",
+      "gitBlobSha256": "85D46FE5CFF1502B49989FEB6FEEFD29E0D4A54ADAFE953FE3C287FD59ADC49D",
+      "currentSha256": "85D46FE5CFF1502B49989FEB6FEEFD29E0D4A54ADAFE953FE3C287FD59ADC49D",
+      "bytes": 466,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/fridge_scroll_cooldown.asset.meta",
+      "gitBlob": "cb0e2d8a4524a5a60886591eb21da681a03b516f",
+      "gitBlobSha256": "6C46030303268A519AA6BBAFF10BFC36CF6D70E3A29A8B62F432D7DFBECEEBA8",
+      "currentSha256": "6C46030303268A519AA6BBAFF10BFC36CF6D70E3A29A8B62F432D7DFBECEEBA8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/fridge_scroll_threshold.asset",
+      "gitBlob": "162f0b0d9f8e9a0371547f958fe048daa2fa9b72",
+      "gitBlobSha256": "2675FACF504D51491037D9947F1B80D9B0AEC9B25F5D3750D357C2DF8E67383D",
+      "currentSha256": "2675FACF504D51491037D9947F1B80D9B0AEC9B25F5D3750D357C2DF8E67383D",
+      "bytes": 467,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/fridge_scroll_threshold.asset.meta",
+      "gitBlob": "f59b1babde0ac6f462f89b0c7bbad9dc7c94cbbb",
+      "gitBlobSha256": "D6F0F13A584249BB9E0DF41C36F7E1568101EB4E5E2D03B1E61C896E8B4A112C",
+      "currentSha256": "D6F0F13A584249BB9E0DF41C36F7E1568101EB4E5E2D03B1E61C896E8B4A112C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/prep_zone_capacity.asset",
+      "gitBlob": "c88cdcc2a8b8daf84b82434b6b0be3b0ac7c79fa",
+      "gitBlobSha256": "BA7A92048DFB0E4C71ADED04E7EA3E1CD04D0E86FDA22563F614BEC6917F8306",
+      "currentSha256": "BA7A92048DFB0E4C71ADED04E7EA3E1CD04D0E86FDA22563F614BEC6917F8306",
+      "bytes": 419,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/prep_zone_capacity.asset.meta",
+      "gitBlob": "ae47c98690d29451b08aac6ec4b0245d25b88abc",
+      "gitBlobSha256": "6D59914702F80252683DBDCBFF0E7BE49400BFE60E109162844EAF567EC3C8CE",
+      "currentSha256": "6D59914702F80252683DBDCBFF0E7BE49400BFE60E109162844EAF567EC3C8CE",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/unknown_product_item.asset",
+      "gitBlob": "42c1650e3571a6eea4f2111f1dc9aa965a22fe71",
+      "gitBlobSha256": "67B2F1FB1E17335814B40CFA329409B0B3262F08A359AFBDDCADEDB28E381D61",
+      "currentSha256": "67B2F1FB1E17335814B40CFA329409B0B3262F08A359AFBDDCADEDB28E381D61",
+      "bytes": 430,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/CookingGameConfig/unknown_product_item.asset.meta",
+      "gitBlob": "5b9b248f0e6810e4e2741004cd097fd75ee6ec00",
+      "gitBlobSha256": "C790067B84697037FC84138F864F1ACCC6D434DCBFD5E770070E43EAD6A192A7",
+      "currentSha256": "C790067B84697037FC84138F864F1ACCC6D434DCBFD5E770070E43EAD6A192A7",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv1.asset",
+      "gitBlob": "3c268b719c7ded3110420850536458963fa8c0cb",
+      "gitBlobSha256": "7E7F1EA7404E5558791A42273EA3B269CFCE9FAC041EF3E0D6183F4184EA00F3",
+      "currentSha256": "7E7F1EA7404E5558791A42273EA3B269CFCE9FAC041EF3E0D6183F4184EA00F3",
+      "bytes": 451,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv1.asset.meta",
+      "gitBlob": "68d21489578d05a1af3753f0f3296cfe3463a5a5",
+      "gitBlobSha256": "EDADB2D6ED550FC7432F809550723AEDDA96BE9C7BE048EAA7CB98F0735E6F26",
+      "currentSha256": "EDADB2D6ED550FC7432F809550723AEDDA96BE9C7BE048EAA7CB98F0735E6F26",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv2.asset",
+      "gitBlob": "37ea70a10b62c695a91adc733cd4633b64382fd3",
+      "gitBlobSha256": "DF2907A0464EF8C5F00DBB84A95C3BE44716F60D6F5BCD8FE17756147EF6C29F",
+      "currentSha256": "DF2907A0464EF8C5F00DBB84A95C3BE44716F60D6F5BCD8FE17756147EF6C29F",
+      "bytes": 451,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv2.asset.meta",
+      "gitBlob": "ce0743930fb7bf59559d2a50c9a50eaad966205c",
+      "gitBlobSha256": "C2012E22BDBC62EA93BD25F5C30C3B39968E739403742C0943FEBBD752A076FA",
+      "currentSha256": "C2012E22BDBC62EA93BD25F5C30C3B39968E739403742C0943FEBBD752A076FA",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv3.asset",
+      "gitBlob": "6708059ba14e3b0cebf5ddcf8166e11c42ce3d4f",
+      "gitBlobSha256": "525471AF7A57242843BBD2DA7DA58A47C7C821AD91DA8F25CE31B87A71D645A0",
+      "currentSha256": "525471AF7A57242843BBD2DA7DA58A47C7C821AD91DA8F25CE31B87A71D645A0",
+      "bytes": 451,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv3.asset.meta",
+      "gitBlob": "9859a3a1a8c0511c81f00bb6f0ed948240acc629",
+      "gitBlobSha256": "D7F1C0A1DFE8E9E13FE97275AC30427BECF1CDC17C21C21E305600CBAFA5D511",
+      "currentSha256": "D7F1C0A1DFE8E9E13FE97275AC30427BECF1CDC17C21C21E305600CBAFA5D511",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv4.asset",
+      "gitBlob": "1da4034162ce9cdb14fe3658cc3dde86acc037ee",
+      "gitBlobSha256": "5379C889FCFE9B887DF05DB94202CAE10699BCF0C2AA066F41EAD0AD8D295B50",
+      "currentSha256": "5379C889FCFE9B887DF05DB94202CAE10699BCF0C2AA066F41EAD0AD8D295B50",
+      "bytes": 451,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv4.asset.meta",
+      "gitBlob": "d7afc0e7a1447164ec3397305b2d5c7bf0526a9c",
+      "gitBlobSha256": "F17EA116BD772B8F1AF40C649AB76B8AB1738F46CE8E668D6240EA4FAFF97201",
+      "currentSha256": "F17EA116BD772B8F1AF40C649AB76B8AB1738F46CE8E668D6240EA4FAFF97201",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv5.asset",
+      "gitBlob": "22c3ce60e439863e3b100a28c6a28ffaac35c017",
+      "gitBlobSha256": "1A3063ACC648B4F36CFF9748F505EB6A04AE62860C649EFC449F23A77CA3C955",
+      "currentSha256": "1A3063ACC648B4F36CFF9748F505EB6A04AE62860C649EFC449F23A77CA3C955",
+      "bytes": 451,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/FridgeCapacityLevels/fcap_lv5.asset.meta",
+      "gitBlob": "d3bce9ab10ec1ba0a52bdf22e5c76ab2a8242181",
+      "gitBlobSha256": "3FC0B207B9661021100FC1103993B9907914BF8FEB4FF33A4FB63170ADFA8A45",
+      "currentSha256": "3FC0B207B9661021100FC1103993B9907914BF8FEB4FF33A4FB63170ADFA8A45",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_cabbage.asset",
+      "gitBlob": "f93b1aa743c9b0e4f310c459943fe0581badabff",
+      "gitBlobSha256": "CE7814C5FE800F2DD42A0B1F36320842DCDD911FA9058E1551E184B3C733B9CD",
+      "currentSha256": "CE7814C5FE800F2DD42A0B1F36320842DCDD911FA9058E1551E184B3C733B9CD",
+      "bytes": 414,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_cabbage.asset.meta",
+      "gitBlob": "6616c4cd080fdb2105ee3045d0fbc99632ab4fa1",
+      "gitBlobSha256": "3343288ED579792D97C8A3C2DBD97670329910067A387E6926E4054B50D8D447",
+      "currentSha256": "3343288ED579792D97C8A3C2DBD97670329910067A387E6926E4054B50D8D447",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_danhuangpai.asset",
+      "gitBlob": "a0ec898d58f1f4cb5443c3e5c49f365d1be38fb4",
+      "gitBlobSha256": "2C03F7594C35EC4C96F9FDAA5444CF41F0C968F94E1FFC8439713BDE67139341",
+      "currentSha256": "2C03F7594C35EC4C96F9FDAA5444CF41F0C968F94E1FFC8439713BDE67139341",
+      "bytes": 459,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_danhuangpai.asset.meta",
+      "gitBlob": "18c8a63095944923a00e6f27a4b4fe42c9318bd3",
+      "gitBlobSha256": "E49ABFEC0568430E1CB1A2B46F2618CFF6878650BB33D5EA7F72413971E9B38E",
+      "currentSha256": "E49ABFEC0568430E1CB1A2B46F2618CFF6878650BB33D5EA7F72413971E9B38E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_egg.asset",
+      "gitBlob": "b7184b5aa821f1cdb68eb18bde562d6768f8cf17",
+      "gitBlobSha256": "F80D34E024A4FE1B9D57C452B14DEEEF4FA05353A751D86B0801942FB68FC5EA",
+      "currentSha256": "F80D34E024A4FE1B9D57C452B14DEEEF4FA05353A751D86B0801942FB68FC5EA",
+      "bytes": 410,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_egg.asset.meta",
+      "gitBlob": "c5c3183b2a69f4ec2a2efc4261fbdcc1fb3f7477",
+      "gitBlobSha256": "0DED4D9E85691087E076339685FD0866817AA44B7548589CCF1E368D780138BF",
+      "currentSha256": "0DED4D9E85691087E076339685FD0866817AA44B7548589CCF1E368D780138BF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_giant_egg.asset",
+      "gitBlob": "da94dc5edfcfd8da6d41ff4239f09bdccfc19f07",
+      "gitBlobSha256": "80D0FA8DB45672040CBFDBFF8906453EE714A7EA02F11B08B0E836EE3B3055A1",
+      "currentSha256": "80D0FA8DB45672040CBFDBFF8906453EE714A7EA02F11B08B0E836EE3B3055A1",
+      "bytes": 416,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_giant_egg.asset.meta",
+      "gitBlob": "18d426d2edbe84a5cf7050d43be55c2a89e0d2fa",
+      "gitBlobSha256": "334D01A91D249ED94CAB020BBC02831DC2E98DDF34DCF8898B11EAD8FA33CC64",
+      "currentSha256": "334D01A91D249ED94CAB020BBC02831DC2E98DDF34DCF8898B11EAD8FA33CC64",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_ham_sausage.asset",
+      "gitBlob": "642e88211f9c516b634c076889ce3aae3fa1d869",
+      "gitBlobSha256": "9A2B6A07C88B9AEAEC42C1204DACC1E2FD1468612B9B6DB2D119DFA4C8DE0BE6",
+      "currentSha256": "9A2B6A07C88B9AEAEC42C1204DACC1E2FD1468612B9B6DB2D119DFA4C8DE0BE6",
+      "bytes": 418,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_ham_sausage.asset.meta",
+      "gitBlob": "08c476391e4b841f97e9312d479d1f5441c7ba0f",
+      "gitBlobSha256": "A731CB157E8358337FFACDD803E94266FD753F528CD53A951E00AE5C489B9B7F",
+      "currentSha256": "A731CB157E8358337FFACDD803E94266FD753F528CD53A951E00AE5C489B9B7F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_milk_box.asset",
+      "gitBlob": "5138c5fa747e58e15c60296fc7a4d5a954b8a50e",
+      "gitBlobSha256": "88026CD0B7F4598F271D80464545080ADD45921D05EE5A5AE62E5B16E209ACC2",
+      "currentSha256": "88026CD0B7F4598F271D80464545080ADD45921D05EE5A5AE62E5B16E209ACC2",
+      "bytes": 415,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_milk_box.asset.meta",
+      "gitBlob": "fd1e23fe045df3de5116d851dd10fb70f28d58c4",
+      "gitBlobSha256": "24EFB79518F6BCE9BCB8B91B21C77C6421182A3ED0DC996B6348D9170BBF653E",
+      "currentSha256": "24EFB79518F6BCE9BCB8B91B21C77C6421182A3ED0DC996B6348D9170BBF653E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_milktea_fen.asset",
+      "gitBlob": "2b06d038e798de201941d738b0de92c068d6a642",
+      "gitBlobSha256": "C23524E808B522FF9F96BF16CBD67597E038849A8597A5E4B92D84DC8A97D3AE",
+      "currentSha256": "C23524E808B522FF9F96BF16CBD67597E038849A8597A5E4B92D84DC8A97D3AE",
+      "bytes": 459,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_milktea_fen.asset.meta",
+      "gitBlob": "42520c93ff05880448c7cb887504da56216eabac",
+      "gitBlobSha256": "745E51A615DEB088011E2955B98644DC35E29004AAE25ED029BFC8E42B2C7E2F",
+      "currentSha256": "745E51A615DEB088011E2955B98644DC35E29004AAE25ED029BFC8E42B2C7E2F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_nongtangbao.asset",
+      "gitBlob": "9b54f216360397a70c17b860f427183de166a638",
+      "gitBlobSha256": "1B81C65AA0FAE0834904A22F296FA387AEE3BFC9663357C8888DD1674E84E2A8",
+      "currentSha256": "1B81C65AA0FAE0834904A22F296FA387AEE3BFC9663357C8888DD1674E84E2A8",
+      "bytes": 459,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_nongtangbao.asset.meta",
+      "gitBlob": "0870e23285ea5fbed4f004c52899404993bcd27b",
+      "gitBlobSha256": "4C17EFBFB0AA757AB306C594C7CF5CB6D3EB34A1604A6B50F18CAC4F3160A69E",
+      "currentSha256": "4C17EFBFB0AA757AB306C594C7CF5CB6D3EB34A1604A6B50F18CAC4F3160A69E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_dried.asset",
+      "gitBlob": "d35a5fb503a4b49df974b8bf0127de9fe3d576dc",
+      "gitBlobSha256": "E92482E9D9281326751E41D0639203707996DA7F9DBB2D7C8A2DEC408ACD7753",
+      "currentSha256": "E92482E9D9281326751E41D0639203707996DA7F9DBB2D7C8A2DEC408ACD7753",
+      "bytes": 419,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_dried.asset.meta",
+      "gitBlob": "9085e5c6add4f90b36f438bdd5438209f879ea6b",
+      "gitBlobSha256": "6DC93510D897B7B462309B59C6E251BB19DA67A4E6CFB9698C64558C6CA10590",
+      "currentSha256": "6DC93510D897B7B462309B59C6E251BB19DA67A4E6CFB9698C64558C6CA10590",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_instant.asset",
+      "gitBlob": "5a8dced837a1ed5376c63247844815a97dc0bd9e",
+      "gitBlobSha256": "82039AEDD1AA240BA888B41E5CBA70C44EE4C4DCA9E6D963C2F2F0A59B88BA9B",
+      "currentSha256": "82039AEDD1AA240BA888B41E5CBA70C44EE4C4DCA9E6D963C2F2F0A59B88BA9B",
+      "bytes": 421,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_instant.asset.meta",
+      "gitBlob": "27bd44c62a297d5052d6513c0f8e47ed8e5cfce5",
+      "gitBlobSha256": "3E01DB6E1AB61C45C33350730D607381B52663750E540B87852F308A3DFE452D",
+      "currentSha256": "3E01DB6E1AB61C45C33350730D607381B52663750E540B87852F308A3DFE452D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_rice.asset",
+      "gitBlob": "6672a9c9a9f89e4ca286cef165094fd444b30e53",
+      "gitBlobSha256": "86B80106A3842F73BC2B443D6808B24414994C1B11DC06C3CDCA970462E2C6C9",
+      "currentSha256": "86B80106A3842F73BC2B443D6808B24414994C1B11DC06C3CDCA970462E2C6C9",
+      "bytes": 459,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_noodle_rice.asset.meta",
+      "gitBlob": "93e4c8655b758a58c7caf70a2b0db0f9402f26fe",
+      "gitBlobSha256": "26B5B409884406E1D8AF98210BD4065F0869AA8B4163B7EED3AAEDD57F3CF4AB",
+      "currentSha256": "26B5B409884406E1D8AF98210BD4065F0869AA8B4163B7EED3AAEDD57F3CF4AB",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_octopus_leg.asset",
+      "gitBlob": "177a5b949780adb18f220730be17f2881f872993",
+      "gitBlobSha256": "E1623F16C5645DF9D10386436A5689346C012702FBA050C773ED7D6D83E05EF6",
+      "currentSha256": "E1623F16C5645DF9D10386436A5689346C012702FBA050C773ED7D6D83E05EF6",
+      "bytes": 418,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_octopus_leg.asset.meta",
+      "gitBlob": "a5a9162efc64ed7699c2cd9676a504c10bcff320",
+      "gitBlobSha256": "858C7788BF592094B647A79512B31CA310B463B534BC67B49B809AAD7FD4E96C",
+      "currentSha256": "858C7788BF592094B647A79512B31CA310B463B534BC67B49B809AAD7FD4E96C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_ofanqie.asset",
+      "gitBlob": "e89297d4d8edd420d77281dd632ee42cc19735a3",
+      "gitBlobSha256": "6E64C4A87146BC48114AA4D454B4A103CD723F6113BE525B04FBB41B4F9FED13",
+      "currentSha256": "6E64C4A87146BC48114AA4D454B4A103CD723F6113BE525B04FBB41B4F9FED13",
+      "bytes": 455,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_ofanqie.asset.meta",
+      "gitBlob": "cacd6fc939cd56b7fb08f1ef5918f23a106e74b1",
+      "gitBlobSha256": "3DD95E5388DB3ECBC9A1739C1CC8BED7F0FB4CEA8E0FEDD278F0B949AD80007F",
+      "currentSha256": "3DD95E5388DB3ECBC9A1739C1CC8BED7F0FB4CEA8E0FEDD278F0B949AD80007F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_paomianbao.asset",
+      "gitBlob": "b8c0a611af529fcec1e04f034f291d992aec1397",
+      "gitBlobSha256": "8BC20FB5EB54F7128F379679DA865E6134E22E70BCC5AE0B0CCE5FAB0EF8B5BA",
+      "currentSha256": "8BC20FB5EB54F7128F379679DA865E6134E22E70BCC5AE0B0CCE5FAB0EF8B5BA",
+      "bytes": 458,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_paomianbao.asset.meta",
+      "gitBlob": "9e78e8a3b2477e0b839564d8fe345a2921dc0054",
+      "gitBlobSha256": "7303B58A17375E84173881D305932804C50FA47F0BD1F6A44DCB47EE46648D38",
+      "currentSha256": "7303B58A17375E84173881D305932804C50FA47F0BD1F6A44DCB47EE46648D38",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_pidan.asset",
+      "gitBlob": "f0aa17010c3719d55343791c2c3bf1357540d9d4",
+      "gitBlobSha256": "641EE11ECEDAFE1053EE35FDADA503FBA98C840DE3601359D064A5557C3BF965",
+      "currentSha256": "641EE11ECEDAFE1053EE35FDADA503FBA98C840DE3601359D064A5557C3BF965",
+      "bytes": 453,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_pidan.asset.meta",
+      "gitBlob": "0220ff94ce130a8877966eb02be39acf7dde563d",
+      "gitBlobSha256": "54A5F259779B78CEAA80C3F813E4BEF699290778821577FF60CAC9E837E4C77F",
+      "currentSha256": "54A5F259779B78CEAA80C3F813E4BEF699290778821577FF60CAC9E837E4C77F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_scallion.asset",
+      "gitBlob": "afb63dbdac266cc2feb27ea7b1e7fb08675f09db",
+      "gitBlobSha256": "654B16E130FE599730C430BFB9C36BE7CFB38DE807984CEEAC2A09B5A8D95C91",
+      "currentSha256": "654B16E130FE599730C430BFB9C36BE7CFB38DE807984CEEAC2A09B5A8D95C91",
+      "bytes": 415,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_scallion.asset.meta",
+      "gitBlob": "154cedc79c4be250ad668d93d24e8b5832656d3a",
+      "gitBlobSha256": "D6347DD653915D62B76CAC39AA14A71B5E63A9BB636B4A943D6B6F13AC0C305A",
+      "currentSha256": "D6347DD653915D62B76CAC39AA14A71B5E63A9BB636B4A943D6B6F13AC0C305A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_tomato.asset",
+      "gitBlob": "9c082b89c0d986830ee8aa2ebbcfccd27927ccce",
+      "gitBlobSha256": "92C287496833037F8F368750146CE34C0017239870F61A328F6EDC6E51AEBE16",
+      "currentSha256": "92C287496833037F8F368750146CE34C0017239870F61A328F6EDC6E51AEBE16",
+      "bytes": 413,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/InitialInventory/ing_tomato.asset.meta",
+      "gitBlob": "a8294836e594c8f933e1aea150525a97ed80f9f9",
+      "gitBlobSha256": "26AEA99243588E47A73CED80796BC6161081A2CE025C086BA0723B07D252A1D0",
+      "currentSha256": "26AEA99243588E47A73CED80796BC6161081A2CE025C086BA0723B07D252A1D0",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_cabbage.asset",
+      "gitBlob": "19bc28bbe1334a64c1236257b4e47dc2c7a1a8ff",
+      "gitBlobSha256": "D4C45C2B5A471CD653FF77EA8B34EB51FF6E56B36287096D5CB46023F7692FDC",
+      "currentSha256": "D4C45C2B5A471CD653FF77EA8B34EB51FF6E56B36287096D5CB46023F7692FDC",
+      "bytes": 734,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_cabbage.asset.meta",
+      "gitBlob": "26e1d07880258311cae424b8fad6c32272ed9481",
+      "gitBlobSha256": "C91B6ADE4A6103B1750B013C09432E88F447F8AD8885FB8BF88A779A508BE9E5",
+      "currentSha256": "C91B6ADE4A6103B1750B013C09432E88F447F8AD8885FB8BF88A779A508BE9E5",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_clear_broth.asset",
+      "gitBlob": "ad103900310b220cac57b60b91f66d428fe3fa1f",
+      "gitBlobSha256": "56F981FA843838867B02E4D5A7128D86001163C7E37F8DEFE503AA8CC94855C3",
+      "currentSha256": "56F981FA843838867B02E4D5A7128D86001163C7E37F8DEFE503AA8CC94855C3",
+      "bytes": 777,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_clear_broth.asset.meta",
+      "gitBlob": "d7d4ed0867e7e857f33445e3e3360c9891ae5b52",
+      "gitBlobSha256": "5A471D9BAFA76C0EFC24FB2B364C62D6285835EFA66F5CB525E4310D0BEEFD1D",
+      "currentSha256": "5A471D9BAFA76C0EFC24FB2B364C62D6285835EFA66F5CB525E4310D0BEEFD1D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_danhuangpai.asset",
+      "gitBlob": "621553da1f4d66d7c0d255982e3db3b4de7264a8",
+      "gitBlobSha256": "FEC0AA89C43C4C335AB41EED20568934DBAE9CBB8DC2FDD3224E3FE8DD063B0F",
+      "currentSha256": "FEC0AA89C43C4C335AB41EED20568934DBAE9CBB8DC2FDD3224E3FE8DD063B0F",
+      "bytes": 794,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_danhuangpai.asset.meta",
+      "gitBlob": "94ee0946d02bc32a3d666ded5ab5e34934d74339",
+      "gitBlobSha256": "5D4BB56CC7A4621C0DB6F204F25D60FFF16EC569D05D17A6C5512891A19BBAE4",
+      "currentSha256": "5D4BB56CC7A4621C0DB6F204F25D60FFF16EC569D05D17A6C5512891A19BBAE4",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_egg.asset",
+      "gitBlob": "5f82e666d8a27acfb6746389c0cd4b10569c1ba5",
+      "gitBlobSha256": "7BE6B846B8C351351E97E058541BB51AC473CD4D1258406C41DE37F129714A7B",
+      "currentSha256": "7BE6B846B8C351351E97E058541BB51AC473CD4D1258406C41DE37F129714A7B",
+      "bytes": 721,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_egg.asset.meta",
+      "gitBlob": "28537b9e297c59d4c1b99ff1ba47b5f86bc1aff1",
+      "gitBlobSha256": "688215A7B96BEB0467963A044B0A08E3561DF64DDB05B7AC2FB43292C6941221",
+      "currentSha256": "688215A7B96BEB0467963A044B0A08E3561DF64DDB05B7AC2FB43292C6941221",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_giant_egg.asset",
+      "gitBlob": "5e68ee3a4bd90e1b23f52a84b7028acbea227aed",
+      "gitBlobSha256": "BC78C644FE65B5F9CA22D7474A12FEAD189CF0C69FF70F2828274131737E3C44",
+      "currentSha256": "BC78C644FE65B5F9CA22D7474A12FEAD189CF0C69FF70F2828274131737E3C44",
+      "bytes": 752,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_giant_egg.asset.meta",
+      "gitBlob": "3801d185c18f797a910723544c0eb84945c411b8",
+      "gitBlobSha256": "DBE5D45D9A0788CCA217905BCD20862B14A11FA48ED129062D721F34A13CDBC4",
+      "currentSha256": "DBE5D45D9A0788CCA217905BCD20862B14A11FA48ED129062D721F34A13CDBC4",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_ham_sausage.asset",
+      "gitBlob": "b19fa5010da6b5b66226deeb35f344fa2db24749",
+      "gitBlobSha256": "1CE67D28E3D9B392CB8CB2EDB865F225F4921300A5CF45FC7A355AC0E1D4F5CC",
+      "currentSha256": "1CE67D28E3D9B392CB8CB2EDB865F225F4921300A5CF45FC7A355AC0E1D4F5CC",
+      "bytes": 745,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_ham_sausage.asset.meta",
+      "gitBlob": "ae0a3456b8f6d1ee07eb6515dffddc8ab017fa9d",
+      "gitBlobSha256": "B7562EA10509B0C0425DDBC00E608F9FCF530BF853911FCF09DDDA0BA8743990",
+      "currentSha256": "B7562EA10509B0C0425DDBC00E608F9FCF530BF853911FCF09DDDA0BA8743990",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_milk_box.asset",
+      "gitBlob": "2a0345373a01a95dde948573b6feb570ab3133af",
+      "gitBlobSha256": "67008522AF72409D4E0DBF28867CB69491B75623E45918A864F46ACB970F12EE",
+      "currentSha256": "67008522AF72409D4E0DBF28867CB69491B75623E45918A864F46ACB970F12EE",
+      "bytes": 748,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_milk_box.asset.meta",
+      "gitBlob": "33137983a87f8b60fc1f6bf98b81c42a91fcd38b",
+      "gitBlobSha256": "D84C92A6129CA156EA79636C97733C7C90684C15EA8C39D4A44BED8A691D9E7F",
+      "currentSha256": "D84C92A6129CA156EA79636C97733C7C90684C15EA8C39D4A44BED8A691D9E7F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_milktea_fen.asset",
+      "gitBlob": "173592002a6ad90f1f19645a652a70beb9079070",
+      "gitBlobSha256": "3F988EF1BAD6AFA830EB64D041948141C1E65A9462D5088184943C9195C917A4",
+      "currentSha256": "3F988EF1BAD6AFA830EB64D041948141C1E65A9462D5088184943C9195C917A4",
+      "bytes": 781,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_milktea_fen.asset.meta",
+      "gitBlob": "8b0572dcfe28bf8d347966e21cd43e6bc56c7dad",
+      "gitBlobSha256": "559AC989CD3BBEE695FE8BC5D6DFF74A1F89F44CC3DE9AA51CE0FB6304E2CBDC",
+      "currentSha256": "559AC989CD3BBEE695FE8BC5D6DFF74A1F89F44CC3DE9AA51CE0FB6304E2CBDC",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_nongtangbao.asset",
+      "gitBlob": "d939ccc27714edb46a1dcd62cab9eec75331c335",
+      "gitBlobSha256": "262B10A09CD1EC24B459569D088E0A3FDD00D332C9998DF8F2F9458F2438D01C",
+      "currentSha256": "262B10A09CD1EC24B459569D088E0A3FDD00D332C9998DF8F2F9458F2438D01C",
+      "bytes": 780,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_nongtangbao.asset.meta",
+      "gitBlob": "3c7d09d6931f16627385d084e026d047fcba443d",
+      "gitBlobSha256": "E4B8F8610F514CE959583097DCE21539678128B6B1BE435C2E2394C3D9C960C8",
+      "currentSha256": "E4B8F8610F514CE959583097DCE21539678128B6B1BE435C2E2394C3D9C960C8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_dried.asset",
+      "gitBlob": "861d99766294db3e2d6acd7866f5df1990adf5e2",
+      "gitBlobSha256": "29B174C04C4AEAB333227A8C21D9103E528E9770FA53E88844F460C7D88BDC70",
+      "currentSha256": "29B174C04C4AEAB333227A8C21D9103E528E9770FA53E88844F460C7D88BDC70",
+      "bytes": 755,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_dried.asset.meta",
+      "gitBlob": "4a442200feff5595e4823163e588e2b0c5d8982a",
+      "gitBlobSha256": "05A7E90C54B65837AA15701928E5C11BEA3EC286B1CE654B4533A041A31A03F8",
+      "currentSha256": "05A7E90C54B65837AA15701928E5C11BEA3EC286B1CE654B4533A041A31A03F8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_instant.asset",
+      "gitBlob": "9c1d35f3a05ab40dc7102a9454069c23da15db9b",
+      "gitBlobSha256": "B548F1DA550BAC83633530EC3DA2BCFA184B5EED8795F6E489B544485D5F4CF8",
+      "currentSha256": "B548F1DA550BAC83633530EC3DA2BCFA184B5EED8795F6E489B544485D5F4CF8",
+      "bytes": 761,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_instant.asset.meta",
+      "gitBlob": "2980172b98a9061d45e755cf3e93181f637d64c4",
+      "gitBlobSha256": "BE24BAC90F30F54DB821C54655EF9004F0EC5E5F6DA06485C64100B3F552778F",
+      "currentSha256": "BE24BAC90F30F54DB821C54655EF9004F0EC5E5F6DA06485C64100B3F552778F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_rice.asset",
+      "gitBlob": "b89c4bc1e7605524c0085cec69ecfb05c4dde16a",
+      "gitBlobSha256": "83F0D2DEB75EB143510E9281F103293E6F8555213772999322028003E5B015B3",
+      "currentSha256": "83F0D2DEB75EB143510E9281F103293E6F8555213772999322028003E5B015B3",
+      "bytes": 782,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_noodle_rice.asset.meta",
+      "gitBlob": "41003ccc75ed7166fdf413d4be1b81b50845b0ef",
+      "gitBlobSha256": "AC749D14C626046AB5E758A603B73F68EC255F7341E64A1CF282BFF2D845FA1C",
+      "currentSha256": "AC749D14C626046AB5E758A603B73F68EC255F7341E64A1CF282BFF2D845FA1C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_octopus_leg.asset",
+      "gitBlob": "24ee84fc63f7a8fb42290d6c3c48edaf65dc77cf",
+      "gitBlobSha256": "29E0A2AC4624FEAD65892A7FEE75E25A66E98AC56701C7970CE17D09361E7C5D",
+      "currentSha256": "29E0A2AC4624FEAD65892A7FEE75E25A66E98AC56701C7970CE17D09361E7C5D",
+      "bytes": 750,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_octopus_leg.asset.meta",
+      "gitBlob": "f0a4ff92945ffc3420bbffe9ee7275c2a9913931",
+      "gitBlobSha256": "E975DF9877159180D6AE01D9D6A43DE797CF3D474C54BE73DDC5DBD97631B10C",
+      "currentSha256": "E975DF9877159180D6AE01D9D6A43DE797CF3D474C54BE73DDC5DBD97631B10C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_ofanqie.asset",
+      "gitBlob": "2fbd21f51d0ab85ed2d094a69518356319f901e1",
+      "gitBlobSha256": "7443CA6B9AC95B5EE1DCE246ECC55C46CFEA2FD5CC76DC5A4CB4717ECB9640DE",
+      "currentSha256": "7443CA6B9AC95B5EE1DCE246ECC55C46CFEA2FD5CC76DC5A4CB4717ECB9640DE",
+      "bytes": 770,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_ofanqie.asset.meta",
+      "gitBlob": "55c35b1f6b7d56ad8ccc16768a469a8c14290a10",
+      "gitBlobSha256": "619FE2E3CA447C8DDAED86F2C195CE75BCFA5D8B337E7A2D6A69A04C34436D04",
+      "currentSha256": "619FE2E3CA447C8DDAED86F2C195CE75BCFA5D8B337E7A2D6A69A04C34436D04",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_paomianbao.asset",
+      "gitBlob": "0d1df2bb540e4f05477ae142a1d8e83605974361",
+      "gitBlobSha256": "993CD55C4EC428067AB72061448ADB88A4BC01B7DBFCF48DF2E8217551125D43",
+      "currentSha256": "993CD55C4EC428067AB72061448ADB88A4BC01B7DBFCF48DF2E8217551125D43",
+      "bytes": 778,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_paomianbao.asset.meta",
+      "gitBlob": "00b9ea0d29dc847f0eddab9a77dc8aad15367aa0",
+      "gitBlobSha256": "B7DE50B85611D5961A6FEC227740C00517EFF86368CAA3068421D9EBF8E54D3C",
+      "currentSha256": "B7DE50B85611D5961A6FEC227740C00517EFF86368CAA3068421D9EBF8E54D3C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_pidan.asset",
+      "gitBlob": "55ded6a67b84ce57aae58b13e8c0aed957e96e95",
+      "gitBlobSha256": "73FB36A83347DC5D0D49DF60B13B8A9F13CDE793AAE78463643C4E7CF97B7D5C",
+      "currentSha256": "73FB36A83347DC5D0D49DF60B13B8A9F13CDE793AAE78463643C4E7CF97B7D5C",
+      "bytes": 755,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_pidan.asset.meta",
+      "gitBlob": "6a93c28a654d89d909ed48da1027ac08f977a17b",
+      "gitBlobSha256": "FFED407C896A1295709290BD7FEF504B9D5B71894C43A2E935F6E433815EC9EF",
+      "currentSha256": "FFED407C896A1295709290BD7FEF504B9D5B71894C43A2E935F6E433815EC9EF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_scallion.asset",
+      "gitBlob": "11d5fa2801956b772fa0d7c95a2cb79ad1c24823",
+      "gitBlobSha256": "42E2578C343CC38C8399E842E13645D80B4BDEDDA8C8AE289097DA195EDFCECB",
+      "currentSha256": "42E2578C343CC38C8399E842E13645D80B4BDEDDA8C8AE289097DA195EDFCECB",
+      "bytes": 748,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_scallion.asset.meta",
+      "gitBlob": "c9b925ffc8d52666a60914698ddd8cdd3673e328",
+      "gitBlobSha256": "A624D86B814359C5BAE2010DD55D9B7CE7E0316C8C530D49D918BF14C3AC08B6",
+      "currentSha256": "A624D86B814359C5BAE2010DD55D9B7CE7E0316C8C530D49D918BF14C3AC08B6",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_tomato.asset",
+      "gitBlob": "a160e04a7b6026ef8c7e338cced7e8af571c491f",
+      "gitBlobSha256": "1FA93BAB88394675A26425C69A10706B89F98F2FC8DB3F547234E713516A658E",
+      "currentSha256": "1FA93BAB88394675A26425C69A10706B89F98F2FC8DB3F547234E713516A658E",
+      "bytes": 744,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/ing_tomato.asset.meta",
+      "gitBlob": "b368fa7256b47b28afb8bd64029df709cb211323",
+      "gitBlobSha256": "05AB68A60F49BC0AA2C5C2CCCC9212F52BD1472AA2734FA22103FBCBEEE86837",
+      "currentSha256": "05AB68A60F49BC0AA2C5C2CCCC9212F52BD1472AA2734FA22103FBCBEEE86837",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_cabbage_washed.asset",
+      "gitBlob": "b8914f302f07b606848ec13cccda3a9814567baa",
+      "gitBlobSha256": "5C824C9B2ACBCEB92AF8A7B8686D9916FE924A8ED5E708C4B8D28114C6C23D63",
+      "currentSha256": "5C824C9B2ACBCEB92AF8A7B8686D9916FE924A8ED5E708C4B8D28114C6C23D63",
+      "bytes": 736,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_cabbage_washed.asset.meta",
+      "gitBlob": "e299263957c1e980492191c075d95eef501b9d76",
+      "gitBlobSha256": "C21660935E2CF93F65F91B7E4EE59C84DA3159377AB7535D9E51E74D7010523E",
+      "currentSha256": "C21660935E2CF93F65F91B7E4EE59C84DA3159377AB7535D9E51E74D7010523E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_clear_broth.asset",
+      "gitBlob": "511b7f5b93c781454683e863ffb5eb3442c44572",
+      "gitBlobSha256": "13CE1D8BC38681716A2B70B2E36FAFA9B956CECBAFFB03191241A87E8F62AC6C",
+      "currentSha256": "13CE1D8BC38681716A2B70B2E36FAFA9B956CECBAFFB03191241A87E8F62AC6C",
+      "bytes": 740,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_clear_broth.asset.meta",
+      "gitBlob": "c197f359c202f3587b183d9706d1225d9ad76591",
+      "gitBlobSha256": "9B518D126E3D3D276FA58441DC5AB2AC11F7B03B25C9982B9FCDE63670456CE7",
+      "currentSha256": "9B518D126E3D3D276FA58441DC5AB2AC11F7B03B25C9982B9FCDE63670456CE7",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_danhuangpai_sui.asset",
+      "gitBlob": "e2e730fa52881ccf6e428ee2ae45e381b600afb8",
+      "gitBlobSha256": "FF7677802C252F28A1BB75D04BB4995F6457DE5D73125BBEE527D63033BA66DD",
+      "currentSha256": "FF7677802C252F28A1BB75D04BB4995F6457DE5D73125BBEE527D63033BA66DD",
+      "bytes": 793,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_danhuangpai_sui.asset.meta",
+      "gitBlob": "6c3da1f3694dd1998ee52af6b7d1876eb1142925",
+      "gitBlobSha256": "32E573E184FE6687BBFDEE1F56C9B6CA589E962EE1CA4C2D036B73D1AF23AF00",
+      "currentSha256": "32E573E184FE6687BBFDEE1F56C9B6CA589E962EE1CA4C2D036B73D1AF23AF00",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_egg_liquid.asset",
+      "gitBlob": "76bb2b160b9cd6c1e4ffba06c031e64f51cc0f90",
+      "gitBlobSha256": "D0A075C68E5D73D7A78DBD6A5ECDF8CE7129F88976E5133C5D46142835631D5A",
+      "currentSha256": "D0A075C68E5D73D7A78DBD6A5ECDF8CE7129F88976E5133C5D46142835631D5A",
+      "bytes": 749,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_egg_liquid.asset.meta",
+      "gitBlob": "a5ba9ef88dbc12e4d26dfd58aa68a50e78f07f11",
+      "gitBlobSha256": "E74E2CE3FE92788142C85BC7D83D3A6867B28782188F38F7ABFA8A8CDC191E40",
+      "currentSha256": "E74E2CE3FE92788142C85BC7D83D3A6867B28782188F38F7ABFA8A8CDC191E40",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_fried_egg.asset",
+      "gitBlob": "545e36f99d97b7dc1c9dd75b21f91eb376cefac2",
+      "gitBlobSha256": "80919DB4AA9F07054C40CC2F5883258A125C017C6E601F9214E6ED9BFCC8BCEF",
+      "currentSha256": "80919DB4AA9F07054C40CC2F5883258A125C017C6E601F9214E6ED9BFCC8BCEF",
+      "bytes": 775,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_fried_egg.asset.meta",
+      "gitBlob": "a3204b9f50183021934e8a57a0ca3e8ddcde442d",
+      "gitBlobSha256": "8057146F3644076E21671C232691081255190B04531A493E1DBFB34E6A1B3D4A",
+      "currentSha256": "8057146F3644076E21671C232691081255190B04531A493E1DBFB34E6A1B3D4A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_instant_noodle_boiled.asset",
+      "gitBlob": "4eaa98eeeef1b41d4f4e051b4a30ce5e3beb67d4",
+      "gitBlobSha256": "6F23AFF594D95B880894407CCCDAC0F512575A3497E88FD12C73635A28CCC29B",
+      "currentSha256": "6F23AFF594D95B880894407CCCDAC0F512575A3497E88FD12C73635A28CCC29B",
+      "bytes": 811,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_instant_noodle_boiled.asset.meta",
+      "gitBlob": "353c0071932fabf207492a1887cde9f331846e2d",
+      "gitBlobSha256": "FB6A37B87D840E83B72EC25875AF86DC60ED03CDB0BE717D148440D946FAD025",
+      "currentSha256": "FB6A37B87D840E83B72EC25875AF86DC60ED03CDB0BE717D148440D946FAD025",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_kaishui_dish.asset",
+      "gitBlob": "d079f5bef486ed4b52e1abefe6841453b98ef09a",
+      "gitBlobSha256": "B69A63F568BD93A40C79B1D1C5A80BD45F728A51EBF42D4DE4C583F0580AA9D8",
+      "currentSha256": "B69A63F568BD93A40C79B1D1C5A80BD45F728A51EBF42D4DE4C583F0580AA9D8",
+      "bytes": 755,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_kaishui_dish.asset.meta",
+      "gitBlob": "88e84289922e601a8d26e51eb0cedcf29c31161e",
+      "gitBlobSha256": "5592C6B8389DFFE8068D0CB03CBA6AE34D60EC5302E6D34B70C6D95430A3CC7D",
+      "currentSha256": "5592C6B8389DFFE8068D0CB03CBA6AE34D60EC5302E6D34B70C6D95430A3CC7D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_milktea_liquid.asset",
+      "gitBlob": "3b95bf29904f8d7e5e7f510280ce8f2c3c43d4e2",
+      "gitBlobSha256": "48E9C7A78D7B371EB97756EEAA56683A6C340B472AFE159D0808F991AAE6E807",
+      "currentSha256": "48E9C7A78D7B371EB97756EEAA56683A6C340B472AFE159D0808F991AAE6E807",
+      "bytes": 790,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_milktea_liquid.asset.meta",
+      "gitBlob": "f88e7b8989a91b6c830b92f2316976bdbc79f6a0",
+      "gitBlobSha256": "41295CA28A15886871CC75BDF844160304A5905B791DD50D76F341C83737513C",
+      "currentSha256": "41295CA28A15886871CC75BDF844160304A5905B791DD50D76F341C83737513C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_nongtangbao_soup.asset",
+      "gitBlob": "a1cbbf2aaf90a137fd13fb0c4d5be665e236a2cc",
+      "gitBlobSha256": "F5FB0E6AA6837AC055D6ECB6C31958BE596A5813EABF29F0694CA620947CD01A",
+      "currentSha256": "F5FB0E6AA6837AC055D6ECB6C31958BE596A5813EABF29F0694CA620947CD01A",
+      "bytes": 784,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_nongtangbao_soup.asset.meta",
+      "gitBlob": "43fc60c4dee75ae84be42322473b9efc324903ed",
+      "gitBlobSha256": "E07E22D862DBA62697705075DE7E6200513F51BD6239881AD04AA484F43C6FC0",
+      "currentSha256": "E07E22D862DBA62697705075DE7E6200513F51BD6239881AD04AA484F43C6FC0",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_noodle_boiled.asset",
+      "gitBlob": "31674126ebcd3ddb6e5042d2876d22d01a584883",
+      "gitBlobSha256": "F0FC2D98A76F784F0A7CC936701C06883C775299AAEE212945188A79FEF7078E",
+      "currentSha256": "F0FC2D98A76F784F0A7CC936701C06883C775299AAEE212945188A79FEF7078E",
+      "bytes": 758,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_noodle_boiled.asset.meta",
+      "gitBlob": "67e7817f66f0bda5927ad93abe479ff5af234362",
+      "gitBlobSha256": "A22FE094EC5D7B5078E3FA19DD31C77071867BD102C44FD2B1937D8F57F2DD83",
+      "currentSha256": "A22FE094EC5D7B5078E3FA19DD31C77071867BD102C44FD2B1937D8F57F2DD83",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_ofanqie_danhuangpai.asset",
+      "gitBlob": "78b4b28839d97e558ce15f8bf0423b56a79d01c9",
+      "gitBlobSha256": "840C82CDFDDCF7187E70EADEB443CC131E8156FA0520867BCF9ADA476D937F8C",
+      "currentSha256": "840C82CDFDDCF7187E70EADEB443CC131E8156FA0520867BCF9ADA476D937F8C",
+      "bytes": 805,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_ofanqie_danhuangpai.asset.meta",
+      "gitBlob": "69ab6f62dd26c428a6f75a3c9ce5d8fa2bd37df4",
+      "gitBlobSha256": "A251EF286B6B828EBD344875BBA0F32CB72779BB6F062D4171A967993FCE3B81",
+      "currentSha256": "A251EF286B6B828EBD344875BBA0F32CB72779BB6F062D4171A967993FCE3B81",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_ofanqie_sui.asset",
+      "gitBlob": "595e77aa4dfcb396e1a672aa6653f46fa6444d79",
+      "gitBlobSha256": "4EAD972C97C310C112A17CE7C5969B235C7289D6D81722694A86A9E4D89DFDC9",
+      "currentSha256": "4EAD972C97C310C112A17CE7C5969B235C7289D6D81722694A86A9E4D89DFDC9",
+      "bytes": 781,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_ofanqie_sui.asset.meta",
+      "gitBlob": "fb5c1090b52f849af6b08c183ed16232b2bdb630",
+      "gitBlobSha256": "13CF002BFB61F790A85A2B798964B7C51F4DFFE522DFDD83FB49EFAFBFAB68AF",
+      "currentSha256": "13CF002BFB61F790A85A2B798964B7C51F4DFFE522DFDD83FB49EFAFBFAB68AF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_paomian_soup.asset",
+      "gitBlob": "66cb4b37a4cb5439a3171fe721aef1135e2f9409",
+      "gitBlobSha256": "7108B3C2ED6213DA22794D4AA655CCFB830A4A83C164BA52DFC56B8CBD45148A",
+      "currentSha256": "7108B3C2ED6213DA22794D4AA655CCFB830A4A83C164BA52DFC56B8CBD45148A",
+      "bytes": 772,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_paomian_soup.asset.meta",
+      "gitBlob": "21eb88572948f6c6507edb50e864a03453f927d8",
+      "gitBlobSha256": "2C934CEAFDFB6306D95D8F3547D1CE82CEC2BFD8C01021F34052ABBABA0C510F",
+      "currentSha256": "2C934CEAFDFB6306D95D8F3547D1CE82CEC2BFD8C01021F34052ABBABA0C510F",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_pidan_milktea_noodle.asset",
+      "gitBlob": "e4209c3f6eeef2f776088661cd81ce5d09a45ce3",
+      "gitBlobSha256": "297D7A9E2DA20D6D3C1BCA6F38E47B12D0FA51EC2E3853092BF98D2D3EF5DD00",
+      "currentSha256": "297D7A9E2DA20D6D3C1BCA6F38E47B12D0FA51EC2E3853092BF98D2D3EF5DD00",
+      "bytes": 808,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_pidan_milktea_noodle.asset.meta",
+      "gitBlob": "f527e8ad30ae7713cb5c5905d093c373dd47f387",
+      "gitBlobSha256": "03A0122204236EA9BE00190831C1FAC724224F34695C4668E958FA531579F44E",
+      "currentSha256": "03A0122204236EA9BE00190831C1FAC724224F34695C4668E958FA531579F44E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_qingtang_dish.asset",
+      "gitBlob": "fa2373401815a3e3b694ba02f8730391920a51cf",
+      "gitBlobSha256": "8BE8AB621BFC2B8A571567D00BF6D432FDB89A434CAA6318BD187E9A5BA2A39F",
+      "currentSha256": "8BE8AB621BFC2B8A571567D00BF6D432FDB89A434CAA6318BD187E9A5BA2A39F",
+      "bytes": 746,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_qingtang_dish.asset.meta",
+      "gitBlob": "5502d786884103a993aa59f422c7459d5853100a",
+      "gitBlobSha256": "E7AC00912C5D9832D77298B0A23EA64B968A025B2086B6187EFB7AA08D12CAA0",
+      "currentSha256": "E7AC00912C5D9832D77298B0A23EA64B968A025B2086B6187EFB7AA08D12CAA0",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_rice_noodle_boiled.asset",
+      "gitBlob": "5610ceedda6689588a8c3ae3dcd713ef5a26ecd8",
+      "gitBlobSha256": "A321D4E77848288238FA4CA4E1D03412FEE1E2677885A56B9DDBCFF5E736E644",
+      "currentSha256": "A321D4E77848288238FA4CA4E1D03412FEE1E2677885A56B9DDBCFF5E736E644",
+      "bytes": 802,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_rice_noodle_boiled.asset.meta",
+      "gitBlob": "8235d34d93f3bd09d8967b79476cededef9ee936",
+      "gitBlobSha256": "BA0D6301BC6FA2EE8E49E787CFAB501C9F8488AD39235DE672C93265B101BA9A",
+      "currentSha256": "BA0D6301BC6FA2EE8E49E787CFAB501C9F8488AD39235DE672C93265B101BA9A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_scrambled_egg.asset",
+      "gitBlob": "381d58d84085f7bc5ab6f2e5ed651e04344031a2",
+      "gitBlobSha256": "5A7193B2E78B0EE818E8F351AD1D437AE2AFFA00FE74A11B114C9FE7646BF671",
+      "currentSha256": "5A7193B2E78B0EE818E8F351AD1D437AE2AFFA00FE74A11B114C9FE7646BF671",
+      "bytes": 758,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_scrambled_egg.asset.meta",
+      "gitBlob": "769ab1762cf87f17d197910e5d3143739fa9bb92",
+      "gitBlobSha256": "CD14886A700FCBF64B63CA2A2455490EF1EA19D7E727D8CCC1CDBA2DE6A506C7",
+      "currentSha256": "CD14886A700FCBF64B63CA2A2455490EF1EA19D7E727D8CCC1CDBA2DE6A506C7",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_cut.asset",
+      "gitBlob": "3d5ed4fda9a7f94ed56384591d568255a5ecfa99",
+      "gitBlobSha256": "1CBCEE28C2709319C62DE7857DC93F69F6CE84598D27481521711E695B0A5267",
+      "currentSha256": "1CBCEE28C2709319C62DE7857DC93F69F6CE84598D27481521711E695B0A5267",
+      "bytes": 749,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_cut.asset.meta",
+      "gitBlob": "ebcc04ffdfae56b660dd0630ba648dcce14f85af",
+      "gitBlobSha256": "3BD8B433D638CF49C691D547CD1A1F2C286C4A38DD61669DC5FE237DE7BB99BF",
+      "currentSha256": "3BD8B433D638CF49C691D547CD1A1F2C286C4A38DD61669DC5FE237DE7BB99BF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_egg_dish.asset",
+      "gitBlob": "a483885298cd862d2289811178a2d17298c15f49",
+      "gitBlobSha256": "F9B84F987B701C77511ED44A2D1AC31E952138C3C5AB1A02A49E95B329DFA6F5",
+      "currentSha256": "F9B84F987B701C77511ED44A2D1AC31E952138C3C5AB1A02A49E95B329DFA6F5",
+      "bytes": 764,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_egg_dish.asset.meta",
+      "gitBlob": "3f321e700f011711d97e404590c9b50245578c14",
+      "gitBlobSha256": "EBF41DD8C5B7173F49EAF35FC88624B52CCF7C482C81BFA22E4AC1EFDEF1C8B8",
+      "currentSha256": "EBF41DD8C5B7173F49EAF35FC88624B52CCF7C482C81BFA22E4AC1EFDEF1C8B8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_egg_soup.asset",
+      "gitBlob": "c2d1bfb9e15826b62a8f7f26627a8862485d702a",
+      "gitBlobSha256": "AE617770EA1BD2E0C83810282E1AE720AA94940125C5776B9A78EB3E235DE212",
+      "currentSha256": "AE617770EA1BD2E0C83810282E1AE720AA94940125C5776B9A78EB3E235DE212",
+      "bytes": 764,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_tomato_egg_soup.asset.meta",
+      "gitBlob": "961f8ddd8c84a403e5b271d7f120e7c994a07a1d",
+      "gitBlobSha256": "7AF9B4ABCCE01A73098FF6AA01D68B03DBE7E92BF4AAEC254D0CB0288614AC09",
+      "currentSha256": "7AF9B4ABCCE01A73098FF6AA01D68B03DBE7E92BF4AAEC254D0CB0288614AC09",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_unknown.asset",
+      "gitBlob": "0aa284893213eba5067781ecc94f8800337eff00",
+      "gitBlobSha256": "8396B53A483FA353F151AE593ADECDD17D498ABA83C5CC8AB41D088855D0FD31",
+      "currentSha256": "8396B53A483FA353F151AE593ADECDD17D498ABA83C5CC8AB41D088855D0FD31",
+      "bytes": 740,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/prd_unknown.asset.meta",
+      "gitBlob": "8804f34c3b5bf5b9ecf961dd5ea270bb8eb18053",
+      "gitBlobSha256": "C578D66B35346C77399348807CC3363809088B2335926A0ADB5A96F021E1D6CA",
+      "currentSha256": "C578D66B35346C77399348807CC3363809088B2335926A0ADB5A96F021E1D6CA",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_oil.asset",
+      "gitBlob": "91d940246aa8ea4f60272098343637d7a62b0dbd",
+      "gitBlobSha256": "5D3100BB977914A3FD8DB6D713E84BE31129E144F66C9C2D09A248C3A982CE13",
+      "currentSha256": "5D3100BB977914A3FD8DB6D713E84BE31129E144F66C9C2D09A248C3A982CE13",
+      "bytes": 727,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_oil.asset.meta",
+      "gitBlob": "13db24beb93792941e49e3e9f079e4634fbb5231",
+      "gitBlobSha256": "A1750706F4C535F60E7037F19A5D999AD78EC81F0EF922ABFBB2CBAA9A18FCEC",
+      "currentSha256": "A1750706F4C535F60E7037F19A5D999AD78EC81F0EF922ABFBB2CBAA9A18FCEC",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_salt.asset",
+      "gitBlob": "ef61082446524bd31ae11b2a6457d2c8cb4842a5",
+      "gitBlobSha256": "71ADBA0DECCADFEC4CABB3FAB461A21B0C884B04743F07F46317C5BB1EA2DF2E",
+      "currentSha256": "71ADBA0DECCADFEC4CABB3FAB461A21B0C884B04743F07F46317C5BB1EA2DF2E",
+      "bytes": 730,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_salt.asset.meta",
+      "gitBlob": "cb05a3a38ce98c2e8b76f965382a917c9a169d17",
+      "gitBlobSha256": "CA53631810B422285F0C4B376BF313C0624C0F2C77FC542A36F7AE77ECB497EC",
+      "currentSha256": "CA53631810B422285F0C4B376BF313C0624C0F2C77FC542A36F7AE77ECB497EC",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_water.asset",
+      "gitBlob": "9c66fd18cba8be11b037cc1904347cb646a17950",
+      "gitBlobSha256": "E8725F62F7AFC4217959114E4C9CA56071F4FB7E68CF79BCDBCCA220A8EBFC8E",
+      "currentSha256": "E8725F62F7AFC4217959114E4C9CA56071F4FB7E68CF79BCDBCCA220A8EBFC8E",
+      "bytes": 733,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Items/stp_water.asset.meta",
+      "gitBlob": "ad2cb72394ee0c5efcbba30db800df51735e6cb5",
+      "gitBlobSha256": "9AA45062D1FAF0CC225976BD4FFF9CF9E29EDAA91E547010A1C9A008820976B9",
+      "currentSha256": "9AA45062D1FAF0CC225976BD4FFF9CF9E29EDAA91E547010A1C9A008820976B9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Freezer.asset",
+      "gitBlob": "a690bd04f1b800edcb1b6db92532b96b762a33e1",
+      "gitBlobSha256": "2031AE698AD28D3608061A8541C9C28A1FCB209E588C515FF9CCFEAF08D99D1E",
+      "currentSha256": "2031AE698AD28D3608061A8541C9C28A1FCB209E588C515FF9CCFEAF08D99D1E",
+      "bytes": 606,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Freezer.asset.meta",
+      "gitBlob": "2d7d169327b7be0c69d069c6cabde00e0ee102cc",
+      "gitBlobSha256": "8EB57E7E073E16A8C2A5DDC1A88A0E5A78C9799D94E3C31686B1D92DCECEE7D5",
+      "currentSha256": "8EB57E7E073E16A8C2A5DDC1A88A0E5A78C9799D94E3C31686B1D92DCECEE7D5",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Oven.asset",
+      "gitBlob": "981bfc6ede6a4e15a778108c404db59da2fe1daf",
+      "gitBlobSha256": "8CE455F53E19AB98529F327E513DB1C4765CEDBDFD9F0E58F4248F562BEAAC2E",
+      "currentSha256": "8CE455F53E19AB98529F327E513DB1C4765CEDBDFD9F0E58F4248F562BEAAC2E",
+      "bytes": 594,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Oven.asset.meta",
+      "gitBlob": "ca231d355e4d4698d247da2e0c6f41848de925fb",
+      "gitBlobSha256": "F15BC3CCD7D9161AB447B9C78F24B96F52CE3130069C75D0198354BB6EED5932",
+      "currentSha256": "F15BC3CCD7D9161AB447B9C78F24B96F52CE3130069C75D0198354BB6EED5932",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/PrepCounter.asset",
+      "gitBlob": "746dd1b081d1a2717c2a911ae09cbb6a25deb278",
+      "gitBlobSha256": "F60A1AD8D956C9EF4D17B9FBE6285D087C762CC0E79F66CDBC775951F9A8B7D8",
+      "currentSha256": "F60A1AD8D956C9EF4D17B9FBE6285D087C762CC0E79F66CDBC775951F9A8B7D8",
+      "bytes": 788,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/PrepCounter.asset.meta",
+      "gitBlob": "ef3191c179fbca05a4bf6489c717304989c06126",
+      "gitBlobSha256": "FB8DAECACD2ED008A60FFA0D8D549E33517E7E3FDDF222BD79047F67F5424045",
+      "currentSha256": "FB8DAECACD2ED008A60FFA0D8D549E33517E7E3FDDF222BD79047F67F5424045",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Salad.asset",
+      "gitBlob": "6851a71a5e0271ba5ad83f55bb458512c50f106d",
+      "gitBlobSha256": "A8323ABE6760D2D4A1C9147BC5CE7FF7A84462B477CD5FF050A9C2ABFE732F95",
+      "currentSha256": "A8323ABE6760D2D4A1C9147BC5CE7FF7A84462B477CD5FF050A9C2ABFE732F95",
+      "bytes": 614,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Salad.asset.meta",
+      "gitBlob": "890fa1716426804a44c63a79b18df1f6cfa64ff2",
+      "gitBlobSha256": "E369F3B83E9F6E3DB7E090AEC0C5C56EA36BF80094FECCD5FB1F9D9E3973113C",
+      "currentSha256": "E369F3B83E9F6E3DB7E090AEC0C5C56EA36BF80094FECCD5FB1F9D9E3973113C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Stove.asset",
+      "gitBlob": "4a170ad85a34951499085afb87c7077be0f3ae29",
+      "gitBlobSha256": "6C20485C77854A20620E4B15F35F57927AA1EEE77592052B117D5E7DBF1AA871",
+      "currentSha256": "6C20485C77854A20620E4B15F35F57927AA1EEE77592052B117D5E7DBF1AA871",
+      "bytes": 748,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/KitchenAreas/Stove.asset.meta",
+      "gitBlob": "42a250968a025e9951f55bcbb3a393408c48697b",
+      "gitBlobSha256": "E4DD3DEB43DC1AFE69FF15BAF2FCBE818E6DF79AC67CDEAF03750C419B1B80E7",
+      "currentSha256": "E4DD3DEB43DC1AFE69FF15BAF2FCBE818E6DF79AC67CDEAF03750C419B1B80E7",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_boil.asset",
+      "gitBlob": "83b383b7512d5aa6ce2eecbf783f3bceef8a00a7",
+      "gitBlobSha256": "12175379A1BEF72741387F70296AC54411FF298CA6E42F5A325151505E10CB0B",
+      "currentSha256": "12175379A1BEF72741387F70296AC54411FF298CA6E42F5A325151505E10CB0B",
+      "bytes": 480,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_boil.asset.meta",
+      "gitBlob": "122eb7226e91f26ee2e866a73bc32b8907902fb6",
+      "gitBlobSha256": "F1018F9712AB5470C9810DB216247AE30CC18F0BC7A349C0D374B67C0B33D611",
+      "currentSha256": "F1018F9712AB5470C9810DB216247AE30CC18F0BC7A349C0D374B67C0B33D611",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_cut.asset",
+      "gitBlob": "b3d643fc066e082b6f42af9bffa98ddcfb015aab",
+      "gitBlobSha256": "B905EEAD5FEFB0A62AD489B03EBFEBE37BE0DAD4ACBE8B4C0928F6CF248C0462",
+      "currentSha256": "B905EEAD5FEFB0A62AD489B03EBFEBE37BE0DAD4ACBE8B4C0928F6CF248C0462",
+      "bytes": 478,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_cut.asset.meta",
+      "gitBlob": "775ecee6c25002bab926396d93f25228d52667b9",
+      "gitBlobSha256": "B766FFD7416A24ECEA440291EAFCAD7ADC01A7FC2B4BD4512FB56AC22A237B6C",
+      "currentSha256": "B766FFD7416A24ECEA440291EAFCAD7ADC01A7FC2B4BD4512FB56AC22A237B6C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_fry.asset",
+      "gitBlob": "8948817d9d98d678cdd8ef33a68845778fda26f4",
+      "gitBlobSha256": "266CBEDCB6E8F03A6CCA30A00BC5CD08AD01FE2467940420DBB7422F1161F461",
+      "currentSha256": "266CBEDCB6E8F03A6CCA30A00BC5CD08AD01FE2467940420DBB7422F1161F461",
+      "bytes": 516,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_fry.asset.meta",
+      "gitBlob": "f3503ca7c4d52b63873e44e9f02d5c4baee9ab65",
+      "gitBlobSha256": "2B11AE88310BD398C7CB54261287E78D0D972A7BB2BFB3C37E4E3A4111390934",
+      "currentSha256": "2B11AE88310BD398C7CB54261287E78D0D972A7BB2BFB3C37E4E3A4111390934",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_mix.asset",
+      "gitBlob": "21a0ea20498f019ec2a5fcef8507a390827b807b",
+      "gitBlobSha256": "25C67C66D053BFFBF12F61FB7EFBBF5EF9FBF0BCA1F7391B52528A55E7C716A1",
+      "currentSha256": "25C67C66D053BFFBF12F61FB7EFBBF5EF9FBF0BCA1F7391B52528A55E7C716A1",
+      "bytes": 516,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_mix.asset.meta",
+      "gitBlob": "21a97c24cb61f8bd3572d826d96661f70036d1ce",
+      "gitBlobSha256": "C409759EFDCFFCF327F60AD2F1815626D53BA8FFDE35EECE056057561980B997",
+      "currentSha256": "C409759EFDCFFCF327F60AD2F1815626D53BA8FFDE35EECE056057561980B997",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_no_process.asset",
+      "gitBlob": "c6d3bf7cb5bd5eae7feadedaa705d9592baf077b",
+      "gitBlobSha256": "40B40A06A2A81579E532A6890F7794B04FE2CC5840057842CAD9950C778C701C",
+      "currentSha256": "40B40A06A2A81579E532A6890F7794B04FE2CC5840057842CAD9950C778C701C",
+      "bytes": 479,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_no_process.asset.meta",
+      "gitBlob": "b652d1838d336008b418dc4b42776673dc6693d6",
+      "gitBlobSha256": "BC44697C1AAFD5849FF071F9DEBE47E4013A4AAF33677B1F4921D1E5FD1A67AD",
+      "currentSha256": "BC44697C1AAFD5849FF071F9DEBE47E4013A4AAF33677B1F4921D1E5FD1A67AD",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_smash.asset",
+      "gitBlob": "13b90aac55d815e9f43e00ef7e2ac219bbfa507f",
+      "gitBlobSha256": "A22ABAC139ACB0D34E4ADDDA3E87BDC318E7F4247E11D1C14B3A249EAD60AD14",
+      "currentSha256": "A22ABAC139ACB0D34E4ADDDA3E87BDC318E7F4247E11D1C14B3A249EAD60AD14",
+      "bytes": 522,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_smash.asset.meta",
+      "gitBlob": "ca218c8655e7c32e555bb78b6e63c52e7cd984da",
+      "gitBlobSha256": "C0329D91A43B2296379CDD320FC7F8B55432F27E9A942B8D76B07CEC90793E29",
+      "currentSha256": "C0329D91A43B2296379CDD320FC7F8B55432F27E9A942B8D76B07CEC90793E29",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_stew.asset",
+      "gitBlob": "3ce22c4fecb80989c4af82ef9285db12e2f4a6b5",
+      "gitBlobSha256": "B36C1692ED5A1C13D8C34F29C0DA80E42BDA660858BF2D7F46434A324F75C2C5",
+      "currentSha256": "B36C1692ED5A1C13D8C34F29C0DA80E42BDA660858BF2D7F46434A324F75C2C5",
+      "bytes": 480,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_stew.asset.meta",
+      "gitBlob": "f5e35aa36148a915d11f1e89f73825da8bf10539",
+      "gitBlobSha256": "3B804222C6739807729A4AC69E7CAF665840A5C459403EB965C39D0443FDDB21",
+      "currentSha256": "3B804222C6739807729A4AC69E7CAF665840A5C459403EB965C39D0443FDDB21",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_stirfry.asset",
+      "gitBlob": "9566c7e0b3512b2c81647b7921a63b08bfb26c35",
+      "gitBlobSha256": "8D2B002ED502AF70502A870D38E249230FABE9BD1F9B8C80E6407EE9C07BA192",
+      "currentSha256": "8D2B002ED502AF70502A870D38E249230FABE9BD1F9B8C80E6407EE9C07BA192",
+      "bytes": 490,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_stirfry.asset.meta",
+      "gitBlob": "c121a5ae4638b687f92b1f1ca43d5bfc7057459c",
+      "gitBlobSha256": "28D42EFF29AF44D0D670C1CD1D3EA25840258657EA3CA8FE7F8B8F25F32F03C9",
+      "currentSha256": "28D42EFF29AF44D0D670C1CD1D3EA25840258657EA3CA8FE7F8B8F25F32F03C9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_wash.asset",
+      "gitBlob": "155309343a4739fbafa17bf2a7d6c62c44cce0f9",
+      "gitBlobSha256": "CC7B3389E3625951D5E79D7071E1B215FBAC0FCB41385EE84A861585BF737A23",
+      "currentSha256": "CC7B3389E3625951D5E79D7071E1B215FBAC0FCB41385EE84A861585BF737A23",
+      "bytes": 481,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_wash.asset.meta",
+      "gitBlob": "9bd9896e989dc9537238eaae4a13d5556cd7ddee",
+      "gitBlobSha256": "6F6D1411D71C2D9951E006FAC8DA39198C59094C076E3F94ED7DC0BE7517F26A",
+      "currentSha256": "6F6D1411D71C2D9951E006FAC8DA39198C59094C076E3F94ED7DC0BE7517F26A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_whisk.asset",
+      "gitBlob": "3aeddceda56376ce72ca29669761ef3dc2a61831",
+      "gitBlobSha256": "58A38B09FF7AA7A8EC2315BC8667CC9EF0D5C9D1170204479691B14A0CD615D5",
+      "currentSha256": "58A38B09FF7AA7A8EC2315BC8667CC9EF0D5C9D1170204479691B14A0CD615D5",
+      "bytes": 484,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessActions/act_whisk.asset.meta",
+      "gitBlob": "54206e0e6bca0019a8428dddc0a7e2fba6837fe5",
+      "gitBlobSha256": "7FDBB6455A20F564044B989995573A4A020E0A8BBA08D57D8CB15694957C6063",
+      "currentSha256": "7FDBB6455A20F564044B989995573A4A020E0A8BBA08D57D8CB15694957C6063",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_cabbage_washed.asset",
+      "gitBlob": "729a006bf7575cf84e8d920beb93b8e4032869d8",
+      "gitBlobSha256": "89479364CD178DFA08AD772C0618CE86E555016885439531A612C6BC4F4BD780",
+      "currentSha256": "89479364CD178DFA08AD772C0618CE86E555016885439531A612C6BC4F4BD780",
+      "bytes": 593,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_cabbage_washed.asset.meta",
+      "gitBlob": "e16e63d0a51ffa27e1018823c206f134de1a1983",
+      "gitBlobSha256": "34EFB8B63BC4DFBC77151EE173BDF62618CDC2B0670A7752FDCA787339BD707C",
+      "currentSha256": "34EFB8B63BC4DFBC77151EE173BDF62618CDC2B0670A7752FDCA787339BD707C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_clear_broth.asset",
+      "gitBlob": "3b6e384f9138d841b017fd956aa5f3416c6f1a9f",
+      "gitBlobSha256": "46813B3717A0E56503CEA9654BC92EE97014F1566D04C67538A37BE02E2C8B75",
+      "currentSha256": "46813B3717A0E56503CEA9654BC92EE97014F1566D04C67538A37BE02E2C8B75",
+      "bytes": 601,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_clear_broth.asset.meta",
+      "gitBlob": "dbaa64f0fdbfe2a2525934779147686275eda8d3",
+      "gitBlobSha256": "D89BA76ABEBF549D1736ED7F9396309EA8636119592F4447A6FE3F166DD57C4D",
+      "currentSha256": "D89BA76ABEBF549D1736ED7F9396309EA8636119592F4447A6FE3F166DD57C4D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_danhuangpai_sui.asset",
+      "gitBlob": "355b627bb1fd52e401a95ee8df5f6bc6180875bf",
+      "gitBlobSha256": "DEC2562A73517907CF215067403821EBADDEFEFC84206929AFDB845A079AF9C9",
+      "currentSha256": "DEC2562A73517907CF215067403821EBADDEFEFC84206929AFDB845A079AF9C9",
+      "bytes": 642,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_danhuangpai_sui.asset.meta",
+      "gitBlob": "ad057aa7bb931cac0735c8d4a562a53c93199073",
+      "gitBlobSha256": "6425A18A83A528DDE69C1ABE8262410CF61A6FEBD5D9E3EB8A688EB220448415",
+      "currentSha256": "6425A18A83A528DDE69C1ABE8262410CF61A6FEBD5D9E3EB8A688EB220448415",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_egg_liquid.asset",
+      "gitBlob": "95b4d8b55bf2b7678fcb5c17018b815913b9c6d5",
+      "gitBlobSha256": "117C4ABB728AF36E6F4DC3A963DBDBEA2A3B4205B206747673B4C67A76CD251F",
+      "currentSha256": "117C4ABB728AF36E6F4DC3A963DBDBEA2A3B4205B206747673B4C67A76CD251F",
+      "bytes": 582,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_egg_liquid.asset.meta",
+      "gitBlob": "f2236bd22d3bef6a7fcdf3bcbe9226715ff9243f",
+      "gitBlobSha256": "A2EEAD70C8ADDB0616392C9BA99F2398DBE1006522FFD9B015CADE85FD1FA73A",
+      "currentSha256": "A2EEAD70C8ADDB0616392C9BA99F2398DBE1006522FFD9B015CADE85FD1FA73A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_egg_liquid_giant.asset",
+      "gitBlob": "bc5899980c5c1527bbd359c9e04ab1c3d634dce3",
+      "gitBlobSha256": "EA52CD914DDDB090920EAF59052B377B94F0DA02CCF56D738381693E60F205DB",
+      "currentSha256": "EA52CD914DDDB090920EAF59052B377B94F0DA02CCF56D738381693E60F205DB",
+      "bytes": 594,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_egg_liquid_giant.asset.meta",
+      "gitBlob": "d48147e79426d3b12c37857fe0b0d858d71aa636",
+      "gitBlobSha256": "A3F7B86114EE64F98B6DA629CFA57EAC228413C9A202A96159C392836F086EF2",
+      "currentSha256": "A3F7B86114EE64F98B6DA629CFA57EAC228413C9A202A96159C392836F086EF2",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_fried_egg.asset",
+      "gitBlob": "5755343ecd4243d50f8706f06fd9cf095f14c076",
+      "gitBlobSha256": "E3876F7056512E29D3744CC396BF838D053606200F71ED605B399668F3FC9F7F",
+      "currentSha256": "E3876F7056512E29D3744CC396BF838D053606200F71ED605B399668F3FC9F7F",
+      "bytes": 625,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_fried_egg.asset.meta",
+      "gitBlob": "3feac4ead7b5a1f855e87302ebe32b0baf9ca253",
+      "gitBlobSha256": "48F1599D1B264207DFBAA16DCA6FCCB1DD96D338A2FC36ABAA19ABDA8D338BDF",
+      "currentSha256": "48F1599D1B264207DFBAA16DCA6FCCB1DD96D338A2FC36ABAA19ABDA8D338BDF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_instant_noodle_boiled.asset",
+      "gitBlob": "cbd54b6222af6950f6e6208fadd184766e3ae518",
+      "gitBlobSha256": "D3D2CF6DAB2A0114B52A19CABD7F6DC6A7D58BF17AB22414A4AB8D8FA5EB8016",
+      "currentSha256": "D3D2CF6DAB2A0114B52A19CABD7F6DC6A7D58BF17AB22414A4AB8D8FA5EB8016",
+      "bytes": 663,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_instant_noodle_boiled.asset.meta",
+      "gitBlob": "8d7741ad6bd74451c580532c2d49edc3c011eb8b",
+      "gitBlobSha256": "794335C6DC80C0F7EEF6ED016DF1FAFCA5257C250FA06833CA865A9D06BFB8E9",
+      "currentSha256": "794335C6DC80C0F7EEF6ED016DF1FAFCA5257C250FA06833CA865A9D06BFB8E9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_kaishui_final.asset",
+      "gitBlob": "11214cf8a24ea3ca482d6816f974f2981a2642c7",
+      "gitBlobSha256": "DE2E91847DE0DCEA22BD00FB980D5D5C41093044955183B82A0133AA2D13B17F",
+      "currentSha256": "DE2E91847DE0DCEA22BD00FB980D5D5C41093044955183B82A0133AA2D13B17F",
+      "bytes": 611,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_kaishui_final.asset.meta",
+      "gitBlob": "ae9eb6e0bfb2a4e7dbd63e5524a12dcc94d55d3c",
+      "gitBlobSha256": "678620CACD91BE6C0EBDDB8B66D4DF9F2A7EC949D4C1EB91579FCBA77247CEC4",
+      "currentSha256": "678620CACD91BE6C0EBDDB8B66D4DF9F2A7EC949D4C1EB91579FCBA77247CEC4",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_milktea_liquid.asset",
+      "gitBlob": "29733ec812df6a1496366acdc8df2de5311c72bf",
+      "gitBlobSha256": "12589E4B45BC4FE922E4073DF0CD4534BF24994041230BE0E6F2EE61C118D646",
+      "currentSha256": "12589E4B45BC4FE922E4073DF0CD4534BF24994041230BE0E6F2EE61C118D646",
+      "bytes": 646,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_milktea_liquid.asset.meta",
+      "gitBlob": "7c55e7112bf2e3ae7b762bc12d7cc32f0aceeb53",
+      "gitBlobSha256": "65B1B9E0189E26E2278875D7E56D1D1603E43562799E20AF929FDA9D23EF9903",
+      "currentSha256": "65B1B9E0189E26E2278875D7E56D1D1603E43562799E20AF929FDA9D23EF9903",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_nongtangbao_soup.asset",
+      "gitBlob": "6c2e5d67e0a3bc0f0db1478c9849a229094447ee",
+      "gitBlobSha256": "BEF71C8E4A3A2ABA985C1CBE0A8578385CD95038A30904D68DD4D8966C700F85",
+      "currentSha256": "BEF71C8E4A3A2ABA985C1CBE0A8578385CD95038A30904D68DD4D8966C700F85",
+      "bytes": 650,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_nongtangbao_soup.asset.meta",
+      "gitBlob": "44181b6fb848d4ca00cf01d035edae017fa4a18a",
+      "gitBlobSha256": "BAA1389BB53BC2785E349666198F0425419DB97A286A839C95ECEB91816E6FB6",
+      "currentSha256": "BAA1389BB53BC2785E349666198F0425419DB97A286A839C95ECEB91816E6FB6",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_noodle_boiled.asset",
+      "gitBlob": "f3da8874cacd572adb1dc44156647afcb542bd92",
+      "gitBlobSha256": "5346CF47A5C3AF781D0A1887222A3DB6D7888A32AE8E2D8B6D14E5A7860D16DF",
+      "currentSha256": "5346CF47A5C3AF781D0A1887222A3DB6D7888A32AE8E2D8B6D14E5A7860D16DF",
+      "bytes": 604,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_noodle_boiled.asset.meta",
+      "gitBlob": "cee717ed79c884aa2976b9ee82e472729fba798b",
+      "gitBlobSha256": "F575806E09BCC6D7569C25E1D269128FACC7CB9A98408BD568FF29D3AA7AF5D9",
+      "currentSha256": "F575806E09BCC6D7569C25E1D269128FACC7CB9A98408BD568FF29D3AA7AF5D9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_noodle_boiled_alt.asset",
+      "gitBlob": "c6484bb70418b06b2a40ef3a59a6cd3f069bc840",
+      "gitBlobSha256": "72E2F24A65C0E8284BCA314B3A4F14F7D6ED70F14DB95D463771EED9ADB7981F",
+      "currentSha256": "72E2F24A65C0E8284BCA314B3A4F14F7D6ED70F14DB95D463771EED9ADB7981F",
+      "bytes": 610,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_noodle_boiled_alt.asset.meta",
+      "gitBlob": "e1408d91942ec703daa0a35abc40f06674e8b8d6",
+      "gitBlobSha256": "7F981FBEA5EBFFD51D87DB033B510ECF27B7387663A85913FC643B4CA91A135D",
+      "currentSha256": "7F981FBEA5EBFFD51D87DB033B510ECF27B7387663A85913FC643B4CA91A135D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_ofanqie_danhuangpai.asset",
+      "gitBlob": "d01053b921d29c7f6017504ae64ecda66e32706a",
+      "gitBlobSha256": "4EFC9FF7D0E15153A651734AADF8BDC90C5F286F2C953292D34CCE9A2D80A785",
+      "currentSha256": "4EFC9FF7D0E15153A651734AADF8BDC90C5F286F2C953292D34CCE9A2D80A785",
+      "bytes": 671,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_ofanqie_danhuangpai.asset.meta",
+      "gitBlob": "c6f6b3593b5446e591d13c17ebf47a5a1f9ec96d",
+      "gitBlobSha256": "176119D29C84230784F6AF3E29AB1BA13E41E5E0CA3029F45C31D8880F477042",
+      "currentSha256": "176119D29C84230784F6AF3E29AB1BA13E41E5E0CA3029F45C31D8880F477042",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_ofanqie_sui.asset",
+      "gitBlob": "d6e369bf43c2ae4c9c906390cfe4ebaf992c455f",
+      "gitBlobSha256": "F7FD07807EBF1113AEE29EE659DDED7E7059EAC7679611130D621E60D7D48745",
+      "currentSha256": "F7FD07807EBF1113AEE29EE659DDED7E7059EAC7679611130D621E60D7D48745",
+      "bytes": 630,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_ofanqie_sui.asset.meta",
+      "gitBlob": "c561bd62cd080993a8faaa121afe384ae954de04",
+      "gitBlobSha256": "CF3752E639DC1EED13CBCEB13AC11C17C91DD6BAC0C21AF7E5B673631EF4B487",
+      "currentSha256": "CF3752E639DC1EED13CBCEB13AC11C17C91DD6BAC0C21AF7E5B673631EF4B487",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_paomian_soup.asset",
+      "gitBlob": "d8061c4516141358a6d577876ffb9804e747caca",
+      "gitBlobSha256": "352C8466C6DE4A79BA756847E7B15D43F571465D35C81DB9251B4B275E42DB87",
+      "currentSha256": "352C8466C6DE4A79BA756847E7B15D43F571465D35C81DB9251B4B275E42DB87",
+      "bytes": 641,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_paomian_soup.asset.meta",
+      "gitBlob": "bfd219918bf6629f8d0c88bc8c6f143145907efb",
+      "gitBlobSha256": "1ED88A7AB34A27A0A47DDEEDDEC576FB91E7562D009FC8D91C61422FE586BEAB",
+      "currentSha256": "1ED88A7AB34A27A0A47DDEEDDEC576FB91E7562D009FC8D91C61422FE586BEAB",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_pidan_milktea_noodle.asset",
+      "gitBlob": "999c7291222ac5ea5bde268738bf8566b3c1495d",
+      "gitBlobSha256": "B1025509C048A189A400F0F523F7DB7E3AB12B211371EBFBD1C11DCF7DE8444B",
+      "currentSha256": "B1025509C048A189A400F0F523F7DB7E3AB12B211371EBFBD1C11DCF7DE8444B",
+      "bytes": 686,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_pidan_milktea_noodle.asset.meta",
+      "gitBlob": "cb036a51290918f426bc59ccee4a67445bf998ae",
+      "gitBlobSha256": "AC7CA34E0D347C7DFA634D8FA497402AE57A75D8345FC170AD8B38BF411D1928",
+      "currentSha256": "AC7CA34E0D347C7DFA634D8FA497402AE57A75D8345FC170AD8B38BF411D1928",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_qingtang_dish.asset",
+      "gitBlob": "153f7c4be9a5435196b9c0968c0716b2040cd909",
+      "gitBlobSha256": "C0CC59FEF0D8FDCBB05E6856F0BF2DABEEECAE267A952FF3404C6F7F91C1CC07",
+      "currentSha256": "C0CC59FEF0D8FDCBB05E6856F0BF2DABEEECAE267A952FF3404C6F7F91C1CC07",
+      "bytes": 650,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_qingtang_dish.asset.meta",
+      "gitBlob": "a4dfb2cb789ed758b2e3559d842ea3ec7bb5fe95",
+      "gitBlobSha256": "4DD62FB877AC6D705769D119EFD8FF6D0C3A3AB28BBC612F4E657FDB511424D3",
+      "currentSha256": "4DD62FB877AC6D705769D119EFD8FF6D0C3A3AB28BBC612F4E657FDB511424D3",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_qingtang_final.asset",
+      "gitBlob": "834e5b378cb05d8f6caa26ce7f90ded802f3dc6d",
+      "gitBlobSha256": "0D4BC521D868998EB18CB21E766D5BECFBD82A4A977C1C142C000BAA8AB83B63",
+      "currentSha256": "0D4BC521D868998EB18CB21E766D5BECFBD82A4A977C1C142C000BAA8AB83B63",
+      "bytes": 618,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_qingtang_final.asset.meta",
+      "gitBlob": "34922d469f67f132e301db68e0edc7b13f7cac9f",
+      "gitBlobSha256": "E1F8F626293FB4B7E038D65B294102AD129E6AC2AA8CD2347B8C4C22DD8900E9",
+      "currentSha256": "E1F8F626293FB4B7E038D65B294102AD129E6AC2AA8CD2347B8C4C22DD8900E9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_rice_noodle_boiled.asset",
+      "gitBlob": "119c751503bec60d1bf58eafb0439db01ff4c599",
+      "gitBlobSha256": "A660956F9A97C9783FE94C9CA4E24B4728FCACA1C2167F0B0893032241DEAB42",
+      "currentSha256": "A660956F9A97C9783FE94C9CA4E24B4728FCACA1C2167F0B0893032241DEAB42",
+      "bytes": 654,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_rice_noodle_boiled.asset.meta",
+      "gitBlob": "448574b377e8bff2e00d262432b9d67588da20d8",
+      "gitBlobSha256": "EA82F756314A0E873B4FBC4F7291A9698F164D75D383FE9BFCAA0E7FBE5E8ED6",
+      "currentSha256": "EA82F756314A0E873B4FBC4F7291A9698F164D75D383FE9BFCAA0E7FBE5E8ED6",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_scrambled_egg.asset",
+      "gitBlob": "32ec5da6e54b65d80d83836b29a56e2abc8563b9",
+      "gitBlobSha256": "0B8E49193ECEA7D2837AE32A128C22BB2C46034DDE2B04F3A067B82899DD63C7",
+      "currentSha256": "0B8E49193ECEA7D2837AE32A128C22BB2C46034DDE2B04F3A067B82899DD63C7",
+      "bytes": 603,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_scrambled_egg.asset.meta",
+      "gitBlob": "92980074f51b44991ebb7abdc79ddc87e5c5c26c",
+      "gitBlobSha256": "B4CC94DE0BF763C6D268736549C6C43B7AB856C783934C56DD4D1437BB656864",
+      "currentSha256": "B4CC94DE0BF763C6D268736549C6C43B7AB856C783934C56DD4D1437BB656864",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_cut.asset",
+      "gitBlob": "344cfccb54a3fef4c57824fb4d598b5fe70e95b5",
+      "gitBlobSha256": "AE1D04C204B39DCD0210175E35F6945A7EAB98968747F2EDCC3074DA9AAC30A6",
+      "currentSha256": "AE1D04C204B39DCD0210175E35F6945A7EAB98968747F2EDCC3074DA9AAC30A6",
+      "bytes": 584,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_cut.asset.meta",
+      "gitBlob": "3ed8782b598f0c9de07dd2c08ce1761fa3f3492c",
+      "gitBlobSha256": "546D5D95A0962D047288083B4E6E4F538108131E6E5D27F7B95466C680BE2726",
+      "currentSha256": "546D5D95A0962D047288083B4E6E4F538108131E6E5D27F7B95466C680BE2726",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_dish.asset",
+      "gitBlob": "488c84014d664017493c6c42eb58800240a28eeb",
+      "gitBlobSha256": "3BF965D349A3B7D15A1A2336EAA39DEB352F8BCDB3B2AADB2BA714BF8AAAA6F3",
+      "currentSha256": "3BF965D349A3B7D15A1A2336EAA39DEB352F8BCDB3B2AADB2BA714BF8AAAA6F3",
+      "bytes": 658,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_dish.asset.meta",
+      "gitBlob": "71e1a4eae64a87e0ce2de3d8eed902b576cca90a",
+      "gitBlobSha256": "201FFFEDA9E1CACFE5AA835BE6DAA6B83BCB4D42C31B2D3BC9E9C08EBC163A68",
+      "currentSha256": "201FFFEDA9E1CACFE5AA835BE6DAA6B83BCB4D42C31B2D3BC9E9C08EBC163A68",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_final.asset",
+      "gitBlob": "012880219c5e2762624e46e0e6c7e18057ad151a",
+      "gitBlobSha256": "29D70ACB83A752DA438C8907AAC10E23CC60CFA322A15CA5440A5EF192544096",
+      "currentSha256": "29D70ACB83A752DA438C8907AAC10E23CC60CFA322A15CA5440A5EF192544096",
+      "bytes": 626,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_final.asset.meta",
+      "gitBlob": "12b8ebd4a3ac3a58aded1f70ce7fa4d82c7b3089",
+      "gitBlobSha256": "2C357F1E08310B01F0F932D62703E58EE93869467C1B860AE87C8034A6585D13",
+      "currentSha256": "2C357F1E08310B01F0F932D62703E58EE93869467C1B860AE87C8034A6585D13",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_soup.asset",
+      "gitBlob": "b4127eafc9025398a80da59609979ca7619e2270",
+      "gitBlobSha256": "443060CFFCFA16D70C8E65711A241502F046C9C3AA68BCD7A08F081AA0D1F885",
+      "currentSha256": "443060CFFCFA16D70C8E65711A241502F046C9C3AA68BCD7A08F081AA0D1F885",
+      "bytes": 620,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/ProcessingRecords/proc_tomato_egg_soup.asset.meta",
+      "gitBlob": "cd7bc3643513223d5e645893ff166fe1be2a11c1",
+      "gitBlobSha256": "FE9484785CE0524E92D3E2196BE3DA87F7457D3217C7F611877D766AA0534954",
+      "currentSha256": "FE9484785CE0524E92D3E2196BE3DA87F7457D3217C7F611877D766AA0534954",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_kaishui_cabbage.asset",
+      "gitBlob": "ad0812280776998714e45c5197cdeea893466f68",
+      "gitBlobSha256": "4070942E9610F9E291C60B00620B0FFE65795D04A3FA39C0D054FB716A8AD87D",
+      "currentSha256": "4070942E9610F9E291C60B00620B0FFE65795D04A3FA39C0D054FB716A8AD87D",
+      "bytes": 754,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_kaishui_cabbage.asset.meta",
+      "gitBlob": "8df17db8800bec4931b1990bb542050cadd7b908",
+      "gitBlobSha256": "DD302FF5FF2DB4E4C4F69AADBF910A3CBAF78F687B954583397FCFDC578EBF5A",
+      "currentSha256": "DD302FF5FF2DB4E4C4F69AADBF910A3CBAF78F687B954583397FCFDC578EBF5A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_qingtang_noodle.asset",
+      "gitBlob": "a716ae9ea805435839d6f13658b4abaf74eaf430",
+      "gitBlobSha256": "696A5C0CFAF5E56473C8986EAC2D6DA86083163F11EE8F5214C158A603021DEB",
+      "currentSha256": "696A5C0CFAF5E56473C8986EAC2D6DA86083163F11EE8F5214C158A603021DEB",
+      "bytes": 1020,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_qingtang_noodle.asset.meta",
+      "gitBlob": "7ec9adf7a606cbbd6b76a778a8ad52a95a760106",
+      "gitBlobSha256": "26B1B34557EBFA42383D06DC55F2CFFA52E6DB7BF4242E236D88BED0C181E233",
+      "currentSha256": "26B1B34557EBFA42383D06DC55F2CFFA52E6DB7BF4242E236D88BED0C181E233",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_tomato_egg.asset",
+      "gitBlob": "2f18782d97a3377c2d038e4d830449604c51e08c",
+      "gitBlobSha256": "5BD51E25F0282307A0AFA79B672D1ED6D55116196D1E5255E99B025F195E5589",
+      "currentSha256": "5BD51E25F0282307A0AFA79B672D1ED6D55116196D1E5255E99B025F195E5589",
+      "bytes": 965,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Recipes/rcp_tomato_egg.asset.meta",
+      "gitBlob": "60e4732d18710d76475dadc5cad86770f0527359",
+      "gitBlobSha256": "3967C03C2B9EDE21FA56F3D7B763D68C9FAEDD9C86CA617EB1B42CCD514BEA07",
+      "currentSha256": "3967C03C2B9EDE21FA56F3D7B763D68C9FAEDD9C86CA617EB1B42CCD514BEA07",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_broth_1.asset",
+      "gitBlob": "52bf9592b848b1bb51e7f9f12417445459e49ed2",
+      "gitBlobSha256": "B2800A5B9DC0D1DC76451263C0DB0F1159361A070E0A544B9451E52E13E4620C",
+      "currentSha256": "B2800A5B9DC0D1DC76451263C0DB0F1159361A070E0A544B9451E52E13E4620C",
+      "bytes": 799,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_broth_1.asset.meta",
+      "gitBlob": "0991b74f1bdf743a19bce5ffa50724d7c3ffc048",
+      "gitBlobSha256": "46E517A2242C85B9CDC87AAE952E52D6816815C4F4AB9B30CF53009F76DF0668",
+      "currentSha256": "46E517A2242C85B9CDC87AAE952E52D6816815C4F4AB9B30CF53009F76DF0668",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_cabbage_1.asset",
+      "gitBlob": "701b094f6c25a3073e66a5321d7127b96b8829a7",
+      "gitBlobSha256": "D18DDF662C0CBDB11F3548A31691B056942E49AAC024DF13CD0B8BF9F208C317",
+      "currentSha256": "D18DDF662C0CBDB11F3548A31691B056942E49AAC024DF13CD0B8BF9F208C317",
+      "bytes": 733,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_cabbage_1.asset.meta",
+      "gitBlob": "4d93cd93a95e2d5f9ea12f436b0e7751bdf31f7e",
+      "gitBlobSha256": "E7B008298CA6B8E318615C08B92F37543600A0EA08624EEDF445B48B03AE1DDF",
+      "currentSha256": "E7B008298CA6B8E318615C08B92F37543600A0EA08624EEDF445B48B03AE1DDF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_egg_3.asset",
+      "gitBlob": "327511fd6d5761b3760705e0b2760a463f1b0571",
+      "gitBlobSha256": "D97FCE614FFF1DB5EEFB5B1AD78C61BD93233C486DFF9D3E20FFA894E91A7DF4",
+      "currentSha256": "D97FCE614FFF1DB5EEFB5B1AD78C61BD93233C486DFF9D3E20FFA894E91A7DF4",
+      "bytes": 735,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_egg_3.asset.meta",
+      "gitBlob": "3ae69ce1cc87b779cd8b70364531ee7800cc696e",
+      "gitBlobSha256": "D824529BAC09CBCCFA9149FA6E2D52DCA1B1EEEC7573FFC1E38B8F9533D65300",
+      "currentSha256": "D824529BAC09CBCCFA9149FA6E2D52DCA1B1EEEC7573FFC1E38B8F9533D65300",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_jiaotou_1.asset",
+      "gitBlob": "7a738c5927ae05e55edf62afa94e860254c7ba81",
+      "gitBlobSha256": "B827D755B2086ECDDA2CA4B3C18F4C628480D7777F5EA1E1BBA81108A25147DA",
+      "currentSha256": "B827D755B2086ECDDA2CA4B3C18F4C628480D7777F5EA1E1BBA81108A25147DA",
+      "bytes": 787,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_jiaotou_1.asset.meta",
+      "gitBlob": "47e389faf58e8c7f2b9f09b940d16e213be14e48",
+      "gitBlobSha256": "EAAE86D9017745831B86558CB3D22BCF6FEF0384603B3D5107B20A85A37E744C",
+      "currentSha256": "EAAE86D9017745831B86558CB3D22BCF6FEF0384603B3D5107B20A85A37E744C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_noodle_1.asset",
+      "gitBlob": "da559202ff5b95923f7b756ea89116e2e50514a4",
+      "gitBlobSha256": "48C5B2974DB5FFF711F11E4C3E7D37E8560A7DD592072F2B671785B8D8F1FC33",
+      "currentSha256": "48C5B2974DB5FFF711F11E4C3E7D37E8560A7DD592072F2B671785B8D8F1FC33",
+      "bytes": 755,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_noodle_1.asset.meta",
+      "gitBlob": "8453acad809d4afc89d8a68dfe6738758bf0a2eb",
+      "gitBlobSha256": "10B7AE66FC3598722916EE02D3D8B86AF064C88243261B7CD76C92B2433528B6",
+      "currentSha256": "10B7AE66FC3598722916EE02D3D8B86AF064C88243261B7CD76C92B2433528B6",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_scallion_1.asset",
+      "gitBlob": "c7d711bdee2ffd2f902d36a935e24e6f89697747",
+      "gitBlobSha256": "08E7119551F8EBEE8D9AA3F08C141770FA1478D26D8344CF61445C6D392DE59F",
+      "currentSha256": "08E7119551F8EBEE8D9AA3F08C141770FA1478D26D8344CF61445C6D392DE59F",
+      "bytes": 719,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_scallion_1.asset.meta",
+      "gitBlob": "ddc3af31b9848760c9be9a4e121c439916e0759c",
+      "gitBlobSha256": "0BA2FADD3E616AE23F86505A1CC8B489DF579C9F781EF15DCDF1F9FA947ECE4D",
+      "currentSha256": "0BA2FADD3E616AE23F86505A1CC8B489DF579C9F781EF15DCDF1F9FA947ECE4D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_tomato_2.asset",
+      "gitBlob": "d5cccd595a7b6dd811ff018449b936f402e3ae48",
+      "gitBlobSha256": "68371E7A7DFA953C6977AE7179311C6972AF0FA0C15B2FF0520C230A141B4401",
+      "currentSha256": "68371E7A7DFA953C6977AE7179311C6972AF0FA0C15B2FF0520C230A141B4401",
+      "bytes": 726,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSlots/slot_tomato_2.asset.meta",
+      "gitBlob": "9ae4a7750aca5f24c88e1e222131a9fc418725d0",
+      "gitBlobSha256": "1CAFCAC64043E4D0359EE7F065A3FAB3ED41BC84FE6889D3DC79ECCAADB42B73",
+      "currentSha256": "1CAFCAC64043E4D0359EE7F065A3FAB3ED41BC84FE6889D3DC79ECCAADB42B73",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_01.asset",
+      "gitBlob": "744f8de0c40a80c9daec8b85d7be320f4491605c",
+      "gitBlobSha256": "A195B89800A90B5D4F6CEEB458C7CCAE185F4638F90776EC3147CCE23BA4BC98",
+      "currentSha256": "A195B89800A90B5D4F6CEEB458C7CCAE185F4638F90776EC3147CCE23BA4BC98",
+      "bytes": 630,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_01.asset.meta",
+      "gitBlob": "8003b3a81c0ae3ba3717ac93809b463c275cd6a2",
+      "gitBlobSha256": "3834968E6DD1CF661806AF9D4664C6FDF328A83DFE9DB832B1735838E547E9FB",
+      "currentSha256": "3834968E6DD1CF661806AF9D4664C6FDF328A83DFE9DB832B1735838E547E9FB",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_02.asset",
+      "gitBlob": "22541ab43983c5491550212a84a6b000065c4f27",
+      "gitBlobSha256": "7B7ED0529AA8A810C44C6E9943B9893E8633E57EFEBFD5F3ADA82487CAB82365",
+      "currentSha256": "7B7ED0529AA8A810C44C6E9943B9893E8633E57EFEBFD5F3ADA82487CAB82365",
+      "bytes": 639,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_02.asset.meta",
+      "gitBlob": "a5a063e74c941ea28bfa4f47eb5170645c668e89",
+      "gitBlobSha256": "0003FD085E127D37566F76646FA8D2BF899C2EFE3D8B62E53634D4CBD9F028C9",
+      "currentSha256": "0003FD085E127D37566F76646FA8D2BF899C2EFE3D8B62E53634D4CBD9F028C9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_03.asset",
+      "gitBlob": "5b2917dbdcf2a078fd00eaffadfc970396d08e95",
+      "gitBlobSha256": "E76D48A0C8DF89D98DD1150DB5BFFEFB4E907965B3B2F85AE6640D0783EA21AC",
+      "currentSha256": "E76D48A0C8DF89D98DD1150DB5BFFEFB4E907965B3B2F85AE6640D0783EA21AC",
+      "bytes": 624,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_kc_03.asset.meta",
+      "gitBlob": "716d7496759124d6f48557f12178c2f58900fec1",
+      "gitBlobSha256": "1556E46F1A51D5DBFBC10F7A28D21E76437E74B20542A249355F4EB25D05585A",
+      "currentSha256": "1556E46F1A51D5DBFBC10F7A28D21E76437E74B20542A249355F4EB25D05585A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_01.asset",
+      "gitBlob": "0e2167566c57e78fbb8e3d01380d3556151995e5",
+      "gitBlobSha256": "0F97233C43BE2C41350B792C2BB06BDE0A6BC51B5599176D193BADD01746A1C9",
+      "currentSha256": "0F97233C43BE2C41350B792C2BB06BDE0A6BC51B5599176D193BADD01746A1C9",
+      "bytes": 738,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_01.asset.meta",
+      "gitBlob": "3316d3edf4bec64d2685c91f5019b26d0635292f",
+      "gitBlobSha256": "5A7FCBA7509E0C0D763674C53EF6877331A0E43233DBE5AE936B2DC8BCCB214C",
+      "currentSha256": "5A7FCBA7509E0C0D763674C53EF6877331A0E43233DBE5AE936B2DC8BCCB214C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_02.asset",
+      "gitBlob": "4c4228b3f3692e55f158bb3314db5e28dff6b2d2",
+      "gitBlobSha256": "EF601EDCD4E3443B1D0A0F6F656E5A6842ECBF37D78D816B8D130B16299DABFD",
+      "currentSha256": "EF601EDCD4E3443B1D0A0F6F656E5A6842ECBF37D78D816B8D130B16299DABFD",
+      "bytes": 767,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_02.asset.meta",
+      "gitBlob": "f356b0b92605959814865decc666eac5659e10aa",
+      "gitBlobSha256": "62C5A7843FEFB05E23A28C431C3F39DA10530953DDDC6E4B4F2310C216FDE755",
+      "currentSha256": "62C5A7843FEFB05E23A28C431C3F39DA10530953DDDC6E4B4F2310C216FDE755",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_03.asset",
+      "gitBlob": "b2613ceafe2ee4fbe5e5466405cdcd890847fe7f",
+      "gitBlobSha256": "FC37702EEF9458E6A14DA26A9C48DFF35761646EB4FF66A219DA960D8B6B1B12",
+      "currentSha256": "FC37702EEF9458E6A14DA26A9C48DFF35761646EB4FF66A219DA960D8B6B1B12",
+      "bytes": 757,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_03.asset.meta",
+      "gitBlob": "618e5c437e8bfb30b83dc84f6ac18f7283bd06e8",
+      "gitBlobSha256": "781B70EBCF0B0DC53F68B113F7EF683C7BE04FE3418B2BF8721B5C879EE6BA26",
+      "currentSha256": "781B70EBCF0B0DC53F68B113F7EF683C7BE04FE3418B2BF8721B5C879EE6BA26",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_04.asset",
+      "gitBlob": "688d8f32aaa4b4b006aef5c6d7377564567c206e",
+      "gitBlobSha256": "6F1D2D4504BFABDEEFA28B2516BAF108A82401F0A6F00DE3CC1B7E2E936495CD",
+      "currentSha256": "6F1D2D4504BFABDEEFA28B2516BAF108A82401F0A6F00DE3CC1B7E2E936495CD",
+      "bytes": 726,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_qt_04.asset.meta",
+      "gitBlob": "7da1940d24b59fc7c4cbdaa6f50c27dddacd0e33",
+      "gitBlobSha256": "847ED3B6A103373264ABC9B830855BEABDE9D5FA7AE903CA351F80846DE3B801",
+      "currentSha256": "847ED3B6A103373264ABC9B830855BEABDE9D5FA7AE903CA351F80846DE3B801",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_01.asset",
+      "gitBlob": "1883e85fb0c75475604efbc3b77c388ecff91882",
+      "gitBlobSha256": "62CFEF5326D32794B485D933EC07F58F200B5D6E40CF40D96E757F040DC165EE",
+      "currentSha256": "62CFEF5326D32794B485D933EC07F58F200B5D6E40CF40D96E757F040DC165EE",
+      "bytes": 741,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_01.asset.meta",
+      "gitBlob": "8e75e40df1732acb93ccd9a372a2c2751ae9c743",
+      "gitBlobSha256": "1F51985365B2B742252E90C5DD2A955A8C4B5A0611B0DD6C1091DF82ACC59A4A",
+      "currentSha256": "1F51985365B2B742252E90C5DD2A955A8C4B5A0611B0DD6C1091DF82ACC59A4A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_02.asset",
+      "gitBlob": "0ad38e20d94b978ccfb866687ca0d946394f7385",
+      "gitBlobSha256": "43FB809689BF1D525B65A783C3077CFC2232CDA63B1C0BC1CBE2D33AEAD8D6F9",
+      "currentSha256": "43FB809689BF1D525B65A783C3077CFC2232CDA63B1C0BC1CBE2D33AEAD8D6F9",
+      "bytes": 736,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_02.asset.meta",
+      "gitBlob": "85b5f3f9ffc9ac924d357fc8f53313caed07aaad",
+      "gitBlobSha256": "E7C24BA1F18FBDE2DD785233493A9F43DF694D32450A7B0E34B5FD54F2E3188A",
+      "currentSha256": "E7C24BA1F18FBDE2DD785233493A9F43DF694D32450A7B0E34B5FD54F2E3188A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_03.asset",
+      "gitBlob": "7f4bca3a59c065140db10825abad4555dccf6a49",
+      "gitBlobSha256": "1D6EBD70E5DC2287FFCBD0EF9D36883DC3C253A6D280481E398270FFF81083D4",
+      "currentSha256": "1D6EBD70E5DC2287FFCBD0EF9D36883DC3C253A6D280481E398270FFF81083D4",
+      "bytes": 747,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_03.asset.meta",
+      "gitBlob": "480ccb9ac884fe2f5d8aadc7ab49490b8f8b72b9",
+      "gitBlobSha256": "8129E8FD59DBD08E0CF9417C3616FDDD514272CC252F4CBB6B4ADA6C53B8F26D",
+      "currentSha256": "8129E8FD59DBD08E0CF9417C3616FDDD514272CC252F4CBB6B4ADA6C53B8F26D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_04.asset",
+      "gitBlob": "60902e713b3b918d4b88cd989521f5b843d6bd2c",
+      "gitBlobSha256": "40F69338F7CA65D81EB32BB2E6382823F81093B9719A5E31AF57E5BF1A323C97",
+      "currentSha256": "40F69338F7CA65D81EB32BB2E6382823F81093B9719A5E31AF57E5BF1A323C97",
+      "bytes": 673,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeSteps/step_te_04.asset.meta",
+      "gitBlob": "d34bbe367093ccee712999d4ef20a9b9e19a34c5",
+      "gitBlobSha256": "D793FFDF615A9BC33F77B50B5D0EE4AC1673281D7D467F66785DBC12338AADC8",
+      "currentSha256": "D793FFDF615A9BC33F77B50B5D0EE4AC1673281D7D467F66785DBC12338AADC8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_kaishui_std.asset",
+      "gitBlob": "07f94787f5788f0030dc59edc750ee03c515b777",
+      "gitBlobSha256": "912BC9AC71ABE83311C48C86A1CD98A6E36BE2DD8C1A9BA2A1A0FD01BE6F6213",
+      "currentSha256": "912BC9AC71ABE83311C48C86A1CD98A6E36BE2DD8C1A9BA2A1A0FD01BE6F6213",
+      "bytes": 637,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_kaishui_std.asset.meta",
+      "gitBlob": "3680d1a85f3c4cd175fd255159f33f2c69366652",
+      "gitBlobSha256": "678AF6D3D1E368B700DF1086CD956EB2D5EA544210B4D448EAA536B0C11DD080",
+      "currentSha256": "678AF6D3D1E368B700DF1086CD956EB2D5EA544210B4D448EAA536B0C11DD080",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_ofanqie_danhuangpai.asset",
+      "gitBlob": "6722a69d950a1a0251a00a349674cbf7dd172654",
+      "gitBlobSha256": "7A11860DDDF451678FE39B4352EFE390DD919169FD553A8E808E054A745D4124",
+      "currentSha256": "7A11860DDDF451678FE39B4352EFE390DD919169FD553A8E808E054A745D4124",
+      "bytes": 694,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_ofanqie_danhuangpai.asset.meta",
+      "gitBlob": "66c2c97005eab3f0aa5f271342742cbbea5bb5a5",
+      "gitBlobSha256": "EB1D738A1F3BF70436898AEBE98EDECFE0B49C434D9E1652AF82563FEF75C93B",
+      "currentSha256": "EB1D738A1F3BF70436898AEBE98EDECFE0B49C434D9E1652AF82563FEF75C93B",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_pidan_milktea_noodle.asset",
+      "gitBlob": "bd42098efb4e69e9f2ec3d4cc8bd0e7186175f94",
+      "gitBlobSha256": "622FF57D3AADE746E038C92807C1B59E32E871047262D650DE2CF037C7B984C1",
+      "currentSha256": "622FF57D3AADE746E038C92807C1B59E32E871047262D650DE2CF037C7B984C1",
+      "bytes": 701,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_pidan_milktea_noodle.asset.meta",
+      "gitBlob": "d871c27511f760a5ba2e17a127bea3b38c31d183",
+      "gitBlobSha256": "368CE9EB4C891EE8795ADAB1EA33BD5EFD95A304C501BBE63845E2645B269A23",
+      "currentSha256": "368CE9EB4C891EE8795ADAB1EA33BD5EFD95A304C501BBE63845E2645B269A23",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_qingtang_std.asset",
+      "gitBlob": "6324a98a610a8648306a458d71ce96221a367436",
+      "gitBlobSha256": "A8A3F00F5FAA9A2827294444485417308AF482384D431B4C196DDE76B331C0C8",
+      "currentSha256": "A8A3F00F5FAA9A2827294444485417308AF482384D431B4C196DDE76B331C0C8",
+      "bytes": 628,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_qingtang_std.asset.meta",
+      "gitBlob": "387c751e9de03012be9b599c635748fded003bac",
+      "gitBlobSha256": "30EF3A6D92B56185E3711F83D05045C4BCA0246E414927E8B5F47CD9CE207913",
+      "currentSha256": "30EF3A6D92B56185E3711F83D05045C4BCA0246E414927E8B5F47CD9CE207913",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_tomato_egg_soup.asset",
+      "gitBlob": "c7711dff198280efee13aa88be66ed82233f8e1a",
+      "gitBlobSha256": "125F1511DD143E60365297B64B9FBC9DA5E6FB03D55F6C4EED1AA31CEF75789E",
+      "currentSha256": "125F1511DD143E60365297B64B9FBC9DA5E6FB03D55F6C4EED1AA31CEF75789E",
+      "bytes": 643,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_tomato_egg_soup.asset.meta",
+      "gitBlob": "98f6d164e78fc4b1dac658d3caed61e6c1d061fa",
+      "gitBlobSha256": "DA63EADD282DF3046271E0521B9D22596EEC6FF62E8B509F3368A244847C435E",
+      "currentSha256": "DA63EADD282DF3046271E0521B9D22596EEC6FF62E8B509F3368A244847C435E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_tomato_egg_std.asset",
+      "gitBlob": "4bd393116c0ad62791dfd3380f2097c63b221993",
+      "gitBlobSha256": "D6E3C22C0EFE84DA6F1E1E4C5E2457E1E4C3BC2DF949C55507B7ABDB546C0EBF",
+      "currentSha256": "D6E3C22C0EFE84DA6F1E1E4C5E2457E1E4C3BC2DF949C55507B7ABDB546C0EBF",
+      "bytes": 644,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/RecipeVariants/var_tomato_egg_std.asset.meta",
+      "gitBlob": "0dfe24a8e6f830e02571b2746b4f65bd6109d9a5",
+      "gitBlobSha256": "8EC9C4D3BA075718A75555F99BA335B52BA5BED71AFF71B2D3B57976AC0DD845",
+      "currentSha256": "8EC9C4D3BA075718A75555F99BA335B52BA5BED71AFF71B2D3B57976AC0DD845",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dairy.asset",
+      "gitBlob": "a56a8f67fa40dcd8cba051de87c8cd61e6da394d",
+      "gitBlobSha256": "00927D799E31FCAAD4BE633376A8BF7A74A5B901497B2B7DBE04CCC842D0FA90",
+      "currentSha256": "00927D799E31FCAAD4BE633376A8BF7A74A5B901497B2B7DBE04CCC842D0FA90",
+      "bytes": 592,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dairy.asset.meta",
+      "gitBlob": "bae8a8d2d6e9f0d2b4c4d3e4fd15399fcf548467",
+      "gitBlobSha256": "305E577DA76C77D04B2EF4FD027D502E174A5E366DCB60F9C532BA77B495E418",
+      "currentSha256": "305E577DA76C77D04B2EF4FD027D502E174A5E366DCB60F9C532BA77B495E418",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_boil.asset",
+      "gitBlob": "350de1047780de0a6494a0979944bdebe702f6dc",
+      "gitBlobSha256": "DD541842EC604ECA4A2BF592722F094B643DD1CB5A372E749621316326C0B6BA",
+      "currentSha256": "DD541842EC604ECA4A2BF592722F094B643DD1CB5A372E749621316326C0B6BA",
+      "bytes": 594,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_boil.asset.meta",
+      "gitBlob": "15644d37e32b1ceeecc303c91ba6753c55c87ef5",
+      "gitBlobSha256": "3D12D8F5B5A95A60162757CBBC7D669916C8D8EFF27F100E3D43EFF97A59C3E9",
+      "currentSha256": "3D12D8F5B5A95A60162757CBBC7D669916C8D8EFF27F100E3D43EFF97A59C3E9",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_deepfry.asset",
+      "gitBlob": "3df8f921492a3e9101a86289e3e9b71e4e080924",
+      "gitBlobSha256": "621DA964847FF5461D62D2E6A270A2B7158536E5CB6E0F21845BA39C57F7149C",
+      "currentSha256": "621DA964847FF5461D62D2E6A270A2B7158536E5CB6E0F21845BA39C57F7149C",
+      "bytes": 600,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_deepfry.asset.meta",
+      "gitBlob": "827844b73c214d0082cccbb66acc2ffedae3f56b",
+      "gitBlobSha256": "DA94A032E4D535269820051ADA8DCBD54DCB838E039551FD13271A45354E9956",
+      "currentSha256": "DA94A032E4D535269820051ADA8DCBD54DCB838E039551FD13271A45354E9956",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_salad.asset",
+      "gitBlob": "02dcfb1fed6c4db9bc0f56c434bebf1fe9ff829c",
+      "gitBlobSha256": "18446546EBA289E408E7A760BAF3DF8D6D57FCEB7DEE4AB257AF6368EC14F2DA",
+      "currentSha256": "18446546EBA289E408E7A760BAF3DF8D6D57FCEB7DEE4AB257AF6368EC14F2DA",
+      "bytes": 624,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_salad.asset.meta",
+      "gitBlob": "3337970a43660fb79564203f6e35cf5c8d0a2ef2",
+      "gitBlobSha256": "0DAA01C6CCA6D7586A49ED326EE0FF014DE7C25A3F67E72DD42146603D462DB0",
+      "currentSha256": "0DAA01C6CCA6D7586A49ED326EE0FF014DE7C25A3F67E72DD42146603D462DB0",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_stew.asset",
+      "gitBlob": "6bc738c1fdf78e6b6f10c1f3ed447f49b1673101",
+      "gitBlobSha256": "B1D46EBA114BF3219A8824113F0BB5975B2EE715B4AD60C516D89BE6FDB394CB",
+      "currentSha256": "B1D46EBA114BF3219A8824113F0BB5975B2EE715B4AD60C516D89BE6FDB394CB",
+      "bytes": 594,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_stew.asset.meta",
+      "gitBlob": "bdef3e56eb338cd09c6a4c403b9f975b1e405fc0",
+      "gitBlobSha256": "D8F1970E3BD1B3093835822DB2F89D7706E75C86B7F99331B85770479DBE8890",
+      "currentSha256": "D8F1970E3BD1B3093835822DB2F89D7706E75C86B7F99331B85770479DBE8890",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_stirfry.asset",
+      "gitBlob": "fce8f14be6e16b14d9e223a609828aaee013d86e",
+      "gitBlobSha256": "EAB77F205AED4603236C0064D2F880362A2C721F46104A7AE915B4916377BC80",
+      "currentSha256": "EAB77F205AED4603236C0064D2F880362A2C721F46104A7AE915B4916377BC80",
+      "bytes": 600,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_dish_stirfry.asset.meta",
+      "gitBlob": "0f994067c5f7475b7ab569e466c71aae70280884",
+      "gitBlobSha256": "F315BBEEB231EC0C32651E16F9DC25C14533F9C3508035DAF533454D4F0DFC04",
+      "currentSha256": "F315BBEEB231EC0C32651E16F9DC25C14533F9C3508035DAF533454D4F0DFC04",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_egg.asset",
+      "gitBlob": "f401abe048c31ec09cef3b6dc4554cd920084e78",
+      "gitBlobSha256": "F077E3D27CA45A9F8526CDAFA87EA14E7075F4338F945732D79A2D50A36C6F40",
+      "currentSha256": "F077E3D27CA45A9F8526CDAFA87EA14E7075F4338F945732D79A2D50A36C6F40",
+      "bytes": 588,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_egg.asset.meta",
+      "gitBlob": "78b199f1918fc98c449307564592ff5459fe7a25",
+      "gitBlobSha256": "A9FF78B90577DABE898451E2CE103E0207165A73166B01DCF162F7D28D341787",
+      "currentSha256": "A9FF78B90577DABE898451E2CE103E0207165A73166B01DCF162F7D28D341787",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_confused.asset",
+      "gitBlob": "e37afd4138a4192cedd819d579596a7648148310",
+      "gitBlobSha256": "C8A65E2CC534BFBB832FDE830DDD79D7A437D94857A5B11BEC74E7E5717283EF",
+      "currentSha256": "C8A65E2CC534BFBB832FDE830DDD79D7A437D94857A5B11BEC74E7E5717283EF",
+      "bytes": 608,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_confused.asset.meta",
+      "gitBlob": "b4d55e50a535b8efbff2f7f032a6e2606afcd10a",
+      "gitBlobSha256": "47B7F7B062B40E80CD8AD5FB2B966900102587324F46024B2964C6728EB56A97",
+      "currentSha256": "47B7F7B062B40E80CD8AD5FB2B966900102587324F46024B2964C6728EB56A97",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_easy.asset",
+      "gitBlob": "1b3c6294363bb1b4e2c7613d18793b868f0f4074",
+      "gitBlobSha256": "E89E8A91FF2DC072B293C1ACA25BDEC41208F65993655D33CD4036CAB4D09600",
+      "currentSha256": "E89E8A91FF2DC072B293C1ACA25BDEC41208F65993655D33CD4036CAB4D09600",
+      "bytes": 532,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_easy.asset.meta",
+      "gitBlob": "54b8d1d7a903adaf5fde7575a573b7d73df60c87",
+      "gitBlobSha256": "17079CF2D5FDBAE0BE8A71859B3E149A2EEE7E455F37B7FB712C3D4639EC598C",
+      "currentSha256": "17079CF2D5FDBAE0BE8A71859B3E149A2EEE7E455F37B7FB712C3D4639EC598C",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_fancy.asset",
+      "gitBlob": "b9bb5dfe13171aa2bf10da2e0ffb9bae8056181d",
+      "gitBlobSha256": "D008AB43E3F34B37AA44426ECD88C16998D745FFA8ADBFA1A6D79096F796B618",
+      "currentSha256": "D008AB43E3F34B37AA44426ECD88C16998D745FFA8ADBFA1A6D79096F796B618",
+      "bytes": 534,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_fancy.asset.meta",
+      "gitBlob": "f89adc8339016f00543db99c6cbdcd936afaef14",
+      "gitBlobSha256": "63F5178255A888B9EA0DD75661D58D375E3DDB41BAE52D9ABBE05412897227F1",
+      "currentSha256": "63F5178255A888B9EA0DD75661D58D375E3DDB41BAE52D9ABBE05412897227F1",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_spicy.asset",
+      "gitBlob": "05345eef8335e738e6340873802c7f7f99000516",
+      "gitBlobSha256": "9703406ADD062042B4CB69AD9501BFF24D24CCAB3CB74C1BE298A560B724307E",
+      "currentSha256": "9703406ADD062042B4CB69AD9501BFF24D24CCAB3CB74C1BE298A560B724307E",
+      "bytes": 534,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_spicy.asset.meta",
+      "gitBlob": "fb417166894f55d41364173a765b25a1c8a250d7",
+      "gitBlobSha256": "907BDCF6F5820F9E0ECAB809C86BA5C63F959F409B31805E721994AEAD48F67E",
+      "currentSha256": "907BDCF6F5820F9E0ECAB809C86BA5C63F959F409B31805E721994AEAD48F67E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_yummy.asset",
+      "gitBlob": "e38468b79e31149c1f14da2d727fec2439e24bc7",
+      "gitBlobSha256": "7E823374C1D0E75706452D2ADF93AF1E89EA5516D147E34955697CC4F9F3E6DE",
+      "currentSha256": "7E823374C1D0E75706452D2ADF93AF1E89EA5516D147E34955697CC4F9F3E6DE",
+      "bytes": 602,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_flavor_yummy.asset.meta",
+      "gitBlob": "c71a37fe4f43218e54254fe8df553483b33079e1",
+      "gitBlobSha256": "EDE464D099A2C1BDFDCBF8C0303C7649F03591B446A92C827FA9C566B0B63E68",
+      "currentSha256": "EDE464D099A2C1BDFDCBF8C0303C7649F03591B446A92C827FA9C566B0B63E68",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_fruit.asset",
+      "gitBlob": "f0b0c3eceb3a8471bf4cc00546bdaa0067735549",
+      "gitBlobSha256": "DBF2513A6B39411F176D2A6AFDE418B59D45AACADA3CAC0AD934FB211447C0FA",
+      "currentSha256": "DBF2513A6B39411F176D2A6AFDE418B59D45AACADA3CAC0AD934FB211447C0FA",
+      "bytes": 592,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_fruit.asset.meta",
+      "gitBlob": "c423f15adbdbfe24b5c4c7739e865b7e173afabe",
+      "gitBlobSha256": "D4A721F61077CDE18DA41B15D6F641214D75E53AA2D79E685F8374677E97F67E",
+      "currentSha256": "D4A721F61077CDE18DA41B15D6F641214D75E53AA2D79E685F8374677E97F67E",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_meat.asset",
+      "gitBlob": "f74c6e767ce7a9936b814795c7da349f3dd9fd79",
+      "gitBlobSha256": "973644B01095265E51F5397005AC42DE7729E761EA41114A2E244472C44E1471",
+      "currentSha256": "973644B01095265E51F5397005AC42DE7729E761EA41114A2E244472C44E1471",
+      "bytes": 590,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_meat.asset.meta",
+      "gitBlob": "802f9b0760eef6f4d2ed0825903866438bf9486f",
+      "gitBlobSha256": "B422D45D304D1FEF49A7C5C826462AE866FA4B6853B5A58882971133B2CE51DA",
+      "currentSha256": "B422D45D304D1FEF49A7C5C826462AE866FA4B6853B5A58882971133B2CE51DA",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_seafood.asset",
+      "gitBlob": "8dc7ebbea80832d4c4ddc512efde64997fea9b5b",
+      "gitBlobSha256": "9842EC30D8D72CA374DA716525AECF32699B9191C50AAB205D68C67CF6825A68",
+      "currentSha256": "9842EC30D8D72CA374DA716525AECF32699B9191C50AAB205D68C67CF6825A68",
+      "bytes": 596,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_seafood.asset.meta",
+      "gitBlob": "5f079a6539588624596f203fc87df090099d658d",
+      "gitBlobSha256": "D4D88D10DF0787A59B7F921D506AE8547EC1437C580F7AE756B65F37D5C23251",
+      "currentSha256": "D4D88D10DF0787A59B7F921D506AE8547EC1437C580F7AE756B65F37D5C23251",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_staplefood.asset",
+      "gitBlob": "936366624e49d2a315d3a36bf9913bc20d4bb63f",
+      "gitBlobSha256": "7C61E4E451A85EB6ABF1C7E20E6C5C91D32DFA74DE1F846EF9BC0FB6DF9CCE82",
+      "currentSha256": "7C61E4E451A85EB6ABF1C7E20E6C5C91D32DFA74DE1F846EF9BC0FB6DF9CCE82",
+      "bytes": 602,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_staplefood.asset.meta",
+      "gitBlob": "0afe2a529951e95d09b3a3146d51755660aae596",
+      "gitBlobSha256": "47DB9B5188AFAF46C816180418B8A2CFADDA83DEEF4A58410EBD8027C71F1086",
+      "currentSha256": "47DB9B5188AFAF46C816180418B8A2CFADDA83DEEF4A58410EBD8027C71F1086",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_veg.asset",
+      "gitBlob": "e8f823a9690a55d47d08b1456dcae69194714993",
+      "gitBlobSha256": "47E820744B9342757E3C88B4204F9855C072FFE4953CE7A4CD47BEE0B8A34883",
+      "currentSha256": "47E820744B9342757E3C88B4204F9855C072FFE4953CE7A4CD47BEE0B8A34883",
+      "bytes": 588,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tags/tag_veg.asset.meta",
+      "gitBlob": "e29587a683e1762476c6e076f9655395bfda48a7",
+      "gitBlobSha256": "624BE77F300DB325CE205E06F14E6F5B242B3D122B1D8680B91C70CE180C9ABA",
+      "currentSha256": "624BE77F300DB325CE205E06F14E6F5B242B3D122B1D8680B91C70CE180C9ABA",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_board.asset",
+      "gitBlob": "38a9a9409bce67241137eb807f964961feae101b",
+      "gitBlobSha256": "A907CE14877461E4EFCAB195748D2A922301DC9BBA082753781CD7B2F2F81969",
+      "currentSha256": "A907CE14877461E4EFCAB195748D2A922301DC9BBA082753781CD7B2F2F81969",
+      "bytes": 592,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_board.asset.meta",
+      "gitBlob": "a5baff9aad50f37a42fd014fb89fdd5f33872686",
+      "gitBlobSha256": "F9C2C3172E7F81BF776B7A91428E6E3009243FBB2FAEF4D2EDA08EB913EA89C8",
+      "currentSha256": "F9C2C3172E7F81BF776B7A91428E6E3009243FBB2FAEF4D2EDA08EB913EA89C8",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_board_station.asset",
+      "gitBlob": "c7758e24bdb775857b9b76c28ded5e203f2aba4c",
+      "gitBlobSha256": "1EE4A34EE2BA4A4F67AC6985886E40896E6DED7B392496712CFD968EE3094E30",
+      "currentSha256": "1EE4A34EE2BA4A4F67AC6985886E40896E6DED7B392496712CFD968EE3094E30",
+      "bytes": 609,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_board_station.asset.meta",
+      "gitBlob": "c7805787e3993ee8b7cb064b9497216b63055be4",
+      "gitBlobSha256": "4C030C5B83E6258BCFD7623191D236BC7019D2D8AB3DBAF5D42476201288919D",
+      "currentSha256": "4C030C5B83E6258BCFD7623191D236BC7019D2D8AB3DBAF5D42476201288919D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_bowl.asset",
+      "gitBlob": "d1c9b7e212d80b8eb082cb95c448ea45b3ecd816",
+      "gitBlobSha256": "629B4086AD9D77A29B3B0C28CF1A578A868DEBB5306CA787013BABC729ECFA95",
+      "currentSha256": "629B4086AD9D77A29B3B0C28CF1A578A868DEBB5306CA787013BABC729ECFA95",
+      "bytes": 590,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_bowl.asset.meta",
+      "gitBlob": "b4c15746806b4cbbb8b9b86b47f104ef292339a0",
+      "gitBlobSha256": "ACCBE787BEE6176515B2F63C471A1B9C93A310CA6D7017F778AAAB2EA0F919CF",
+      "currentSha256": "ACCBE787BEE6176515B2F63C471A1B9C93A310CA6D7017F778AAAB2EA0F919CF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_chopsticks.asset",
+      "gitBlob": "a4041d4aa0db1797af7078599c249457be0da657",
+      "gitBlobSha256": "FAD5677025F9C6023800F6CA8BC27EF8A077792E8F149456314948ECB2D39E46",
+      "currentSha256": "FAD5677025F9C6023800F6CA8BC27EF8A077792E8F149456314948ECB2D39E46",
+      "bytes": 642,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_chopsticks.asset.meta",
+      "gitBlob": "a8bdd2db8582bbe7a69568dd1ba825ee815aa1dc",
+      "gitBlobSha256": "71D5C5D199FEC05565A7AD96424CDD31E86226EA37121129FEFB89BB533AA7EF",
+      "currentSha256": "71D5C5D199FEC05565A7AD96424CDD31E86226EA37121129FEFB89BB533AA7EF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_freezer.asset",
+      "gitBlob": "d3fab87c3104cf2a04d5203ff609258672815c5c",
+      "gitBlobSha256": "99DF6D9BBC48C8FB9BAA81687E137C724AF8E7BF756F018D3427F6262AF59DB7",
+      "currentSha256": "99DF6D9BBC48C8FB9BAA81687E137C724AF8E7BF756F018D3427F6262AF59DB7",
+      "bytes": 597,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_freezer.asset.meta",
+      "gitBlob": "cbebc3257b392fea6bd1c5e5b7504d27eed3026c",
+      "gitBlobSha256": "447B0382F43F97F7861DF9AADFEBBD269A0F7DE2159CF734AD1D3D60E2A0519A",
+      "currentSha256": "447B0382F43F97F7861DF9AADFEBBD269A0F7DE2159CF734AD1D3D60E2A0519A",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_hand.asset",
+      "gitBlob": "bee96eb35f7ff463370882d302209f1ef422eb06",
+      "gitBlobSha256": "0E78C7F2DD99CE789EAC01B28C8E21B9410252F4ED31D7C5EDBF7707E5A5A541",
+      "currentSha256": "0E78C7F2DD99CE789EAC01B28C8E21B9410252F4ED31D7C5EDBF7707E5A5A541",
+      "bytes": 640,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_hand.asset.meta",
+      "gitBlob": "956adb01a8f05498f0f1524b371efcd9c6a3112c",
+      "gitBlobSha256": "D015AA142E35970DF6CB0D54350570196BDE6576B0684296FACAD57E9AA717FB",
+      "currentSha256": "D015AA142E35970DF6CB0D54350570196BDE6576B0684296FACAD57E9AA717FB",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_knife.asset",
+      "gitBlob": "8965c05a753faf7c0aef556f3b955e44d2b2079d",
+      "gitBlobSha256": "4126D71F675F634F2BF632DCE5ECAD58DF66C7E09215EF7FA88C60AEF685E5FA",
+      "currentSha256": "4126D71F675F634F2BF632DCE5ECAD58DF66C7E09215EF7FA88C60AEF685E5FA",
+      "bytes": 602,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_knife.asset.meta",
+      "gitBlob": "2517694a7158f9c2a38579cbf4a116bb6c606345",
+      "gitBlobSha256": "E434841EDD4C74E02C70DB256F8A83FC0436E039CA2CBE53F35E20889C3314D7",
+      "currentSha256": "E434841EDD4C74E02C70DB256F8A83FC0436E039CA2CBE53F35E20889C3314D7",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_oven.asset",
+      "gitBlob": "214837af47c3757d384766644138a45584654e2c",
+      "gitBlobSha256": "BB2EE46CF1DDE47385AE576467BF18704B59CC2D55BCDA39BFA3936385458152",
+      "currentSha256": "BB2EE46CF1DDE47385AE576467BF18704B59CC2D55BCDA39BFA3936385458152",
+      "bytes": 591,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_oven.asset.meta",
+      "gitBlob": "a31138030bdf52c0c2a6538d3668a4c3a0fea35a",
+      "gitBlobSha256": "2EA9AD969DFF5F3214C9E320AAF2A610C53C6E3F88D603F53D4DA00E73C5E461",
+      "currentSha256": "2EA9AD969DFF5F3214C9E320AAF2A610C53C6E3F88D603F53D4DA00E73C5E461",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_pan.asset",
+      "gitBlob": "da2021db570ce4c1cc8174cde908baa7fc2a3d56",
+      "gitBlobSha256": "253A1E7D227164E3F65B2467562174E7301D74D80D7703EDEFDEE14C4DEEF181",
+      "currentSha256": "253A1E7D227164E3F65B2467562174E7301D74D80D7703EDEFDEE14C4DEEF181",
+      "bytes": 604,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_pan.asset.meta",
+      "gitBlob": "500be358c3af6d1bbf5c32538d7fd2ac44c0da74",
+      "gitBlobSha256": "557283880E4498CFA4DF1E5EA7EFF98B5DF2C014F135059C62C9E697E6A5624D",
+      "currentSha256": "557283880E4498CFA4DF1E5EA7EFF98B5DF2C014F135059C62C9E697E6A5624D",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_pot.asset",
+      "gitBlob": "d8d5638c1ffac790c5eb13fb75d3ca447ac395de",
+      "gitBlobSha256": "C82E2B28D122656B1E6FF1E35AED8556215A3DD249F4C6C986EF5F821C5360FE",
+      "currentSha256": "C82E2B28D122656B1E6FF1E35AED8556215A3DD249F4C6C986EF5F821C5360FE",
+      "bytes": 601,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_pot.asset.meta",
+      "gitBlob": "3c2bc51bac4a70a23f34736ce86c20ebb43fb518",
+      "gitBlobSha256": "0099F3DB3F537081FD8C55DA0BFB26245E495216D7EC34AAFAFC8F1980FC88E2",
+      "currentSha256": "0099F3DB3F537081FD8C55DA0BFB26245E495216D7EC34AAFAFC8F1980FC88E2",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_salad_station.asset",
+      "gitBlob": "98b7feedc595e1559eaf7d6bf48182926f38a7c7",
+      "gitBlobSha256": "C7BA4E9BB254E6D4D7990F6C7C8D48143097EDCF3C9393674AE67D55118D1B2D",
+      "currentSha256": "C7BA4E9BB254E6D4D7990F6C7C8D48143097EDCF3C9393674AE67D55118D1B2D",
+      "bytes": 609,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_salad_station.asset.meta",
+      "gitBlob": "9ed648f401dacf50722a0560a89be5d31f4b9816",
+      "gitBlobSha256": "C90C5A5ED163649E1E0B8E683E733C0935454330426232BE685AE1E643D4A130",
+      "currentSha256": "C90C5A5ED163649E1E0B8E683E733C0935454330426232BE685AE1E643D4A130",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_saladbowl.asset",
+      "gitBlob": "bd2a41612d7f88a95d83f2023f9068ce1c9fbcc3",
+      "gitBlobSha256": "F979F118AA45B8E5A120659C89042D12360C6140CA80C500078F706B33762E87",
+      "currentSha256": "F979F118AA45B8E5A120659C89042D12360C6140CA80C500078F706B33762E87",
+      "bytes": 629,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_saladbowl.asset.meta",
+      "gitBlob": "b4dc0bb88661db5ac754894497a8458eb0b4e6f5",
+      "gitBlobSha256": "7A0515CD805106CD799BE1EC3728B4ECE958939745B5834276D8C9A322559F93",
+      "currentSha256": "7A0515CD805106CD799BE1EC3728B4ECE958939745B5834276D8C9A322559F93",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_scissors.asset",
+      "gitBlob": "0afd222207497a60e08814c694da6ba52cab21f4",
+      "gitBlobSha256": "104C9CAF17B5FA0CB92BEF100E67537D44242866A894DAAECFA6FC4AADDE3984",
+      "currentSha256": "104C9CAF17B5FA0CB92BEF100E67537D44242866A894DAAECFA6FC4AADDE3984",
+      "bytes": 608,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_scissors.asset.meta",
+      "gitBlob": "664075d34f645521d5cec0e09e3c9b5b7c1f884e",
+      "gitBlobSha256": "E1DDE0A5C8220E5E07A3490354542895D2CDB0A7C559F31A1F8A71F454467273",
+      "currentSha256": "E1DDE0A5C8220E5E07A3490354542895D2CDB0A7C559F31A1F8A71F454467273",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_spatula.asset",
+      "gitBlob": "2d0357c09386e9a6fb4710322ab328f1145acb95",
+      "gitBlobSha256": "C8CA0E18F9DC4F6B8D9920A7950AD5DC939DF3F216BDA306798F276C990036CF",
+      "currentSha256": "C8CA0E18F9DC4F6B8D9920A7950AD5DC939DF3F216BDA306798F276C990036CF",
+      "bytes": 610,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_spatula.asset.meta",
+      "gitBlob": "245bcfde8d7fb423c0bcaf61abffeb30b70bf9c1",
+      "gitBlobSha256": "DD116BC7A77B10B70DE69EEF0EA5003DF797E8917F19E71873097B2F6551F8FF",
+      "currentSha256": "DD116BC7A77B10B70DE69EEF0EA5003DF797E8917F19E71873097B2F6551F8FF",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_stick.asset",
+      "gitBlob": "9d3cdd877a4753dac0b1e3b724acb03dab8f7b2c",
+      "gitBlobSha256": "EE1AAF8581F23DE2EB04722D3A149F303D5AA89F61673C35FBA0EB439C297E18",
+      "currentSha256": "EE1AAF8581F23DE2EB04722D3A149F303D5AA89F61673C35FBA0EB439C297E18",
+      "bytes": 633,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_stick.asset.meta",
+      "gitBlob": "3989c2446c7c8ce314f172d01b5aff0ec17147ab",
+      "gitBlobSha256": "9F48A9FD288AC11ABED5BFF90B0B377226CCC6C39ED29B92141B8B5F6AFDEFBD",
+      "currentSha256": "9F48A9FD288AC11ABED5BFF90B0B377226CCC6C39ED29B92141B8B5F6AFDEFBD",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_stove.asset",
+      "gitBlob": "1fe7ccf5784f3ba7f0f24be58e258485131a2065",
+      "gitBlobSha256": "38370C0A32B1A6381FD639B579823A1EF8F123FAC30AD04EE7ACC8FA877EF9C2",
+      "currentSha256": "38370C0A32B1A6381FD639B579823A1EF8F123FAC30AD04EE7ACC8FA877EF9C2",
+      "bytes": 593,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Cooking/Tools/tool_stove.asset.meta",
+      "gitBlob": "2ea74cd1f551b0cc8896da5d632b50cdc0f1ff65",
+      "gitBlobSha256": "3D098EAD24FF5CD54F0373B344A844C164FAD409CF671E0A1AC8A8C918FDA5D1",
+      "currentSha256": "3D098EAD24FF5CD54F0373B344A844C164FAD409CF671E0A1AC8A8C918FDA5D1",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Localization/Localization/Localization.asset",
+      "gitBlob": "eaf6648cec2dc9997e17b543c1d24192022611b5",
+      "gitBlobSha256": "11D163587B48E37B0CB5B7B8956190893D3CC290841C0D35DBF799A56908C7A9",
+      "currentSha256": "11D163587B48E37B0CB5B7B8956190893D3CC290841C0D35DBF799A56908C7A9",
+      "bytes": 11886,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Localization/Localization/Localization.asset.meta",
+      "gitBlob": "7b6f3c6d8bf4242282cc4b376ac73c73ed6bd3e1",
+      "gitBlobSha256": "27BDEA9D81CE2C5FFE7939A92D60063E7AF7164F46BB7AAAD62E21E906FBA0B6",
+      "currentSha256": "27BDEA9D81CE2C5FFE7939A92D60063E7AF7164F46BB7AAAD62E21E906FBA0B6",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Shared/CK01-MissingSpriteTexture.asset",
+      "gitBlob": "65a8da6326e8649aff02d5d3d62e260916e7c020",
+      "gitBlobSha256": "4A61E1E32B3F6F45B879660B2408831B0E1ADC3C9B0F962ADB55117161129FCF",
+      "currentSha256": "4A61E1E32B3F6F45B879660B2408831B0E1ADC3C9B0F962ADB55117161129FCF",
+      "bytes": 5793,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/Shared/CK01-MissingSpriteTexture.asset.meta",
+      "gitBlob": "dbc2c6d6661455cc0cbb0cad35cdd8a19d4fdcf8",
+      "gitBlobSha256": "AD9B0719EC5382E450B99655D34C873D3A825954075311664A7BD8ECFAD94D3B",
+      "currentSha256": "AD9B0719EC5382E450B99655D34C873D3A825954075311664A7BD8ECFAD94D3B",
+      "bytes": 188,
+      "historicalPayloadMatches": true
+    },
+    {
+      "path": "Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset",
+      "gitBlob": "cad626dc2703392e558ba68f890f80cbce822694",
+      "gitBlobSha256": "C757F69A90C55415EC34396A407371C0F75525247C38B25A9D5B9D83E0CC9E41",
+      "currentSha256": "E8BB85CC982B11E2B83FE167C1090887B19148C67CCE9F5362D3A809F396D091",
+      "bytes": 19318,
+      "historicalPayloadMatches": false
+    },
+    {
+      "path": "Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset.meta",
+      "gitBlob": "9e68346e5f790c0b018f8ac6a9ab37045ca2d3b5",
+      "gitBlobSha256": "A7FCB18E22E0E6DF1E9DAEFC00D4A25B846014ED2CD7F91EA1B98815A6023C26",
+      "currentSha256": "A7FCB18E22E0E6DF1E9DAEFC00D4A25B846014ED2CD7F91EA1B98815A6023C26",
+      "bytes": 189,
+      "historicalPayloadMatches": true
+    }
+  ]
+}

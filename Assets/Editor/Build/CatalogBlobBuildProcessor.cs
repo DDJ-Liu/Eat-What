@@ -38,8 +38,12 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
     private static string Identity(UnityEngine.Object asset)
     { string guid;long id;if(asset==null||!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset,out guid,out id))throw new BuildFailedException("Unstable catalog asset/Sprite identity.");return CatalogBlobSerializer.Key(guid+":"+id.ToString(System.Globalization.CultureInfo.InvariantCulture)); }
     private static bool IsSerializedEmptySprite(ScriptableObject owner,string fieldPath,Sprite sprite)
+    { return IsSerializedEmptyReference(owner,fieldPath,sprite); }
+    private static bool IsSerializedEmptyPrefab(ScriptableObject owner,string fieldPath,GameObject prefab)
+    { return IsSerializedEmptyReference(owner,fieldPath,prefab); }
+    private static bool IsSerializedEmptyReference(ScriptableObject owner,string fieldPath,UnityEngine.Object reference)
     {
-        if(ReferenceEquals(sprite,null)||sprite!=null||owner==null||string.IsNullOrEmpty(fieldPath)||
+        if(ReferenceEquals(reference,null)||reference!=null||owner==null||string.IsNullOrEmpty(fieldPath)||
            fieldPath.Any(c=>!(char.IsLetterOrDigit(c)||c=='_')))return false;
         var path=AssetDatabase.GetAssetPath(owner);
         if(string.IsNullOrEmpty(path)||!path.StartsWith("Assets/Generated/DataTables/",StringComparison.Ordinal)||
@@ -74,19 +78,23 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
         return matches==1;
     }
     private static JObject Capture(out List<CatalogSpriteReference> sprites)
+    { List<CatalogPrefabReference> prefabs; return CaptureReferences(out sprites,out prefabs); }
+    private static JObject CaptureReferences(out List<CatalogSpriteReference> sprites,out List<CatalogPrefabReference> prefabs)
     {
         var source=AssetDatabase.LoadAssetAtPath<CK01GeneratedDataCatalog>(SourceCatalogPath);if(source==null)throw new BuildFailedException("Source catalog missing.");
         var registry=new Dictionary<string,Sprite>(StringComparer.Ordinal);
+        var prefabRegistry=new Dictionary<string,GameObject>(StringComparer.Ordinal);
         var universe=AssetDatabase.FindAssets("t:ScriptableObject",new[]{"Assets/Generated/DataTables"}).SelectMany(g=>AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GUIDToAssetPath(g))).OfType<ScriptableObject>().Where(a=>a!=source).ToArray();
-        var graph=CatalogBlobSerializer.Capture(source,asset=>{var key=Identity(asset);var sprite=asset as Sprite;if(sprite!=null)registry[key]=sprite;return key;},universe,IsSerializedEmptySprite);
+        var graph=CatalogBlobSerializer.Capture(source,asset=>{var key=Identity(asset);var sprite=asset as Sprite;if(sprite!=null)registry[key]=sprite;var prefab=asset as GameObject;if(prefab!=null)prefabRegistry[key]=prefab;return key;},universe,IsSerializedEmptySprite,IsSerializedEmptyPrefab);
+        prefabs=prefabRegistry.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(x=>new CatalogPrefabReference(x.Key,x.Value)).ToList();
         sprites=registry.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(x=>new CatalogSpriteReference(x.Key,x.Value)).ToList();return graph;
     }
     /// <summary>Explicit pre-build export only. Its generated C# must be reviewed/imported/compiled before BuildPrepared.</summary>
     public static void PrepareSnapshot(string stagingDirectory)
     {
         if(BuildPipeline.isBuildingPlayer)throw new BuildFailedException("Never generate fingerprint source in a Build callback.");
-        var staging=ApprovedStaging(stagingDirectory);List<CatalogSpriteReference> sprites;var graph=Capture(out sprites);
-        using(var decoded=CatalogBlobSerializer.Rehydrate(graph,key=>sprites.Single(x=>x.key==key).sprite)) { }
+        var staging=ApprovedStaging(stagingDirectory);List<CatalogSpriteReference> sprites;List<CatalogPrefabReference> prefabs;var graph=CaptureReferences(out sprites,out prefabs);
+        using(var decoded=CatalogBlobSerializer.Rehydrate(graph,key=>sprites.Single(x=>x.key==key).sprite,key=>prefabs.Single(x=>x.key==key).prefab)) { }
         CatalogBlobStaging.Export(graph,staging,Path.GetFullPath(Path.Combine(Application.dataPath,"../.ai-workspace/outputs")));
     }
     private static string ApprovedStaging(string path)
@@ -103,7 +111,7 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
         if(current!=null||File.Exists(JournalPath))throw new BuildFailedException("Unsettled catalog build/journal; inspect and explicitly recover owned inputs first.");
         if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling)throw new BuildFailedException("Clean idle Edit Mode required.");
         for(var i=0;i<SceneManager.sceneCount;i++)if(SceneManager.GetSceneAt(i).isDirty)throw new BuildFailedException("Unsaved authoring scene: refuse build preparation.");
-        var stage=ApprovedStaging(stagingDirectory);List<CatalogSpriteReference> sprites;var graph=Capture(out sprites);var fingerprint=CatalogBlobSerializer.Fingerprint(graph);
+        var stage=ApprovedStaging(stagingDirectory);List<CatalogSpriteReference> sprites;List<CatalogPrefabReference> prefabs;var graph=CaptureReferences(out sprites,out prefabs);var fingerprint=CatalogBlobSerializer.Fingerprint(graph);
         if(CatalogBuildFingerprint.Expected!=fingerprint)throw new BuildFailedException("Prepare fingerprint source and compile before building; callback cannot fix it.");
         var packet=File.ReadAllBytes(Path.Combine(stage,"catalog.bin"));CatalogBlobSerializer.Authenticate(packet,fingerprint,new CatalogBlobCipher(new ObfuscatedStaticKeyProvider()));
         var plan=new CatalogBuildPlan(((string)graph["catalog"]).Substring(0,32),((JArray)graph["assets"]).Select(x=>((string)x["key"]).Substring(0,32)));
@@ -114,7 +122,7 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
         try
         {
             current=ctx;
-            return CatalogBuildPlan.Execute(()=>PrepareInputs(ctx,packet,sprites),()=>{
+            return CatalogBuildPlan.Execute(()=>PrepareInputs(ctx,packet,sprites,prefabs),()=>{
                 var report=BuildPipeline.BuildPlayer(options);if(report==null||report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException("Player build failed.");AssertReport(report,ctx.Plan);return report;
             },()=>Cleanup(ctx));
         }
@@ -178,14 +186,14 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
         if(string.IsNullOrEmpty(AssetDatabase.CreateFolder(parent,Path.GetFileName(path))))throw new IOException("Cannot create owned input folder.");
         FinishCreate(ctx,path,true);
     }
-    private static void PrepareInputs(Context ctx,byte[] packet,List<CatalogSpriteReference> sprites)
+    private static void PrepareInputs(Context ctx,byte[] packet,List<CatalogSpriteReference> sprites,List<CatalogPrefabReference> prefabs)
     {
         if(File.Exists(BlobPath)||File.Exists(BlobPath+".meta"))throw new BuildFailedException("Existing catalog.bin is not owned by this build; do not overwrite it.");
         AssertImplicitRoots(ctx.Plan);
         CatalogBuildPlan.AssertNewOwnedInput(Path.GetFullPath("."),ctx.Root,ctx.Root);WriteJournal(ctx);Folder(ctx,ctx.Root);
-        var catalog=ScriptableObject.CreateInstance<CK01GeneratedDataCatalog>();catalog.name="CK01-ReleaseCatalog";catalog.ConfigureBuildSpriteReferences(sprites);
+        var catalog=ScriptableObject.CreateInstance<CK01GeneratedDataCatalog>();catalog.name="CK01-ReleaseCatalog";catalog.ConfigureBuildReferences(sprites,prefabs);
         var path=ctx.Root+"/RuntimeCatalog.asset";BeginCreate(ctx,path);AssetDatabase.CreateAsset(catalog,path);ctx.Catalog=catalog;FinishCreate(ctx,path,false);
-        var link=new System.Text.StringBuilder("<linker>");foreach(var group in CatalogBlobSerializer.AssetTypes.Concat(new[]{typeof(LocTableEntry)}).GroupBy(t=>t.Assembly.GetName().Name))
+        var link=new System.Text.StringBuilder("<linker>");foreach(var group in CatalogBlobSerializer.AssetTypes.Concat(CatalogBlobSerializer.ValueTypes).GroupBy(t=>t.Assembly.GetName().Name))
         {link.Append("<assembly fullname=\"").Append(group.Key).Append("\">");foreach(var type in group)link.Append("<type fullname=\"").Append(type.FullName).Append("\" preserve=\"all\"/>");link.Append("</assembly>");}link.Append("</linker>");
         var linkPath=ctx.Root+"/link.xml";BeginCreate(ctx,linkPath);File.WriteAllText(linkPath,link.ToString(),new UTF8Encoding(false));AssetDatabase.ImportAsset(linkPath);FinishCreate(ctx,linkPath,false);
         Folder(ctx,"Assets/StreamingAssets/data");BeginCreate(ctx,BlobPath);using(var output=new FileStream(BlobPath,FileMode.CreateNew,FileAccess.Write)){output.Write(packet,0,packet.Length);output.Flush(true);}AssetDatabase.ImportAsset(BlobPath);FinishCreate(ctx,BlobPath,false);

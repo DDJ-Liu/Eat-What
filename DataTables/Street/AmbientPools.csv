@@ -1,1 +1,4 @@
 pool_id,scope,dialogue_ids,comment
+amb_test_a,,dlg_test_single_a;dlg_test_single_b,
+amb_test_b,,dlg_test_three,
+amb_test_c,,dlg_test_pair,

@@ -1,1 +1,5 @@
 character_id,name_key,portrait_sprite,portrait_offset_x,portrait_offset_y,portrait_scale,street_visual_prefab,expressions,emote_offset_x,emote_offset_y,comment
+chr_test_tomato,test_chr_tomato.name,,,,,npc_visual_tomato,,,,
+chr_test_passer_a,test_chr_passer_a.name,,,,,npc_visual_tomato,,,,
+chr_test_passer_b,test_chr_passer_b.name,,,,,,,,,
+chr_test_potato,test_chr_potato.name,,,,,,,,,

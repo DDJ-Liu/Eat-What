@@ -2,7 +2,9 @@ $ErrorActionPreference='Stop'
 $catalogRepository=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 function Get-CatalogCompileInputs {
     $dataRoot=Join-Path $catalogRepository 'Assets/Scripts/DataBase/CookingData'
-    $runtime=@(Get-ChildItem $dataRoot -Filter 'CK01*.cs' -File|ForEach-Object FullName)+@('CookingEnums.cs','KitchenAreaData.cs','RecipeView.cs','Phase2DataViews.cs','ICatalogSource.cs','ScriptableObjectSource.cs','EncryptedBlobSource.cs','CatalogBlobSerializer.cs','Build/CatalogBuildFingerprint.g.cs'|ForEach-Object{Join-Path $dataRoot $_})+@('LocTableAsset.cs','LocTextCatalog.cs'|ForEach-Object{Join-Path $catalogRepository "Assets/Scripts/DataBase/Localization/$_"})
+    $runtime=@(Get-ChildItem $dataRoot -Filter 'CK01*.cs' -File|ForEach-Object FullName)+@('CookingEnums.cs','KitchenAreaData.cs','RecipeView.cs','ICatalogSource.cs','ScriptableObjectSource.cs','EncryptedBlobSource.cs','CatalogBlobSerializer.cs','Build/CatalogBuildFingerprint.g.cs'|ForEach-Object{Join-Path $dataRoot $_})+@('LocTableAsset.cs','LocTextCatalog.cs'|ForEach-Object{Join-Path $catalogRepository "Assets/Scripts/DataBase/Localization/$_"})
+    # Current canonical pure view/constraint sources; CookingData/Phase2DataViews.cs is a move marker.
+    $runtime+=@('Phase2DataViews.cs','RecipeConstraints.cs'|ForEach-Object{Join-Path $catalogRepository "Assets/Scripts/Cooking/ShortCycle/Core/Phase2/$_"})
     $security=@(Get-ChildItem (Join-Path $catalogRepository 'Assets/Scripts/Tools/Security') -Filter '*.cs' -File|ForEach-Object FullName)+@(Join-Path $catalogRepository 'Assets/Scripts/Tools/Persistence/SaveEnvelope.cs')
     $jsonRoots=@(Get-ChildItem (Join-Path $catalogRepository 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
     if($jsonRoots.Count -ne 1){throw 'Expected installed Newtonsoft package.'}
@@ -210,12 +212,29 @@ function Invoke-CatalogOwnershipTests {
     $result.ToString()
 }
 function Invoke-CatalogBlobTests {
-    param([Parameter(Mandatory)][string]$ReportRoot,[switch]$CompileOnly)
+    param([Parameter(Mandatory)][string]$ReportRoot,[switch]$CompileOnly,[string]$CatalogLegacy14Snapshot)
     if($env:EATWHAT_TEST_CATALOG_OWNERSHIP_ONLY -eq '1'){return Invoke-CatalogOwnershipTests -ReportRoot $ReportRoot}
     $root=[IO.Path]::GetFullPath($ReportRoot);New-Item -ItemType Directory -Path $root -Force|Out-Null
     $snapshot=Join-Path $root 'serialized-source.json'
     & python (Join-Path $PSScriptRoot 'Fixtures/ReadUnityCatalogSnapshot.py') --project-root $catalogRepository --output $snapshot
     if($LASTEXITCODE -ne 0){throw 'Actual serialized catalog snapshot reader failed.'}
+    # Always retain the complete current source; fixed Legacy14 is an explicit independent input.
+    $currentSnapshot=$snapshot
+    if(-not [string]::IsNullOrWhiteSpace($CatalogLegacy14Snapshot)){
+        $snapshot=[IO.Path]::GetFullPath($CatalogLegacy14Snapshot)
+        if(-not(Test-Path -LiteralPath $snapshot -PathType Leaf)){throw 'Explicit Legacy14 snapshot file missing.'}
+    }
+    $currentData=Get-Content -LiteralPath $currentSnapshot -Raw -Encoding utf8|ConvertFrom-Json -DateKind String
+    $selectedData=Get-Content -LiteralPath $snapshot -Raw -Encoding utf8|ConvertFrom-Json -DateKind String
+    [ordered]@{
+        mode=$(if($snapshot -ceq $currentSnapshot){'Current'}else{'Legacy14'})
+        selectedSnapshot=$snapshot;selectedSha256=(Get-FileHash -LiteralPath $snapshot -Algorithm SHA256).Hash
+        selectedTables=@($selectedData.catalog.fields.tables).Count;selectedDataSOs=@($selectedData.assets).Count
+        currentSnapshot=$currentSnapshot;currentSha256=(Get-FileHash -LiteralPath $currentSnapshot -Algorithm SHA256).Hash
+        currentTables=@($currentData.catalog.fields.tables).Count;currentDataSOs=@($currentData.assets).Count
+        currentNativeAssets=@($currentData.nativeAssets).Count
+    }|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $root 'input-contract.json') -Encoding utf8
+
     $inputs=Initialize-CatalogHost -IncludeTests
     if($CompileOnly){return @{action='CATALOG_HOST_COMPILED';sourceSnapshot=$snapshot}}
     $protocol=Test-CatalogNativeResultProtocol

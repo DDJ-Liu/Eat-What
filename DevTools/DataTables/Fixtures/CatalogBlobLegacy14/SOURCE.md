@@ -1,0 +1,9 @@
+# CatalogBlob Legacy14 固定输入
+
+本输入只服务旧14表完整Blob回归，不代表当前22表或V013-11新八表发布。运行时自包含，不依赖AI输出或Git读取。
+
+Catalog记录由原ReadUnityCatalogSnapshot.load_unity解析Git提交 fc4dc3726ef884e05e2b137305d0ff420eb51353 的 Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset 原blob取得，SHA256 C757F69A90C55415EC34396A407371C0F75525247C38B25A9D5B9D83E0CC9E41。没有从当前22表切片/过滤八表，没有在Assets恢复或写Unity YAML。
+
+169个数据SO、1个native资产及其meta由原Reader读取；SOURCE.json逐文件保存历史Git blob身份与当前内容SHA（LFS如有则核内容OID），已核与该提交相同。m_Name/GUID/字段原样保留。sceneReferences保原Reader当前结果。
+
+固定snapshot.json SHA256：64BFBE0613BE7DD40D5C67327F2C1BD09CC5AC18FFF185E7CC9749EF6EAFADF8。这是执行前冻结值，不以测试输出回填。原Reader和CatalogBlobTests.cs不修改。显式参数及完整current22保留方式见DataTables README；555仍须另验真实22/八表与Prefab完整往返。

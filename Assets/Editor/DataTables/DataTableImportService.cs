@@ -1269,6 +1269,16 @@ namespace EatWhat.DataTables
                     var lookup = NarrativeFilenameLookupPolicy.Resolve(column.referenceRole, rawValue,
                         name => FindExactNarrativePaths(column.referenceRole, name));
                     if (!string.IsNullOrEmpty(lookup.Warning)) warnings.Add(lookup.Warning);
+                    // Only Characters' street visual gains a Unity reference. Preserve the original nameOnly string/other roles.
+                    var character = asset as CK01CharacterData;
+                    if (character != null && column.name == nameof(CK01CharacterData.street_visual_prefab) && column.referenceRole == "visual")
+                    {
+                        var prefab = string.IsNullOrEmpty(lookup.AssetPath) ? null : AssetDatabase.LoadMainAssetAtPath(lookup.AssetPath) as GameObject;
+                        if (!string.IsNullOrEmpty(lookup.AssetPath) && prefab == null)
+                            warnings.Add("visual '" + rawValue + "' resolved to '" + lookup.AssetPath + "' but could not be loaded as a Prefab GameObject; reference remains empty.");
+                        if (!ValuesEqual(character.street_visual_prefab_asset, prefab))
+                        { character.street_visual_prefab_asset = prefab; changed = true; }
+                    }
                 }
                 else if (field.FieldType == typeof(Sprite))
                 {
@@ -1563,9 +1573,9 @@ namespace EatWhat.DataTables
                     report.errors.Add("CK01 import registration references missing schema '" + registration.SchemaPath + "'.");
                 }
             }
-            if (registrations.Count != 14)
+            if (registrations.Count != 22)
             {
-                report.errors.Add("CK01 import registration must contain exactly 14 tables.");
+                report.errors.Add("CK01 import registration must contain exactly 22 tables.");
             }
         }
 

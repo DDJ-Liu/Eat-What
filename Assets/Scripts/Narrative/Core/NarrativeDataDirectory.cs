@@ -39,8 +39,18 @@ namespace EatWhat.Narrative.Core
         bool TryGetLineChain(string dialogueId, out NarrativeLineChain chain, out string diagnostic);
     }
 
+    // Optional read capability; existing INarrativeDataDirectory implementers keep their contract.
+    public interface INarrativeSceneStateDirectory
+    {
+        bool TryFindSceneAsset(string sceneAsset, out NarrativeScene scene, out string diagnostic);
+        bool TryGetStatePlacements(string sceneId, string stateId, out IReadOnlyList<NarrativeSceneStatePlacement> rows, out string diagnostic);
+    }
+
+    public interface INarrativeSceneStateList
+    { bool TryGetSceneStates(string sceneId, out IReadOnlyList<NarrativeSceneState> rows, out string diagnostic); }
+
     // Immutable indices; no execution/progress state, source rows or engine objects are retained.
-    public sealed class NarrativeDataDirectory : INarrativeDataDirectory
+    public sealed class NarrativeDataDirectory : INarrativeDataDirectory, INarrativeSceneStateDirectory, INarrativeSceneStateList
     {
         readonly Index<string, NarrativeCharacter> characters;
         readonly Index<string, NarrativeDialogue> dialogues;
@@ -50,6 +60,9 @@ namespace EatWhat.Narrative.Core
         readonly Index<Tuple<string, string>, NarrativeSceneState> states;
         readonly Index<Tuple<string, string, string, string>, NarrativeSceneStatePlacement> placements;
         readonly Index<string, NarrativeAmbientPool> pools;
+        readonly List<NarrativeScene> sceneRows;
+        readonly List<NarrativeSceneStatePlacement> placementRows;
+        readonly List<NarrativeSceneState> stateRows;
 
         public NarrativeDataDirectory(IEnumerable<NarrativeCharacter> characters = null,
             IEnumerable<NarrativeDialogue> dialogues = null, IEnumerable<NarrativeDialogueLine> lines = null,
@@ -58,20 +71,66 @@ namespace EatWhat.Narrative.Core
             IEnumerable<NarrativeAmbientPool> pools = null)
         {
             var issues = new List<NarrativeDataDiagnostic>();
+            sceneRows = scenes == null ? new List<NarrativeScene>() : new List<NarrativeScene>(scenes);
+            placementRows = placements == null ? new List<NarrativeSceneStatePlacement>() : new List<NarrativeSceneStatePlacement>(placements);
+            stateRows = states == null ? new List<NarrativeSceneState>() : new List<NarrativeSceneState>(states);
             this.characters = new Index<string, NarrativeCharacter>("Characters", characters, x => x.CharacterId, x => Present(x.CharacterId), issues);
             this.dialogues = new Index<string, NarrativeDialogue>("Dialogues", dialogues, x => x.DialogueId, x => Present(x.DialogueId), issues);
             this.lines = new Index<string, NarrativeDialogueLine>("DialogueLines", lines, x => x.LineId, x => Present(x.LineId), issues);
             this.cgs = new Index<string, NarrativeCg>("CGs", cgs, x => x.CgId, x => Present(x.CgId), issues);
-            this.scenes = new Index<string, NarrativeScene>("Scenes", scenes, x => x.SceneId, x => Present(x.SceneId), issues);
-            this.states = new Index<Tuple<string, string>, NarrativeSceneState>("SceneStates", states,
+            this.scenes = new Index<string, NarrativeScene>("Scenes", sceneRows, x => x.SceneId, x => Present(x.SceneId), issues);
+            this.states = new Index<Tuple<string, string>, NarrativeSceneState>("SceneStates", stateRows,
                 x => Tuple.Create(x.SceneId, x.StateId), x => Present(x.SceneId, x.StateId), issues);
-            this.placements = new Index<Tuple<string, string, string, string>, NarrativeSceneStatePlacement>("SceneStatePlacements", placements,
+            this.placements = new Index<Tuple<string, string, string, string>, NarrativeSceneStatePlacement>("SceneStatePlacements", placementRows,
                 x => Tuple.Create(x.SceneId, x.StateId, x.Kind, x.Target), x => Present(x.SceneId, x.StateId, x.Kind, x.Target), issues);
             this.pools = new Index<string, NarrativeAmbientPool>("AmbientPools", pools, x => x.PoolId, x => Present(x.PoolId), issues);
             Diagnostics = issues.AsReadOnly();
         }
         public IReadOnlyList<NarrativeDataDiagnostic> Diagnostics { get; private set; }
         static bool Present(params string[] parts) { foreach (var part in parts) if (string.IsNullOrEmpty(part)) return false; return true; }
+
+        public bool TryGetSceneStates(string sceneId, out IReadOnlyList<NarrativeSceneState> rows, out string diagnostic)
+        {
+            var result = new List<NarrativeSceneState>(); rows = result.AsReadOnly(); NarrativeScene scene;
+            if (!TryGetScene(sceneId, out scene, out diagnostic)) return false;
+            foreach (var row in stateRows) if (row != null && row.SceneId == sceneId)
+            {
+                NarrativeSceneState indexed;
+                if (!TryGetSceneState(sceneId, row.StateId, out indexed, out diagnostic)) return false;
+                result.Add(indexed);
+            }
+            rows = result.AsReadOnly(); return true;
+        }
+
+        public bool TryFindSceneAsset(string sceneAsset, out NarrativeScene scene, out string diagnostic)
+        {
+            scene = null; diagnostic = null;
+            if (!Present(sceneAsset)) { diagnostic = "Scene asset basename is required."; return false; }
+            foreach (var row in sceneRows)
+                if (row != null && string.Equals(row.SceneAsset, sceneAsset, StringComparison.Ordinal))
+                {
+                    NarrativeScene indexed;
+                    if (!scenes.TryGet(row.SceneId, out indexed, out diagnostic)) { scene = null; return false; }
+                    if (scene != null) { scene = null; diagnostic = "Ambiguous scene asset: " + sceneAsset; return false; }
+                    scene = indexed;
+                }
+            if (scene == null) diagnostic = "No scene row for asset: " + sceneAsset;
+            return scene != null;
+        }
+        public bool TryGetStatePlacements(string sceneId, string stateId, out IReadOnlyList<NarrativeSceneStatePlacement> rows, out string diagnostic)
+        {
+            var result = new List<NarrativeSceneStatePlacement>(); rows = result.AsReadOnly();
+            NarrativeSceneState state;
+            if (!TryGetSceneState(sceneId, stateId, out state, out diagnostic)) return false;
+            foreach (var row in placementRows)
+                if (row != null && row.SceneId == sceneId && row.StateId == stateId)
+                {
+                    NarrativeSceneStatePlacement indexed;
+                    if (!TryGetSceneStatePlacement(row.SceneId, row.StateId, row.Kind, row.Target, out indexed, out diagnostic)) return false;
+                    result.Add(indexed);
+                }
+            rows = result.AsReadOnly(); return true;
+        }
 
         public bool TryGetCharacter(string id, out NarrativeCharacter model, out string diagnostic) { return characters.TryGet(id ?? "", out model, out diagnostic); }
         public bool TryGetDialogue(string id, out NarrativeDialogue model, out string diagnostic) { return dialogues.TryGet(id ?? "", out model, out diagnostic); }

@@ -392,7 +392,7 @@ namespace UnityEditor.SceneManagement {
     try{[IO.File]::AppendAllText($asset,'runtime drift');Reject {[BuildReleaseAsyncFixture]::VerifyRecoveryInputs($nativePrior,$nativeReview,$noOwned)} '*Original non-Editor input drift*' 'production recovery refuses runtime source drift'}finally{[IO.File]::WriteAllBytes($asset,$assetBytes)}
     $packageBytes=[IO.File]::ReadAllBytes($exe)
     try{[IO.File]::AppendAllText($exe,'package drift');Reject {[BuildReleaseAsyncFixture]::VerifyRecoveryPackage($nativePrior,$nativeReview)} '*Original package file drift*' 'production recovery refuses package drift'}finally{[IO.File]::WriteAllBytes($exe,$packageBytes)}
-    $unapproved=JRead $reviewPath;$unapproved.Property('allowedEditorChanges').Value=[Newtonsoft.Json.Linq.JArray]::Parse('[{"path":"Assets/Scripts/Runtime.cs","oldSha256":"A","newSha256":"B","oldBytes":1,"newBytes":1}]')
+    $unapproved=[Newtonsoft.Json.Linq.JObject]::Parse([IO.File]::ReadAllText($reviewPath,$utf8));$unapproved.Property('allowedEditorChanges').set_Value([Newtonsoft.Json.Linq.JArray]::Parse('[{"path":"Assets/Scripts/Runtime.cs","oldSha256":"A","newSha256":"B","oldBytes":1,"newBytes":1}]'))
     Reject {[BuildReleaseAsyncFixture]::VerifyRecoveryInputs($nativePrior,$unapproved,$noOwned)} '*Unapproved or duplicate Editor source difference*' 'production recovery rejects non-Editor exception list'
     $recoverCase=$oldCase.Clone();$recoverCase.Action='RecoveryPlan';$recoverCase.Attempt=2;$recoverCase.ExecutionId='d'*32;$recoverCase.EvidenceRoot=$nextEvidence
     $recoverCase.PreviousEvidenceRoot=$oldEvidence;$recoverCase.ControlReviewPath=$reviewPath;$recoverCase.ControlReviewSha256=Sha $reviewPath

@@ -60,6 +60,14 @@ try {
     # New schema row inputs; existing assertions below are intentionally unchanged.
     $compileSources += @('CK01CharacterData','CK01DialogueData','CK01DialogueLineData','CK01CGData','CK01SceneData','CK01SceneStateData','CK01SceneStatePlacementData','CK01AmbientPoolData','CK01OptionalValues') | ForEach-Object { Join-Path $repositoryRoot ("Assets/Scripts/DataBase/CookingData/" + $_ + ".cs") }
     $compileSources += @($AdditionalCompileSources)
+    # V013-10 actual Unity lookup and new import cases; retained boundary/source lists deduplicate below.
+    $compileSources += @(
+        (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeDataAdapter.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeRuntimeEntry.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/DialoguePresentationConfig.cs'),
+        (Join-Path $repositoryRoot 'DevTools/Narrative/NarrativeRuntimeUnityBoundary.cs'),
+        (Join-Path $PSScriptRoot 'CharacterVisualPrefabImportTests.cs'),
+        (Join-Path $PSScriptRoot 'Fixtures/NarrativeCatalogBlobTests.cs'))
     # Shared narrative authoring rules now depend on the existing pure Core assembly sources.
     $compileSources += @((Join-Path $repositoryRoot 'Assets/Editor/DataTables/NarrativeTableValidation.cs')) + @(Get-ChildItem (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Core') -File -Filter '*.cs' | ForEach-Object FullName)
     $compileSources = @($compileSources | Select-Object -Unique)
@@ -318,9 +326,61 @@ try {
         Assert-True ($property.PropertyType -eq $propertyContract.Type) "Generated catalog v2.4 property type mismatch: $($propertyContract.Name)"
     }
 
+    # AI549_BEGIN: run the public production validation path and its actual registration guard.
+    $savedProofDataPath = [UnityEngine.Application]::ProofDataPath
+    try {
+        [UnityEngine.Application]::ProofDataPath = Join-Path $repositoryRoot 'Assets'
+        $publicValidation = [EatWhat.DataTables.DataTableImportService]::ValidateAll()
+    }
+    finally { [UnityEngine.Application]::ProofDataPath = $savedProofDataPath }
+    Assert-True ($publicValidation.schemas.Count -eq 22) 'Public ValidateAll must actually enumerate all twenty-two current schemas.'
+    $publicRegistrationErrors = @($publicValidation.errors | Where-Object { $_.StartsWith('CK01 import registration', [StringComparison]::Ordinal) })
+    Assert-True ($publicRegistrationErrors.Count -eq 0) 'Public ValidateAll must pass the current registration guard; retain other host diagnostics separately.'
+    $loadedTableType = [EatWhat.DataTables.DataTableImportService].GetNestedType('LoadedTable', [Reflection.BindingFlags]'NonPublic')
+    $loadedListType = ([System.Collections.Generic.List[object]]).GetGenericTypeDefinition().MakeGenericType([type[]]@($loadedTableType))
+    $guardTables = [Activator]::CreateInstance($loadedListType)
+    foreach ($schemaReport in $publicValidation.schemas) {
+        $loadedTable = [Activator]::CreateInstance($loadedTableType)
+        $loadedTableType.GetField('SchemaPath').SetValue($loadedTable, $schemaReport.schemaPath)
+        $guardTables.Add($loadedTable)
+    }
+    $guard = [EatWhat.DataTables.DataTableImportService].GetMethod('ValidateCK01Registration', [Reflection.BindingFlags]'Static, NonPublic')
+    $reportType = [EatWhat.DataTables.DataTableImportService].GetNestedType('DataTableImportReport', [Reflection.BindingFlags]'Public')
+    $completeGuardReport = [Activator]::CreateInstance($reportType)
+    [void]$guard.Invoke($null, [object[]]@($guardTables, $completeGuardReport))
+    Assert-True ($completeGuardReport.errors.Count -eq 0) 'The actual registration guard must accept the schema paths returned by public ValidateAll.'
+    $missingSchemaPath = $guardTables[0].SchemaPath
+    $guardTables.RemoveAt(0)
+    $missingGuardReport = [Activator]::CreateInstance($reportType)
+    [void]$guard.Invoke($null, [object[]]@($guardTables, $missingGuardReport))
+    Assert-True ($missingGuardReport.errors.Count -eq 1 -and $missingGuardReport.errors[0] -ceq "CK01 import registration references missing schema '$missingSchemaPath'.") 'The unchanged registration guard must still reject the one missing schema.'
+    # The retained JsonUtility.FromJson stub returns default(T): expose every public-path error.
+    # This is registration coverage, not a claim of complete native data validation/import success.
+    # AI549_END
+
+    # V013-10 appended after the original business assertions.
+    $visualPrefabReport = [CharacterVisualPrefabImportTests]::Run($repositoryRoot)
+    $narrativeBlobReport = [NarrativeCatalogBlobTests]::Run($repositoryRoot)
+
     [pscustomobject]@{
+        characterVisualPrefab = ($visualPrefabReport | ConvertFrom-Json)
+        narrativeBlob = ($narrativeBlobReport | ConvertFrom-Json)
         success = $true
         registrations = $registrations.Count
+        # AI549_RESULT_BEGIN
+        publicValidateAllCalled = $true
+        publicValidateAllSchemaCount = $publicValidation.schemas.Count
+        publicValidateAllSuccess = $publicValidation.success
+        publicValidateAllErrorCount = $publicValidation.errors.Count
+        publicValidateAllErrors = @($publicValidation.errors)
+        publicValidateAllWarningCount = $publicValidation.warnings.Count
+        publicValidateAllInfoCount = $publicValidation.infos.Count
+        publicRegistrationErrorCount = $publicRegistrationErrors.Count
+        completeRegistrationGuardErrorCount = $completeGuardReport.errors.Count
+        missingSchemaGuardErrors = @($missingGuardReport.errors)
+        publicValidateAllReportJson = ($publicValidation | ConvertTo-Json -Depth 8 -Compress)
+        validationHost = 'retained StaticCompile UnityStubs; JsonUtility.FromJson returns default(T); no native JSON or asset persistence'
+        # AI549_RESULT_END
         spriteFallback = 'PASS'
         localization = 'PASS'
         localizationIngredientKeys = $expectedIngredientText.Count

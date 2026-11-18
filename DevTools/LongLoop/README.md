@@ -1,3 +1,35 @@
+## V013-07 实际气泡触发依赖（2026-11-16）
+
+## V013-08 调试路由与编译隔离（2026-11-16）
+
+原默认入口末尾追加实际NarrativeSceneDebugPanel/Applier/Runtime/Adapter/Trigger/Driver/Model/View联测26项，外界键盘/GUI/层级与行/文本/输出表面由NarrativeDebugUnityBoundary替代，业务实现不复制；同时定向运行原NarrativeAmbientBubbleTests的82原断言，不跑Narrative全套。明确区分这种外部能力fake与真实发布包，未做原生GUI/输入验收。
+
+同入口编译当前完整Core/LongLoop的Editor、Development、Release符号组合，并以独立Mono元数据单测各6项证明：面板类型及三个强制入口只在前两者存在，正常API三者保持。原默认Bee闭包实际是Player符号，不能冒作Editor；首次该假设导致元数据首败，修正为三组合分别显式编译后通过，原失败/一次同键重试保留。当前Core引用路径在派生响应文件中按实际正反斜杠绑定匹配，不混用Editor Core冒作Release。没有Player Build或Unity原生执行。
+
+默认/depth-scale/y-sort/ground-space四门仍为本卡唯一LongLoop模式，原99/44/142及05的34/6/11与其它三模式原断言/夹具保持。LongLoop显式追加Unity.InputSystem引用，面板用新Keyboard API，当前真引用编译闭包纳入新源码/meta；Core正常TryTrigger与开发强制共用池/取句/随机/进度逻辑，专用入口条件编译。
+
+## V013-05 场景默认状态应用（2026-11-16）
+
+原默认入口末尾追加三组，保原99/目标44/NPC142及所有旧断言：NarrativeSceneStateTests用真实应用器与Core目录/Parser/气泡模型，外部索引/壳/实例化能力fake；NarrativeSceneInactiveTargetsTests引用原目标测试程序集中的实际Registry验证停用预摆查找；NpcShellStateRestoreTests引用原壳测试程序集的实际Shell验证原形象身份/顺序/姿态、朝向与释放。新检查34/6/11，只有默认入口执行，四模式的真实LongLoop编译闭包均纳入当前两新源及既有修改。没有复制应用算法、改变旧框架/冻结输入或运行其它镜头/短循环门。
+
+本卡运行默认、--depth-scale、--y-sort、--ground-space。首次接线工具换行定位失败导致Final1仅执行旧门，不能当新增覆盖；Final2新增夹具少一个构造参数编译失败，修正后Final3同键一次重试完整通过，历史/原流保留。新源码同交meta。实际场景默认/重应用、生成前公开Trigger.Configure接线与后继五列人工路径见[场景状态说明](../../docs/街景场景状态配置与使用说明.md)。原生挂载/保存/视觉仍未执行。
+
+原LongLoop真实闭包追加NarrativeAmbientBubbleTrigger/Driver，Narrative.Unity按当前完整源码及实际UI/TMP/UIModule引用重编译。默认入口的原99、目标44、壳142与旧断言/模式保持；本卡只运行默认入口，不扩成四模式或其它全量门。实际Driver→View逻辑联测位于原Narrative入口，外部feet/head/时钟/UI为fake，取句模型/数据接入/Resolver不替换。组件不改主角/镜头/DepthScale/GroundSpace；正式接线和表现留13/14。
+
+## V013-04 Narrative.Unity直接引用（2026-11-16）
+
+LongLoop新增单向Narrative.Unity直接引用，原Core引用保持。既有runner在LongLoop编译前按当前Core/Toolkit/ShortCycle.Core/Generated真实源和引用构建Unity层全部源（包含NarrativeRuntimeEntry），沿原闭包/输出记录机制，不引用陈旧空标记DLL。原99、目标44、NPC142检查与所有旧断言/模式保持；04仅需默认入口编译验证，没有新增全量/其它模式门。运行时使用与不可用诊断见项目 `docs/剧情运行时接入说明.md`，无实际Managers挂载。
+
+## V013-03 NPC壳（2026-11-16）
+
+原默认入口在保留原99及前卡44检查后追加 `NpcShellTests.cs`，真实编译/执行NpcShell、原DepthScale/Math和配置，只有Unity层级/实例化/延迟销毁由 `NpcShellUnityBoundary.cs` 替代。原四模式真实LongLoop闭包补入NpcShell；原测试/断言与前卡边界不改。未做Unity/Prefab/场景操作，使用说明原位更新于 `组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md`；现Prefab尚未通用化。
+
+## V013-02 场景演出目标（2026-11-16）
+
+原 `Test-LongLoopPlayer.py` 默认模式保留原输入/运动断言，追加 `NarrativeTargetTests`：直接编译三个正式标记/注册表源并引用当前真实 Narrative.Core，Unity 场景/对象边界仅由 `NarrativeTargetUnityBoundary.cs` 替代。覆盖启停、启动顺序、场景隔离、角色实例、重复保先登记、缺失诊断、锚点当前位置和显式 player。原默认、`--depth-scale`、`--y-sort`、`--ground-space` 四模式的旧测试文件/断言不变；每个 LongLoop 真实引用编译闭包补当前三个源及 Core 直接引用。无新通用框架、探针或其它模式门。
+
+正式配置与使用方式见项目 `docs/剧情目标标记与注册说明.md`；不运行 Unity，不挂载场景/Prefab，不实现 NPC 壳/状态/气泡或修改主角/镜头。
+
 <!-- DEMO012-DRIVER-501-20261112 -->
 ## 2026-11-12 V012-05 实际驱动接入
 

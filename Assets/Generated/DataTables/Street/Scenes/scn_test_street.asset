@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bf6fed88c54008881f09a7c83bfd5c, type: 3}
+  m_Name: scn_test_street
+  m_EditorClassIdentifier: Generated.DataTables::CK01SceneData
+  scene_id: scn_test_street
+  name_key: test_scene_street.name
+  scene_type: street
+  is_small_room: 0
+  scene_asset: LongLoop_Street
+  default_state: test_default
+  comment: 

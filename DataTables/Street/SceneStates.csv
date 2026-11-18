@@ -1,1 +1,3 @@
 scene_id,state_id,story_stage,description,switch_source,comment
+scn_test_street,test_default,,,,
+scn_test_street,test_second,,,,

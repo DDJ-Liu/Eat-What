@@ -4,7 +4,9 @@
   "references": [
     "Narrative.Core",
     "Toolkit",
-    "Generated.DataTables"
+    "Generated.DataTables",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

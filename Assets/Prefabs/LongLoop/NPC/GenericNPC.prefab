@@ -1,0 +1,232 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2773048076578553077
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5522576711385812021}
+  - component: {fileID: 7598721605950785767}
+  - component: {fileID: 5416792498230010654}
+  m_Layer: 0
+  m_Name: Visual_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5522576711385812021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2773048076578553077}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7109614593853189022}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &7598721605950785767
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2773048076578553077}
+  m_Enabled: 1
+  m_SortingLayerID: -150304867
+  m_SortingLayer: 4
+  m_SortingOrder: 499
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &5416792498230010654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2773048076578553077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2fb718df6f74ddbb139a86cf3542d81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.DepthScale
+  groundLine: {fileID: 0}
+  localConfig: {fileID: 11400000, guid: f0b0bbb346ea37e49b13d61756b855fc, type: 2}
+  localFootOffset: {x: 0, y: 0, z: 0}
+  useOverrideFactor: 0
+  overrideFactor: 0.03
+  depthOverrideProvider: {fileID: 0}
+--- !u!1 &5296198405415088969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8766002855266049557}
+  m_Layer: 0
+  m_Name: Foot_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8766002855266049557
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5296198405415088969}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7109614593853189022}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8512140760044370578
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7109614593853189022}
+  - component: {fileID: 8918411154485821361}
+  - component: {fileID: 8691771234537715921}
+  - component: {fileID: 4850488659401005512}
+  - component: {fileID: 1786360294830677057}
+  m_Layer: 0
+  m_Name: GenericNPC
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7109614593853189022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8766002855266049557}
+  - {fileID: 5522576711385812021}
+  - {fileID: 7878205206872413338}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8918411154485821361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d13ded1e7164e1086f708d5eeafbcee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.YSorter
+  targetRenderer: {fileID: 0}
+  targetSortingGroup: {fileID: 7598721605950785767}
+  foot: {fileID: 8766002855266049557}
+  baseOrder: 499
+  precision_TUNE: 100
+  depthOffset: 0
+  bakeOnStart: 0
+--- !u!114 &8691771234537715921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af980c42a2ae408094f4f4e8518a38bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NpcShell
+  foot: {fileID: 8766002855266049557}
+  visualMount: {fileID: 5522576711385812021}
+  headAnchor: {fileID: 7878205206872413338}
+--- !u!114 &4850488659401005512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da9856f2e554aed9155c3c6b086640e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NarrativeActorMarker
+  characterId: 
+--- !u!114 &1786360294830677057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b46efd82784a5c8ca34df87820ea8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NarrativeAmbientBubbleTrigger
+  runtimeEntry: {fileID: 0}
+  targetRegistry: {fileID: 0}
+  actorMarker: {fileID: 4850488659401005512}
+  npcShell: {fileID: 8691771234537715921}
+  bubbleView: {fileID: 0}
+  poolId: 
+  triggerTemplate: 
+--- !u!1 &9116239743359452094
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7878205206872413338}
+  m_Layer: 0
+  m_Name: HeadAnchor_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7878205206872413338
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9116239743359452094}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7109614593853189022}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

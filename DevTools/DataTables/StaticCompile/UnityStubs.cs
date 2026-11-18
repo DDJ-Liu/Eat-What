@@ -2,6 +2,8 @@ using System;
 
 namespace UnityEngine
 {
+    // External asset handle needed by the real Characters derived Prefab reference.
+    public class GameObject : Object { }
     public class Object {
         public string name;
         // Synthetic native-lifetime state. Existing fixture objects remain alive by default.
@@ -13,7 +15,8 @@ namespace UnityEngine
         public static bool operator !=(Object left,Object right) { return !(left==right); }
         public override bool Equals(object other) { return ReferenceEquals(this,other); }
         public override int GetHashCode() { return base.GetHashCode(); }
-        public static void Destroy(Object item) { } public static void DestroyImmediate(Object item) { }
+        public static Action<Object> ProofDestroy;
+        public static void Destroy(Object item) { if (ProofDestroy != null) ProofDestroy(item); } public static void DestroyImmediate(Object item) { if (ProofDestroy != null) ProofDestroy(item); }
     }
     public class ScriptableObject : Object { public static ScriptableObject CreateInstance(Type type) { return (ScriptableObject)Activator.CreateInstance(type); } public static T CreateInstance<T>() where T : ScriptableObject, new() { return new T(); } }
     public class Sprite : Object { public Texture2D texture; public static Sprite Create(Texture2D texture, Rect rect, Vector2 pivot, float pixelsPerUnit) { return new Sprite { texture = texture }; } }
@@ -45,8 +48,10 @@ namespace UnityEditor
         public static readonly System.Collections.Generic.Dictionary<Object, string> ProofObjectPaths = new System.Collections.Generic.Dictionary<Object, string>();
         public static readonly System.Collections.Generic.Dictionary<string, Type> ProofTypes = new System.Collections.Generic.Dictionary<string, Type>();
         public static readonly System.Collections.Generic.HashSet<Object> ProofBroken = new System.Collections.Generic.HashSet<Object>();
+        public static Func<string, string[], string[]> ProofFindAssets;
         public static string[] ProofDependencies;
         public static void ResetProofFixture() {
+            ProofFindAssets = null;
             ProofMain.Clear(); ProofAll.Clear(); ProofGuids.Clear(); ProofFileIds.Clear();
             ProofObjectPaths.Clear(); ProofTypes.Clear(); ProofBroken.Clear(); ProofDependencies = null; SerializedObject.ProofPptrIds.Clear(); EditorUtility.ProofDirty.Clear();
         }
@@ -54,7 +59,7 @@ namespace UnityEditor
         public static bool IsValidFolder(string path) { return true; } public static string CreateFolder(string parent, string name) { return "stub"; }
         public static T LoadAssetAtPath<T>(string path) where T : Object { return null; } public static Object LoadAssetAtPath(string path, System.Type type) { return null; } public static Object LoadMainAssetAtPath(string path) { Object value; return ProofMain.TryGetValue(path, out value) ? value : null; } public static Object[] LoadAllAssetsAtPath(string path) { Object[] value; return ProofAll.TryGetValue(path, out value) ? value : new Object[0]; }
         public static void CreateAsset(Object asset, string path) { } public static void AddObjectToAsset(Object asset, Object target) { } public static bool DeleteAsset(string path) { return true; } public static void ImportAsset(string path) { } public static void ImportAsset(string path, ImportAssetOptions options) { }
-        public static string[] FindAssets(string filter, string[] folders) { return new string[0]; } public static string GUIDToAssetPath(string guid) { foreach (var pair in ProofGuids) if (pair.Value == guid) return pair.Key; return string.Empty; }
+        public static string[] FindAssets(string filter, string[] folders) { return ProofFindAssets == null ? new string[0] : ProofFindAssets(filter, folders); } public static string GUIDToAssetPath(string guid) { foreach (var pair in ProofGuids) if (pair.Value == guid) return pair.Key; return string.Empty; }
         public static string[] GetDependencies(string[] paths, bool recursive) { return ProofDependencies ?? paths; }
         public static Type GetMainAssetTypeAtPath(string path) { Type type; if (ProofTypes.TryGetValue(path, out type)) return type; Object main; return ProofMain.TryGetValue(path, out main) ? main.GetType() : null; }
         public static string GetAssetPath(Object asset) { string path; return ProofObjectPaths.TryGetValue(asset,out path) ? path : string.Empty; }

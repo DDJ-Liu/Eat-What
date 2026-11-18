@@ -4,7 +4,10 @@
   "references": [
     "Toolkit",
     "spine-unity",
-    "Unity.Cinemachine"
+    "Unity.Cinemachine",
+    "Narrative.Core",
+    "Narrative.Unity",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

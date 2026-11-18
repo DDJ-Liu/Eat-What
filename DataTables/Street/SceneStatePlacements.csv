@@ -1,1 +1,11 @@
 scene_id,state_id,kind,target,anchor_id,facing,active,dialogue_id,ambient_pool,marker,comment
+scn_test_street,test_default,actor,chr_test_tomato,,,true,,,,
+scn_test_street,test_default,actor,chr_test_passer_a,test_street_01,right,true,,,,
+scn_test_street,test_default,actor,chr_test_passer_a#2,test_street_02,left,true,,amb_test_c,,
+scn_test_street,test_default,actor,chr_test_passer_b,test_street_03,,false,,,,
+scn_test_street,test_second,actor,chr_test_tomato,,,true,,amb_test_b,,
+scn_test_street,test_second,actor,chr_test_potato,test_street_03,right,true,,amb_test_a,,
+scn_test_street,test_second,actor,chr_test_passer_a#2,test_street_02,left,false,,amb_test_c,,
+scn_test_street,test_second,actor,chr_test_passer_b,test_street_01,,true,,,,
+scn_test_street,test_default,actor,chr_test_potato,,,true,,,,
+scn_test_street,test_second,actor,chr_test_passer_a,,,false,,,,

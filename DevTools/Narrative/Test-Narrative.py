@@ -19,6 +19,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", required=True)
     parser.add_argument("--unity-editor", required=True)
+    parser.add_argument("--compile-only", action="store_true", help="Compile current production dependencies without running Narrative fixtures.")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
     # Reuse the existing source evidence/output boundary implementation.
@@ -114,7 +115,10 @@ def main():
         assembly_definitions[name] = definition
         refs = bcl if layer == 'Core' else bcl + [fx / 'Facades/netstandard.dll',
             editor / 'Data/Managed/UnityEngine/UnityEngine.CoreModule.dll',
-            editor / 'Data/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll', outputs['Narrative.Core'], toolkit, generated]
+            editor / 'Data/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll',
+            editor / 'Data/Managed/UnityEngine/UnityEngine.UIModule.dll',
+            root / 'Library/ScriptAssemblies/Unity.TextMeshPro.dll', root / 'Library/ScriptAssemblies/UnityEngine.UI.dll',
+            outputs['Narrative.Core'], toolkit, generated]
         lines = ['-nologo', '-nostdlib+', '-langversion:9.0', '-target:library', '-out:"' + str(out / (name + '.dll')) + '"']
         lines += ['-r:"' + str(p) + '"' for p in refs]
         lines += ['"' + p.relative_to(root).as_posix() + '"' for p in sorted(directory.rglob('*.cs'))]
@@ -131,6 +135,12 @@ def main():
         [root / 'Assets/Editor/DataTables/NarrativeTableValidation.cs'],
         original=root / 'Library/Bee/artifacts/1900b0aE.dag/Editor.DataTables.rsp')
     compile_narrative('Unity')
+    if args.compile_only:
+        report = dict(passed=True, compileOnly=True, unityNativeLaunched=False, substitutesUsed=False,
+            assemblyDefinitions=assembly_definitions, outputs={name:dict(path=str(p), sha256=digest(p)) for name,p in outputs.items()}, stages=records)
+        write_json(out / 'offline-validation.json', report)
+        print(json.dumps(dict(passed=True, compileOnly=True, stages=len(records), report=str(out / 'offline-validation.json'))))
+        return
     sample = out / 'NarrativeAssemblyTests.exe'
     lines = ['-nologo', '-nostdlib+', '-target:exe', '-out:"' + str(sample) + '"']
     lines += ['-r:"' + str(p) + '"' for p in bcl + list(outputs.values())]

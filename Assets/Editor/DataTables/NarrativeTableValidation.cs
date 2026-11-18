@@ -10,8 +10,17 @@ namespace EatWhat.DataTables
     /// <summary>Schema v2.5 authoring rules. No scene loading, asset import or command execution.</summary>
     public static class NarrativeTableValidation
     {
-        public static void EnableProject(DataTableValidationContext context, string projectRoot)
-        { Enable(context, null, (role, name) => FindFiles(projectRoot, role, name)); }
+        public static void EnableProject(DataTableValidationContext context, string projectRoot, string sceneProjectRoot = null)
+        {
+            Enable(context, null, (role, name) => FindFiles(projectRoot, role, name));
+            var staticRules = context.NarrativeValidation;
+            context.NarrativeValidation = (schema, table, sources, result) =>
+            {
+                staticRules(schema, table, sources, result);
+                if (schema.tableName == "SceneStates")
+                    NarrativeSceneContentAudit.ValidateProject(sources, result, sceneProjectRoot ?? projectRoot);
+            };
+        }
 
         public static void Enable(DataTableValidationContext context, DialoguePresentationData config = null,
             Func<string, string, IList<string>> files = null)
@@ -298,6 +307,251 @@ namespace EatWhat.DataTables
                     var dialogue = Find("Dialogues","dialogue_id",id);
                     if (dialogue == null || Value(Source("Dialogues"),dialogue,"tier") != "ambient") Emit("V-22",row,"dialogue_ids","Pool entry '"+id+"' must reference an existing ambient dialogue.");
                 }
+            }
+        }
+    }
+
+    /// <summary>Read-only V-25 for the current Unity text representation. No Unity or alternate CSV loader.</summary>
+    public static class NarrativeSceneContentAudit
+    {
+        public sealed class Inventory
+        {
+            public readonly HashSet<string> Actors = new HashSet<string>(StringComparer.Ordinal);
+            public readonly HashSet<string> Anchors = new HashSet<string>(StringComparer.Ordinal);
+            public readonly List<string> Issues = new List<string>();
+            public bool Complete { get { return Issues.Count == 0; } }
+        }
+        public sealed class Placement
+        {
+            public string Kind, Target, Anchor;
+            public Placement(string kind, string target, string anchor) { Kind = kind; Target = target; Anchor = anchor; }
+        }
+        sealed class Document { public string Class, Id, Body; public bool Stripped; }
+        sealed class Marker { public string Id, Field, Value; public bool Enabled; }
+        static readonly Regex Header = new Regex(@"^--- !u!(\d+) &(-?\d+)( stripped)?\s*$", RegexOptions.Multiline);
+        static readonly Regex Pointer = new Regex(@"^\{fileID:\s*(-?\d+)(?:,\s*guid:\s*([a-fA-F0-9]{32}),\s*type:\s*\d+)?\}$");
+        static readonly System.Text.UTF8Encoding Utf8 = new System.Text.UTF8Encoding(false, true);
+        static string Read(string path) { return File.ReadAllText(path, Utf8); }
+        static string LocalId(string text) { return long.Parse(text, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture); }
+        static string Field(string body, string name)
+        {
+            var matches = Regex.Matches(body, @"^  " + Regex.Escape(name) + @":(?: (.*))?\r?$", RegexOptions.Multiline);
+            if (matches.Count != 1) throw new FormatException("Missing/ambiguous field " + name + ".");
+            return matches[0].Groups[1].Value.TrimEnd('\r');
+        }
+        static Match PPtr(string text)
+        {
+            var match = Pointer.Match(text.Trim());
+            if (!match.Success) throw new FormatException("Unsupported object reference.");
+            LocalId(match.Groups[1].Value); // Validate as an integer; never round localIDs through float/double.
+            return match;
+        }
+        static string Scalar(string text)
+        {
+            text = text.Trim();
+            if (text.StartsWith("'", StringComparison.Ordinal))
+            {
+                if (text.Length < 2 || !text.EndsWith("'", StringComparison.Ordinal)) throw new FormatException("Malformed quoted marker ID.");
+                return text.Substring(1, text.Length - 2).Replace("''", "'");
+            }
+            if (text.StartsWith("\"", StringComparison.Ordinal))
+            {
+                if (text.Length < 2 || !text.EndsWith("\"", StringComparison.Ordinal)) throw new FormatException("Malformed quoted marker ID.");
+                return Regex.Unescape(text.Substring(1, text.Length - 2));
+            }
+            // In chr_vendor#2 the hash is part of the ID, not a YAML comment.
+            if (text.IndexOfAny(new[] {'{', '}', '[', ']', '|', '>'}) >= 0) throw new FormatException("Unsupported marker scalar.");
+            return text;
+        }
+        static List<Document> Documents(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) throw new FormatException("Empty Unity text.");
+            if (!text.StartsWith("%YAML 1.1", StringComparison.Ordinal) || !text.Contains("%TAG !u! tag:unity3d.com,2011:"))
+                throw new FormatException("Missing Unity YAML preamble.");
+            var headers = Header.Matches(text); var documents = new List<Document>();
+            if (headers.Count == 0 || Regex.Matches(text, @"^---", RegexOptions.Multiline).Count != headers.Count)
+                throw new FormatException("Unsupported/malformed Unity document headers.");
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < headers.Count; i++)
+            {
+                var h = headers[i]; string id = LocalId(h.Groups[2].Value);
+                if (!ids.Add(id)) throw new FormatException("Duplicate Unity localID " + id + ".");
+                string body = text.Substring(h.Index + h.Length, (i + 1 < headers.Count ? headers[i+1].Index : text.Length) - h.Index - h.Length).TrimStart('\r','\n');
+                if (!Regex.IsMatch(body, @"^[A-Za-z][A-Za-z0-9_]*:\r?\n")) throw new FormatException("Malformed Unity object body.");
+                documents.Add(new Document { Class = h.Groups[1].Value, Id = id, Stripped = h.Groups[3].Success, Body = body });
+            }
+            return documents;
+        }
+        static List<Marker> Markers(List<Document> docs, string actorGuid, string anchorGuid)
+        {
+            var markers = new List<Marker>();
+            foreach (var doc in docs)
+            {
+                if (doc.Class != "114") continue;
+                if (!doc.Body.StartsWith("MonoBehaviour:", StringComparison.Ordinal)) throw new FormatException("Malformed MonoBehaviour.");
+                if (doc.Stripped)
+                {
+                    // Inherited components are collected from the source PrefabInstance, once.
+                    var reference = PPtr(Field(doc.Body, "m_PrefabInstance"));
+                    bool found = false;
+                    foreach (var instance in docs) if (instance.Class == "1001" && instance.Id == LocalId(reference.Groups[1].Value)) found = true;
+                    if (!found) throw new FormatException("Unresolved stripped component.");
+                    continue;
+                }
+                var script = PPtr(Field(doc.Body, "m_Script")); string guid = script.Groups[2].Value;
+                if (guid.Length == 0) throw new FormatException("Missing MonoBehaviour script GUID.");
+                string field = string.Equals(guid, actorGuid, StringComparison.OrdinalIgnoreCase) ? "characterId" :
+                    string.Equals(guid, anchorGuid, StringComparison.OrdinalIgnoreCase) ? "anchorId" : null;
+                if (field == null) continue;
+                string enabled = Field(doc.Body, "m_Enabled");
+                if (enabled != "0" && enabled != "1") throw new FormatException("Invalid marker m_Enabled.");
+                markers.Add(new Marker { Id = doc.Id, Field = field, Value = Scalar(Field(doc.Body, field)), Enabled = enabled == "1" });
+            }
+            return markers;
+        }
+        static void Add(Inventory inventory, IEnumerable<Marker> markers)
+        {
+            foreach (var marker in markers)
+            {
+                if (!marker.Enabled) continue;
+                NarrativeCommandTarget target; NarrativeCommandDiagnostic issue;
+                if (!NarrativeCommandTargetParser.TryParse((marker.Field == "characterId" ? "actor:" : "anchor:") + marker.Value, out target, out issue))
+                    inventory.Issues.Add("Empty/invalid " + marker.Field + " at component " + marker.Id + ".");
+                else (marker.Field == "characterId" ? inventory.Actors : inventory.Anchors).Add(target.Identifier);
+            }
+        }
+        static void Overrides(Document instance, string sourceGuid, List<Marker> markers)
+        {
+            foreach (string name in new[] { "m_RemovedComponents", "m_RemovedGameObjects", "m_AddedGameObjects", "m_AddedComponents" })
+            {
+                var match = Regex.Match(instance.Body, @"^    " + name + @":(.*)\r?$", RegexOptions.Multiline);
+                if (!match.Success || match.Groups[1].Value.Trim() != "[]") throw new FormatException("Unsupported Prefab additions/removals: " + name + ".");
+            }
+            var blocks = Regex.Matches(instance.Body, @"^    - target: (.*)\r?\n(?<body>(?:(?!    - target:|    m_Removed|    m_Added|  m_SourcePrefab:).*(?:\n|$))*)", RegexOptions.Multiline);
+            foreach (Match block in blocks)
+            {
+                string body = block.Groups["body"].Value;
+                var property = Regex.Match(body, @"^      propertyPath: (.*)\r?$", RegexOptions.Multiline);
+                if (!property.Success) throw new FormatException("Malformed Prefab modification.");
+                string path = property.Groups[1].Value.Trim();
+                if (path != "characterId" && path != "anchorId" && path != "m_Enabled") continue;
+                var pointer = PPtr(block.Groups[1].Value.Trim()); Marker marker = null;
+                if (string.Equals(pointer.Groups[2].Value, sourceGuid, StringComparison.OrdinalIgnoreCase))
+                    foreach (var candidate in markers) if (candidate.Id == LocalId(pointer.Groups[1].Value)) marker = candidate;
+                // m_Enabled on an unrelated component is not a marker override.
+                if (marker == null && path == "m_Enabled") continue;
+                if (marker == null || path != "m_Enabled" && marker.Field != path) throw new FormatException("Unresolved marker override target.");
+                var value = Regex.Match(body, @"^      value:(?: (.*))?\r?$", RegexOptions.Multiline);
+                if (!value.Success) throw new FormatException("Missing marker override value.");
+                string scalar = Scalar(value.Groups[1].Value.TrimEnd('\r'));
+                if (path == "m_Enabled")
+                { if (scalar != "0" && scalar != "1") throw new FormatException("Invalid marker enabled override."); marker.Enabled = scalar == "1"; }
+                else marker.Value = scalar;
+            }
+            int targets = Regex.Matches(instance.Body, @"^    - target:", RegexOptions.Multiline).Count;
+            if (targets != blocks.Count || !Regex.IsMatch(instance.Body, @"^    m_Modifications:(?: \[\])?\r?$", RegexOptions.Multiline))
+                throw new FormatException("Unsupported Prefab modification list.");
+        }
+        public static Inventory ReadInventory(string sceneText, string actorGuid, string anchorGuid, Func<string, string> readPrefabText)
+        {
+            var inventory = new Inventory();
+            try
+            {
+                if (!Regex.IsMatch(actorGuid ?? "", "^[a-fA-F0-9]{32}$") || !Regex.IsMatch(anchorGuid ?? "", "^[a-fA-F0-9]{32}$") ||
+                    string.Equals(actorGuid, anchorGuid, StringComparison.OrdinalIgnoreCase)) throw new FormatException("Missing/ambiguous marker script GUIDs.");
+                var docs = Documents(sceneText); Add(inventory, Markers(docs, actorGuid, anchorGuid));
+                foreach (var instance in docs)
+                {
+                    if (instance.Class != "1001") continue;
+                    if (!instance.Body.StartsWith("PrefabInstance:", StringComparison.Ordinal)) throw new FormatException("Malformed PrefabInstance.");
+                    var source = PPtr(Field(instance.Body, "m_SourcePrefab")); string guid = source.Groups[2].Value;
+                    if (LocalId(source.Groups[1].Value) != "100100000") throw new FormatException("Unsupported Prefab source localID.");
+                    if (guid.Length == 0 || readPrefabText == null) throw new FormatException("Unresolved source Prefab GUID.");
+                    var prefab = Documents(readPrefabText(guid));
+                    foreach (var doc in prefab) if (doc.Class == "1001" || doc.Stripped) throw new FormatException("Nested/variant Prefab is outside this audit's supported representation.");
+                    var markers = Markers(prefab, actorGuid, anchorGuid);
+                    Overrides(instance, guid, markers); Add(inventory, markers);
+                }
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is ArgumentException || error is FormatException || error is OverflowException)
+            { inventory.Issues.Add(error.Message); }
+            return inventory;
+        }
+        public static IList<string> AuditState(Inventory inventory, string sceneId, string stateId, IEnumerable<Placement> placements)
+        {
+            var warnings = new List<string>(); string scope = " scene '" + sceneId + "', state '" + stateId + "': ";
+            foreach (string issue in inventory.Issues) warnings.Add("[V-25][UNVERIFIED]" + scope + issue);
+            // An incomplete inventory cannot prove absence. Do not manufacture missing or clean results.
+            if (!inventory.Complete) return warnings;
+            var listed = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var row in placements)
+            {
+                if (row.Kind != "actor") continue;
+                listed.Add(row.Target);
+                if (!string.IsNullOrEmpty(row.Anchor))
+                { if (!inventory.Anchors.Contains(row.Anchor)) warnings.Add("[V-25][MISSING_ANCHOR]" + scope + "actor '" + row.Target + "' uses missing anchor '" + row.Anchor + "'."); }
+                else if (!inventory.Actors.Contains(row.Target)) warnings.Add("[V-25][NO_PREPLACED]" + scope + "actor '" + row.Target + "' has no anchor or exact preplaced instance.");
+            }
+            var actors = new List<string>(inventory.Actors); actors.Sort(StringComparer.Ordinal);
+            foreach (string actor in actors) if (!listed.Contains(actor)) warnings.Add("[V-25][UNLISTED_ACTOR]" + scope + "preplaced actor '" + actor + "' has no placement.");
+            return warnings;
+        }
+        static DataTableReferenceSource Source(DataTableValidationContext context, string name)
+        { foreach (var source in context.ReferenceTables.Values) if (source.Schema != null && source.Schema.tableName == name) return source; return null; }
+        static string Value(DataTableReferenceSource source, DataTableCsvRow row, string name)
+        { return DataTableValidator.GetEffectiveValue(DataTableValidator.FindColumn(source.Schema, name), row, source.Table); }
+        static string MetaGuid(string path)
+        {
+            var matches = Regex.Matches(Read(path), @"^guid: ([a-fA-F0-9]{32})\r?$", RegexOptions.Multiline);
+            if (matches.Count != 1) throw new FormatException("Missing/ambiguous GUID in " + path + ".");
+            return matches[0].Groups[1].Value;
+        }
+        public static void ValidateProject(DataTableValidationContext context, DataTableValidationResult result, string projectRoot)
+        {
+            var states = Source(context, "SceneStates");
+            if (states == null || states.Table == null || states.Table.Rows.Count == 0) return; // No configured scope; not an attestation of scene contents.
+            var scenes = Source(context, "Scenes"); var entries = Source(context, "SceneStatePlacements");
+            var cache = new Dictionary<string, Inventory>(StringComparer.Ordinal);
+            Dictionary<string, string> prefabs = null;
+            Func<string, string> readPrefab = guid =>
+            {
+                if (prefabs == null)
+                {
+                    prefabs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    string root = Path.Combine(projectRoot, "Assets/Prefabs");
+                    if (Directory.Exists(root)) foreach (string meta in Directory.GetFiles(root, "*.prefab.meta", SearchOption.AllDirectories))
+                    { string key = MetaGuid(meta); if (prefabs.ContainsKey(key)) prefabs[key] = null; else prefabs.Add(key, meta.Substring(0, meta.Length - 5)); }
+                }
+                string path; if (!prefabs.TryGetValue(guid, out path) || path == null) throw new FormatException("Missing/ambiguous source Prefab " + guid + ".");
+                return Read(path);
+            };
+            foreach (var state in states.Table.Rows)
+            {
+                string sceneId = Value(states, state, "scene_id"), stateId = Value(states, state, "state_id");
+                Inventory inventory; var placements = new List<Placement>();
+                if (!cache.TryGetValue(sceneId, out inventory))
+                {
+                    inventory = new Inventory();
+                    try
+                    {
+                        if (scenes == null || scenes.Table == null || entries == null || entries.Table == null) throw new FormatException("Scene/placement input unavailable.");
+                        string asset = null;
+                        foreach (var row in scenes.Table.Rows) if (Value(scenes, row, "scene_id") == sceneId)
+                        { if (asset != null) throw new FormatException("Ambiguous scene ID."); asset = Value(scenes, row, "scene_asset"); }
+                        if (string.IsNullOrEmpty(asset)) throw new FormatException("Scene asset name unavailable.");
+                        var paths = NarrativeTableValidation.FindFiles(projectRoot, "scene", asset);
+                        if (paths.Count != 1) throw new FormatException("Missing/ambiguous scene file '" + asset + "'.");
+                        inventory = ReadInventory(Read(paths[0]), MetaGuid(Path.Combine(projectRoot, "Assets/Scripts/LongLoop/NarrativeActorMarker.cs.meta")),
+                            MetaGuid(Path.Combine(projectRoot, "Assets/Scripts/LongLoop/NarrativeAnchorMarker.cs.meta")), readPrefab);
+                    }
+                    catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is ArgumentException || error is FormatException)
+                    { inventory.Issues.Add(error.Message); }
+                    cache.Add(sceneId, inventory);
+                }
+                if (entries != null && entries.Table != null) foreach (var row in entries.Table.Rows)
+                    if (Value(entries, row, "scene_id") == sceneId && Value(entries, row, "state_id") == stateId)
+                        placements.Add(new Placement(Value(entries, row, "kind"), Value(entries, row, "target"), Value(entries, row, "anchor_id")));
+                foreach (string warning in AuditState(inventory, sceneId, stateId, placements)) result.Warnings.Add("CSV line " + state.LineNumber + ": " + warning);
             }
         }
     }

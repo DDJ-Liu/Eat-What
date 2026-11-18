@@ -20,6 +20,8 @@ public sealed class CK01CharacterData : ScriptableObject
     public CK01OptionalFloat portrait_scale;
     // 街上形象Prefab文件基名，无路径/扩展名；留空表示配表不指定，回落到实例自身，无则没有形象。
     public string street_visual_prefab = string.Empty;
+    // 导表派生的真实Prefab引用；不是CSV列，不替代上方原文件名。空列/缺失均为空，运行时由Unity适配层区分。
+    public GameObject street_visual_prefab_asset = null;
     // 完整版表情预留文本；本版存储但不消费。
     public string expressions = string.Empty;
     // 情绪图标相对立绘的横向偏移，完整版预留，本阶段只存储。

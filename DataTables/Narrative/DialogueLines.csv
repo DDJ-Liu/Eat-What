@@ -1,1 +1,8 @@
 line_id,dialogue_id,next_line,speaker,name_override_key,text_key,commands,expression,emotion,emphasis,scene_emote,comment
+ln_test_single_a_01,dlg_test_single_a,,,,test_line_single_a.text,,,,,,
+ln_test_single_b_01,dlg_test_single_b,,,,test_line_single_b.text,,,,,,
+ln_test_three_01,dlg_test_three,ln_test_three_02,,,test_line_three_1.text,,,,,,
+ln_test_three_02,dlg_test_three,ln_test_three_03,,,test_line_three_2.text,,,,,,
+ln_test_three_03,dlg_test_three,,,,test_line_three_3.text,,,,,,
+ln_test_pair_01,dlg_test_pair,ln_test_pair_02,chr_test_tomato,,test_line_pair_1.text,,,,,,
+ln_test_pair_02,dlg_test_pair,,chr_test_passer_a,,test_line_pair_2.text,,,,,,

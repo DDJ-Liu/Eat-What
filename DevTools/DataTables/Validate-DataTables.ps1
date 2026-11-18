@@ -3,6 +3,7 @@ param(
     [string]$DataTablesRoot,
     [string]$ReportDirectory,
     [string]$SceneInventoryPath,
+    [string]$NarrativeSceneProjectRoot,
     [switch]$RequireSceneInventory,
     [switch]$Quick,
     [switch]$Quiet,
@@ -937,7 +938,8 @@ foreach ($schemaFile in $schemaFiles) {
 }
 
 $context = [EatWhat.DataTables.DataTableValidationContext]::new()
-[EatWhat.DataTables.NarrativeTableValidation]::EnableProject($context, $repositoryRoot)
+if ([string]::IsNullOrWhiteSpace($NarrativeSceneProjectRoot)) { $NarrativeSceneProjectRoot = $repositoryRoot }
+[EatWhat.DataTables.NarrativeTableValidation]::EnableProject($context, $repositoryRoot, $NarrativeSceneProjectRoot)
 Add-EnumValuesFromSource -Context $context
 foreach ($sourceRecord in $records) {
     if ($null -eq $sourceRecord.Schema) {

@@ -220,8 +220,9 @@ def main():
     narrative_dependencies = []
     narrative_core = None
     narrative_toolkit = None
+    narrative_unity = None
 
-    def build(name, sources, refs, target="library", main_type=None, language="latest", defines=(), record_list=None):
+    def build(name, sources, refs, target="library", main_type=None, language="latest", defines=(), record_list=None, assembly_path=None):
         # Existing old-suite fixtures compile the same expanded check source without stale runtime metadata.
         if any(p.name=="LongLoopProbeChecks.cs" for p in sources) and not any(p.name=="StreetFollowPipeline.cs" for p in sources):
             sources=list(sources)+[root/"Assets/Scripts/LongLoop/StreetFollowPipeline.cs",root/"Assets/Scripts/LongLoop/Configuration/CameraFollowConfig.cs",root/"Assets/Scripts/LongLoop/Configuration/StreetConfigAsset.cs"]
@@ -229,7 +230,8 @@ def main():
             bridge = root / "Assets/Scripts/Tools/NarrativeCurveBridge.cs"
             sources = list(sources) + ([] if bridge in sources else [bridge])
             refs = list(refs) + [ensure_narrative_core()]
-        exe = out / (name + (".exe" if target == "exe" else ".dll"))
+        exe = Path(assembly_path) if assembly_path is not None else out / (name + (".exe" if target == "exe" else ".dll"))
+        exe.parent.mkdir(parents=True, exist_ok=True)
         rsp = out / (name + ".rsp")
         lines = ["/nologo", "/noconfig", "/langversion:" + language, "/target:" + target,
                  '/out:"' + str(exe) + '"']
@@ -289,9 +291,27 @@ def main():
         nonlocal narrative_core
         if narrative_core is None:
             narrative_core = build("Narrative.Core", sorted((root / "Assets/Scripts/Narrative/Core").rglob("*.cs")),
-                [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], record_list=narrative_dependencies)
+                [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], defines=("UNITY_EDITOR",), record_list=narrative_dependencies)
             write_narrative_dependencies()
         return narrative_core
+
+    # V013-04 fresh dependency DAG for LongLoop's new direct Narrative.Unity reference.
+    def ensure_narrative_unity():
+        nonlocal narrative_unity
+        if narrative_unity is None:
+            toolkit = build_bee("Toolkit", {}, record_list=narrative_dependencies)
+            short_core = build_bee("ShortCycle.Core", {}, record_list=narrative_dependencies)
+            rows = src(*("Assets/Scripts/DataBase/CookingData/" + n + ".cs" for n in (
+                "CK01CharacterData", "CK01DialogueData", "CK01DialogueLineData", "CK01CGData",
+                "CK01SceneData", "CK01SceneStateData", "CK01SceneStatePlacementData", "CK01AmbientPoolData", "CK01OptionalValues")))
+            generated = build_bee("Generated.DataTables", {"Toolkit": toolkit, "ShortCycle.Core": short_core},
+                rows, record_list=narrative_dependencies)
+            narrative_unity = build("Narrative.Unity", sorted((root / "Assets/Scripts/Narrative/Unity").rglob("*.cs")),
+                common + [ue / "UnityEngine.JSONSerializeModule.dll", ue / "UnityEngine.UIModule.dll",
+                    sa / "Unity.TextMeshPro.dll", sa / "UnityEngine.UI.dll", ensure_narrative_core(), toolkit, generated],
+                record_list=narrative_dependencies)
+            write_narrative_dependencies()
+        return narrative_unity
 
     if args.street_payload_directory:
         directory = Path(args.street_payload_directory).resolve()
@@ -511,7 +531,34 @@ def main():
             else:
                 extra_references = tuple(extra_references) + (current_core,)
         # Older business modes pass candidate additions that current Bee may already contain.
+        # V013-02: compile the actual scene target components in every current LongLoop closure.
+        if name == "LongLoop":
+            current_core = ensure_narrative_core()
+            marker_sources = src("Assets/Scripts/LongLoop/NarrativeActorMarker.cs",
+                                 "Assets/Scripts/LongLoop/NarrativeAnchorMarker.cs",
+                                 "Assets/Scripts/LongLoop/NarrativeTargetRegistry.cs")
+            # V013-03 production addition; all existing marker sources remain unchanged.
+            marker_sources += src("Assets/Scripts/LongLoop/NpcShell.cs")
+            # V013-07 current trigger and real coordinator, never an old cached LongLoop DLL.
+            marker_sources += src("Assets/Scripts/LongLoop/NarrativeAmbientBubbleTrigger.cs",
+                                  "Assets/Scripts/LongLoop/NarrativeAmbientBubbleDriver.cs")
+            marker_sources += src("Assets/Scripts/LongLoop/NarrativeSceneStateApplication.cs",
+                                  "Assets/Scripts/LongLoop/NarrativeSceneStateApplier.cs")
+            marker_sources += src("Assets/Scripts/LongLoop/NarrativeSceneDebugPanel.cs")
+            extra_references = tuple(extra_references) + (sa / "Unity.InputSystem.dll",)
+            extra_sources = tuple(extra_sources) + tuple(p for p in marker_sources if p not in extra_sources)
+            if any(line.startswith('-r:"') and Path(line[4:-1]).stem in ("Narrative.Core", "Narrative.Core.ref") for line in lines):
+                replacements = dict(replacements, **{"Narrative.Core": current_core})
+            else:
+                extra_references = tuple(extra_references) + (current_core,)
         extra_sources = tuple(p for p in extra_sources if '"' + p.relative_to(root).as_posix() + '"' not in lines)
+        # V013-04 bind the actual current Unity layer, never an empty marker or stale Bee dependency.
+        if name == "LongLoop":
+            current_unity = ensure_narrative_unity()
+            if any(line.startswith('-r:"') and Path(line[4:-1]).stem in ("Narrative.Unity", "Narrative.Unity.ref") for line in lines):
+                replacements = dict(replacements, **{"Narrative.Unity": current_unity})
+            else:
+                extra_references = tuple(extra_references) + (current_unity,)
         source_lines = [line for line in lines if line.startswith('"Assets/') and line.endswith('.cs"')]
         sources = [root / line.strip('"') for line in source_lines] + list(extra_sources)
         if not sources or not all(path.is_file() for path in sources):
@@ -1439,6 +1486,133 @@ namespace UnityEngine.InputSystem {
                             "stderr": str(out / "logic-run.stderr.bin"),
                             "text": run.stdout.decode("utf-8-sig", "replace").strip(),
                             "vector2ShimOnlyForPureLogic": str(shim)}}
+    # V013-02 actual components, with only Unity scene/object operations substituted.
+    if run.returncode == 0:
+        target_exe = build("NarrativeTargetTests", src(
+            "Assets/Scripts/LongLoop/NarrativeActorMarker.cs",
+            "Assets/Scripts/LongLoop/NarrativeAnchorMarker.cs",
+            "Assets/Scripts/LongLoop/NarrativeTargetRegistry.cs",
+            "DevTools/LongLoop/NarrativeTargetUnityBoundary.cs",
+            "DevTools/LongLoop/NarrativeTargetTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core()], "exe")
+        command = [str(mono), str(target_exe)]
+        (out / "targets-run.preflight.json").write_text(json.dumps({
+            "capturedBeforeRun": True, "command": command, "exeSha256": digest(target_exe),
+            "monoSha256": digest(mono), "runnerSha256": digest(Path(__file__))}, indent=2), encoding="utf-8")
+        started_at = datetime.now(timezone.utc).isoformat()
+        target_run = subprocess.run(command, cwd=root, capture_output=True)
+        (out / "targets-run.stdout.bin").write_bytes(target_run.stdout)
+        (out / "targets-run.stderr.bin").write_bytes(target_run.stderr)
+        report["targetRegistryTest"] = {"compileExitCode": records[-1]["exitCode"],
+            "runExitCode": target_run.returncode, "command": command,
+            "startedAt": started_at, "finishedAt": datetime.now(timezone.utc).isoformat(),
+            "text": target_run.stdout.decode("utf-8-sig", "replace").strip(),
+            "unityBoundaryOnly": "DevTools/LongLoop/NarrativeTargetUnityBoundary.cs"}
+        (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(json.dumps({"targetRegistryTest": report["targetRegistryTest"]}))
+        if target_run.returncode:
+            print(target_run.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+            raise SystemExit(target_run.returncode)
+    # V013-03 consumes the real shell and depth implementation, only at the default entry.
+    if run.returncode == 0:
+        npc_sources = src("Assets/Scripts/LongLoop/NpcShell.cs", "Assets/Scripts/LongLoop/DepthScale.cs",
+            "Assets/Scripts/LongLoop/DepthScaleMath.cs", "Assets/Scripts/LongLoop/IDepthOverride.cs",
+            "DevTools/LongLoop/NpcShellTests.cs", "DevTools/LongLoop/NpcShellUnityBoundary.cs")
+        npc_sources += src(*("Assets/Scripts/LongLoop/Configuration/" + n + ".cs" for n in
+            ("StreetConfigAsset", "StreetConfigs", "DepthScaleConfig", "CameraModeConfig", "CameraFollowConfig", "SceneBoundsConfig")))
+        npc_exe = build("NpcShellTests", npc_sources,
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
+        command = [str(mono), str(npc_exe)]
+        (out / "npc-run.preflight.json").write_text(json.dumps({"capturedBeforeRun": True,
+            "command": command, "exeSha256": digest(npc_exe), "monoSha256": digest(mono),
+            "runnerSha256": digest(Path(__file__))}, indent=2), encoding="utf-8")
+        started_at = datetime.now(timezone.utc).isoformat()
+        npc_run = subprocess.run(command, cwd=root, capture_output=True)
+        (out / "npc-run.stdout.bin").write_bytes(npc_run.stdout)
+        (out / "npc-run.stderr.bin").write_bytes(npc_run.stderr)
+        report["npcShellTest"] = {"compileExitCode": records[-1]["exitCode"], "runExitCode": npc_run.returncode,
+            "command": command, "startedAt": started_at, "finishedAt": datetime.now(timezone.utc).isoformat(),
+            "text": npc_run.stdout.decode("utf-8-sig", "replace").strip(),
+            "unityBoundaryOnly": "DevTools/LongLoop/NpcShellUnityBoundary.cs"}
+        (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(json.dumps({"npcShellTest": report["npcShellTest"]}))
+        if npc_run.returncode:
+            print(npc_run.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+            raise SystemExit(npc_run.returncode)
+    # V013-05 actual state application with permitted object/index fakes; original tests above unchanged.
+    if run.returncode == 0:
+        for stage, sources, refs in [
+            ("NarrativeSceneStateTests", src("Assets/Scripts/LongLoop/NarrativeSceneStateApplication.cs", "DevTools/LongLoop/NarrativeSceneStateTests.cs"), [ensure_narrative_core()]),
+            ("NarrativeSceneInactiveTargetsTests", src("DevTools/LongLoop/NarrativeSceneInactiveTargetsTests.cs"), [target_exe]),
+            ("NpcShellStateRestoreTests", src("DevTools/LongLoop/NpcShellStateRestoreTests.cs"), [npc_exe])]:
+            exe = build(stage, sources, [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"] + refs, "exe")
+            command = [str(mono), str(exe)]
+            (out / (stage + ".run.preflight.json")).write_text(json.dumps({"capturedBeforeRun": True, "command": command, "exeSha256": digest(exe), "monoSha256": digest(mono)}, indent=2), encoding="utf-8")
+            started_at = datetime.now(timezone.utc).isoformat()
+            child = subprocess.run(command, cwd=root, capture_output=True)
+            (out / (stage + ".run.stdout.bin")).write_bytes(child.stdout)
+            (out / (stage + ".run.stderr.bin")).write_bytes(child.stderr)
+            report[stage] = {"compileExitCode": records[-1]["exitCode"], "runExitCode": child.returncode, "command": command, "startedAt": started_at, "finishedAt": datetime.now(timezone.utc).isoformat(), "text": child.stdout.decode("utf-8-sig", "replace").strip()}
+            (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+            print(json.dumps({stage: report[stage]}))
+            if child.returncode:
+                print(child.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+                raise SystemExit(child.returncode)
+    # V013-08 actual panel/route/model behavior; only external Unity, row/text delivery, input and GUI are substituted.
+    if run.returncode == 0:
+        debug_sources = src(*("Assets/Scripts/LongLoop/" + n + ".cs" for n in ("NarrativeSceneDebugPanel", "NarrativeSceneStateApplier", "NarrativeSceneStateApplication", "NarrativeTargetRegistry", "NarrativeActorMarker", "NarrativeAnchorMarker", "NpcShell", "NarrativeAmbientBubbleTrigger", "NarrativeAmbientBubbleDriver")))
+        debug_sources += src(*("Assets/Scripts/Narrative/Unity/" + n + ".cs" for n in ("NarrativeRuntimeEntry", "NarrativeDataAdapter", "DialoguePresentationConfig", "NarrativeBubbleView")))
+        debug_sources += src(*("Assets/Scripts/DataBase/CookingData/" + n + ".cs" for n in ("CK01CharacterData", "CK01DialogueData", "CK01DialogueLineData", "CK01CGData", "CK01SceneData", "CK01SceneStateData", "CK01SceneStatePlacementData", "CK01AmbientPoolData", "CK01OptionalValues")))
+        debug_sources += src("DevTools/LongLoop/NarrativeDebugUnityBoundary.cs", "DevTools/LongLoop/NarrativeSceneDebugTests.cs", "DevTools/Narrative/NarrativeAmbientBubbleTests.cs")
+        debug_exe = build("NarrativeSceneDebugTests", debug_sources, [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core()], "exe", defines=("UNITY_EDITOR",))
+        def debug_run(stage, command):
+            (out / (stage + ".run.preflight.json")).write_text(json.dumps({"capturedBeforeRun": True, "command": command, "monoSha256": digest(mono)}, indent=2), encoding="utf-8")
+            start = datetime.now(timezone.utc).isoformat()
+            child = subprocess.run(command, cwd=root, capture_output=True)
+            (out / (stage + ".run.stdout.bin")).write_bytes(child.stdout)
+            (out / (stage + ".run.stderr.bin")).write_bytes(child.stderr)
+            item = {"command": command, "exitCode": child.returncode, "startedAt": start, "finishedAt": datetime.now(timezone.utc).isoformat(), "text": child.stdout.decode("utf-8-sig", "replace").strip()}
+            report[stage] = item
+            (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+            if child.returncode:
+                print(child.stdout.decode("utf-8-sig", "replace"), file=sys.stderr)
+                print(child.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+                raise SystemExit(child.returncode)
+            return item
+        print(json.dumps({"debugRoutes": debug_run("debug-routes", [str(mono), str(debug_exe)])}))
+        # Compile the current full LongLoop sources under actual Release/Development symbols.
+        # Existing adjacent dependency APIs are unchanged; Core's conditional API is rebuilt with matching identity/symbols.
+        metadata_exe = build("NarrativeDebugReleaseTests", src("DevTools/LongLoop/NarrativeDebugReleaseTests.cs"), [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
+        editor_record = next(r for r in records if r["stage"] == "LongLoop")
+        editor_input = Path(editor_record["command"][-1][1:])
+        editor_lines = editor_input.read_text(encoding="utf-8-sig").splitlines()
+        current_core = ensure_narrative_core()
+        configurations = []
+        for mode, symbols in [("Release", ()), ("Development", ("DEVELOPMENT_BUILD",)), ("Editor", ("UNITY_EDITOR",))]:
+            folder = out / ("debug-native-" + mode.lower()); folder.mkdir(exist_ok=False)
+            core = build("DebugCore" + mode, sorted((root / "Assets/Scripts/Narrative/Core").rglob("*.cs")), [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], defines=symbols, assembly_path=folder / "Narrative.Core.dll")
+            output = folder / "LongLoop.dll"; lines = []
+            for line in editor_lines:
+                if line.startswith(("-refout:", "/refout:")): continue
+                if line.startswith(("-out:", "/out:")): line = '-out:"' + str(output) + '"'
+                if line.startswith(("-define:", "/define:")):
+                    values = [v for v in line.split(":", 1)[1].split(";") if not v.startswith("UNITY_EDITOR") and v != "DEVELOPMENT_BUILD"]
+                    if not values: continue
+                    line = "-define:" + ";".join(values)
+                line = line.replace(str(current_core), str(core)).replace(current_core.as_posix(), core.as_posix())
+                lines.append(line)
+            if symbols: lines.append("-define:" + ";".join(symbols))
+            rsp = folder / "LongLoop.rsp"; rsp.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            command = [str(mono), str(csc), "@" + str(rsp)]
+            (folder / "preflight.json").write_text(json.dumps({"capturedBeforeCompile": True, "mode": mode, "sourceRsp": str(editor_input), "sourceRspSha256": digest(editor_input), "derivedRspSha256": digest(rsp), "matchingCore": str(core), "matchingCoreSha256": digest(core), "command": command}, indent=2), encoding="utf-8")
+            start = datetime.now(timezone.utc).isoformat(); child = subprocess.run(command, cwd=root, capture_output=True)
+            (folder / "compile.stdout.bin").write_bytes(child.stdout); (folder / "compile.stderr.bin").write_bytes(child.stderr)
+            (folder / "compile-result.json").write_text(json.dumps({"command": command, "exitCode": child.returncode, "startedAt": start, "finishedAt": datetime.now(timezone.utc).isoformat()}, indent=2), encoding="utf-8")
+            if child.returncode:
+                print(child.stdout.decode("utf-8-sig", "replace"), file=sys.stderr); print(child.stderr.decode("utf-8-sig", "replace"), file=sys.stderr); raise SystemExit(child.returncode)
+            configurations.append((mode, output, core))
+        for mode, loop, core in configurations:
+            print(json.dumps({"debug" + mode: debug_run("debug-compile-" + mode.lower(), [str(mono), str(metadata_exe), mode, str(loop), str(core), str(out), str(sa), str(ue)])}))
     (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps({"productionExitCodes": [r["exitCode"] for r in records[:3]],
                       "logicRunExitCode": run.returncode, "logic": report["logicTest"]["text"]}))

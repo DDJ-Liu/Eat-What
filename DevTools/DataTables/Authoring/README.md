@@ -1,5 +1,7 @@
 # 配表 Excel / CSV 双入口
 
+2026-11-16 AI562/V013-12 已在主 `DataTables_Authoring.xlsx` 的既有八表页追加 `test_` 占位，并按本出口格式化、隔离导出与逐格来源审计后发布 8 份实际变化的 CSV（7 份 Narrative/Street 加 Localization）；CGs 保持表头且未重写，13 份 Cooking CSV 未改。原 1551 个非空单元格及批注受保护，配置差异为 140 个授权新增单元格，格式阶段内容/结构差异均为 0。正式 22 表 0 error/46 warning；新增两条 V-25 均为场景接线前未核。当前数据行、共用 ID、字体前置和未来清理方法见[剧情八表配表说明](../../../docs/剧情八表配表说明.md)。后续修改以主 xlsx 为权威源，保留非空旧值，整体格式化、记录逐格来源并校验后再发布派生 CSV；不要用旧 CSV 回建源表。Unity 导入/生成绑定仍由 V013-14 执行。
+
 表头说明：旧14表119列的集中元数据位于header-descriptions.mjs；新增八表105列的用途/填法直接读取schema.description。authoring.mjs按实时schema合并消费点、单位、示例、必填/空值/条件、关联/约束为每字段一份中文注释，现代码范围22表224列。KitchenAreas列表分隔符为|，RecipeSteps.standard_ingredients为;且可混用ing_/prd_/既有stp_。preset_tools旧值保留但不再决定场景可用厨具。示例来自CSV，作为填法参考，不回写人工值。
 
 2026-11-15 N004 DATA 已建立八份仅表头CSV，并在原主工作簿追加八个仅表头页。首次注释更新因既有 `Items!M1` 用户注释停下；独立工具修复后，DATA 仅对新增八页初始化105条表头注释，并将注释和22页格式候选经 FormatOrCommentOnly 事务发布。旧14页的值、类型、公式和结构核对无差异，旧注释未更新。正式22表离线校验通过（0错误、44警告、场景清单仍未核）；ImportContracts、Schemas、Authoring、HeaderComments四个原完整回归入口均已各运行一次并通过。DATA机器合同待CONTROL独立审查；新增八页的Excel客户端显示和场景相关检查仍未人工/原生签收。以下2026-10-12的14表人工签收不代表新增八页的Excel客户端显示已验收。

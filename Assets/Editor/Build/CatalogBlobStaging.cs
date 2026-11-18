@@ -22,6 +22,7 @@ public static class CatalogBlobStaging
             var fingerprint=CatalogBlobSerializer.Fingerprint(graph);var cipher=new CatalogBlobCipher(new ObfuscatedStaticKeyProvider());var packet=CatalogBlobSerializer.Seal(graph,cipher);
             if(SaveEnvelope.SerializeCanonicalObject(CatalogBlobSerializer.Authenticate(packet,fingerprint,cipher))!=SaveEnvelope.SerializeCanonicalObject(graph))throw new InvalidDataException("Catalog staged readback mismatch.");
             var values=new Dictionary<string,byte[]> { ["catalog.graph.json"]=Encoding.UTF8.GetBytes(SaveEnvelope.SerializeCanonicalObject(graph)),["catalog.bin"]=packet,["CatalogBuildFingerprint.g.cs"]=Encoding.UTF8.GetBytes(CatalogBlobSerializer.FingerprintSource(fingerprint)),["export.json"]=Encoding.UTF8.GetBytes(new JObject{["fingerprint"]=fingerprint,["dataAssets"]=((JArray)graph["assets"]).Count,["spriteKeys"]=((JArray)graph["sprites"]).Count,["authenticatedReadback"]=true}.ToString()) };
+            if(graph["prefabs"] is JArray){var metadata=JObject.Parse(Encoding.UTF8.GetString(values["export.json"]));metadata["prefabKeys"]=((JArray)graph["prefabs"]).Count;values["export.json"]=Encoding.UTF8.GetBytes(metadata.ToString());}
             foreach(var pair in values){var path=Path.Combine(full,pair.Key);using(var stream=new FileStream(path,FileMode.CreateNew,FileAccess.Write)){created.Add(path);stream.Write(pair.Value,0,pair.Value.Length);stream.Flush(true);}if(fault!=null)fault(pair.Key);}
             success=true;return fingerprint;
         }

@@ -331,3 +331,27 @@ MonoBehaviour:
     zh_cn: "\u5403\u4EC0\u4E48"
   - key: ui_p0_cover_bubble_b.text
     zh_cn: "\u6C6A\uFF01"
+  - key: test_chr_tomato.name
+    zh_cn: "\u756A\u8304"
+  - key: test_chr_passer_a.name
+    zh_cn: "\u4EBA\u4E00"
+  - key: test_chr_passer_b.name
+    zh_cn: "\u4EBA\u4E09"
+  - key: test_scene_street.name
+    zh_cn: "\u8BD5\u573A"
+  - key: test_line_single_a.text
+    zh_cn: "\u4F60\u597D"
+  - key: test_line_single_b.text
+    zh_cn: "\u5403\u4EC0\u4E48"
+  - key: test_line_three_1.text
+    zh_cn: "\u756A\u8304\u6C64"
+  - key: test_line_three_2.text
+    zh_cn: "\u597D\u559D"
+  - key: test_line_three_3.text
+    zh_cn: "\u771F\u9999"
+  - key: test_line_pair_1.text
+    zh_cn: "\u770B\u8FD9\u91CC"
+  - key: test_line_pair_2.text
+    zh_cn: "\u597D"
+  - key: test_chr_potato.name
+    zh_cn: "\u571F\u8C46"
