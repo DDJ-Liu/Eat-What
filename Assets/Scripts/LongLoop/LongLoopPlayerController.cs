@@ -28,6 +28,7 @@ namespace EatWhat.LongLoop
         [Header("Interfaces")]
         [SerializeField] private MonoBehaviour gameInputProvider;
         [SerializeField] private MonoBehaviour avatarBehaviour;
+        [SerializeField] private OperationLock operationLock = null;
 
         private IGameInput input;
         private IPlayerAvatar avatar;
@@ -110,6 +111,8 @@ namespace EatWhat.LongLoop
             }
         }
 
+        public void ConfigureOperationLock(OperationLock value) { operationLock = value; }
+
         public void ConfigureBoundaries(Transform left, Transform right)
         {
             boundaryL_TUNE = left;
@@ -184,6 +187,8 @@ namespace EatWhat.LongLoop
         protected virtual void Update()
         {
             ApplyRigidbodyConstraints();
+            if (operationLock != null && operationLock.IsLocked)
+            { StopMovement(); return; }
             if (hasFocus && input != null)
                 SetMoveInput(new Vector2(input.Horizontal, input.Vertical));
             else if (!hasFocus)

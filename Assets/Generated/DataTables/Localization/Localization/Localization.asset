@@ -355,3 +355,29 @@ MonoBehaviour:
     zh_cn: "\u597D"
   - key: test_chr_potato.name
     zh_cn: "\u571F\u8C46"
+  - key: test_chr_talker.name
+    zh_cn: "\u4EBA\u56DB"
+  - key: test_chr_player.name
+    zh_cn: "\u6211"
+  - key: test_name_unknown.name
+    zh_cn: "\uFF1F\uFF1F\uFF1F"
+  - key: test_line_talk_a_01.text
+    zh_cn: "\u4F60\u597D\uFF0C\u4ECA\u5929\u5403\u4EC0\u4E48\uFF1F"
+  - key: test_line_talk_a_02.text
+    zh_cn: "\u5979\u770B\u4E86\u770B\u83DC\u5355\u3002"
+  - key: test_line_talk_a_03.text
+    zh_cn: "\u756A\u8304\u6C64\uFF0C\u597D\u559D\u3002"
+  - key: test_line_talk_a_04.text
+    zh_cn: "\u597D\uFF0C\u771F\u9999\uFF01"
+  - key: test_line_talk_a_05.text
+    zh_cn: "\u4ECA\u5929\u7684\u83DC\u5355\u6709\u756A\u8304\u6C64\u3001\u571F\u8C46\u548C\u70ED\u996D\u3002\u4F60\u770B\uFF0C\u6C64\u91CC\u6709\u756A\u8304\u3001\u571F\u8C46\uFF0C\u8FD8\u6709\u9999\u9999\u7684\u7C73\u996D\u2026\u2026\u597D\u559D\uFF1F\uFF01\u518D\u5403\u4E00\u53E3\uFF0C\u771F\u9999\u3002"
+  - key: test_line_talk_b_01.text
+    zh_cn: "\u4F60\u597D\uFF0C\u5403\u4EC0\u4E48\uFF1F"
+  - key: test_line_talk_b_02.text
+    zh_cn: "\u5403\u756A\u8304\u6C64\u5427\u3002"
+  - key: test_line_talk_b2_01.text
+    zh_cn: "\u597D\uFF0C\u4E00\u8D77\u5403\u3002"
+  - key: test_line_talk_c_01.text
+    zh_cn: "\u771F\u9999\u3002"
+  - key: ui_street_talk.text
+    zh_cn: "\u4EA4\u8C08"

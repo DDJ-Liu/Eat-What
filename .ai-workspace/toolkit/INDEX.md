@@ -6,6 +6,7 @@
 
 | ID | 名称/摘要 | 域 | 正文 |
 | --- | --- | --- | --- |
+| TK-INT-20 | InteractionPrompt / InteractionPromptState：被动挂点按键提示，现设备/本地化、短渐变；CODE离线候选，视觉待后继 | INT | [INT.md](INT.md#tk-int-20) |
 | TK-CMD-01 | CommandManager + CommandBindingAsset Command/ | CMD | [CMD.md](CMD.md#tk-cmd-01) |
 | TK-CMD-02 | ShortCycleCommandBridge | CMD | [CMD.md](CMD.md#tk-cmd-02) |
 | TK-SEC-01 | 认证加密V2、密钥provider、二进制容器与共享ISaveCodec/EncryptedJsonCodec | SEC | [SEC.md](SEC.md#tk-sec-01) |

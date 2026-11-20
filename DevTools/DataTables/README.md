@@ -1,5 +1,13 @@
 # DataTables 开发工具入口
 
+## V014-OPT 表端气泡来源告警 V-26（2026-11-19）
+
+沿现 `NarrativeTableValidation.Enable/EnableProject` 的SceneStatePlacements规则增加V-26 warning；ImportService与 `Validate-DataTables.ps1 -Quick -ReportDirectory <目录>` 自动收到，不新增加载器/入口。角色自身条目须active=true且表内ambient_pool有有效池引用；同scene/state的另一个在场actor所填池，经dialogue_ids及真实first_line/next_line链含该角色精确speaker ID时提示。接收者仅无多实例后缀条目；发起者可有#2。每接收条目一条，列出它的池、另一个发起者/池/首个命中line，多个发起者汇在同条；空speaker、自己、停用、跨scene/state不合并。错误引用仍走原规则，警告不阻断、不改配置。
+
+只查表内池；条目为空而只在场景实例配置的池无法静态检查，V-26=0不等于所有实际实例无叠泡。原Narrative准入组新增RunV26，使用自包含 `DevTools/Narrative/Fixtures/ValidationV26/historical.json` 及原Input/Context/CSV parser/真实validator，原Run断言全文保持。原0.1.3修前8条placement实际文本、当前修后和配套CSV来源/SHA在fixture与SOURCE.md，测试不依赖活动outputs。20用例66检查：修前test_default的番茄/基础路人各一条，由#2发起；修后0条，停用/跨状态/精确ID/可达链等边界覆盖。
+
+本卡同一45个输入（22CSV/22schema/源工作簿）前后保全核对，现行22表0error/47warning、旧警告逐项相同、V-26=0；包含573已交ui_street_talk.text这一已有未引用key，不回退成历史46。完整Narrative原入口通过，旧断言/102行基准保持。只开发规则和离线验证，未改表定义/值、资产、存档或发布格式版本常量，未作版本格式签收；完整项目核验日期不变。
+
 ## V013-09 场景内容离线审计（2026-11-16）
 
 `Validate-DataTables.ps1 -Quick -ReportDirectory <目录>` 现在经原 `NarrativeTableValidation.EnableProject` 在 SceneStates 结果中追加 V-25 warning，完整/Quick 报告的 warnings 都能看到。数据仍由原 CSV/schema、ReferenceTables 与有效值读取；审计类 `NarrativeSceneContentAudit` 同置于现有 Editor 源文件，不另设剧情数据目录。DataTableImportService 原 EnableProject 调用也能获得这些 warning，无 Unity 加载或资产保存动作。

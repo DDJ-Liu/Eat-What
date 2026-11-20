@@ -174,10 +174,10 @@
       "directory": ".ai-workspace/inputs",
       "id": "schema",
       "currentPaths": [
-        ".ai-workspace/inputs/CK01-B_配表Schema_v2_5_1.md"
+        ".ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md"
       ],
       "pattern": "^\\.ai-workspace/inputs/CK01-B_配表Schema_v(?<version>\\d+(?:_\\d{1,4})+)\\.md$",
-      "registrationSource": "2026-11-15用户转交设计端v2.5.1，接收清单NARRATIVE-N012P1-20261115核原字节SHA；仅目录与本地化文字补正，表定义不改。旧v2.5及历史夹具来源保留。"
+      "registrationSource": "2026-11-19 用户提供 v2.5.3 存档版本勘误；原件和补丁的 SHA 见 PLAYABLE-DEMO014-20261119/存档版本补丁接收.json。"
     },
     {
       "versionRule": "numeric-components",

@@ -1,5 +1,17 @@
 # 控制台入口
 
+2026-11-19 可玩包 0.1.4 已接收[存档版本补丁](inputs/派发/PLAYABLE-DEMO014-20261119/cards/补丁说明_可玩包体0_1_4_存档版本号_20261119.md)。[Schema v2.5.3](inputs/CK01-B_配表Schema.md)明确发布数据包 2.5.1、存档 2.4.1。AI584 已同卡完成长循环存档，三种构建条件共 273 项真实文件检查通过独审；V-26 沿用原审查。实时状态见[本批登记](inputs/派发/PLAYABLE-DEMO014-20261119/执行登记.md)。
+
+2026-11-19 0.1.3 已提交 `43cc68f`，0.1.4 v1.1 已进入新监管批次。[执行登记](inputs/派发/PLAYABLE-DEMO014-20261119/执行登记.md)保留卡号、人工门和履历。
+
+2026-11-19 原 V013-17 的监管已完成，AI570 与同根修复 AI571 均独审通过。操作续行实用 2/5，成品启动退出一次。正式批次完成后回到 MANUAL。用户已签收工程体验，成品与报告在交付文件目录。[构建核验](outputs/control/PLAYABLE-DEMO013-20261115/AI570-package-verification.json)。
+
+2026-11-19 0.1.3 气泡人工反馈由 AI566、567、569、568 完成。四卡均已正式结算并独立审查，session `56d1ca9636fb4d199ee11456e2aec0d3` 完成后自动返回 MANUAL。两套状态各五条已在 Unity 读回，Console 无新增记录。用户仅复测两项，确认 0.1.3 通过后再接原 17。见[独审](outputs/control/PLAYABLE-DEMO013-20261115/AI-000568-independent-review.json)和[两项复测说明](../docs/demo-0.1.3_人工检查说明.md)。
+
+2026-11-17：USER-V0.1.3a手工DONE，原16第③managed精确3/额外预摆单列已获用户批准；AI565第二轮三合同3/3、CONTROL独审通过。Runtime可用、自然scn_test_street/test_default，Registry actor5=受管NPC3+额外chr_test_potato+主角；全部Shell5含停用passer_b，活动NPC4，三受管各活动形象1。新增Error0/Warning6，Play/Stop各1，最终ready/stopped、Street clean、14保存文件不变。首轮官方CLI主线程超时FAIL及原Error/所有失败保留，具体根因未证、无管线或生产修复；验收累计2/3、操作根续行1/5。额外预摆引用/自身番茄/amb_test_a已Edit与Play核合法，Head局部0仍由用户看气泡高度，手工DONE不撤销。详[独审](outputs/control/PLAYABLE-DEMO013-20261115/AI565-independent-final-review.json)和[人工说明](../docs/demo-0.1.3_人工检查说明.md)。当前session5034e36753bd4b229040eb44ac0d008d全部成功→COMPLETE自动MANUAL，非额度耗尽或用户撤销监管；下一真实门为用户明确“0.1.3检查通过”才投原17打包。watch60已核PAUSED，短循环/描边/后台探针不恢复，无新Build/Git提交。
+
+2026-11-16：[0.1.3投放](inputs/派发/PLAYABLE-DEMO013-20261115/执行登记.md)原01～15各自代码/数据/原生或文档范围均CONTROL独审通过，原17卡/USER完整保留。旧成果已6d2f911/fc4dc37提交；本轮0.1.3不续改Git。562旧1551格保/新增140/2341逐格、563四管理对象/三锚点/NPC形象保存且37旧父级位置保，原生三合同、操作1/验收1of3；导表0error56warning4未核info、Console22warning/0error如实留档。564三用户文档在docs、3合同通过，用量sources空项已按追加原源核实并保原错误，不重跑。第二段scope560～564已正式全部SUCCEEDED→session COMPLETE自动MANUAL，非用户停止或额度耗尽；555根2/5、561根1/5及所有失败许可保留。下一真实前置是新USERa：挪三锚点/核占位/调Head；16待其明确DONE才按监管安排S40，17还需明确0.1.3检查通过，不代人工签收。watch60原PAUSED；重复暂停写被自动审批拒绝，原配置保持、无阻碍。短循环/描边不恢复。见[本阶段交接](outputs/control/PLAYABLE-DEMO013-20261115/开发阶段交接.md)，实时模式读queue。
+
 2026-11-15补充：用户已签收N0-OPT视觉/Excel，已完成[N012-P1顺序补丁](inputs/派发/NARRATIVE-N012P1-20261115/AI546_N012P1执行补充.md)，固定CODE/监管独审2合同/8事实通过，只相关Narrative离线入口；session正常COMPLETE，无Unity/新版本/Git许可。附件K25～27作为本补丁规划依据，未据附件自动替换全局规范；未来CG退场提议留待设计裁决。
 
 2026-11-13新业务：用户接收剧情底座批14卡并明确将N0-OPT补丁转正式，共15逻辑卡；[执行登记](inputs/派发/NARRATIVE-FOUNDATION-20261113/执行登记.md)保完整依赖/原件与正式号。首批AI519/520/521已注册，按固定CODE串行推进，目录设计人工门保留；本批不进引擎、不导入、不打包，不沿用前一轮Git提交/推送许可。下方整体验收和整理指此前阶段，不扩大到新批。

@@ -17,6 +17,12 @@ namespace EatWhat.LongLoop
         void SetVisual(object prefab);
         void SetPool(string poolId);
     }
+    // Optional capability: old scene actors and their original nine steps remain unchanged.
+    public interface INarrativeSceneStateDialogueActor
+    {
+        void SetDialogueBinding(string dialogueId, string marker);
+        string ActualDialogueId { get; }
+    }
     public interface INarrativeSceneStateWorld
     {
         bool TryFindActor(string fullId, out INarrativeSceneStateActor actor);
@@ -35,21 +41,29 @@ namespace EatWhat.LongLoop
         private readonly HashSet<INarrativeSceneStateActor> originals = new HashSet<INarrativeSceneStateActor>();
         private readonly List<INarrativeSceneStateActor> generated = new List<INarrativeSceneStateActor>();
         private readonly List<string> diagnostics = new List<string>();
+        private readonly Action<IEnumerable<string>> clearTalked;
+        private readonly Func<bool> dialogueInProgress;
         private bool disposed;
         public IReadOnlyList<string> Diagnostics => diagnostics.AsReadOnly();
         public string SceneId { get; private set; }
         public string StateId { get; private set; }
 
-        public NarrativeSceneStateApplication(INarrativeDataDirectory directory, INarrativeSceneStateWorld world)
+        public NarrativeSceneStateApplication(INarrativeDataDirectory directory, INarrativeSceneStateWorld world,
+            Action<IEnumerable<string>> clearTalked = null, Func<bool> dialogueInProgress = null)
         {
             this.directory = directory ?? throw new ArgumentNullException(nameof(directory));
             this.world = world ?? throw new ArgumentNullException(nameof(world));
             sceneDirectory = directory as INarrativeSceneStateDirectory;
+            this.clearTalked = clearTalked; this.dialogueInProgress = dialogueInProgress;
         }
         public bool ApplyDefault(string sceneAsset) { return Apply(sceneAsset, null); }
         public bool Apply(string sceneAsset, string stateId)
         {
             if (disposed) return Diagnose("DISPOSED: Scene state application has ended.");
+            bool switching = SceneId != null && stateId != null;
+            if (switching && dialogueInProgress != null && dialogueInProgress())
+                return Diagnose("DIALOGUE_IN_PROGRESS: 对话进行中");
+            var resetIds = new HashSet<string>(StringComparer.Ordinal);
             NarrativeScene scene; string issue;
             if (sceneDirectory == null) return Diagnose("MISSING_QUERY: Directory has no scene-state query capability.");
             if (!sceneDirectory.TryFindSceneAsset(sceneAsset, out scene, out issue)) return Diagnose(issue);
@@ -77,6 +91,12 @@ namespace EatWhat.LongLoop
                     if (!actor.RememberOriginal(out issue)) { Diagnose("BACKUP: " + issue); continue; }
                     originals.Add(actor);
                 }
+                var binding = actor as INarrativeSceneStateDialogueActor;
+                if (binding != null)
+                {
+                    binding.SetDialogueBinding(row.DialogueId, row.Marker);
+                    if (switching && !string.IsNullOrWhiteSpace(binding.ActualDialogueId)) resetIds.Add(binding.ActualDialogueId);
+                }
                 actor.SetActive(row.Active);
                 if (!row.Active) continue;
                 if (row.AnchorId.Length != 0)
@@ -102,7 +122,10 @@ namespace EatWhat.LongLoop
                 }
                 if (row.AmbientPool.Length != 0) actor.SetPool(row.AmbientPool);
             }
-            SceneId = scene.SceneId; StateId = selectedState; return true;
+            SceneId = scene.SceneId; StateId = selectedState;
+            // Only this target state's successfully applied actor rows contribute, including inactive rows.
+            if (switching && resetIds.Count != 0 && clearTalked != null) clearTalked(new List<string>(resetIds));
+            return true;
         }
         private void ClearGenerated()
         { foreach (var actor in generated) if (actor.IsAlive) world.DestroyActor(actor); generated.Clear(); }

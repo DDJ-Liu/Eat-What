@@ -117,6 +117,12 @@ namespace EatWhat.Narrative.Unity
             catch (Exception error) { diagnostic = ReadFailure(error); return false; }
         }
 
+        public DialoguePresentationResolution ResolveForService(NarrativeDialogue dialogue, NarrativeDialogueContinuationPolicy policy)
+        {
+            if (policy == null) throw new ArgumentNullException(nameof(policy));
+            return policy.Resolve(EnsureInitialized() ? presentationConfig.Data : null, dialogue);
+        }
+
         public bool TryResolveTrigger(string templateName, out DialogueTriggerResolution resolution, out string diagnostic)
         {
             resolution = null;

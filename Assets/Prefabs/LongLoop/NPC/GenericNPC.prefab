@@ -1,5 +1,54 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1189845869033847837
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 241209771162002888}
+  - component: {fileID: 5730879673492597707}
+  m_Layer: 0
+  m_Name: MarkerAnchor_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &241209771162002888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189845869033847837}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7878205206872413338}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5730879673492597707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189845869033847837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2ff05c62488469c905dacca841bdf04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Narrative.Unity::EatWhat.Narrative.Unity.NarrativeHeadMarkerView
+  fontAsset: {fileID: 11400000, guid: 75909fc3d0fa2c94baa5706654d37655, type: 2}
+  fontMaterial: {fileID: 9052723641695353799, guid: 75909fc3d0fa2c94baa5706654d37655, type: 2}
+  worldCamera: {fileID: 0}
+  sortingLayerName: LL_MidgroundFront
+  sortingOrder: 0
 --- !u!1 &2773048076578553077
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,6 +144,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7109614593853189022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5417079888977560258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6895743901580091561}
+  m_Layer: 0
+  m_Name: BubbleAnchor_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6895743901580091561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5417079888977560258}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7878205206872413338}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5876153577359392215
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3370646168630886644}
+  m_Layer: 0
+  m_Name: PromptAnchor_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3370646168630886644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876153577359392215}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.6, y: 4.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7878205206872413338}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8512140760044370578
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,6 +219,8 @@ GameObject:
   - component: {fileID: 8691771234537715921}
   - component: {fileID: 4850488659401005512}
   - component: {fileID: 1786360294830677057}
+  - component: {fileID: 7302465431366238462}
+  - component: {fileID: 9105863719291817292}
   m_Layer: 0
   m_Name: GenericNPC
   m_TagString: Untagged
@@ -167,6 +280,9 @@ MonoBehaviour:
   foot: {fileID: 8766002855266049557}
   visualMount: {fileID: 5522576711385812021}
   headAnchor: {fileID: 7878205206872413338}
+  markerAnchor: {fileID: 241209771162002888}
+  promptAnchor: {fileID: 3370646168630886644}
+  bubbleAnchor: {fileID: 6895743901580091561}
 --- !u!114 &4850488659401005512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,6 +315,43 @@ MonoBehaviour:
   bubbleView: {fileID: 0}
   poolId: 
   triggerTemplate: 
+  dialogueService: {fileID: 0}
+--- !u!114 &7302465431366238462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60c9dfb749774d929a84c5bb14e16bce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NarrativeDialogueTrigger
+  runtimeEntry: {fileID: 0}
+  dialogueService: {fileID: 0}
+  actorMarker: {fileID: 4850488659401005512}
+  npcShell: {fileID: 8691771234537715921}
+  dialogueId: 
+  markerValue: 
+  triggerTemplate: 
+--- !u!114 &9105863719291817292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512140760044370578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38ee8186cb54800afae9225e7134ef0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NarrativeHeadMarkerDriver
+  runtimeEntry: {fileID: 0}
+  dialogueService: {fileID: 0}
+  dialogueTrigger: {fileID: 7302465431366238462}
+  npcShell: {fileID: 8691771234537715921}
+  markerView: {fileID: 5730879673492597707}
 --- !u!1 &9116239743359452094
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,9 +377,12 @@ Transform:
   m_GameObject: {fileID: 9116239743359452094}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 241209771162002888}
+  - {fileID: 3370646168630886644}
+  - {fileID: 6895743901580091561}
   m_Father: {fileID: 7109614593853189022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

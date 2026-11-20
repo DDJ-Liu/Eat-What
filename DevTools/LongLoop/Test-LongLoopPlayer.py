@@ -308,8 +308,10 @@ def main():
                 rows, record_list=narrative_dependencies)
             narrative_unity = build("Narrative.Unity", sorted((root / "Assets/Scripts/Narrative/Unity").rglob("*.cs")),
                 common + [ue / "UnityEngine.JSONSerializeModule.dll", ue / "UnityEngine.UIModule.dll",
-                    sa / "Unity.TextMeshPro.dll", sa / "UnityEngine.UI.dll", ensure_narrative_core(), toolkit, generated],
+                    sa / "Unity.TextMeshPro.dll", sa / "UnityEngine.UI.dll", ensure_narrative_core(), toolkit, generated,
+                    next((root / "Library/PackageCache").glob("com.unity.nuget.newtonsoft-json*/Runtime/Newtonsoft.Json.dll"))],
                 record_list=narrative_dependencies)
+            shutil.copyfile(next((root / "Library/PackageCache").glob("com.unity.nuget.newtonsoft-json*/Runtime/Newtonsoft.Json.dll")), out / "Newtonsoft.Json.dll")
             write_narrative_dependencies()
         return narrative_unity
 
@@ -523,6 +525,8 @@ def main():
 
         if name == "Toolkit":
             current_core = ensure_narrative_core()
+            prompt_sources = src("Assets/Scripts/Tools/InteractionPrompt.cs", "Assets/Scripts/Tools/InteractionPromptState.cs")
+            extra_sources = tuple(extra_sources) + tuple(p for p in prompt_sources if p not in extra_sources)
             bridge = root / "Assets/Scripts/Tools/NarrativeCurveBridge.cs"
             if '"' + bridge.relative_to(root).as_posix() + '"' not in lines and bridge not in extra_sources:
                 extra_sources = tuple(extra_sources) + (bridge,)
@@ -545,7 +549,10 @@ def main():
             marker_sources += src("Assets/Scripts/LongLoop/NarrativeSceneStateApplication.cs",
                                   "Assets/Scripts/LongLoop/NarrativeSceneStateApplier.cs")
             marker_sources += src("Assets/Scripts/LongLoop/NarrativeSceneDebugPanel.cs")
-            extra_references = tuple(extra_references) + (sa / "Unity.InputSystem.dll",)
+            marker_sources += src("Assets/Scripts/LongLoop/OperationLock.cs")
+            marker_sources += src("Assets/Scripts/LongLoop/NarrativeDialogueTrigger.cs", "Assets/Scripts/LongLoop/StreetInteractionSelection.cs",
+                                  "Assets/Scripts/LongLoop/StreetInteractionSelector.cs", "Assets/Scripts/LongLoop/StreetDialogueGameState.cs")
+            extra_references = tuple(extra_references) + (sa / "Unity.InputSystem.dll", sa / "UnityEngine.UI.dll")
             extra_sources = tuple(extra_sources) + tuple(p for p in marker_sources if p not in extra_sources)
             if any(line.startswith('-r:"') and Path(line[4:-1]).stem in ("Narrative.Core", "Narrative.Core.ref") for line in lines):
                 replacements = dict(replacements, **{"Narrative.Core": current_core})
@@ -1143,7 +1150,23 @@ try {
         start=datetime.now(timezone.utc).isoformat();process=subprocess.Popen(command,cwd=root,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=dict(os.environ,FOLLOW_R_FIXTURE_ROOT=str(out/"lifecycle-fixtures"),FOLLOW_R_LIVE_MODE_PATH=str(out.parent/"live-mode-before.json")));stdout,stderr=process.communicate()
         (out/"driver-run.stdout.bin").write_bytes(stdout);(out/"driver-run.stderr.bin").write_bytes(stderr)
         report={"unityNativeLaunched":False,"productionCompiles":production,"logicCompile":records[-1],"logicTest":{"command":command,"pid":process.pid,"exitCode":process.returncode,"startedAt":start,"finishedAt":datetime.now(timezone.utc).isoformat(),"text":stdout.decode("utf-8-sig","replace")}}
+        if args.follow_driver_v012 and process.returncode == 0:
+            gate_sources = sources + src("Assets/Scripts/LongLoop/StreetDialogueGameState.cs",
+                "DevTools/LongLoop/StreetDialogueGateBoundary.cs", "DevTools/LongLoop/StreetDialogueGateTests.cs")
+            gate_exe = build("StreetDialogueGateTests", gate_sources,
+                [fx/"mscorlib.dll",fx/"System.dll",fx/"System.Core.dll",fx/"Facades/netstandard.dll",newtonsoft],
+                "exe",main_type="StreetDialogueGateTests",language="preview")
+            gate_command = [str(mono),str(gate_exe)]
+            (out/"dialogue-gates.preflight.json").write_text(json.dumps({"capturedBeforeRun":True,"command":gate_command,
+                "exeSha256":digest(gate_exe),"monoSha256":digest(mono),"nativeUnity":False,
+                "boundary":"actual driver/camera models/game-state; external service event/query handles only"},indent=2),encoding="utf-8")
+            gate_run = subprocess.run(gate_command,cwd=root,capture_output=True)
+            (out/"dialogue-gates.stdout.bin").write_bytes(gate_run.stdout);(out/"dialogue-gates.stderr.bin").write_bytes(gate_run.stderr)
+            report["dialogueGateCompile"] = records[-1]
+            report["dialogueGateTest"] = {"command":gate_command,"exitCode":gate_run.returncode,"text":gate_run.stdout.decode("utf-8-sig","replace")}
         (out/"offline-validation.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+        if report.get("dialogueGateTest",{}).get("exitCode",0):
+            print(gate_run.stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(gate_run.returncode)
         print(json.dumps({"productionExitCodes":[r["exitCode"] for r in production],"logicRunExitCode":process.returncode,"logic":report["logicTest"]["text"]}))
         if process.returncode:print(stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(process.returncode)
         return
@@ -1300,8 +1323,9 @@ try {
         if args.depth_scale:
             logic_sources += src("DevTools/LongLoop/DepthScaleLogicTests.cs",
                                  "DevTools/LongLoop/DepthScaleFacingLifecycleTests.cs")
+        logic_sources += src("Assets/Scripts/LongLoop/OperationLock.cs")
         logic = build("DepthScaleLogicTests" if args.depth_scale else "WalkAreaLogicTests", logic_sources,
-            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe",
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core()], "exe",
             "DepthScaleLogicTests" if args.depth_scale else "WalkAreaLogicTests")
         run_preflight = out / "walk-run.preflight.json"
         run_preflight.write_text(json.dumps({"capturedBeforeRun": True,
@@ -1561,10 +1585,14 @@ namespace UnityEngine.InputSystem {
     # V013-08 actual panel/route/model behavior; only external Unity, row/text delivery, input and GUI are substituted.
     if run.returncode == 0:
         debug_sources = src(*("Assets/Scripts/LongLoop/" + n + ".cs" for n in ("NarrativeSceneDebugPanel", "NarrativeSceneStateApplier", "NarrativeSceneStateApplication", "NarrativeTargetRegistry", "NarrativeActorMarker", "NarrativeAnchorMarker", "NpcShell", "NarrativeAmbientBubbleTrigger", "NarrativeAmbientBubbleDriver")))
-        debug_sources += src(*("Assets/Scripts/Narrative/Unity/" + n + ".cs" for n in ("NarrativeRuntimeEntry", "NarrativeDataAdapter", "DialoguePresentationConfig", "NarrativeBubbleView")))
+        debug_sources += src(*("Assets/Scripts/Narrative/Unity/" + n + ".cs" for n in ("NarrativeRuntimeEntry", "NarrativeDialogueContinuationPolicy", "NarrativeDataAdapter", "DialoguePresentationConfig", "NarrativeBubbleView")))
         debug_sources += src(*("Assets/Scripts/DataBase/CookingData/" + n + ".cs" for n in ("CK01CharacterData", "CK01DialogueData", "CK01DialogueLineData", "CK01CGData", "CK01SceneData", "CK01SceneStateData", "CK01SceneStatePlacementData", "CK01AmbientPoolData", "CK01OptionalValues")))
         debug_sources += src("DevTools/LongLoop/NarrativeDebugUnityBoundary.cs", "DevTools/LongLoop/NarrativeSceneDebugTests.cs", "DevTools/Narrative/NarrativeAmbientBubbleTests.cs")
-        debug_exe = build("NarrativeSceneDebugTests", debug_sources, [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core()], "exe", defines=("UNITY_EDITOR",))
+        debug_sources += src("DevTools/LongLoop/NarrativeHeadMarkerViewBoundary.cs", "Assets/Scripts/LongLoop/NarrativeHeadMarkerDriver.cs",
+            "DevTools/LongLoop/NarrativeInteractionServiceBoundary.cs",
+            "Assets/Scripts/Narrative/Unity/NarrativeTalkedPersistence.cs", "Assets/Scripts/LongLoop/NarrativeDialogueTrigger.cs",
+            "Assets/Scripts/LongLoop/StreetInteractionSelection.cs")
+        debug_exe = build("NarrativeSceneDebugTests", debug_sources, [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core(), fx / "Facades/netstandard.dll", current_toolkit, out / "Newtonsoft.Json.dll"], "exe", defines=("UNITY_EDITOR",))
         def debug_run(stage, command):
             (out / (stage + ".run.preflight.json")).write_text(json.dumps({"capturedBeforeRun": True, "command": command, "monoSha256": digest(mono)}, indent=2), encoding="utf-8")
             start = datetime.now(timezone.utc).isoformat()
@@ -1580,6 +1608,11 @@ namespace UnityEngine.InputSystem {
                 raise SystemExit(child.returncode)
             return item
         print(json.dumps({"debugRoutes": debug_run("debug-routes", [str(mono), str(debug_exe)])}))
+        # V014-16 uses actual panel/applier/trigger/persistence from this same retained host.
+        extended_debug = build("NarrativeSceneDebugDialogueTests", src("DevTools/LongLoop/NarrativeSceneDebugDialogueTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", fx / "Facades/netstandard.dll",
+             ensure_narrative_core(), debug_exe, current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
+        print(json.dumps({"debugDialogue": debug_run("debug-dialogue", [str(mono), str(extended_debug), str(out.parent / (out.name + "-debug-record"))])}))
         # Compile the current full LongLoop sources under actual Release/Development symbols.
         # Existing adjacent dependency APIs are unchanged; Core's conditional API is rebuilt with matching identity/symbols.
         metadata_exe = build("NarrativeDebugReleaseTests", src("DevTools/LongLoop/NarrativeDebugReleaseTests.cs"), [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
@@ -1613,6 +1646,95 @@ namespace UnityEngine.InputSystem {
             configurations.append((mode, output, core))
         for mode, loop, core in configurations:
             print(json.dumps({"debug" + mode: debug_run("debug-compile-" + mode.lower(), [str(mono), str(metadata_exe), mode, str(loop), str(core), str(out), str(sa), str(ue)])}))
+    # V014-10 appended default group. Reuse the retained controller/physics boundary unchanged.
+    if run.returncode == 0:
+        lock_metadata = out / "OperationLockMetadataBoundary.cs"
+        lock_metadata.write_text("namespace UnityEngine { [System.AttributeUsage(System.AttributeTargets.Field)] public sealed class TooltipAttribute : System.Attribute { public TooltipAttribute(string text) {} } }", encoding="utf-8")
+        lock_sources = src("Assets/Scripts/Tools/Input/IGameInput.cs",
+            "Assets/Scripts/LongLoop/IPlayerAvatar.cs", "Assets/Scripts/LongLoop/HorizontalMotion.cs",
+            "Assets/Scripts/LongLoop/WalkArea.cs", "Assets/Scripts/LongLoop/PlanarMotion.cs",
+            "Assets/Scripts/LongLoop/LongLoopPlayerController.cs", "Assets/Scripts/LongLoop/OperationLock.cs",
+            "Assets/Scripts/LongLoop/DepthScale.cs", "Assets/Scripts/LongLoop/DepthScaleMath.cs",
+            "Assets/Scripts/LongLoop/IDepthOverride.cs", "DevTools/LongLoop/WalkAreaUnityShim.cs",
+            "DevTools/LongLoop/OperationLockTests.cs") + [lock_metadata]
+        lock_sources += src(*("Assets/Scripts/LongLoop/Configuration/" + n + ".cs" for n in
+            ("StreetConfigAsset", "StreetConfigs", "DepthScaleConfig", "CameraModeConfig", "CameraFollowConfig", "SceneBoundsConfig")))
+        lock_exe = build("OperationLockTests", lock_sources,
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core()], "exe")
+        command = [str(mono), str(lock_exe)]
+        (out / "operation-lock.preflight.json").write_text(json.dumps({"capturedBeforeRun": True, "command": command, "exeSha256": digest(lock_exe), "monoSha256": digest(mono), "boundary": "retained WalkAreaUnityShim only; actual lock/controller/Core interface"}, indent=2), encoding="utf-8")
+        child = subprocess.run(command, cwd=root, capture_output=True)
+        (out / "operation-lock.stdout.bin").write_bytes(child.stdout)
+        (out / "operation-lock.stderr.bin").write_bytes(child.stderr)
+        report["operationLockTest"] = {"runExitCode": child.returncode, "text": child.stdout.decode("utf-8-sig", "replace").strip(), "nativeUnity": False}
+        if child.returncode:
+            (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+            print(child.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+            raise SystemExit(child.returncode)
+    # V014-24: reuse the actual shell/registry/trigger/driver/view already in the retained debug host.
+    if run.returncode == 0:
+        anchor_exe = build("NpcPresentationAnchorTests", src("DevTools/LongLoop/NpcPresentationAnchorTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core(), debug_exe], "exe")
+        command = [str(mono), str(anchor_exe)]
+        (out / "npc-anchors.preflight.json").write_text(json.dumps({"capturedBeforeRun": True, "command": command,
+            "exeSha256": digest(anchor_exe), "monoSha256": digest(mono), "actualHost": str(debug_exe),
+            "actualHostSha256": digest(debug_exe), "boundary": "retained debug host external scene/hierarchy/row/text/surface only"}, indent=2), encoding="utf-8")
+        child = subprocess.run(command, cwd=root, capture_output=True)
+        (out / "npc-anchors.stdout.bin").write_bytes(child.stdout)
+        (out / "npc-anchors.stderr.bin").write_bytes(child.stderr)
+        report["npcPresentationAnchorsTest"] = {"runExitCode": child.returncode, "text": child.stdout.decode("utf-8-sig", "replace").strip(), "nativeUnity": False}
+        if child.returncode:
+            (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+            print(child.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
+            raise SystemExit(child.returncode)
+    # V014-13 appended interaction logic. Reuse the retained scene host; do not alter old assertions.
+    if run.returncode == 0:
+        interaction_sources = src("DevTools/LongLoop/NpcDialogueInteractionTests.cs")
+        interaction_exe = build("NpcDialogueInteractionTests", interaction_sources,
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core(), debug_exe], "exe")
+        command = [str(mono), str(interaction_exe)]
+        (out / "npc-interaction.preflight.json").write_text(json.dumps({"capturedBeforeRun":True,"command":command,
+            "exeSha256":digest(interaction_exe),"monoSha256":digest(mono),"actualHost":str(debug_exe),"actualHostSha256":digest(debug_exe),
+            "boundary":"retained scene/hierarchy/row/text/ground capability handles, external service/prompt/input; actual new trigger/selector/Core/bubble"},indent=2),encoding="utf-8")
+        child = subprocess.run(command,cwd=root,capture_output=True)
+        (out / "npc-interaction.stdout.bin").write_bytes(child.stdout);(out / "npc-interaction.stderr.bin").write_bytes(child.stderr)
+        report["npcInteractionTest"] = {"runExitCode":child.returncode,"text":child.stdout.decode("utf-8-sig","replace").strip(),"nativeUnity":False}
+        if child.returncode:
+            (out / "offline-validation.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+            print(child.stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(child.returncode)
+    if run.returncode == 0:
+        state_exe = build("NarrativeSceneStateDialogueTests", src("DevTools/LongLoop/NarrativeSceneStateDialogueTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core(), debug_exe,
+             fx / "Facades/netstandard.dll", current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
+        command = [str(mono), str(state_exe), str(out.parent / (out.name + "-state-record"))]
+        (out / "state-dialogue.preflight.json").write_text(json.dumps({"capturedBeforeRun":True,"command":command,
+            "exeSha256":digest(state_exe),"monoSha256":digest(mono),"actualHostSha256":digest(debug_exe),
+            "boundary":"actual application/applier/trigger/record/Toolkit store; external row/clone/hierarchy/marker lifecycle/service query handles"},indent=2),encoding="utf-8")
+        child = subprocess.run(command,cwd=root,capture_output=True)
+        (out / "state-dialogue.stdout.bin").write_bytes(child.stdout);(out / "state-dialogue.stderr.bin").write_bytes(child.stderr)
+        report["sceneStateDialogueTest"] = {"runExitCode":child.returncode,"text":child.stdout.decode("utf-8-sig","replace").strip(),"nativeUnity":False}
+        if child.returncode:
+            (out / "offline-validation.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+            print(child.stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(child.returncode)
+    if run.returncode == 0:
+        marker_exe = build("NarrativeHeadMarkerTests", src("DevTools/LongLoop/NarrativeHeadMarkerTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", fx / "Facades/netstandard.dll",
+             ensure_narrative_core(), debug_exe, current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
+        command = [str(mono), str(marker_exe), str(out.parent / (out.name + "-marker-record"))]
+        (out / "head-marker.preflight.json").write_text(json.dumps({"capturedBeforeRun":True,"command":command,
+            "exeSha256":digest(marker_exe),"monoSha256":digest(mono),"hostSha256":digest(debug_exe),
+            "boundary":"actual driver/Core04/trigger/record/bubble; external service/render/Unity handles"},indent=2),encoding="utf-8")
+        child = subprocess.run(command,cwd=root,capture_output=True)
+        (out / "head-marker.stdout.bin").write_bytes(child.stdout);(out / "head-marker.stderr.bin").write_bytes(child.stderr)
+        report["headMarkerTest"] = {"runExitCode":child.returncode,"text":child.stdout.decode("utf-8-sig","replace").strip(),"nativeUnity":False}
+        if child.returncode:
+            (out / "offline-validation.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+            print(child.stderr.decode("utf-8-sig","replace"),file=sys.stderr);raise SystemExit(child.returncode)
+    if run.returncode == 0:
+        spawn_exe = build("NarrativeHeadMarkerSpawnTests", src("DevTools/LongLoop/NarrativeHeadMarkerSpawnTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", fx / "Facades/netstandard.dll",
+             ensure_narrative_core(), debug_exe, current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
+        report["headMarkerSpawnTest"] = debug_run("head-marker-spawn", [str(mono), str(spawn_exe), str(out.parent / (out.name + "-marker-spawn-record"))])
     (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps({"productionExitCodes": [r["exitCode"] for r in records[:3]],
                       "logicRunExitCode": run.returncode, "logic": report["logicTest"]["text"]}))

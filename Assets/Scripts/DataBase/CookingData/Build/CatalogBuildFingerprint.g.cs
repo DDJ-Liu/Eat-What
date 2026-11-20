@@ -1,2 +1,2 @@
 // Prepared before compilation; never emitted in Build callback.
-public static class CatalogBuildFingerprint { public const string Expected = "83e997e59a77d0fa65093220eb00173326b351e9ceeba02f25375556ac47ecf5"; }
+public static class CatalogBuildFingerprint { public const string Expected = "dd39c03a60af6ff080d24f661a37c915d71ac4106a12845add75e8acfb750324"; }

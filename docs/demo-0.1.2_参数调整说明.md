@@ -1,5 +1,17 @@
 # demo-0.1.2 参数调整说明
 
+## 0.1.4 对话浮动缓收补正（V014-11-R，2026-11-19）
+
+原586最终浮动清零结论已被CONTROL拒验，AI591按用户裁决修正实际Target：有效对话门挡新浮动输入、立即清兴趣点，已有两轴浮动从实际世界值按原Look Out Time返回，尚在进入/世界限速中的状态不再先继续外漂。保存的OutTime0.8秒、MaxDistance2.5世界单位、MaxSpeed4单位/秒、ShrinkDelay10秒均未写。极低速度上限可延长实际返回，速度0可停住，OutTime0也仍服从速度上限；细节见[街道镜头说明](参数调整说明_街道镜头.md)。四模式和双门组1856项仅为离线技术结论，保本轮两次夹具失败与原586拒验；原19后街景人工、06字位和原0.1.2体验结论不变。
+
+
+## 2026-11-19 对话门控补充（0.1.4局部）
+
+原0.1.2速度、ShrinkDelay、视线意图和浮动算法/参数保持。新IStreetChannelState.CameraOverridden只供实时动态视野Freeze On Override判断；原DialogueOrCinematic只关偏移。新状态组件订阅普通对话服务，接管标志本版恒false；原19才接场景。
+
+当前CameraFollow保存ShrinkDelay10秒、LookOutTime0.8秒，Gate Offsets In Dialogue与Freeze On Override都true；本卡只读未改。普通对话不冻结Size，但仍等原10秒Delay，视线意图返回规则和NonLive等策略不变。四旧模式及新增196逻辑检查通过不代签镜头观感；完整参数/实际浮动缓收与硬上限关系见[街道镜头说明](参数调整说明_街道镜头.md)，五列在0.1.4人工说明。原0.1.2人工验收结论保持，完整项目核验日期不变。
+
+
 最后实际核对：2026-11-13，当前源码、保存资产及用户整体通过决定。当前磁盘参数：Size 7.5～10；Expand Time 7秒；Shrink Delay 10秒、Shrink Time 14秒；Recenter Delay 5秒；Look Max Distance 2.5世界单位、Look Max Speed 4世界单位/秒；Edge Zone Ratio 0.2。这是用户最新保存值，源码默认值不变。 既有机器结果保持；新包已构建并普通启动/正常退出通过；用户已在2026-11-13明确包体全部验收通过。
 
 ## 动态视野
@@ -142,7 +154,7 @@ ParallaxOrigin_TUNE当前已由用户保存为(-1.75,-2.21,0)，不恢复历史�
 
 输入优先现有IStreetChannelState.Input，再查gameState/Foot的公开父级IGameInput。正式Foot_TUNE是PlayerRoot_TUNE子节点，其父级LegacyInputProvider给鼠标/纵向轴；速度来自脚底实际XY位移，不用输入意图或provider假速度代替。RightStick仍预留。Gate Offsets In Dialogue取CameraModeConfig开关，活动状态由既有ConfigureGameState/IStreetChannelState.DialogueOrCinematic提供，默认未置位；没有新对话系统或序列化引用。
 
-门控时最终浮动贡献为0，内部状态继续按Look Out Time退出。Freeze On Override与门控开关独立：live对话/剧情状态冻结Zoom，NonLive时保留Zoom并在返回首样本复用；关闭冻结时NonLive重置。纵向输入不添加同一浮动门控。
+门控时新浮动目标为0，已有实际世界浮动按Look Out Time退出并经过原限距/限速/最终裁切，兴趣点立即归零。Freeze On Override与偏移门独立：live仅CameraOverridden接管冻结Zoom，普通对话不冻结；NonLive时原保留Zoom并在返回首样本复用、关闭冻结时NonLive重置策略保持。纵向输入不添加同一浮动门控。
 
 安装Confiner2D3.1.7要求Size变化时公开InvalidateLensCache；驱动比较上一实际应用Size而非每次传入的场景初值，实际改变才刷新，稳定/重复回调不重复刷新；停用归还原Lens时失效缓存供原生按原Size重建。原OversizeWindow.Enabled0、MaxWindowSize0保持，0表示不限制潜在窗口大小，不必为本卡改该优化提示。边界多边形仍要容纳最大视野，真实边界与分配成本待原生检查。无反射、内部缓存写入、位置修正量写入或第二层相机阻尼。
 

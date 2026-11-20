@@ -1,5 +1,65 @@
 # 《是啊，吃什么》代码结构与修改导航
 
+2026-11-21 街景普通对话版级冒烟已通过。当前 `LongLoop_Street.unity` 中第四锚点位于 (8.75, -4.85, 0)。启动街景后，`NarrativeDialogueService` 连接对话界面、操作锁及游戏状态，`StreetInteractionSelector` 连接同一组服务；五个具名 NPC 已从实际 Registry 读回。已发布的 Windows64 Mono 包从 Boot 进入 Street；运行数据包沿用 2.5.1，玩家存档沿用 2.4.1。用户调整后的挂点和出字参数见[对话参数说明](docs/参数调整说明_对话.md)。
+
+2026-11-20 原19/AI595局部操作已保存但未结清：Street新增NarrativeDialogueUI/InteractionPrompt实例与StreetDialogue_TUNE（Service/OperationLock/GameState/Selector），原玩家OperationLock和镜头GameState各接一引用；同HUD Composition/Box/Dimmer、原Runtime/Registry/Input/Camera、Applier/Debug同Service及两NPC正式Trigger路径接齐。唯一Talked仍由09 Session持有，Edit不初始化。第四锚点test_street_04_TUNE(1.1,-4,0)，土豆自身对话dlg_test_talk_c；正式ImportAll一次0error/56warning/8未核info，新18/更新24/未变163，16具名角色/段/句和交谈键可读。原28根/两NPC/玩家镜头有限字段无漂移，20保护、44表源schema、62脚本meta SHA保持；SaveScene一次返回clean，后续读回dirty未归属，现场未再保存/重载/清标记，首轮安全收口Fail/null保留；本次同根只读核磁盘仍为原保存点，原三项正式保存合同通过，无新增原生调用/验收，实际引擎累计1/3。未归属Editor dirty仍为后继保护事项，不推断全部内存相等；确需覆盖/重载/Play且无安全替代时再由用户决定。人工门保持，完整核验仍2026-09-17。
+
+2026-11-20 原18/AI594局部原生入口：正式新增`Assets/Prefabs/UI Components/NarrativeDialogueUI.prefab`（GUID2f11438ca51943e4492259e7d9623aef，作者Canvas/Dim/空Portraits/Dialogue/VisualRoot与Events，Canvas/Dimmer/BoxView/Composition本地接线）及`InteractionPrompt.prefab`（GUID31c0c9ee06d1234408c03596a6769067，仅被动组件与气泡字体）。GenericNPC原GUID/meta不变，在原Head下新增Marker/Prompt/Bubble三个_TUNE挂点，(0,.6)/(.6,.6)/(0,1.25)；根Trigger/Driver及MarkerAnchor子View本地引用齐全，自身三值空，Runtime/Service/Camera/Input等场景依赖留原19。原Foot/Visual/Head位置与引用保持，当前通用Head Y=2；Street磁盘/clean状态、字体及演出资产未改。37份主资产/25meta正式导入、编译完成与首次保存读回，无Play/场景接线或视觉代签；首轮描述文件权限Fail保留，本轮走独立正常审批。配置与实际保存值见三份现有组件说明，原06/原19及用户人工门保持，完整核验日期仍2026-09-17。
+
+2026-11-19 原18源侧/AI593：Canvas增加作者Canvas/Dim Image/三层的序列化引用，BoxView增加作者视觉根、Box/Name/TMP、三个Image命中与CanvasGroup引用；完整绑定复用作者节点，部分错绑明确诊断，全空保原自动生成与自有释放。作者Canvas启停仅开关渲染并保原Dimmer量，Box停用恢复作者位置/缩放/姓名尺寸、只拆自身EventTrigger条目，不删作者树；字体材质先于font，TMP真实排版门不变。新增可挂NarrativeDialogueComposition/meta（GUID afce24cba72a4c51aeb13d58892d9d2e），Box/Dimmer是Prefab本地引用，给09同一Session创建原07/08对并独占，不设Update/第二FSM；Service可选Presentation Composition，空保原直接Box/Dimmer。Session构造追加可选组合接口，销毁释放占用；编排及Core行为不改。现有Narrative入口追加作者/自动两路径与实际Service/Session生命周期组，原53及旧断言保持；真实Unity/TMP/UI引用离线编译，作者对象/事件/TMP为外部句柄，字位/换行仍false。逐文件源/meta与后续保存对象表在本卡交付和现有界面说明；本卡未制作Prefab/场景、无原生/Build/Git操作，完整核验日期不提高。
+
+2026-11-19 V014-15-R/AI592局部修复：原589因正常生成依赖缺口与0.35误尺寸被CONTROL拒验，原报告/失败保留。NarrativeDialogueTrigger原ConfigureReferences在注入Runtime/Service时同步本地HeadMarkerDriver.ConfigureSceneBindings；Driver.OnEnable从同根Trigger取已注入上下文，View可显式绑MarkerAnchor子件或只在自身子树解析，不全场查找。相同上下文幂等不重启bob/fade/重复订阅，改服务先退订；实际Applier原生成/重应用/预摆恢复代码不改。View固定直径按原18修正0.85世界单位；仅校正本批新增View测试两处错误0.35预期，其余原断言保持。新32项沿实际ApplyDefault/ApplyState/13注入和子件克隆映射验证，无直接driver.Configure；原驱动26、视图24、最新F8 33、Narrative原入口与Street默认首次Final通过。真实Unity DLL编译通过，外部Clone/生命周期/服务事件/绘图边界分列；无原生/资源/保存参数修改，3源码现有meta保留。原18/19及其后人工检查保留，当前NPC标记UI修复不加独立Lab前置，完整核验仍2026-09-17。
+
+2026-11-19 V014-16局部入口：现有条件编译NarrativeSceneDebugPanel新增可空09服务引用及ConfigureDialogue；当前13实际绑定/01.HasTalked逐行读取，服务Talked延迟查询，不另建记录。三个入口转调09.TryStart(实际段/完整实例ID)、01.ClearAll/原SaveNow、原Applier.ApplyState；对话中Apply灰显且入口拒绝，缺服务/记录仅隐藏对应新按钮，原Bubble/Apply保持。面板自身改继承BaseRaycaster/IPointerClickHandler，按Window TUNE屏幕矩形优先返回自身命中，在UGUI派发前拦截，不改06/09/Core输入行为；默认Update顺序-1000，基类原生命周期自动登记。LongLoop显式新增UnityEngine.UI引用，Release仍整类型排除。原Street默认入口追加33项，同一真实宿主执行应用器/13/01/Toolkit冷文件，外部服务仅调用/查询边界；原26及其它默认组/三种编译各6全部通过，旧断言保持。无原生/场景/用户档写入，未改15标记；18/19引用与实际点击/布局、原06人工门仍待，五列/配置见现有docs，完整核验日期不提高。
+
+2026-11-19 V014-15局部入口：Narrative.Unity新增NarrativeHeadMarkerView/meta（只世界Canvas/圆片/TMP绘制与自有资源），LongLoop新增NarrativeHeadMarkerDriver/meta（每NPC状态owner，读13实际绑定、Core04判定、09/01当前已聊与Runtime触发入口四参数）。Driver.Advance单一game delta持bob/fade；服务开始事件立即隐藏所有订阅标记，结束首次回报已是最新灰/金样式再淡回；none/不活动隐藏，不引用气泡/提示。View根脱离NPC缩放树、固定0.85世界单位直径，位置跟MarkerAnchor24，LL_MidgroundFront现层高于LL_Characters，不改层设置；显式字体先sharedMaterial后font，无自动资产查找。新驱动26/视图24及原Narrative运行/Street默认通过；无原生画面/场景写入。首轮scope漏显示源已CONTROL同根补正，原失败保、根续行1/5，18/19接线与实际视觉仍人工，完整核验日期不提高。
+
+
+2026-11-19 V014-14局部入口：原SceneStateApplication九步和旧Actor接口保持，新增可选INarrativeSceneStateDialogueActor；实际Applier.Actor通过13的SetActualBinding写dialogue/marker，RestoreOriginal清实际覆盖回实例值，未列入且从未受管预摆不动。首次成功应用（含首次显式指定）不清记录；已有状态后ApplyState每次均切换、同状态也清，全部角色条目应用后只对目标实际非空绑定调用一次批量01.Clear→SaveNow，包括inactive行/空字段回落、不含省略预摆。可空Dialogue Service拒绝进行中切换，现服务Talked延迟查询避免Start前空记录缓存；ConfigureDialogueState可单独注入同一个真实持久化owner，Core接口不扩。生成壳在本Applier持有的停用初始化父节点下先写完整ID，再转正式父级并由原Active步骤启用；不改Registry登记规则/资产。新66项与旧默认回归通过，首次宿主netstandard编译失败同键解决；14份源码/旧测试快照保持，镜头11不改，19接线及画面/原06人工门仍在，完整核验日期不提高。
+
+
+2026-11-19 V014-11-R/AI591局部修复：原586最终偏移被CONTROL拒验，原报告/失败保持。StreetFollowDriver在有效对话门开始时快照实际LookWorldOffset，用原StreetLookFloat.Evaluate的退出插值从该世界起点归零，再走原LimitWorld距离/速度上限；修正进入未完成/世界限速落后时可能继续外漂。新增FollowClipContext.LookInputGated是瞬态生产者契约：驱动已挡新输入，合成可保退出余量；默认false的纯管线原始输入仍硬清浮动，兴趣点仍立即清，裁切不变。四模式通过，双门组1856含新增1660项实际Target/同轨迹无浮动对照；本轮两次夹具失败及修复保留。原586状态/速度/输入/Zoom/ShrinkDelay与资产不变，原19接线后表现仍人工；本卡离线技术结论独立，不提高完整核验日期。
+
+
+2026-11-19 V014-13局部入口：LongLoop新增NarrativeDialogueTrigger（同NPC根，实例/实际绑定、Trigger取值器半径、normal准入）、IStreetInteractable/IStreetInteractionPrompt与普通对象StreetInteractionSelection、场景单一StreetInteractionSelector。Registry活动角色→真实GroundSpace.GroundDistance→Core04最近/同距沿前目标→NPC PromptAnchor24→Toolkit单帧Interact→09服务TryStart（完整实例id）；锁/对话先清提示并跳过后续输入/候选步骤，提示创建失败清旧显示。14后继写SetActualBinding，17填选择器本地化key，18/19接Prefab/场景。气泡Trigger仅新增可空Dialogue Service和精确发起者门，抑制新触发含DebugForce，原绝对冷却/已显示泡/其它NPC不变。新增38项和原默认/地面29通过；首次新增夹具编译失败与修复保留。无镜头11变更、场景/配表或引擎操作，原06和实际表现人工门保持；配置/五列表原位维护，完整核验仍2026-09-17。
+
+
+2026-11-19 V014-11局部入口：LongLoop新增StreetDialogueGameState/meta，订阅09服务事件，同步DialogueOrCinematic（仅对话）且CameraOverridden本版恒false；原IStreetChannelState新增后者，Driver实时zoom Frozen仅改读该标志，偏移仍原对话门，NonLive/曲线/ShrinkDelay不动。实际速度仍脚点差/CM时间，provider Velocity/Interests当前不读；组件Input转同一IGameInput/Foot父链、空兴趣表，兼容速度为真实脚点采样。原四镜头模式首轮通过，新196项含双假状态目标/Size/输入/Delay逐项一致、普通对话缩小/浮动退出恢复、独立接管冻结及事件解绑；旧断言保持，仅授权Freeze夹具同步两标志。原LongLoop编译闭包补现Newtonsoft引用，未改源数据/配置/玩家/Narrative。原19场景接线与表现待人工，五列/参数原位补充，完整核验仍2026-09-17。
+
+
+2026-11-19 V014-09局部入口：Unity新增同名MonoBehaviour NarrativeDialogueService及普通实现NarrativeDialogueSession/各meta。四引用接RuntimeEntry、BoxView、Dimmer、Core锁接口；单一Input/Scheduler/01持久化实例，外部新链用当前目录建一个FSM，链内由Core续接，事件带完整发起者和Aborted。游戏deltaTime单调累计、只调08→07，单次既有Box推进事件，无新读键；开始帧忽略输入，开关跨段/下次保持。Core无Abort，服务只追踪/释放自身锁，清UI并丢弃旧FSM/调度器，无假完成/已聊。RuntimeEntry仅新增受限ResolveForService调用FullFlow策略，旧解析不变；正常root/key沿工程原方案，不引用LongLoop。96真实逻辑项+原运行回归通过，V26/配表未重跑；原19接线及真实画面/生命周期/06字位待人工，说明原位维护，完整核验仍2026-09-17。
+
+
+2026-11-19 V014-01落盘补丁局部入口：Unity新增NarrativeTalkedPersistence普通对象/meta，包内唯一Core NarrativeTalkedRecord，通过原INarrativeTalkedRecord接FSM。Factory沿Toolkit现build codec+EnvelopeAuthenticator，固定long_loop.json/dialogue_talked ID列表；09在RuntimeEntry可用后InitializeWhenAvailable一次，记录/清除/恢复立即SaveNow，读缺/坏/错版本可用空记录+一次诊断，缺节空、坏节或并发变化阻写保原件，未知有效节保留。SaveEnvelope2.4.1/Catalog2.5.1分立且不改；Narrative.Unity仅补现Newtonsoft显式预编译引用，方向保持。发布95/编辑器89/开发89真实文件项、原Toolkit四环境各158及原Narrative运行组通过；V26/配表按用户明确跳过不重验。首轮44项/依赖失败、原Mono260路径首败保留，新短路径实测绿；09接启动/服务后继，未触真实玩家档或场景，完整核验仍2026-09-17。
+
+
+2026-11-19 V014-08局部入口：Unity新增NarrativeDialogueExit及ContinuationPolicy/同名meta，前者复用07的Box/Dim与稳定owner，真实Sequence只保留box/undim，反向收框/一次隐藏撤销，AfterBoxClosed早报后继续回亮，AfterCameraReturned等全部；Clear真中止且无完成。09每帧只08.Advance，按收框边界拆同一delta经07唯一组件时间口，不另读键，原06单次Toolkit输入保持。后者作FSM解析委托，以原Resolver+临时exit组/覆盖输入副本把有效Seamless回落FullFlow，诊断一次，原Core/参数/对话不变；否则原Core会绕过Exit。原Narrative追加185真实FSM/Sequence/Dimmer及适配层项，旧断言/原组保持，首轮全通过。09与场景接线、实际表现和06字位人工仍待，配置/五列表原位更新；完整核验仍2026-09-17。
+
+
+2026-11-19 V014-07局部入口：Unity新增NarrativeDialogueEntrance普通编排对象/PresentationSurfaces接口及meta，复用真实StepSequence，按快照dim→box或同时、实际移除portrait，原BoxPresenter真实打字机/名字同次启动。05/06追加显式外部时间入口保未接管行为；BoxView.Update仍单次Toolkit读键，只停自动Tick，07.Advance不读键，09只接原推进事件。完成事件由09转FSM，延后且持原context/line；Core原skip自行开句的过期入场通知抑制，无图请求延后确认；08退场/09服务未代做。ScalePop固定小回弹在Unity视图，无Core曲线/配置修改。原Narrative入口追加真实FSM/序列/打字机的新组，原断言保持；06字位/换行仍接线后待人工，参数/五列表见界面说明。未Unity/场景/存档或完整核验提升，仍2026-09-17。
+
+2026-11-19 V014-06 attempt2按用户已签裁决分阶段：当前机器范围为dialogueBoxLogicAndInputVerified+原Narrative回归，53项和原生产源码/测试保持；真实TMP行/字位数据仍false/null，不制造排版证据。字位与换行稳定性转街景接线后跨行长句慢显/快进补全的必查待人工项，用户检查前不签收，见[人工说明](docs/demo-0.1.4_人工检查说明.md)。首轮失败、原合同/报告和根累计保留，未把旧缺证据标已修复；本轮仅维护说明/证据，无Unity/源码/存档写入。下文首轮06记录为历史，当前以本段为准；完整核验仍2026-09-17。
+
+2026-11-19 V014-01阶段入口：新增`Core/NarrativeTalkedRecord.cs`及稳定meta，实现原INarrativeTalkedRecord，公开MarkTalked/HasTalked/Count/Clear(ids)/ClearAll/Export/Restore，Ordinal精确集合与独立有序列表、替换前校验；Dictionary维持mscorlib-only，无IO/JSON/Unity。原Narrative命令入口追加真实Record/FSM的44项，完整/无缝完成记录及原102行保持；HashSet依赖首败经同键一次重试修复保史。当前只完成步骤1只读核查/2内存，未接Unity/服务或存档，步骤3～6待用户版本裁决。Toolkit可独立slot，但本次原Persistence基线Mono encrypted:integer_above_double_exact红项保留、未修/重试；schema封装实际2.4.1与发布图2.5.1未改或签收。接口/边界见Narrative README；阶段交接不等整卡完成，完整核验仍2026-09-17。
+
+2026-11-19 V014-OPT局部入口：既有`Assets/Editor/DataTables/NarrativeTableValidation.cs`的Placement追加表端V-26非阻断warning，同scene/state的在场actor自挂有效池且是另一在场actor表内池可达句的精确speaker才报；接收者无#后缀、发起者可#2，空speaker/停用/不同状态不混同，不读取实例池。原EnableProject/校验与导表入口自动消费，不另设剧情数据目录/加载入口或版本常量。原NarrativeValidationTests追加RunV26/原PS入口输出validation-v26.json，复用原Input/Context和真实validator；自属ValidationV26夹具20例66项含AI566修前2条/修后0，原231/其它断言和102行基准保持。正式22表同输入前后0error/47warning逐项保持，V-26=0。配表说明和工具README同步；未写表/资产/版本或跑引擎，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：Unity侧新增`NarrativeDialogueBoxView.cs`/`NarrativeDialogueBoxPresenter.cs`及稳定meta。View在原Canvas.DialogueLayer建运行时纯色底板/TMP/左侧名字/两个指针开关；整句ForceMeshUpdate后仅改maxVisibleCharacters，沿真实characterInfo.index映射原Typewriter的UTF16前缀，完整排版行距在显字前处理。Presenter复用Core.Typewriter/AdvanceInput与FSM已选NameKey/LocService，异步后续Tick回报原line对象，屏幕/Toolkit Interact只发推进意图。原世界MouseInteract无屏幕例，依原06明确许可回落EventSystem；不引用LongLoop、不改Core行为/资源/配置。默认Narrative入口追加53项真实适配器/模型用例，边界只录输出，无排版算法；真实TMP行信息仍缺，不能称布局稳定验收通过。字段/五列表见[界面说明](组件说明文档/视觉特效/普通对话界面配置与使用说明.md)，07/08/09编排服务、18场景接线与统一Lab人工待后继，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：NpcShell追加MarkerAnchor/PromptAnchor/BubbleAnchor三独立可空引用，各自回落原HeadAnchor，旧ConfigureReferences保持；新ConfigurePresentationAnchors只设三引用。NarrativeAmbientBubbleTrigger按原实际speaker的壳取BubbleAnchor，Driver/视图/Renderer/上移/冷却不改。原LongLoop默认入口复用现debug宿主实际全链追加用例，旧壳142和气泡82/47保持，原断言夹具不改。Prefab/场景三子点及位置留18/19；字段/单位与五列表见[街景NPC说明](组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md)，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：Toolkit下`InteractionPrompt.cs`/`InteractionPromptState.cs`及稳定meta拥有单目标提示/淡入淡出状态；被动Overlay按高度缩放跟随世界挂点，固定两设备共用布局。只读原IGameInput.CurrentDevice并沿LocService/LocalizedText，保缺key回退，无Narrative/LongLoop依赖或新硬件输入。登记TK-INT-20；原Narrative入口新增--interaction-prompt定向39项实际状态/本地化及真实UI编译，布局源审读/渲染人工分列。配置见[提示说明](组件说明文档/视觉特效/交互按键提示配置与使用说明.md)；后续选择器接线与统一Lab人工未做，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：`Assets/Scripts/LongLoop/OperationLock.cs`及稳定meta拥有通用按名持有者集合、IsLocked/HolderCount和0→1/1→0事件，并正式实现现Core.INarrativeDialogueLock。主角LongLoopPlayerController新增可选Operation Lock引用/ConfigureOperationLock，Update读设备移动前锁住即调用原StopMovement返回；未接锁走旧路径，原运动/朝向/形象方法保持。原LongLoop默认入口末尾追加实际锁/控制器测试，沿用WalkArea边界与真实Core接口；相关编译源闭包补新类型，旧断言/夹具不改。接口与接线见[LongLoop说明](DevTools/LongLoop/README.md)，场景服务接线和原生体验留后继，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：Unity侧新增`NarrativeDialogueCanvas.cs`/`NarrativeSceneDimmer.cs`与稳定meta。前者拥有被动HUD运行根和三层（2560×1440/Height/Overlay/order200），后者拥有owner请求、max合并和当前压暗量，从实际tier.normalDim快照及调用时长续接。无输入路由/对话进度、模糊或黑幕；字体沿现气泡Heavy WithFallback接线，未写资产。原Narrative入口追加实际组件/Resolver的外部UI句柄单元组，真实Unity DLL编译单列；原行为/夹具保持。配置与五列人工路径见[界面说明](组件说明文档/视觉特效/普通对话界面配置与使用说明.md)；未进Unity或创建Prefab/场景，视觉待后继统一Lab，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：`Assets/Scripts/Narrative/Core/NarrativeInteractionRules.cs`（同交稳定meta）提供无状态ResolveMarker/SelectNearest。前者消费已取好的实际标记/绑定等级/已聊布尔值，仅Talk可灰；后者消费外部地面距离/半径/可用性和上次稳定ID，严格范围内取最近，精确等距保留上次。无记录、绑定优先级、几何、输入或渲染所有权，实际接线留后继；API和无上次的首项规则见[原Narrative说明](DevTools/Narrative/README.md)。新增用例追加原入口，旧行为/断言/夹具保持，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：`Assets/Scripts/Narrative/Core/NarrativeStepSequence.cs`（同交稳定meta）拥有一次具名步骤运行的进度。Begin快照步骤/移除名，Sequential承接剩余时间、Parallel各自推进至最长结束；Advance接受外部delta，Skip补全，完成bool每运行一次，无引擎/回调/效果换算。只读Steps区分未开始与零时长完成，API边界见[原Narrative说明](DevTools/Narrative/README.md)。新增用例追加原离线入口；未改命令调度器/状态机/输入/Resolver或实际接入入退场。本模块局部核对，完整核验仍2026-09-17。
+
+2026-11-19 0.1.4局部入口：`Assets/Scripts/Narrative/Core/NarrativeTypewriterModel.cs`（同交稳定meta）拥有单句可见文字进度。Begin消费现有Resolver不可变text快照，Advance接外部delta/快进，Complete补全；完成以bool只报一次，无回调/引擎引用。Unicode文字元素计数与含换行的UTF-16前缀分列，连续/末尾标点及途中快进切换规则见[原Narrative入口](DevTools/Narrative/README.md)。新增用例接原离线入口，旧状态机/调度/输入/取值器行为与断言保持；本卡未接视图/服务或改数据资源，不代表0.1.4体验完成，完整核验仍2026-09-17。
+
 2026-11-19 0.1.3 发布数据可随 Windows 成品加载。`CatalogBlobBuildProcessor` 将已保存生成资产的序列化信息与磁盘字段交叉核对，`CatalogBlobSerializer` 据此保留合法空角色形象。已绑定的形象沿稳定引用导出，无法证明为空的损坏引用会报错。`DevTools/Build-Demo.ps1` 使用当前快照和 `BuildPrepared` 构建启动页与街景。此次局部核对覆盖发布调用链和普通成品启动退出，详见[发布数据说明](DevTools/BuildRelease/README.md)。
 
 2026-11-19 局部核对了 Street 剧情气泡。`NarrativeBubbleCanvasRenderer` 在停用的气泡节点上创建 `TextMeshProUGUI`，先设定 UI 正交测量，再按 `Max Text Width` 获取首选尺寸。自然触发的冷却归发起者，`DialogueLines.speaker` 决定显示角色。当前工作簿与正式 CSV 的 `test_default` 保留 `chr_test_passer_a#2` 的双人池，番茄与基础路人的池留空，土豆保自身池。`test_second` 为番茄指定单人三句池，土豆使用 `test_street_03`。本次核对范围为气泡渲染、两状态及配表，完整工程核验日期沿用原记录。见[两项复测说明](docs/demo-0.1.3_人工检查说明.md)。

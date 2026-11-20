@@ -19,7 +19,7 @@ MonoBehaviour:
   anchor_id: test_street_03
   facing: right
   active: 1
-  dialogue_id: 
+  dialogue_id: dlg_test_talk_a
   ambient_pool: amb_test_a
   marker: 
   comment: 

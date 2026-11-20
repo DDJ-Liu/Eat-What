@@ -11,7 +11,9 @@ namespace EatWhat.LongLoop
         Vector3 VelocityWorld { get; }
         IGameInput Input { get; }
         IReadOnlyList<ChannelInterest> NearbyInterests { get; }
+        // Dialogue state gates offsets; camera ownership alone freezes dynamic zoom.
         bool DialogueOrCinematic { get; }
+        bool CameraOverridden { get; }
     }
 
     public struct ChannelContext

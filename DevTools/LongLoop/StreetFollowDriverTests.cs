@@ -35,6 +35,7 @@ internal sealed class DriverGameState:MonoBehaviour,IStreetChannelState
     public Vector3 VelocityWorld=>Vector3.right*1000;public IGameInput Input {get;}=new DriverInput();
     public System.Collections.Generic.IReadOnlyList<ChannelInterest> NearbyInterests=>null;
     public bool DialogueOrCinematic {get;set;}
+    public bool CameraOverridden {get;set;}
 }
 internal static class StreetFollowDriverTests
 {
@@ -521,7 +522,7 @@ internal static class StreetFollowDriverV012Tests
     }
     private sealed class ModeSource:IStreetChannelState
     {
-        public InputSource Source=new InputSource();public bool DialogueOrCinematic {get;set;}
+        public InputSource Source=new InputSource();public bool DialogueOrCinematic {get;set;}public bool CameraOverridden {get;set;}
         public Vector3 VelocityWorld=>new Vector3(10000,10000,0);
         public IGameInput Input=>Source;
         public System.Collections.Generic.IReadOnlyList<ChannelInterest> NearbyInterests=>null;
@@ -712,8 +713,8 @@ internal static class StreetFollowDriverV012Tests
             Check(f.Driver.VerticalOffsetState.Value<1,"actual speed recovery exits vertical channel");
             var mode=new ModeSource {Source=source,DialogueOrCinematic=true};
             f.Driver.ConfigureGameState(mode);Tick(f,.6f,dt:.2f);
-            Near(f.Driver.LastResult.Channels.LookFloat.x,0,"final float gated zero");
-            Check(f.Driver.LookFloatState.X.Value>0,"internal float exits gradually while final contribution zero");
+            Check(f.Driver.LastResult.Channels.LookFloat.x>0,"existing final float returns over LookOutTime");
+            Check(f.Driver.LookFloatState.X.Value>0,"internal float exits gradually with final residue preserved");
             StreetConfigs.Current.CameraMode.GateOffsetsInDialogue=false;Tick(f,.8f,dt:.2f);
             Check(f.Driver.LastResult.Channels.LookFloat.x>0,"existing mode gate switch observed");
             f.Driver.Configure(f.Binding,f.Point,f.Target,f.Interest,null,f.Debugger);
@@ -744,12 +745,12 @@ internal static class StreetFollowDriverV012Tests
         using(var f=new StreetFollowDriverTests.Fixture()) {
             Enable(f);var mode=new ModeSource();f.Driver.ConfigureGameState(mode);
             Tick(f,0);Tick(f,.2f,1.3f,dt:.2f);
-            var saved=f.Driver.ZoomState;mode.DialogueOrCinematic=true;Tick(f,.4f,1.3f,dt:.2f);
+            var saved=f.Driver.ZoomState;mode.DialogueOrCinematic=mode.CameraOverridden=true;Tick(f,.4f,1.3f,dt:.2f);
             Check(f.Driver.ZoomState.Equals(saved),"live takeover freezes full zoom progress");
             Near(f.State.Lens.OrthographicSize,saved.Size,"frozen size still written");
             f.Config.FreezeOnOverride=false;Tick(f,.6f,1.3f,dt:.2f);
             Check(f.Driver.ZoomState.Size>saved.Size,"freeze switch false permits advance");
-            mode.DialogueOrCinematic=false;f.Config.FreezeOnOverride=true;saved=f.Driver.ZoomState;
+            mode.DialogueOrCinematic=mode.CameraOverridden=false;f.Config.FreezeOnOverride=true;saved=f.Driver.ZoomState;
             f.Camera.Live=false;Tick(f,.8f,1.3f,dt:.2f);
             Check(f.Driver.ZoomState.Equals(saved),"non-live takeover retains frozen zoom state");
             f.Camera.Live=true;Tick(f,1,dt:.2f);
@@ -835,7 +836,7 @@ internal static class StreetFollowDriverV012Tests
     }
     private sealed class ReturnIntentMode:IStreetChannelState
     {
-        public ReturnIntentInput Source;public bool DialogueOrCinematic{get;set;}
+        public ReturnIntentInput Source;public bool DialogueOrCinematic{get;set;}public bool CameraOverridden{get;set;}
         public IGameInput Input=>Source;public Vector3 VelocityWorld=>Vector3.zero;
         public System.Collections.Generic.IReadOnlyList<ChannelInterest> NearbyInterests=>null;
     }

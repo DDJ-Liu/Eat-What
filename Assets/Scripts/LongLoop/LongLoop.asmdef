@@ -7,7 +7,8 @@
     "Unity.Cinemachine",
     "Narrative.Core",
     "Narrative.Unity",
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

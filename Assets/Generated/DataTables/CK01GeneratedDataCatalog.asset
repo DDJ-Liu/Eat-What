@@ -374,6 +374,12 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: fe236a1b31676444dbb84a7fe8ef61a9, type: 2}
     - stableId: chr_test_potato
       asset: {fileID: 11400000, guid: 93139de9d03787b419ddb28c31da3cb7, type: 2}
+    - stableId: chr_test_talker
+      asset: {fileID: 11400000, guid: bd3a970690d711b478d233beb4cb4fe8, type: 2}
+    - stableId: chr_test_narrator
+      asset: {fileID: 11400000, guid: fc5c806e59a395247bcf143cabc24bc8, type: 2}
+    - stableId: chr_test_player
+      asset: {fileID: 11400000, guid: e32a9504b40217d48b57f0cbdb673888, type: 2}
   - tableName: Dialogues
     aggregateAsset: {fileID: 0}
     rows:
@@ -385,6 +391,14 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: acacafbc22d71b549b6def90e01a319d, type: 2}
     - stableId: dlg_test_pair
       asset: {fileID: 11400000, guid: 8813b279f9fe965499c89e0e71d2625e, type: 2}
+    - stableId: dlg_test_talk_a
+      asset: {fileID: 11400000, guid: c46b9d9a1052dad40ab2873af8d070ec, type: 2}
+    - stableId: dlg_test_talk_b
+      asset: {fileID: 11400000, guid: 71472168274bc0a45964770a25c0dd1b, type: 2}
+    - stableId: dlg_test_talk_b2
+      asset: {fileID: 11400000, guid: 8158d0f77c8ab1846a0284679b44c56b, type: 2}
+    - stableId: dlg_test_talk_c
+      asset: {fileID: 11400000, guid: 5b349f10a22b3214fbeedf8883900ef2, type: 2}
   - tableName: DialogueLines
     aggregateAsset: {fileID: 0}
     rows:
@@ -402,6 +416,24 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: 50020ef0a90737241865725407582d34, type: 2}
     - stableId: ln_test_pair_02
       asset: {fileID: 11400000, guid: b7d3453e26248394d8eb9ad91f47adb1, type: 2}
+    - stableId: ln_test_talk_a_01
+      asset: {fileID: 11400000, guid: 3da8d2d8c8ad65c428d0e7e402626a8b, type: 2}
+    - stableId: ln_test_talk_a_02
+      asset: {fileID: 11400000, guid: 9fdcd0674627a1f40ae94c35f88d4eac, type: 2}
+    - stableId: ln_test_talk_a_03
+      asset: {fileID: 11400000, guid: 3e1e24ffd033d8e4aa1eba79f902d679, type: 2}
+    - stableId: ln_test_talk_a_04
+      asset: {fileID: 11400000, guid: ad57d0c642d6acd439c1e0ddf3d5187d, type: 2}
+    - stableId: ln_test_talk_a_05
+      asset: {fileID: 11400000, guid: cceccf00b5892f24692be0bf41bc7507, type: 2}
+    - stableId: ln_test_talk_b_01
+      asset: {fileID: 11400000, guid: 3e39af3de22f51f48a148badfc7b310e, type: 2}
+    - stableId: ln_test_talk_b_02
+      asset: {fileID: 11400000, guid: 7f0bc1f6482468348819343829f02f51, type: 2}
+    - stableId: ln_test_talk_b2_01
+      asset: {fileID: 11400000, guid: b00d8ce30f61d4d4983b0b3a2129887c, type: 2}
+    - stableId: ln_test_talk_c_01
+      asset: {fileID: 11400000, guid: 2ec5590dfb1153f488173b36bb5ec8b3, type: 2}
   - tableName: CGs
     aggregateAsset: {fileID: 0}
     rows: []
@@ -440,6 +472,10 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: 0e6a7aa319baafb43b4c2c9175013e25, type: 2}
     - stableId: 15_scn_test_street__11_test_second__5_actor__17_chr_test_passer_a
       asset: {fileID: 11400000, guid: 72a9db9008c69b04f9f6c318d42201e9, type: 2}
+    - stableId: 15_scn_test_street__12_test_default__5_actor__15_chr_test_talker
+      asset: {fileID: 11400000, guid: c28c3fb4fd339c04380e7a88e82b17db, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__15_chr_test_talker
+      asset: {fileID: 11400000, guid: 0dc26922c68309641aee8c9f6d73f929, type: 2}
   - tableName: AmbientPools
     aggregateAsset: {fileID: 0}
     rows:

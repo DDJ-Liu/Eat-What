@@ -71,6 +71,8 @@ namespace EatWhat.LongLoop
         public Vector3 Foot, TargetReference, ScreenRight;
         public float OrthoSize, Aspect, SafeZoneWidth;
         public bool Orthographic, ProjectionKnown, DialogueOrCinematic, GateOffsetsInDialogue;
+        // Producer has gated new look input; LookFloat contains only its existing exit residue.
+        public bool LookInputGated;
     }
     public enum FollowClipInvalidReason { None, InvalidWidth, InvalidLens, InvalidProjection, InvalidState, Overflow }
     public struct FollowClipResult
@@ -308,7 +310,8 @@ namespace EatWhat.LongLoop
                 return Invalid(r,FollowClipInvalidReason.InvalidState);
             r.Horizontal=input.Horizontal;r.Vertical=input.Vertical;
             r.GateApplied=ctx.GateOffsetsInDialogue&&ctx.DialogueOrCinematic;
-            r.Interest=r.GateApplied?Vector2.zero:input.Interest;r.LookFloat=r.GateApplied?Vector2.zero:input.LookFloat;
+            r.Interest=r.GateApplied?Vector2.zero:input.Interest;
+            r.LookFloat=r.GateApplied&&!ctx.LookInputGated?Vector2.zero:input.LookFloat;
             double hx=(double)r.Horizontal.x+r.LookFloat.x,vy=(double)r.Vertical.y+r.LookFloat.y;
             if(!Representable(hx)||!Representable(vy)) return Invalid(r,FollowClipInvalidReason.Overflow);
             double x=Clamp(hx,-maximumHorizontal,maximumHorizontal)+r.Vertical.x+r.Interest.x;

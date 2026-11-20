@@ -17,6 +17,10 @@ namespace EatWhat.LongLoop
         private Transform generatedNpcParent = null;
         [SerializeField] private string triggerTemplate = string.Empty;
         [SerializeField] private bool applyDefaultOnStart = true;
+        [SerializeField, Tooltip("Optional existing dialogue service; shares its talked record and refuses switches while running.")]
+        private NarrativeDialogueService dialogueService = null;
+        private NarrativeTalkedPersistence talkedRecord;
+        private GameObject spawnInitialization;
         private NarrativeSceneStateApplication application;
         private INarrativeDataDirectory boundDirectory;
         private readonly Dictionary<GameObject, Actor> actors = new Dictionary<GameObject, Actor>();
@@ -46,6 +50,18 @@ namespace EatWhat.LongLoop
             placeholderVisualPrefab = placeholder; bubbleView = view; generatedNpcParent = parent;
             triggerTemplate = template ?? string.Empty; return true;
         }
+        public bool ConfigureDialogueState(NarrativeDialogueService service, NarrativeTalkedPersistence record = null)
+        {
+            if (application != null) { Warn("End this scene application before changing its dialogue bindings."); return false; }
+            dialogueService = service; talkedRecord = record; return true;
+        }
+        private void ClearTalked(IEnumerable<string> ids)
+        {
+            // Resolve lazily: Start may precede the service's first Update/session creation.
+            var record = talkedRecord ?? (dialogueService == null ? null : dialogueService.Talked);
+            if (record == null || !record.InitializeWhenAvailable(runtimeEntry != null && runtimeEntry.IsAvailable)) return;
+            record.Clear(ids); // Actual01 owner performs its existing immediate SaveNow.
+        }
         private void Start() { if (applyDefaultOnStart && application == null) ApplyDefault(); }
         public bool ApplyDefault() { return Apply(null); }
         public bool ApplyState(string stateId)
@@ -63,7 +79,8 @@ namespace EatWhat.LongLoop
             if (application == null)
             {
                 targetRegistry.CollectSceneMarkers();
-                boundDirectory = directory; application = new NarrativeSceneStateApplication(directory, this);
+                boundDirectory = directory; application = new NarrativeSceneStateApplication(directory, this, ClearTalked,
+                    () => dialogueService != null && dialogueService.IsRunning);
             }
             if (!ReferenceEquals(boundDirectory, directory)) { Warn("Directory changed; recreate the scene application at an explicit lifetime boundary."); return false; }
             bool result = application.Apply(gameObject.scene.name, stateId);
@@ -86,7 +103,14 @@ namespace EatWhat.LongLoop
         {
             actor = null; diagnostic = null;
             if (genericNpcPrefab == null) { diagnostic = "Generic NPC Prefab is not assigned."; return false; }
-            var instance = Instantiate(genericNpcPrefab, generatedNpcParent == null ? transform : generatedNpcParent, false);
+            var parent = generatedNpcParent == null ? transform : generatedNpcParent;
+            if (spawnInitialization == null)
+            {
+                spawnInitialization = new GameObject("NpcSpawnInitialization");
+                spawnInitialization.SetActive(false); spawnInitialization.transform.SetParent(parent, false);
+            }
+            // An inactive parent prevents OnEnable registration before the full id is authored.
+            var instance = Instantiate(genericNpcPrefab, spawnInitialization.transform, false);
             instance.SetActive(false);
             var marker = instance.GetComponent<NarrativeActorMarker>(); var shell = instance.GetComponent<NpcShell>();
             var trigger = instance.GetComponent<NarrativeAmbientBubbleTrigger>();
@@ -95,6 +119,9 @@ namespace EatWhat.LongLoop
             marker.ConfigureId(fullId);
             if (!trigger.Configure(runtimeEntry, targetRegistry, marker, shell, bubbleView, triggerTemplate))
             { diagnostic = "Generated NPC trigger bindings were refused."; DiscardGenerated(instance); return false; }
+            var dialogue = instance.GetComponent<NarrativeDialogueTrigger>();
+            if (dialogue != null) dialogue.ConfigureReferences(runtimeEntry, dialogueService, marker, shell);
+            instance.transform.SetParent(parent, false);
             var value = new Actor(this, instance); actors.Add(instance, value); actor = value; return true;
         }
         public void DestroyActor(INarrativeSceneStateActor actor)
@@ -108,21 +135,25 @@ namespace EatWhat.LongLoop
         private void OnDisable() { EndApplication(); }
         private void OnDestroy() { EndApplication(); }
         private void EndApplication()
-        { if (application != null) application.Dispose(); application = null; boundDirectory = null; actors.Clear(); reported = 0; }
+        {
+            if (application != null) application.Dispose(); application = null; boundDirectory = null; actors.Clear(); reported = 0;
+            if (spawnInitialization != null) Destroy(spawnInitialization); spawnInitialization = null;
+        }
         private void Warn(string text) { Debug.LogWarning("NarrativeSceneStateApplier: " + text, this); }
 
-        private sealed class Actor : INarrativeSceneStateActor
+        private sealed class Actor : INarrativeSceneStateActor, INarrativeSceneStateDialogueActor
         {
             private readonly NarrativeSceneStateApplier owner;
             internal readonly GameObject Root;
             private readonly NpcShell shell;
             private readonly NarrativeAmbientBubbleTrigger trigger;
+            private readonly NarrativeDialogueTrigger dialogue;
             private NpcShell.SceneStateVisuals visuals;
             private Vector3 position;
             private bool active;
             private string pool;
             internal Actor(NarrativeSceneStateApplier owner, GameObject root)
-            { this.owner = owner; Root = root; shell = root.GetComponent<NpcShell>(); trigger = root.GetComponent<NarrativeAmbientBubbleTrigger>(); }
+            { this.owner = owner; Root = root; shell = root.GetComponent<NpcShell>(); trigger = root.GetComponent<NarrativeAmbientBubbleTrigger>(); dialogue = root.GetComponent<NarrativeDialogueTrigger>(); }
             public bool IsAlive => Root != null;
             public bool RememberOriginal(out string diagnostic)
             {
@@ -133,12 +164,16 @@ namespace EatWhat.LongLoop
                 if (trigger != null && !trigger.Configure(owner.runtimeEntry, owner.targetRegistry,
                     Root.GetComponent<NarrativeActorMarker>(), shell, owner.bubbleView, trigger.TriggerTemplate))
                 { visuals.Dispose(); visuals = null; diagnostic = "Preplaced trigger has different lifetime bindings; model retained, actor skipped."; return false; }
+                if (dialogue != null && owner.dialogueService != null)
+                    dialogue.ConfigureReferences(owner.runtimeEntry, owner.dialogueService, Root.GetComponent<NarrativeActorMarker>(), shell);
                 position = Root.transform.position; active = Root.activeSelf; pool = trigger == null ? null : trigger.PoolId;
                 return true;
             }
             public void RestoreOriginal()
-            { Root.transform.position = position; visuals.Restore(); if (trigger != null) trigger.SetPoolId(pool); Root.SetActive(active); }
+            { Root.transform.position = position; visuals.Restore(); if (trigger != null) trigger.SetPoolId(pool); if (dialogue != null) dialogue.ClearActualBinding(); Root.SetActive(active); }
             public void ReleaseOriginal() { if (visuals != null) visuals.Dispose(); visuals = null; }
+            public string ActualDialogueId => dialogue == null ? null : dialogue.ActualDialogueId;
+            public void SetDialogueBinding(string id, string marker) { if (dialogue != null) dialogue.SetActualBinding(id, marker); }
             public void SetActive(bool value) { Root.SetActive(value); }
             public bool PlaceAtAnchor(string id, out string diagnostic)
             {

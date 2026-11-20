@@ -1,4 +1,141 @@
+## V014-15 世界头顶标记显示（2026-11-19）
+
+原18源侧 / AI593（2026-11-19）：现有Python入口追加NarrativeDialoguePrefabTests，用当前Canvas/BoxView/Composition/Service/Session与原07/08/01检查作者节点和原自动路径、单一图/输入、装卸自有EventTrigger、保外部监听、作者树/姿态与压暗量恢复、错绑诊断和下一服务生命周期重用。外部句柄只提供层级/UI事件运输/无布局算法TMP与Runtime数据目录投递，Service/FSM/入退场/持久化为真实源码；production真实Unity引用编译另列，原53与所有旧断言不改。新增可挂组件及稳定meta见原18交接；不执行Unity/制作Prefab或签真实字位，完整人工门保持。
+
+V014-15-R / AI592（2026-11-19）：原View实现直径误写0.35、且原驱动测试未覆盖自然生成场景依赖，已被CONTROL拒验。本轮View直径按原18约0.85纠正，仅改本批新增View测试两处预期，其余24项逻辑和旧基准保持；原运行入口与Street默认首次Final通过。正常生成32项在Street入口，驱动不再需要Prefab保存场景引用。真实画面按原18/19后人工检查，本次NPC标记UI修复不加Lab独立前置；原报告/失败保留。
+
+现有Python运行入口末尾追加NarrativeHeadMarkerViewTests：真实Narrative.Unity/NarrativeHeadMarkerView源，24项核世界根脱离NPC缩放、固定0.85直径/跟挂点bob、既有LL_MidgroundFront层、圆形纹理/同图染灰、glyph/tint/alpha映射、非交互、材质先font后、停用拒重建/自有资源清理和不销毁外部字体材质。测试使用独立外部Unity/UI/TMP/纹理/排序句柄；生产Narrative.Unity编译仍用真实Unity DLL，不能把报告production substitutesUsed=false误解为单测已原生渲染。实际Driver的26项/Core04/取值器/01/气泡共存在Street默认组，View自身不决定状态或开第二时钟。
+
+本卡两个点名入口沿原运行组，Narrative用原-SkipDataRegressions只跳配表/V26等非本卡门，原运行与三模式持久化检查仍真实执行；原断言保持。头顶组件/meta只交源码，正式18/19接线与世界文字/遮挡/观感按五列人工，不改演出参数/字体/排序资产或原06人工门。正式图缺失登记在获批现有NPC说明，程序圆片仅占位；无新工具族/探针/守卫/比较器。
+
 # 剧情离线验证入口
+
+## V014-09 统一对话服务（2026-11-19）
+
+NarrativeDialogueService是同名MonoBehaviour，原19负责场景接线；它持有一个NarrativeDialogueSession正式实现，不建立第二条对话业务口。触发/调试以后只调Service.TryStart(id,initiator,out diagnostic)，查询IsRunning/DialogueId/InitiatorId，订阅DialogueStarted/DialogueEnded（DialogueId、完整InitiatorId、Aborted不可变）。普通级才进入；缺引用/接入不可用、busy、缺ID、Ambient不适用、Story不支持/坏链分别给原因和诊断。Core自动续接到Story也在本版本解析适配层拒绝，不触发剧情准备，不改Core行为。
+
+Service用工程原persistentDataPath/saves根、ObfuscatedStaticKeyProvider和01的CreateForCurrentBuild；实际FSM直接接持久化对象。接入可用后一次初始化，正常完成仍由Core记已聊、释放锁及段末事件；测试只传显式隔离根，未实例化原生组件或访问用户档。RuntimeEntry仅新增ResolveForService(model,policy)，在原接入检查后读当前配置交FullFlow策略；旧TryResolveDialogue行为保持，原模型host闭包只补已有Policy源。
+
+Session持有一份推进模型和调度器。每次外部新链建立一份绑定当前目录的FSM，同一链续接仍由该FSM决定；不是每句重建，不清AUTO/快进或持久化。无外部命令/切场景handler，原Scheduler的缺handler诊断保留、原内建wait仍按既有规则；scheduler在空闲帧也推进。组件只转BoxView.AdvanceRequested，不另读IGameInput；box配置为session.Input。Update传Time.deltaTime与frameCount，游戏时间累计单调非负；Session只调08.Advance，同一时间仍经07到组件，正常结束不Clear，空闲仍走回亮。每段开始帧的推进忽略，含续接第一帧；两个开关在服务对象寿命内保持，新对象初始关闭，不存档。
+
+Core无Abort接口。OnDisable调用实际Session.Abort，OnDestroy再Dispose：清07/08、仅释放自己追踪的锁，永久丢弃旧FSM和无外部handler的调度器，不NotifyExitCompleted、不写已聊、不执行段末命令；有活动段才发一次Aborted=true结束，重复清理不重复发。回报持原对象转Core；外部事件中要求中止会等Core请求栈返回再清理，避免回入。新请求用新FSM，但沿同一Input/01对象，旧context不能再回报。真实Unity卸载回调顺序未执行，代码路径/接口与纯实现离线检查分别记录。
+
+原入口末尾新增NarrativeDialogueServiceTests：96项真实Session/FSM/Scheduler/输入/07/08/01/Dimmer及实际Toolkit DLL，fake只框几何、注入锁和运行源句柄；真实文件为任务隔离目录，当前codec来自原生产编译。新MonoBehaviour另用真实Unity/UI/TMP DLL编译，未拿stub宣称Native lifecycle/射线通过。原各组/273文件及headless114/102行、Runtime39/气泡82/47随原SkipDataRegressions入口通过，V26/配表不重跑，原断言保持。结果在dialogue-service.stdout.bin和offline-validation.json.dialogueServiceTestText。
+
+
+## V014-01 文件落盘与版本补丁（AI584 attempt2，2026-11-19）
+
+用户“按照新的文档进行处理”已由CONTROL接收。v2.5.3只修存档版本说明：SaveEnvelope.CurrentSchemaVersion仍2.4.1，Catalog仍2.5.1，读写均核真实JsonSaveStore自己的常量，不新增业务版本。首轮44项/Core实现及错误/阶段交接保留；原内存HashSet依赖失败已解决、原Toolkit Mono首败现由CONTROL证实为260字符临时路径，不把它改写成旧测试通过。
+
+Unity新增普通对象NarrativeTalkedPersistence，实现原INarrativeTalkedRecord，内部只持一份已通过的Core Record；不暴露可绕过落盘的可变Record。固定Slot=long_loop，文件<传入root>/long_loop.json；Section=dialogue_talked，值为对话ID数组。CreateForCurrentBuild(root,keys,diagnostic,utcNow)复用实际SaveCodecFactory和EnvelopeAuthenticator，不自建加密/版本；Narrative.Unity原已依赖Toolkit，此次只在overrideReferences下显式加入现Newtonsoft.Json.dll，不改变程序集方向。
+
+09在RuntimeEntry.IsAvailable后调用InitializeWhenAvailable(true)一次，未可用传false不IO；再次调用不重读覆盖内存。读缺文件/坏文件/版本不符返回可用空记录、一次诊断，不阻塞对话。有效文件缺本节按空且不报错；非法本节、认证/读写失败或并发变化沿原Store阻写保原件。MarkTalked/Clear/ClearAll/Restore立即SaveNow，FSM接这个对象本身，不接其内部Record；Count/HasTalked/Export只读。写阻断后内存仍正常改动，LastSaveSucceeded=false，原坏档诊断不重复；新写故障只诊断一次，不自动解锁或覆盖。只创建本节，不新建scene_state/story_flags，已有未知有效节保持。初始化之前的写接口拒绝，09不能用每帧重试初始化/SaveNow代替明确时机。
+
+09持有根与密钥生命周期，生产根可沿现Application.persistentDataPath/saves，仅使用独立long_loop.json；本卡代码不访问默认路径，也没有接09/场景。原ShortCycle default.json及两个保存点不改。配置/读档可用性与对话服务可用性分别由09门控，不从IsInitialized推断RuntimeEntry仍有效。
+
+原入口新增真实文件组，按release、UNITY_EDITOR、DEVELOPMENT_BUILD分别编译生产Factory/Store/codec/crypto与适配器；发布95项AES/HMAC，编辑器及开发各89项明文，包含冷启动、即时写、错误版本从常量派生、坏件/缺节/坏节、原件/并发保护和独占锁住default.json时全部操作。使用短隔离p/<OutputRootName>/<mode>目录，保留每轮数据；无真实玩家档。首次新增组已全绿，收尾把固定p根修为每次输出具名根后再次最终复核，没有自测失败，不修改旧断言。原Toolkit入口短隔离实跑宿主+Mono三分支各158项通过，首轮原260字符失败仍保留。
+
+本卡按用户范围执行Test-Narrative.ps1 -SkipDataRegressions：保留实际生产编译、原命令/FSM/演出、整链114/102行、Runtime39/气泡82/47；显式跳过配表fixture/adapter/validator/V26/authoring运行。开关默认false，原默认调用和断言保持；不把这几个跳过项报本轮重验。旧44项不单独重做，直接沿用已独审证据；随本轮原命令组运行不改变它的断言/来源。结果在offline-validation.json.talkedPersistenceResults和逐模式stdout，纯文件逻辑无画面人工验收。
+
+
+## V014-08 退场与续接（2026-11-19）
+
+新增普通对象`NarrativeDialogueExit(entrance)`，复用07同一Box/Dim引用与owner。Exit持原context、停07旧入场/句队列，真实StepSequence只保留box、undim，portrait实际移除；收框调用EntrancePose(1-progress)，完成只Hide一次。Sequential在收框边界Withdraw(owner,undimTime)，Parallel在请求时Withdraw；不在后台完成时再次撤销，避免删除下一段新请求。AfterBoxClosed在收框后报告而后台回亮继续，AfterCameraReturned在普通级等所有步骤。全零也等后续Advance，旧context不回报或改新框，Clear仅真实中止，不代Core结束/记已聊/解锁。
+
+09组合后每帧只调用08.Advance(delta)，不要同时再调用07.Advance。08按收框边界拆分同一delta，切片总时长等于delta，组件时间全部仍经07.Advance；不直接再Advance Box/Dim、不读输入。早报后的下一段可用剩余时间继续入场，从05当前量重定向；正常DialogueEnded不Clear/Dispose07/08，否则后台回亮会被清掉。09只订阅BoxView.AdvanceRequested，不再采样Toolkit Interact；07事件转原FSM，08.ExitCompleted转NotifyExitCompleted。
+
+Core的Seamless原行为会跳过Exit。09创建FSM时必须使用`d => continuationPolicy.Resolve(config,d)`，不要直接用原Resolver：Unity的NarrativeDialogueContinuationPolicy先用真实Resolver取值，仅有效Seamless时复制内存根/exit组，临时解析输入把成功的同名枚举atom等长改为FullFlow，再调用原ResolveWithOverrides。其它组只读共享、其它参数/原无效及重复诊断保留，原对话文字/模板/快照/Core行为不修改；每次实际回落仅诊断一次，无帧轮询或去重缓存。下一版要开放Seamless时移除此版本策略，不改保存数据。
+
+默认原入口追加NarrativeDialogueExitTests：185项直接运行实际FSM/Sequence/05 Dimmer/06 Presenter/07/08及策略；fake仅外部Unity/UI句柄、框几何、view/clock/lock/无效果命令处理器。旧层级boundary只加ScriptableObject/菜单/日志能力，旧用例断言及原组输出保持。结果在dialogue-exit.stdout.bin和offline-validation.json.dialogueExitTestText。首轮完整Narrative回归通过，无产品自测失败；没有Unity/Play/画面验证，原06字位/换行人工门及后继09/18接线继续保留。
+
+
+## V014-07 入场/每句半部（2026-11-19）
+
+Narrative.Unity新增NarrativeDialogueEntrance及NarrativePresentationSurfaces接口；这是普通C#编排对象，不是新MonoBehaviour或完整INarrativeDialogueView。后继09组合视图把入场/句请求转07、退场转08，订阅07.EntranceCompleted/TextCompleted并转现FSM回报接口。构造传05 Dimmer/06 BoxView且显式接管时间，07单独时每帧调用一次Advance(delta)；接08后只调08的组合入口，不读全局时钟。真实StepSequence移除portrait步骤，按快照Sequential/Parallel驱动；Box.Show清旧句，BeginLine由原Presenter同时更新名字与实际Typewriter，命令不作为出字前置。
+
+取时与读键分开：BoxView.Update在externalTime时只停自动Tick，仍单次读Toolkit.Interact并用实际Presenter.ProcessFrame转AdvanceRequested；07.Advance只推进Box/Dim时间，不读键。09订阅BoxView这一路推进，不再重复读相同IGameInput。新增离线用例直接执行ProcessFrame，核外部帧有键仍一次意图、不自行tick，服务tick不额外发输入，未接管时原时间/输入行为保持。真实硬件/射线未执行，原06人工门不变。
+
+回报从Advance发出，持原context/line，换段/换句/Clear过期丢弃。Core原skip分支在CompleteEntrance返回后自己BeginLine，07强制到位后抑制该过期入场通知，避免重复回报，不改Core。无图cast/speaker/reaction/can-end只做延后表示确认，Core本就没有对应独立等待接口；letterbox/story-camera占位确认可由组合层转真实准备完成口，09仍按原卡拒普通级以外入口。Clear只撤自有dim token并隐藏，Dispose归还时间；不替服务释放锁/写已聊。ScalePop固定轻回弹仅在Unity侧Presenter.EntrancePose，原Pose端点/四Core曲线不改。
+
+08/09接线交接：07.Advance继续作为Box/Dim时间的唯一推进，08不再重复Advance组件；正常段末勿调用07.Clear/Dispose，以免清掉AfterBoxClosed后的后台恢复亮度。08应只在自己的步骤开始时发一次撤销，旧段完成不得再次改新段的box/dim；使用原context和07.CurrentContext过滤过期，复用DimmingOwnerToken。测试Bridge是外部能力连接，不是正常退场/服务生命周期的生产实现。
+
+原Python默认入口追加NarrativeDialogueEntranceTests组，真实FSM/StepSequence/BoxPresenter/Typewriter/输入/Resolver与本地化；fake仅Box几何/输出、Dim请求记录及外部view/clock/lock/未完成命令处理器，不复制序列器/打字机/压暗算法，不造TMP布局。结果在dialogue-entrance.stdout.bin及offline-validation.json.dialogueEntranceTestText，以ENTRANCE_RESULT逐项记录；原层级组闭包只补新接口源，原断言保持。后继接线与五列表见[界面说明](../../组件说明文档/视觉特效/普通对话界面配置与使用说明.md)，仅离线范围，不签原生/字位或0.1.4体验。
+
+## V014-06分阶段验收（AI580 attempt2，2026-11-19）
+
+用户明确允许本卡按已验证逻辑/输入结算，把真实TMP字位与换行留为街景接线后必查人工项。现正式机器合同为dialogueBoxLogicAndInputVerified与narrativeRegressionPassed；原53项、生产源码和断言保持，通过原入口在本轮当前依赖上复核。realTmpLineInfoVerified、实际字形/行数据继续false/null，不把输入/动画数学或输出录制器当排版证据。首轮dialogueBoxLayoutAndInputVerified=false的原合同、失败、报告和根累计完整保留，不标原缺证据已修复。
+
+本轮不动场景、字体或任何玩家存档，不新增探针/行数据/源码。用户在接线后的可操作街景看跨行长句慢显，再快进/补全，检查先显字原位及换行点固定；状态PENDING_USER，见[五列说明](../../docs/demo-0.1.4_人工检查说明.md)。下文06首轮的硬证据缺口说明作为历史留存，当前以本段用户签定分阶段口径为准，完整核验日期不变。
+
+## 已聊记录：首轮内存阶段历史（V014-01 / AI584，2026-11-19）
+
+`Core/NarrativeTalkedRecord.cs` 是原 `INarrativeTalkedRecord` 的正式实现，唯一拥有本实例的ID集合；当前只完成原01步骤1只读核查/步骤2。未连接运行时服务或存档，没有读取真实玩家文件，未选择长循环slot/格式、节映射、启动读或即时写；步骤3～6须CONTROL收到实际用户版本裁决后在同根安排，不能把内存成功当整卡完成。
+
+公开面：MarkTalked(id)幂等记录，HasTalked(id)精确查询，Count只读；Clear(ids)清指定集合并返回实际删除数，ClearAll()全清。Export()给独立的新List并按Ordinal排序；Restore(ids)先校验复制再整体替换、去重，源列表随后变化不影响owner。写入/恢复/指定清除只接受非空白ID；空集合合法，null集合/空白元素抛ArgumentException且整次不部分清除。查询null/不存在为false。不裁剪/改大小写，不依当前目录删除未来或暂不可见ID。没有文件IO、时钟、JSON或Unity依赖；沿Core的mscorlib-only合同用Dictionary作集合，不增加System.Core。
+
+现 `NarrativeCommandTests` 原组后追加NarrativeTalkedRecordTests，真实Record/FSM/Resolver/目录/输入/调度器运行，外部view/lock/clock为无效果能力。44项含集合与列表往返、无外部可变泄漏、非法恢复保活态、FSM开始/打完不提前记录、完成退出才记录、完整/无缝两段和旧回调不重复；commands.stdout.bin以TALKED_RECORD_RESULT落细项。旧FSM/其余断言与102行基准保持。Final1原程序集门发现HashSet引入System.Core首败，换Dictionary后同键一次重试Final2全入口通过；不改原门，失败史保留。
+
+只读封装结论：Tools/Persistence属于Toolkit，Narrative.Unity已有Toolkit引用；Core仍不引用Toolkit。JsonSaveStore(root,codec,authenticator)支持受限独立slot→<slot>.json，payload为可保留未知节的JObject；SaveCodecFactory在Editor/Dev明文、Release原V2加密，宿主注入key和auth。坏件/版本不符返回诊断并锁slot保护原文件；缺文件TryRead=false、diagnostic=null且不建目录，原01要求的一次业务诊断仍须后继适配补。原短循环SaveBoundary使用default slot、SessionManager默认persistentDataPath/saves，源码未改、路径未访问。本阶段不实现任何新的slot文件或节。
+
+当前SaveEnvelope format=1/schema=2.4.1，发布图Schema=2.5.1；版本冲突由用户裁决，不以Schema文档v2.5.2直接改常量。先跑原Persistence入口的本次基线**红**：Mono release在encrypted:integer_above_double_exact新store认证数值往返失败；后两个Mono模式未执行，原始隔离日志留本卡报告。按原卡红基线规则不在本卡修/重试Toolkit，不阻断内存功能，不称封装全绿或落盘验收通过。此处只登记风险，不启动已暂停短循环/引擎/存档修复，完整项目核验日期不变。
+
+## V-26 表端重复气泡来源准入（V014-OPT，2026-11-19）
+
+原 `NarrativeValidationTests.Run` 的231检查/56案例及所有原断言保持；同一类追加 `RunV26(root)`，复用原Input/Context、生产DataTableCsvParser/DataTableValidator/NarrativeTableValidation。原Test-Narrative.ps1在旧validation输出之后调用并落validation-v26.json，不另建工具/探针或复制业务判定。真实Editor.DataTables编译仍纳入原生产闭包。新20案例66检查包括实际AI566修前配置2条命中、当前修后0、#2发起者指向基础角色、接收者后缀不混同、两端active、不同scene/state、空表池/隐式speaker、自身、可达链、池中第二段、重复speaker合一和非actor。
+
+固定输入与来源在Fixtures/ValidationV26/historical.json和SOURCE.md，测试运行不读活动outputs。修前placement来自原件775B/SHA0B344BCBF7FBDFBFC5828686CA49520F9EEE806CE6DD9BCFE137A67AAEB46113，配套/修后是2026-11-19冻结正式输入，非完整0.1.3历史快照。只检测表中明确挂池/指定speaker，不能检查只填在场景实例自身的池；不做Unity、实际气泡行为或格式版本签收。现行22表同输入改前后0错误/47警告逐项保持，V-26=0，573界面key已有告警保留。配置人员见[八表说明](../../docs/剧情八表配表说明.md)，完整核验日期不变。
+
+## 对话框适配器（V014-06，2026-11-19）
+
+生产入口为Narrative.Unity的NarrativeDialogueBoxView（运行时TMP/UI）和NarrativeDialogueBoxPresenter（复用真实Typewriter/Input、FSM给定NameKey和现LocService）。服务注入现input模型、Toolkit IGameInput后Show(snapshot)/BeginLine(line,finalLocalizedText)，07/08按SetBoxProgress驱动，CompleteLine仅补字，Hide取消旧回报；TextCompleted在后续Update携原line对象通知09/FSM，AdvanceRequested交服务，不在视图内推进FSM或持有段状态。BodyTextComponent/VisibleTextLength/VisibleCharacterCount只读运行组件供既有授权接线/读回使用，不是新探针。
+
+默认Python入口在原dialogue-layers组后追加NarrativeDialogueBoxTests，直接执行真实Presenter、Core.Typewriter/AdvanceInput/FSM/Resolver与LocService/Catalog。复用InteractionPromptUnityBoundary仅作Vector2/ScriptableObject/log外部句柄；新Surface只记录调用和前缀，**完全不计算字形/行/基线/坐标**。53项包含FSM空/非空/句改名、整句先提交/前缀进度、Unicode、延后关联回报、开关排除推进、两路一次事件和动画端点；dialogue-box.stdout.bin及offline-validation.json.dialogueBoxTestText记明nativeUnity=false和realTmpLineInfoVerified=false。不能把这组通过或真实SDK编译等同于原卡所需真实TMP排版行信息；该项缺证据，后继应由CONTROL安排既有权限/流程补证，不新增探针/守卫/比较器或修改旧断言。原Narrative全入口及102行基准保持。
+
+源审确认现Button_MouseInteract→MousePressableObject→MouseManager用世界Collider2D/Physics2D，无屏幕空间按钮先例，依原V014-06§6使用EventTrigger.PointerClick回落；按键仍只读IGameInput.Interact，无直接Unity.Input调用。两开关没有Submit处理，避免同键双发；真实射线/设备尚待原生/人工。局部字段和五列表见[普通对话界面说明](../../组件说明文档/视觉特效/普通对话界面配置与使用说明.md)。
+
+## Toolkit按键提示定向组（2026-11-19）
+
+原Python入口增加可选 `--interaction-prompt`：仍编译当前真实Core/Toolkit/Generated/Unity等六个生产阶段，再只执行InteractionPromptLogicTests，不执行未点名Narrative/LongLoop全组。Toolkit旧Bee闭包只补InteractionPrompt/InteractionPromptState两源。新组直接执行生产提示状态、原IGameInput枚举、实际LocService/LocTextCatalog；边界仅Vector2值/ScriptableObject资产句柄/日志，结果在interaction-prompt.stdout.bin及offline-validation.json.promptTestText，实际UI投影/TMP布局/圆角渲染和硬件未执行。默认入口、原compile-only和旧断言/夹具保持；V014-12按§2.7无额外旧门，本卡不把全套回归添作前置。
+
+组件登记TK-INT-20；固定420×64框/64×48键帽只在创建时布置，设备分支只改键帽文字，布局一致性为实际源码审读，39项机器检查只覆盖状态/设备/本地化，二者不混写。字段/现设备限制及五列人工路径见[按键提示说明](../../组件说明文档/视觉特效/交互按键提示配置与使用说明.md)。
+
+## 对话界面层与压暗（2026-11-19）
+
+Unity侧新增同名独立组件 `NarrativeDialogueCanvas` / `NarrativeSceneDimmer` 及稳定meta。Canvas为被动Overlay HUD，2560×1440、按高度缩放，运行时自己创建并释放Dimming/Portraits/Dialogue三层；默认排序200高于当前气泡100，字体引用应由后续接线绑定当前气泡的Heavy WithFallback。Dimmer读取实际Resolver快照tier.normalDim，按owner保存请求并取最大目标；每次有效请求/撤销从当前值开始新的调用时长，0秒立即完成，未知owner撤销不打断过渡。运行Update用unscaledDeltaTime，Advance为同一实际实现的离线推进入口；不新增演出参数或改原配置。仅预留INarrativeSceneBlur接口，未实现虚化/黑幕。
+
+原Python入口在所有旧命令组之后追加NarrativeDialogueLayersTests组，用原Mono/csc编译实际两组件和真实Core Resolver。该组的NarrativeDialogueLayersUnityBoundary只替代外部Unity对象/层级/UI/TMP句柄，**不复制压暗/请求逻辑，也不验证真实渲染**；它与原共享StaticCompile和气泡边界分开，旧断言/夹具/调用保持。真实生产DLL编译仍引用实际Unity/UI/TMP DLL；原report的substitutesUsed字段沿用该编译口径，新组边界单列dialogueLayersFixtureBoundary。新增逐项结果在dialogue-layers.stdout.bin和offline-validation.json的dialogueLayersTestText中以DIALOGUE_LAYERS_RESULT记录。
+
+用户配置及五列路径见[普通对话界面说明](../../组件说明文档/视觉特效/普通对话界面配置与使用说明.md)和[0.1.4人工说明](../../docs/demo-0.1.4_人工检查说明.md)。本卡没有Unity/Prefab/场景接线或视觉签收，后继先接统一VisualEffectsLab再人工看效果，不把离线字段检查当画面通过。
+
+## 标记与候选纯规则（2026-11-19）
+
+`Assets/Scripts/Narrative/Core/NarrativeInteractionRules.cs` 提供两组无状态函数。`ResolveMarker(actualMarker, boundDialogueLevel, hasTalked)` 接收已经按条目/实例优先级选好的实际标记值，不再做来源取值。none明确隐藏，talk为「…」，story为金色「！」；null/空串才按已绑定Normal/Story推导，没有绑定则隐藏。只在结果是Talk、确实有绑定对话且已聊过时IsGrey=true，Story永不灰。复用现有NarrativeDialogueLevel，null表示无对话；Ambient不属于本交互输入域，未知枚举/标记（含大小写或空白误填）拒绝，不猜业务值。
+
+`SelectNearest(candidates, previousCandidateId)` 接收不可变 `NarrativeInteractionCandidate(candidateId, groundDistance, interactRadius, isAvailable)`，返回输入中的选中候选或null。距离和半径由调用者用相同地面单位提供，须有限非负；可用且distance严格小于radius才入选，正好等于半径不入选。多个取距离最近者，精确等距时保留上次ID，ID按Ordinal精确匹配；没有入选的上次ID时按输入顺序取首项，不加epsilon/迟滞。调用者为每个目标提供唯一稳定ID，因此重建候选对象不会丢失等距保留。列表不排序/修改，函数不持有上次选择或已聊状态，不读引擎/记录/配置或计算空间距离。
+
+原Narrative命令入口末尾追加 `NarrativeInteractionRulesTests`，逐项结果以MARKER_SELECTION_RESULT记录在commands.stdout.bin/offline-validation.json。30组标记矩阵（含none/空串区别和灰态）及候选边界、最近、等距、不可用等直接调用真实函数；现有断言/夹具和全部原Narrative回归保持。实际标记显示件与交互输入/接线由后继负责，本卡不产生画面效果。
+
+## 步骤序列纯逻辑（2026-11-19）
+
+`Assets/Scripts/Narrative/Core/NarrativeStepSequence.cs` 提供不可变 `NarrativeSequenceStep(name, durationSeconds)` 和一次运行的 `NarrativeStepSequence`。时长为有限非负秒数，名字非空且同次输入内按Ordinal精确匹配、不得重复。`Begin(steps, mode, removedStepNames)` 在开始前按名移除可选步骤并快照输入集合；不存在的移除名忽略，不修改调用者列表。`Sequential` 只开始当前一步，完成边界立即开始下一步，剩余时间继续推进；`Parallel` 全部一起开始，各步独立按自身时长推进，最长一步完成时结束。入场、退场及未来黑边/镜头都可用同一模型；本卡没有执行实际效果或接入现有状态机/命令调度器。
+
+`Steps` 是本次运行的只读列表，各项提供Name、DurationSeconds、Progress（0～1）、HasStarted、IsComplete；进度换算成位置/透明度归调用者。依次执行时尚未开始的零时长步骤仍是0，到达它才立即到1；开头/中间/末尾零时长均不消耗额外时间。同时执行的零时长步骤在Begin即到1。全空、全零、全移除在Begin即完成。
+
+`Advance(deltaSeconds)` 由外部提供秒数，非正数直接无操作、不倒退；NaN及正无穷拒绝。`Skip()` 把含尚未开始的所有保留步骤置1。Begin/Advance/Skip返回true仅表示这次调用刚完成本运行，后续推进/跳过不重复报告；重新Begin开启新运行并清进度。Begin先验证/准备再替换原运行，输入集合之后的修改不会回写进度。模型不读全局时钟、没有回调；后续视图必须等状态机请求调用返回后再转达完成，尤其不能借全零/全移除在请求栈内重入。
+
+原 `Test-Narrative.ps1` 的旧断言/夹具不改，只在原命令入口末尾追加 `NarrativeStepSequenceTests`。真实模型的逐项结果在 commands.stdout.bin / offline-validation.json 中以 SEQUENCE_RESULT 输出；原typewriter77、FSM99、整链114/102行、Runtime39及气泡82/47继续随同原入口执行，不新建探针或框架。
+
+## 打字机纯逻辑（2026-11-19）
+
+`NarrativeTypewriterModel` 位于 `Assets/Scripts/Narrative/Core/`，只负责一句文字的显示进度，读取现有 `DialoguePresentationSnapshot` 的 text 分组：charsPerSecond、punctuationPause、punctuationSet、fastForwardMultiplier；不新增配置参数或修改默认值、Resolver、输入模型或状态机。
+
+`Begin(finalText, snapshot)` 开始并清本句进度；`Advance(deltaSeconds, fastForward)` 接收外部非负有限秒数和当前快进开关；`Complete()` 立即补全。三个方法返回的true均只表示本句刚刚出完，空句/纯换行句在Begin即可返回true；以后Advance/Complete不重复报告。模型没有回调；后续视图需在状态机请求调用返回后再转达完成，不能借空句在请求栈内重入状态机。
+
+`VisibleCharacterCount` / `TotalCharacterCount` 按Unicode文字元素计数，包含标点、排除换行；代理对与组合附加字符不拆开。`VisibleTextLength` 是含免费换行的UTF-16前缀长度，`VisibleText` 保留原文字前缀；不要把非换行文字元素数直接当UTF-16截断位置。连续标点各自消耗出字时间，仅最后一个后停一次；免费换行不打断该判断，末尾标点直接完成。快进开启会立即取消待执行停顿；切回后按正常速度处理未来文字，不复活旧停顿，分数字符进度保留。速度0不自动出字但可补全；倍率0在快进时不自动出字，不猜“瞬间完成”。
+
+快照在Begin取值固定，换一份由真实Resolver得到的新快照再Begin才改变本句参数；修改作者配置不会回写既有不可变快照。纯模型不读时钟、不解析富文本/变量、不做本地化、TMP、视图或设备输入。
+
+现有 `Test-Narrative.ps1 -OutputRoot <全新目录>` 的原组保持，原命令测试入口末尾追加 `NarrativeTypewriterTests`，直接调用真实模型/Resolver快照。原命令、状态机99、整链114及102行基准、Runtime39、气泡82/47仍按原入口执行；新逐项结果在Python的commands.stdout.bin与offline-validation.json内以TYPEWRITER_RESULT记录。不使用新探针、独立框架或引擎验收。
 
 ## V013-10 必要生产编译与引用查询（2026-11-16）
 

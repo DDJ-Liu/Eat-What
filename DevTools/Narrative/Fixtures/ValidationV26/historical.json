@@ -1,0 +1,67 @@
+{
+  "source": "Historical placement bytes from actual AI566 before; repaired placement and companion inputs frozen from current 2026-11-19 production CSVs. Not a claim that all companion tables are a complete pre-0.1.3 snapshot.",
+  "historicalPlacement": "scene_id,state_id,kind,target,anchor_id,facing,active,dialogue_id,ambient_pool,marker,comment\nscn_test_street,test_default,actor,chr_test_tomato,,,true,,amb_test_a,,\nscn_test_street,test_default,actor,chr_test_passer_a,test_street_01,right,true,,amb_test_b,,\nscn_test_street,test_default,actor,chr_test_passer_a#2,test_street_02,left,true,,amb_test_c,,\nscn_test_street,test_default,actor,chr_test_passer_b,test_street_03,,false,,,,\nscn_test_street,test_second,actor,chr_test_tomato,,,true,,amb_test_a,,\nscn_test_street,test_second,actor,chr_test_passer_a,test_street_03,right,true,,amb_test_a,,\nscn_test_street,test_second,actor,chr_test_passer_a#2,test_street_02,left,false,,amb_test_c,,\nscn_test_street,test_second,actor,chr_test_passer_b,test_street_01,,true,,,,\n",
+  "tables": {
+    "Characters": "character_id,name_key,portrait_sprite,portrait_offset_x,portrait_offset_y,portrait_scale,street_visual_prefab,expressions,emote_offset_x,emote_offset_y,comment\nchr_test_tomato,test_chr_tomato.name,,,,,npc_visual_tomato,,,,\nchr_test_passer_a,test_chr_passer_a.name,,,,,npc_visual_tomato,,,,\nchr_test_passer_b,test_chr_passer_b.name,,,,,,,,,\nchr_test_potato,test_chr_potato.name,,,,,,,,,\nchr_test_talker,test_chr_talker.name,,,,,npc_visual_tomato,,,,\nchr_test_narrator,,,,,,,,,,\nchr_test_player,test_chr_player.name,,,,,,,,,\n",
+    "Dialogues": "dialogue_id,tier,cast_01,cast_01_station,cast_01_pos_x,cast_01_pos_y,cast_01_scale,cast_01_order,cast_02,cast_02_station,cast_02_pos_x,cast_02_pos_y,cast_02_scale,cast_02_order,cast_03,cast_03_station,cast_03_pos_x,cast_03_pos_y,cast_03_scale,cast_03_order,cast_04,cast_04_station,cast_04_pos_x,cast_04_pos_y,cast_04_scale,cast_04_order,tier_profile,entrance_profile,exit_profile,layout_profile,speaker_profile,expression_profile,text_profile,reaction_profile,cg_profile,overrides,first_line,next_dialogue,on_end,comment\ndlg_test_single_a,ambient,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_single_a_01,,,\ndlg_test_single_b,ambient,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_single_b_01,,,\ndlg_test_three,ambient,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_three_01,,,\ndlg_test_pair,ambient,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_pair_01,,,\ndlg_test_talk_a,normal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_talk_a_01,,,\ndlg_test_talk_b,normal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_talk_b_01,dlg_test_talk_b2,,\ndlg_test_talk_b2,normal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,entrance.boxMode=ScalePop;text.charsPerSecond=12,ln_test_talk_b2_01,,,\ndlg_test_talk_c,normal,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ln_test_talk_c_01,,,\n",
+    "DialogueLines": "line_id,dialogue_id,next_line,speaker,name_override_key,text_key,commands,expression,emotion,emphasis,scene_emote,comment\nln_test_single_a_01,dlg_test_single_a,,,,test_line_single_a.text,,,,,,\nln_test_single_b_01,dlg_test_single_b,,,,test_line_single_b.text,,,,,,\nln_test_three_01,dlg_test_three,ln_test_three_02,,,test_line_three_1.text,,,,,,\nln_test_three_02,dlg_test_three,ln_test_three_03,,,test_line_three_2.text,,,,,,\nln_test_three_03,dlg_test_three,,,,test_line_three_3.text,,,,,,\nln_test_pair_01,dlg_test_pair,ln_test_pair_02,chr_test_tomato,,test_line_pair_1.text,,,,,,\nln_test_pair_02,dlg_test_pair,,chr_test_passer_a,,test_line_pair_2.text,,,,,,\nln_test_talk_a_01,dlg_test_talk_a,ln_test_talk_a_02,chr_test_talker,,test_line_talk_a_01.text,,,,,,\nln_test_talk_a_02,dlg_test_talk_a,ln_test_talk_a_03,chr_test_narrator,,test_line_talk_a_02.text,,,,,,\nln_test_talk_a_03,dlg_test_talk_a,ln_test_talk_a_04,chr_test_talker,test_name_unknown.name,test_line_talk_a_03.text,,,,,,\nln_test_talk_a_04,dlg_test_talk_a,ln_test_talk_a_05,chr_test_player,,test_line_talk_a_04.text,,,,,,\nln_test_talk_a_05,dlg_test_talk_a,,chr_test_talker,,test_line_talk_a_05.text,,,,,,\nln_test_talk_b_01,dlg_test_talk_b,ln_test_talk_b_02,chr_test_passer_a,,test_line_talk_b_01.text,,,,,,\nln_test_talk_b_02,dlg_test_talk_b,,chr_test_passer_a,,test_line_talk_b_02.text,,,,,,\nln_test_talk_b2_01,dlg_test_talk_b2,,chr_test_passer_a,,test_line_talk_b2_01.text,,,,,,\nln_test_talk_c_01,dlg_test_talk_c,,chr_test_potato,,test_line_talk_c_01.text,,,,,,\n",
+    "CGs": "cg_id,cg_sprite,transition_mode,fade_in,fade_out,ken_burns_zoom,ken_burns_pan_x,ken_burns_pan_y,ken_burns_duration,ken_burns_curve,keep_box,keep_portraits,keep_name,comment\n",
+    "Scenes": "scene_id,name_key,scene_type,is_small_room,scene_asset,default_state,comment\nscn_test_street,test_scene_street.name,street,false,LongLoop_Street,test_default,\n",
+    "SceneStates": "scene_id,state_id,story_stage,description,switch_source,comment\nscn_test_street,test_default,,,,\nscn_test_street,test_second,,,,\n",
+    "SceneStatePlacements": "scene_id,state_id,kind,target,anchor_id,facing,active,dialogue_id,ambient_pool,marker,comment\nscn_test_street,test_default,actor,chr_test_tomato,,,true,,,,\nscn_test_street,test_default,actor,chr_test_passer_a,test_street_01,right,true,,,,\nscn_test_street,test_default,actor,chr_test_passer_a#2,test_street_02,left,true,dlg_test_talk_b,amb_test_c,none,\nscn_test_street,test_default,actor,chr_test_passer_b,test_street_03,,false,,,,\nscn_test_street,test_second,actor,chr_test_tomato,,,true,,amb_test_b,story,\nscn_test_street,test_second,actor,chr_test_potato,test_street_03,right,true,dlg_test_talk_a,amb_test_a,,\nscn_test_street,test_second,actor,chr_test_passer_a#2,test_street_02,left,false,,amb_test_c,,\nscn_test_street,test_second,actor,chr_test_passer_b,test_street_01,,true,,,,\nscn_test_street,test_default,actor,chr_test_potato,,,true,,,,\nscn_test_street,test_second,actor,chr_test_passer_a,,,false,,,,\nscn_test_street,test_default,actor,chr_test_talker,test_street_04,,true,dlg_test_talk_a,,,\nscn_test_street,test_second,actor,chr_test_talker,test_street_04,,true,dlg_test_talk_a,,,\n",
+    "AmbientPools": "pool_id,scope,dialogue_ids,comment\namb_test_a,,dlg_test_single_a;dlg_test_single_b,\namb_test_b,,dlg_test_three,\namb_test_c,,dlg_test_pair,\n",
+    "Localization": "loc_key,zh_cn,comment\nact_boil.name,煮,\nact_cut.name,切割,\nact_no_process.name,直接放入,\nact_stew.name,炖,\nact_stirfry.name,翻炒,\nact_wash.name,摘洗,\nact_whisk.name,搅拌,\nact_smash.name,捣碎,\nact_mix.name,拌混,\nact_fry.name,煎炸,\ning_cabbage.flavor,开水白菜的排面担当,\ning_cabbage.name,白菜心,\ning_egg.flavor,平平无奇，但谁也离不开它,\ning_egg.name,鸡蛋,\ning_giant_egg.flavor,一颗顶三颗，农场直送的自信,\ning_giant_egg.name,超级有机农场巨蛋,\ning_ham_sausage.flavor,五连装，掰一根少一根,\ning_ham_sausage.name,好吃的金锣王,\ning_milk_box.flavor,开盒后请尽快喝完,\ning_milk_box.name,牛奶（盒）,\ning_noodle_dried.flavor,抱成一捆才有安全感的面条们,\ning_noodle_dried.name,一把挂面,\ning_noodle_instant.flavor,长了脚也逃不掉被煮的命运,\ning_noodle_instant.name,泡面饼,\ning_octopus_leg.flavor,不知道本体去哪了，只剩一条,\ning_octopus_leg.name,章鱼脚,\ning_scallion.flavor,撒上就香，不撒就差点意思,\ning_scallion.name,小葱,\ning_tomato.flavor,巨好吃爽茄，本茄认证,\ning_tomato.name,番茄,\ning_danhuangpai.flavor,蛋黄派！！,\ning_danhuangpai.name,蛋黄派,\ning_ofanqie.flavor,哦！！！番茄！！！,\ning_ofanqie.name,哦！番茄,\ning_pidan.flavor,传说某个世界里它曾是超级反派,\ning_pidan.name,皮蛋,\ning_noodle_rice.flavor,过桥——,\ning_noodle_rice.name,米线,\ning_nongtangbao.flavor,浓汤宝——,\ning_nongtangbao.name,浓汤宝,\ning_milktea_fen.flavor,因为你是我的良乐美啊~~,\ning_milktea_fen.name,奶茶粉包,\ning_paomianbao.flavor,最恶毒的诅咒莫过于泡面没有调料包,\ning_paomianbao.name,泡面调料包,\nprd_instant_noodle_boiled.flavor,煮好的泡面！,\nprd_instant_noodle_boiled.name,煮好的泡面,\nprd_rice_noodle_boiled.flavor,过桥的米线,\nprd_rice_noodle_boiled.name,煮好的米线,\nprd_cabbage_washed.flavor,摘好的白菜心！,\nprd_cabbage_washed.name,摘好的白菜心,\nprd_clear_broth.flavor,高汤！！！,\nprd_clear_broth.name,清亮高汤,\nprd_egg_liquid.flavor,蛋液！,\nprd_egg_liquid.name,蛋液,\nprd_kaishui_dish.flavor,开水白菜!,\nprd_kaishui_dish.name,开水白菜,\nprd_unknown.name,不明物体,\nprd_unknown.flavor,……这是什么？,\nprd_noodle_boiled.flavor,煮好的面!,\nprd_noodle_boiled.name,煮好的面,\nprd_qingtang_dish.flavor,清汤面!,\nprd_qingtang_dish.name,清汤面,\nprd_fried_egg.flavor,传说某个世界里对抗皮蛋大魔王的勇者,\nprd_fried_egg.name,煎蛋,\nprd_scrambled_egg.flavor,炒好的蛋!,\nprd_scrambled_egg.name,炒好的蛋,\nprd_danhuangpai_sui.flavor,蛋黄派碎！,\nprd_danhuangpai_sui.name,蛋黄派碎,\nprd_tomato_cut.flavor,切好的番茄!,\nprd_tomato_cut.name,切好的番茄,\nprd_ofanqie_sui.flavor,哦番茄碎！,\nprd_ofanqie_sui.name,哦番茄碎,\nprd_nongtangbao_soup.flavor,浓汤宝汤！,\nprd_nongtangbao_soup.name,浓汤宝汤,\nprd_milktea_liquid.flavor,冲泡奶茶！,\nprd_milktea_liquid.name,冲泡奶茶,\nprd_paomian_soup.flavor,泡面汤！,\nprd_paomian_soup.name,泡面汤,\nprd_pidan_milktea_noodle.flavor,皮蛋奶茶面！,\nprd_pidan_milktea_noodle.name,皮蛋奶茶面,\nprd_ofanqie_danhuangpai.flavor,哦番茄拌蛋黄派！,\nprd_ofanqie_danhuangpai.name,哦番茄拌蛋黄派,\nprd_tomato_egg_dish.flavor,番茄炒蛋!,\nprd_tomato_egg_dish.name,番茄炒蛋,\nprd_tomato_egg_soup.flavor,番茄蛋花汤!,\nprd_tomato_egg_soup.name,番茄蛋花汤,\nrcp_kaishui_cabbage.flavor,开水白菜!,\nrcp_kaishui_cabbage.name,开水白菜,\nrcp_qingtang_noodle.flavor,清汤面!,\nrcp_qingtang_noodle.name,清汤面,\nrcp_tomato_egg.flavor,番茄炒蛋!,\nrcp_tomato_egg.name,番茄炒蛋,\nstep_kc_01.text,白菜心摘好洗干净,\nstep_kc_02.text,慢慢炖一锅清汤,\nstep_kc_03.text,白菜汆一下，浇上汤,\nstep_qt_01.text,水开了就把面丢进去,\nstep_qt_02.text,熬制高汤,\nstep_qt_03.text,煎蛋，或炒制别的浇头,\nstep_qt_04.text,煮好的面放入高汤，添加浇头，出锅,\nstep_te_01.text,把蛋打成蛋液,\nstep_te_02.text,番茄切成小块,\nstep_te_03.text,热油下锅先炒蛋,\nstep_te_04.text,番茄下锅一起炒，出锅,\nstp_oil.flavor,热锅冷油,\nstp_oil.name,食用油,\nstp_salt.flavor,咸味的来源,\nstp_salt.name,盐,\nstp_water.flavor,无限供应,\nstp_water.name,清水,\ntag_dairy.name,奶类,\ntag_dish_boil.name,煮,\ntag_dish_deepfry.name,炸,\ntag_dish_stew.name,炖,\ntag_dish_stirfry.name,炒,\ntag_dish_salad.name,沙拉台,\ntag_egg.name,蛋类,\ntag_flavor_confused.name,吃不懂,\ntag_flavor_easy.name,简单好做,\ntag_flavor_fancy.name,看着就贵,\ntag_flavor_spicy.name,辣爪,\ntag_flavor_yummy.name,真滴很香,\ntag_fruit.name,水果,\ntag_meat.name,肉类,\ntag_seafood.name,海鲜,\ntag_staplefood.name,主食,\ntag_veg.name,蔬菜,\ntool_board.name,案板,\ntool_board_station.name,砧板台,\ntool_bowl.name,碗,\ntool_chopsticks.name,筷子,\ntool_freezer.name,小冰柜,\ntool_hand.name,手,\ntool_knife.name,菜刀,\ntool_oven.name,烤箱,\ntool_pan.name,炒锅,\ntool_pot.name,汤锅,\ntool_salad_station.name,沙拉台,\ntool_scissors.name,剪刀,\ntool_spatula.name,锅铲,\ntool_stove.name,灶台,\ntool_stick.name,擀面杖,\ntool_saladbowl.name,沙拉碗,\nui_cook_pending_feature.text,请期待正式版,厨具配置占位弹窗\nui_p0_catalog_tab.text,目录,目录页签\nui_p0_current_recipe_tab.text,当前,文案待最终人工对齐\nui_p0_escape.text,ESC,去除消费端硬编码\nui_p0_favorite.text,收藏,星标悬停\nui_p0_ingredient_list_header.text,所需食材,文案待最终人工对齐\nui_p0_start_cooking.text,开始做饭,字图优先，TMP 回退\nui_p1_clueboard_tips.text,\"TIPS：人被杀就会死\n不知道怎么办的话：不妨尝试先放空大脑吧。\",参考图原文；文案待最终人工对齐\nui_p1_return.text,返回,箭头悬停/无图回退\nvar_kaishui_std.name,开水白菜,\nvar_qingtang_std.name,清汤面,\nvar_tomato_egg_soup.name,番茄蛋花汤,\nvar_tomato_egg_std.name,番茄炒蛋,\nvar_pidan_milktea_noodle.name,皮蛋奶茶面,\nvar_ofanqie_danhuangpai.name,蛋黄番茄沙拉,\nui_p0_cover_bubble_a.text,吃什么,\nui_p0_cover_bubble_b.text,汪！,\ntest_chr_tomato.name,番茄,\ntest_chr_passer_a.name,人一,\ntest_chr_passer_b.name,人三,\ntest_scene_street.name,试场,\ntest_line_single_a.text,你好,\ntest_line_single_b.text,吃什么,\ntest_line_three_1.text,番茄汤,\ntest_line_three_2.text,好喝,\ntest_line_three_3.text,真香,\ntest_line_pair_1.text,看这里,\ntest_line_pair_2.text,好,\ntest_chr_potato.name,土豆,\ntest_chr_talker.name,人四,\ntest_chr_player.name,我,\ntest_name_unknown.name,？？？,\ntest_line_talk_a_01.text,你好，今天吃什么？,\ntest_line_talk_a_02.text,她看了看菜单。,\ntest_line_talk_a_03.text,番茄汤，好喝。,\ntest_line_talk_a_04.text,好，真香！,\ntest_line_talk_a_05.text,今天的菜单有番茄汤、土豆和热饭。你看，汤里有番茄、土豆，还有香香的米饭……好喝？！再吃一口，真香。,\ntest_line_talk_b_01.text,你好，吃什么？,\ntest_line_talk_b_02.text,吃番茄汤吧。,\ntest_line_talk_b2_01.text,好，一起吃。,\ntest_line_talk_c_01.text,真香。,\nui_street_talk.text,交谈,\n"
+  },
+  "provenance": [
+    {
+      "path": ".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000566/attempt1/SceneStatePlacements-before.csv",
+      "sha256": "0B344BCBF7FBDFBFC5828686CA49520F9EEE806CE6DD9BCFE137A67AAEB46113",
+      "bytes": 775
+    },
+    {
+      "path": "DataTables/Narrative/Characters.csv",
+      "sha256": "DF5012776B3D22A4D9AA3A2052D96F85C0DA7F97A450106436E2391C2D742BA1",
+      "bytes": 531
+    },
+    {
+      "path": "DataTables/Narrative/Dialogues.csv",
+      "sha256": "D160F35EFB5FDC743EC1FCFA2826C32F2BC45FD59718EABC7E927EA619BD6E0E",
+      "bytes": 1226
+    },
+    {
+      "path": "DataTables/Narrative/DialogueLines.csv",
+      "sha256": "57E1C3142F6AE86295642DA2D43413EDB5859A8F4B93A0C1F1AAC8DD368CD6A4",
+      "bytes": 1539
+    },
+    {
+      "path": "DataTables/Narrative/CGs.csv",
+      "sha256": "3F4F0515ADD1D22326419AD448DEAAD88FA1485604EAADA403E6AE60BC159FE4",
+      "bytes": 174
+    },
+    {
+      "path": "DataTables/Street/Scenes.csv",
+      "sha256": "28D1E787CBDDB05789058F245FB259409CB46E545BB1CB80902A27775445BE57",
+      "bytes": 161
+    },
+    {
+      "path": "DataTables/Street/SceneStates.csv",
+      "sha256": "C7433F673361D10CBBB6C89A0ABED2B69B7D94BC6CC7CBBBBEDD1139BC6C5900",
+      "bytes": 132
+    },
+    {
+      "path": "DataTables/Street/SceneStatePlacements.csv",
+      "sha256": "A75297632AC47566C7BA0FBA7BABDEE5B184C7E0827B926AC5F5294749B40487",
+      "bytes": 1103
+    },
+    {
+      "path": "DataTables/Street/AmbientPools.csv",
+      "sha256": "244160A9AE53419629106775A0E036E4E65B57A0F33FD950D63450144B062BD5",
+      "bytes": 143
+    },
+    {
+      "path": "DataTables/Localization/Localization.csv",
+      "sha256": "7FFF8ED75BA7D06527CE162C5C280BB6188714076ABE33ECC610BAAB21E9AE50",
+      "bytes": 7354
+    }
+  ]
+}

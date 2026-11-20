@@ -26,6 +26,9 @@ namespace EatWhat.LongLoop
         private StreetDynamicZoomState zoomState;
         private StreetLookFloatState lookFloatState;
         private StreetLookFloatWorldState lookWorldState;
+        private StreetLookFloatState lookWorldReturnState;
+        private Vector2 lookWorldReturnAxes;
+        private bool lookWorldReturning;
         private StreetVerticalOffsetState verticalState;
         private float lastRatio=1,lastEffectiveSize,lookMaxDistance,lookMaxSpeed;
         private bool freezeOnOverride,lensSizeKnown,dynamicLensOwned;
@@ -110,7 +113,7 @@ namespace EatWhat.LongLoop
         {
             binding?.EndStoppedResponse();pipeline=default;
             if(!preserveZoom)zoomState=default;
-            lookFloatState=default;lookWorldState=default;verticalState=default;lastRatio=1;LastSize=0;LastZoomResult=default;
+            lookFloatState=default;lookWorldState=default;lookWorldReturnState=default;lookWorldReturnAxes=default;lookWorldReturning=false;verticalState=default;lastRatio=1;LastSize=0;LastZoomResult=default;
             lastWriteFrame=-1;prepared=aimSeen=completed=false;LastResult=default;
         }
         private bool BindingsValid(CinemachineVirtualCameraBase vcam)
@@ -162,6 +165,7 @@ namespace EatWhat.LongLoop
             Vector2 move=actualInput!=null?new Vector2(actualInput.Horizontal,actualInput.Vertical):
                 gameState is LongLoopPlayerController player?player.MoveInput:Vector2.zero;
             bool dialogue=provider!=null&&provider.DialogueOrCinematic;
+            bool cameraOverridden=provider!=null&&provider.CameraOverridden;
             Vector3 foot=followPoint.Foot.position;
             bool moving=zoomState.Initialized&&zoomState.Moving;double speedY=0;
             if(pipeline.Initialized)
@@ -172,31 +176,32 @@ namespace EatWhat.LongLoop
             float channelDt=pipeline.Initialized?deltaTime:0;
             bool lookTriggered;
             StreetDynamicZoomResult zoom;StreetLookFloatResult floating;StreetVerticalOffsetResult vertical;
-            if(!EvaluateChannels(false,moving,speedY,look,move.y,dialogue,channelDt,lookDevice==GameInputDevice.Gamepad,out zoom,out floating,out vertical,out lookTriggered))
+            if(!EvaluateChannels(false,moving,speedY,look,move.y,dialogue,cameraOverridden,channelDt,lookDevice==GameInputDevice.Gamepad,out zoom,out floating,out vertical,out lookTriggered))
             {ReleaseLens();Status=StreetFollowDriverStatus.InvalidConfig;return;}
             var originalLens=state.Lens;
             if(zoom.Size.HasValue)SetSize(ref state,zoom.Size.Value);
             var input=new StreetFollowInput {Foot=foot,Focus=focus,Time=now,DeltaTime=deltaTime,SuspendReturn=lookTriggered};
             var clip=new FollowClipContext {Orthographic=true,ProjectionKnown=true,ScreenRight=state.RawOrientation*Vector3.right,
                 OrthoSize=state.Lens.OrthographicSize,Aspect=state.Lens.Aspect,SafeZoneWidth=safeWidth,
-                GateOffsetsInDialogue=gate,DialogueOrCinematic=dialogue};
+                GateOffsetsInDialogue=gate,DialogueOrCinematic=dialogue,LookInputGated=gate&&dialogue};
             var frame=new StreetFollowCompositionInput {DynamicZoomEnabled=zoomSettings.Enabled,
                 Size=state.Lens.OrthographicSize,MaxSize=zoomSettings.MaxSize,PreviousRatio=lastRatio,
                 LookFloat=floating.Value,VerticalOffset=vertical.Value};
-            var worldLook=LimitWorldLook(frame,false,channelDt);
+            StreetLookFloatState worldReturn; Vector2 worldReturnAxes;
+            var worldLook=LimitWorldLook(frame,false,channelDt,gate&&dialogue,out worldReturn,out worldReturnAxes);
             if(!worldLook.Valid){state.Lens=originalLens;ReleaseLens();Status=StreetFollowDriverStatus.InvalidConfig;return;}
             frame.LookFloatIsWorld=true;frame.WorldLookFloat=worldLook.Value;
             var composition=StreetFollowComposition.Evaluate(pipeline,input,settings,clip,frame);
             if(composition.Valid&&composition.Follow.GoalStep.Status==FollowStepStatus.TeleportReset)
             {
                 // Discard this frame's speculative channel steps and restart all three.
-                if(!EvaluateChannels(true,false,0,look,move.y,dialogue,0,lookDevice==GameInputDevice.Gamepad,out zoom,out floating,out vertical,out lookTriggered))
+                if(!EvaluateChannels(true,false,0,look,move.y,dialogue,cameraOverridden,0,lookDevice==GameInputDevice.Gamepad,out zoom,out floating,out vertical,out lookTriggered))
                 {state.Lens=originalLens;ReleaseLens();Status=StreetFollowDriverStatus.InvalidConfig;return;}
                 state.Lens=originalLens;
                 if(zoom.Size.HasValue)SetSize(ref state,zoom.Size.Value);
                 frame.Size=state.Lens.OrthographicSize;frame.LookFloat=floating.Value;frame.VerticalOffset=vertical.Value;
                 input.SuspendReturn=lookTriggered;
-                worldLook=LimitWorldLook(frame,true,0);
+                worldLook=LimitWorldLook(frame,true,0,gate&&dialogue,out worldReturn,out worldReturnAxes);
                 if(!worldLook.Valid){state.Lens=originalLens;ReleaseLens();Status=StreetFollowDriverStatus.InvalidConfig;return;}
                 frame.WorldLookFloat=worldLook.Value;
                 clip.OrthoSize=frame.Size;
@@ -206,6 +211,7 @@ namespace EatWhat.LongLoop
             {state.Lens=originalLens;ReleaseLens();Status=StreetFollowDriverStatus.InvalidConfig;return;}
             var result=composition.Follow;Vector3 previousTarget=pipeline.Target;
             zoomState=zoom.State;lookFloatState=floating.State;lookWorldState=worldLook.State;verticalState=vertical.State;
+            lookWorldReturnState=worldReturn;lookWorldReturnAxes=worldReturnAxes;lookWorldReturning=gate&&dialogue;
             lastRatio=composition.Ratio;LastSize=state.Lens.OrthographicSize;LastZoomResult=zoom;
             UpdateLensCache(vcam,LastSize,originalLens.OrthographicSize,zoom.Size.HasValue);
             pipeline=result.State;LastResult=result;cameraTarget.position=result.Target;
@@ -223,7 +229,7 @@ namespace EatWhat.LongLoop
                 binding.BeginStoppedResponse(deltaTime);
         }
         private bool EvaluateChannels(bool reset,bool moving,double speedY,Vector2 look,float verticalInput,
-            bool dialogue,float dt,bool directLook,out StreetDynamicZoomResult zoom,out StreetLookFloatResult floating,
+            bool dialogue,bool cameraOverridden,float dt,bool directLook,out StreetDynamicZoomResult zoom,out StreetLookFloatResult floating,
             out StreetVerticalOffsetResult vertical,out bool lookTriggered)
         {
             // Current effective Target is intent; a fading Value must not prolong suspension.
@@ -232,16 +238,37 @@ namespace EatWhat.LongLoop
             lookTriggered=floating.Valid&&lookSettings.Enabled&&!(gate&&dialogue)&&lookMaxDistance>0&&lookMaxSpeed>0&&
                 (floating.Target.x!=0&&settings.MaxHorizontalOffset>0||floating.Target.y!=0&&settings.MaxVerticalOffset>0);
             zoom=StreetDynamicZoom.Evaluate(reset?default:zoomState,new StreetDynamicZoomInput {
-                Moving=moving,Frozen=freezeOnOverride&&dialogue,SuspendShrink=lookTriggered,DeltaTime=dt },zoomSettings);
+                Moving=moving,Frozen=freezeOnOverride&&cameraOverridden,SuspendShrink=lookTriggered,DeltaTime=dt },zoomSettings);
             vertical=StreetVerticalOffset.Evaluate(reset?default:verticalState,new StreetVerticalOffsetInput {
                 VerticalInput=verticalInput,ActualVerticalSpeed=speedY,DeltaTime=dt },verticalSettings);
             return zoom.Valid&&(!zoom.Size.HasValue||Positive(zoom.Size.Value))&&floating.Valid&&vertical.Valid;
         }
-        private StreetLookFloatWorldResult LimitWorldLook(StreetFollowCompositionInput frame,bool reset,float dt)
+        private StreetLookFloatWorldResult LimitWorldLook(StreetFollowCompositionInput frame,bool reset,float dt,bool gated,
+            out StreetLookFloatState returning,out Vector2 returnAxes)
         {
             float ratio=frame.DynamicZoomEnabled?(float)((double)frame.Size/frame.MaxSize):1;
-            return StreetLookFloat.LimitWorld(reset?default:lookWorldState,frame.LookFloat,
+            var previous=reset?default:lookWorldState;
+            returning=default;returnAxes=default;
+            if(gated)
+            {
+                // Exit the world contribution actually reached, not an in-flight normalized goal.
+                bool start=reset||!lookWorldReturning||lookWorldReturnState.X.Duration!=lookSettings.OutTime;
+                returnAxes=start?new Vector2(System.Math.Abs(previous.Value.x),System.Math.Abs(previous.Value.y)):lookWorldReturnAxes;
+                var prior=start?new StreetLookFloatState {
+                    X=ReturnAxis(previous.Value.x),Y=ReturnAxis(previous.Value.y) }:lookWorldReturnState;
+                var exit=StreetLookFloat.Evaluate(prior,new StreetLookFloatInput {Gated=true,DeltaTime=dt},lookSettings);
+                if(!exit.Valid)return default;
+                returning=exit.State;
+                // Reuse the existing exit interpolation AND world distance/speed limits.
+                return StreetLookFloat.LimitWorld(previous,exit.Value,returnAxes,1,lookMaxDistance*ratio,lookMaxSpeed,dt);
+            }
+            return StreetLookFloat.LimitWorld(previous,frame.LookFloat,
                 new Vector2(settings.MaxHorizontalOffset,settings.MaxVerticalOffset),ratio,lookMaxDistance*ratio,lookMaxSpeed,dt);
+        }
+        private static StreetLookFloatAxisState ReturnAxis(float value)
+        {
+            double sign=System.Math.Sign(value);
+            return new StreetLookFloatAxisState {Initialized=true,Value=sign,Start=sign,Target=sign};
         }
         private static bool Positive(double value)=>StreetFollowPipeline.Finite(value)&&value>0&&value<=float.MaxValue;
         private static void SetSize(ref CameraState state,float size)

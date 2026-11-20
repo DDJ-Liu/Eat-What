@@ -281,10 +281,47 @@ namespace EatWhat.DataTables
                     if (!NarrativeCommandTargetParser.TryParse("actor:"+V(row,"target"),out target,out issue)) Emit("V-21",row,"target",issue.Reason);
                     else if (Source("Characters") == null) Unknown(row,"target","Characters input unavailable.");
                     else if (Find("Characters","character_id",target.BaseId) == null) Emit("V-21",row,"target","Actor base character is missing or ambiguous.");
+                    BubbleSources(row);
                 }
                 else if (V(row,"kind") == "object" || V(row,"kind") == "exit")
                     foreach (string field in new[]{"anchor_id","facing","dialogue_id","ambient_pool","marker"})
                         if (V(row,field).Length > 0) Emit("V-21",row,field,"This column is only used for actor placements.");
+            }
+            // V-26 is table-only. A suffixed initiator is still a distinct actor; recipients match the explicit base speaker exactly.
+            void BubbleSources(DataTableCsvRow row)
+            {
+                bool active;
+                string actor = V(row,"target"), pool = V(row,"ambient_pool"), scene = V(row,"scene_id"), state = V(row,"state_id");
+                NarrativeCommandTarget parsed; NarrativeCommandDiagnostic issue;
+                if (!bool.TryParse(V(row,"active"),out active) || !active || pool.Length == 0 ||
+                    actor.IndexOf('#') >= 0 || !NarrativeCommandTargetParser.TryParse("actor:"+actor,out parsed,out issue) ||
+                    Find("AmbientPools","pool_id",pool) == null) return;
+                var placements = Source("SceneStatePlacements"); var pools = Source("AmbientPools");
+                var dialogues = Source("Dialogues"); var lines = Source("DialogueLines");
+                if (placements == null || pools == null || dialogues == null || lines == null) return;
+                var conflicts = new List<string>();
+                foreach (var other in placements.Table.Rows)
+                {
+                    string initiator = Value(placements,other,"target"), otherPool = Value(placements,other,"ambient_pool");
+                    if (Value(placements,other,"kind") != "actor" || initiator == actor ||
+                        Value(placements,other,"scene_id") != scene || Value(placements,other,"state_id") != state ||
+                        !bool.TryParse(Value(placements,other,"active"),out active) || !active || otherPool.Length == 0 ||
+                        !NarrativeCommandTargetParser.TryParse("actor:"+initiator,out parsed,out issue)) continue;
+                    var sourcePool = Find("AmbientPools","pool_id",otherPool); if (sourcePool == null) continue;
+                    string conflictingLine = "";
+                    foreach (string raw in Value(pools,sourcePool,"dialogue_ids").Split(';'))
+                    {
+                        var dialogue = Find("Dialogues","dialogue_id",raw.Trim());
+                        if (dialogue == null || Value(dialogues,dialogue,"tier") != "ambient") continue;
+                        foreach (var line in Chain(dialogues,dialogue))
+                            if (Value(lines,line,"speaker") == actor) { conflictingLine = Value(lines,line,"line_id"); break; }
+                        if (conflictingLine.Length != 0) break;
+                    }
+                    if (conflictingLine.Length != 0)
+                        conflicts.Add("actor '"+initiator+"', pool '"+otherPool+"', line '"+conflictingLine+"'");
+                }
+                if (conflicts.Count != 0) Emit("V-26",row,"ambient_pool","Actor '"+actor+"' in scene '"+scene+"', state '"+state+
+                    "' has table pool '"+pool+"' and is an explicit speaker in another active actor's table pool: "+string.Join("; ",conflicts)+". Scene-instance pools are not inspected.");
             }
             void CompleteState(DataTableCsvRow row)
             {

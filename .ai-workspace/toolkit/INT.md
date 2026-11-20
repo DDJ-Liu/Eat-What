@@ -1,5 +1,13 @@
 # 工具库 · INT
 
+<a id="tk-int-20"></a>
+
+## TK-INT-20 · 被动交互按键提示（2026-11-19）
+
+| ID | 名称 / 路径 | 能力 | 公开面 | 状态 | 消费方 | 来源 | 备注 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| TK-INT-20 | InteractionPrompt / InteractionPromptState，Assets/Scripts/Tools/ | 单目标屏幕挂点提示，短淡入淡出、Pivot对齐、设备键帽、现本地化及圆角占位 | Show(Transform,key)/Hide/ConfigureInput；只读Target/LastDiagnostic；状态实现单独复用 | CODE离线39项及真实TMP/UI编译通过，未原生/视觉 | 后续交互选择器、出口等调用者 | AI-000578 / V014-12 | Toolkit可用TMP/本地化，未转LongLoop；读原IGameInput.CurrentDevice，不读Interact、不新接手柄硬件，无对话/街道依赖；[配置/五列说明](../../组件说明文档/视觉特效/交互按键提示配置与使用说明.md) |
+
 2026-10-28 AI380 TK-INT-19 局部扩展：`INavigationInput.BackPressed` 是同一 `IGameInput.cs` 中的可选导航接口，`LegacyInputProvider` 在启用且有焦点时提供 Escape 按下帧；原 `IGameInput` 的 Horizontal/Interact/MouseScreenPos 不变。LongLoop `SceneFlow` 通过 Inspector 的 `navigationInputProvider` 消费，可绑定 Boot 持久节点上的 LegacyInputProvider。离线编译与控制流测试完成，Boot 场景和实际按键待 ENGINE。
 
 > 从 [INDEX.md](INDEX.md) 定位；状态与公开面沿用原登记。

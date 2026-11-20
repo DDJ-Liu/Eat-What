@@ -2901,3 +2901,1035 @@ M80按预计新源/meta/测试+既有Main/Python和4说明文件不超过10文�
 > SUPERVISED START at 2026-11-15T22:02:02.2965271+08:00: {"sessionId":"0feffeabf69043ca8cfb355cd6a0c63b","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000546"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-15T22:02:02.2954005+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
 
 > SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-15T22:27:53.3512835+08:00: {"at":"2026-11-15T22:27:53.3202647+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000546"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+## AI-000547 | [ENGINE_CLI] [V013-01] 底座源码原生导入与默认演出配置
+
+- 序号：547
+- 提交时间：2026-11-15T23:22:05.0223789+08:00
+- 模块 ID：V013-01
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+V013-01底座进引擎原生操作。先读 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI547_V01301执行补充.md、原cards/V013-01.md、完整73文件清单和inputs/acceptance/AI-000547.json。用户本轮明确要求先提交再启动整包监管，两提交6d2f911/fc4dc37已完成并正常hook通过，已构成此卡列明导入/正式导表/新建配置/保存的业务授权；实际平台审批、用户未知dirty和错误目标独立保持。固定ENGINE_CLI官方CLI/既有Invoke-TaskTool及正常preflight，核D:/GameProject/Eat-What/6000.3.24f1唯一实例。按序导入已提交源/asmdef/meta→确认编译及程序集→公开ImportAll正式22表一次→新建Assets/Settings/Narrative/DialoguePresentationConfig.asset类型默认十组default→保存读回，不改场景/数据源/源码/其它资源或配置。已有值不覆盖，正常meta补字段保持GUID。三固定合同编译无error、Core/Unity程序集加载、目标配置十组可读；导表操作证据如实保既有warnings和UNVERIFIED不加行为门。L120因73导入源及生成资产集合；操作/验收轮分计SUP操作5、验收最多3，零Play/截图/新探针/旧宿主Arm/Git。Compile失败真实Fail交CODE独立小修，不在本卡修生产/框架或借旧任务号。每批Checkpoint/必要续租；失败在真实范围额度内CONTROL独审唯一ApproveResume，耗尽主动报申请，不无反馈停。即时Prepare-一次真实回传-Record给CONTROL，禁止自领548或其它后继。
+## AI-000548 | [CODE] [V013-02] 角色与锚点标记及本场景演出目标索引
+
+- 序号：548
+- 提交时间：2026-11-15T23:22:06.2712818+08:00
+- 模块 ID：V013-02
+- 初始状态：QUEUED
+- 前置依赖：AI-000547
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-02演出目标索引仅预注册，等待AI547真实成功及CONTROL独审后另投，不抢跑。读 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI548_V01302执行补充.md、原cards/V013-02.md及inputs/acceptance/AI-000548.json。两个角色/锚点标记及本场景注册表，启停登记注销，id含多实例/player/anchor、缺失诊断和重复保先注册。实际源/程序集/地面接口先核，合理复用不重写语法；只本目标不写NPC壳/场景状态/气泡业务，不改主角/镜头/短循环。新C#同名组件/meta一并交付，必要说明在项目docs。回归仅原LongLoop入口默认、--depth-scale、--y-sort、--ground-space四模式，原断言不改；绿色来源沿529/531及已提交源，领前核漂移，旧红如实报告不在卡内修。预计源码/meta/测试/宿主/文档>10文件L120，2固定合同，无引擎/资源接线/新通用框架/字体/正式数据/Git。CODE有Assets范围与ENGINE互斥，Checkpoint/续租，SUP普通5内唯一ApproveResume，耗尽报申请；结算即时Prepare-一次回传-Record。
+
+> SUPERVISED POLICY at 2026-11-15T23:22:07.2513946+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"新0.1.3原业务首卡/原依赖后继；固定车道共享工程互斥，CODE待ENGINE真实成功独审；无额外人工门，原用户手工段与最终签收保留。","updatedAt":"2026-11-15T23:22:06.9145890+08:00","supervisionLevel":"full"},"taskId":"AI-000547"}
+
+> SUPERVISED POLICY at 2026-11-15T23:22:08.0226012+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"新0.1.3原业务首卡/原依赖后继；固定车道共享工程互斥，CODE待ENGINE真实成功独审；无额外人工门，原用户手工段与最终签收保留。","updatedAt":"2026-11-15T23:22:07.6229465+08:00","supervisionLevel":"full"},"taskId":"AI-000548"}
+
+> SUPERVISED START at 2026-11-15T23:22:08.4530627+08:00: {"sessionId":"c0038b1aded346e2acf139c27589908f","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000547","AI-000548"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-15T23:22:08.4513224+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+## AI-000549 | [CODE] [V013-01-REGISTRATION] 导入器注册数量与现行22表对齐
+
+- 序号：549
+- 提交时间：2026-11-15T23:55:10.3826916+08:00
+- 模块 ID：V013-01-REGISTRATION
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI547直属独立CODE REPAIR，仅修真实ImportAll/ValidateAll使用的ValidateCK01Registration旧14条件/文案为现行22，保全部其它生产字节及missing-schema检查。读 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI549_注册数量独立修复.md、父首败独审与acceptance/AI-000549.json；首轮Native已编译加载但ImportAll早停0资产写，不能在引擎卡修源码/框架。现有ImportContracts追加实际public ValidateAll经过相同private门的回归，保原所有Assert条件/消息/次序/数据，不只比较registry.Count或搜字面量。只有两个既有文件及own output，S40两合同，一次原ImportContracts完整入口；不跑其它全套/不Unity/不资产数据/meta写/不Git。事前身份、原流、exit、旧Assert逆向及生产两数字逆向证明留档，无项目文档影响。父/root547同一稳定问题及POLICY周期，保原失败/累计，首次claim消费；普通额度内CONTROL独审后唯一ApproveResume，耗尽主动报告申请，真实权限/停止门保持。结算即时Prepare-一次实际回传-Record，不自恢复547/领548。
+
+> SUPERVISED POLICY at 2026-11-15T23:55:11.7663788+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"AI547同根生产数量修复，ENGINE已正式Fail无生产写，CODE仅限定源修与离线现有入口，原失败/stop/预算保持。","updatedAt":"2026-11-15T23:55:11.4281597+08:00","supervisionLevel":"full"},"taskId":"AI-000549"}
+
+> SUPERVISED EXTEND at 2026-11-15T23:55:12.1541123+08:00: {"taskIds":["AI-000549"],"reason":"原01运行失败需同根CODE独立最小修复，普通POLICY预算内，17原卡及人工门保持"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-16T00:31:03.5765047+08:00: {"remaining":4,"used":1,"reserved":0,"rootTaskId":"AI-000547","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","scope":{"paths":[".ai-workspace/inputs/grants/AI-000547.grant.json",".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000547","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/DataTables/DataTableImportContracts.cs","Assets/Editor/DataTables/DataTableImportService.cs","Assets/Editor/DataTables/DataTableValidationCore.cs","Assets/Editor/DataTables/Editor.DataTables.asmdef","Assets/Editor/DataTables/NarrativeTableValidation.cs","Assets/Editor/DataTables/NarrativeTableValidation.cs.meta","Assets/Generated/DataTables","Assets/Generated/DataTables.meta","Assets/Scripts/DataBase/CookingData/CK01AmbientPoolData.cs","Assets/Scripts/DataBase/CookingData/CK01AmbientPoolData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01CGData.cs","Assets/Scripts/DataBase/CookingData/CK01CGData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01CharacterData.cs","Assets/Scripts/DataBase/CookingData/CK01CharacterData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01DialogueData.cs","Assets/Scripts/DataBase/CookingData/CK01DialogueData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01DialogueLineData.cs","Assets/Scripts/DataBase/CookingData/CK01DialogueLineData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01GeneratedDataCatalog.cs","Assets/Scripts/DataBase/CookingData/CK01OptionalValues.cs","Assets/Scripts/DataBase/CookingData/CK01OptionalValues.cs.meta","Assets/Scripts/DataBase/CookingData/CK01SceneData.cs","Assets/Scripts/DataBase/CookingData/CK01SceneData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01SceneStateData.cs","Assets/Scripts/DataBase/CookingData/CK01SceneStateData.cs.meta","Assets/Scripts/DataBase/CookingData/CK01SceneStatePlacementData.cs","Assets/Scripts/DataBase/CookingData/CK01SceneStatePlacementData.cs.meta","Assets/Scripts/LongLoop/StreetFollowDriver.cs","Assets/Scripts/LongLoop/StreetFollowPipeline.cs","Assets/Scripts/Narrative.meta","Assets/Scripts/Narrative/Core.meta","Assets/Scripts/Narrative/Core/DialogueOverrides.cs","Assets/Scripts/Narrative/Core/DialogueOverrides.cs.meta","Assets/Scripts/Narrative/Core/DialoguePresentationData.cs","Assets/Scripts/Narrative/Core/DialoguePresentationData.cs.meta","Assets/Scripts/Narrative/Core/DialoguePresentationResolver.cs","Assets/Scripts/Narrative/Core/DialoguePresentationResolver.cs.meta","Assets/Scripts/Narrative/Core/DialoguePresentationSnapshot.cs","Assets/Scripts/Narrative/Core/DialoguePresentationSnapshot.cs.meta","Assets/Scripts/Narrative/Core/DialoguePresentationValidation.cs","Assets/Scripts/Narrative/Core/DialoguePresentationValidation.cs.meta","Assets/Scripts/Narrative/Core/Narrative.Core.asmdef","Assets/Scripts/Narrative/Core/Narrative.Core.asmdef.meta","Assets/Scripts/Narrative/Core/NarrativeAdvanceInputModel.cs","Assets/Scripts/Narrative/Core/NarrativeAdvanceInputModel.cs.meta","Assets/Scripts/Narrative/Core/NarrativeCommandParser.cs","Assets/Scripts/Narrative/Core/NarrativeCommandParser.cs.meta","Assets/Scripts/Narrative/Core/NarrativeCommandScheduler.cs","Assets/Scripts/Narrative/Core/NarrativeCommandScheduler.cs.meta","Assets/Scripts/Narrative/Core/NarrativeCommandSignatures.cs","Assets/Scripts/Narrative/Core/NarrativeCommandSignatures.cs.meta","Assets/Scripts/Narrative/Core/NarrativeCoreMarker.cs","Assets/Scripts/Narrative/Core/NarrativeCoreMarker.cs.meta","Assets/Scripts/Narrative/Core/NarrativeCurves.cs","Assets/Scripts/Narrative/Core/NarrativeCurves.cs.meta","Assets/Scripts/Narrative/Core/NarrativeDataDirectory.cs","Assets/Scripts/Narrative/Core/NarrativeDataDirectory.cs.meta","Assets/Scripts/Narrative/Core/NarrativeDataModels.cs","Assets/Scripts/Narrative/Core/NarrativeDataModels.cs.meta","Assets/Scripts/Narrative/Core/NarrativeDialogueContracts.cs","Assets/Scripts/Narrative/Core/NarrativeDialogueContracts.cs.meta","Assets/Scripts/Narrative/Core/NarrativeDialogueStateMachine.cs","Assets/Scripts/Narrative/Core/NarrativeDialogueStateMachine.cs.meta","Assets/Scripts/Narrative/Unity.meta","Assets/Scripts/Narrative/Unity/DialoguePresentationConfig.cs","Assets/Scripts/Narrative/Unity/DialoguePresentationConfig.cs.meta","Assets/Scripts/Narrative/Unity/Narrative.Unity.asmdef","Assets/Scripts/Narrative/Unity/Narrative.Unity.asmdef.meta","Assets/Scripts/Narrative/Unity/NarrativeDataAdapter.cs","Assets/Scripts/Narrative/Unity/NarrativeDataAdapter.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeUnityMarker.cs","Assets/Scripts/Narrative/Unity/NarrativeUnityMarker.cs.meta","Assets/Scripts/Tools/NarrativeCurveBridge.cs","Assets/Scripts/Tools/NarrativeCurveBridge.cs.meta","Assets/Scripts/Tools/Toolkit.asmdef","Assets/Settings/Narrative","Assets/Settings/Narrative.meta","CODEBASE_MAP.md","docs/参数调整说明_对话.md"],"operations":["asset-create","asset-import","asset-save","backup-asset","data-import","documentation","evidence-packaging","idempotence-check","native-readonly","read-console-increment"]},"cycles":["AI-000547:AI-000549:registration-count-22-v1"],"authorizationSource":"POLICY","verification":"AI549 independently reviewed 2contracts/7facts, production exactly two14→22 numbers, old64Assert preserved, new4 real public/private registration checks passed; raw44 Stub errors retained, not full native validation. SENT once/receipt SHA/Receive verified. Fresh snapshot ENGINE idle/completed/errornull4, CODE idle/completed/errornull178, DATA notLoaded/completed/errornull9; runtime all3 IDLE/zero RUNNING. Full547/548/549 session active stop/exitfalse. Original547 operation1 fail/acceptance0 preserved. Resume only importer source refresh and remaining ImportAll/default asset/save/read, keep original82-path business scope and same consumed CODE repair cycle; no extra native/permission/manual bypass.","taskId":"AI-000547","grantId":"31c57b0c25dc466badfab2043f7ca66a"}
+## AI-000550 | [CODE] [V013-03] 通用NPC壳的挂点、形象与朝向组件
+
+- 序号：550
+- 提交时间：2026-11-16T01:01:47.1196854+08:00
+- 模块 ID：V013-03
+- 初始状态：QUEUED
+- 前置依赖：AI-000548
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-03 NPC壳代码卡仅预注册，等待原AI548真实成功CONTROL独审后另投，不抢跑。读 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI550_V01303执行补充.md、原cards/V013-03.md及acceptance/AI-000550.json。按实际548/旧NPC/地面/纵深缩放与排序实现核接口，做脚底/形象/头顶引用、左右翻转和形象替换；传无保持原有子对象，新形象只留一个，朝向保绝对大小，无形象安全。只壳所有者，不抢状态应用/气泡/移动/对话/主角/镜头。CODE同交付同名组件与meta保已有GUID，不改Prefab或场景（13/14另做）。测试真实实现与必要外部fake，不新通用框架/比较器；原四LongLoop模式默认/depth-scale/y-sort/ground-space原断言保持，旧红如实报告不夹修。预计源码/meta/测试/宿主/原说明>10文件L120两合同，原NPC配置说明及索引原位更新标待原生，项目文档局部不提高9/17核验。无Unity/CLI/MCP/Play/Build、正式数据/字体/ProjectSettings/Git/其它Asset或暂停业务。Assets与ENGINE/DATA互斥、Checkpoint/续租、正式失败留史，SUP5内CONTROL独审唯一ApproveResume，耗尽主动汇报申请，结算即时Prepare-一次回传-Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-16T01:01:48.6500666+08:00: {"taskId":"AI-000550","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原V01303未执行新业务预排，原依赖548不抢跑，CODE源与原生/DATA互斥，无本卡原生操作。","updatedAt":"2026-11-16T01:01:48.2730811+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-16T01:01:49.0679197+08:00: {"taskIds":["AI-000550"],"reason":"原17卡下一已知依赖预排，防止仍有原未完需求时提前收束；不抢跑或扩大原卡。"}
+## AI-000551 | [CODE] [V013-04] 剧情运行时接入点
+
+- 序号：551
+- 提交时间：2026-11-16T01:33:33.5797607+08:00
+- 模块 ID：V013-04
+- 初始状态：QUEUED
+- 前置依赖：AI-000547
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-04运行时接入组件新业务根，仅预排固定CODE串行，待CONTROL正式另投，不提前执行。读AI551_V01304执行补充.md、原cards/V013-04.md和acceptance/AI-000551.json；复用实际NarrativeDataAdapter/Catalog ICatalogSource/原Resolver，持唯一演出配置和数据引用、对外目录/trigger取值，缺失或读取失败诊断不可用不抛；不持业务状态。LongLoop已含Core，仅补Unity单向引用。数据源编辑/开发与加密发布策略保持，八表发布/Prefab是11后继，不在04改Catalog或接口。真实组件/Adapter/Resolver合成测试，不改旧断言/夹具/正式数据/资产；原Narrative入口通过及LongLoop新引用离线编译，旧红正式回报，不卡内修框架或新门。预计源码/meta/测试/宿主接线/说明>10文件L120两合同。新组件meta同交付，原两项目文档/原README及docs固定说明原位维护，完整核验仍9/17；无Unity/CLI/MCP/Play/Build/场景Prefab/配置值/Git或暂停业务。共享工程互斥、Checkpoint续租、SUP5正常续行唯一ApproveResume并保失败，耗尽即时汇报申请；结算当轮Prepare一次真实回传绑定CONTROL后Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-16T01:33:35.2208545+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原V01304运行时接入预排；源码工具固定CODE串行与引擎/DATA互斥，原依赖547不改，无本卡原生/人工门。","updatedAt":"2026-11-16T01:33:34.7836023+08:00","supervisionLevel":"full"},"taskId":"AI-000551"}
+
+> SUPERVISED EXTEND at 2026-11-16T01:33:59.4230260+08:00: {"taskIds":["AI-000551"],"reason":"用户已授权0.1.3原17卡监管开发；原04接入组件依赖547，先预排固定CODE串行，550独审后正式另投。无新业务/人工门扩大，保持完整后继规划并防止链中途误收口。"}
+## AI-000552 | [CODE] [V013-06] 气泡取句与触发纯逻辑
+
+- 序号：552
+- 提交时间：2026-11-16T01:56:19.5027016+08:00
+- 模块 ID：V013-06
+- 初始状态：QUEUED
+- 前置依赖：AI-000547
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原V013-06气泡取句与触发纯逻辑新根，仅预排固定CODE串行，CONTROL另投前不执行。读AI552_V01306执行补充.md/原cards/V013-06.md/acceptance552；实际复用纯目录/模型/Resolver trigger，状态每NPC唯一、地面距离与随机外部传入，严格距离内且冷却结束触发；多句顺序/随机换段多段不连选单段可重复，返回文本key和speaker或池NPC，冷却从成功触发时算。坏池/坏引用非ambient不触发并去重诊断，命令跳过诊断但仍发；换池清进度保冷却。只Core无Unity/LongLoop或真实视图/输入/普通剧情FSM/处理器/存档。原完整用例+真实实现测试，原Narrative离线入口/所有断言/夹具保持，旧红回报不夹修，新框架/探针/门禁止。预计4-10文件M80/2合同；必要meta同交付，原docs对话说明/README/两入口原位维护不改数值或完整核验日期。无Unity/CLI/MCP/Play/Build/场景Prefab/配表Schema/字体/生成资产/Git或暂停业务。共享工程互斥Checkpoint续租、SUP5内独审ApproveResume保失败，耗尽及时报告申请；结算当轮Prepare一次真实回传绑定CONTROL后Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-16T01:56:20.8317790+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原06纯逻辑依赖547已满足，仅预排固定CODE串行，为后继07/05提供实际接口；无本卡原生或新人工门。","updatedAt":"2026-11-16T01:56:20.5381815+08:00","supervisionLevel":"full"},"taskId":"AI-000552"}
+
+> SUPERVISED EXTEND at 2026-11-16T01:56:21.1616841+08:00: {"reason":"用户已授权原17卡监管开发，先551原04接入后552原06纯逻辑；保原依赖和所有05/07/USER要求，不扩大业务或恢复暂停项。","taskIds":["AI-000552"]}
+## AI-000553 | [CODE] [V013-07] 路人气泡视图与触发组件
+
+- 序号：553
+- 提交时间：2026-11-16T02:30:21.4072347+08:00
+- 模块 ID：V013-07
+- 初始状态：QUEUED
+- 前置依赖：AI-000550, AI-000552
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-07气泡视图与触发新根，仅预排等AI552成功CONTROL独审后另投，不实施。读AI553_V01307执行补充.md/原07/索引1.4/acceptance553；实际复用552纯逻辑、551数据配置接入、548场景目标、550HeadAnchor和原GroundSpace/本地化。LongLoop只持池id/逻辑状态并转交真实距离与结果，缺说话者跳句诊断，池setter供05；不复制06规则。Narrative.Unity视图只管各NPC气泡，跟头顶/尺寸不随深度/高于街景，淡入存活上漂淡出用原tier配置，同NPC新句使旧气泡立即消失过渡、其它独立无限额，不锁输入镜头；不反向引用街道。先核现有烹饪底图样式可复用否则程序占位，不改短循环/共享资源或字体。实际实现与外部UI时钟位置fake测试，原Narrative入口断言夹具保持+LongLoop实际编译，旧红回报不夹修框架/断言，不新门/探针。预计>10文件L120两合同，同名组件meta同交付。原项目固定组件说明/索引、对话参数/README/两入口按实际更新及五列人工路径，完整核验仍9/17。无Unity/CLI/MCP/Play/Build/场景Prefab/正式数据/Generated/资产/字体/ProjectSettings/Git写；实际接线13/14和USER签收保留，不新中途门。共享锁Checkpoint续租、SUP5内独审ApproveResume保失败，耗尽报告申请；结算当轮Prepare一次真实回传CONTROL后Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-16T02:30:22.8786932+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原07等待原06/552及03/550，当前仅预排；固定CODE共享工程互斥，不做原生或新中途人工门。","updatedAt":"2026-11-16T02:30:22.5211409+08:00","supervisionLevel":"full"},"taskId":"AI-000553"}
+
+> SUPERVISED EXTEND at 2026-11-16T02:30:23.3952402+08:00: {"reason":"用户已授权原0.1.3全部17卡监管开发，原07依赖03/06保持，先552后独审再07；原05/13/14/USER规划和最终签收门保留，不扩大业务。","taskIds":["AI-000553"]}
+## AI-000554 | [CODE] [V013-10] 导表绑定角色形象Prefab与Unity查询
+
+- 序号：554
+- 提交时间：2026-11-16T02:57:25.2681417+08:00
+- 模块 ID：V013-10
+- 初始状态：QUEUED
+- 前置依赖：AI-000547
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-10导表Prefab引用绑定工具源码新根，固定CODE仅预排，待CONTROL另投不抢跑，正式配表仍DATA不改。读AI554_V01310执行补充.md/原10/两合同；核真实Importer/Registry/存在检查/生成行Catalog/Unity Adapter RuntimeEntry及原宿主，最小复用导入计划。street_visual_prefab精确文件基名在审定Visuals目录绑定实际Prefab，缺失warning引用空不阻断、空列无warning，原CSV字符串/大小写/空值/Schema保持；Portrait/CG只现目录存在检查不绑定。运行时Unity侧按角色id取绑定引用，Core不引Unity/不反向依赖街道；不猜未来字段或新数据源，实际API报告供05/11消费。只真实绑定/查询路径测试，fake外部资产文件能力，不在Assets造假Prefab/YAML；原正式22表校验和Schemas/ImportContracts/Authoring三旧入口原断言/夹具保持通过，旧红报告不夹修，不新门/框架比较器。预计>10文件L120/2合同，新meta同交付，原固定八表/接入说明、README、两入口原位维护完整核验仍9/17。无Unity/CLI/MCP/Play/Build/ImportAll/资产或Generated产物/配表xlsxSchema/字体/ProjectSettings/Git写，不提前11发布或恢复暂停业务。共享锁Checkpoint续租、SUP5内独审ApproveResume保失败，耗尽报告申请，结算当轮Prepare一次真实回传CONTROL后Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-16T02:57:26.6696608+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原10工具源码按固定CODE，原依赖547保持，仅预排；正式数据仍DATA/实际导表14ENGINE，共享互斥不改人工门。","updatedAt":"2026-11-16T02:57:26.3666231+08:00","supervisionLevel":"full"},"taskId":"AI-000554"}
+
+> SUPERVISED EXTEND at 2026-11-16T02:57:27.0836314+08:00: {"reason":"用户已授权原17卡监管开发，原10在07后先供真实Prefab绑定/运行时接口，再原11/13及05；原05与所有USER/签收规划完整保留，不扩大业务或恢复暂停项。","taskIds":["AI-000554"]}
+## AI-000555 | [CODE] [V013-11] 八表与形象引用的加密发布链
+
+- 序号：555
+- 提交时间：2026-11-16T03:44:36.4073563+08:00
+- 模块 ID：V013-11
+- 初始状态：QUEUED
+- 前置依赖：AI-000554
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-11八表/形象引用发布工具源码新根，仅预排固定CODE，待554原10成功CONTROL独审后另投不猜未来接口。读AI555_V01311执行补充.md/原11/两合同，先只读核现加密导出读取/ICatalogSource/build-only Catalog及Sprite携带/构建脚本，写依据；再按554实际绑定最小扩八表/可空列表/Prefab引用及构建步骤，真实往返逐行同、按角色id取Prefab，旧T1-T15导出结果保持。现14类型/Schema2.4.1不得只改数量版本冒成功；若现机制不能承载且需较大改造按原卡交具体方案等待用户，不擅改策略。无平行明文/Resources或发布回SO降级，不改密钥/外部配置/正式配表Schema。真实Serializer/解码/源/Unity适配测试，fake仅外部引用文件密码输入，不复制实现/新框架门。原22表校验+Schemas/ImportContracts/Authoring旧断言夹具保持；Blob/BuildRelease具名离线按改动必要验证，旧红回报不夹修。预计>10文件L120/两合同，新源meta同交，原工具README/固定说明/两入口按实际维护完整核验仍9/17。无Unity/CLI/MCP/Play/Build/实际导表或build staging/正式生成资产指纹/Prefab场景字体ProjectSettings/Git写，真实包留17用户通过后。共享锁Checkpoint续租、SUP5内独审ApproveResume保失败，耗尽报告申请，结算当轮Prepare一次真实回传CONTROL后Record，不自领后继或恢复暂停项。
+
+> SUPERVISED POLICY at 2026-11-16T03:44:37.9890615+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原11工具代码固定CODE，原依赖554保持；仅预排，现有对象引用需较大改造的原设计人工门保留，不实际发布或改配表。","updatedAt":"2026-11-16T03:44:37.5900716+08:00","supervisionLevel":"full"},"taskId":"AI-000555"}
+
+> SUPERVISED EXTEND at 2026-11-16T03:44:38.4591054+08:00: {"reason":"用户已授权原17卡监管开发，先原10绑定再原11发布工具，依赖保持；较大改造需用户裁决的原卡门和17体验通过门保留，不扩大业务或恢复暂停项。","taskIds":["AI-000555"]}
+## AI-000556 | [CODE] [V013-05] 场景默认状态加载与重新应用
+
+- 序号：556
+- 提交时间：2026-11-16T04:28:28.5302178+08:00
+- 模块 ID：V013-05
+- 初始状态：QUEUED
+- 前置依赖：AI-000548, AI-000550, AI-000551, AI-000553, AI-000554, AI-000555
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-05场景默认状态加载应用新根，仅预排固定CODE，不抢跑；原02/03/04依赖已具备，加实际07/10/11交付前提，待13通用壳操作与CONTROL补核另投。读AI556_V01305执行补充.md/原05/两合同，严格九步与重应用：场景filename/defaultstate，无存档；跳物件出口，复用预摆否则生成壳/标记，absent停用跳后步，有锚定位/空锚新生停用预摆不动，有朝向才写；角色有形象名才按实际554基础id查引用，明确名缺引用才占位/诊断，空无条目保自身；pool有值才写保冷却。原预摆无条目不碰，重应用只清本轮自生并恢复预摆原样。553生成NPC绑定需正式公开配置入口且首次Update前接场景引用，不反射/Prefab非法场景引用；必要既有目录/Adapter只读查询兼容追加不建平行目录，不因换state重建运行时目录洗模型冷却。真实生产应用逻辑测试外部fake索引壳，原完整用例+四LongLoop旧模式旧断言保持，旧红报告不夹修框架，禁止新门/通用快照比较器。预计>10文件L120两合同，新组件meta同交，原固定说明/README/两入口按影响维护完整核验仍9/17与五列后继人工路径。无Unity/CLI/MCP/Play/Build/场景Prefab资产/数据配置Schema/xlsx/字体Generated/Git写。共享锁Checkpoint续租、SUP5内独审ApproveResume保失败，耗尽报告申请；结算当轮Prepare一次真实回传CONTROL后Record，不自领后继或恢复暂停项。
+
+> SUPERVISED POLICY at 2026-11-16T04:28:30.0005703+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原05源码固定CODE只预排，02/03/04及实际池/引用前提保持，先11/13后实际补核另投；不做资产或新中途人工门。","updatedAt":"2026-11-16T04:28:29.6359028+08:00","supervisionLevel":"full"},"taskId":"AI-000556"}
+
+> SUPERVISED EXTEND at 2026-11-16T04:28:30.4788417+08:00: {"taskIds":["AI-000556"],"reason":"用户已授权原17卡监管开发，原05全九步/重应用及原前置保留，加实际07/10/11接口顺序，仅预排；原13资产、14接线、USER及最终签收另行不代过，不扩大业务。"}
+## AI-000557 | [CODE] [V013-11-BASELINE-REPAIR] [V013-11前置] 恢复旧Blob基线及明确14/22输入合同
+
+- 序号：557
+- 提交时间：2026-11-16T04:53:41.5499842+08:00
+- 模块 ID：V013-11-BASELINE-REPAIR
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+AI555直属独立旧Blob基线REPAIR，同根同稳定问题，不实现新发布。读AI557_旧Blob基线独立修复.md/父fail1独审/两合同；最小修现类型源清单到实际Core Phase2DataViews并核RecipeConstraints。保全部旧C#断言/冻结fixture，新增具名固定旧14 JSON输入与SOURCE：历史Catalog必须源自已核fc4dc37 blob/SHA而非截当前22，旧169资产记录按原Reader完整证明来源，执行前冻结SHA。原入口可选显式Legacy14输入，默认当前源保持、始终完整保存current22快照，原C#/Mono/认证旧全用例在显式14模式通过，不能冒新22往返已完成/吞exit。只现Common/入口/Reader最小输入接线及新Fixtures目录/README，不写生产类型/资产/数据/旧夹具/旧断言/源策略/密钥，不新框架探针比较器。预计4-10文件M80两合同；一次具名原Blob完整离线，原失败与当前22保全，发布产品仍555。父首败/根SUP5/引擎0保持，POLICY周期首次Claim消费，普通范围内独审ApproveResume，耗尽报告申请。共享锁Checkpoint续租，结算当轮Prepare一次真实回传CONTROL后Record，不自恢复555/领556，不Unity/Build/ImportAll/Git或恢复暂停业务。
+
+> SUPERVISED POLICY at 2026-11-16T04:53:43.0414557+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"父555首败旧Blob前置，独立CODE同根POLICY；仅现工具源/具名旧14样例，不改原断言/用户数据，current22仍完整保留，原生/新发布不在此修复。","updatedAt":"2026-11-16T04:53:42.7060682+08:00","supervisionLevel":"full"},"taskId":"AI-000557"}
+
+> Dependency correction for AI-000555 at 2026-11-16T04:53:43.8116579+08:00: AI-000554, AI-000557
+
+> SUPERVISED EXTEND at 2026-11-16T04:53:44.1306487+08:00: {"reason":"原11已授权必要独立前置修复，555同根POLICY周期，原14断言/fixture不改而显式固定输入，current22完整范围和原失败保留，不新增人工门/业务。","taskIds":["AI-000557"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-16T05:22:44.0269089+08:00: {"grantId":"722952d14dca44d0827d6ecc11b67f9f","used":1,"cycles":["AI-000555:AI-000557:catalog-baseline-v1"],"reserved":0,"authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000555","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Editor/DataTables","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Narrative/Unity","CODEBASE_MAP.md","DevTools/Build-Demo.ps1","DevTools/Build-Release.ps1","DevTools/BuildRelease","DevTools/DataTables","docs/剧情八表配表说明.md","docs/剧情运行时接入说明.md"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"remaining":4,"taskId":"AI-000555","rootTaskId":"AI-000555","verification":"Fresh AI555-resume1-fresh-app-snapshots.json all bound CODE/ENGINE_CLI/DATA completed,errornull,idle/notLoaded, formal workers allIDLE/noRUNNING. Full current547..557 ACTIVE stop/exitfalse. Original555 PAUSED_CIRCUIT TASK/VERIFICATION attempt1, dependency554 accepted and directrepair557 SUCCEEDED independently2contracts/9facts;legacyHost246/Mono246/protocol22/metadata63 plus342Git/currentidentities and currentfull22 unchanged verified, originalassertions/Reader/fixtures retained;SENT1receipt/responseSHA and Receive done. Same consumedcycleAI555:557 catalog-baseline-v1 root1used/0reserved/5limit/4remaining, no native acceptance used, no permission/human gate. Only resume original555 originalbusinessScope/instruction; fixedlegacy14 explicit mode plus real22/eight/Prefab product obligation in supplemental, no new source/data strategy or reset.","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0"}
+## AI-000558 | [CODE] [V013-11-BUILDHOST-REPAIR] [V013-11前置] 修复旧BuildRelease单点JToken宿主赋值
+
+- 序号：558
+- 提交时间：2026-11-16T06:12:23.5413790+08:00
+- 模块 ID：V013-11-BUILDHOST-REPAIR
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+AI555直属独立REPAIR，只修FullProof.ps1:395对JToken外部宿主赋值的当前PS兼容点。先读AI558_BuildRelease宿主赋值独立修复.md/父fail2独审/两合同，完整保存前字节；语义等价CLR互操作保同一allowedEditorChanges数组及全部原Check/Reject行、次序、嵌入冻结C#和其它固定数据不变，精确单点diff与可逆字节证明。一次原Test-BuildRelease.ps1完整离线入口并证明后续原拒绝断言实际执行，不重跑已绿数据/Blob，不Unity/Build/staging/生产源码/配表/资产/密钥/现指纹/Git写。新独立故障正式Fail，不扩大修复。S40两合同两scope，根555第2POLICY周期首Claim消费，旧attempt1/2与557消费不退。Checkpoint/续租，共享锁，完成当轮Prepare一次实际通知绑定CONTROL后Record，不自行恢复555或领556/13。未知计量null加原因，无项目文档影响，不提高9/17完整核验。
+
+> SUPERVISED POLICY at 2026-11-16T06:12:56.7999937+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"同根必要宿主单点源码修复，完整监管/共享工程互斥。","updatedAt":"2026-11-16T06:12:56.4865484+08:00","supervisionLevel":"full"},"taskId":"AI-000558"}
+
+> SUPERVISED EXTEND at 2026-11-16T06:13:27.5618855+08:00: {"taskIds":["AI-000558"],"reason":"同已授权0.1.3父555必要独立宿主小修，SUP5内第2周期；非新业务或用户人工门。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-16T06:28:15.6360745+08:00: {"verification":"CONTROL已完成AI558独审2合同/9事实，Compare ACCEPTANCE_MATCHED2/2，SENT1/receipt-response SHA及Receive核实；父17源码成果当前SHA一致，原555两次失败保留。fresh-apps实际CODE195 idle completed、ENGINE8/DATA9 notLoaded completed，正式无RUNNING/预约，SUP ACTIVE/stop-exitfalse，未有人/权限门。原555 NEEDS_USER普通VERIFICATION，根2used/0reserved/5limit/3remaining。配对成功558同已消费cycle，只做余下报告/合同收口，不重跑已绿门。","rootTaskId":"AI-000555","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000555","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/Build","Assets/Editor/DataTables","Assets/Scripts/DataBase/CookingData","Assets/Scripts/Narrative/Unity","CODEBASE_MAP.md","DevTools/Build-Demo.ps1","DevTools/Build-Release.ps1","DevTools/BuildRelease","DevTools/DataTables","docs/剧情八表配表说明.md","docs/剧情运行时接入说明.md"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"used":2,"remaining":3,"taskId":"AI-000555","cycles":["AI-000555:AI-000558:buildrelease-jtoken-v1"],"authorizationSource":"POLICY","reserved":0,"grantId":"31db7a5519534db781e4e3a301ad4f96"}
+## AI-000559 | [ENGINE_CLI] [V013-13] NPC Prefab通用化与两形象原生接入
+
+- 序号：559
+- 提交时间：2026-11-16T06:40:12.9126001+08:00
+- 模块 ID：V013-13
+- 初始状态：QUEUED
+- 前置依赖：AI-000548, AI-000550, AI-000551, AI-000552, AI-000553, AI-000554, AI-000555
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-13固定ENGINE_CLI操作新根；先读AI559_V01313执行补充.md/原13/现Schema14/完整42源-meta清单/三合同。用户已批量授权，正常平台审批、fresh当前工程6000.3.24f1与实例/dirty门保持。严格原序：备份原Prefab及Street(场景只读)→导入明列源编译→克隆番茄视觉到npc_visual_tomato原材质皮肤idle不改，DepthScale/SortingGroup留旧mount不重复→新Square现有Sprite白色占位到Schema指定placeholder→原Prefab保Foot/Visual/DepthScale/SortingGroup/YSorter变换配置去角色渲染，挂Shell/Actor/Trigger及新HeadAnchor_TUNE默认待调，只绑定合法本地引用→MoveAsset到GenericNPC保原GUID→正常保存读回。完整逐文件/组件计划见补充；不手写YAML、不移重设已有物件、不改场景/生产源码/源表/Generated/字体/配置/ProjectSettings或Git。不Play/Build/导表/截图/冻结探针/行为测试。三合同仅两新Prefab可读、壳三组件三引用空mount、原GUID不变；操作SUP5/验收累计3分列，任一步失败正式停该步结算不跳过，普通余量由CONTROL独审ApproveResume。L120/共享锁/Checkpoint续租，固定NPC使用文档与索引、资源目录方案/两入口原位维护，不提高9/17完整核验；五列人工路径交付，14恢复场景形象与运行接线，USER体验不代签。Complete/Fail/Yield当轮Prepare一次真实回传绑定CONTROL后Record，不自领556/14或恢复暂停业务。
+
+> SUPERVISED POLICY at 2026-11-16T06:40:14.4298978+08:00: {"taskId":"AI-000559","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原13已授权操作，源前置全部独审完成，原生全监管与共享工程互斥。","updatedAt":"2026-11-16T06:40:14.0967335+08:00","supervisionLevel":"full"}}
+
+> Dependency correction for AI-000556 at 2026-11-16T06:40:15.2278797+08:00: AI-000548, AI-000550, AI-000551, AI-000553, AI-000554, AI-000555, AI-000559
+
+> SUPERVISED EXTEND at 2026-11-16T06:40:15.6583162+08:00: {"reason":"同本轮0.1.3已授权原13，当前555离线已独审，按原顺序开始Prefab操作，不代后继USER门。","taskIds":["AI-000559"]}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-16T07:41:00.2312700+08:00: {"at":"2026-11-16T07:41:00.1300169+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000547","AI-000548","AI-000549","AI-000550","AI-000551","AI-000552","AI-000553","AI-000554","AI-000555","AI-000556","AI-000557","AI-000558","AI-000559"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+## AI-000560 | [CODE] [V013-08] Editor与Dev调试面板及真实状态/气泡路由
+
+- 序号：560
+- 提交时间：2026-11-16T07:52:30.3655208+08:00
+- 模块 ID：V013-08
+- 初始状态：QUEUED
+- 前置依赖：AI-000556, AI-000553
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-08固定CODE开发调试入口，读AI560_V01308执行补充.md/原08/两合同/现05与气泡实际接口；仅Editor和Dev编译简单按键面板，真实scene/state/Registry NPC池，调用原ApplyState及同一Model强制取句，跳距离冷却准入但保正常冷却截止，不伪造时间/另造算法或重置模型。必要兼容只读状态/枚举与受条件编译专用强制能力，非Dev编译确无调试类型/入口；现输入系统/无新字体美术。真实路由/模型行为和Release编译用例，原LongLoop四模式断言保持，不额外镜头短循环/冻结探针/新框架。预计源码/meta/测试/文档>10文件L120，两合同；新源同名组件/meta、现GUID保，固定中文说明与五列后继人工路径/两入口原位维护，不提高9/17完整核验。只源码离线，不Unity/Play/Build/导表/场景Prefab配置资产/表xlsx/schema字体Generated/Git写。用户维持0.1.3监管授权，旧session仅已登记scope自动完成非人停，新scope正式SetMode后派；SUP5/Checkpoint续租/共享锁，失败原账保，额度耗尽报告申请，结算当轮Prepare一次真实通知CONTROL后Record，不自领后继或恢复暂停业务。
+
+> SUPERVISED POLICY at 2026-11-16T07:52:31.8769121+08:00: {"taskId":"AI-000560","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原08已授权源码离线，完整监管及共享工程互斥，前置556/553已独审。","updatedAt":"2026-11-16T07:52:31.4703401+08:00","supervisionLevel":"full"}}
+## AI-000561 | [CODE] [V013-09] 三类场景内容V25离线告警与原报告接入
+
+- 序号：561
+- 提交时间：2026-11-16T07:52:32.1721416+08:00
+- 模块 ID：V013-09
+- 初始状态：QUEUED
+- 前置依赖：AI-000548, AI-000559, AI-000560
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-09固定CODE离线场景内容审计，仅预排待原08独审后另投，读AI561_V01309执行补充.md/原09/两合同/实际Marker GUID与Prefab override文本及现校验报告。三类V25仅warning：条目anchor缺、空anchor缺预摆、预摆无状态条目；完整id/scene/state比较，物件出口触发区不做；不能漏现GenericNPC继承Marker及Scene字段override，未知表示保未核，不假称干净。复用既有数据/文本能力及报告，不平行目录/CSV规则，不新框架/探针比较器；明确长期文本夹具三脏各报/干净0及当前Prefab表示用例，原断言/冻结夹具不改。预计源/meta/Fixture/报告/文档>10文件L120、两合同，只工具离线，不Unity/Build/实际导表/场景Prefab配置资产/生产表xlsx/schemaGenerated/字体/密钥指纹/Git写；固定README/八表说明/两入口原位维护不提高9/17核验日期。SUP5内独审ApproveResume保失败累计，Checkpoint续租共享锁，耗尽主动报告申请；结算当轮Prepare一次真实回传绑定CONTROL后Record，不自领后继/恢复暂停项。
+
+> SUPERVISED POLICY at 2026-11-16T07:52:33.1895113+08:00: {"taskId":"AI-000561","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原09预排，同批现报告工具扩充；保旧数据/冻结样例和Native范围，完整监管/互斥。","updatedAt":"2026-11-16T07:52:32.8161065+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED START at 2026-11-16T07:53:04.3423461+08:00: {"sessionId":"eb20c7c2aca44098983e64b3a98226b5","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000560","AI-000561"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-16T07:53:04.3349389+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+## AI-000562 | [DATA] [V013-12] 八表测试占位、源工作簿保护及忠实CSV导出
+
+- 序号：562
+- 提交时间：2026-11-16T08:48:51.0859830+08:00
+- 模块 ID：V013-12
+- 初始状态：QUEUED
+- 前置依赖：AI-000554, AI-000559, AI-000561
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-12固定DATA占位配置新根，仅预排待561原09工具独审再投。读AI562_V01312执行补充.md/原12/现Schema与主xlsx/既有Authoring和字形只读能力，按明确test_角色/scene/state/anchor/pool/四段七句及两状态行覆盖原功能；原12已明确授权管线填占位，不借旧U1-DONE或旧发布。先全源备份/值类型公式快照/并发保护，主xlsx只新增授权空格行、原非空全保；T9仅新增占位key不改旧行，T1-T15及Schema/旧夹具保持。写文字前字形覆盖，缺字换已有字，不改字体/跑构建发布。每轮整体格式标准化/字段说明/真红保，格式阶段全值类型公式不变，源xlsx忠实导九CSV逐格diff。正式22表0error、V13-V24无意外/新增warn逐条明示，V25接线前warning保未核，不改场景消告警；不用旧CSV反建xlsx。L120/三合同/15scope，禁止cs脚本测试/Native/Unity/batch/Play/Build/ImportAll/Generated/场景Prefab配置/meta/字体/密钥指纹/其它CookingCSV/Git写，14另导入。固定八表说明/Authoring README及两入口按实际维护、不提高9/17完整核验，不复制配置authority。SUP5/Checkpoint续租/共享锁，失败独审唯一ApproveResume，耗尽报告申请，结算当轮Prepare一次真实回传CONTROL后Record，不自领14/恢复暂停业务/代USER。
+
+> SUPERVISED POLICY at 2026-11-16T08:48:52.6038070+08:00: {"taskId":"AI-000562","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原12明确管线填占位授权，正式DATA负责主xlsx和忠实CSV，工具09前置/full互斥；不使用旧U1/Native发布。","updatedAt":"2026-11-16T08:48:52.2447246+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-16T08:48:53.1652074+08:00: {"reason":"同一原0.1.3批原12预排，接原09通过后DATA配置，保持原USER/Native后继门。","taskIds":["AI-000562"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-16T09:32:43.9751937+08:00: {"scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000561","项目整体阅读理解与推进基线_2026-08-14.md","Assets/Editor/DataTables","CODEBASE_MAP.md","DevTools/DataTables","docs/剧情八表配表说明.md"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"taskId":"AI-000561","grantId":"168b71fe66db4541b7ffd83fea95216d","reserved":1,"cycles":["AI-000561:evidence-taskid-v1"],"remaining":4,"used":0,"authorizationSource":"POLICY","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","rootTaskId":"AI-000561","verification":"CONTROL已独审561首次CONTROL_ACCEPTANCE_STOP：原18成果SHA当前同/逻辑32报告23原数据回归绿，真实Compare重核只有缺evidence.taskId的两EVIDENCE_WRONG_TASK，非串任务，原证据EEFB.../回执/失败不改。真实SENT1及receipt-response SHA后Receive。freshCODE199idle ENGINE9idle DATA9inactive均completed errornull，无RUNNING/预约；SUP ACTIVE stop-exitfalse无人工/权限门，根0/5余5。原6scope/指令/合同不改，下一轮只own新证据元数据和原比较器重结算，不重跑生产。"}
+## AI-000563 | [ENGINE_CLI] [V013-14] 街景剧情接线与占位正式导入
+
+- 序号：563
+- 提交时间：2026-11-16T10:03:51.7216273+08:00
+- 模块 ID：V013-14
+- 初始状态：QUEUED
+- 前置依赖：AI-000551, AI-000556, AI-000559, AI-000560, AI-000561, AI-000562
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原V013-14固定ENGINE_CLI仅预排，DATA562正式完成且CONTROL独审后另投，不凭预排运行。读AI563_V01314执行补充.md/原14/24逐文件导入清单/三合同及562最终CSV字形证据。用户已整批监管授权原Native动作，正常平台审批/fresh同工程6000.3.24f1及实例dirty门保持。严格序：备份Street/影响Generated→导入24编译→仍clean时原ImportAll一次消费最终源→四新TUNE对象Runtime/Registry/Applier/Debug并同Runtime的View/Renderer完整场景引用，Renderer必须显式Camera与现已批WithFallback字体只读引用→主角新Marker合法临时id、旧NPC chr_test_tomato加新TomatoVisual子对象且pool空/场景绑定→三个test_street_01/02/03新锚点出生点两侧错开初值→正常保存Street/有限读回。保所有已有对象父级/位置与现用户参数，不改源/CSV/xlsx/schema/原GenericNPC和两形象/字体材质/config/ProjectSettings版本/Build列表/Git；不Play截图Probe/行为门。三合同仅四对象必需引用、三锚点、旧位置父级保且NPC有视觉子对象，原生累计3轮与操作SUP5分列不清旧账。新增V25warning/不支持增删文本的UNVERIFIED诚实保，不修改校验掩盖。L120共享锁Checkpoint续租，固定文档/五列人工路径与两入口原位维护不提高9/17完整核验，Head/anchor终调及16 USERa/17用户检查通过门不能代签。结算当轮Prepare一次真实通知CONTROL后Record，不自领后继或恢复暂停业务。
+
+> SUPERVISED POLICY at 2026-11-16T10:03:53.2556006+08:00: {"taskId":"AI-000563","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原14已授权Native新目标仅预排，待DATA源独审；完整24源/具体新场景绑定/三合同，原生共享互斥。","updatedAt":"2026-11-16T10:03:52.9104921+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-16T10:03:54.1436553+08:00: {"taskIds":["AI-000563"],"reason":"同一0.1.3原14预排避免登记子集自动完成误当整批完成；562独审后再投，不改变USER/版本门。"}
+## AI-000564 | [CODE] [V013-15] 用户内容配置说明与两份清单
+
+- 序号：564
+- 提交时间：2026-11-16T10:41:08.5974111+08:00
+- 模块 ID：V013-15
+- 初始状态：QUEUED
+- 前置依赖：AI-000563
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原V013-15固定CODE纯文档新根仅预排，563原14正式成功且CONTROL独审后再投，不与引擎文档写并行。读AI564_V01315执行补充.md/原15/USER/现Schema/实际源及563最终保存事实，M80三合同5scope。固定docs交付街景NPC内容配置说明（配表和预摆两路径/生效/优先级/诊断，详细字段链接原专题不复制权威）、demo-0.1.3占位校对清单（全部test角色四段七句三池两全状态八行三锚点/用途/USER检查）、街景NPC缺失内容清单（形象/底图/正式内容的实际规格命名目录与接入，未知规格不猜），更新docsREADME。三份面向用户不引用内部编号；源码默认/现保存值/建议分开，原USERa及16/17人工门不代签。仅文档/evidence，不CS/Unity/编译/测试/导表/Play/Build/素材迁移/已有专题或两入口/永久清单/Git写，不新比较器。实际源审读和允许diff即可，不跑生产回归。SUP5/Checkpoint续租，固定三合同比较器、evidence根taskId真实，结算当轮Prepare一次真实回CONTROL后Record，不自领后继/恢复暂停业务。
+
+> SUPERVISED POLICY at 2026-11-16T10:41:10.2994129+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch","lane:code"],"reviewDependsOn":["AI-000563"],"humanGateAfter":false,"gateApproved":false,"reason":"原15依14真实交付后用户三份文档，四文件M80；共享源/固定文档读取保串行，不扩Unity或人工签收范围。","updatedAt":"2026-11-16T10:41:09.9252141+08:00","supervisionLevel":"full"},"taskId":"AI-000564"}
+
+> SUPERVISED EXTEND at 2026-11-16T10:41:10.9476620+08:00: {"reason":"原17卡持续监管授权；原15仅预排依563正式成功且CONTROL独审，不提前执行，16/17及新USER手工门保留，原失败计量不改。","taskIds":["AI-000564"]}
+
+> SUPERVISED USER_DEFERRED_HUMAN_REVIEWS at 2026-11-16T11:27:43.9045574+08:00: {"enabled":true,"at":"2026-11-16T11:27:43.8883020+08:00","userDecision":"继续修复空表导出的问题，保留已有数据和原断言，通过后按监管模式推进后续任务。额度用尽就及时汇报并申请追加，只有确实需要我人工介入时才停。","scope":"CURRENT_SUPERVISED_CHAIN_AND_EXTENSIONS"}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-16T11:43:06.2566251+08:00: {"at":"2026-11-16T11:43:06.2037681+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000560","AI-000561","AI-000562","AI-000563","AI-000564"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+## AI-000565 | [ENGINE_CLI] [V013-16] 手工完成后版级冒烟及直接预摆配置核查
+
+- 序号：565
+- 提交时间：2026-11-17T04:15:48.2769645+08:00
+- 模块 ID：V013-16
+- 初始状态：QUEUED
+- 前置依赖：AI-000563, AI-000564
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+原V013-16固定ENGINE_CLI官方CLI/S40纯验收新根。用户2026-11-17手工DONE且批准第三项按默认状态managed3计数/形象、extra预摆单列，其余两项不变；读AI565_V01316执行补充/手工后计划/真实两用户原件/原16/三合同。fresh同工程6000.3.24f1与五组预检，先只读核chr_test_potato完整配置/现Head/形象/原用户保存成果；stopped clean后原EnterPlay一次自然运行约10秒，无输入/F8/强制气泡/Initialize/ApplyState。仅Street及三对象/runtime可用、增量无新Error、真实default active actor精确ID集合数量及形象三合同；原Registry全部actor/NPC/managed/extra/player真实分列，不删除停用extra凑数。现原公开只读查询/既有工具路径，无新门/比较器/身份校验/截图/CI消费/Build判定/探针/卡内修复/行为阈值时序帧曲线测试。原ExitPlay正常Stop，保用户dirty与当前保存配置；无Scene/Prefab/Generated等持久写/导表/源数据/字体/ProjectSettings/Git写，scope仅own与两docs可写。所有验收失败累计最多3、无第四或配对续验；普通未满由CONTROL唯一ApproveResume，不换根清账。原17等明确0.1.3检查通过。交定稿五列人工说明及extra配置问题字段/影响，真实原流/usage来源未知保null，结算当轮Prepare一次真实通知CONTROL后Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-17T04:15:50.0036452+08:00: {"policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原16固定S40版级3断言纯验收，当前USERa已DONE且第③有限裁决已获批，所有验收失败累计3；共享资源互斥，原17最终体验门不扩大。","updatedAt":"2026-11-17T04:15:49.5180416+08:00","supervisionLevel":"full"},"taskId":"AI-000565"}
+
+> SUPERVISED START at 2026-11-17T04:15:50.5625708+08:00: {"sessionId":"5034e36753bd4b229040eb44ac0d008d","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000565"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-17T04:15:50.5603218+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-17T04:45:14.6969598+08:00: {"remaining":4,"reserved":1,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["AI-000565:main-thread-timeout-v1"],"authorizationSource":"POLICY","rootTaskId":"AI-000565","taskId":"AI-000565","used":0,"scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000565","Assets/Generated/DataTables","Assets/Prefabs/LongLoop/NPC/GenericNPC.prefab","Assets/Scenes/LongLoop/LongLoop_Street.unity","docs/demo-0.1.3_人工检查说明.md","docs/README.md"],"operations":["backup-asset","documentation","enter-play","evidence-packaging","exit-play","idempotence-check","native-readonly","read-console-increment"]},"verification":"CONTROL independently verified fail1 receipt/transport SHA, native timeout exit6, recovered status/Stop, preserved14 files; current app snapshots ENGINE idle/completed, CODE and DATA notLoaded/completed in AI565-resume1-fresh-apps.json. No hard stop; same scope only. Acceptance next2of3; retry before0of5. Fresh native readiness required before one unchanged smoke, no package/product edits or internal retries.","grantId":"ec8f56393a9240328a7545f7e9c9f4d4"}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-17T04:56:23.7269769+08:00: {"at":"2026-11-17T04:56:23.6871283+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000565"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+2026-11-17 CONTROL收束：AI565原16第2轮三合同CONTROL独审通过，首轮超时FAIL保留；原生验收累计2/3、操作根续行1/5，不自动领第3轮。session5034e36753bd4b229040eb44ac0d008d已ALL_SCOPE_TASKS_SUCCEEDED自动COMPLETE→MANUAL，非用户停止/耗尽。USERa DONE、extra chr_test_potato已Edit/Play核合法；Head0与表现交项目docs/demo-0.1.3_人工检查说明.md。原17继续前必须用户明确0.1.3检查通过；旧WATCH已PAUSED、短循环/描边/后台探针不恢复，不新Build/Git提交。独审outputs/control/PLAYABLE-DEMO013-20261115/AI565-independent-final-review.json；两轮52文本ZIP101932B已CONTROL核CRC/UTF8/SHA，完整证据原位保留。
+
+## AI-000566 | [DATA] [V013-BUB-1] 分状态拆开单人和双人气泡配置
+
+- 序号：566
+- 提交时间：2026-11-19T02:31:40.1898366+08:00
+- 模块 ID：V013-BUB-1
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+按本卡执行补充 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI-000566_气泡补丁.md 和0.1.3气泡人工反馈_20261119.md 的最终用户补充实施。固定DATA。用户已明确“同一角色上不应该同时出现单独触发的气泡配置和双人气泡配置，你先做一下配置的调整然后我再重新进行测试”。按状态拆分以保留原三种池的测试覆盖和原有NPC身份/位置。原始表行、真实预摆实例固有池优先级与当前人工修改先核。若与下列相符，仅改权威工作簿SceneStatePlacements的3个ambient_pool格：test_default中chr_test_passer_a#2 原amb_test_c置空；test_second中chr_test_tomato由amb_test_a改为amb_test_c，chr_test_passer_a由amb_test_a置空。默认状态的番茄仅独立单句、基础路人仅独立三句链；第二状态番茄触发同一原双人句、由番茄与基础路人分别说话，基础路人无自有池，extra potato仍独立。停用行可保留原值。不得改冷却代码、任何已有台词/ID/位置/Font/Unity资产。先保全源，核工作簿已释放且值无漂移，不删锁/强制关闭Excel/覆盖其他改动。用正式authoring与实际xlsx忠实导出、保护其它全部单元格、原格式/注释规范、逐格差异、22表校验；确认按角色/状态的单人双人参与无交叉。若当前源已变，保护用户所改、审查恢复目标再继续。更新固定占位校对/内容说明、给出两状态操作。输出在本卡own目录。SUP5，checkpoint，正式结算立即回传。
+
+> SUPERVISED POLICY at 2026-11-19T02:31:41.6198456+08:00: {"policy":{"resourceKeys":["data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"DATA仅工作簿/派生CSV与专属说明，CODE仅气泡宽度与其专属说明；ENGINE在两者结算后串行发布。","updatedAt":"2026-11-19T02:31:41.2532044+08:00","supervisionLevel":"full"},"taskId":"AI-000566"}
+## AI-000567 | [CODE] [V013-BUB-2] 修复街景气泡短句逐字换行
+
+- 序号：567
+- 提交时间：2026-11-19T02:31:41.9159111+08:00
+- 模块 ID：V013-BUB-2
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+按本卡执行补充 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI-000567_气泡补丁.md 和0.1.3气泡人工反馈_20261119.md 的最终用户补充实施。固定CODE。用户明确实际问题“现在是一字一换行，短句并没有正确地放置在同一行中”。在 maxTextWidth=960,fontSize=28 时“看这里”应排在同一行且底板仍按内容收紧，超过上限才按可用宽度换行，长句/手动换行/本地化/内边距/字体保护与已有观感保持。检查当前正式TMP包、停用父节点下Awake/LoadFontAsset前后及GetPreferredValues对传参/字体初始化的真实行为。找出最小布局修复、与实际实现关联的回归/离线编译；可引用包源码的明确限制，不能把stubs当作真实排版。给出有限具体人工复测（28号字、960下短句同一行/明显变窄时多行、检查底板）。不需要短句固定宽，不改冷却/显示归属/用户场景与数值，配表独立由DATA处理。更新现有视效说明和对应五列人工检查（只改宽度相关、不覆盖本轮另行DATA说明）。两合同见acceptance；用现有相关离线入口。不在本卡操作Unity/场景/Prefab/Generated/ProjectSettings/Git。own报告evidence/acceptance/usage/diff。首次根自动5续行，结算当轮正式回传。
+
+> SUPERVISED POLICY at 2026-11-19T02:31:43.0393332+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"DATA仅工作簿/派生CSV与专属说明，CODE仅气泡宽度与其专属说明；ENGINE在两者结算后串行发布。","updatedAt":"2026-11-19T02:31:42.6054503+08:00","supervisionLevel":"full"},"taskId":"AI-000567"}
+## AI-000568 | [ENGINE_CLI] [V013-BUB-3] 发布两态气泡配表并核宽度代码编译
+
+- 序号：568
+- 提交时间：2026-11-19T02:31:43.3273976+08:00
+- 模块 ID：V013-BUB-3
+- 初始状态：QUEUED
+- 前置依赖：AI-000566, AI-000567
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+按本卡执行补充 .ai-workspace/inputs/派发/PLAYABLE-DEMO013-20261115/AI-000568_气泡补丁.md 和0.1.3气泡人工反馈_20261119.md 的最终用户补充实施。固定ENGINE_CLI。依赖566 DATA正式通过与567 CODE离线通过，CONTROL独审后才能派发。只消费已审三处气泡池的最新源与宽度脚本，沿正式CLI检查当前工程/版本、用户保存成果/编译Console。沿项目已有正式导入入口使配表在当前Street可用；备份必要生成物、限定变更读回，两状态三个目标asset与原始CSV一致。若现成公开API可只导目标且更新Catalog优先之，否则沿563支持的ImportAll，事先估算影响，保护独立用户改动和未知写入。复核宽度脚本被当前工程编译接收。无需再次版级冒烟、无需Play，观察时序与视觉由用户复测。不得写Scene/Prefab/字体/参数/版本/源表等。允许生成物仅原范围，改变不相关业务内容停下。最多2合同：生成物的分状态配置真实可读、当前宽度实现编译可用/无新增编译Error。操作根SUP5，原生验收累计3独立记账。报告含合并后的两项简短人工操作。正式结算立即通知CONTROL。
+
+> SUPERVISED POLICY at 2026-11-19T02:31:44.4531475+08:00: {"policy":{"resourceKeys":["data-batch","unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"DATA仅工作簿/派生CSV与专属说明，CODE仅气泡宽度与其专属说明；ENGINE在两者结算后串行发布。","updatedAt":"2026-11-19T02:31:44.0374256+08:00","supervisionLevel":"full"},"taskId":"AI-000568"}
+
+> SUPERVISED START at 2026-11-19T02:31:44.9653564+08:00: {"sessionId":"56d1ca9636fb4d199ee11456e2aec0d3","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000566","AI-000567","AI-000568"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-19T02:31:44.9629063+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+> Instruction revision for AI-000566 at 2026-11-19T02:36:21.0168780+08:00
+
+固定DATA，仅在已保存且关闭的最新权威xlsx上做气泡配置与隔离忠实导出，正式CSV由后继569在已审候选上成组发布。复核冻结源SHA 8937805D0292A05E4C764E5563FE30AFA9CFAC45D33D1B84C40A1E707E9F8561、备份、并发/值类型公式保护。用户亲测两项、其余通过，明确先改配置后复测，不改任何冷却/说话者代码。SceneStatePlacements按完整主键改3个ambient_pool：test_default的chr_test_tomato和chr_test_passer_a清空（预摆tomato和生成a自身池空已核），#2原amb_test_c保持，成为这两位speaker唯一双人对话来源；test_second番茄由amb_test_a改amb_test_b保单人句链、用户已配土豆amb_test_a及锚点03保持。为保存态原手工第二状态用potato替代基础passer_a且符合现行完整状态V-21，新增2个原缺失快照条目：默认potato active=true、空anchor/facing/pool等，沿用现成预摆位置/自身形象及单句池；第二状态基础passer_a active=false、其它可空，保该状态缺席的含义。保用户Characters新行/Localization“土豆”、全部其它非空单元格/类型/公式、Scene/Prefab/字体不写。导表格式标准化须证值不变。按项目已有authoring正式流程导出最新xlsx到own隔离区域，保逐格来源/候选CSV及22表验证。566不发布生产CSV，569对实际相关差异原子发布。核是否存在独立用户差异（如Cooking），仅报告保全，不发布无关内容。验证两状态实际有效发起者/说话者、保两人轮说、同一角色无单人双人竞争；读真实用户预摆回落。固定docs占位清单/内容说明相关段更新，注明历史快照/最新数据，不把未导入当成已发布。结算报告要给569确切源/候选/逐格/provenance路径及SHA；既有验收两条，own证据。SUP5、Checkpoint续租、正式结算后一次通知CONTROL/Record。
+> Instruction revision for AI-000568 at 2026-11-19T02:36:22.0409556+08:00
+
+固定ENGINE_CLI。前置566/567/569均独审。消费已发布最新三表及已交付气泡宽度脚本。先fresh正确Unity实例/版本、用户dirty/保存成果及编译状态，沿563既有正式Editor导表API最小支持范围（必要时ImportAll）更新受影响Generated/Catalog，保全用户文件与无关成果。读回三处pool、两条完整状态补行、土豆角色及name数据和宽度脚本编译Console。目标是默认双人两位speaker无独立池，第二状态只有单人池、保用户土豆预摆和锚点03。最多2合同，汇报操作与原生验收分开计数。编辑态发布，无Play/时序/阈值/截图/改场景/测试旧565/改字体或配置参数。文档注明成功发布与仅两项复测，资料入own路径。SUP5，正式结算当轮通知CONTROL。
+## AI-000569 | [DATA] [V013-BUB-DP] 发布已审气泡及土豆来源三表
+
+- 序号：569
+- 提交时间：2026-11-19T02:36:22.3093126+08:00
+- 模块 ID：V013-BUB-DP
+- 初始状态：QUEUED
+- 前置依赖：AI-000566
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+固定DATA。消费AI566已独审的最新权威xlsx与其合法候选、源数据快照及逐格证据；作者已保存关闭，显式授权发布本轮气泡调整和它所依赖的用户土豆角色及本地化数据。只在正式相关三表 DataTables/Street/SceneStatePlacements.csv、DataTables/Narrative/Characters.csv、DataTables/Localization/Localization.csv 内发布真实派生变化；按既有 Authoring 冻结源/基线/候选、正式逐格provenance与备份/事务/并发保护；22表当前数据离线验证、原失败保留。无关工作表独立差异保留/报告，不猜值，不写xlsx、不进Unity。不重复整册格式处理或源编辑，直接消费已核最新格式/导出候选。如有真正新增关联依赖告知CONTROL。确认3源在目标及当前源数据无阻断错误；两合同，own报告，正式结算即时回传。
+
+> SUPERVISED POLICY at 2026-11-19T02:36:23.4410738+08:00: {"policy":{"resourceKeys":["data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"消费566正式隔离CSV来源后，发布边界为受影响三表","updatedAt":"2026-11-19T02:36:23.0489940+08:00","supervisionLevel":"full"},"taskId":"AI-000569"}
+
+> SUPERVISED EXTEND at 2026-11-19T02:36:23.8550371+08:00: {"reason":"当前主xlsx已有用户土豆角色及本地化，发布相关派生变化需要配套三表；不扩大566写范围","taskIds":["AI-000569"]}
+
+> Dependency correction for AI-000568 at 2026-11-19T02:36:24.5811756+08:00: AI-000566, AI-000567, AI-000569
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-19T03:21:10.0331954+08:00: {"at":"2026-11-19T03:21:09.9924808+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000566","AI-000567","AI-000568","AI-000569"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}2026-11-19 0.1.3 气泡补丁四卡独审完成。角色、状态、本地化已发布，文字修复已编译。人工门仅保留两项，见[本轮登记](inputs/派发/PLAYABLE-DEMO013-20261115/执行登记.md)。
+
+## AI-000570 | [ENGINE_CLI] [V013-17] 打包 demo-0.1.3 并正常启动退出
+
+- 序号：570
+- 提交时间：2026-11-19T03:35:04.7575519+08:00
+- 模块 ID：V013-17
+- 初始状态：QUEUED
+- 前置依赖：AI-000555, AI-000565, AI-000566, AI-000567, AI-000568, AI-000569
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+原 V013-17。用户已明确反馈气泡冷却及短句换行两项通过、0.1.3 检查通过并要求继续监管打包。原17、用户回执、AI555/558/568结论与本补充并读。固定 ENGINE_CLI，Unity 6000.3.24f1，复用现有 DevTools/Build-Demo.ps1 与同项目既有审定引擎载体（历史原样备查 .ai-workspace/archive/2026-11-13/AI-000512.zip，按当前代码和真实身份路径适配）。只启动本版本构建，不复测旧565，不改动用户保存的数据/场景/参数/字体或Git。先核当前工程、stopped clean、Build入口、源数据及版本，从 demo-0.1.2 到 demo-0.1.3 仅发布版本号按公开 API 与 ProjectSettings 保存协议更新。该版本名为用户本次指定发布版本。保全用户当前工作树，包括现有字体差异，不擅自还原。只建新 release/demo-0.1.3/EatWhat.exe，Boot.unity 与 LongLoop_Street.unity 两场景，Windows64 Mono 非Development；使用原发布数据打包路径和恢复作者场景设置、已知本卡临时输入日记。必须正确处理当前八张剧情表、Prefab 引用与版本指纹。正式工具权限照常审批。旧包、用户存档保护；复用已有常规Player启动/正常退出路径，一次普通启动和正常退出，不强杀、无自动输入或体验代签。原两项合同 buildSucceeded、playerStartsAndExitsNormally；操作与验收分计。交 BuildReport、确切产物/场景/配置/Console、Player正常退出证据、任何风险与失败。固定随包更新说明、人工说明、V013-15三文档由CONTROL在构建后补齐并核链接，ENGINE发回实际结果。SUPERVISED首次+同根最多5操作续行，验收最多3，原失败保留；每轮完成即真实通知CONTROL；独立权限/人工停止门保持。scope见控制台同期登记，读工作簿/CSV、源码等仅供使用。
+
+PROJECT_GRANT_PATH=.ai-workspace/inputs/grants/AI-000570.grant.json
+PROJECT_GRANT_SHA256=1AE3EA3512CC8657BCD14712852B4D0AE9D53F49B482B1FB23C3A51C8D61EDC8
+
+> SUPERVISED POLICY at 2026-11-19T03:35:06.2540015+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"用户明确0.1.3体验通过，原17正式新根发布，全部前置已完成。","updatedAt":"2026-11-19T03:35:05.9594717+08:00","supervisionLevel":"full"},"taskId":"AI-000570"}
+
+> SUPERVISED START at 2026-11-19T03:35:06.7517016+08:00: {"sessionId":"94d560a3adc4404fa2766941dcb43d80","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000570"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-19T03:35:06.7501963+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-19T03:56:05.0690239+08:00: {"rootTaskId":"AI-000570","authorizationSource":"POLICY","cycles":["AI-000570:catalog-stage-inner-v1"],"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","grantId":"b5ab1edcff524ce4b1096fa2f48b3438","remaining":4,"reserved":1,"scope":{"paths":[".ai-workspace/inputs/grants/AI-000570.grant.json",".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000570","Assets","Library/CatalogBlobBuild.journal.json","Library/LastBuild.buildreport","ProjectSettings/ProjectSettings.asset","release/demo-0.1.3"],"operations":["build","build-owned-temporary-input-create-and-journaled-cleanup","evidence-write","idempotence-check","normal-player-start-once","offline-compilation","project-settings","read-only-inspect","release-package-write","restore-author-scene-setup"]},"used":0,"verification":"01a1ceb4-a7ae-7663-8007-8c71e3c93ad1 idle/completed e634234e-dde2-406e-82f6-7e64a82886f2:48","taskId":"AI-000570"}
+## AI-000571 | [CODE] [V013-17-CATALOG] 发布器忠实导出合法空角色形象
+
+- 序号：571
+- 提交时间：2026-11-19T04:10:02.6466776+08:00
+- 模块 ID：V013-17-CATALOG
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+# V013-17 发布数据的合法空形象引用
+
+AI570 同根独立 CODE 修复。证据在本批 AI-000570/attempt2/capture-diagnostic.json。真实 CaptureReferences 的内层异常为 Unresolved Prefab reference。四角色的两份真实形象正常，两份权威生成资产磁盘字段为 {fileID: 0}、Editor serialized instanceId 为 0，反射所得对象是非 CLR null 的 Unity 假空 GameObject。填入虚构形象或修改配表会破坏已验收的实例自身回落。
+
+最小实现限已有 CatalogBlobSerializer 及 CatalogBlobBuildProcessor，必要时在原测试夹具和既有入口补针对本问题的离线回归。复用并兼容已实现的 Editor 空 Sprite 判定与序列化来源证明，使能证明为空的角色形象引用导出 null，正常 Prefab 注册和往返不变，未能证明为空的损坏/悬空引用仍失败，旧 Sprite 行为和已有公共入口保持。不能把全部 Unity 空对象静默吞掉。保留当前未提交改动与冻结样例、用户配置、生成资产、指纹和测试原断言。不改变全局包格式、密钥、Schema、既有版本/引擎状态。新旧相关代码都从本机源码确认后修改。
+
+2 个固定合同：合法空形象能忠实序列化且其余登记形象能恢复；不可证明的断引用仍被拒绝，原有关联 Sprite/Prefab 离线回归通过。复用现有离线入口，只增必要回归，不创建新的引擎验收或调用引擎。本机需原生的证据留给原构建卡。实际报告、所有失败、使用量以及比较结果入本卡 own/attemptN，正式结算当轮回传同 CONTROL。固定 CODE，等待 ENGINE 在正式失败点释放工程。源构建卡随后从已保存版本号继续；以同一根额度累计。
+
+> SUPERVISED POLICY at 2026-11-19T04:10:04.0023247+08:00: {"taskId":"AI-000571","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"同一发布根的独立 CODE 修复；避免与工程操作重叠。","updatedAt":"2026-11-19T04:10:03.6223759+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T04:10:04.4476216+08:00: {"taskIds":["AI-000571"],"reason":"原工程可玩体验已签收；生产发布器拒绝合法空形象，同父根独立修复后继续构建。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-19T04:21:57.4540557+08:00: {"verification":"01a1ceb4-a7ae-7663-8007-8c71e3c93ad1 idle/completed e634234e-dde2-406e-82f6-7e64a82886f2:62","remaining":3,"used":2,"authorizationSource":"POLICY","rootTaskId":"AI-000570","sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["AI-000570:AI-000571:empty-prefab-v1"],"taskId":"AI-000570","reserved":0,"grantId":"47bf446fc2324de686f36ec182d03003","scope":{"paths":[".ai-workspace/inputs/grants/AI-000570.grant.json",".ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000570","Assets","Library/CatalogBlobBuild.journal.json","Library/LastBuild.buildreport","ProjectSettings/ProjectSettings.asset","release/demo-0.1.3"],"operations":["build","build-owned-temporary-input-create-and-journaled-cleanup","evidence-write","idempotence-check","normal-player-start-once","offline-compilation","project-settings","read-only-inspect","release-package-write","restore-author-scene-setup"]}}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-19T04:52:12.2587055+08:00: {"at":"2026-11-19T04:52:12.2307319+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000570","AI-000571"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}2026-11-19 0.1.3 整体体验正式签收，原17打包已完成并实际启动退出。完整交付及两次准备失败、独立修复见[本批登记](inputs/派发/PLAYABLE-DEMO013-20261115/执行登记.md)。
+
+## AI-000572 | [CODE] [V014-02] 打字机模型 [CODE]
+
+- 序号：572
+- 提交时间：2026-11-19T06:09:31.5887651+08:00
+- 模块 ID：V014-02
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-02.md，以随包Schema v2.5.2和当前真实源码为准。仅原02打字机纯逻辑和现行Narrative离线测试；按实际快照、快进与连续标点/换行测。原存档格式争议与本卡无关。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000572/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000572.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:09:32.5831102+08:00: {"taskId":"AI-000572","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:09:32.3353748+08:00","supervisionLevel":"full"}}
+## AI-000573 | [DATA] [V014-17] 占位内容：普通对话 [DATA]
+
+- 序号：573
+- 提交时间：2026-11-19T06:09:33.3676879+08:00
+- 模块 ID：V014-17
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：L / 120
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-17.md，以随包Schema v2.5.2和当前真实源码为准。按原17逐项核字段和字形、确保工作簿已关闭并备份，已有非空值/类型/公式保护，原卡列明的空格及新增样例才写，保持作者工作簿正式流程和格式标准化。逐格来源和diff、22表和作者工具回归、按对象两状态检查。核实后按既有正式发布流程将确有变化的五类CSV成组发布，备份、锁和幂等保持，原生导表在19；若现有工具需要独立发布卡，完成可做部分并回报具体证据与候选给CONTROL。现有其他业务值、配表工具、场景/Prefab/字体不改。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000573/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000573.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:09:34.2534600+08:00: {"taskId":"AI-000573","policy":{"resourceKeys":["data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:09:33.9506691+08:00","supervisionLevel":"full"}}
+## AI-000574 | [CODE] [V014-03] 步骤序列器 [CODE]
+
+- 序号：574
+- 提交时间：2026-11-19T06:09:34.8720432+08:00
+- 模块 ID：V014-03
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-03.md，以随包Schema v2.5.2和当前真实源码为准。仅原03可取消与跳过的纯逻辑步骤序列器，顺序/并行、回调次数及可重入按原卡回归。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000574/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000574.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:09:35.8594407+08:00: {"taskId":"AI-000574","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:09:35.6405388+08:00","supervisionLevel":"full"}}
+## AI-000575 | [CODE] [V014-04] 标记判定与交互对象选择 [CODE]
+
+- 序号：575
+- 提交时间：2026-11-19T06:09:36.4607617+08:00
+- 模块 ID：V014-04
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-04.md，以随包Schema v2.5.2和当前真实源码为准。仅原04的标记判定、范围与候选择取纯函数。按原卡表逐项检查，º无引擎操作。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000575/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000575.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:09:37.4068897+08:00: {"taskId":"AI-000575","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:09:37.1442692+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED START at 2026-11-19T06:09:37.9272778+08:00: {"sessionId":"85091f656b0742dca3befc84ada8ac0c","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000572","AI-000573","AI-000574","AI-000575"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-19T06:09:37.9256749+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+## AI-000576 | [CODE] [V014-05] 对话界面层与场景压暗 [CODE]
+
+- 序号：576
+- 提交时间：2026-11-19T06:12:30.4455890+08:00
+- 模块 ID：V014-05
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-05.md，以随包Schema v2.5.2和当前真实源码为准。仅原05：Canvas分层和压暗件，保留气泡画布与配置资产原值。小范围实现及相应测试，确有参数使用说明维护固定目录，完整视觉效果接线后交人工。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000576/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000576.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:12:31.3205375+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:12:31.1026013+08:00","supervisionLevel":"full"},"taskId":"AI-000576"}
+## AI-000577 | [CODE] [V014-10] 操作锁 [CODE]
+
+- 序号：577
+- 提交时间：2026-11-19T06:12:31.9844673+08:00
+- 模块 ID：V014-10
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-10.md，以随包Schema v2.5.2和当前真实源码为准。按原10仅在主角读输入前增加门控与已有停止移动路径；接口 INarrativeDialogueLock 在 Narrative.Core，按多个持有者测试。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000577/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000577.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:12:32.8940975+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:12:32.6137278+08:00","supervisionLevel":"full"},"taskId":"AI-000577"}
+## AI-000578 | [CODE] [V014-12] 按键提示件 [CODE]
+
+- 序号：578
+- 提交时间：2026-11-19T06:12:33.4401437+08:00
+- 模块 ID：V014-12
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-12.md，以随包Schema v2.5.2和当前真实源码为准。Toolkit.asmdef实有TMP、UGUI，已有本地化和IGameInput.CurrentDevice；按原12实现可复用提示，复用现有设备接口。不得新接手柄硬件或改既有输入行为。工具登记与固定使用说明同步。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000578/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000578.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:12:34.3644851+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:12:34.1257353+08:00","supervisionLevel":"full"},"taskId":"AI-000578"}
+## AI-000579 | [CODE] [V014-24] 壳上的标记、提示、气泡三个挂点 [CODE]
+
+- 序号：579
+- 提交时间：2026-11-19T06:12:34.8816491+08:00
+- 模块 ID：V014-24
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-24.md，以随包Schema v2.5.2和当前真实源码为准。按原24只改NPC壳与气泡触发定位和对应离线回归，保留旧HeadAnchor回落及气泡视图/冷却。Prefab和场景挂点在原18/19操作。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000579/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000579.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:12:35.7979626+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:12:35.5472992+08:00","supervisionLevel":"full"},"taskId":"AI-000579"}
+> Instruction revision for AI-000574 at 2026-11-19T06:12:47.8035871+08:00
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-03.md，以随包Schema v2.5.2和当前真实源码为准。仅原03纯逻辑步骤序列器，按原卡验证依次/同时、跳过、移除步骤、零时长、非正推进及一次完成。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000574/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000574.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+> Instruction revision for AI-000575 at 2026-11-19T06:12:48.5344488+08:00
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-04.md，以随包Schema v2.5.2和当前真实源码为准。仅原04的标记判定、范围与候选择取纯函数。按原卡表逐项检查，无引擎操作。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000575/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000575.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED EXTEND at 2026-11-19T06:12:48.9614648+08:00: {"reason":"当前0.1.4投放包内无前置的05、10、12、24，执行人工门前的开发，独立审查与共享锁保持。","taskIds":["AI-000576","AI-000577","AI-000578","AI-000579"]}
+## AI-000580 | [CODE] [V014-06] 对话框视图 [CODE]
+
+- 序号：580
+- 提交时间：2026-11-19T06:15:22.9641903+08:00
+- 模块 ID：V014-06
+- 初始状态：QUEUED
+- 前置依赖：AI-000572, AI-000576
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-06.md，以随包Schema v2.5.2和当前真实源码为准。按原06实现定版排字、名字、按钮与输入，依据现行Toolkit输入接口和原卡已有UI事件回落。验排版须给真实排版后行信息与可见字进度依据，明确离线与待人工边界。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000580/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000580.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:15:23.8623246+08:00: {"taskId":"AI-000580","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:15:23.6242580+08:00","supervisionLevel":"full"}}
+## AI-000581 | [CODE] [V014-07] 入场与每句呈现 [CODE]
+
+- 序号：581
+- 提交时间：2026-11-19T06:15:24.6159897+08:00
+- 模块 ID：V014-07
+- 初始状态：QUEUED
+- 前置依赖：AI-000574, AI-000576, AI-000580
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-07.md，以随包Schema v2.5.2和当前真实源码为准。按原07复用已交付的05/06/03接口与真实状态机回报接口，关注相同上下文、过期回报及调用退出后回报。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000581/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000581.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:15:25.7788619+08:00: {"taskId":"AI-000581","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:15:25.2349335+08:00","supervisionLevel":"full"}}
+## AI-000582 | [CODE] [V014-08] 退场与续接 [CODE]
+
+- 序号：582
+- 提交时间：2026-11-19T06:15:26.3051788+08:00
+- 模块 ID：V014-08
+- 初始状态：QUEUED
+- 前置依赖：AI-000581
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-08.md，以随包Schema v2.5.2和当前真实源码为准。按原08完整走退场与续接，中止清理，按两种恢复时机回报；既有状态机与参数资产保护。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000582/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000582.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T06:15:27.2241884+08:00: {"taskId":"AI-000582","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T06:15:26.9389943+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T06:15:28.6408133+08:00: {"reason":"原06至08按明确依赖排入同一0.1.4监管。","taskIds":["AI-000580","AI-000581","AI-000582"]}
+## AI-000583 | [CODE] [V014-OPT] 校验告警 V-26 [DATA · 工具链]
+
+- 序号：583
+- 提交时间：2026-11-19T08:34:38.6185032+08:00
+- 模块 ID：V014-OPT
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-OPT.md，以随包Schema v2.5.2和当前真实源码为准。正式V-26，仅新增一条表端可静态识别的非阻断警告。复用现有NarrativeTableValidation及原准入测试，按在场条目、同scene/state、不同发起者、指定speaker精确ID查；含#2的池发起者仍可指向基础角色；区分active=false及另一个状态。实际0.1.3修前配置来源 .ai-workspace/outputs/PLAYABLE-DEMO013-20261115/AI-000566/attempt1/SceneStatePlacements-before.csv，与修复后输入做隔离实例，长期回归固定在DevTools中，不依赖活动outputs。先跑同一现行正式22表和Narrative作为基线；对同一输入改前改后原告警逐项保持，V-26=0，现已交573新增界面key的1条告警保留。不得改工作簿/CSV/用户参数/资产或任何存档、发布包版本常量；实际两个序列化版本号已独立报用户，V26本卡不处置或签收格式版本，仅开发规则和验证。测试和说明点明状态中只填在场景实例的池无法静态查。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000583/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000583.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T08:34:39.6711889+08:00: {"taskId":"AI-000583","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T08:34:39.3687270+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T08:34:41.0143331+08:00: {"reason":"0.1.4正式V-26独立于对话框与存档格式裁决，按原卡只改静态验证器，保留两种既有格式常量。","taskIds":["AI-000583"]}
+## AI-000584 | [CODE] [V014-01] 已聊过的记录与存档 [CODE]
+
+- 序号：584
+- 提交时间：2026-11-19T08:49:53.4806017+08:00
+- 模块 ID：V014-01
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-01.md，以随包Schema v2.5.2和当前真实源码为准。分段执行同一原01并沿用同号和完整合同。当前授权执行步骤1的只读核查及步骤2的纯内存功能：先核项目真实封装与独立slot，先跑原DevTools/Persistence/Test-ToolkitPersistence.ps1基线并按原卡区分红绿；开发Narrative.Core中的INarrativeTalkedRecord正式实现，记、查、去重、指定清除、全清、导出及从列表恢复，验证复用真实状态机契约与点名Narrative回归。只读原程序与临时测试目录，不触碰任何真实玩家存档。当前版本冲突尚在用户裁决：发布图Schema2.5.1，存档封装CurrentSchemaVersion实际2.4.1。在CONTROL回传实际用户决定前，不能开始步骤3至6的任何文件落盘接入、绑定启动或选定存档格式；不改Toolkit/短循环/任何版本常量。完成可独立部分后若仍无裁决，将报告、diff、有效离线结果及确切下一步存入own output，按正常queue YieldSupervisionTask保存安全检查点并当轮Prepare→通知→Record。只表示阶段性完成，绝不首合同代第二合同、Complete整卡或消耗额度反复尝试；待CONTROL取得答复后同一根安排剩余部分。若原封装不支持独立文件或真实程序集引用不满足原卡独立条件，照实报告。当前步骤仅写Core相应新类/meta、既有Narrative测试和必要模块说明；Unity侧代码写入待实际决定。 原卡全部业务验收与§2.7点名回归保留；新脚本随同GUID稳定.meta。每次业务写前正式SupervisionCheckpoint。自己的报告/逐项证据、合同、用量及diff在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000584/attemptN/。机器合同见 .ai-workspace/inputs/acceptance/AI-000584.json，evidence根同名布尔值及checks需附真实明细。实际失败与累计保留，正规结算当轮Prepare、一次实际发送给绑定CONTROL、Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T08:49:54.4890045+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"固定职能，数据使用主工作簿和正式作者工具，源代码修改在CODE；依赖独审后由CONTROL派发。","updatedAt":"2026-11-19T08:49:54.2359888+08:00","supervisionLevel":"full"},"taskId":"AI-000584"}
+
+> SUPERVISED EXTEND at 2026-11-19T08:49:55.8315974+08:00: {"taskIds":["AI-000584"],"reason":"原01的只读封装核查、原基线及纯内存已聊记录不依赖格式版本。完整存档仍在原卡上保留两个合同，用户决定前只推进独立部分，随后安全交接。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-19T14:48:44.7847140+08:00: {"cycles":["grant:d5b285f17a1340f9a4f1353e7fc764bd"],"taskId":"AI-000580","reserved":1,"grantId":"d1d7a7757d5c4b4fab2d196b192ab34c","rootTaskId":"AI-000580","authorizationSource":"HUMAN","remaining":4,"sourceApprovalId":"call_45ba5ad9902a43808a14b9cb8a8059c5:0","verification":"固定CODE notLoaded/completed 211269ec-1745-445b-87c5-7382fd563ae6:135; CONTROL已复核首轮FAIL、两个原断言、真实人批及后置人工门；沿原卡使用一轮既有额度。","scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000580","项目整体阅读理解与推进基线_2026-08-14.md","组件说明文档/视觉特效/普通对话界面配置与使用说明.md","组件说明文档/视觉特效/README.md","Assets/Scripts/Narrative/Unity","CODEBASE_MAP.md","DevTools/Narrative","docs/参数调整说明_对话.md","docs/demo-0.1.4_人工检查说明.md"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"used":0}
+## AI-000585 | [CODE] [V014-09] 对话服务 [CODE]
+
+- 序号：585
+- 提交时间：2026-11-19T18:56:21.6017016+08:00
+- 模块 ID：V014-09
+- 初始状态：QUEUED
+- 前置依赖：AI-000584
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原任务 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-09.md 及有效补丁 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/存档版本补丁接收.json，现行 Schema .ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md。 依据已交付的07与08时间/输入协议、AI582 service09-handoff、AI584存档接口；使用原FSM/调度器/输入和单一锁，普通入口拒绝条件、每段事件次序、帧内输入防误触、续接/中止按原卡。此卡不驱动真实场景。 原卡业务及§2.7点名回归，保原断言和全部失败；仅使用现有入口、实际源码/夹具与正式范围。每次业务写前正式SupervisionCheckpoint，新增脚本随同稳定meta。详读 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000585-scope.json 与 .ai-workspace/inputs/acceptance/AI-000585.json。报告、逐项证据、根布尔checks、用量与diff放 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000585/attemptN/。结算当轮Prepare→一次真实发给绑定CONTROL→Record。不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T18:56:22.9899719+08:00: {"taskId":"AI-000585","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原卡代码接线，固定CODE与其它生产车道共享工程互斥；CONTROL后继派发前独审。","updatedAt":"2026-11-19T18:56:22.7646775+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T18:56:23.6724265+08:00: {"reason":"继续当前用户授权的0.1.4原卡，依实际队列前置串行，人工/原生门并行保留。","taskIds":["AI-000585"]}
+## AI-000586 | [CODE] [V014-11] 镜头门控 [CODE]
+
+- 序号：586
+- 提交时间：2026-11-19T18:56:38.6464868+08:00
+- 模块 ID：V014-11
+- 初始状态：QUEUED
+- 前置依赖：AI-000585
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原任务 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-11.md 及有效补丁 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/存档版本补丁接收.json，现行 Schema .ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md。 仅合并原11两种门和原卡明确许可的旧夹具调整，沿现有4个相机回归；原断言、用户配置及其它镜头行为照原卡。 原卡业务及§2.7点名回归，保原断言和全部失败；仅使用现有入口、实际源码/夹具与正式范围。每次业务写前正式SupervisionCheckpoint，新增脚本随同稳定meta。详读 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000586-scope.json 与 .ai-workspace/inputs/acceptance/AI-000586.json。报告、逐项证据、根布尔checks、用量与diff放 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000586/attemptN/。结算当轮Prepare→一次真实发给绑定CONTROL→Record。不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T18:56:40.0575814+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原卡代码接线，固定CODE与其它生产车道共享工程互斥；CONTROL后继派发前独审。","updatedAt":"2026-11-19T18:56:39.7730599+08:00","supervisionLevel":"full"},"taskId":"AI-000586"}
+## AI-000587 | [CODE] [V014-13] NPC 的对话挂载口、触发组件与交互选择 [CODE]
+
+- 序号：587
+- 提交时间：2026-11-19T18:56:40.9867250+08:00
+- 模块 ID：V014-13
+- 初始状态：QUEUED
+- 前置依赖：AI-000575, AI-000585, AI-000578, AI-000579
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+完整执行原任务 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-13.md 及有效补丁 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/存档版本补丁接收.json，现行 Schema .ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md。 复用真实选择模型、按键提示和NPC壳/已有气泡控制点；最近合格对象、锁、当前发起者静音及退出恢复按原卡，仅默认与地面距离既有街景回归。 原卡业务及§2.7点名回归，保原断言和全部失败；仅使用现有入口、实际源码/夹具与正式范围。每次业务写前正式SupervisionCheckpoint，新增脚本随同稳定meta。详读 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000587-scope.json 与 .ai-workspace/inputs/acceptance/AI-000587.json。报告、逐项证据、根布尔checks、用量与diff放 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000587/attemptN/。结算当轮Prepare→一次真实发给绑定CONTROL→Record。不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T18:56:42.0149907+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原卡代码接线，固定CODE与其它生产车道共享工程互斥；CONTROL后继派发前独审。","updatedAt":"2026-11-19T18:56:41.6518599+08:00","supervisionLevel":"full"},"taskId":"AI-000587"}
+## AI-000588 | [CODE] [V014-14] 场景状态应用：对话与标记，切换时重置已聊过 [CODE]
+
+- 序号：588
+- 提交时间：2026-11-19T18:56:42.6618117+08:00
+- 模块 ID：V014-14
+- 初始状态：QUEUED
+- 前置依赖：AI-000584, AI-000587
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原任务 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-14.md 及有效补丁 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/存档版本补丁接收.json，现行 Schema .ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md。 原九步状态应用及该卡全部分支，目标状态重置已聊记录、重复切换与预摆恢复，禁止覆盖原配表和实例资产。 原卡业务及§2.7点名回归，保原断言和全部失败；仅使用现有入口、实际源码/夹具与正式范围。每次业务写前正式SupervisionCheckpoint，新增脚本随同稳定meta。详读 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000588-scope.json 与 .ai-workspace/inputs/acceptance/AI-000588.json。报告、逐项证据、根布尔checks、用量与diff放 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000588/attemptN/。结算当轮Prepare→一次真实发给绑定CONTROL→Record。不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T18:56:44.0411526+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原卡代码接线，固定CODE与其它生产车道共享工程互斥；CONTROL后继派发前独审。","updatedAt":"2026-11-19T18:56:43.6175049+08:00","supervisionLevel":"full"},"taskId":"AI-000588"}
+## AI-000589 | [CODE] [V014-15] 头顶标记 [CODE]
+
+- 序号：589
+- 提交时间：2026-11-19T18:56:44.9043469+08:00
+- 模块 ID：V014-15
+- 初始状态：QUEUED
+- 前置依赖：AI-000584, AI-000575, AI-000585, AI-000587, AI-000579
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原任务 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-15.md 及有效补丁 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/存档版本补丁接收.json，现行 Schema .ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md。 按现有visual文档维护头顶标记配置与五列人工说明。验证浮动/灰态/隐藏、淡入淡出及气泡共存。原卡点名Narrative与Street默认入口。 原卡业务及§2.7点名回归，保原断言和全部失败；仅使用现有入口、实际源码/夹具与正式范围。每次业务写前正式SupervisionCheckpoint，新增脚本随同稳定meta。详读 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000589-scope.json 与 .ai-workspace/inputs/acceptance/AI-000589.json。报告、逐项证据、根布尔checks、用量与diff放 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000589/attemptN/。结算当轮Prepare→一次真实发给绑定CONTROL→Record。不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T18:56:45.9976724+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原卡代码接线，固定CODE与其它生产车道共享工程互斥；CONTROL后继派发前独审。","updatedAt":"2026-11-19T18:56:45.7005777+08:00","supervisionLevel":"full"},"taskId":"AI-000589"}
+## AI-000590 | [CODE] [V014-16] 调试入口扩展 [CODE]
+
+- 序号：590
+- 提交时间：2026-11-19T18:56:46.8298654+08:00
+- 模块 ID：V014-16
+- 初始状态：QUEUED
+- 前置依赖：AI-000585, AI-000587, AI-000588
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+完整执行原任务 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-16.md 及有效补丁 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/存档版本补丁接收.json，现行 Schema .ai-workspace/inputs/CK01-B_配表Schema_v2_5_3.md。 仅现有调试入口扩展；三个入口转调真实服务/记录/状态应用器，发布编译排除，原街道默认回归。 原卡业务及§2.7点名回归，保原断言和全部失败；仅使用现有入口、实际源码/夹具与正式范围。每次业务写前正式SupervisionCheckpoint，新增脚本随同稳定meta。详读 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000590-scope.json 与 .ai-workspace/inputs/acceptance/AI-000590.json。报告、逐项证据、根布尔checks、用量与diff放 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000590/attemptN/。结算当轮Prepare→一次真实发给绑定CONTROL→Record。不自领后继。
+
+> SUPERVISED POLICY at 2026-11-19T18:56:47.6659512+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原卡代码接线，固定CODE与其它生产车道共享工程互斥；CONTROL后继派发前独审。","updatedAt":"2026-11-19T18:56:47.3530487+08:00","supervisionLevel":"full"},"taskId":"AI-000590"}
+
+> SUPERVISED EXTEND at 2026-11-19T18:56:48.2364925+08:00: {"taskIds":["AI-000586","AI-000587","AI-000588","AI-000589","AI-000590"],"reason":"继续当前用户授权的0.1.4原卡，依实际队列前置串行，人工/原生门并行保留。"}
+
+> Verification rejected for AI-000586 at 2026-11-19T20:04:03.8554903+08:00: decision=REJECTED; reason=用户已明确最终可见目标按Look Out Time缓收；原实现的最终通道在第一帧挡掉全部余量。保留原成功子项和全部证据，单独修复此项并独立复核。
+## AI-000591 | [CODE] [V014-11-R] 对话开始时保留实际镜头浮动的退出曲线
+
+- 序号：591
+- 提交时间：2026-11-19T20:07:27.3745378+08:00
+- 模块 ID：V014-11-R
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+修复原AI-000586，问题键V01411_FINAL_LOOK_DECAY。用户裁决 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/V014-11_镜头最终偏移按退出时间缓收_用户裁决.json、原.ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000586-final-offset-rejection-evidence.json与原V014-11/人工表第18项。普通对话门开启时，新浮动输入不生效，兴趣点归零；最终跟随目标上的原有两轴浮动按已有Look Out Time、退出曲线返回至零。只修实际合成丢掉已衰减余量的部分及直接冲突断言，保留纯管线对未经门控原始输入的原契约和其它原断言；避免测试类型/场景特判。四原镜头模式离线验证，真实驱动最终目标与对照/真实退出偏移：进入时、中间、终点、持续贴边不新起；零时、有效门关闭、普通对话ShrinkDelay、接管冻结及兴趣点隔离。不得仅凭内部状态或调试量、另造测试用曲线判通过。配置、场景、原失败不动。更新docs/参数调整说明_街道镜头.md及docs/demo-0.1.4_人工检查说明.md和受影响项目说明。接线后仍交用户观察真实画面；本子修复只结算可离线客观判定的实现，不需要产品级人工签收替代该结论。每次业务写前SupervisionCheckpoint，report/diff/证据/用量在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000591/attemptN。合同 .ai-workspace/inputs/acceptance/AI-000591.json，领取的完整Scope .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000591-scope.json；正式结算后Prepare-一次发送CONTROL-Record。
+
+> SUPERVISED POLICY at 2026-11-19T20:07:28.6262741+08:00: {"taskId":"AI-000591","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原11同根CODE修复，原19接线依赖独审；已有NPC任务仍继续。","updatedAt":"2026-11-19T20:07:28.3563078+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T20:07:29.0272607+08:00: {"reason":"用户决定普通对话最终浮动按Look Out Time缓收；同根小修复。","taskIds":["AI-000591"]}
+
+> Dependency correction for AI-000588 at 2026-11-19T20:33:52.5263043+08:00: AI-000584, AI-000587, AI-000591
+
+> Dependency correction for AI-000589 at 2026-11-19T20:33:53.3460870+08:00: AI-000584, AI-000575, AI-000585, AI-000587, AI-000579, AI-000591
+
+> Dependency correction for AI-000588 at 2026-11-19T20:33:55.4421056+08:00: AI-000584, AI-000587
+
+> Dependency correction for AI-000589 at 2026-11-19T20:33:56.4971415+08:00: AI-000584, AI-000575, AI-000585, AI-000587, AI-000579
+> Control rejection resolved AI-000586 : {"at":"2026-11-19T20:53:40.7327776+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"V01411_FINAL_LOOK_DECAY","repairTaskId":"AI-000591","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","userDecision":"按 Look Out Time 缓收，允许修正冲突断言（推荐）","verification":"四组相机原入口通过。独立从8组实际驱动和同轨迹对照的最终Target逐样本相减，核对二维回落、最大距离和速度：保存参数0/0.4/0.8秒分别2.5/1.25/0，持续边缘输入无新漂移，未完成入场及低速限幅不外冲。保留ShrinkDelay、兴趣点门、镜头接管和原始输入契约。真实街景观感仍待原19；父卡首次拒验与子卡夹具/报告失败如实保留。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PLAYABLE-DEMO014-20261119\\AI-000586-final-offset-resolution-proof.json","evidenceSha256":"1C1A189D7404CC87F5AA80AEB75C744583A526732C29804F20585DEAB85E5027","rejectedResultSha256":"A64420127577D9D47624577DDFFFF932125510DCAA340873B2EE61B6580B2506","repairResultSha256":"D9709AC61C09260A1F2070A5A68779B1788618610BBCF316D28B507CA7378436"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-19T21:27:27.9786823+08:00: {"scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000589","项目整体阅读理解与推进基线_2026-08-14.md","组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md","组件说明文档/视觉特效/README.md","Assets/Scripts/LongLoop","Assets/Scripts/Narrative/Unity/NarrativeHeadMarkerView.cs","Assets/Scripts/Narrative/Unity/NarrativeHeadMarkerView.cs.meta","CODEBASE_MAP.md","DevTools/LongLoop","DevTools/Narrative","docs/街景NPC内容配置说明.md","docs/demo-0.1.4_人工检查说明.md"],"operations":["documentation","evidence","idempotence-check","offline-regression","source-edit"]},"used":0,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","taskId":"AI-000589","reserved":1,"cycles":["V01415-DISPLAY-SCOPE-01"],"remaining":4,"verification":"CODE app idle/completed 211269ec-1745-445b-87c5-7382fd563ae6:379; AI589 attempt1 receive and independent review verified original15 2.1 and actual asmdefs; add only NarrativeHeadMarkerView.cs and own meta to deliver original feature; no production write on fail, no permission/engine stop.","rootTaskId":"AI-000589","authorizationSource":"POLICY","grantId":"ad79d28b84864e6f83886e553d5a7d50"}
+
+> Verification rejected for AI-000589 at 2026-11-19T22:01:13.4228893+08:00: decision=REJECTED; reason=两项合同与50项离线检查如实通过；原18规定0.85而当前0.35不可配，运行时通用NPC缺标记驱动场景依赖注入。必须按原15/18小修复后再接线。
+## AI-000592 | [CODE] [V014-15-R] 头顶标记的生成实例接线与占位直径
+
+- 序号：592
+- 提交时间：2026-11-19T22:02:14.9349673+08:00
+- 模块 ID：V014-15-R
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+修复原 AI-000589 V014-15 与 V014-18 的两个实际接入缺口。原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-15.md、V014-18.md，独立证据 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000589-attempt2-rejection-evidence.json。圆片实际固定直径按原18约0.85世界单位，保留NPC纵深不影响尺寸和挂点定位；仅把本批误写0.35的新增检查校正为原需求，保既有0.1.3及其他原断言。沿正常生产入口让动态通用Prefab实例在激活时能取得已有Runtime、同一Dialogue Service/已聊记录与本地件；核预摆、重新应用或启停时不遗留订阅、不误清现有绑定，未挂标记的旧NPC继续正常。优先复用13/14对话触发器已有场景依赖注入，不每帧全场查找，不依赖测试直接手动给标记驱动填场景引用。标记View可显式引用本地子件。Prefab/街景实际保存留18/19。以正常生成入口或与其同一初始化的可验证调用覆盖自然生成后的标记、隐藏和最新灰态，离线再跑原15点名Narrative和Street默认回归；实现选择保持最小。纠正受影响配置说明和接线清单。任务属于同根源码修复，证据足以客观离线结算，真实画面交原人工门。完整scope .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000592-scope.json、合同 .ai-workspace/inputs/acceptance/AI-000592.json、报告/用量/任务diff/原始运行证据 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000592/attemptN。写前SupervisionCheckpoint，正式结算后Prepare→真实通知CONTROL一次→Record。
+
+> SUPERVISED POLICY at 2026-11-19T22:02:16.2654886+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"同根CODE修复，原项目写锁。人工只在18/19接线后验。","updatedAt":"2026-11-19T22:02:15.8631373+08:00","supervisionLevel":"full"},"taskId":"AI-000592"}
+
+> SUPERVISED EXTEND at 2026-11-19T22:02:16.6756697+08:00: {"taskIds":["AI-000592"],"reason":"CONTROL依原15/18独审发现运行生成实例和原设计直径缺口，同一根权限内限一轮。"}
+## AI-000593 | [CODE] [V014-18-C] 对话界面 Prefab 的节点与入退场接线
+
+- 序号：593
+- 提交时间：2026-11-19T22:23:54.1723268+08:00
+- 模块 ID：V014-18-C
+- 初始状态：QUEUED
+- 前置依赖：AI-000576, AI-000580, AI-000581, AI-000582, AI-000585
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+原 V014-18 的前置源码小卡，仅按 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-18.md 第3步和 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/V014-18_接线前源码核查.json 实现可保存Prefab接线，不执行Editor或制作Prefab。实查 Canvas/Box 总是 new 层和控件，入口/退出普通编排由Session单独构造。让正式Prefab可显式绑定原文的屏幕画布根、Dim（全屏不拦点）、空Portraits、Dialogue的正文/名字与两个按钮及实际推进命中；实际运行采用这些作者节点，已绑定时不另建等价视觉树并正确维护监听/启停/复用，不移除作者节点。保无预摆时旧运行时调用及释放路径；部分失配可诊断。Prefab按原18能挂、能用的入/退场编排引用，接到原有唯一Session状态所有者/编排与现有Box/Dimmer，复用原07/08和09服务。不加第二个状态机、空壳组件、无效层或仅供测试的分支。技术细节优先最小并检查既有调用和真实API，字体材质先于font。保护原配置、旧测试与53项、原06的字位人工门。沿既有 Narrative 离线入口验证正式已绑定和原自动路径、生命周期不重复与原回归；不造原生探针。生产脚本及相应meta实际逐文件交付表，原位更新界面配置说明和接线顺序、必要地图/基线。独立离线结算，原18才做原生并交实景人工。任务与原18共用交付目标，不改各原卡的失败和额度。报告/diff/逐项证据/用量在 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000593/attemptN，完整scope .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000593-scope.json；合同 .ai-workspace/inputs/acceptance/AI-000593.json。写前SupervisionCheckpoint，正式结算后Prepare→当轮一次回传绑定CONTROL→Record。
+
+> SUPERVISED POLICY at 2026-11-19T22:23:55.4632202+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原18序列化界面接线的源侧前置；固定CODE与原生同项目互斥。","updatedAt":"2026-11-19T22:23:55.1948329+08:00","supervisionLevel":"full"},"taskId":"AI-000593"}
+
+> SUPERVISED EXTEND at 2026-11-19T22:23:55.8738257+08:00: {"reason":"原18正式节点接入的源侧前置，原生操作待全部前置结算及逐文件清单完成。","taskIds":["AI-000593"]}
+
+> Verification resolved for AI-000592 at 2026-11-19T22:34:27.5356950+08:00: decision=VERIFIED; summary=CONTROL验收本子卡两项源码修复。结算提示所列真实Prefab、画面和输入属原15/18/19及版级人工门，已逐项保留在原15和五列表，仍待用户。; evidence=生成后正常注入场景服务的32项原始输出及实际直径0.85、原15两入口通过：.ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000592-independent-review.json。人工检查归属：.ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000592-technical-and-visual-review.json；本次没有运行Unity或判定画面。
+> Control rejection resolved AI-000589 : {"at":"2026-11-19T22:34:53.2730100+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"V01415_MARKER_RUNTIME_INTEGRATION","repairTaskId":"AI-000592","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","userDecision":"批准本次修复和续行，另外，对相关的续行许可次数限制进行放宽：手动模式时，每次需要人工续行不变，上限保持为1；自动模式时，允许3次的重复修复尝试后，再进行人工询问和额外次数的批准；监管模式下则默认允许5次自主重复尝试","verification":"CONTROL源码与原始32项正常生成结果独审通过，0.85世界尺寸与原设计一致、既有两回归通过。解除两项技术拒验，恢复原15真实画面待用户检查。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\PLAYABLE-DEMO014-20261119\\AI-000589-marker-resolution-proof.json","evidenceSha256":"A7318E28905B8F159BF3E8FE43CA10EFA9B9F92108D9A4278F354BE4779F04E4","rejectedResultSha256":"8A18B46AF86800D88C2E8D8471FADB152CD0E11D8A6669AF6F53C47EC592DBD6","repairResultSha256":"7447D48F181FEC034743C75A138A643F8DD164CA849087951925FCE322BEEB25"}
+## AI-000594 | [ENGINE_CLI] [V014-18] 对话界面、按键提示与通用NPC Prefab接线
+
+- 序号：594
+- 提交时间：2026-11-19T22:36:42.2232687+08:00
+- 模块 ID：V014-18
+- 初始状态：QUEUED
+- 前置依赖：AI-000576, AI-000580, AI-000581, AI-000582, AI-000578, AI-000587, AI-000589, AI-000579, AI-000592, AI-000593
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+执行原卡 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-18.md；先满足全部前置(含同根15-R/原18源侧前置AI-000593)的CONTROL独审才派发。保持监管，ENGINE_CLI使用受管Unity官方CLI、正常平台审批、Unity6000.3.24f1，按真实session/目标实例/用户已有dirty/Console预检，正式Checkpoint后操作。以本派发指令所附逐文件导入明细及真实交付SHA为准，原四脚本目录仅供导入已点名代码/meta，不编辑源。原18步骤依序：先备份GenericNPC.prefab及其原引用→导入清单并确认编译→创建 Assets/Prefabs/UI Components/NarrativeDialogueUI.prefab（可保存的根、压暗、空立绘、对话层及正文/名字框/两按钮；接实际编排组件、字体复用当前气泡，使用原06布局）→创建同目录 InteractionPrompt.prefab→扩展 Assets/Prefabs/LongLoop/NPC/GenericNPC.prefab 的原头顶下三个独立子点，(0,+0.6)/(+0.6,+0.6)/(0,+1.25)，稳定原引用与位置；根加Trigger/Driver，标记挂点加View和本地引用，实例自身三字段为空。修复后直径0.85；运行时生成场景依赖经正式Trigger路径。原19才绑定场景的服务/相机/输入。按协议只保存目标资产并回读。作者已有保存值保留；正式场景、共享字体/材质和配置不写。可复用官方API/既有工具，禁止手改Unity YAML。原18现行配置说明、目录索引与人工五列原位维护。原任务级三项合约 .ai-workspace/inputs/acceptance/AI-000594.json。操作和验收分计，操作5同根续行，实际引擎验收总≤3；不因静态回读做额外Play、时序或图像对比。正式范围 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000594-scope.json，CONTROL逐文件附件 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/V014-18_19_脚本导入清单_编排底稿.json 在前置结束后最终核实，实际派发同时列路径，无正式派发不领取。报告/备份/diff/读回/用量 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000594/attemptN。每步失败按实结算回报，不混用MCP或切换环境。正式结算后当轮Prepare→一次实际通知绑定CONTROL→Record。
+
+> SUPERVISED POLICY at 2026-11-19T22:36:43.4667403+08:00: {"taskId":"AI-000594","policy":{"resourceKeys":["unity-project","narrative-foundation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原18按原序只定点写三个Prefab；源码前置完成后CONTROL按逐文件清单下派，ENGINE/DATA/CODE互斥。","updatedAt":"2026-11-19T22:36:43.1524626+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T22:36:44.0291197+08:00: {"taskIds":["AI-000594"],"reason":"预排原18，AI593独审及导入清单完成后才派发，当前不操作Unity。"}
+## AI-000595 | [ENGINE_CLI] [V014-19] 街景对话接线与普通对话占位导入
+
+- 序号：595
+- 提交时间：2026-11-19T23:01:19.3718911+08:00
+- 模块 ID：V014-19
+- 初始状态：QUEUED
+- 前置依赖：AI-000585, AI-000577, AI-000586, AI-000588, AI-000590, AI-000573, AI-000594
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+执行 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-19.md，按新Schema v2.5.3/存档补丁。此卡只预排，等AI594实际保存回读、CONTROL独审并在正式派发中列原18已导入与剩余清单后才领取。固定ENGINE_CLI，Unity6000.3.24f1正常平台审批，既有受管预检/dirty/备份/目标实例与Console，共享工程互斥；逐项操作顺序不得跨过失败。1 备份Street及将受正式导表影响的生成资产，核已有用户状态。按 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/V014-18_逐文件导入清单.json 与594实际回执去重，已导入不重复，有剩余只按最终逐文件清单导入并确认编译。2 仅通过既有DataTableImportService.ImportAll()一次正式导表，消费V014-17的DataTables源，不写作者xlsx/CSV/schema或重烘字体，保正式告警及错误。3 安装原卡两Prefab实例、新服务、操作锁、游戏状态组件、交互选择器等，复用现有场景物件。4 按原19表接引用；见AI593 ENG-HANDOFF中PresentationComposition、本地Box/Dimmer与同一Service/Session/实际存档，锁及游戏状态接原玩家/镜头/Selector，提示键ui_street_talk.text，预摆/生成经原NPC绑定路径。5 出生点附近新锚点test_street_04，不与现有三锚或两预摆重叠；6 仅土豆实例自身的对话填dlg_test_talk_c；7 按正式协议保存Street及限定生成资产，读回。检查点≤3：对话对象与必需引用；新增锚点/原17数据按ID；土豆及另一个预摆继承三挂点、原父级/位置/形象/池及镜头和主角已保存值保护。实际导表后只对新增配置逐ID核查，不用数量排除用户额外内容。新组件初值清楚记录、原对象不移动不重设父级，配置说明与五列表原位维护。既有视效/源脚本/通用Prefab和用户存档不改。无截图/定时探针/额外Play/不在本卡打包；操作与引擎验收独立计（操作监管5次续行，原生验收累计≤3）。原19接线完的用户手工调位置/字位/整体体验交原人工卡。每批写前SupervisionCheckpoint；完整scope .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000595-scope.json、合同 .ai-workspace/inputs/acceptance/AI-000595.json，证据 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000595/attemptN；正式结算Prepare→一次真实通知绑定CONTROL→Record。
+
+> SUPERVISED POLICY at 2026-11-19T23:01:20.7959168+08:00: {"taskId":"AI-000595","policy":{"resourceKeys":["unity-project","narrative-foundation","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原19街景与正式导表同锁，等原18双方读回独审才下派。","updatedAt":"2026-11-19T23:01:20.4491803+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED EXTEND at 2026-11-19T23:01:21.3325709+08:00: {"taskIds":["AI-000595"],"reason":"原19仅正式预排，原18源码和Prefab独审均成立才进入街景。"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-20T00:02:40.6097798+08:00: {"sourceApprovalId":"call_8a9666b906e24d4b804dab646ead1a36:0","taskId":"AI-000594","remaining":2,"reserved":3,"scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000594","项目整体阅读理解与推进基线_2026-08-14.md","组件说明文档/视觉特效/交互按键提示配置与使用说明.md","组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md","组件说明文档/视觉特效/普通对话界面配置与使用说明.md","组件说明文档/视觉特效/README.md","Assets/Prefabs/LongLoop/NPC/GenericNPC.prefab","Assets/Prefabs/UI Components/InteractionPrompt.prefab","Assets/Prefabs/UI Components/InteractionPrompt.prefab.meta","Assets/Prefabs/UI Components/NarrativeDialogueUI.prefab","Assets/Prefabs/UI Components/NarrativeDialogueUI.prefab.meta","Assets/Scripts/LongLoop/ChannelContext.cs","Assets/Scripts/LongLoop/LongLoop.asmdef","Assets/Scripts/LongLoop/LongLoopPlayerController.cs","Assets/Scripts/LongLoop/NarrativeAmbientBubbleTrigger.cs","Assets/Scripts/LongLoop/NarrativeDialogueTrigger.cs","Assets/Scripts/LongLoop/NarrativeDialogueTrigger.cs.meta","Assets/Scripts/LongLoop/NarrativeHeadMarkerDriver.cs","Assets/Scripts/LongLoop/NarrativeHeadMarkerDriver.cs.meta","Assets/Scripts/LongLoop/NarrativeSceneDebugPanel.cs","Assets/Scripts/LongLoop/NarrativeSceneStateApplication.cs","Assets/Scripts/LongLoop/NarrativeSceneStateApplier.cs","Assets/Scripts/LongLoop/NpcShell.cs","Assets/Scripts/LongLoop/OperationLock.cs","Assets/Scripts/LongLoop/OperationLock.cs.meta","Assets/Scripts/LongLoop/StreetDialogueGameState.cs","Assets/Scripts/LongLoop/StreetDialogueGameState.cs.meta","Assets/Scripts/LongLoop/StreetFollowDriver.cs","Assets/Scripts/LongLoop/StreetFollowPipeline.cs","Assets/Scripts/LongLoop/StreetInteractionSelection.cs","Assets/Scripts/LongLoop/StreetInteractionSelection.cs.meta","Assets/Scripts/LongLoop/StreetInteractionSelector.cs","Assets/Scripts/LongLoop/StreetInteractionSelector.cs.meta","Assets/Scripts/Narrative/Core/NarrativeInteractionRules.cs","Assets/Scripts/Narrative/Core/NarrativeInteractionRules.cs.meta","Assets/Scripts/Narrative/Core/NarrativeStepSequence.cs","Assets/Scripts/Narrative/Core/NarrativeStepSequence.cs.meta","Assets/Scripts/Narrative/Core/NarrativeTalkedRecord.cs","Assets/Scripts/Narrative/Core/NarrativeTalkedRecord.cs.meta","Assets/Scripts/Narrative/Core/NarrativeTypewriterModel.cs","Assets/Scripts/Narrative/Core/NarrativeTypewriterModel.cs.meta","Assets/Scripts/Narrative/Unity/Narrative.Unity.asmdef","Assets/Scripts/Narrative/Unity/NarrativeDialogueBoxPresenter.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueBoxPresenter.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueBoxView.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueBoxView.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueCanvas.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueCanvas.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueComposition.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueComposition.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueContinuationPolicy.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueContinuationPolicy.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueEntrance.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueEntrance.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueExit.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueExit.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueService.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueService.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeDialogueSession.cs","Assets/Scripts/Narrative/Unity/NarrativeDialogueSession.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeHeadMarkerView.cs","Assets/Scripts/Narrative/Unity/NarrativeHeadMarkerView.cs.meta","Assets/Scripts/Narrative/Unity/NarrativePresentationSurfaces.cs","Assets/Scripts/Narrative/Unity/NarrativePresentationSurfaces.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeRuntimeEntry.cs","Assets/Scripts/Narrative/Unity/NarrativeSceneDimmer.cs","Assets/Scripts/Narrative/Unity/NarrativeSceneDimmer.cs.meta","Assets/Scripts/Narrative/Unity/NarrativeTalkedPersistence.cs","Assets/Scripts/Narrative/Unity/NarrativeTalkedPersistence.cs.meta","Assets/Scripts/Tools/InteractionPrompt.cs","Assets/Scripts/Tools/InteractionPrompt.cs.meta","Assets/Scripts/Tools/InteractionPromptState.cs","Assets/Scripts/Tools/InteractionPromptState.cs.meta","CODEBASE_MAP.md","docs/demo-0.1.4_人工检查说明.md"],"operations":["asset-create","asset-import","asset-modify","asset-save","backup-asset","documentation","evidence-packaging","idempotence-check","native-readonly","read-console-increment"]},"grantId":"fcca037aa7d2487f976d4a0f3960eb94","used":0,"rootTaskId":"AI-000594","cycles":["grant:7a2d9e407e6e479bb74ae19b22ad7820","grant:0fd49368a4ab42c78986edccdf75836f","grant:b9023432a8e94a6eba208717c8d82d8e"],"verification":"真实用户本轮批准同根3轮正常平台审批；原始失败已独审。固定引擎chat idle/completed e634234e-dde2-406e-82f6-7e64a82886f2:98；无运行或预约。首次重进单独审批受管只读status，验证目标后原18继续。","authorizationSource":"HUMAN"}
+## AI-000596 | [ENGINE_CLI] [V014-20] 普通对话发布数据封包与读回预检
+
+- 序号：596
+- 提交时间：2026-11-20T00:26:24.4972631+08:00
+- 模块 ID：V014-20
+- 初始状态：QUEUED
+- 前置依赖：AI-000595
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+按原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-20.md，在原19实际接线与正式导表独审后操作。当前实现有公开 CatalogBlobBuildProcessor.PrepareSnapshot(absoluteEmptyOutputPath)，位于Assets/Editor/Build/CatalogBlobBuildProcessor.cs，实际取正式引用、构造/水合后交CatalogBlobStaging.Export封包并认证。不用BuildPrepared或BuildPlayer，不改ProjectSettings和bundleVersion；产物仅置本次任务证据下全新暂存目录。使用受管官方Unity CLI和实际平台审批，首次status单独。有限验收2项：正式取引用/封包及从写出catalog.bin通过既有CatalogBlobSerializer.Authenticate等正式API读回成功；原17新增角色、段、句与状态条目上对话/标记两列，以AI573 content-diff和当前正式CSV ID逐项核比读回字段值，覆盖空名/空形象或立绘、按句改名、空与none等实有数据，不以仅验证export.json、总计或源码代替真实读回。若数据逻辑失败，按原卡保留原文和失败步骤另交CONTROL，卡内不改发布工具。不访问用户存档，不重复导表或运行Play，不产生发布成品及不新增探针/守卫。Schema v2.5.3（数据包2.5.1，玩家存档2.4.1）。 此卡仅预排，CONTROL独审原19后另派。使用 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000596-scope.json 领取，合同 .ai-workspace/inputs/acceptance/AI-000596.json。写前SupervisionCheckpoint；本卡自己的报告/diff/原始证据/用量置 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000596/attemptN。操作与引擎验收分列，规则/历史/权限保持。正式结算当轮Prepare→一次真实通知绑定CONTROL→Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-20T00:26:25.8787795+08:00: {"policy":{"resourceKeys":["unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原19后分别做原发布准备/文档，前置由控制端独审后再下派。","updatedAt":"2026-11-20T00:26:25.5047284+08:00","supervisionLevel":"full"},"taskId":"AI-000596"}
+## AI-000597 | [CODE] [V014-21] 对话使用说明、占位校对与缺失内容清单
+
+- 序号：597
+- 提交时间：2026-11-20T00:26:26.1950005+08:00
+- 模块 ID：V014-21
+- 初始状态：QUEUED
+- 前置依赖：AI-000595
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+按原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-21.md 的四项逐条编写，依据原19实际保存读回、发布Schema v2.5.3及原17逐ID资料。用户说明只讲真实Inspector、配表、场景和操作步骤，不引用内部任务编号。更新docs/街景NPC内容配置说明.md与docs/参数调整说明_对话.md，新建docs/demo-0.1.4_占位校对清单.md，更新docs/街景NPC缺失内容清单.md。原卡列全的生效/待生效参数和配置时机、真实入口/单位/初值/样例、旁白/按句改名/续接/空与none、触发实时值与对话开始快照如果不同按源码分别写准。按源逐项定位4段9句等占位的核对目的；缺图的规格/名称/已批准目录与替换步骤；存档位置与开发/发布清空已聊记录的真实入口，勿指导删除其它进度或实际访问玩家档。产物供用户阅读；实际06字位/原19观感与用户验收仍待。只改四份正式文档，旧证据原位，CODE不写Assets/配表。 此卡仅预排，CONTROL独审原19后另派。使用 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000597-scope.json 领取，合同 .ai-workspace/inputs/acceptance/AI-000597.json。写前SupervisionCheckpoint；本卡自己的报告/diff/原始证据/用量置 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000597/attemptN。操作与引擎验收分列，规则/历史/权限保持。正式结算当轮Prepare→一次真实通知绑定CONTROL→Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-20T00:26:27.4228797+08:00: {"policy":{"resourceKeys":["documentation"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原19后分别做原发布准备/文档，前置由控制端独审后再下派。","updatedAt":"2026-11-20T00:26:26.9563796+08:00","supervisionLevel":"light"},"taskId":"AI-000597"}
+
+> SUPERVISED EXTEND at 2026-11-20T00:26:28.0181621+08:00: {"reason":"原20、21按19真实读回解锁，用户手工段、原22冒烟及打包门保持。","taskIds":["AI-000596","AI-000597"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-20T00:48:47.8880808+08:00: {"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","cycles":["V01419-SAVED-READBACK-01"],"taskId":"AI-000595","scope":{"paths":[".ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000595","项目整体阅读理解与推进基线_2026-08-14.md","组件说明文档/视觉特效/交互按键提示配置与使用说明.md","组件说明文档/视觉特效/街景NPC_Prefab配置与使用说明.md","组件说明文档/视觉特效/普通对话界面配置与使用说明.md","组件说明文档/视觉特效/README.md","CODEBASE_MAP.md","docs/街景场景状态配置与使用说明.md","docs/街景NPC内容配置说明.md","docs/demo-0.1.4_人工检查说明.md"],"operations":["documentation","evidence-packaging","idempotence-check","native-readonly"]},"verification":"独审保存点E58563381B41、原生读回及145个原对象序列化差异；原19授权内只读收口。未知Editor内存原样保留。独审及Receive已登记；实时ENGINE_CLI idle/completed e634234e-dde2-406e-82f6-7e64a82886f2:110。","rootTaskId":"AI-000595","grantId":"4da48074cab5438f9bbf2ecdee17522a","used":0,"authorizationSource":"POLICY","reserved":1,"remaining":4}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-20T01:35:06.7112582+08:00: {"at":"2026-11-20T01:35:06.5531246+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000572","AI-000573","AI-000574","AI-000575","AI-000576","AI-000577","AI-000578","AI-000579","AI-000580","AI-000581","AI-000582","AI-000583","AI-000584","AI-000585","AI-000586","AI-000587","AI-000588","AI-000589","AI-000590","AI-000591","AI-000592","AI-000593","AI-000594","AI-000595","AI-000596","AI-000597"],"cancelledTaskIds":[],"pendingUserTaskIds":["AI-000580","AI-000581","AI-000582","AI-000585","AI-000586","AI-000587","AI-000589","AI-000590","AI-000593","AI-000597"]}
+## AI-000598 | [ENGINE_CLI] [V014-22] 用户手工完成后的街景普通对话版级冒烟
+
+- 序号：598
+- 提交时间：2026-11-21T00:47:41.8373579+08:00
+- 模块 ID：V014-22
+- 初始状态：QUEUED
+- 前置依赖：AI-000595, AI-000597
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+V014-22 / S40 纯版级验收。原件 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-22.md，用户手工完成 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/手工段完成与立绘到位_20261121.json。实际原19/20/21已独审。正式 scope .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000598-scope.json；合同 .ai-workspace/inputs/acceptance/AI-000598.json。固定ENGINE_CLI官方CLI正常逐项平台审批，首个status独立；先fresh读取当前Edit/场景/Console与既有五组标准预检。上次dirty未知，先按当前状态核实；只在当前已保存干净Street、未Play时用正式EnterPlay一次，约10秒自然运行，既有原生只读API/离线验证过的公开读口，三项原合同：实际运行接入可用、原指定服务/锁/HUD/状态/Selector引用完整且服务空闲；完整增量无新增Error；自然默认状态下五个具名NPC通过当前Registry读取实际绑定对话/标记，无总数判断。精确期望按原卡，仅已证实用户改过这五个占位内容时按原卡备选条件核五人可解析且无诊断错误；调数值不自动触发放宽。用户已调参数及放立绘，保护当前磁盘、用户未保存改动及存档。禁止注入输入/启动对话/强制ApplyState/清记录/重导数据、改资产或代码，禁保存/重载/切场来消除未知脏改。优先复用AI565正式Play/Stop与原生预检、现有服务/调试公开只读查询；不新写门/探针/比较器/身份校验，不截图不CI/Build判定、不作行为时序及卡内修复。完成后以绑定Enter证明正式ExitPlay，读回stopped/场景与Console。若原本在Play不替用户Stop；保护门拒绝则保全结算。验收所有原因首次累计至多3轮，不跨模式清零；同根操作续行另列。交五列定稿现docs人工说明、实际原流/报告（文本包按项目规定），区分本轮人检反馈和机器结果。报告产物 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000598/attemptN；正式结算当轮Prepare/一次实际通知绑定CONTROL/Record，不自领后继。
+
+> SUPERVISED POLICY at 2026-11-21T00:47:55.3569403+08:00: {"taskId":"AI-000598","policy":{"resourceKeys":["narrative-foundation","unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原22纯S40一次Play三合同；用户参数已定，原23整版人工门独立。","updatedAt":"2026-11-21T00:47:55.0895542+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED START at 2026-11-21T00:47:56.0005963+08:00: {"sessionId":"9f429b9a465d40a8b47d427da1bf20c6","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000598"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-21T00:47:55.9989425+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-21T01:02:50.1426507+08:00: {"at":"2026-11-21T01:02:50.1162238+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000598"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+## AI-000599 | [ENGINE_CLI] [V014-23] 正式构建 demo-0.1.4 并验证正常启动退出
+
+- 序号：599
+- 提交时间：2026-11-21T01:06:44.7181752+08:00
+- 模块 ID：V014-23
+- 初始状态：QUEUED
+- 前置依赖：AI-000596, AI-000597, AI-000598
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+V014-23原卡 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/original/cards/V014-23.md。用户整版体验签收并明确冒烟通过直接打包；原20发布预检及原22冒烟独审均通过。本工程Unity 6000.3.24f1，已有0.1.3 AI570 attempt1及成功attempt3正式构建/原生公开API与Player宿主可复用，完整核当前绑定、完整范围和根路径、当前脚本版本，旧身份/许可/证据不复用。固定ENGINE_CLI用正式受管官方CLI按实际权限正常平台审批。第一条独立status。只构建Windows64 Mono非开发Boot+LongLoop_Street到全新release/demo-0.1.4/EatWhat.exe，保旧包、用户已保存的参数/五张立绘/源数据/场景/字体/未保存改动与用户存档。产品版本demo-0.1.3→demo-0.1.4按项目已批准的公共API/场景脏检查/SaveAssets/回读及其余ProjectSettings SHA比较，拒绝手写YAML。使用正常发布数据准备、当前候选指纹审查和安装及编译、生产BuildPrepared真实认证与构建。本轮可用原20预检的staging作依据，实际生产链须核当前数据和当轮产物指纹。Pin现有真实输入与正常恢复流程，不覆盖已有输出、不改共享BuildSettings或已有产品源逻辑。临时输入与Library日记由正式流程处理，无人工清理用户现场。只一次实际普通新Player窗口启动和正常退出，无自动输入/强杀/行为测试/截图/CI；如需要为实际Player开窗口按应用要求走平台审批并核产物路径。两项原合同 buildSucceeded、playerStartsAndExitsNormally。收好运行日志、原构建报告含场景列表/警告与正常退出、最终恢复现场及保护核对；必须指出产生的运行时分发目录与开发调试产物。所有失败保留，操作与验收分计。CONTROL负责载入随包更新说明、人工说明和原21四文档并制作最终可解压交付。任务范围及合同在 .ai-workspace/outputs/control/PLAYABLE-DEMO014-20261119/AI-000599-scope.json、.ai-workspace/inputs/acceptance/AI-000599.json；证据 .ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000599/attemptN。真实Complete或Fail同轮Prepare→一次通知绑定CONTROL→Record。
+
+PROJECT_GRANT_PATH=.ai-workspace/inputs/grants/AI-000599.grant.json
+PROJECT_GRANT_SHA256=2E37A340C85BC720CB1E492E4A536EB8DB66471F08E158F2149D0F00BEA0D09C
+
+> SUPERVISED POLICY at 2026-11-21T01:06:55.7875326+08:00: {"taskId":"AI-000599","policy":{"resourceKeys":["unity-project","data-batch"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"原23用户明确整版通过并直接打包，新目录Windows64两场景；用户后续签收成品。","updatedAt":"2026-11-21T01:06:55.4208702+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED START at 2026-11-21T01:06:56.4272257+08:00: {"sessionId":"042e5c98317f4622a51a4ccec2c926d5","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000599"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-21T01:06:56.4256773+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-21T01:16:51.4482738+08:00: {"taskId":"AI-000599","grantId":"3f99c759807f450f90d56284f56926f4","rootTaskId":"AI-000599","reserved":1,"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","verification":"01a1ceb4-a7ae-7663-8007-8c71e3c93ad1 idle/completed 65190f45-b0f6-4dfe-8e3f-5a17099e5187:55; 首轮已独审：正确实例心跳在发起前34.619秒，预检在业务前停止；原数据完整。仍按既有30秒保护，改为最后采集并立即消费。","used":0,"cycles":["V01423-AI599-operation-1"],"authorizationSource":"POLICY","scope":{"paths":[".ai-workspace/inputs/grants/AI-000599.grant.json",".ai-workspace/outputs/PLAYABLE-DEMO014-20261119/AI-000599","Assets","Library/CatalogBlobBuild.journal.json","Library/LastBuild.buildreport","ProjectSettings/ProjectSettings.asset","release/demo-0.1.4"],"operations":["build","build-owned-temporary-input-create-and-journaled-cleanup","evidence-write","idempotence-check","normal-player-start-once","offline-compilation","project-settings","read-only-inspect","release-package-write","restore-author-scene-setup"]},"remaining":4}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-21T01:32:19.0439174+08:00: {"at":"2026-11-21T01:32:19.0276825+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000599"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+
+> Verification resolved for AI-000580 at 2026-11-21T01:45:09.7697461+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000581 at 2026-11-21T01:45:10.8729368+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000582 at 2026-11-21T01:45:11.8519295+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000585 at 2026-11-21T01:45:12.8277999+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000586 at 2026-11-21T01:45:13.8955177+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000587 at 2026-11-21T01:45:14.8333119+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000589 at 2026-11-21T01:45:15.8829532+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000590 at 2026-11-21T01:45:16.7615729+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000593 at 2026-11-21T01:45:17.6428085+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。
+
+> Verification resolved for AI-000597 at 2026-11-21T01:45:18.4266430+08:00: decision=VERIFIED; summary=0.1.4 用户手工段、整版体验与 Windows64 成品已签收。该卡随本版结清，保留逐轮技术审查。; evidence=用户明确确认整版体验通过，手工调整已保存。成品构建与启动退出条件已满足。依据 .ai-workspace/inputs/派发/PLAYABLE-DEMO014-20261119/用户整版体验通过并批准打包_20261121.json 及同目录 用户成品签收_20261121.json。本次登记整版结论，不单列用户未述的设备或技术测量。

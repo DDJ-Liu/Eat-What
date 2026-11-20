@@ -1,3 +1,45 @@
+## V014-15 头顶标记实际驱动（2026-11-19）
+
+V014-15-R / AI592：原默认入口新增NarrativeHeadMarkerSpawnTests 32项，真实Applier.ApplyDefault/ApplyState→13.ConfigureReferences→Driver.ConfigureSceneBindings，不直接手填驱动场景引用。外部边界只克隆层级/SerializeField本地引用和派发生命周期，沿当前Runtime/01/Core/应用器判断；覆盖预摆、正常生成的子View、全体立即隐藏/最新灰态、重复注入保fade、启停/服务替换/重建退订及旧NPC无标记兼容。原标记26、F8 33、全部旧默认断言不改并通过；正式18/19与人工视觉/输入未代做。
+
+默认入口追加NarrativeHeadMarkerTests，26项执行实际Driver/Core04/Runtime触发Resolver/13绑定/01当前记录与同NPC原气泡链；外部服务仅事件/查询/真实记录句柄，View边界只录入绘制调用，不复制判定、时间、灰色或bob。复用原debug宿主，只新增Time.deltaTime外部游戏时钟句柄；新Driver+渲染句柄入同一host，现全部旧断言源不动。新逻辑涵盖normal/story/none、actual覆盖、专用挂点、幅度/周期/具名模板/零值、全体开始立即隐藏、已聊后首个回样已灰+淡回、NPC不活动/解绑重启与同NPC真实气泡共存，实际记录写任务短隔离目录，不读玩家档。
+
+实际View本体由当前Native SDK闭包编译，并在Narrative既有入口独立追加24项实际绘制组件测试；外部UI/TMP/纹理/层级/排序句柄只替代引擎能力，不声称Native字体、渲染或GPU释放。初次双入口通过后，复核补服务记录就绪门，避免记录未知时初始亮闪；只复验Street默认，最终驱动26/显示24通过，初次s1结果保留，Narrative及View源不变。原Street全部99/44/142/34/6/11/26/82/47/21/38/66和三条件各6保持；不跑镜头四模式/地面/配表/V26。原15首attempt因scope缺显示源正式失败，CONTROL同根补范围后attempt2实施，旧失败与根1/5保留，非重编号。
+
+## V014-14 实际状态绑定和01清除（2026-11-19）
+
+既有默认入口追加NarrativeSceneStateDialogueTests，66项运行实际Application/Applier.Actor、Runtime/Adapter、13触发器、01 NarrativeTalkedPersistence和当前Toolkit JsonSaveStore/Factory/HMAC。外部服务仅查询/事件/同一真实记录引用；Unity行/层级/克隆/Marker生命周期由保留debug宿主能力边界交付，未复制应用、绑定、登记或记录算法。原debug边界新增通用可选InstantiateFactory/ActiveChanged钩子和标准GetComponents/AddComponent(Type)/构造能力，默认null保旧宿主，只有新测试配置并finally清；克隆仅复制序列化字段/引用并投递生产Marker回调。真实Unity时序未在本卡验证。
+
+原默认所有断言保持：99/44/142/34/6/11/26/82/锁47/挂点21/交互38和三条件各6。头部生产SDK全闭包仍编译真实服务/持久化。debug宿主加实际13与01源、Toolkit/Newtonsoft/Mono netstandard facade；原交互38改从同一debug宿主引用现类型，避免重复类型定义，断言文件不改。新增组的真实签名文件位于本轮输出旁的独立短目录（如Final2-default-state-record），不是用户存档；冷读保未关联ID和其它有效节。只验证当前Toolkit构建分支，不重跑01三种模式全量或配表/V26/镜头模式。
+
+Final1扩展宿主编译因缺netstandard报CS0012，新66项未运行，原stderr/stdout与闭包保持；补facade后Final2默认全通过，同键FAILED→RESOLVED。新用例覆盖首次/首次显式无重置、重复/不同状态清目标、空继承/明确none、inactive绑定、未涉及/本态省略预摆、进行中拒绝、晚出现记录、单独记录和空连接兼容，并证明实际生成完整ID无空登记诊断。临时初始化父节点归Applier.EndApplication关闭，镜头/01/Core/旧测试源码SHA保。无新长期工具/探针/守卫/比较器，原19接线/表现及06人工另列。
+
+## V014-11-R 实际最终目标缓收（2026-11-19）
+
+AI591复用四模式，最终证据为Final1的follow-driver和Final3的follow-driver-v012/look-float/dynamic-zoom；生产源码在Final1后未再改。v012附加双门组1856（原196保数量，直接冲突一项修改；新增1660），新增各用例记录真实Driver Target及同输入/脚点轨迹的无浮动基线，两轴覆盖保存2.5/4/0.8、正鼠标/负手柄、进入动画、归一化目标大于实际世界值、零时、极低/零速度、门关闭、持续输入不新起，并检查真实余量的兴趣点隔离/最终裁切。四原模式其它断言保持，仅原Driver两项最终清零冲突断言按裁决修正。生产StreetLookFloat/Composition/Zoom/状态组件与资产均保原SHA。
+
+Final1新对照轨迹在进入门时低于原移动阈值，浮动版和无浮动版进入不同返回挂起分支，最终Target差异断言失败。改新轨迹为持续移动、保全部目标断言；Final2数值轨迹报告直接序列化Unity Vector.normalized引起循环引用且掩盖原异常。改为标量数组并先输出原异常，Final3带RepeatReason通过。两次失败→同键RESOLVED，原stderr/编译/回归闭包保留。后两模式只在Final3首次实际执行，已过的Final1 follow-driver未重复，未伪补运行历史。外部Unity/Input/服务事件为原宿主能力边界，生产算法/真实CM Composer沿既有入口；无Native/新探针/Build判定，画面仍留原19后人工。
+
+## V014-13 NPC交互与发起者气泡门（2026-11-19）
+
+默认入口追加NpcDialogueInteractionTests，38项调用实际NarrativeDialogueTrigger/StreetInteractionSelection、既有Core选择规则/Runtime取值器及气泡Trigger/Driver/Model/View；保留旧99/44/142/34-6-11/26/82/锁47/挂点21与三构建条件各6项原断言。外部服务仅模拟TryStart/查询/事件，提示/输入、场景层级/行/表面与原debug宿主地面能力为替身；不复制服务状态机、距离换算、气泡或选择算法。真实StreetInteractionSelector组件由当前生产SDK闭包编译，未在该宿主运行其Unity生命周期。独立--ground-space沿原入口29项验证实际GroundSpaceMath；两处生产调用均沿同一GroundSpace.GroundDistance。此卡不跑四镜头模式、Narrative全量、V26或配表。
+
+首次新夹具误用ConfigureFactory导致CS1061，FAILED/RESOLVED同键记录及原日志保留；修为实际ConfigureSurfaceFactory后默认通过。随后源码复核补上Show失败时隐藏旧NPC提示/清显示缓存，并追加失败恢复两项，第三次默认带RepeatReason通过；未重跑未变化的ground-space。共默认3次、ground-space1次，引擎0次。新增NarrativeInteractionServiceBoundary仅为离线外部API边界，不进生产程序集。输出npc-interaction.stdout.bin、offline-validation.json.npcInteractionTest；无新探针/守卫/比较器，原断言文件不改。场景19接线、原生按键/HUD、仅发起者气泡和原06字位由人工说明承接。
+
+## NPC三表现挂点（V014-24，2026-11-19）
+
+NpcShell新增MarkerAnchor/PromptAnchor/BubbleAnchor，各自空时回旧HeadAnchor；原Foot/Visual/Head与ConfigureReferences保持，新ConfigurePresentationAnchors只设三引用。Trigger仍按原实际speaker查壳，改取BubbleAnchor，不改Driver/View/Renderer或冷却/上移。标记/提示消费留后继，Prefab/场景三子点归18/19。本卡只源码与离线，字段/单位/五列说明在原NPC/气泡配置文档维护。
+
+原默认入口在全部旧组后追加NpcPresentationAnchorTests，直接引用本轮已编译的原debug宿主实际Shell/Registry/Trigger/Driver/Model/View，只复用原外部场景/行/文本/表面边界，不新建替身或算法。逐项结果在npc-anchors.stdout.bin及offline-validation.json.npcPresentationAnchorsTest；原壳142与默认各组断言保持，原Narrative入口保气泡82/47。未使用已冻结探针，未Unity/视觉签收。
+
+## 操作锁（V014-10，2026-11-19）
+
+新增OperationLock（同名MonoBehaviour及稳定meta）正式实现Core.INarrativeDialogueLock。Lock/Unlock按Ordinal持有者名幂等维护同一集合，公开IsLocked/HolderCount/IsHeldBy；首位Locked、最后一位Unlocked，重复持有不叠加。未知释放返回false，LastDiagnostic和Unity warning指出名字；空白名字拒绝。Acquire/Release复用同一集合，时间参数归FSM，不在锁内计时。没有对话专用限制或禁用时自动释放他人锁。
+
+主角Inspector的Operation Lock默认None；后继接同一个共享锁，服务也注入该INarrativeDialogueLock。ConfigureOperationLock可显式绑定/解绑。只在Update读取移动输入前新增一次IsLocked判断，调用原StopMovement并返回；未接锁保旧路径，原移动/朝向/形象/物理方法不改。生效点是控制器Update，外部强制放置/直接写位置应由调用方遵守锁所有权；没有新增移动参数或场景改动。
+
+原默认Test-LongLoopPlayer.py入口末尾追加OperationLockTests，直接编译/执行实际锁、主角和真实Core接口，复用原WalkAreaUnityShim的外部输入/Transform/Rigidbody边界，不复制运动/锁算法。旧99/目标44/壳142/状态34-6-11/调试26及编译隔离保持。所有LongLoop生产闭包补新锁源；原walk/depth控制器宿主只补类型依赖与Core引用，旧夹具不绑定锁、断言不改，本卡仅执行原卡点名默认模式。结果在operation-lock.stdout.bin及offline-validation.json.operationLockTest；无Unity/设备/原生动画验收。五列人工说明见../../docs/demo-0.1.4_人工检查说明.md。
+
 ## V013-07 实际气泡触发依赖（2026-11-16）
 
 ## V013-08 调试路由与编译隔离（2026-11-16）
@@ -126,6 +168,19 @@ Inspect把编译/请求能力与场景readiness分开，缺两旧GUID迁移/Came
 2026-11-06 AI447框架Edit SMOKE局部实核：当前官方菜单首次缺SMK，按明确授权一次正常recompile/AssetDatabase.Refresh后，实际Domain五菜单出现；本轮Inspect原生compiledMenu/requestAccepted/cleanupIdle均true且isPlaying=false。10次官方调用exit0，三项固定合同，不含Play或版本验收。两Probe及Street收尾字节不变，框架未修改。当前玩家/出生点完整路径为/PlayerRoot_TUNE与/PlayerSpawn_TUNE；新SMK需另绑实际claim，不能复用本卡请求。详情.ai-workspace/outputs/PLAYABLE-DEMO011-20261104/AI-000447/attempt1/REPORT.md，CONTROL独立验收仍另记；不提高项目完整核验日期。
 
 # LongLoop 短冒烟入口
+
+## V014-11 对话与镜头接管双门（2026-11-19）
+
+只读审计：StreetFollowDriver实际Moving/纵向速度一直由FollowPoint.Foot位移和Cinemachine时间推得，不读IStreetChannelState.VelocityWorld；兴趣列表NearbyInterests当前也未消费。输入依次为provider.Input→gameState父链IGameInput→Foot父链；无IGameInput时旧直接Player引用才用MoveInput的纵向备用。本卡保留这些分支，不改玩家、移速/真实脚点算法或兴趣点填充。
+
+IStreetChannelState新增CameraOverridden；旧DialogueOrCinematic名字保留，语义仅“对话进行中”，供已有偏移门。驱动只把实时zoom Frozen改为FreezeOnOverride&&CameraOverridden，正常/重置调用都传该独立标志；NonLive/warp/配置重绑等旧策略不改。LookFloat.Gated和look intent仍读dialogue门。AI591按后续用户裁决修正最终合成：Driver从实际世界偏移复用原退出插值/LimitWorld，FollowClipContext.LookInputGated只为已挡新输入的真实退出余量放行；默认false的原始输入纯管线仍硬门控，兴趣点始终立即清，裁切不改。旧586立即清最终浮动的结论已被CONTROL拒验，历史输出保留。
+
+新增StreetDialogueGameState（同名MonoBehaviour/meta）：订阅已独审NarrativeDialogueService开始/结束，读取服务IsRunning同步标志，CameraOverridden本版恒false。Configure/启用可同步已在进行的对话，禁用/销毁/重绑解绑并清门。Player Foot须接与Driver同一真实Foot；Input Provider可接现玩家IGameInput，空时沿Foot父链，返回原输入对象、不再采样按键。兼容VelocityWorld按实际Foot位置/Unity游戏时间差给世界u/s（首采样0），当前Driver仍不使用；NearbyInterests固定只读空表。场景由原19接Driver.Game State，不在本卡保存。
+
+原四模式--follow-driver/--follow-driver-v012/--look-float/--dynamic-zoom全部首轮通过。旧三夹具只补接口成员，Freeze用例依原卡同时设/清两标志，所有旧断言不改。v012原主程序之后单独编译/运行StreetDialogueGateTests，196项实际Driver/CM回调/纯镜头/新状态组件，fake服务仅事件/query句柄，不复制09算法；生产闭包仍用真实Narrative.Unity/Unity DLL编译。原LongLoop依赖编译补01已需的现Newtonsoft DLL引用，无版本/封装修复。结果在原offline-validation.json.dialogueGateTest及dialogue-gates.stdout.bin；旧logicTest/logicCompile仍指原主程序。
+
+未执行实际Unity/Play、任何FollowR/CI/构建探针或原生行为验收。原四模式里既有源码编译/纯断言保留，不把冻结FOLLOW-R作为验收；新机器合同仍2项。当前资产只读：GateOffsetsInDialogue=true、FreezeOnOverride=true、ShrinkDelay10秒（源码0）、LookOutTime0.8秒（源码0.5）。原19/画面与0.1.4人工门保持，五列与配置见docs。
+
 
 2026-11-07 AI454局部维护：SmokeRun帧检查使用TryReadLiveState一次WaitOne(0)，同一现队列互斥内读取三状态文本、关文件并释放锁后严格解析。BUSY只保持自有输入中立并StopMovement，不读旧JSON、不采运动样本或判PASS；安装后也先中立。原0.5秒live检查节奏保留，锁忙后逐帧尝试，恢复必须fresh检查通过。Sequence暂停只扣除每向0.3秒中的中立时段，原Begin开始的总8秒不延期，截止仍失败/清理；外来输入或原stop/lease/JSON/IO/目标错误仍及时停止。通用同步JsonFile500ms、writer/ACL/会计不变。现--street-frame-read编译实际SmokeRun/ValidateSmokeRequest源片段及Sequence/读取器，以真实Windows互斥/JSON测试三个具名场景；Unity状态、控制器、JSON落盘是透明离线边界，非产品运动或Unity原生通过。当前修复仍须CONTROL独立后具体加载及框架SMOKE，不在验收卡临场修复或自行续行451。
 

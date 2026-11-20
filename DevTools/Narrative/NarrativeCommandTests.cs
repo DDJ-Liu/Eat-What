@@ -231,6 +231,10 @@ internal static class NarrativeCommandTests
         NarrativeDataDirectoryTests.Run();
         DialoguePresentationResolverTests.Run(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(args[0]), "PresentationDefaults.v2_5.tsv"));
         NarrativeDialogueStateMachineTests.Run();
+        NarrativeTypewriterTests.Run();
+        NarrativeStepSequenceTests.Run();
+        NarrativeInteractionRulesTests.Run();
+        NarrativeTalkedRecordTests.Run();
         return 0;
     }
 }

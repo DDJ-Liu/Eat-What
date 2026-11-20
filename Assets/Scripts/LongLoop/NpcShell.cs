@@ -12,8 +12,14 @@ namespace EatWhat.LongLoop
         private Transform foot = null;
         [SerializeField, Tooltip("Child mount with the existing DepthScale/SortingGroup; only its children are appearances.")]
         private Transform visualMount = null;
-        [SerializeField, Tooltip("Stable bubble attachment point outside the replaceable visual subtree.")]
+        [SerializeField, Tooltip("Stable fallback head point outside the replaceable visual subtree.")]
         private Transform headAnchor = null;
+        [SerializeField, Tooltip("Marker point. Empty falls back to Head Anchor.")]
+        private Transform markerAnchor = null;
+        [SerializeField, Tooltip("Interaction prompt point. Empty falls back to Head Anchor.")]
+        private Transform promptAnchor = null;
+        [SerializeField, Tooltip("Bubble point. Empty falls back to Head Anchor.")]
+        private Transform bubbleAnchor = null;
 
         private bool hasFacing;
         private bool facingRight = true;
@@ -23,6 +29,9 @@ namespace EatWhat.LongLoop
         public Transform Foot => foot;
         public Transform VisualMount => visualMount;
         public Transform HeadAnchor => headAnchor;
+        public Transform MarkerAnchor => markerAnchor != null ? markerAnchor : headAnchor;
+        public Transform PromptAnchor => promptAnchor != null ? promptAnchor : headAnchor;
+        public Transform BubbleAnchor => bubbleAnchor != null ? bubbleAnchor : headAnchor;
         public bool IsFacingRight => hasFacing ? facingRight : visualMount == null || visualMount.localScale.x >= 0f;
         public GameObject CurrentVisual => visualMount != null && visualMount.childCount > 0
             ? visualMount.GetChild(0).gameObject : null;
@@ -34,6 +43,9 @@ namespace EatWhat.LongLoop
             visualMount = mountReference;
             headAnchor = headReference;
         }
+
+        public void ConfigurePresentationAnchors(Transform marker, Transform prompt, Transform bubble)
+        { markerAnchor = marker; promptAnchor = prompt; bubbleAnchor = bubble; }
 
         public bool SetFacing(bool right)
         {

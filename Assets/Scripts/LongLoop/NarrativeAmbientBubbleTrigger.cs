@@ -17,9 +17,13 @@ namespace EatWhat.LongLoop
         private string poolId = string.Empty;
         [SerializeField, Tooltip("Optional caller trigger template; empty uses the original default resolver.")]
         private string triggerTemplate = string.Empty;
+        [SerializeField] private NarrativeDialogueService dialogueService = null;
         private NarrativeAmbientBubbleDriver driver;
         private string boundNpcId;
         private int reportedDiagnostics;
+        public bool SuppressesNewBubbles => dialogueService != null && dialogueService.IsRunning && actorMarker != null &&
+            string.Equals(dialogueService.InitiatorId, actorMarker.CharacterId, StringComparison.Ordinal);
+        public void ConfigureDialogueService(NarrativeDialogueService service) { dialogueService = service; }
         public string PoolId => poolId;
         public string TriggerTemplate => triggerTemplate;
 
@@ -43,7 +47,7 @@ namespace EatWhat.LongLoop
         { poolId = value ?? string.Empty; if (driver != null) driver.ChangePool(poolId); }
 
         private void Update()
-        { EnsureDriver(); driver.Tick(Time.timeAsDouble, count => UnityEngine.Random.Range(0, count)); ReportDiagnostics(); }
+        { EnsureDriver(); if (!SuppressesNewBubbles) driver.Tick(Time.timeAsDouble, count => UnityEngine.Random.Range(0, count)); ReportDiagnostics(); }
 
         private void EnsureDriver()
         {
@@ -63,7 +67,7 @@ namespace EatWhat.LongLoop
         public bool DebugForceBubble()
         {
             if (!isActiveAndEnabled) return false;
-            EnsureDriver(); string issue;
+            EnsureDriver(); if (SuppressesNewBubbles) return false; string issue;
             if (!ValidateNpcBinding(out issue)) { Debug.LogWarning("NarrativeAmbientBubbleTrigger: " + issue, this); return false; }
             bool emitted = driver.DebugForce(Time.timeAsDouble, count => UnityEngine.Random.Range(0, count));
             ReportDiagnostics(); return emitted;
@@ -96,9 +100,10 @@ namespace EatWhat.LongLoop
             if (targetRegistry == null || !targetRegistry.TryGetActor(speakerId, out actor))
             { diagnostic = "Speaker is not registered in this scene."; return false; }
             var shell = actor.GetComponent<NpcShell>();
-            if (shell == null || shell.HeadAnchor == null || !shell.HeadAnchor.gameObject.activeInHierarchy)
-            { diagnostic = "Speaker has no active NpcShell Head Anchor."; return false; }
-            head = shell.HeadAnchor; return true;
+            var anchor = shell == null ? null : shell.BubbleAnchor;
+            if (anchor == null || !anchor.gameObject.activeInHierarchy)
+            { diagnostic = "Speaker has no active NpcShell Bubble Anchor (or Head Anchor fallback)."; return false; }
+            head = anchor; return true;
         }
     }
 }

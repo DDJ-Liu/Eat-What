@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$OutputRoot = $env:EATWHAT_NARRATIVE_OUTPUT_ROOT,
-    [string]$UnityEditorPath = 'C:/Program Files/Unity/Hub/Editor/6000.3.24f1/Editor'
+    [string]$UnityEditorPath = 'C:/Program Files/Unity/Hub/Editor/6000.3.24f1/Editor',
+    [switch]$SkipDataRegressions
 )
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -25,6 +26,7 @@ $modelSources += (Join-Path $PSScriptRoot 'NarrativeAmbientBubbleTests.cs')
 $modelSources += @(
     (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/DialoguePresentationConfig.cs'),
     (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeRuntimeEntry.cs'),
+    (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeDialogueContinuationPolicy.cs'),
     (Join-Path $PSScriptRoot 'NarrativeRuntimeUnityBoundary.cs'),
     (Join-Path $PSScriptRoot 'NarrativeRuntimeEntryTests.cs'))
 # V013-07 actual coordinator/view; external time/head/UI fixture capabilities only.
@@ -48,6 +50,8 @@ $modelPreflight = [ordered]@{
 }
 $modelPreflight | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutputRoot 'model-host.preflight.json')
 & $modelHost -CompileOnly -AdditionalCompileSources $modelSources
+# Explicit card-level opt-out only; default data/V26/authoring calls and assertions stay unchanged.
+if (-not $SkipDataRegressions) {
 $tableReport = [NarrativeTableFixtureTests]::Run($repositoryRoot)
 [IO.File]::WriteAllText((Join-Path $OutputRoot 'table-fixture.json'), $tableReport)
 Write-Output $tableReport
@@ -57,8 +61,13 @@ Write-Output $modelReport
 $validationReport = [NarrativeValidationTests]::Run($repositoryRoot)
 [IO.File]::WriteAllText((Join-Path $OutputRoot 'validation-fixture.json'), $validationReport)
 Write-Output $validationReport
+# V014-OPT appended cases; original validation group and assertions above remain unchanged.
+$v26Report = [NarrativeValidationTests]::RunV26($repositoryRoot)
+[IO.File]::WriteAllText((Join-Path $OutputRoot 'validation-v26.json'), $v26Report)
+Write-Output $v26Report
 . (Join-Path $PSScriptRoot 'NarrativeTableAuthoringTests.ps1')
 Invoke-NarrativeTableAuthoringTests -RepositoryRoot $repositoryRoot -OutputRoot (Join-Path $OutputRoot 'table-authoring')
+}
 $chainReport = [NarrativeHeadlessChainTests]::Run($repositoryRoot, (Join-Path $OutputRoot 'headless-chain'))
 [IO.File]::WriteAllText((Join-Path $OutputRoot 'headless-chain.json'), $chainReport)
 Write-Output $chainReport

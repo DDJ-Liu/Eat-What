@@ -158,4 +158,65 @@ public static class NarrativeValidationTests
         var oldCsv=DataTableCsvParser.Parse("id\n\"\"\n"); var oldStrict=DataTableValidator.Validate(oldSchema,oldCsv,new DataTableValidationContext());var enabled=new DataTableValidationContext();NarrativeTableValidation.Enable(enabled,new DialoguePresentationData(),(a,b)=>new List<string>());var oldDomain=DataTableValidator.Validate(oldSchema,oldCsv,enabled);Check(oldStrict.Errors.SequenceEqual(oldDomain.Errors)&&oldStrict.Warnings.SequenceEqual(oldDomain.Warnings)&&oldDomain.Infos.Count==0,"unrelated table diagnostics identical with domain enabled");
         return JsonConvert.SerializeObject(new {passed=true,checks,isolatedCases=cases,cleanGenericErrors=0,cleanV13Through24Diagnostics=0,syntheticInputs=true,nativeUnity=false,observations});
     }
+
+    // V014-OPT appended admission cases. Reuses the original Input/Context/validator; original Run assertions stay unchanged.
+    public static string RunV26(string root)
+    {
+        int count=0; var observations=new List<object>();
+        Action<bool,string> assert=(value,message)=>{count++;if(!value)throw new Exception("V26: "+message);};
+        var frozen=JObject.Parse(File.ReadAllText(Path.Combine(root,"DevTools/Narrative/Fixtures/ValidationV26/historical.json")));
+        Func<bool,Input> historical=before=>
+        {
+            var input=new Input(root);
+            foreach(var item in ((JObject)frozen["tables"]).Properties())
+                input.Tables[item.Name]=DataTableCsvParser.Parse((string)item.Value);
+            if(before) input.Tables["SceneStatePlacements"]=DataTableCsvParser.Parse((string)frozen["historicalPlacement"]);
+            return input;
+        };
+        Func<Input> pair=()=>
+        {
+            var input=historical(true);var rows=input.Tables["SceneStatePlacements"].Table.Rows;
+            var recipient=rows[0];var initiator=rows[2]; rows.Clear();rows.Add(recipient);rows.Add(initiator);return input;
+        };
+        Func<string,Input,int,string[]> checkCase=(name,input,expected)=>
+        {
+            var results=input.Validate();
+            assert(results.Values.All(x=>x.Errors.Count==0),name+" remains nonblocking with no generic errors");
+            var messages=results["SceneStatePlacements"].Warnings.Where(x=>x.Contains("[V-26]")).ToArray();
+            assert(messages.Length==expected,name+" exact V26 count; actual="+messages.Length);
+            assert(results.Values.SelectMany(x=>x.Infos).All(x=>!x.Contains("[V-26]")),name+" warning severity only");
+            observations.Add(new{name,expected,messages});return messages;
+        };
+        var old=checkCase("actual-0.1.3-before",historical(true),2);
+        assert(old.Any(x=>x.Contains("Actor 'chr_test_tomato'")&&x.Contains("line 'ln_test_pair_01'")),"historical tomato own pool plus explicit paired speaker detected");
+        assert(old.Any(x=>x.Contains("Actor 'chr_test_passer_a'")&&x.Contains("line 'ln_test_pair_02'")),"historical base passer also detected");
+        assert(old.All(x=>x.Contains("state 'test_default'")&&x.Contains("actor 'chr_test_passer_a#2'")),"suffixed initiator can explicitly address unsuffixed recipients; inactive second-state source excluded");
+        checkCase("repaired-frozen-production",historical(false),0);
+        var hit=checkCase("isolated-hit",pair(),1);
+        assert(hit[0].StartsWith("CSV line 2: field 'ambient_pool' [V-26]",StringComparison.Ordinal),"exact report row field and rule");
+        assert(hit[0].Contains("scene 'scn_test_street'")&&hit[0].Contains("state 'test_default'")&&hit[0].Contains("pool 'amb_test_a'")&&hit[0].Contains("pool 'amb_test_c'"),"both table pools and scene/state are actionable");
+        var x=pair();x.Set("SceneStatePlacements",0,"ambient_pool","");checkCase("recipient-pool-blank-instance-not-inspected",x,0);
+        x=pair();x.Set("SceneStatePlacements",1,"ambient_pool","");checkCase("initiator-pool-blank-instance-not-inspected",x,0);
+        x=pair();x.Set("SceneStatePlacements",0,"active","false");checkCase("recipient-inactive",x,0);
+        x=pair();x.Set("SceneStatePlacements",1,"active","false");checkCase("initiator-inactive",x,0);
+        x=pair();x.Set("SceneStatePlacements",1,"state_id","test_second");checkCase("different-state",x,0);
+        x=pair();x.Set("SceneStatePlacements",1,"scene_id","scn_other");checkCase("different-scene",x,0);
+        x=pair();x.Set("SceneStatePlacements",0,"target","chr_test_tomato#2");checkCase("recipient-suffix-does-not-match-base-speaker",x,0);
+        x=pair();x.Set("SceneStatePlacements",0,"ambient_pool","amb_test_c");x.Tables["SceneStatePlacements"].Table.Rows.RemoveAt(1);checkCase("own-pool-speaking-self-is-not-another-initiator",x,0);
+        int firstPairLine=historical(true).Tables["DialogueLines"].Table.Rows.FindIndex(r=>r.Values[0]=="ln_test_pair_01");
+        int secondPairLine=historical(true).Tables["DialogueLines"].Table.Rows.FindIndex(r=>r.Values[0]=="ln_test_pair_02");
+        assert(firstPairLine>=0&&secondPairLine>=0,"frozen actual pair line indices located");
+        x=pair();x.Set("DialogueLines",firstPairLine,"speaker","");checkCase("implicit-speaker-is-not-an-explicit-base-id",x,0);
+        x=pair();x.Set("DialogueLines",firstPairLine,"speaker","chr_test_tomato2");checkCase("speaker-id-prefix-is-not-exact",x,0);
+        x=pair();x.Set("DialogueLines",secondPairLine,"speaker","chr_test_tomato");checkCase("two-matching-lines-one-warning-per-recipient",x,1);
+        x=pair();x.Set("SceneStatePlacements",1,"ambient_pool","amb_test_b");checkCase("other-pool-has-no-explicit-recipient",x,0);
+        x=pair();x.Set("SceneStatePlacements",1,"ambient_pool","amb_missing");checkCase("missing-pool-left-to-existing-reference-warning",x,0);
+        x=pair();x.Set("AmbientPools",2,"dialogue_ids","dlg_test_single_a;dlg_test_pair");checkCase("later-dialogue-in-pool-is-traversed",x,1);
+        x=pair();x.Set("AmbientPools",2,"dialogue_ids","dlg_test_single_a");checkCase("unreferenced-pair-lines-do-not-count",x,0);
+        x=pair();x.Set("SceneStatePlacements",1,"kind","object");checkCase("non-actor-initiator-excluded",x,0);
+        x=pair();x.Set("SceneStatePlacements",0,"kind","object");checkCase("non-actor-recipient-excluded",x,0);
+        return JsonConvert.SerializeObject(new{passed=true,checks=count,cases=observations.Count,actualProductionValidator=true,
+            historicalPlacementSource=(string)frozen["provenance"][0]["path"],historicalSourceSha256=(string)frozen["provenance"][0]["sha256"],
+            runtimeDependsOnActiveOutputs=false,sceneInstancePoolsInspected=false,nativeUnity=false,observations});
+    }
 }

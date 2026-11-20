@@ -135,8 +135,8 @@ MonoBehaviour:
       symbolPopTime: 0.2
     text:
     - name: default
-      charsPerSecond: 30
-      punctuationPause: 0.1
+      charsPerSecond: 25
+      punctuationPause: 0.07
       punctuationSet: "\uFF0C\u3002\uFF01\uFF1F\uFF5E\u2026\u3001\uFF1B\uFF1A,.!?"
       clickWhileTyping: 0
       clickWhileTypingFast: 1
