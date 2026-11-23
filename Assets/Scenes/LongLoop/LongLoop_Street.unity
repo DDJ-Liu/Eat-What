@@ -1446,6 +1446,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa761f25c46946e390dc58becd966471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Narrative.Unity::EatWhat.Narrative.Unity.NarrativeDialogueBoxView
+--- !u!114 &847830000 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3802633680596575184, guid: 2f11438ca51943e4492259e7d9623aef, type: 3}
+  m_PrefabInstance: {fileID: 847829996}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb3c0cc64b145839895771ec841331a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Narrative.Unity::EatWhat.Narrative.Unity.NarrativePortraitStage
 --- !u!1001 &903216142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2107,6 +2118,51 @@ Transform:
   - {fileID: 804829079}
   m_Father: {fileID: 2019166426}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1316302731
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1316302733}
+  - component: {fileID: 1316302732}
+  m_Layer: 0
+  m_Name: test_street_05_TUNE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1316302732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316302731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93cf2eb1d8644a628af58e5fd46ea8bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NarrativeAnchorMarker
+  anchorId: test_street_05
+--- !u!4 &1316302733
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316302731}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.4, y: -4.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1335000503
 GameObject:
   m_ObjectHideFlags: 0
@@ -2340,6 +2396,7 @@ GameObject:
   - component: {fileID: 1376563300}
   - component: {fileID: 1376563299}
   - component: {fileID: 1376563298}
+  - component: {fileID: 1376563303}
   m_Layer: 0
   m_Name: StreetDialogue_TUNE
   m_TagString: Untagged
@@ -2424,6 +2481,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1376563303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376563297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04bddf3e6b2847ea8ef616ae4b6bcafa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LongLoop::EatWhat.LongLoop.NarrativeStreetReactionAdapter
+  dialogueService: {fileID: 1376563301}
+  targetRegistry: {fileID: 1521806782}
+  streetCamera: {fileID: 184533470}
+  playerController: {fileID: 2019166425}
 --- !u!1 &1466702682
 GameObject:
   m_ObjectHideFlags: 0
@@ -3360,6 +3433,7 @@ MonoBehaviour:
   stateApplier: {fileID: 391129363}
   targetRegistry: {fileID: 1521806782}
   dialogueService: {fileID: 1376563301}
+  portraitStage: {fileID: 847830000}
   toggleKey_TUNE: 101
   window_TUNE:
     serializedVersion: 2
@@ -3738,3 +3812,4 @@ SceneRoots:
   - {fileID: 1704730409}
   - {fileID: 1376563302}
   - {fileID: 477843314}
+  - {fileID: 1316302733}

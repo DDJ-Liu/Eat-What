@@ -57,6 +57,21 @@ public static class CatalogBlobSerializer
         long id; if (!long.TryParse(value.Substring(33), NumberStyles.Integer, CultureInfo.InvariantCulture, out id) || id == 0) throw new FormatException("Invalid localID.");
         return value;
     }
+    // Shared formal build collection: capture's actual identity walk supplies both persistent registries.
+    public static JObject CaptureReferences(CK01GeneratedDataCatalog catalog, Func<UnityEngine.Object,string> identity,
+        IEnumerable<ScriptableObject> allDataAssets, Func<ScriptableObject,string,Sprite,bool> emptySprite,
+        Func<ScriptableObject,string,GameObject,bool> emptyPrefab, out List<CatalogSpriteReference> sprites,
+        out List<CatalogPrefabReference> prefabs)
+    {
+        var spriteRegistry = new SortedDictionary<string,Sprite>(StringComparer.Ordinal);
+        var prefabRegistry = new SortedDictionary<string,GameObject>(StringComparer.Ordinal);
+        var graph = Capture(catalog, asset => {
+            var key = Key(identity(asset)); var sprite = asset as Sprite; if (sprite != null) spriteRegistry[key] = sprite;
+            var prefab = asset as GameObject; if (prefab != null) prefabRegistry[key] = prefab; return key;
+        }, allDataAssets, emptySprite, emptyPrefab);
+        sprites = spriteRegistry.Select(x => new CatalogSpriteReference(x.Key,x.Value)).ToList();
+        prefabs = prefabRegistry.Select(x => new CatalogPrefabReference(x.Key,x.Value)).ToList(); return graph;
+    }
     public static JObject Capture(CK01GeneratedDataCatalog catalog, Func<UnityEngine.Object,string> identity, IEnumerable<ScriptableObject> allDataAssets = null)
     { return Capture(catalog, identity, allDataAssets, null); }
     public static JObject Capture(CK01GeneratedDataCatalog catalog, Func<UnityEngine.Object,string> identity, IEnumerable<ScriptableObject> allDataAssets,
@@ -163,8 +178,17 @@ public static class CatalogBlobSerializer
             var prefabRecords=graph["prefabs"] as JArray;if(prefabRecords==null)throw new FormatException("Invalid Prefab registry.");
             foreach(var token in prefabRecords){var key=Key((string)token);if(prefabs.ContainsKey(key))throw new FormatException("Duplicate Prefab key.");var prefab=metadataOnly?null:resolvePrefab(key);if(!metadataOnly&&prefab==null)throw new FormatException("Missing stable Prefab: "+key);prefabs.Add(key,prefab);}
         }
+        var rowFields = new Dictionary<string,JObject>(StringComparer.Ordinal);
         foreach(var pair in nodes)
-        { var fields=(JObject)pair.Value["fields"];ExactFields(fields,Fields(types[pair.Key]).Select(f=>f.Name));foreach(var field in Fields(types[pair.Key]))ReadValue(fields[field.Name],field.FieldType,null,types,sprites,prefabs,0); }
+        {
+            var fields=pair.Value["fields"] as JObject;
+            // Old Character packets alone may omit the newly derived nullable Sprite. Never mutate authenticated input.
+            if(types[pair.Key]==typeof(CK01CharacterData) && fields!=null && fields.Property(nameof(CK01CharacterData.portrait_sprite_asset))==null)
+            { fields=(JObject)fields.DeepClone();fields.Add(nameof(CK01CharacterData.portrait_sprite_asset),JValue.CreateNull()); }
+            ExactFields(fields,Fields(types[pair.Key]).Select(f=>f.Name));
+            foreach(var field in Fields(types[pair.Key]))ReadValue(fields[field.Name],field.FieldType,null,types,sprites,prefabs,0);
+            rowFields.Add(pair.Key,fields);
+        }
         var tableNames=new HashSet<string>(StringComparer.Ordinal);
         foreach(var entry in tableRecords)
         {
@@ -178,7 +202,7 @@ public static class CatalogBlobSerializer
         try
         {
             foreach(var pair in types){var item=ScriptableObject.CreateInstance(pair.Value);owned.Add(item);objects.Add(pair.Key,item);item.name=(string)nodes[pair.Key]["name"];}
-            foreach(var pair in objects)foreach(var field in Fields(types[pair.Key]))field.SetValue(pair.Value,ReadValue(nodes[pair.Key]["fields"][field.Name],field.FieldType,objects,types,sprites,prefabs,0));
+            foreach(var pair in objects)foreach(var field in Fields(types[pair.Key]))field.SetValue(pair.Value,ReadValue(rowFields[pair.Key][field.Name],field.FieldType,objects,types,sprites,prefabs,0));
             var tables=new List<CK01GeneratedDataTable>();foreach(JObject table in tableRecords){var rows=new List<CK01GeneratedDataRowReference>();foreach(JObject row in (JArray)table["rows"])rows.Add(new CK01GeneratedDataRowReference((string)row["id"],objects[(string)row["asset"]]));tables.Add(new CK01GeneratedDataTable((string)table["name"],table["aggregate"].Type==JTokenType.Null?null:objects[(string)table["aggregate"]],rows));}
             foreach(var item in owned){var locale=item as LocTableAsset;if(locale!=null)LocService.Configure(locale);}
             return new CatalogDecodedData(tables,owned,objects);

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fd332a765534d888c26e0474a073a38, type: 3}
+  m_Name: 15_scn_test_street__12_test_default__5_actor__13_chr_test_host
+  m_EditorClassIdentifier: Generated.DataTables::CK01SceneStatePlacementData
+  scene_id: scn_test_street
+  state_id: test_default
+  kind: actor
+  target: chr_test_host
+  anchor_id: test_street_05
+  facing: 
+  active: 1
+  dialogue_id: dlg_test_cast_3
+  ambient_pool: 
+  marker: 
+  comment: 

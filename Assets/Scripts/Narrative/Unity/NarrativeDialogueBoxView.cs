@@ -11,7 +11,7 @@ namespace EatWhat.Narrative.Unity
 {
     /// <summary>Runtime-only ordinary dialogue rectangles. V014-07/08/09 own orchestration and service wiring.</summary>
     [DisallowMultipleComponent]
-    public sealed class NarrativeDialogueBoxView : MonoBehaviour, INarrativeDialogueBoxSurface, INarrativeDialogueBoxPresentation
+    public sealed class NarrativeDialogueBoxView : MonoBehaviour, INarrativeDialogueBoxSurface, INarrativeDialogueBoxPresentation, INarrativeDialogueNameSide
     {
         [SerializeField] NarrativeDialogueCanvas dialogueCanvas = null;
         [SerializeField, Tooltip("Toolkit IGameInput provider. Interact is read once per Update.")]
@@ -42,6 +42,8 @@ namespace EatWhat.Narrative.Unity
         bool ownsVisuals;
         Vector2 authoredBoxPosition, authoredNameSize;
         Vector3 authoredBoxScale;
+        Vector2 leftNameAnchorMin, leftNameAnchorMax, leftNamePivot, leftNamePosition;
+        bool nameOnRight;
         sealed class PointerBinding { public EventTrigger Trigger; public EventTrigger.Entry Entry; }
         readonly List<PointerBinding> pointerBindings = new List<PointerBinding>();
         public event Action AdvanceRequested;
@@ -64,8 +66,25 @@ namespace EatWhat.Narrative.Unity
         public void Show(DialoguePresentationSnapshot snapshot)
         {
             if (presenter == null) throw new InvalidOperationException("Configure the existing advance input model first.");
-            EnsureCreated(); runtimeRoot.gameObject.SetActive(true); presenter.PrepareEntrance(snapshot);
+            EnsureCreated(); SetNameSide(false); runtimeRoot.gameObject.SetActive(true); presenter.PrepareEntrance(snapshot);
             SetBoxProgress(snapshot, 0);
+        }
+        /// <summary>Immediately mirror the existing name rect, or restore its captured left layout.</summary>
+        public void SetNameSide(bool right)
+        {
+            EnsureCreated();
+            if (right == nameOnRight) return;
+            nameBox.anchorMin = right ? new Vector2(1 - leftNameAnchorMax.x, leftNameAnchorMin.y) : leftNameAnchorMin;
+            nameBox.anchorMax = right ? new Vector2(1 - leftNameAnchorMin.x, leftNameAnchorMax.y) : leftNameAnchorMax;
+            nameBox.pivot = right ? new Vector2(1 - leftNamePivot.x, leftNamePivot.y) : leftNamePivot;
+            nameBox.anchoredPosition = right ? new Vector2(-leftNamePosition.x, leftNamePosition.y) : leftNamePosition;
+            nameOnRight = right;
+        }
+        void CaptureNameLayout()
+        {
+            leftNameAnchorMin = nameBox.anchorMin; leftNameAnchorMax = nameBox.anchorMax;
+            leftNamePivot = nameBox.pivot; leftNamePosition = nameBox.anchoredPosition;
+            nameOnRight = false;
         }
         public void BeginLine(NarrativeLinePresentation line, string finalLocalizedText)
         {
@@ -124,6 +143,7 @@ namespace EatWhat.Narrative.Unity
                 bodyText = authoredBodyText; nameText = authoredNameText; group = authoredGroup;
                 autoImage = authoredAutoButton; fastImage = authoredFastForwardButton; ownsVisuals = false;
                 authoredBoxPosition = box.anchoredPosition; authoredBoxScale = box.localScale; authoredNameSize = nameBox.sizeDelta;
+                CaptureNameLayout();
                 bodyText.fontSharedMaterial = dialogueCanvas.SharedFontMaterial; bodyText.font = dialogueCanvas.FontAsset;
                 nameText.fontSharedMaterial = dialogueCanvas.SharedFontMaterial; nameText.font = dialogueCanvas.FontAsset;
                 bodyText.raycastTarget = nameText.raycastTarget = false;
@@ -151,6 +171,7 @@ namespace EatWhat.Narrative.Unity
             bodyText = Text(textArea, textFontSize); bodyText.useMaxVisibleDescender = false;
             nameBox = Rect("Name", box); nameBox.anchorMin = nameBox.anchorMax = new Vector2(0, 1);
             nameBox.pivot = new Vector2(0, 1); nameBox.anchoredPosition = new Vector2(nameLeft, nameTop);
+            CaptureNameLayout();
             var namePlate = nameBox.gameObject.AddComponent<Image>(); namePlate.color = new Color(.2f, .23f, .32f, 1); namePlate.raycastTarget = false;
             var nameArea = Rect("Text", nameBox); Stretch(nameArea); nameText = Text(nameArea, nameFontSize);
             nameText.alignment = TextAlignmentOptions.Center; nameText.textWrappingMode = TextWrappingModes.NoWrap;
@@ -216,7 +237,12 @@ namespace EatWhat.Narrative.Unity
                 bodyText.lineSpacing = (textLineHeight - baselineGap) / (bodyText.fontSize * .01f);
                 bodyText.ForceMeshUpdate(true, true);
             }
-            nameText.text = finalName; nameBox.sizeDelta = new Vector2(Mathf.Max(ownsVisuals ? nameMinWidth : authoredNameSize.x, nameText.preferredWidth + 32), ownsVisuals ? nameHeight : authoredNameSize.y);
+            nameText.text = finalName;
+            float width = Mathf.Max(ownsVisuals ? nameMinWidth : authoredNameSize.x, nameText.preferredWidth + 32);
+            if (nameOnRight)
+                nameBox.anchoredPosition = new Vector2(nameBox.anchoredPosition.x -
+                    (width - nameBox.sizeDelta.x) * (1 - nameBox.pivot.x) * nameBox.localScale.x, nameBox.anchoredPosition.y);
+            nameBox.sizeDelta = new Vector2(width, ownsVisuals ? nameHeight : authoredNameSize.y);
             nameBox.gameObject.SetActive(showName);
         }
         public void SetVisiblePrefix(int utf16End)
@@ -243,7 +269,7 @@ namespace EatWhat.Narrative.Unity
             {
                 runtimeRoot.gameObject.SetActive(false);
                 if (ownsVisuals) Destroy(runtimeRoot.gameObject);
-                else { box.anchoredPosition = authoredBoxPosition; box.localScale = authoredBoxScale; nameBox.sizeDelta = authoredNameSize; }
+                else { SetNameSide(false); box.anchoredPosition = authoredBoxPosition; box.localScale = authoredBoxScale; nameBox.sizeDelta = authoredNameSize; }
             }
             // Destroy is deferred. Retain this canvas component through disable/re-enable in the same frame.
             if (destroying && ownedRaycaster != null) { Destroy(ownedRaycaster); ownedRaycaster = null; }

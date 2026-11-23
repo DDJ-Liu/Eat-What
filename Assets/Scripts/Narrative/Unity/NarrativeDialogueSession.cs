@@ -19,6 +19,14 @@ namespace EatWhat.Narrative.Unity
         public string InitiatorId { get; private set; }
         public bool Aborted { get; private set; }
     }
+    public sealed class NarrativeDialogueLineEvent
+    {
+        internal NarrativeDialogueLineEvent(string dialogueId, string lineId, string speakerId)
+        { DialogueId = dialogueId; LineId = lineId; SpeakerId = speakerId; }
+        public string DialogueId { get; private set; }
+        public string LineId { get; private set; }
+        public string SpeakerId { get; private set; }
+    }
 
     /// <summary>The service's owned runtime. Unity lifecycle/time/input adapters call this same implementation.</summary>
     public sealed class NarrativeDialogueSession : INarrativeDialogueView, INarrativeDialogueClock, IDisposable
@@ -43,6 +51,7 @@ namespace EatWhat.Narrative.Unity
         NarrativeDialogueStateMachine machine;
         NarrativeCommandScheduler scheduler;
         NarrativeDialogueContext current;
+        NarrativeDialogueEvent pendingConversationEnd;
         string chainInitiator = "";
         int frame, startedFrame, depth, diagnosticsRead;
         bool abortRequested, disposeRequested, disposed;
@@ -51,17 +60,22 @@ namespace EatWhat.Narrative.Unity
         public bool IsRunning { get { return current != null; } }
         public string DialogueId { get { return current == null ? null : current.Dialogue.DialogueId; } }
         public string InitiatorId { get { return current == null ? null : chainInitiator; } }
+        public DialoguePresentationSnapshot CurrentSnapshot { get { return current == null ? null : current.Snapshot; } }
+        public string CurrentSpeakerId
+        { get { return current == null || machine == null || machine.CurrentLine == null || !ReferenceEquals(machine.CurrentLine.Context, current) ? null : machine.CurrentLine.SpeakerId; } }
         public NarrativeDialoguePhase Phase { get { return machine == null ? NarrativeDialoguePhase.Inactive : machine.Phase; } }
         public double NowSeconds { get; private set; }
         public IReadOnlyList<string> Diagnostics { get { return diagnostics.AsReadOnly(); } }
         public event Action<NarrativeDialogueEvent> DialogueStarted;
         public event Action<NarrativeDialogueEvent> DialogueEnded;
+        public event Action<NarrativeDialogueLineEvent> LineStarted;
+        public event Action<NarrativeDialogueEvent> ConversationEnded;
 
         public NarrativeDialogueSession(Func<INarrativeDataDirectory> directory,
             Func<NarrativeDialogue, NarrativeDialogueContinuationPolicy, DialoguePresentationResolution> resolve,
             INarrativeDialogueBoxPresentation box, INarrativeDialogueDimming dimmer,
             INarrativeDialogueLock operationLock, NarrativeTalkedPersistence talked, Action<string> warning = null,
-            INarrativeDialogueComposition composition = null)
+            INarrativeDialogueComposition composition = null, Func<string,object> portraitSprites = null)
         {
             this.directory = directory ?? throw new ArgumentNullException(nameof(directory));
             this.resolve = resolve ?? throw new ArgumentNullException(nameof(resolve));
@@ -72,6 +86,10 @@ namespace EatWhat.Narrative.Unity
             this.composition = composition;
             if (composition == null) { entrance = new NarrativeDialogueEntrance(box, dimmer); exit = new NarrativeDialogueExit(entrance); }
             else composition.Acquire(this, box, dimmer, out entrance, out exit);
+            var portraitComposition = composition as INarrativeDialoguePortraitComposition;
+            entrance.ConfigurePortraits(portraitComposition == null ? null : portraitComposition.PortraitStage,
+                id => { var data = directory(); NarrativeCharacter character; string issue;
+                    return data != null && data.TryGetCharacter(id, out character, out issue) ? character : null; }, portraitSprites);
             entrance.EntranceCompleted += OnEntrance; entrance.TextCompleted += OnText; exit.ExitCompleted += OnExit;
             scheduler = new NarrativeCommandScheduler(null); // No external command/scene-switch handlers in this version.
         }
@@ -142,6 +160,7 @@ namespace EatWhat.Narrative.Unity
                     CollectDiagnostics();
                     if (abortRequested) AbortNow();
                     if (disposeRequested) DisposeNow();
+                    PublishConversationEnd();
                 }
             }
         }
@@ -155,6 +174,7 @@ namespace EatWhat.Narrative.Unity
 
         void INarrativeDialogueView.DialogueStarted(NarrativeDialogueContext context, double now)
         {
+            pendingConversationEnd = null;
             current = context; startedFrame = frame; entrance.DialogueStarted(context, now);
             DialogueStarted?.Invoke(new NarrativeDialogueEvent(DialogueId, chainInitiator, false));
         }
@@ -162,12 +182,20 @@ namespace EatWhat.Narrative.Unity
         {
             if (!ReferenceEquals(current, context)) return;
             current = null;
-            DialogueEnded?.Invoke(new NarrativeDialogueEvent(context.Dialogue.DialogueId, chainInitiator, false));
+            pendingConversationEnd = new NarrativeDialogueEvent(context.Dialogue.DialogueId, chainInitiator, false);
+            DialogueEnded?.Invoke(pendingConversationEnd);
             // No Clear here: AfterBoxClosed can leave undim running while the FSM starts its next segment.
         }
         void INarrativeDialogueView.Enter(NarrativeDialogueContext c, double t) { if (Current(c)) entrance.Enter(c, t); }
         void INarrativeDialogueView.CompleteEntrance(NarrativeDialogueContext c, double t) { if (Current(c)) entrance.CompleteEntrance(c, t); }
-        void INarrativeDialogueView.StartText(NarrativeLinePresentation l, double t) { if (Current(l.Context)) entrance.StartText(l, t); }
+        void INarrativeDialogueView.StartText(NarrativeLinePresentation l, double t)
+        {
+            if (!Current(l.Context)) return;
+            bool first = !ReferenceEquals(entrance.CurrentLine, l);
+            entrance.StartText(l, t);
+            if (first && Current(l.Context) && ReferenceEquals(entrance.CurrentLine, l))
+                LineStarted?.Invoke(new NarrativeDialogueLineEvent(l.Context.Dialogue.DialogueId, l.Line.LineId, l.SpeakerId));
+        }
         void INarrativeDialogueView.CompleteText(NarrativeLinePresentation l, double t) { if (Current(l.Context)) entrance.CompleteText(l, t); }
         void INarrativeDialogueView.Exit(NarrativeDialogueContext c, double t) { if (Current(c)) exit.Exit(c, t); }
         void INarrativeDialogueView.UpdateCast(NarrativeDialogueContext c, double t) { entrance.UpdateCast(c, t); }
@@ -184,7 +212,19 @@ namespace EatWhat.Narrative.Unity
             // Core has no Abort API. Discard it permanently, never report a normal completion to it.
             machine = null; scheduler = new NarrativeCommandScheduler(null); diagnosticsRead = 0;
             exit.Clear(); operationLock.ReleaseHeld(NowSeconds);
-            if (previous != null) DialogueEnded?.Invoke(new NarrativeDialogueEvent(previous.Dialogue.DialogueId, chainInitiator, true));
+            if (previous != null)
+            {
+                pendingConversationEnd = new NarrativeDialogueEvent(previous.Dialogue.DialogueId, chainInitiator, true);
+                DialogueEnded?.Invoke(pendingConversationEnd);
+            }
+            PublishConversationEnd();
+        }
+        void PublishConversationEnd()
+        {
+            // The unchanged FSM starts a follow-up after DialogueEnded returns. Wait for that stack to settle.
+            if (pendingConversationEnd == null || current != null || (machine != null && machine.Phase != NarrativeDialoguePhase.Inactive)) return;
+            var ended = pendingConversationEnd; pendingConversationEnd = null;
+            ConversationEnded?.Invoke(ended);
         }
         public void Dispose()
         { if (disposed) return; disposeRequested = true; Abort(); if (depth == 0) DisposeNow(); }

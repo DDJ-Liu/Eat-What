@@ -1,5 +1,33 @@
 # DataTables 开发工具入口
 
+## AI-000614 角色立绘派生引用（2026-11-21）
+
+扩充既有TK-DAT-01，无新runner/守卫。Characters原portrait_sprite基名保留，生成行新增可空Sprite portrait_sprite_asset；真实TryApplyRow沿现nameOnly精确Single策略加载整图Sprite，换图/清空/缺失/Multiple清旧引用，原警告/非阻断与changed保持。原Build CaptureReferences改调同一Serializer.CaptureReferences通用收集，原registry与加密运行读回不另建；旧Character封包只缺此新字段时补null的只读字段视图，其它缺失/未知字段、错误类型与资产映射仍拒绝，认证输入不变。
+
+默认Test-CK01BImportContracts现追加既有两个测试文件内的新组：CharacterVisualPrefabImportTests新增36项（总88，旧52保持），NarrativeCatalogBlobTests新增18项（总254，旧210+空Prefab26保持）。原68处PS静态Assert和76源清单不改。原PortraitImportOnly73只补外部Single Sprite句柄夹具，不改断言；CatalogBlob.Common既有NativeReferenceCompile验证实际Release/Development/Editor/Build API，无Unity执行。三项首次改后全通过；StaticCompile JsonUtility仍default(T)、公开ValidateAll的44条宿主诊断与原基线一致，不冒作原生导表验收。后继12/13导入四生产源/meta的SHA及05字段契约见614/attempt1/PROVIDER_INTERFACE.md，正式导表/release data预检留13/14。
+
+## V015-10-B 旧导入约定宿主依赖修复（AI-000612，2026-11-21）
+
+原 `Test-CK01BImportContracts.ps1` 的源码清单只补一项既有 `Assets/Scripts/Narrative/Unity/NarrativeDialogueContinuationPolicy.cs`。实际RuntimeEntry的ResolveForService已引用该类型，旧清单缺项曾在原603编译报CS0246；所有原失败记录保留。没有新框架、宿主、参数分支或原断言改动。
+
+本次用原默认完整入口首次运行成功：success=true，编译76个现有源码，22项注册、原68处静态Assert-True调用点源码保持，角色Prefab原组52项、NarrativeBlob原组236项（含原210+空Prefab26）、严格UTF-8/BOM及配料导入原4例通过。移除新增一行后整个PS正文与领取前完全相同；夹具、生产代码、正式CSV/xlsx、Unity资产未改。
+
+原静态宿主的JsonUtility.FromJson仍返回default(T)，所以publicValidateAllSuccess=false、44条公开路径诊断原样输出；publicRegistrationErrorCount和完整注册守卫错误均0。这次恢复的是既有离线导入约定入口，不能据此声称真实Unity JSON、资产持久化或正式22表完整验证0错误。没有修宿主桩或放宽断言，没有新导表/发布操作；当前实际正式验证仍由对应正式入口与执行线负责。
+
+修复沿原603根周期V01510-import-host-baseline-1，实际根已用2/5（另一周期为原夹具修复），本卡attempt1、改后验证1次、无新增失败/引擎操作，不退款或清零。旧603红基线与三次新夹具失败均保持历史；下节“当时红”不再表示当前默认入口尚未修好。
+
+## 立绘与CG的Single导入约定（2026-11-21）
+
+原`NarrativeFilenameLookupPolicy.Resolve`继续区分大小写按无路径/扩展名的完整文件基名找唯一候选，不接受子图显示名。现在对portrait/cg共用唯一路径.meta只读检查：TextureImporter.spriteMode=2（Multiple）时AssetPath为空、RejectedMultipleSprite=true，并明确提示“这张立绘的导入方式是多张子图，请改为单张”；CG给同义提示。切一块也属于Multiple。静态Characters为V-18、CGs为V-19；Importer同样告警，且仅对这个拒接把生成行的portrait_sprite/cg_sprite置空，使运行模型当作无图，原CSV格不动。改为Single后再按真实导表流程可从原CSV恢复名字；本卡不改Importer或自动重导。
+
+这不是按子Sprite名找图，也不通过LoadAllAssets任选一块。没有meta时保持原存在性行为，不能据此声称Sprite一定可加载；非Sprite/其它未解析情况仍由既有检查与真实导入负责，不在本次补猜。原Cooking Sprite与visual Prefab查找/绑定、旧Schema及发布格式不变。新代码仍在既有Contracts/Service文件，无新Unity脚本或meta。
+
+新73项在已有`DevTools/Narrative/Test-Narrative.ps1 -PortraitImportOnly -OutputRoot <本任务新目录>`：六个生产阶段用真实Unity引用编译，随后经原CompileOnly能力复用现成Narrative依赖闭包，仅调用新NarrativePortraitImportTests。真实共享查找、正式validator、TryApplyRow、Runtime Adapter均执行；外部AssetDatabase路径/对象是句柄，文件只是路径/meta夹具，没有纹理解码、Unity导入或资产保存。覆盖Single、Multiple一块/两块、两角色共用、明文告警、源值不变/生成值空、重读/重导幂等、大小写/扩展名/子图名。
+
+原V015-10/AI603执行前已跑旧独立导入约定和发布离线入口。当时前者因RuntimeEntry缺ContinuationPolicy编译输入CS0246失败，原脚本/断言不改，另交CONTROL独立修复；新分支不冒充修好了旧默认入口。发布基线（显式Legacy14）宿主/Mono各246通过，正式22表前后0错误/47警告/9info，全部47警告相同、sceneInventory仍UNVERIFIED。原卡首轮新夹具3次失败与同根第2次执行73项通过均留档；不换号、不清根累计。当前旧入口修复见页首AI612，不改旧实际结论。
+
+原AI603源码卡未改五图PNG/meta或表/配置；它记录的是当时五图均Multiple，Single操作、真实导入及按ID核图由对应ENGINE卡另行结算，当前状态以其实际回执为准。本次AI612工具宿主修复没有导入/重存这些资产；资源规格与唯一目录说明见[剧情资源目录方案](../../docs/剧情资源目录方案.md)。
+
 ## V014-OPT 表端气泡来源告警 V-26（2026-11-19）
 
 沿现 `NarrativeTableValidation.Enable/EnableProject` 的SceneStatePlacements规则增加V-26 warning；ImportService与 `Validate-DataTables.ps1 -Quick -ReportDirectory <目录>` 自动收到，不新增加载器/入口。角色自身条目须active=true且表内ambient_pool有有效池引用；同scene/state的另一个在场actor所填池，经dialogue_ids及真实first_line/next_line链含该角色精确speaker ID时提示。接收者仅无多实例后缀条目；发起者可有#2。每接收条目一条，列出它的池、另一个发起者/池/首个命中line，多个发起者汇在同条；空speaker、自己、停用、跨scene/state不合并。错误引用仍走原规则，警告不阻断、不改配置。
@@ -40,7 +68,7 @@ GameObject字段通过GUID:localID写入prefab引用，构建副本并列携带C
 
 ## V013-10 角色形象引用工具（2026-11-16）
 
-角色原street_visual_prefab仍string/nameOnly；真实TryApplyRow只给CK01CharacterData追加派生street_visual_prefab_asset（GameObject），沿原精确名查找/警告/changed与保存边界，缺失不阻断、空列不警告并清旧引用。Portrait/CG仍只存在检查，Schema/原14及八表定义与源值不改。原ImportContracts末尾追加CharacterVisualPrefabImportTests，直接调用实际私有行应用、Catalog、Unity Adapter和Runtime；只在原UnityStubs加GameObject类型及默认仍空的FindAssets可选外部fake，所有原业务断言/冻结夹具保持。
+角色原street_visual_prefab仍string/nameOnly；真实TryApplyRow只给CK01CharacterData追加派生street_visual_prefab_asset（GameObject），沿原精确名查找/警告/changed与保存边界，缺失不阻断、空列不警告并清旧引用。当时Portrait/CG只存在检查；Portrait现按页首614派生Sprite，CG保持查名，Schema/原14及八表定义与源值不改。原ImportContracts末尾追加CharacterVisualPrefabImportTests，直接调用实际私有行应用、Catalog、Unity Adapter和Runtime；只在原UnityStubs加GameObject类型及默认仍空的FindAssets可选外部fake，所有原业务断言/冻结夹具保持。
 
 本卡只跑原22表校验、Schemas/ImportContracts/Authoring，以及现Narrative Python的--compile-only真实生产依赖编译；不跑整Narrative/LongLoop或其它全量门。Native API兼容和StaticCompile fake执行分报，无AssetDatabase实际保存。固定配置/消费说明见docs/剧情八表配表说明.md及运行时接入说明；11加密/Prefab映射和14实际导表未在本卡执行。下文N004“不绑定”属于原阶段记录。
 

@@ -130,6 +130,8 @@ internal static class NarrativeDialoguePrefabTests
             Check(fallbackRoot!=null&&fallbackRoot.gameObject.name=="DialogueBox_Runtime"&&fallbackCanvas.gameObject.name=="NarrativeDialogueCanvas_Runtime","unbound path still creates original runtime visual tree");
             Life(old,"OnDestroy");Life(fallback.Box,"OnDisable");Life(fallback.Canvas,"OnDisable");
             Check(fallbackRoot.gameObject.Destroyed&&fallbackCanvas.gameObject.Destroyed,"runtime fallback destroys only its own generated visuals");
+            NarrativeNameBoxSideTests.Run();
+            NarrativeDialogueNotificationTests.Run(System.IO.Path.Combine(args[0], "notifications"));
             Console.WriteLine(JsonConvert.SerializeObject(new{result="DIALOGUE_PREFAB_PASS",checks=details.Count,details,nativeUnity=false,realTmpLayoutVerified=false},Formatting.Indented));return 0;
         }
         catch(Exception ex){Console.Error.WriteLine(ex);return 1;}

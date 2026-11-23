@@ -1,3 +1,15 @@
+## V015-08 街景反应（2026-11-21）
+
+默认入口追加NarrativeStreetReactionAdapterTests 59项（原45项完整保留，AI-000619追加14项脚底归属兼容），执行实际Adapter/原03规则/Registry/NpcShell；外部服务仅派通知/快照，Camera只给投影，StreetReactionPlayerBoundary只记录主角调用，不复制规则/筛人/计时。另以原OperationLockTests宿主中的真实控制器/锁/DepthScale/Avatar路径执行DialogueFacingEntryTests 6项，左/右、锁内有效且不位移。保留原测试所有断言，包括玩家99、面板26/33与09新37。结果在street-reaction和dialogue-facing-entry.run.*及offline-validation.json，真实完整LongLoop三模式编译保持。
+
+四个序列化引用为Dialogue Service、Target Registry、Street Camera、Player Controller；Registry.Player保持原控制/脚底Transform，沿自身及父链找到最近的LongLoopPlayerController；显式主角必须就是该控制器，角色标记只取该控制器同节点，不向外层控制器或其它场景根借标记。正式Street保持PlayerRoot_TUNE/Foot_TUNE，Player Controller接其所属PlayerRoot_TUNE，位置始终取Registry脚底。原三参数Configure保留、空第四项按同一父链解析。用例含正确/错误同场景/跨场景主角绑定、发起#实例/精确角色/主角、Foot视口与裁切范围、到点实时活动名单、None/正延迟暂停/0秒、续接/整次结束/服务中止/停用恢复及幂等订阅。原服务/Core未改。原卡时间行现由用户裁决覆盖为Time.deltaTime，首轮Fail和同根1/5保持；无Unity/Build或其它回归模式。四引用正式保存与人工路径见[组件说明](../../组件说明文档/视觉特效/普通对话界面配置与使用说明.md)。
+
+## V015-09 F8立绘调参（2026-11-21）
+
+默认 `Test-LongLoopPlayer.py --output <新目录>` 入口追加 `NarrativePortraitTuningPanelTests` 37项，不改原调试26/33或其它旧断言。执行实际Panel，复用原场景/IMGUI/服务边界；新增 `NarrativePortraitStageCallBoundary` 仅交付逐图值、记录Set/Clear调用及剪贴板句柄，不实现舞台绘制、临时值计算或清理算法。覆盖逐图ID/现值、六向步长、GUI路由、Invariant复制与日志、全清、缺舞台/闲置/无图、无效行/缩放、原点击拦截。真实舞台行为沿AI-000613既有证据，本卡不另跑Narrative门。
+
+默认生产闭包的Narrative.Unity显式用UNITY_EDITOR，与原Core/LongLoop匹配；原Release/Development/Editor派生编译现各自重建同身份Core和Unity依赖，再编译完整LongLoop，防止消费者引用开发API时混入发布依赖。原三组元数据各6项不改，Release整类无Panel从而无调参代码；保原正常API。均为安装SDK Mono/csc离线，不启动Editor或Build。原默认街道入口基线及首次改后全绿，未运行其它模式；配置/后继五列检查见[普通对话界面说明](../../组件说明文档/视觉特效/普通对话界面配置与使用说明.md)。没有新TK族、后台任务、门或冻结探针。
+
 ## V014-15 头顶标记实际驱动（2026-11-19）
 
 V014-15-R / AI592：原默认入口新增NarrativeHeadMarkerSpawnTests 32项，真实Applier.ApplyDefault/ApplyState→13.ConfigureReferences→Driver.ConfigureSceneBindings，不直接手填驱动场景引用。外部边界只克隆层级/SerializeField本地引用和派发生命周期，沿当前Runtime/01/Core/应用器判断；覆盖预摆、正常生成的子View、全体立即隐藏/最新灰态、重复注入保fade、启停/服务替换/重建退订及旧NPC无标记兼容。原标记26、F8 33、全部旧默认断言不改并通过；正式18/19与人工视觉/输入未代做。

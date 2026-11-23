@@ -310,7 +310,7 @@ def main():
                 common + [ue / "UnityEngine.JSONSerializeModule.dll", ue / "UnityEngine.UIModule.dll",
                     sa / "Unity.TextMeshPro.dll", sa / "UnityEngine.UI.dll", ensure_narrative_core(), toolkit, generated,
                     next((root / "Library/PackageCache").glob("com.unity.nuget.newtonsoft-json*/Runtime/Newtonsoft.Json.dll"))],
-                record_list=narrative_dependencies)
+                defines=("UNITY_EDITOR",), record_list=narrative_dependencies)
             shutil.copyfile(next((root / "Library/PackageCache").glob("com.unity.nuget.newtonsoft-json*/Runtime/Newtonsoft.Json.dll")), out / "Newtonsoft.Json.dll")
             write_narrative_dependencies()
         return narrative_unity
@@ -1589,7 +1589,7 @@ namespace UnityEngine.InputSystem {
         debug_sources += src(*("Assets/Scripts/DataBase/CookingData/" + n + ".cs" for n in ("CK01CharacterData", "CK01DialogueData", "CK01DialogueLineData", "CK01CGData", "CK01SceneData", "CK01SceneStateData", "CK01SceneStatePlacementData", "CK01AmbientPoolData", "CK01OptionalValues")))
         debug_sources += src("DevTools/LongLoop/NarrativeDebugUnityBoundary.cs", "DevTools/LongLoop/NarrativeSceneDebugTests.cs", "DevTools/Narrative/NarrativeAmbientBubbleTests.cs")
         debug_sources += src("DevTools/LongLoop/NarrativeHeadMarkerViewBoundary.cs", "Assets/Scripts/LongLoop/NarrativeHeadMarkerDriver.cs",
-            "DevTools/LongLoop/NarrativeInteractionServiceBoundary.cs",
+            "DevTools/LongLoop/NarrativeInteractionServiceBoundary.cs", "DevTools/LongLoop/NarrativePortraitStageCallBoundary.cs",
             "Assets/Scripts/Narrative/Unity/NarrativeTalkedPersistence.cs", "Assets/Scripts/LongLoop/NarrativeDialogueTrigger.cs",
             "Assets/Scripts/LongLoop/StreetInteractionSelection.cs")
         debug_exe = build("NarrativeSceneDebugTests", debug_sources, [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core(), fx / "Facades/netstandard.dll", current_toolkit, out / "Newtonsoft.Json.dll"], "exe", defines=("UNITY_EDITOR",))
@@ -1613,17 +1613,33 @@ namespace UnityEngine.InputSystem {
             [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", fx / "Facades/netstandard.dll",
              ensure_narrative_core(), debug_exe, current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
         print(json.dumps({"debugDialogue": debug_run("debug-dialogue", [str(mono), str(extended_debug), str(out.parent / (out.name + "-debug-record"))])}))
-        # Compile the current full LongLoop sources under actual Release/Development symbols.
-        # Existing adjacent dependency APIs are unchanged; Core's conditional API is rebuilt with matching identity/symbols.
+        # V015-09 appended panel cases, retaining all prior debug assertions unchanged.
+        tuning = build("NarrativePortraitTuningPanelTests", src("DevTools/LongLoop/NarrativePortraitTuningPanelTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", fx / "Facades/netstandard.dll",
+             ensure_narrative_core(), debug_exe, current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
+        print(json.dumps({"portraitTuning": debug_run("portrait-tuning", [str(mono), str(tuning)])}))
+        # V015-08 actual adapter/Core/registry/shell, external service/camera/controller command transport.
+        reaction = build("NarrativeStreetReactionAdapterTests",
+            src("Assets/Scripts/LongLoop/NarrativeStreetReactionAdapter.cs", "DevTools/LongLoop/StreetReactionPlayerBoundary.cs",
+                "DevTools/LongLoop/NarrativeStreetReactionAdapterTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", fx / "Facades/netstandard.dll",
+             ensure_narrative_core(), debug_exe, current_toolkit, out / "Newtonsoft.Json.dll"], "exe")
+        print(json.dumps({"streetReaction": debug_run("street-reaction", [str(mono), str(reaction)])}))
+        # Compile full LongLoop and its conditional Core/Unity APIs with matching mode symbols.
         metadata_exe = build("NarrativeDebugReleaseTests", src("DevTools/LongLoop/NarrativeDebugReleaseTests.cs"), [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], "exe")
         editor_record = next(r for r in records if r["stage"] == "LongLoop")
         editor_input = Path(editor_record["command"][-1][1:])
         editor_lines = editor_input.read_text(encoding="utf-8-sig").splitlines()
         current_core = ensure_narrative_core()
+        current_unity = ensure_narrative_unity()
+        unity_record = next(r for r in narrative_dependencies if r["stage"] == "Narrative.Unity")
         configurations = []
         for mode, symbols in [("Release", ()), ("Development", ("DEVELOPMENT_BUILD",)), ("Editor", ("UNITY_EDITOR",))]:
             folder = out / ("debug-native-" + mode.lower()); folder.mkdir(exist_ok=False)
             core = build("DebugCore" + mode, sorted((root / "Assets/Scripts/Narrative/Core").rglob("*.cs")), [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll"], defines=symbols, assembly_path=folder / "Narrative.Core.dll")
+            unity = build("DebugUnity" + mode, sorted((root / "Assets/Scripts/Narrative/Unity").rglob("*.cs")),
+                [core if Path(r["path"]) == current_core else Path(r["path"]) for r in unity_record["references"]],
+                defines=symbols, assembly_path=folder / "Narrative.Unity.dll")
             output = folder / "LongLoop.dll"; lines = []
             for line in editor_lines:
                 if line.startswith(("-refout:", "/refout:")): continue
@@ -1633,6 +1649,7 @@ namespace UnityEngine.InputSystem {
                     if not values: continue
                     line = "-define:" + ";".join(values)
                 line = line.replace(str(current_core), str(core)).replace(current_core.as_posix(), core.as_posix())
+                line = line.replace(str(current_unity), str(unity)).replace(current_unity.as_posix(), unity.as_posix())
                 lines.append(line)
             if symbols: lines.append("-define:" + ";".join(symbols))
             rsp = folder / "LongLoop.rsp"; rsp.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -1671,6 +1688,11 @@ namespace UnityEngine.InputSystem {
             (out / "offline-validation.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
             print(child.stderr.decode("utf-8-sig", "replace"), file=sys.stderr)
             raise SystemExit(child.returncode)
+    # V015-08 real player entry against the retained actual lock/controller/depth host.
+    if run.returncode == 0:
+        facing_entry = build("DialogueFacingEntryTests", src("DevTools/LongLoop/DialogueFacingEntryTests.cs"),
+            [fx / "mscorlib.dll", fx / "System.dll", fx / "System.Core.dll", ensure_narrative_core(), lock_exe], "exe")
+        print(json.dumps({"dialogueFacingEntry": debug_run("dialogue-facing-entry", [str(mono), str(facing_entry)])}))
     # V014-24: reuse the actual shell/registry/trigger/driver/view already in the retained debug host.
     if run.returncode == 0:
         anchor_exe = build("NpcPresentationAnchorTests", src("DevTools/LongLoop/NpcPresentationAnchorTests.cs"),

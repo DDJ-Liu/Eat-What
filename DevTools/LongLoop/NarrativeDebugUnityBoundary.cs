@@ -53,20 +53,27 @@ namespace UnityEngine
     public struct Quaternion{}
     public struct Vector2{public float x,y;public Vector2(float x,float y){this.x=x;this.y=y;}}
     public struct Rect{public float x,y,width,height;public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}public bool Contains(Vector2 p)=>p.x>=x&&p.y>=y&&p.x<x+width&&p.y<y+height;}
-    public class Camera:Behaviour{}
+    public class Camera:Behaviour
+    {
+        // External camera projection transport; no visibility or reaction decision is copied here.
+        public float nearClipPlane=.3f,farClipPlane=1000;
+        public Func<Vector3,Vector3> Project=point=>new Vector3(.5f,.5f,1);
+        public Vector3 WorldToViewportPoint(Vector3 point){return Project(point);}
+    }
     public static class Screen{public static int height=1080;}
     public static class Application{public static bool isPlaying=true;}
     public static class Mathf{public static float Abs(float v)=>Math.Abs(v);}
     public static class Time{public static double timeAsDouble;public static float deltaTime;}
     public static class Random{public static int Range(int min,int max)=>min;}
     public static class JsonUtility{public static string ToJson(object value)=>"{}";}
-    public static class Debug{public static readonly List<string> Warnings=new List<string>();public static void LogWarning(string s,object context=null){Warnings.Add(s);}}
+    public static class Debug{public static readonly List<string> Warnings=new List<string>();public static readonly List<string> Messages=new List<string>();public static void Log(string s){Messages.Add(s);}public static void LogWarning(string s,object context=null){Warnings.Add(s);}}
     public static class GUI{public static bool enabled=true;public static readonly Skin skin=new Skin();public class Skin{public object window;}}
     public static class GUILayout
     {
         public static readonly List<string> Labels=new List<string>();public static readonly HashSet<string> Clicks=new HashSet<string>();
         public static readonly List<string> Buttons=new List<string>();public static readonly List<string> DisabledButtons=new List<string>();
         public static void BeginArea(Rect r,string title,object style){}public static void EndArea(){}
+        public static void BeginHorizontal(){}public static void EndHorizontal(){}
         public static Vector2 BeginScrollView(Vector2 v)=>v;public static void EndScrollView(){}
         public static void Label(string s){Labels.Add(s);}public static bool Button(string s){Buttons.Add(s);if(!GUI.enabled){DisabledButtons.Add(s);return false;}return Clicks.Remove(s);}
     }

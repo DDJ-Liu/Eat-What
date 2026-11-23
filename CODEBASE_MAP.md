@@ -1,5 +1,41 @@
 # 《是啊，吃什么》代码结构与修改导航
 
+2026-11-23 末句高亮局部修复：仅NarrativeDialogueEntrance.CanEnd不再对有效立绘批SetSpeaker(null)；FSM的CanEnd仍只表示末句可推进，等待保当前说话者与原过渡，真实Exit继续冻结，下一段逐句取新目标。原无图延后回执保留；Core/Session/Exit/Stage不改。现有PortraitSequence原94及新增路径共212通过，旧120/185/96与114整链/102行保持；旧源码先复现失败、同字节测试修后通过。参数/组件/人工说明原位校正，土豆单句为复测入口；未Unity或写资源/表，完整核验仍2026-09-17。
+
+2026-11-23 对话配置说明局部同步：现行内容说明新增立绘Single/基名、对准SVG、F8抄回、cast三种站位及当前Stations；参数标明已生效六项高亮、反应/入退场与未生效字段。新增docs/demo-0.1.5_占位校对清单.md，四图归属、后续Pomegranate-2、三段十一句及人五/第五锚点均与616正式导表/保存资源核对；组件说明/索引已消除脚底与控制器同Transform误述，明确Registry Foot与所属PlayerRoot控制器/身份、位置按目标。主角锁/原人工说明补首次面对例外，当前人工表保留待用户。仅文档/SVG，无实现或资源变化，不提高2026-09-17完整核验日期。
+
+2026-11-23 V015-13/AI-000616 attempt2完成Street接线与正式导表：按脚底兼容清单导入4脚本，ImportAll一次0error/56warning/11info（无Multiple告警），新增17/更新28/未变177生成资产。StreetDialogue_TUNE新增NarrativeStreetReactionAdapter并保存四引用，Registry仍原Foot，显式Controller接所属PlayerRoot；F8接UI实例继承Stage，新根锚点test_street_05_TUNE=(0.4,-4.75,0)，anchorId=test_street_05、待用户终调。场景保存一次，首次只读读回/原三合同通过；完整磁盘差异仅新增组件/锚点、F8引用和继承Stage的stripped引用，原父级/位置、镜头/玩家/UI/NPC挂点保存值保持。Street clean、ready/stopped，Console增量0，未Play/Build或签收画面。首轮失败和619修复保留，根续行2/5；使用说明统一交原15/AI618补正，本次只核局部，不提高2026-09-17完整核验日期。
+
+2026-11-23 V015-13-R/AI-000619局部修复 `NarrativeStreetReactionAdapter.BindingsReady`：Registry.Player继续指Street的 `PlayerRoot_TUNE/Foot_TUNE`，控制/朝向从目标自身及父链最近的 `LongLoopPlayerController` 解析，身份标记只取该控制器同节点；显式Player Controller必须是该Foot所属 `PlayerRoot_TUNE` 上的组件，继续拒绝错主角、无标记/空ID和跨场景目标。玩家坐标仍取脚底，服务事件/Time.deltaTime/Core/场景绑定均不改。原默认测试追加14项、旧45原断言保留；原13失败/续行与引擎验收计数不清零，本卡不进入Unity，原卡待独审后的正式SHA接线。只局部核对，完整核验仍2026-09-17。
+
+2026-11-23 V015-12/AI-000615 attempt3完成原`Assets/Prefabs/UI Components/NarrativeDialogueUI.prefab`立绘接线：现Portraits层挂`NarrativePortraitStage`，直接子节点`PortraitTemplate_TUNE`仅RectTransform/CanvasRenderer/Image、停用/无图/不拦点击/底中锚；Stage.portraitTemplate接该Image，根Composition.portraitStage接Stage，mirrorRightPortraits保默认true。17份审定脚本定向导入后编译无错，仅保存本Prefab一次并读回；磁盘差异只含新模板/Stage、父级新增组件/子引用和Composition新引用，原15节点/组件/引用/布局保持。Canvas.authoredPortraitLayer为原层定位入口，未编辑生产源码/场景，Console新增Error0/Warning2，无Play/Build；13场景接线和实际表现待后继。使用说明原位更新；首轮主线程超时、次轮临时载体错读BoxView字段及本轮外层摘要命令预解析错误均保留，根续行2/5，原生保存后读回一次。仅局部核对，完整核验仍2026-09-17。
+
+2026-11-21 V015-05/AI-000607 attempt2完成Unity侧可选立绘编排：NarrativePresentationSurfaces追加不带Unity类型的舞台/名字侧/可选组合能力；Composition序列化MonoBehaviour portraitStage并验证舞台能力，Session经Runtime.GetCharacterPortraitSprite→DataAdapter→614的portrait_sprite_asset读图。Entrance每段一次原LayoutResolver，缓存同一只读结果/原图句柄供Stage，按原StepSequence条件加入/移除portrait，逐句同步名字侧/高亮/打字；Exit保留独立退场运行、批句柄与压暗owner，AfterBoxClosed后台不丢，新段与旧批各走各的。Stage保原typed/tuning APIs，仅补呈现接口及退出冻结；Box只实现已有名字侧能力，无布局字段改动。无舞台分支沿原120/185/96，新增编排94/Runtime6/真实Stage冻结4，原完整Narrative及114整链/102行保持。未改Core、LongLoop、表/参数/Prefab/场景；12/13接线与表现待后继，源码/meta SHA和portraitStage字段见607/attempt2/PROVIDER_INTERFACE.md。首轮缺引用失败及614修复同根1/5保持，完整核验仍2026-09-17。
+
+2026-11-21 AI-000614为原05补可空导入立绘引用：`CK01CharacterData.portrait_sprite_asset`是派生Sprite，CSV/Schema基名列portrait_sprite不变。原TryApplyRow沿现精确名/Single拒Multiple策略，唯一可加载整图才赋引用，换图/清空/缺失清旧值并沿原changed/告警；纯Core仍只持基名。原Build CaptureReferences的通用Sprite/Prefab登记逻辑移到现CatalogBlobSerializer.CaptureReferences并由原Build调用，实际读回仍用原registry/Seal/Open/EncryptedBlobSource。反序列化仅准许旧Character缺这一个新nullable字段，克隆字段视图补null、不改已认证输入，其它字段/类型/错误严格保持。原默认ImportContracts首轮改后88（旧52+新36）/254（旧210+空Prefab26+新18）、原PortraitOnly73及真实Unity API闭包编译通过；未导入生成资产、运行Unity或更新发布包/版本。供05读取字段与12/13生产四源/meta SHA在614的PROVIDER_INTERFACE.md；原05仍须独审后正式同根续行，前次失败/许可保留。只局部核对，完整核验仍2026-09-17。
+
+2026-11-21 V015-08/AI-000608 attempt2按用户“转身随对白暂停”完成源码：新增`Assets/Scripts/LongLoop/NarrativeStreetReactionAdapter.cs`/同名meta，一个服务对象一个场景组件，序列化Dialogue Service、Target Registry、Street Camera、Player Controller四引用，主角显式值须与Registry Player同根一致，旧三参数Configure兼容。消费03单一规则与07原Started/LineStarted/ConversationEnded及CurrentSnapshot/InitiatorId；首段两者面对、逐句实例/精确ID/主角映射，到点读活动NPC Foot/相机viewport+clip，监听同源Time.deltaTime；续接不恢复/重做，结束/中止/停用恢复首次NPC值而排除主角。缓存只有对象身份，不另持原朝向/计时。主角仅新增SetDialogueFacing包装原SetFacing，操作锁下有效、无移动/输入路径变化。原服务/Core/壳/注册表不改，原Street默认测试及三模式编译保持，实际接线/视觉留13及五列人工。首轮时间冲突失败与同根续行1/5保留；此为局部核对，完整核验仍2026-09-17。
+
+2026-11-21 V015-09/AI-000609局部扩展原`Assets/Scripts/LongLoop/NarrativeSceneDebugPanel.cs`：可选同场景Portrait Stage引用，沿原F8滚动区/点击Raycaster逐图显示角色ID及舞台当前取景，偏移±0.01、角色缩放±0.02，经原SetTemporaryFraming即时覆盖；逐行复制Invariant/Tab一行到系统剪贴板及日志，全清调用AI-000613 ClearAllTemporaryFraming。GetVisibleFramings为唯一现值来源，不缓存第二份；无绑定隐藏，空闲/无图只说明，整个面板仍只Editor/Development。DevTools/LongLoop原默认入口仅追加独立37项与外部调用/GUI边界，旧26/33断言文件不改；实际Narrative.Unity依赖现按匹配三模式重编译，完整LongLoop三条件与旧元数据各6项通过，原Street全入口首次改后绿。无Unity/场景/Prefab/数据修改，05前置另案，08现行同根续行结果见页首更新、真实取景/剪贴板待后继接线与人工；说明原位更新，完整核验仍2026-09-17。
+
+历史首轮（2026-11-21，现已按页首08续行）V015-08/AI-000608在生产写入前停驻：原08时间行要求“与对话服务同一种不受时间缩放影响的时间”，实际`NarrativeDialogueService.Update`仍调用`session.Advance(Time.deltaTime, Time.frameCount)`，现界面说明也明确游戏deltaTime/暂停0。本票只有LongLoop范围，无法同时保持服务同源并在不改Narrative服务的情况下保证不受缩放；需CONTROL先正式统一时间口径/必要修复范围，再原根续行08。尚未新增反应组件或主角朝向入口，无生产源码修改，本卡回归/验收未执行；03规则和07事件/查询可用成果保留，与05立绘引用问题独立。完整核验仍2026-09-17。
+
+历史首轮（614现已补齐字段源码，正式导入/05仍待后继）V015-05/AI-000607核对发现接入前置缺口：`CK01CharacterData.portrait_sprite`仍只有文件名字符串、无Sprite引用字段；`DataTableImportService.TryApplyRow`的nameOnly分支只对street_visual_prefab写真实Prefab引用，portrait仅做查名/Multiple拒接。原05明确要求读导入后立绘引用，现无此运行时入口；补齐角色数据类/导入及必要发布链不在本票Narrative范围，按原卡冲突规则停驻回CONTROL。试作5个生产文件已保全并逐字节恢复领取前基线，原120/185/96及全Narrative基线绿，未跑改后验收、无已完成05能力。04舞台/06换边/07通知成果保留；先独立补前置再同根正式续行，真实失败/额度不重置，完整核验仍2026-09-17。
+
+2026-11-21 V015-04新增 `Assets/Scripts/Narrative/Unity/NarrativePortraitStage.cs` 及稳定meta：唯一新可挂组件在既有Portraits层，绑定非激活Image模板并只克隆自有节点。ShowBatch接原layout结果、Sprite/原角色映射与本段快照，每批独立高亮模型/入退场进度；SetSpeaker/Advance只交原模型再绘Rect/颜色/次序，Side完全沿原结果（不足1像素居中），无Update/时钟或新FSM。右侧镜像默认开，开发取景替换角色偏移/因子、当前及后续批即时更新，发布编译无临时代码；退场1/Clear/停用只清自有图。原Narrative入口追加release100/editor107/dev107首次全绿，旧断言/114整链/102行不变；实际Sprite画面待人工，V015-05/12/09接编排/模板/调参。本卡不动原生产组件、Prefab或资源/表；使用/参数/五列文档原位同步，完整核验仍2026-09-17。
+
+2026-11-21 V015-07局部扩展原 `NarrativeDialogueService/Session`：正文StartText调用原07/Box后，同帧发 `LineStarted(NarrativeDialogueLineEvent)`，三个只读ID为DialogueId/LineId/SpeakerId；`CurrentSnapshot`取现current.Snapshot、`CurrentSpeakerId`取实际FSM CurrentLine，空段均null、旁白角色为空字符串。原逐段Started/Ended内容及相对先后保持；新增 `ConversationEnded`在原调用栈完成续接、实际Inactive或中止时发最后段原事件，段间不发，不能把它当全部背景淡回完成。只缓存待发通知，不新增状态机/时间/业务所有者；原TryStart入口与Core未改。原Prefab宿主追加实际MonoBehaviour链86项，原服务96/名字换边45/Prefab43及整链114/102行保持；首轮新夹具未发0速补全输入失败，第二轮全绿，历史保留。V015-08后继订阅，五列说明/组件/参数原位更新；完整核验仍2026-09-17。
+
+2026-11-21 V015-06局部为现有 `NarrativeDialogueBoxView` 增加 `SetNameSide(bool right)`：初始化缓存作者Name的锚点/轴心/位置，每次Show回左，右侧镜像并在名字宽度变化时固定右边；停用恢复作者左侧与初始尺寸。不增节点/序列化字段，不改Presenter/FSM/输入/演出参数或Prefab保存值。原Narrative的Prefab宿主仅追加独立 `NarrativeNameBoxSideTests` 45项，原53项/Prefab43项及整链114/102行保持；基线绿、改后第三轮绿，前两次新夹具缺组件导致对象计数失败已保留。编排选择侧别归V015-05，长名实际TMP与画面按docs/demo-0.1.5_人工检查说明.md待人工。组件与参数说明原位同步；本次仅离线局部核对，完整核验仍2026-09-17。
+
+2026-11-21 V015-10局部完成立绘/CG Multiple拒接：Editor/DataTables的原NarrativeFilenameLookupPolicy只读唯一路径.meta的TextureImporter.spriteMode，已知Multiple时返回明确中文告警与RejectedMultipleSprite；原DataTableImportService.TryApplyRow仅对该拒接将生成行nameOnly置空，源CSV不变，其他角色/旧查找约定保持。正式静态V-18（立绘）/V-19（CG）共用原策略。现有Test-Narrative.ps1新增-PortraitImportOnly，生产六阶段真引用编译+真实查找/校验/行导入73项通过，外部只有AssetDatabase句柄。原默认Test-CK01BImportContracts缺ContinuationPolicy的CS0246未修，发布基线宿主/Mono各246绿，22表0error47warning9info前后逐项同；原首轮3次夹具失败和同根续行1/5保留，不称全部旧入口绿。五图均Multiple，实际Importer更改/图绑定留原18/13/16，资源方案原位补Single规则，完整核验仍2026-09-17。
+
+2026-11-21 V015-03局部新增 `Assets/Scripts/Narrative/Core/NarrativeStreetReactionRules.cs` 及稳定meta：一次整段交谈（含续接）一个规则实例，`Begin`只算发起NPC/主角互相面对；`SetSpeaker`取本段快照reaction.turnMode/turnDelay，按实际街景实例ID计单个可替换延迟，`Advance`只收外部时间。到点才向`INarrativeStreetReactionSource`读取当前说话者及候选快照，按屏内/0.01世界单位容差和三类排除返回左右朝向命令；不动场景。发起NPC及真正发生转向的旁人仅记首次原朝向，`End/Abort`返回稳定恢复清单并清状态，不含主角；续接不Begin/End，记录保留。原Narrative入口仅追加新组61项，01的119/02的211及原断言/114整链/102行保持；后继08再接Registry/相机/壳与主角入口，本卡无Unity或实际转身签收，完整核验仍2026-09-17。
+
+2026-11-21 V015-02局部新增 `Assets/Scripts/Narrative/Core/NarrativeSpeakerHighlightModel.cs` 及稳定meta：每段一个模型，输入显示名单的角色ID/原侧别与原演出快照speaker六项；初始中性，`SetSpeaker`按Ordinal精确身份选说话者（同ID多张同时高亮），旁白/名单外或无立绘者使显示者全为听者。`States`固定出场顺序、提供只读但随模型更新的Brightness/Scale/Rise/ShiftX/IsFront；亮度/放大/上浮/横移从当前值线性走向目标，换人重计时，同人不重启，置前立即变化，Cut/0秒立即完成。唯一时间入口`Advance`，不读引擎/时钟，不渲染、不向FSM回报完成。原Narrative宿主只追加新组211项；原站位119及其余原断言/114整链/102行保持。舞台接入与实际画面归后继，完整核验仍2026-09-17。
+
+2026-11-21 V015-01局部新增 `Assets/Scripts/Narrative/Core/NarrativePortraitLayoutResolver.cs`（同交稳定meta）：调用方将原 `NarrativeCastEntry`、`NarrativeCharacter` 和已知立绘可用性组成 `NarrativePortraitCastInput`，以本段原 `DialoguePresentationSnapshot` 调用纯静态 `Resolve`。只读取快照 `layout.stations`，先过滤无立绘者，再按直接位置→全人数具名站位→可见人数默认位置取值；三因子缩放、图片比例对准点、严格小于1像素的中侧容差、具名重号取较小人数及逐项诊断同次返回。`Portraits`保原出场顺序，`BackToFront`按次序/原格数递增供绘制，结果只读，无状态所有者、引擎或资源加载依赖；不读portraitBottomAlign。原Narrative入口追加 `NarrativePortraitLayoutTests` 119项，原断言保持；实际基线与改后完整指定入口均通过，102行/114整链不变。舞台/高亮/编排接入属后继，未签实际画面；完整核验仍2026-09-17。
+
 2026-11-21 街景普通对话版级冒烟已通过。当前 `LongLoop_Street.unity` 中第四锚点位于 (8.75, -4.85, 0)。启动街景后，`NarrativeDialogueService` 连接对话界面、操作锁及游戏状态，`StreetInteractionSelector` 连接同一组服务；五个具名 NPC 已从实际 Registry 读回。已发布的 Windows64 Mono 包从 Boot 进入 Street；运行数据包沿用 2.5.1，玩家存档沿用 2.4.1。用户调整后的挂点和出字参数见[对话参数说明](docs/参数调整说明_对话.md)。
 
 2026-11-20 原19/AI595局部操作已保存但未结清：Street新增NarrativeDialogueUI/InteractionPrompt实例与StreetDialogue_TUNE（Service/OperationLock/GameState/Selector），原玩家OperationLock和镜头GameState各接一引用；同HUD Composition/Box/Dimmer、原Runtime/Registry/Input/Camera、Applier/Debug同Service及两NPC正式Trigger路径接齐。唯一Talked仍由09 Session持有，Edit不初始化。第四锚点test_street_04_TUNE(1.1,-4,0)，土豆自身对话dlg_test_talk_c；正式ImportAll一次0error/56warning/8未核info，新18/更新24/未变163，16具名角色/段/句和交谈键可读。原28根/两NPC/玩家镜头有限字段无漂移，20保护、44表源schema、62脚本meta SHA保持；SaveScene一次返回clean，后续读回dirty未归属，现场未再保存/重载/清标记，首轮安全收口Fail/null保留；本次同根只读核磁盘仍为原保存点，原三项正式保存合同通过，无新增原生调用/验收，实际引擎累计1/3。未归属Editor dirty仍为后继保护事项，不推断全部内存相等；确需覆盖/重载/Play且无安全替代时再由用户决定。人工门保持，完整核验仍2026-09-17。
@@ -105,6 +141,18 @@
 ## 工程与场景
 
 正式共享Build表保持五场景：Boot、ShortCycle_P0P1、CookingProcess、ShortCycle_P2、LongLoop_Street。0.1.2的Windows64 Mono非Development构建只在本次BuildPlayerOptions选Boot+Street，不改共享场景表。源码/资源定位细节见[工程入口](.ai-workspace/codebase/entry.md)。
+
+2026-11-23 V015-13实际保存的Street对话接线（仅本模块局部核对）：
+
+| 对象 / 组件 | 当前保存引用或位置 |
+| --- | --- |
+| StreetDialogue_TUNE / NarrativeStreetReactionAdapter | Dialogue Service→同对象原Service；Target Registry→NarrativeTargetRegistry_TUNE；Street Camera→Cam_Street；Player Controller→PlayerRoot_TUNE的LongLoopPlayerController |
+| NarrativeTargetRegistry_TUNE / Player | 保留PlayerRoot_TUNE/Foot_TUNE；Adapter沿父链最近控制器认定同一主角，位置仍取Foot |
+| NarrativeSceneDebugPanel_TUNE / Portrait Stage | NarrativeDialogueUI/Portraits的继承Stage；原Applier/Registry/Service引用保持 |
+| NarrativeDialogueUI实例 | Stage、停用无图模板和Composition引用继承原Prefab，两字段prefabOverride=false；不Apply回Prefab |
+| test_street_05_TUNE / NarrativeAnchorMarker | 新根对象，anchorId=test_street_05，初值(0.4,-4.75,0)；靠近出生点且与四原锚点/两NPC错开，待用户挪动 |
+
+原四锚点与两预摆NPC父级/位置均保留；镜头驱动、主角控制器、UI实例和GenericNPC三个子挂点的旧保存值无变化。ImportAll保留56条告警（含V-25未核和缺图占位），不把正式导表success写成这些告警已解决。人工图形、朝向、F8取景及整体体验留后继原流程。
 
 ## 长循环与镜头
 

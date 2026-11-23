@@ -14,16 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Generated.DataTables::CK01CharacterData
   character_id: chr_test_talker
   name_key: test_chr_talker.name
-  portrait_sprite: 
+  portrait_sprite: Pomegranate-1
+  portrait_sprite_asset: {fileID: 21300000, guid: a304fa66308c6614ea3254764ec4d016, type: 3}
   portrait_offset_x:
     hasValue: 0
     value: 0
   portrait_offset_y:
-    hasValue: 0
-    value: 0
+    hasValue: 1
+    value: 0.3
   portrait_scale:
-    hasValue: 0
-    value: 0
+    hasValue: 1
+    value: 1.58
   street_visual_prefab: npc_visual_tomato
   street_visual_prefab_asset: {fileID: 3921762816315963581, guid: 9063b7e7513ee924ba59f672d8c83d07, type: 3}
   expressions: 

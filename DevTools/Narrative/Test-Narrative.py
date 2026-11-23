@@ -184,6 +184,9 @@ def main():
         '"DevTools/Narrative/NarrativeStepSequenceTests.cs"',
         '"DevTools/Narrative/NarrativeInteractionRulesTests.cs"',
         '"DevTools/Narrative/NarrativeTalkedRecordTests.cs"',
+        '"DevTools/Narrative/NarrativePortraitLayoutTests.cs"',
+        '"DevTools/Narrative/NarrativeSpeakerHighlightTests.cs"',
+        '"DevTools/Narrative/NarrativeStreetReactionTests.cs"',
         '"Assets/Scripts/Tools/NarrativeCurveBridge.cs"']
     compile_assembly('NarrativeCommandTests', command_lines)
     fixture = root / 'DevTools/Narrative/Fixtures/CommandSignatures.v2_5.tsv'
@@ -322,7 +325,8 @@ def main():
         'Assets/Scripts/Narrative/Unity/NarrativeDialogueService.cs', 'Assets/Scripts/Narrative/Unity/NarrativeTalkedPersistence.cs',
         'Assets/Scripts/Tools/Input/IGameInput.cs', 'Assets/Scripts/DataBase/Localization/LocTextCatalog.cs',
         'Assets/Scripts/DataBase/Localization/LocTableAsset.cs', 'DevTools/Narrative/NarrativeDialogueLayersUnityBoundary.cs',
-        'DevTools/Narrative/NarrativePrefabServiceBoundary.cs', 'DevTools/Narrative/NarrativeDialoguePrefabTests.cs')]
+        'DevTools/Narrative/NarrativePrefabServiceBoundary.cs', 'DevTools/Narrative/NarrativeDialoguePrefabTests.cs',
+        'DevTools/Narrative/NarrativeNameBoxSideTests.cs', 'DevTools/Narrative/NarrativeDialogueNotificationTests.cs')]
     compile_assembly('NarrativeDialoguePrefabTests', prefab_lines)
     old_mono = environment.get('MONO_PATH'); environment['MONO_PATH'] = str(json_reference.parent)
     try:
@@ -332,7 +336,43 @@ def main():
     finally:
         if old_mono is None: environment.pop('MONO_PATH', None)
         else: environment['MONO_PATH'] = old_mono
+    # V015-05 real FSM/session/sequences/layout/highlight with external stage/box/dim call transport.
+    portrait_sequence = out / 'NarrativePortraitSequenceTests.exe'
+    sequence_lines = ['-nologo', '-nostdlib+', '-target:exe', '-out:"' + str(portrait_sequence) + '"']
+    sequence_lines += ['-r:"' + str(p) + '"' for p in bcl + [fx / 'Facades/netstandard.dll', outputs['Narrative.Core'], toolkit, json_reference, prefab_sample]]
+    sequence_lines += ['"DevTools/Narrative/NarrativePortraitSequenceTests.cs"']
+    compile_assembly('NarrativePortraitSequenceTests', sequence_lines)
+    old_mono = environment.get('MONO_PATH'); environment['MONO_PATH'] = str(json_reference.parent)
+    try:
+        portrait_sequence_text = run_stage('portrait-sequence', [str(mono), str(portrait_sequence), str(out.parent / 'p' / (out.name + '-portrait-sequence'))],
+            dict(exe=str(portrait_sequence), exeSha256=digest(portrait_sequence), nativeUnity=False,
+                fixtureBoundary='actual FSM/session/entrance/exit/sequence/layout/highlight; external stage/box/dim calls and image handles only'))
+    finally:
+        if old_mono is None: environment.pop('MONO_PATH', None)
+        else: environment['MONO_PATH'] = old_mono
+    portrait_stage_results = []
+    old_mono = environment.get('MONO_PATH'); environment['MONO_PATH'] = str(json_reference.parent)
+    try:
+        for mode in ('release', 'UNITY_EDITOR', 'DEVELOPMENT_BUILD'):
+            sample = out / ('NarrativePortraitStage-' + mode + '.exe')
+            lines = ['-nologo', '-nostdlib+', '-target:exe', '-out:"' + str(sample) + '"']
+            if mode != 'release': lines += ['-define:' + mode]
+            lines += ['-r:"' + str(p) + '"' for p in bcl + [fx / 'Facades/netstandard.dll', outputs['Narrative.Core'], json_reference]]
+            lines += ['"' + p + '"' for p in (
+                'Assets/Scripts/Narrative/Unity/NarrativePortraitStage.cs',
+                'Assets/Scripts/Narrative/Unity/NarrativePresentationSurfaces.cs',
+                'DevTools/Narrative/NarrativePortraitStageUnityBoundary.cs',
+                'DevTools/Narrative/NarrativePortraitStageTests.cs')]
+            compile_assembly('NarrativePortraitStage-' + mode, lines)
+            result = run_stage('portrait-stage-' + mode, [str(mono), str(sample)],
+                dict(exe=str(sample), exeSha256=digest(sample), nativeUnity=False, buildCondition=mode,
+                    fixtureBoundary='actual stage plus original layout/highlight models; external hierarchy/clone/destroy and supplied Sprite rectangles only'))
+            portrait_stage_results.append(dict(buildCondition=mode, result=json.loads(result)))
+    finally:
+        if old_mono is None: environment.pop('MONO_PATH', None)
+        else: environment['MONO_PATH'] = old_mono
     report = dict(passed=True, unityNativeLaunched=False, substitutesUsed=False,
+        portraitStageResults=portrait_stage_results, portraitSequenceTestText=portrait_sequence_text,
         assemblyDefinitions=assembly_definitions, outputs={name:dict(path=str(p), sha256=digest(p)) for name,p in outputs.items()},
         stages=records, sampleText=text, commandTestText=command_text, independentCommandFixture=str(fixture),
         independentCommandFixtureSha256=digest(fixture), existingGeneratedTransitiveDependency='ShortCycle.Core (unchanged)',

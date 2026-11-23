@@ -2,7 +2,8 @@
 param(
     [string]$OutputRoot = $env:EATWHAT_NARRATIVE_OUTPUT_ROOT,
     [string]$UnityEditorPath = 'C:/Program Files/Unity/Hub/Editor/6000.3.24f1/Editor',
-    [switch]$SkipDataRegressions
+    [switch]$SkipDataRegressions,
+    [switch]$PortraitImportOnly
 )
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -10,7 +11,9 @@ if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
     $OutputRoot = Join-Path $repositoryRoot ('.ai-workspace/outputs/narrative-offline/' + [guid]::NewGuid().ToString('N'))
 }
 $python = (Get-Command python -ErrorAction Stop).Source
-& $python (Join-Path $PSScriptRoot 'Test-Narrative.py') --output $OutputRoot --unity-editor $UnityEditorPath
+$narrativeArguments = @((Join-Path $PSScriptRoot 'Test-Narrative.py'), '--output', $OutputRoot, '--unity-editor', $UnityEditorPath)
+if ($PortraitImportOnly) { $narrativeArguments += '--compile-only' }
+& $python @narrativeArguments
 if ($LASTEXITCODE -ne 0) { throw "Narrative offline runner exited with code $LASTEXITCODE" }
 # Separate headless fixture host: actual import/query methods, existing stubs,
 # no AssetDatabase persistence. Real Unity DLL compilation is recorded above.
@@ -35,6 +38,7 @@ $modelSources += @(
     (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeBubbleView.cs'),
     (Join-Path $PSScriptRoot 'NarrativeBubbleUnityBoundary.cs'),
     (Join-Path $PSScriptRoot 'NarrativeBubbleViewTests.cs'))
+if ($PortraitImportOnly) { $modelSources += (Join-Path $PSScriptRoot 'NarrativePortraitImportTests.cs') }
 $modelHost = Join-Path $repositoryRoot 'DevTools/DataTables/Test-CK01BImportContracts.ps1'
 $modelJsonRoots = @(Get-ChildItem (Join-Path $repositoryRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
 if ($modelJsonRoots.Count -ne 1) { throw 'Expected the retained StaticCompile Newtonsoft reference.' }
@@ -50,6 +54,12 @@ $modelPreflight = [ordered]@{
 }
 $modelPreflight | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutputRoot 'model-host.preflight.json')
 & $modelHost -CompileOnly -AdditionalCompileSources $modelSources
+if ($PortraitImportOnly) {
+    $portraitReport = [NarrativePortraitImportTests]::Run($repositoryRoot, (Join-Path $OutputRoot 'portrait-fixtures'))
+    [IO.File]::WriteAllText((Join-Path $OutputRoot 'portrait-import.json'), $portraitReport)
+    Write-Output $portraitReport
+    return
+}
 # Explicit card-level opt-out only; default data/V26/authoring calls and assertions stay unchanged.
 if (-not $SkipDataRegressions) {
 $tableReport = [NarrativeTableFixtureTests]::Run($repositoryRoot)

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Generated.DataTables::CK01DialogueData
   dialogue_id: dlg_test_talk_a
   tier: normal
-  cast_01: 
+  cast_01: chr_test_talker
   cast_01_station: 
   cast_01_pos_x:
     hasValue: 0
@@ -28,7 +28,7 @@ MonoBehaviour:
   cast_01_order:
     hasValue: 0
     value: 0
-  cast_02: 
+  cast_02: chr_test_player
   cast_02_station: 
   cast_02_pos_x:
     hasValue: 0

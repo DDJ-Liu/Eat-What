@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace EatWhat.DataTables
 {
@@ -123,6 +124,7 @@ namespace EatWhat.DataTables
     {
         public string AssetPath;
         public string Warning;
+        public bool RejectedMultipleSprite;
     }
 
     // Filename resolution only, never creates a reference, placeholder or asset.
@@ -138,8 +140,26 @@ namespace EatWhat.DataTables
             var candidates = findCandidates == null ? null : findCandidates(normalized);
             foreach (var path in candidates ?? new List<string>())
                 if (!string.IsNullOrWhiteSpace(path) && string.Equals(Path.GetFileNameWithoutExtension(path), normalized, StringComparison.Ordinal) && !exact.Contains(path)) exact.Add(path);
-            return exact.Count == 1 ? new FilenameLookupResult { AssetPath = exact[0] } : new FilenameLookupResult {
+            if (exact.Count == 1)
+            {
+                if ((role == "portrait" || role == "cg") && IsMultipleSpriteImport(exact[0]))
+                    return new FilenameLookupResult { RejectedMultipleSprite = true,
+                        Warning = (role == "cg" ? "这张 CG" : "这张立绘") + "的导入方式是多张子图，请改为单张：" + normalized + "。引用保持为空。" };
+                return new FilenameLookupResult { AssetPath = exact[0] };
+            }
+            return new FilenameLookupResult {
                 Warning = role + " '" + normalized + "' has " + exact.Count + " exact candidates; reference remains unresolved (no first-match selection)." };
+        }
+
+        // Shared by formal filesystem validation and Editor import. Read only; never reimports or edits metadata.
+        // Missing metadata retains the old existence-only result; it is not an attestation of Sprite loadability.
+        static bool IsMultipleSpriteImport(string path)
+        {
+            string meta = path + ".meta";
+            if (!File.Exists(meta)) return false;
+            string text = File.ReadAllText(meta);
+            return Regex.IsMatch(text, @"(?m)^TextureImporter:[ \t]*\r?$") &&
+                Regex.IsMatch(text, @"(?m)^  spriteMode:[ \t]*2[ \t]*\r?$");
         }
     }
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Generated.DataTables::CK01DialogueData
   dialogue_id: dlg_test_talk_c
   tier: normal
-  cast_01: 
+  cast_01: chr_test_potato
   cast_01_station: 
   cast_01_pos_x:
     hasValue: 0

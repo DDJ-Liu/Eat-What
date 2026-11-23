@@ -1,8 +1,84 @@
-# 街景 NPC 内容配置说明
+# 街景 NPC 内容与立绘配置
 
-最后核对：2026-11-20，依据当前已保存的街景、通用 NPC 与对话界面 Prefab、正式 CSV 和实际源码。本说明讲配置方法；已保存引用不等于真实字位、按键与整体体验已经通过。操作前先确认并保全现有未保存改动，不强制覆盖或重载现场。
+最后局部核对：2026-11-23，对照当前源码、正式CSV、生成角色引用、演出配置资产、已保存的Street与对话Prefab，以及正式导表和首次保存读回记录。本轮只维护说明；已保存引用不等于图片、转身、调参或整版体验已由用户检查通过。
 
-配套阅读：[对话参数](参数调整说明_对话.md)、[当前占位校对](demo-0.1.4_占位校对清单.md)、[缺失素材](街景NPC缺失内容清单.md)、[场景状态](街景场景状态配置与使用说明.md)。配表作者源是 `DevTools/DataTables/Authoring/DataTables_Authoring.xlsx`，不要用旧 CSV 反向重建覆盖工作簿。
+当前普通对话已接入四张角色立绘、说话者高亮、名字换边、入退场、街景反应及开发期F8调参。正式入口是 `Assets/Scenes/LongLoop/LongLoop_Street.unity`；新增“人五”在默认状态发起三人→四人→自定义站位串联。第五锚点 `test_street_05_TUNE` 当前保存世界坐标 `(0.4,-4.75,0)`，只是待用户终调的起点。逐项内容见[本版占位校对清单](demo-0.1.5_占位校对清单.md)，实际体验见[人工检查说明](demo-0.1.5_人工检查说明.md)。
+
+<a id="portrait-config"></a>
+## 立绘：从图片到对话画面
+
+### 1. 放图、导入、填角色表
+
+1. 新图先按项目美术资源流程确认用途、最终路径与替换范围，再放 `Assets/Sprites/Narrative/Portraits/`；不要擅自覆盖已引用图。文件基名须在Sprite搜索目录中唯一且大小写一致，如 `portrait_vendor_default.png`。
+2. 在Unity选择图片，Inspector的 **Texture Type=Sprite (2D and UI)**、**Sprite Mode=Single**，应用导入设置。这里使用整张PNG，包含透明留白；不要选Multiple或填旧切片名 `Potato_0`。Multiple会在导表时告警，该图不会接入，不能任选一片代替。
+3. 打开唯一作者工作簿 `DevTools/DataTables/Authoring/DataTables_Authoring.xlsx` 的 **Characters** 页。`character_id`是已有基础角色ID；`portrait_sprite`只填精确文件基名，如 `Tomato`，不带目录、`.png`或切片后缀。`street_visual_prefab`是街景小人，与立绘不是同一列。生成的Sprite引用由导表器派生，不需要手填新引用列。
+4. 配好下列角色取景三值，保存工作簿，经正式导出/校验发布CSV，再在Unity停止游戏时执行 **Tools > Data Tables > Import All**。查看本次报告和生成引用，重新进入游戏检查。不要直接改CSV、Generated资产或运行时克隆绕过作者源。
+
+| 角色表列 | 单位、默认/空值 | 改动含义 |
+| --- | --- | --- |
+| portrait_offset_x | 整张图片宽度比例；空为0，有限，可为负 | 图片对准点X=`0.5+x`，从整图左边算。未镜像时增大让图片整体向左；右侧镜像时视觉方向相反。不是屏幕像素，也不是站位X |
+| portrait_offset_y | 整张图片高度比例；空为0，有限，可为负 | 图片对准点Y=`y`，从整图底边算。增大让图片整体下移；0对齐底边，0.3对齐距底边30%处。允许下半部移到屏幕外正常裁切 |
+| portrait_scale | 角色倍率；空为1，必须有限且>0 | 放大/缩小整张图片，仍绕同一对准点；最终倍率还乘站位倍率和本段cast倍率，说话时另乘高亮倍率。不是厘米、PPU或只裁人物可见轮廓 |
+
+![整图对准点映射到屏幕显示锚点，未镜像示意](images/portrait-alignment.svg)
+
+示意用x=0.10、y=0.30说明坐标，不是要求把现表改成此值。当前四角色x为空（按0），y均0.3；番茄/土豆/谈话人/主角的角色倍率分别1.43/1.36/1.58/1.44。**整张图片上的对准点对到屏幕显示锚点**；透明留白也参加宽高计算。两张石榴原画布不同，不能把同一偏移当成已经保证无跳变的表情差分。
+
+### 2. 用 F8 找取景，再抄回作者源
+
+在Editor或Development版本正常进入街景并开始有立绘的对话，按 **F8** 打开原面板，滚动到“立绘调参”。当前 `NarrativeSceneDebugPanel_TUNE` 上 **Narrative Scene Debug Panel > Portrait Stage** 已接同场景对话界面的舞台；发布版本没有F8。无舞台时整区隐藏；没有进行中对话/没有图时只显示说明。
+
+每行是基础角色ID及其取景三值，按钮 **偏移X± / 偏移Y±** 每次0.01图片比例，**缩放±** 每次0.02，非正缩放拒绝。显示的是角色倍率，不是站位/段落/高亮相乘后的总倍率。同角色当前和后续批次共用临时覆盖，名单重复时多行会跟着同一角色变化。
+
+找到合适值后点该行 **复制**，先粘到临时文本核对：一行依次为 `角色ID<Tab>x<Tab>y<Tab>缩放`，小数点为`.`，同一行也写Console。按ID找到工作簿Characters对应行，把后三值分别填回 **portrait_offset_x / portrait_offset_y / portrait_scale**；不要把ID粘到偏移列或把整行覆盖其它已有单元格。保存、正式导出/校验、停止游戏后Import All，再重新进入对话确认。
+
+**清除全部临时值**恢复本舞台所有角色的原表取景，不清已聊记录；与“清空已聊过”按钮不同。F8不写工作簿、CSV或存档，关面板不会自动保存；同舞台Clear节点保留临时值，舞台实例销毁后消失。临时值可能继续盖住新表值，对比新导入结果前先清除或正常停止再进入。只在测试内容/测试存档操作其它F8功能。
+
+### 3. 对话表出场列与三种站位写法
+
+在 **Dialogues** 的 `cast_01`…`cast_04` 按出场顺序填基础角色ID；每槽的 `_station / _pos_x / _pos_y / _scale / _order` 只作用于本段。一个槽填一个ID，不是用逗号写多人。旁白角色通常不放入名单。
+
+| 写法 | 示例 | 位置、倍率与次序 |
+| --- | --- | --- |
+| 自动排 | `cast_01=chr_test_tomato`，该槽station/pos都空 | 按**实际有图的人数**选1～4人站位组，再按有效名单顺序使用站位；无图者不占人数或位置 |
+| 点名站位 | `cast_01_station=s3-left`，pos都空 | 精确区分大小写找名字；可选其它人数组的已命名站位，取该站的位置/倍率/层次。未知名字诊断后回该人的自动位置 |
+| 直接给位置 | `cast_02_pos_x=-600`、`cast_02_pos_y=80` | 以屏幕底边中心为(0,0)的2560×1440参考像素；X右正、Y上正。**任意一项有值就覆盖整个station/自动位置**，另一项空按0；不继承该station倍率/层，站位因子回1、原层回0 |
+
+优先级为 **直接位置 > 命名站位 > 自动排**。本段 `_scale` 空按1，与角色/站位倍率相乘，不覆盖角色表；`_order` 空继承所选站位layer（直接位置时为0），填了就覆盖本段基础层，数值大更靠前；同值按cast槽顺序，后者靠前。说话者还会在同批内临时置前，结束高亮后回基础排序。
+
+当前可直接参考 `dlg_test_cast_custom`：土豆点名 `s3-left`；谈话人直接(-600,80)、本段scale=0.8、order=-1。这是现有测试段保存值，不是要覆盖其它段落的建议。
+
+### 4. 全局站位表在哪里
+
+Project选择 **Assets/Settings/Narrative/DialoguePresentationConfig.asset**，Inspector展开 **Data > Layout > 对应模板 > Stations**。默认模板name=`default`；`actorCount`是该组有图人数；entry的 **Id** 是station名字，**Position** 是显示锚点，**Scale** 是站位倍率（>0），**Layer** 是基础前后层。不要重名；跨组同名会诊断并选较小人数组，不用它做覆盖技巧。
+
+| 人数 | 当前名字，按自动排顺序 | 保存位置(X,Y) | 保存倍率 / layer |
+| --- | --- | --- | --- |
+| 1 | s1-center | (0,0) | 1 / 0 |
+| 2 | s2-left；s2-right | (-747,0)；(747,0) | 均1 / 0 |
+| 3 | s3-left；s3-center；s3-right | (-853,0)；(0,0)；(853,0) | 均1；layer为0、1、0 |
+| 4 | s4-left-outer；s4-left-inner；s4-right-inner；s4-right-outer | (-960,0)；(-400,0)；(400,0)；(960,0) | 0.9、1、1、0.9；layer为0、1、1、0 |
+
+段落 `layout_profile` 选Layout整组模板，空用default；站位默认→指定组模板→有效段落overrides的规则见[参数说明](参数调整说明_对话.md)。`portraitBottomAlign` **本版不读**，不能靠开关它改变对准点。角色取景改Characters，整段排布改cast或Stations，两者不要混调。
+
+### 5. 常见情况与提示
+
+| 情况 | 当前表现 / 先查哪里 |
+| --- | --- |
+| 说话的人没在cast名单 | 不自动加图；现有图都按听众处理。姓名/正文仍照原句显示；名字框默认回左 |
+| 旁白 | 没有当前高亮人物，已有图转听众态；旁白不借用上一句名字。名单无图时仍能正常显示文字 |
+| 名单角色没有立绘 | 跳过该图，不计人数、不留空位；不会拿番茄占位或按街景形象猜图。核portrait_sprite、Single和生成引用 |
+| 超过四人 | 当前表只有四个cast槽，未支持五人自动排。不要在一个槽塞列表；需五人时先提出扩展需求。非表入口若超过默认组会缺站位并回底中，不保证能读的排布 |
+| 右边的人反向 | **NarrativeDialogueUI / Portraits / Narrative Portrait Stage > Mirror Right Portraits** 默认开；当前保存也开，只翻解析为Right的立绘。关后全正向；中/左不翻。不按临时横移或高亮后位置重新判断侧别 |
+| 名字切到右边 | 当前说话者立绘的显示锚点在右侧时名字右对齐；其它情况左侧。右边位置来自左边镜像，正式调作者Name左侧即可 |
+| Multiple、找不到、同名图告警 | 在本次Import All报告按表名/行/字段定位Characters.portrait_sprite；核图片Single、基名与唯一性，不能改已填业务值来掩盖真实问题 |
+| 站位/倍率诊断或图不合适 | 查cast槽和Layout模板：未知station回自动、缺默认回底中(倍率1/层0)、非法倍率该因子回1。表格式合法不代表画面合适；重名/非法值应修作者配置，不把回落当正常排布 |
+
+### 6. 街景主角、反应与已保存引用
+
+`StreetDialogue_TUNE` 上的 **Narrative Street Reaction Adapter** 已保存本场景 **Dialogue Service / Target Registry / Street Camera / Player Controller** 四引用。Registry.Player保持 `PlayerRoot_TUNE/Foot_TUNE`；**Player Controller接该Foot所属 `PlayerRoot_TUNE` 上的 LongLoop Player Controller**，身份来自此控制器同节点Actor Marker。也兼容直接绑定控制器Transform；位置按Registry所绑目标取样，控制器仅沿自身/父链最近归属解析，不全场景搜索或借另一个主角的身份。不要把Registry改绑Visual来迁就控制器。
+
+**位置保持；朝向在对话开始时转向对方一次，之后保持。** 同一轮续接不重复面对，结束不把主角朝向转回。听众按本段Reaction的FaceSpeaker/None和turnDelay响应；默认FaceSpeaker/0.2秒，随对白游戏时间一起暂停。None只取消听众转身，开始双方相向仍做；整次结束/中止恢复NPC首次原朝向。真实方向和节奏请按[五列人工表](demo-0.1.5_人工检查说明.md)检查。
 
 ## 一、让一个 NPC 能交谈
 
@@ -18,14 +94,14 @@
 | Dialogues.dialogue_id / tier | 唯一段 ID；可交谈段填 `normal` | 如 `dlg_test_talk_a`。`ambient` 给气泡用；本版交谈服务拒绝 `story`，金色标记也不会让剧情级可交谈 |
 | Dialogues.first_line | 首句的 line_id | `ln_test_talk_a_01`。不能凭行的上下顺序决定开头 |
 | Dialogues.next_dialogue | 同一轮结束后自动接的下一段，可空 | `dlg_test_talk_b` 接 `dlg_test_talk_b2`；尾段留空，不要指回自身或形成环 |
-| Dialogues.cast_01…cast_04 | 本版普通对话可空 | 当前四段测试均空；不要为了显示姓名虚填立绘名单，立绘尚未接入 |
+| Dialogues.cast_01…cast_04 | 本段出场的角色ID，可空；每槽另有站位/位置/缩放/次序 | 按本页立绘章填写；空名单仍能显示对白和姓名，有图角色才进入立绘人数 |
 | Dialogues 的各 profile / overrides | 选演出模板或本段覆盖；不需要时留空 | `text_profile` 选文字模板；`overrides` 例见[参数说明](参数调整说明_对话.md)。不直接把这些字段当台词 |
 | DialogueLines.line_id / dialogue_id | 句 ID 唯一；所属段要一致 | 一段每句都填准确的 dialogue_id |
 | DialogueLines.next_line | 下一句 ID；最后一句留空 | 首句沿此链走，不能断链或成环 |
 | DialogueLines.speaker | 普通正文的角色 ID | 填 Characters 中的基础 ID，如 `chr_test_passer_a`；发起交谈的街景实例可以是 `chr_test_passer_a#2`，二者不是同一用途 |
 | DialogueLines.text_key | 正文的本地化键 | 如 `test_line_talk_a_01.text`，中文写在 Localization.zh_cn，不把正文直接塞进 text_key |
 | DialogueLines.name_override_key | 只覆盖这一句的显示名，可空 | 如 `test_name_unknown.name` → “？？？”；不改变 speaker 的角色身份或 Characters.name_key |
-| commands / on_end / expression / emotion / scene_emote 等 | 本版普通内容先留空 | 相关底层字段存在，但外部动作、立绘和表情表现尚未完整接入，不能靠填字符串制造尚未支持的效果 |
+| commands / on_end / expression / emotion / scene_emote 等 | 本版普通内容先留空 | 相关底层字段存在，但外部动作和表情表现尚未完整接入，不能靠填字符串制造尚未支持的效果 |
 
 每个名字键、正文键和提示键都在 `Localization` 页填写唯一 `loc_key` 和中文 `zh_cn`。普通正文不要求 speaker 在街景上另有可见实例；其姓名来自角色数据。气泡的 speaker 则用于找场景挂点，规则见后文，不能混用。
 

@@ -95,6 +95,55 @@ public static class NarrativeCatalogBlobTests
         finally {foreach(var row in rows)UnityEditor.SerializedObject.ProofPptrIds.Remove(row);}
         return checks-first;
     }
+    static int TestPortraitReferences()
+    {
+        int first=checks;var sprite=new Sprite {name="PortraitWhole"};var catalog=new CK01GeneratedDataCatalog();
+        var a=new CK01CharacterData {character_id="chr_portrait_a",portrait_sprite="PortraitWhole",portrait_sprite_asset=sprite,name_key="name_a",comment="preserve_a"};
+        var b=new CK01CharacterData {character_id="chr_portrait_b",portrait_sprite="PortraitWhole",portrait_sprite_asset=sprite,name_key="name_b"};
+        var empty=new CK01CharacterData {character_id="chr_portrait_empty",portrait_sprite="",comment="preserve_empty"};
+        var dialogue=new CK01DialogueData {dialogue_id="dlg_portrait",first_line="line_portrait"};
+        var rows=new ScriptableObject[]{a,b,empty,dialogue};var ids=new Dictionary<UnityEngine.Object,string>();
+        ids.Add(catalog,new string('a',32)+":11400000");ids.Add(sprite,new string('b',32)+":21300000");
+        for(int i=0;i<rows.Length;i++)ids.Add(rows[i],(i+1).ToString("x32")+":11400000");
+        catalog.ReplaceTables(new[]{new CK01GeneratedDataTable("Characters",null,new[]{new CK01GeneratedDataRowReference(a.character_id,a),new CK01GeneratedDataRowReference(b.character_id,b),new CK01GeneratedDataRowReference(empty.character_id,empty)}),
+            new CK01GeneratedDataTable("Dialogues",null,new[]{new CK01GeneratedDataRowReference(dialogue.dialogue_id,dialogue)})});
+        List<CatalogSpriteReference> sprites;List<CatalogPrefabReference> prefabs;
+        var graph=CatalogBlobSerializer.CaptureReferences(catalog,x=>ids[x],rows,null,null,out sprites,out prefabs);
+        Check(sprites.Count==1&&sprites[0].key==ids[sprite]&&ReferenceEquals(sprites[0].sprite,sprite)&&prefabs.Count==0,"formal Build collector registers same shared portrait Sprite once");
+        Check(Canonical(graph)==Canonical(CatalogBlobSerializer.Capture(catalog,x=>ids[x],rows)),"shared formal collection preserves complete capture graph");
+        var carrier=new CK01GeneratedDataCatalog();carrier.ConfigureBuildReferences(sprites,prefabs);
+        var held=(List<CatalogSpriteReference>)typeof(CK01GeneratedDataCatalog).GetField("releaseSprites",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(carrier);
+        Check(held.Count==1&&ReferenceEquals(held[0].sprite,sprite)&&carrier.Tables.Count==0,"actual release carrier holds collected whole Sprite without authoring rows");
+        Func<string,Sprite> resolve=key=>sprites.SingleOrDefault(x=>x.key==key)?.sprite;
+        var cipher=new CatalogBlobCipher(new FixtureKey());var fingerprint=CatalogBlobSerializer.Fingerprint(graph);var packet=CatalogBlobSerializer.Seal(graph,cipher);
+        using(var source=new EncryptedBlobSource(()=>packet,fingerprint,resolve,cipher))
+        {
+            var runtime=new CK01GeneratedDataCatalog();runtime.InstallSourceForValidation(source);CK01CharacterData found;string issue;
+            Check(runtime.TryGetCharacter(a.character_id,out found,out issue)&&ReferenceEquals(found.portrait_sprite_asset,sprite)&&found.portrait_sprite==a.portrait_sprite&&found.name_key==a.name_key&&found.comment==a.comment,"actual encrypted catalog readback returns same Sprite and other Character fields");
+            Check(runtime.TryGetCharacter(b.character_id,out found,out issue)&&ReferenceEquals(found.portrait_sprite_asset,sprite),"second Character retains shared Sprite identity");
+            Check(runtime.TryGetCharacter(empty.character_id,out found,out issue)&&found.portrait_sprite_asset==null&&found.comment==empty.comment,"empty Character reference stays null through release source");
+        }
+        Reject(()=>CatalogBlobSerializer.Open(packet,fingerprint,key=>null,cipher),"registered live portrait resolver failure remains strict");
+        var old=(JObject)graph.DeepClone();foreach(JObject node in (JArray)old["assets"])if((string)node["type"]==typeof(CK01CharacterData).FullName)((JObject)node["fields"]).Remove("portrait_sprite_asset");
+        old["sprites"]=new JArray();string canonicalBefore=Canonical(old);CatalogBlobSerializer.ValidateMetadata(old);
+        var oldPacket=CatalogBlobSerializer.Seal(old,cipher);
+        using(var decoded=CatalogBlobSerializer.Open(oldPacket,CatalogBlobSerializer.Fingerprint(old),key=>null,cipher))
+        {
+            var restored=decoded.Assets.Values.OfType<CK01CharacterData>().ToDictionary(x=>x.character_id);
+            Check(restored.Count==3&&restored.Values.All(x=>x.portrait_sprite_asset==null),"old Character packets missing only new derived field read as nullable empty");
+            Check(restored[a.character_id].portrait_sprite==a.portrait_sprite&&restored[a.character_id].name_key==a.name_key&&restored[a.character_id].comment==a.comment&&restored[empty.character_id].comment==empty.comment,"legacy compatibility retains all original Character contents");
+        }
+        Check(Canonical(old)==canonicalBefore,"metadata/readback compatibility never rewrites authenticated graph or fingerprint input");
+        Func<JObject,JObject> fields=g=>(JObject)((JArray)g["assets"]).Single(x=>(string)x["key"]==ids[a])["fields"];
+        var bad=(JObject)old.DeepClone();fields(bad).Remove("name_key");Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"missing other Character field still rejects");
+        bad=(JObject)old.DeepClone();fields(bad)["unknown_portrait"]=JValue.CreateNull();Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"unknown Character field still rejects");
+        bad=(JObject)graph.DeepClone();fields(bad)["portrait_sprite_asset"]="PortraitWhole";Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"portrait field cannot be a filename or wrong JSON type");
+        bad=(JObject)graph.DeepClone();fields(bad)["portrait_sprite_asset"]=new JObject { ["asset"]=ids[a] };Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"portrait field cannot reference a ScriptableObject instead of Sprite");
+        bad=(JObject)graph.DeepClone();fields(bad)["portrait_sprite_asset"]=new JObject { ["sprite"]=new string('f',32)+":21300000" };Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"portrait key outside Sprite registry still rejects");
+        bad=(JObject)old.DeepClone();var other=(JObject)((JArray)bad["assets"]).Single(x=>(string)x["key"]==ids[dialogue])["fields"];other["portrait_sprite_asset"]=JValue.CreateNull();Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"new optional field exception does not apply to other asset types");
+        bad=(JObject)old.DeepClone();((JArray)bad["assets"])[0]["type"]="System.String";Reject(()=>CatalogBlobSerializer.ValidateMetadata(bad),"legacy compatibility does not weaken asset type allowlist");
+        Check(CatalogBlobSerializer.Schema=="2.5.1","release packet schema/version unchanged");return checks-first;
+    }
     public static string Run(string root)
     {
         checks=0;var old=JObject.Parse(File.ReadAllText(Path.Combine(root,"DevTools/DataTables/Fixtures/NarrativeBlobV251/legacy14-export.json")));
@@ -168,8 +217,8 @@ public static class NarrativeCatalogBlobTests
                 using(var empty=CatalogBlobSerializer.Rehydrate(CatalogBlobSerializer.Capture(new CK01GeneratedDataCatalog(),x=>new string('c',32)+":11400000"),key=>null,key=>null))Check(empty.Tables.Count==0,"empty catalog/registries roundtrip");
                 using(var oldAgain=CatalogBlobSerializer.Open(CatalogBlobSerializer.Seal(old,cipher),CatalogBlobSerializer.Fingerprint(old),key=>sprites[key],cipher))Check(oldAgain.Tables.Count==14,"old2.4.1 payload remains readable through original API");
             }
-            int originalChecks=checks;int emptyPrefabChecks=TestEmptyPrefabSemantics();
-            return "{\"passed\":true,\"checks\":"+checks+",\"originalChecks\":"+originalChecks+",\"emptyPrefabChecks\":"+emptyPrefabChecks+",\"tables\":22,\"legacyAssetsCompared\":169,\"legacyTablesCompared\":14,\"actualEncryptedSourceAndRuntime\":true,\"nativeUnity\":false}";
+            int originalChecks=checks;int emptyPrefabChecks=TestEmptyPrefabSemantics();int portraitReferenceChecks=TestPortraitReferences();
+            return "{\"passed\":true,\"checks\":"+checks+",\"originalChecks\":"+originalChecks+",\"emptyPrefabChecks\":"+emptyPrefabChecks+",\"portraitReferenceChecks\":"+portraitReferenceChecks+",\"tables\":22,\"legacyAssetsCompared\":169,\"legacyTablesCompared\":14,\"actualEncryptedSourceAndRuntime\":true,\"nativeUnity\":false}";
         }
         finally { UnityEngine.Object.ProofDestroy=null; }
     }

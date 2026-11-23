@@ -235,6 +235,9 @@ internal static class NarrativeCommandTests
         NarrativeStepSequenceTests.Run();
         NarrativeInteractionRulesTests.Run();
         NarrativeTalkedRecordTests.Run();
+        NarrativePortraitLayoutTests.Run();
+        NarrativeSpeakerHighlightTests.Run();
+        NarrativeStreetReactionTests.Run();
         return 0;
     }
 }

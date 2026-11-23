@@ -28,6 +28,15 @@ namespace EatWhat.Narrative.Unity
             prefab = row.street_visual_prefab_asset; return true;
         }
 
+        public static bool TryGetCharacterPortraitSprite(CK01GeneratedDataCatalog catalog, string characterId,
+            out Sprite sprite, out string diagnostic)
+        {
+            sprite = null; diagnostic = null;
+            if (catalog == null) { diagnostic = "Generated catalog is missing."; return false; }
+            CK01CharacterData row;
+            if (!catalog.TryGetCharacter(characterId, out row, out diagnostic) || string.IsNullOrEmpty(row.portrait_sprite)) return false;
+            sprite = row.portrait_sprite_asset; return sprite != null;
+        }
         public static NarrativeCharacter FromRow(CK01CharacterData row)
         {
             Required(row);

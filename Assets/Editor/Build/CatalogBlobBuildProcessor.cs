@@ -82,12 +82,8 @@ public sealed class CatalogBlobBuildProcessor : IPreprocessBuildWithReport, IPro
     private static JObject CaptureReferences(out List<CatalogSpriteReference> sprites,out List<CatalogPrefabReference> prefabs)
     {
         var source=AssetDatabase.LoadAssetAtPath<CK01GeneratedDataCatalog>(SourceCatalogPath);if(source==null)throw new BuildFailedException("Source catalog missing.");
-        var registry=new Dictionary<string,Sprite>(StringComparer.Ordinal);
-        var prefabRegistry=new Dictionary<string,GameObject>(StringComparer.Ordinal);
         var universe=AssetDatabase.FindAssets("t:ScriptableObject",new[]{"Assets/Generated/DataTables"}).SelectMany(g=>AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GUIDToAssetPath(g))).OfType<ScriptableObject>().Where(a=>a!=source).ToArray();
-        var graph=CatalogBlobSerializer.Capture(source,asset=>{var key=Identity(asset);var sprite=asset as Sprite;if(sprite!=null)registry[key]=sprite;var prefab=asset as GameObject;if(prefab!=null)prefabRegistry[key]=prefab;return key;},universe,IsSerializedEmptySprite,IsSerializedEmptyPrefab);
-        prefabs=prefabRegistry.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(x=>new CatalogPrefabReference(x.Key,x.Value)).ToList();
-        sprites=registry.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(x=>new CatalogSpriteReference(x.Key,x.Value)).ToList();return graph;
+        return CatalogBlobSerializer.CaptureReferences(source,Identity,universe,IsSerializedEmptySprite,IsSerializedEmptyPrefab,out sprites,out prefabs);
     }
     /// <summary>Explicit pre-build export only. Its generated C# must be reviewed/imported/compiled before BuildPrepared.</summary>
     public static void PrepareSnapshot(string stagingDirectory)

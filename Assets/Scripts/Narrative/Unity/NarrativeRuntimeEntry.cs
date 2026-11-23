@@ -89,6 +89,12 @@ namespace EatWhat.Narrative.Unity
             return ready;
         }
 
+        public Sprite GetCharacterPortraitSprite(string characterId)
+        {
+            if (!EnsureInitialized()) return null;
+            Sprite sprite; string diagnostic;
+            return NarrativeDataAdapter.TryGetCharacterPortraitSprite(dataCatalog, characterId, out sprite, out diagnostic) ? sprite : null;
+        }
         public bool TryGetCharacterVisualPrefab(string characterId, out GameObject prefab, out string diagnostic)
         {
             prefab = null; diagnostic = null;

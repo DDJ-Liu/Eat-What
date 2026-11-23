@@ -20,9 +20,13 @@ namespace EatWhat.Narrative.Unity
         public bool IsRunning { get { return session != null && session.IsRunning; } }
         public string DialogueId { get { return session == null ? null : session.DialogueId; } }
         public string InitiatorId { get { return session == null ? null : session.InitiatorId; } }
+        public DialoguePresentationSnapshot CurrentSnapshot { get { return session == null ? null : session.CurrentSnapshot; } }
+        public string CurrentSpeakerId { get { return session == null ? null : session.CurrentSpeakerId; } }
         public NarrativeTalkedPersistence Talked { get { return session == null ? null : session.Talked; } }
         public event Action<NarrativeDialogueEvent> DialogueStarted;
         public event Action<NarrativeDialogueEvent> DialogueEnded;
+        public event Action<NarrativeDialogueLineEvent> LineStarted;
+        public event Action<NarrativeDialogueEvent> ConversationEnded;
 
         bool EnsureSession()
         {
@@ -44,10 +48,11 @@ namespace EatWhat.Narrative.Unity
             {
                 INarrativeDataDirectory data;
                 return runtimeEntry != null && runtimeEntry.TryGetDirectory(out data) ? data : null;
-            }, (dialogue, policy) => runtimeEntry.ResolveForService(dialogue, policy), boxView, sceneDimmer, operationLock, talked, Warn, presentationComposition);
+            }, (dialogue, policy) => runtimeEntry.ResolveForService(dialogue, policy), boxView, sceneDimmer, operationLock, talked, Warn, presentationComposition, id => runtimeEntry.GetCharacterPortraitSprite(id));
             boxView.Configure(session.Input, null); // BoxView retains its existing Inspector Toolkit Input Provider.
             boxView.AdvanceRequested += ForwardAdvance;
             session.DialogueStarted += ForwardStarted; session.DialogueEnded += ForwardEnded;
+            session.LineStarted += ForwardLineStarted; session.ConversationEnded += ForwardConversationEnded;
             return true;
         }
         public NarrativeServiceStartStatus TryStart(string dialogueId, string initiatorId, out string diagnostic)
@@ -61,13 +66,16 @@ namespace EatWhat.Narrative.Unity
         void ForwardAdvance() { if (isActiveAndEnabled && session != null) session.RequestAdvance(Time.frameCount); }
         void ForwardStarted(NarrativeDialogueEvent item) { DialogueStarted?.Invoke(item); }
         void ForwardEnded(NarrativeDialogueEvent item) { DialogueEnded?.Invoke(item); }
+        void ForwardLineStarted(NarrativeDialogueLineEvent item) { LineStarted?.Invoke(item); }
+        void ForwardConversationEnded(NarrativeDialogueEvent item) { ConversationEnded?.Invoke(item); }
         void Warn(string message) { Debug.LogWarning("[DIALOGUE] " + message); }
         void OnDisable() { session?.Abort(); }
         void OnDestroy()
         {
             if (session == null) return;
             if (boxView != null) boxView.AdvanceRequested -= ForwardAdvance;
-            session.Dispose(); session.DialogueStarted -= ForwardStarted; session.DialogueEnded -= ForwardEnded; session = null;
+            session.Dispose(); session.DialogueStarted -= ForwardStarted; session.DialogueEnded -= ForwardEnded;
+            session.LineStarted -= ForwardLineStarted; session.ConversationEnded -= ForwardConversationEnded; session = null;
         }
     }
 }

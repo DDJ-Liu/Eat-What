@@ -1269,7 +1269,9 @@ namespace EatWhat.DataTables
                     var lookup = NarrativeFilenameLookupPolicy.Resolve(column.referenceRole, rawValue,
                         name => FindExactNarrativePaths(column.referenceRole, name));
                     if (!string.IsNullOrEmpty(lookup.Warning)) warnings.Add(lookup.Warning);
-                    // Only Characters' street visual gains a Unity reference. Preserve the original nameOnly string/other roles.
+                    // Multiple-sprite portraits/CGs are unavailable, not a request to pick a sliced subasset.
+                    if (lookup.RejectedMultipleSprite) parsedValue = string.Empty;
+                    // Characters retain original nameOnly strings and nullable derived Unity references.
                     var character = asset as CK01CharacterData;
                     if (character != null && column.name == nameof(CK01CharacterData.street_visual_prefab) && column.referenceRole == "visual")
                     {
@@ -1278,6 +1280,14 @@ namespace EatWhat.DataTables
                             warnings.Add("visual '" + rawValue + "' resolved to '" + lookup.AssetPath + "' but could not be loaded as a Prefab GameObject; reference remains empty.");
                         if (!ValuesEqual(character.street_visual_prefab_asset, prefab))
                         { character.street_visual_prefab_asset = prefab; changed = true; }
+                    }
+                    if (character != null && column.name == nameof(CK01CharacterData.portrait_sprite) && column.referenceRole == "portrait")
+                    {
+                        var sprite = string.IsNullOrEmpty(lookup.AssetPath) ? null : AssetDatabase.LoadAssetAtPath<Sprite>(lookup.AssetPath);
+                        if (!string.IsNullOrEmpty(lookup.AssetPath) && sprite == null)
+                            warnings.Add("portrait '" + rawValue + "' resolved to '" + lookup.AssetPath + "' but could not be loaded as a Single Sprite; reference remains empty.");
+                        if (!ValuesEqual(character.portrait_sprite_asset, sprite))
+                        { character.portrait_sprite_asset = sprite; changed = true; }
                     }
                 }
                 else if (field.FieldType == typeof(Sprite))

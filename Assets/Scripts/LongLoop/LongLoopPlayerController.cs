@@ -113,6 +113,9 @@ namespace EatWhat.LongLoop
 
         public void ConfigureOperationLock(OperationLock value) { operationLock = value; }
 
+        // Dialogue's initial mutual facing uses the same depth/avatar path, including while input is locked.
+        public void SetDialogueFacing(bool right) { SetFacing(right); }
+
         public void ConfigureBoundaries(Transform left, Transform right)
         {
             boundaryL_TUNE = left;

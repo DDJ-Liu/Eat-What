@@ -1,8 +1,9 @@
 character_id,name_key,portrait_sprite,portrait_offset_x,portrait_offset_y,portrait_scale,street_visual_prefab,expressions,emote_offset_x,emote_offset_y,comment
-chr_test_tomato,test_chr_tomato.name,,,,,npc_visual_tomato,,,,
+chr_test_tomato,test_chr_tomato.name,Tomato,,0.3,1.43,npc_visual_tomato,,,,
 chr_test_passer_a,test_chr_passer_a.name,,,,,npc_visual_tomato,,,,
 chr_test_passer_b,test_chr_passer_b.name,,,,,,,,,
-chr_test_potato,test_chr_potato.name,,,,,,,,,
-chr_test_talker,test_chr_talker.name,,,,,npc_visual_tomato,,,,
+chr_test_potato,test_chr_potato.name,Potato,,0.3,1.36,,,,,
+chr_test_talker,test_chr_talker.name,Pomegranate-1,,0.3,1.58,npc_visual_tomato,,,,
 chr_test_narrator,,,,,,,,,,
-chr_test_player,test_chr_player.name,,,,,,,,,
+chr_test_player,test_chr_player.name,Octopus,,0.3,1.44,,,,,
+chr_test_host,test_chr_host.name,,,,,npc_visual_tomato,,,,

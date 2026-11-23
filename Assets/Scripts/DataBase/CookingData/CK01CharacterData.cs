@@ -10,8 +10,10 @@ public sealed class CK01CharacterData : ScriptableObject
     public string character_id = string.Empty;
     // 名字框本地化键；留空不显示名字框，旁白也按此规则填写。
     public string name_key = string.Empty;
-    // 全身立绘文件基名，无路径/扩展名且保留大小写；留空不能进入立绘出场名单，本阶段只查文件名不绑定。
+    // 全身立绘文件基名，无路径/扩展名且保留大小写；留空不能进入立绘出场名单，由下方派生引用供运行时使用。
     public string portrait_sprite = string.Empty;
+    // 导表派生的Single整图Sprite引用；不是CSV列，空/缺失/Multiple均不绑定。
+    public Sprite portrait_sprite_asset = null;
     // 原画布宽度比例，-0.5到0.5；指定对齐显示锚点的横向点，留空语义为0，不把空改成实际0。
     public CK01OptionalFloat portrait_offset_x;
     // 原画布高度比例，0到1；0为底部，留空语义为0；先偏移再围绕显示锚点缩放。

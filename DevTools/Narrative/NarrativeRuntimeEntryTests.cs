@@ -40,6 +40,20 @@ public static class NarrativeRuntimeEntryTests
         var value=(Action)typeof(DialoguePresentationConfig).GetField("Changed",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(config);
         return value==null ? 0 : value.GetInvocationList().Length;
     }
+    static int TestPortraitLookup()
+    {
+        int before=checks;var sprite=new Sprite {name="ImportedWhole"};var row=new CK01CharacterData {character_id="chr_sprite",portrait_sprite="ImportedWhole",portrait_sprite_asset=sprite};
+        var catalog=Catalog(false);var tables=new List<CK01GeneratedDataTable>(catalog.Tables);
+        tables[0]=new CK01GeneratedDataTable("Characters",null,new[]{new CK01GeneratedDataRowReference(row.character_id,row)});catalog.ReplaceTables(tables);
+        var entry=new NarrativeRuntimeEntry();entry.Configure(new DialoguePresentationConfig(),catalog);
+        Check(ReferenceEquals(entry.GetCharacterPortraitSprite(row.character_id),sprite),"runtime portrait lookup returns imported Sprite identity");
+        INarrativeDataDirectory data;NarrativeCharacter character;string issue;
+        Check(entry.TryGetDirectory(out data)&&data.TryGetCharacter(row.character_id,out character,out issue)&&character.PortraitSprite==row.portrait_sprite,"pure directory keeps original basename without Unity type");
+        Check(entry.GetCharacterPortraitSprite("chr_missing")==null,"missing Character has no portrait");
+        row.portrait_sprite="";Check(entry.GetCharacterPortraitSprite(row.character_id)==null,"empty basename rejects stale derived Sprite");
+        row.portrait_sprite="ImportedWhole";row.portrait_sprite_asset=null;Check(entry.GetCharacterPortraitSprite(row.character_id)==null,"missing imported Sprite is no portrait");
+        entry.isActiveAndEnabled=false;Event(entry,"OnDisable");Check(entry.GetCharacterPortraitSprite(row.character_id)==null,"unavailable Runtime has no portrait");Event(entry,"OnDestroy");return checks-before;
+    }
     public static string Run()
     {
         checks=0;
@@ -105,6 +119,7 @@ public static class NarrativeRuntimeEntryTests
         Check(!entry.IsAvailable&&!entry.TryGetDirectory(out directory),"disabled component unavailable");
         entry.isActiveAndEnabled=true;Event(entry,"OnEnable");Check(entry.IsAvailable,"reenable rebuilds references");
         Event(entry,"OnDestroy");Check(Subscribers(config)==0,"destroy unsubscribes config callback");
-        return "{\"passed\":true,\"checks\":"+checks+",\"actualComponentAdapterResolver\":true,\"nativeUnity\":false,\"sourcePolicyChanged\":false,\"jsonNotifyLimitation\":\"original JsonUtility stub returns {}; existing Changed delegate delivered explicitly\"}";
+        int originalChecks=checks,portraitLookupChecks=TestPortraitLookup();
+        return "{\"passed\":true,\"checks\":"+checks+",\"originalChecks\":"+originalChecks+",\"portraitLookupChecks\":"+portraitLookupChecks+",\"actualComponentAdapterResolver\":true,\"nativeUnity\":false,\"sourcePolicyChanged\":false,\"jsonNotifyLimitation\":\"original JsonUtility stub returns {}; existing Changed delegate delivered explicitly\"}";
     }
 }

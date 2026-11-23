@@ -380,6 +380,8 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: fc5c806e59a395247bcf143cabc24bc8, type: 2}
     - stableId: chr_test_player
       asset: {fileID: 11400000, guid: e32a9504b40217d48b57f0cbdb673888, type: 2}
+    - stableId: chr_test_host
+      asset: {fileID: 11400000, guid: d90f7bb2f9cbcaa47b15d23d5942bae5, type: 2}
   - tableName: Dialogues
     aggregateAsset: {fileID: 0}
     rows:
@@ -399,6 +401,12 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: 8158d0f77c8ab1846a0284679b44c56b, type: 2}
     - stableId: dlg_test_talk_c
       asset: {fileID: 11400000, guid: 5b349f10a22b3214fbeedf8883900ef2, type: 2}
+    - stableId: dlg_test_cast_3
+      asset: {fileID: 11400000, guid: a76753cfadd9a6c4abcd1354b3ce430f, type: 2}
+    - stableId: dlg_test_cast_4
+      asset: {fileID: 11400000, guid: 9e03c5c0c93921242bd0ad11daad8b0a, type: 2}
+    - stableId: dlg_test_cast_custom
+      asset: {fileID: 11400000, guid: c875e7262d05a55458a85c799637e906, type: 2}
   - tableName: DialogueLines
     aggregateAsset: {fileID: 0}
     rows:
@@ -434,6 +442,28 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: b00d8ce30f61d4d4983b0b3a2129887c, type: 2}
     - stableId: ln_test_talk_c_01
       asset: {fileID: 11400000, guid: 2ec5590dfb1153f488173b36bb5ec8b3, type: 2}
+    - stableId: ln_test_cast_3_01
+      asset: {fileID: 11400000, guid: aa8c90462293aed49b11a42f2e5d2a9b, type: 2}
+    - stableId: ln_test_cast_3_02
+      asset: {fileID: 11400000, guid: 708db12dbec6a114b83ae17fe13f213e, type: 2}
+    - stableId: ln_test_cast_3_03
+      asset: {fileID: 11400000, guid: ecb4d9376663a044385b29a0b279514c, type: 2}
+    - stableId: ln_test_cast_3_04
+      asset: {fileID: 11400000, guid: 29fd48cdbb1dd504fbce2d40f877bc99, type: 2}
+    - stableId: ln_test_cast_3_05
+      asset: {fileID: 11400000, guid: 3d98247507d53cd42a6ba28d719eb421, type: 2}
+    - stableId: ln_test_cast_4_01
+      asset: {fileID: 11400000, guid: 75493e694bca4974d896e19f96046c9b, type: 2}
+    - stableId: ln_test_cast_4_02
+      asset: {fileID: 11400000, guid: df959523153382844a435e6c076c253d, type: 2}
+    - stableId: ln_test_cast_4_03
+      asset: {fileID: 11400000, guid: d0724c4a2ce02bc4188c04d58346faef, type: 2}
+    - stableId: ln_test_cast_4_04
+      asset: {fileID: 11400000, guid: dfa2b55821a850747b87f054bd53cba1, type: 2}
+    - stableId: ln_test_cast_custom_01
+      asset: {fileID: 11400000, guid: e16c4bf2c1f56f2458db63947989c458, type: 2}
+    - stableId: ln_test_cast_custom_02
+      asset: {fileID: 11400000, guid: 2bd3d26ab93808c479933ed279b2501f, type: 2}
   - tableName: CGs
     aggregateAsset: {fileID: 0}
     rows: []
@@ -476,6 +506,10 @@ MonoBehaviour:
       asset: {fileID: 11400000, guid: c28c3fb4fd339c04380e7a88e82b17db, type: 2}
     - stableId: 15_scn_test_street__11_test_second__5_actor__15_chr_test_talker
       asset: {fileID: 11400000, guid: 0dc26922c68309641aee8c9f6d73f929, type: 2}
+    - stableId: 15_scn_test_street__12_test_default__5_actor__13_chr_test_host
+      asset: {fileID: 11400000, guid: a692bafc3bd5f35408bb09d62c94c667, type: 2}
+    - stableId: 15_scn_test_street__11_test_second__5_actor__13_chr_test_host
+      asset: {fileID: 11400000, guid: ce4e7c2bcb223d14a8194812b426cedc, type: 2}
   - tableName: AmbientPools
     aggregateAsset: {fileID: 0}
     rows:

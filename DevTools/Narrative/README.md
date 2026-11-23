@@ -1,3 +1,75 @@
+## 末句等待高亮（2026-11-23）
+
+现有 `Test-Narrative.ps1 -SkipDataRegressions` 的NarrativePortraitSequenceTests现212项，原Main用例及94项保持。新增路径使用真实NarrativeTypewriterModel自然出字/补全与原Session/FSM/input/序列/Layout/Highlight，不复制打字或状态机算法；外部仍只是Box/Stage/Dim句柄和通知搬运。自然完成、正常点击补全、快进自动出完后，Phase=LineComplete仍运行并等推进，CanEnd不重发SetSpeaker、不重启或逆转过渡；以两秒测试过渡覆盖等待中继续完成。
+
+生产仅改NarrativeDialogueEntrance.CanEnd：有效立绘批不再设null，原无舞台/无图的Unsupported回执保留。还核真实退场冻结、早报后旧批完成/清理、下一段独立新说话者、旧批不串色、中止清理、旁白/名单外听众态、无舞台延后回执。Core/FSM/Session/Typewriter/Exit/Stage不改。
+
+同一新增测试字节在旧源码先复现：原94通过后，具名在场末句自然出完等待的高亮断言失败；单点修后同入口首次全绿，旧120/185/96、Box53、Stage106/133/133与其它组保持，整链114及102行基准逐字节相同。非Unity/画面签收；人工复测选已有土豆单句，避免把三人段末尾旁白当成具名在场末句。
+
+## V015-05 可选立绘编排（2026-11-21续行）
+
+原Test-Narrative.ps1 -SkipDataRegressions在Prefab宿主后追加NarrativePortraitSequenceTests 94项，执行真FSM/Session/StepSequence/LayoutResolver/HighlightModel，外部stage/box/dim只搬运句柄/请求。覆盖依次/同时开始与完成、无舞台/名单空/无图不空等、跳过、名字右左中/名单外/旁白、逐句同调用、两种恢复、早报后后台退出/回亮、两批重叠/同角与独立压暗owner、中止；不改原120/185/96及其它断言。Runtime原组39后追加6项真实派生Sprite读取，保原源码断言；实际Stage各条件追加4项退出冻结/另一活动批继续推进，原102/129/129现106/133/133，所有调参入口/字典的发布排除保持。FakeRuntime只新增图句柄查询，Stage编译纳入现PresentationSurfaces；不复制编排/筛图算法或新增runner。
+
+本轮基线绿，首次改后编排94和原组绿，第二次仅为补实际Stage/Runtime边界用例全绿，无产品验证失败；统一输出offline-validation.json、portrait-sequence.stdout.bin和Runtime小组。真实Unity API依赖闭包仍由同入口编译，无Unity启动。原Data/Authoring/存档其它门不因本卡新增；原Narrative内已有01存档273仍保留执行。后继实际Prefab字段portraitStage及所有源码/meta SHA在607/attempt2/PROVIDER_INTERFACE.md，原05首轮缺引用失败和同根累计保留。
+
+## V015-04 立绘舞台（2026-11-21）
+
+现有 `Test-Narrative.ps1 -SkipDataRegressions` 在原组之后追加舞台三条件组：release100、UNITY_EDITOR107、DEVELOPMENT_BUILD107，首次完整执行均通过。实际生产Stage与原LayoutResolver/HighlightModel运行；外部边界只搬运Image克隆/销毁、父子/同级顺序、RectTransform字段和给定Sprite.rect宽高，没有站位/动画/高亮/渲染实现。发布条件反射核实三个临时取景入口及字典不存在，不以运行开关伪装排除。生产六阶段另用真实Unity引用编译，未启动Editor。
+
+覆盖实际字段赋值、0/.5/1入场三侧与Fade开/关、退场从当前点起/终点销毁、模型五量绘制/置前复位、两批独立/Clear/停用、默认镜像及开关、±1边界与不足1像素居中、开发期取景替换角色因子/当前及后续批生效/清除恢复、缺模板一次warning。原所有测试文件断言不改；原119/211/61、86/45/43、53/120/185/96及整链114/102行继续原入口。原Narrative内存档273照常运行，不新设存档门。
+
+只新增 `NarrativePortraitStage.cs` 与稳定meta（GUID 0cb3c0cc64b145839895771ec841331a），不改原Canvas/Box/Dimmer/Service/FSM，不写Prefab、场景、图片、Importer、正式表或配置资产。V015-05接编排、V015-12配模板、V015-09消费开发取景；当前实际图形/取景/遮挡/明暗未验，中文配置与五列人工说明在原文档。舞台消费原Placement.Side，不另按X符号推导，源代码内无Update或时钟。
+
+## V015-07 服务每句通知（2026-11-21）
+
+现有Prefab宿主追加 `NarrativeDialogueNotificationTests` 86项，仍由 `Test-Narrative.ps1 -SkipDataRegressions` 运行。直接执行实际MonoBehaviour Service→Session→FSM/07/08/BoxView，仅复用既有外部Runtime目录交付、Unity层级/生命周期与TMP句柄；没有自行实现服务、状态机、排版或通知规则。原服务96项源码字节保持，原Prefab43项/名字换边45项及其它原断言照常执行；整链114和102行基准保持。
+
+新增覆盖：每句一次及三个ID、同人连续句/旁白/名单外说话者、正文呈现同帧同步通知、当前段真实快照与当前FSM说话者查询、补全文本后查询保持/结束清空、A→B不同段ID及旧事件顺序、整次结束只在B后、失效下一段（缺失/坏行链/Ambient/Story）最终收束、中止前首句/句回调内中止后不再发句、重复中止与服务销毁退订。`ConversationEnded`观察原FSM栈完成后的实际状态，不以NextDialogue字段非空预测成功，不改原开始入口。
+
+本卡基线绿。改后首轮夹具以0出字速度又不按Typing输入，无法结束；已保留并正式FAILED登记。第二轮按原服务夹具发实际补全/推进输入后86项和全入口通过，同key RESOLVED，生产代码未因夹具失败修改。没有Unity/Play/Build/截图或独立街道、表工具、作者工具、镜头入口；原Narrative内部存档273检查照常执行，无新存档门。该新增通知本身不画图，街景反应的订阅与表现归V015-08，使用/五列人工表见既有组件说明和docs/demo-0.1.5_人工检查说明.md。
+
+## V015-06 名字框换边（2026-11-21）
+
+现有 `Test-Narrative.ps1 -SkipDataRegressions` 在原Prefab宿主末尾追加 `NarrativeNameBoxSideTests.Run()`，不另建入口、不修改原53/43或其它旧断言。新增45项直接运行实际BoxView的Show/SetNameSide/LayoutFullLine/停用：作者与自动路径、用户左侧布局、镜像、左右切回、右侧宽度变化固定右边、空名隐藏、逐段重置与停用后重新采样。夹具沿用外部层级/UI事件/TMP句柄，preferredWidth仅由测试输入，不计算字形/换行；实际长名排版交人工。固定合同仍只有换边与Narrative回归两项，新增单测条数不等于引擎门断言数。
+
+本卡基线绿。改后前两次新夹具对象数检查失败，最终定位为未预建正式Prefab的三个空EventTrigger；首次EventSystem推测也保留，第二次未解决，第三次补齐保存组件后全入口绿。旧断言不放宽，生产逻辑未因夹具失败改动；不以第三轮通过抹去历史失败。本次未启动Unity/Play/Build，未跑独立街道、数据表、作者工具、镜头入口；原Narrative内部已有的存档273检查照常执行，没有新增存档门。
+
+`NarrativeDialogueBoxView.SetNameSide(false/true)`是后继编排的即时入口，每次Show回左；没有新增Inspector/演出参数，已有Prefab保存值不变。完整配置及五列人工表见组件说明与docs/demo-0.1.5_人工检查说明.md。
+
+## V015-03 场景反应纯规则（2026-11-21）
+
+`NarrativeStreetReactionRules`每次整场交谈创建/开始一次，构造时传`INarrativeStreetReactionSource`只读能力。`NarrativeStreetReactionActor`是调用方此刻采样的实际实例ID、世界X、FacingRight与IsOnScreen；ID必须在本次运行中稳定且含多实例后缀，模型Ordinal精确比较，不在这里按基础角色匹配。角色→实际说话者小人的选择、Registry在场集合、脚底点是否在相机范围、壳/主角实际设朝向，均属后继街景适配器。现壳已有`IsFacingRight/SetFacing(bool)`，本卡未改它。
+
+`Begin(initiator, player)`返回两者互相面对的必要朝向命令：左方朝右，右方朝左，距离绝对值严格小于0.01世界单位不改。没有发起NPC时不做，主角仍作为后续排除身份。发起NPC按原卡总是记下初始朝向并纳入最终恢复，即使初始近乎同X或已经面对；主角从不记入恢复。命令只有ID与FacingRight，不会变更输入对象或位置，调用方须实际应用返回列表。活动期间再次Begin会拒绝，保护原记录，续接段不要重新Begin。
+
+每句`SetSpeaker(streetActorOrNull, currentSegmentSnapshot)`只取原reaction组turnMode与turnDelay（秒）。空小人或None取消旧计时，None不影响Begin的互相面对；同一个已参与反应的实际说话者不重计时，不因传入新对象/下一段不同delay重开旧计时。换人则丢掉旧计时并按新段delay开始。0秒在SetSpeaker同次调用直接返回围观命令；否则`Advance(deltaSeconds)`只接有限非负外部秒数。禁用后再次启用可为此前未计时的人开启反应。
+
+延迟到点才调用source.TryGetActor读取说话者当前X，再调用GetCandidates取一次当前候选快照；位置/屏内状态/新加入NPC不在通知时冻结。此时说话者已不存在则无转向。只转屏内旁人，排除说话者本人、发起者和主角；同X容差内和本已面对目标者不重复发命令或记旁人恢复。实际有改变的旁人只记第一次发命令前的朝向，之后转几次仍保首值；每次到点只消费一次，不持续追踪/轮询。候选由调用方提供在场NPC集合，不在Core读相机或引擎状态。
+
+整次对话完成用`End()`，中止用`Abort()`：返回按首次记录顺序的只读恢复命令，含发起NPC、不含主角，随后清记录/计时/身份。返回的旧清单不受新一次运行影响。续接段不要End/Abort/Begin，只继续给下一段快照及说话者；同人规则继续有效，换人按新delay，None会取消等待。模型拥有首次记录与计时，外层不另复制一份恢复权威状态或计时器；发命令/恢复并不等待FSM回报。
+
+现有Main末尾与Python编译源列表各只追加一行调用`NarrativeStreetReactionTests`。新61项直接执行真实规则与真实Resolver快照，外部Scene只存输入/采样计数和应用返回布尔，不复制转向算法。覆盖双方两站法、容差边界、延迟/换人/同人、到点位置及候选新鲜度、缺小人/None/屏外与三类排除、两次转向仅记首次、结束/中止/续接及无位置写入。细项在commands.stdout.bin的`STREET_REACTION_RESULT`；当前基线和最终`Test-Narrative.ps1 -SkipDataRegressions`首次通过，原01的119/02的211及全部原Narrative断言保持。仍沿Invoke-TaskTool，不另建runner/探针/守卫/比较器，不扩跑独立表/作者工具、Street、镜头或Toolkit存档门。当前只验证纯规则；真实Registry/相机/壳与主角接入和转身效果由后继街景卡/人工完成。
+
+## V015-02 说话者高亮纯模型（2026-11-21）
+
+`NarrativeSpeakerHighlightModel`每段创建一份，传入`NarrativeSpeakerHighlightInput(角色ID, NarrativePortraitSide)`的显示名单及本段原`DialoguePresentationSnapshot`。上层可将站位解析器的Portraits逐项投影为ID/Side，保持出场顺序；无立绘者已经由解析器过滤。构造时读取speaker组的listenerDim（亮度比例）、speakerScale（放大倍数）、speakerRise/speakerShiftInward（基准像素）、transition（Fade/Cut）、transitionTime（秒）并固定本段值；不读取/改写配置资产。
+
+`States`是只读定长列表，各状态对象保持身份，只有模型更新其五项数值。Brightness是RGB亮度因子而非透明度，Scale是说话者放大倍数而非站位总缩放；Rise/ShiftX是额外基准像素，IsFront告诉舞台是否临时置前，实际轴心/绘制/兄弟顺序归舞台。左侧说话者ShiftX为正、右侧为负、中间为0；未分明暗初值(1,1,0,0,false)，说话者(1,speakerScale,speakerRise,向内偏移,true)，听者(listenerDim,1,0,0,false)。
+
+每句用`SetSpeaker(id)`：首次旁白null/空也会从中性转全听者；名单外ID（包括已过滤的无立绘者）让全部显示者为听者，同一ID的多张图同时是说话者。字符串Ordinal匹配，不裁剪/改大小写。连续同人或null/空旁白返回false，不重开过渡；换人返回true，从当前四项值接续重计整个时长，IsFront在调用时立即更新。`Advance(deltaSeconds)`只消费调用方有限非负秒数，四项线性推进、到终点精确停住；Cut/0秒在SetSpeaker直接到目标。它没有全局时钟、渲染、FSM回报/等待或另一份执行状态；新一段新建模型回到中性，外部不要再拥有这五项动画状态。
+
+原命令Main末尾和Python源列表各只追加新测试一行，`NarrativeSpeakerHighlightTests`直接执行生产模型/真实Resolver，并用真实站位解析结果验证缺立绘路径。新增211项包括三目标/三侧别、四量半程、同人不重启、中途改目标连续、即时置前、Cut/0秒、旁白与名单外、重复ID、输入快照/实例隔离及时间边界。`SPEAKER_HIGHLIGHT_RESULT`在commands.stdout.bin保存细项；当前基线和最终`Test-Narrative.ps1 -SkipDataRegressions`均首次通过，原站位119及原Narrative断言保持。仍沿现有Invoke-TaskTool捕获；不新建runner/探针/守卫/比较器，不扩跑独立表/作者工具、Street、镜头或Toolkit存档入口。没有Unity/舞台接线或实际明暗/大小/位移画面验收，后继舞台接入后再交人工。
+
+## V015-01 立绘站位纯解析（2026-11-21）
+
+生产入口 `NarrativePortraitLayoutResolver.Resolve(cast, snapshot)` 复用原Core模型。每个 `NarrativePortraitCastInput` 包含原 `NarrativeCastEntry`、匹配完整角色ID的 `NarrativeCharacter` 与调用方提供的 `hasPortrait`；不在Core查图片文件或Unity对象。显式立绘可用性允许上层在配置有文件名但资源不可用时同样过滤；未分配的空出场列忽略。传入现有Resolver产生的本段 `DialoguePresentationSnapshot`，本函数不改Resolver或原配置/校验行为。
+
+返回 `Portraits` 按输入出场列顺序，只含有立绘者；原Slot保留，默认站位按过滤后可见索引、含有立绘的总人数选取，不给无立绘者留洞。直接任一位置列有值即生效（另一列0），忽略站位名、站位缩放取1/默认次序0；否则先按Ordinal精确名称跨人数组找，再用可见人数的默认项。重名选较小人数组并每个重名记一次诊断；无默认时用底边中点/站位因子1/次序0，角色与本段的缩放因子继续参与乘积。每个非正或非有限缩放因子独立按1并诊断；偏移不截断。`AlignmentPoint`为(.5+角色偏移x,角色偏移y)，比例相对整图；`DisplayAnchor`为2560×1440基准、相对屏幕底边中点的像素。横向绝对值严格小于1像素为中，正负1已分右/左；不读portraitBottomAlign。
+
+`BackToFront`是同一批只读记录的独立绘制顺序：Order升序，同Order时原Slot升序，最后者在前；不改变Portraits出场顺序。诊断含Kind、角色/原Slot、字段和原因，缺立绘每个被过滤角色记一次；调用方负责呈现日志，不在纯函数中持有“已记录”状态或输出引擎日志。
+
+现有Python命令宿主只追加 `NarrativePortraitLayoutTests` 源与原Main末尾的一次调用，原断言不改。119项直接调用真实Core和真实Resolver快照，含1～4人、覆盖优先/跨人数名字、三因子/对准点、深度与原格数、缺立绘过滤/全空、五人/未知名/零缩放、半填位置、1像素边界、重名取小组、快照冻结与无输入写回。结果在commands.stdout.bin的 `PORTRAIT_LAYOUT_RESULT`。本卡按原2.7运行现有 `Test-Narrative.ps1 -SkipDataRegressions`：完整Narrative生产编译与运行组、原整链114/102行、Runtime39/气泡82及47保持；显式跳过本卡未点名的独立表校验/作者工具回归，不另建runner/探针/守卫/比较器。工具计量沿既有Invoke-TaskTool，未修改验证框架。没有Unity/Play/Build或实际舞台/立绘显示验收；本纯取值任务无可直接操作的画面，后继接入后再走原包人工检查路径。
+
 ## V014-15 世界头顶标记显示（2026-11-19）
 
 原18源侧 / AI593（2026-11-19）：现有Python入口追加NarrativeDialoguePrefabTests，用当前Canvas/BoxView/Composition/Service/Session与原07/08/01检查作者节点和原自动路径、单一图/输入、装卸自有EventTrigger、保外部监听、作者树/姿态与压暗量恢复、错绑诊断和下一服务生命周期重用。外部句柄只提供层级/UI事件运输/无布局算法TMP与Runtime数据目录投递，Service/FSM/入退场/持久化为真实源码；production真实Unity引用编译另列，原53与所有旧断言不改。新增可挂组件及稳定meta见原18交接；不执行Unity/制作Prefab或签真实字位，完整人工门保持。

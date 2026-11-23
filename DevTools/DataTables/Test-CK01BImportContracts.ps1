@@ -64,6 +64,7 @@ try {
     $compileSources += @(
         (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeDataAdapter.cs'),
         (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeRuntimeEntry.cs'),
+        (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/NarrativeDialogueContinuationPolicy.cs'),
         (Join-Path $repositoryRoot 'Assets/Scripts/Narrative/Unity/DialoguePresentationConfig.cs'),
         (Join-Path $repositoryRoot 'DevTools/Narrative/NarrativeRuntimeUnityBoundary.cs'),
         (Join-Path $PSScriptRoot 'CharacterVisualPrefabImportTests.cs'),

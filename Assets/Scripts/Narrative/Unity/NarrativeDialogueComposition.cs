@@ -5,13 +5,16 @@ namespace EatWhat.Narrative.Unity
 {
     /// <summary>Prefab wiring for the existing entrance/exit pair. Only the owning session advances it.</summary>
     [DisallowMultipleComponent]
-    public sealed class NarrativeDialogueComposition : MonoBehaviour, INarrativeDialogueComposition
+    public sealed class NarrativeDialogueComposition : MonoBehaviour, INarrativeDialogueComposition, INarrativeDialoguePortraitComposition
     {
         [SerializeField] NarrativeDialogueBoxView boxView = null;
         [SerializeField] NarrativeSceneDimmer sceneDimmer = null;
+        [SerializeField, Tooltip("Optional NarrativePortraitStage on the authored Portraits layer.")]
+        MonoBehaviour portraitStage = null;
         object owner;
         public NarrativeDialogueBoxView BoxView => boxView;
         public NarrativeSceneDimmer SceneDimmer => sceneDimmer;
+        public INarrativePortraitPresentation PortraitStage => portraitStage as INarrativePortraitPresentation;
         public bool HasOwner => owner != null;
         public NarrativeDialogueEntrance Entrance { get; private set; }
         public NarrativeDialogueExit Exit { get; private set; }
@@ -20,7 +23,7 @@ namespace EatWhat.Narrative.Unity
             out NarrativeDialogueEntrance entrance, out NarrativeDialogueExit exit)
         {
             if (session == null || owner != null || boxView == null || sceneDimmer == null ||
-                !ReferenceEquals(box, boxView) || !ReferenceEquals(dimmer, sceneDimmer))
+                !ReferenceEquals(box, boxView) || !ReferenceEquals(dimmer, sceneDimmer) || (portraitStage != null && PortraitStage == null))
                 throw new InvalidOperationException("Dialogue composition requires one session and its authored Box View / Scene Dimmer.");
             entrance = new NarrativeDialogueEntrance(box, dimmer); exit = new NarrativeDialogueExit(entrance);
             owner = session; Entrance = entrance; Exit = exit;

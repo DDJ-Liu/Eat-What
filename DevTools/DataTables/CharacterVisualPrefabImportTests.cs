@@ -45,6 +45,50 @@ public static class CharacterVisualPrefabImportTests
         }
         var catalog=new CK01GeneratedDataCatalog();catalog.ReplaceTables(tables);return catalog;
     }
+    static int TestPortraitReferences(string root)
+    {
+        int start=checks;var schema=Schema(root,"Characters");bool changed;
+        var temp=Path.GetFullPath(Path.Combine(Path.GetTempPath(),"EatWhatPortraitReference-"+Guid.NewGuid().ToString("N")));
+        Directory.CreateDirectory(temp);AssetDatabase.ResetProofFixture();
+        try
+        {
+            var a=new Sprite {name="PortraitA"};var b=new Sprite {name="PortraitB"};var texture=new Texture2D(1,1,TextureFormat.RGBA32,false);
+            string pa=Path.Combine(temp,"PortraitA.png"),pb=Path.Combine(temp,"PortraitB.png"),pm=Path.Combine(temp,"Multiple.png");
+            foreach(var path in new[]{pa,pb,pm}){File.WriteAllText(path,"external texture handle");File.WriteAllText(path+".meta","TextureImporter:\n  spriteMode: "+(path==pm?2:1)+"\n");}
+            Asset(pa,"portrait-a",texture);Asset(pb,"portrait-b",texture);Asset(pm,"portrait-m",texture);
+            AssetDatabase.ProofAll[pa]=new UnityEngine.Object[]{texture,a};AssetDatabase.ProofAll[pb]=new UnityEngine.Object[]{texture,b};
+            AssetDatabase.ProofAll[pm]=new UnityEngine.Object[]{texture,new Sprite {name="Multiple_0"},new Sprite {name="Multiple_1"}};
+            var guids=new List<string>{"portrait-a","portrait-b","portrait-m"};int lookups=0;
+            AssetDatabase.ProofFindAssets=(filter,folders)=>{lookups++;return guids.ToArray();};
+            var row=new CK01CharacterData();var warnings=Apply(row,schema,"",out changed,"PortraitA");
+            Check(changed&&warnings.Count==0&&row.portrait_sprite=="PortraitA"&&ReferenceEquals(row.portrait_sprite_asset,a),"Single texture subasset binds exact whole Sprite while retaining basename");
+            Apply(row,schema,"",out changed,"PortraitA");Check(!changed,"same Single reference import is idempotent");
+            Apply(row,schema,"",out changed,"PortraitB");Check(changed&&ReferenceEquals(row.portrait_sprite_asset,b),"switching portrait replaces stale Sprite");
+            var replacement=new Sprite {name="PortraitB"};AssetDatabase.ProofAll[pb]=new UnityEngine.Object[]{texture,replacement};
+            Apply(row,schema,"",out changed,"PortraitB");Check(changed&&ReferenceEquals(row.portrait_sprite_asset,replacement),"same basename with changed asset handle updates derived reference");
+            int before=lookups;warnings=Apply(row,schema,"",out changed,"");Check(changed&&row.portrait_sprite_asset==null&&warnings.Count==0&&lookups==before,"empty portrait clears stale reference without lookup or warning");
+            Apply(row,schema,"",out changed,"");Check(!changed,"empty portrait repeat is idempotent");
+            row.portrait_sprite_asset=a;warnings=Apply(row,schema,"",out changed,"Missing");
+            Check(changed&&row.portrait_sprite=="Missing"&&row.portrait_sprite_asset==null&&warnings.Count==1,"missing exact basename preserves source string and clears old reference");
+            row.portrait_sprite_asset=a;warnings=Apply(row,schema,"",out changed,"Multiple");
+            Check(changed&&row.portrait_sprite==""&&row.portrait_sprite_asset==null&&warnings.Count==1&&warnings[0].Contains("导入方式是多张子图"),"Multiple cannot bind either slice and retains original rejection warning");
+            warnings=Apply(row,schema,"",out changed,"Multiple");Check(!changed&&warnings.Count==1,"rejected Multiple repeat is idempotent");
+            warnings=Apply(row,schema,"",out changed,"portraita");Check(row.portrait_sprite_asset==null&&warnings.Count==1,"portrait filenames remain case exact");
+            AssetDatabase.ProofAll[pa]=new UnityEngine.Object[]{texture};row.portrait_sprite_asset=a;
+            warnings=Apply(row,schema,"",out changed,"PortraitA");Check(row.portrait_sprite=="PortraitA"&&row.portrait_sprite_asset==null&&warnings.Count==1&&warnings[0].Contains("Single Sprite"),"unloadable/wrong asset type clears reference with explicit warning");
+            string duplicate=Path.Combine(temp,"duplicate","PortraitA.png");Directory.CreateDirectory(Path.GetDirectoryName(duplicate));File.WriteAllText(duplicate,"external duplicate");
+            Asset(duplicate,"portrait-duplicate",a);guids.Add("portrait-duplicate");
+            warnings=Apply(row,schema,"",out changed,"PortraitA");Check(row.portrait_sprite_asset==null&&warnings.Count==1,"duplicate exact files never select first Sprite");
+            return checks-start;
+        }
+        finally
+        {
+            AssetDatabase.ResetProofFixture();
+            string parent=Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+            if(!temp.StartsWith(parent,StringComparison.OrdinalIgnoreCase))throw new Exception("Fixture cleanup escaped temp root.");
+            Directory.Delete(temp,true);
+        }
+    }
     public static string Run(string root)
     {
         checks=searches=0;AssetDatabase.ResetProofFixture();
@@ -107,7 +151,8 @@ public static class CharacterVisualPrefabImportTests
             runtime.Configure(null,catalog);
             Check(!runtime.TryGetCharacterVisualPrefab("chr_visual",out found,out diagnostic)&&diagnostic.Contains("MISSING_CONFIG"),"runtime unavailable keeps original config gate");
             Check(!NarrativeDataAdapter.TryGetCharacterVisualPrefab(null,"chr_visual",out found,out diagnostic)&&diagnostic!=null,"missing catalog does not invent reference");
-            return "{\"passed\":true,\"checks\":"+checks+",\"actualImportRowAdapterRuntime\":true,\"externalAssetDatabaseAndHandlesOnly\":true,\"assetPersistence\":false}";
+            int originalChecks=checks,portraitReferenceChecks=TestPortraitReferences(root);
+            return "{\"passed\":true,\"checks\":"+checks+",\"originalChecks\":"+originalChecks+",\"portraitReferenceChecks\":"+portraitReferenceChecks+",\"actualImportRowAdapterRuntime\":true,\"externalAssetDatabaseAndHandlesOnly\":true,\"assetPersistence\":false}";
         }
         finally { AssetDatabase.ResetProofFixture(); }
     }

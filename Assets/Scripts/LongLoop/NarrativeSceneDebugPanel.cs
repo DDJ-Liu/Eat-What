@@ -1,5 +1,6 @@
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System.Collections.Generic;
+using System.Globalization;
 using EatWhat.Narrative.Core;
 using EatWhat.Narrative.Unity;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace EatWhat.LongLoop
         [SerializeField] private NarrativeSceneStateApplier stateApplier = null;
         [SerializeField] private NarrativeTargetRegistry targetRegistry = null;
         [SerializeField] private NarrativeDialogueService dialogueService = null;
+        [SerializeField] private NarrativePortraitStage portraitStage = null;
         [SerializeField] private Key toggleKey_TUNE = Key.F8;
         [SerializeField] private Rect window_TUNE = new Rect(16, 16, 420, 480);
         private bool visible;
@@ -24,6 +26,8 @@ namespace EatWhat.LongLoop
         private NarrativeTalkedPersistence talkedOverride;
         private bool ServiceReady => dialogueService != null && dialogueService.isActiveAndEnabled && dialogueService.gameObject.scene == gameObject.scene;
         private bool DialogueRunning => ServiceReady && dialogueService.IsRunning;
+        private bool PortraitStageReady => portraitStage != null && portraitStage.isActiveAndEnabled && portraitStage.gameObject.scene == gameObject.scene;
+        private static readonly IReadOnlyList<KeyValuePair<string, Vector3>> emptyFramings = new List<KeyValuePair<string, Vector3>>().AsReadOnly();
         private NarrativeTalkedPersistence Talked => talkedOverride ?? (ServiceReady ? dialogueService.Talked : null);
 
         // Raycast selection precedes PointerClick dispatch. IMGUI Event.Use alone would be too late.
@@ -43,6 +47,59 @@ namespace EatWhat.LongLoop
         { stateApplier = applier; targetRegistry = registry; }
         public void ConfigureDialogue(NarrativeDialogueService service, NarrativeTalkedPersistence talked = null)
         { dialogueService = service; talkedOverride = talked; }
+        public void ConfigurePortraitStage(NarrativePortraitStage stage) { portraitStage = stage; }
+        public IReadOnlyList<KeyValuePair<string, Vector3>> GetPortraitFramings()
+        { return DialogueRunning && PortraitStageReady ? portraitStage.GetVisibleFramings() : emptyFramings; }
+        public bool TryAdjustPortraitFraming(int row, int axis, bool increase)
+        {
+            var values = GetPortraitFramings();
+            if (row < 0 || row >= values.Count || axis < 0 || axis > 2) return false;
+            var value = values[row].Value; float direction = increase ? 1 : -1;
+            if (axis == 0) value.x += direction * .01f;
+            else if (axis == 1) value.y += direction * .01f;
+            else value.z += direction * .02f;
+            if (!(value.z > 0)) { lastResult = "缩放必须大于0，本次未修改。"; return false; }
+            portraitStage.SetTemporaryFraming(values[row].Key, value.x, value.y, value.z); return true;
+        }
+        public bool TryCopyPortraitFraming(int row)
+        {
+            var values = GetPortraitFramings(); if (row < 0 || row >= values.Count) return false;
+            var value = values[row];
+            string line = value.Key + "\t" + Number(value.Value.x) + "\t" + Number(value.Value.y) + "\t" + Number(value.Value.z);
+            GUIUtility.systemCopyBuffer = line; Debug.Log(line); lastResult = "已复制: " + line; return true;
+        }
+        public bool TryClearAllPortraitFraming()
+        {
+            if (!DialogueRunning || !PortraitStageReady) return false;
+            portraitStage.ClearAllTemporaryFraming(); lastResult = "已清除全部立绘临时值。"; return true;
+        }
+        static string Number(float value) { return value.ToString("R", CultureInfo.InvariantCulture); }
+        void DrawPortraitTuning()
+        {
+            if (!PortraitStageReady) return;
+            GUILayout.Label("立绘调参"); var values = GetPortraitFramings();
+            if (values.Count == 0) { GUILayout.Label("当前没有对话或立绘在显示。"); return; }
+            for (int row = 0; row < values.Count; row++)
+            {
+                GUILayout.Label(values[row].Key);
+                DrawPortraitValue(row, 0, "偏移X", values[row].Value.x);
+                DrawPortraitValue(row, 1, "偏移Y", values[row].Value.y);
+                DrawPortraitValue(row, 2, "缩放", values[row].Value.z);
+                if (GUILayout.Button("复制")) TryCopyPortraitFraming(row);
+            }
+            if (GUILayout.Button("清除全部临时值")) TryClearAllPortraitFraming();
+        }
+        void DrawPortraitValue(int row, int axis, string label, float value)
+        {
+            GUILayout.BeginHorizontal();
+            try
+            {
+                GUILayout.Label(label + ": " + Number(value));
+                if (GUILayout.Button(label + "-")) TryAdjustPortraitFraming(row, axis, false);
+                if (GUILayout.Button(label + "+")) TryAdjustPortraitFraming(row, axis, true);
+            }
+            finally { GUILayout.EndHorizontal(); }
+        }
         private void Update()
         {
             var keyboard = Keyboard.current;
@@ -131,6 +188,7 @@ namespace EatWhat.LongLoop
                             " / 已聊过: " + (record == null || !record.IsInitialized ? "<unavailable>" : record.HasTalked(id).ToString()));
                         if (ServiceReady && GUILayout.Button("对话 " + marker.CharacterId)) TryStartDialogue(marker.CharacterId);
                     }
+                    DrawPortraitTuning();
                     GUILayout.Label(lastResult);
                 }
                 finally { GUILayout.EndScrollView(); }

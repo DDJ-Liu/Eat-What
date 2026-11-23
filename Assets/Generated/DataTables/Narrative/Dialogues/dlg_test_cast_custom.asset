@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dbcb5833b144264b12f1bd984935622, type: 3}
+  m_Name: dlg_test_cast_custom
+  m_EditorClassIdentifier: Generated.DataTables::CK01DialogueData
+  dialogue_id: dlg_test_cast_custom
+  tier: normal
+  cast_01: chr_test_potato
+  cast_01_station: s3-left
+  cast_01_pos_x:
+    hasValue: 0
+    value: 0
+  cast_01_pos_y:
+    hasValue: 0
+    value: 0
+  cast_01_scale:
+    hasValue: 0
+    value: 0
+  cast_01_order:
+    hasValue: 0
+    value: 0
+  cast_02: chr_test_talker
+  cast_02_station: 
+  cast_02_pos_x:
+    hasValue: 1
+    value: -600
+  cast_02_pos_y:
+    hasValue: 1
+    value: 80
+  cast_02_scale:
+    hasValue: 1
+    value: 0.8
+  cast_02_order:
+    hasValue: 1
+    value: -1
+  cast_03: 
+  cast_03_station: 
+  cast_03_pos_x:
+    hasValue: 0
+    value: 0
+  cast_03_pos_y:
+    hasValue: 0
+    value: 0
+  cast_03_scale:
+    hasValue: 0
+    value: 0
+  cast_03_order:
+    hasValue: 0
+    value: 0
+  cast_04: 
+  cast_04_station: 
+  cast_04_pos_x:
+    hasValue: 0
+    value: 0
+  cast_04_pos_y:
+    hasValue: 0
+    value: 0
+  cast_04_scale:
+    hasValue: 0
+    value: 0
+  cast_04_order:
+    hasValue: 0
+    value: 0
+  tier_profile: 
+  entrance_profile: 
+  exit_profile: 
+  layout_profile: 
+  speaker_profile: 
+  expression_profile: 
+  text_profile: 
+  reaction_profile: 
+  cg_profile: 
+  overrides: 
+  first_line: ln_test_cast_custom_01
+  next_dialogue: 
+  on_end: 
+  comment: 

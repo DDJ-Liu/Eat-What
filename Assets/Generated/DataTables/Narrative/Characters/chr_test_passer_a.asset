@@ -15,6 +15,7 @@ MonoBehaviour:
   character_id: chr_test_passer_a
   name_key: test_chr_passer_a.name
   portrait_sprite: 
+  portrait_sprite_asset: {fileID: 0}
   portrait_offset_x:
     hasValue: 0
     value: 0
