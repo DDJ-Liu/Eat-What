@@ -1,11 +1,9 @@
-# 食材交互和反馈系统分析报告
+# 食材交互和反馈系统分析报告（历史指针）
 
-## 执行摘要
+正文已归档至[Ingredient_Interaction_System_Report.md](<docs/archive/工程事实_20261124/history/Ingredient_Interaction_System_Report.md>)；[恢复与来源索引](<docs/archive/工程事实_20261124/README.md>)。原文是旧链参考，不作为现行工程事实。
 
-**目标**：理解食材的表现能力和反馈机制，为设计 Ingredient_Interaction 提供基础。
+<a id="食材交互和反馈系统分析报告"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/Ingredient_Interaction_System_Report.md#食材交互和反馈系统分析报告>)
 
-**关键发现**：
-- 当前食材交互系统采用 **FSM（有限状态机）** 架构
-- 反馈机制依赖于 **CookingManager 的事件回调链路**
-- 动画播放由 **Ingredient_Interaction 中的 Animator 控制**
-- 多阶段动画通过 **ScrollBar 或手动状态推进** 实现
+<a id="执行摘要"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/Ingredient_Interaction_System_Report.md#执行摘要>)

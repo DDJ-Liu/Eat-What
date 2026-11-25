@@ -1,208 +1,57 @@
-# Unity ButtonProject - Child Object Management Patterns Report
+# Unity ButtonProject - Child Object Management Patterns Report（历史指针）
 
-## Overview
-This report documents patterns found in the ButtonProject for managing child game objects, including initialization, discovery, visibility control, and batch operations.
+正文已归档至[ChildrenManagementPatterns_Report.md](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md>)；[恢复与来源索引](<docs/archive/工程事实_20261124/README.md>)。原文是旧链参考，不作为现行工程事实。
 
-## Pattern 1: Awake/Initialization Collection
-Components are gathered from children during Awake() for runtime use.
+<a id="unity-buttonproject---child-object-management-patterns-report"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#unity-buttonproject---child-object-management-patterns-report>)
 
-### DialogSystem.cs (Lines 40-50)
-```csharp
-if(characterSpriteParent != null)
-{
-    foreach(Transform child in characterSpriteParent)
-    {
-        if(child != null && child.GetComponent<SpriteRenderer>() != null)
-        {
-            characterSprites.Add(child.GetComponent<SpriteRenderer>());
-        }
-    }
-}
-```
-**Use Case**: Collecting sprite renderers for character display management
+<a id="overview"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#overview>)
 
-### DropDown_MouseInteract.cs (Lines 34-44)
-```csharp
-if (choices.Count == 0 && choiceParent != null)
-{
-    foreach (Transform child in choiceParent.transform)
-    {
-        var btn = child.GetComponent<Button_MouseInteract>();
-        if (btn != null)
-        {
-            choices.Add(btn);
-        }
-    }
-}
-```
-**Use Case**: Auto-discovering dropdown choice buttons
+<a id="pattern-1-awakeinitialization-collection"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#pattern-1-awakeinitialization-collection>)
 
-## Pattern 2: Index-Based Access
-Using transform.childCount and GetChild(i) for predictable access patterns.
+<a id="dialogsystemcs-lines-40-50"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#dialogsystemcs-lines-40-50>)
 
-### VerticalLayout.cs (Lines 36-55)
-```csharp
-int childCount = transform.childCount;
-ChildSizeInfo[] sizes = new ChildSizeInfo[childCount];
-float totalHeight = 0f;
-bool hasInvalidSize = false;
+<a id="dropdown_mouseinteractcs-lines-34-44"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#dropdown_mouseinteractcs-lines-34-44>)
 
-for (int i = 0; i < childCount; i++)
-{
-    Transform child = transform.GetChild(i);
-    sizes[i] = GetChildSize(child, i);
-    
-    if (!sizes[i].isValid)
-    {
-        hasInvalidSize = true;
-        continue;
-    }
-    totalHeight += sizes[i].size.y;
-}
-```
-**Use Case**: Layout system collecting all child dimensions
+<a id="pattern-2-index-based-access"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#pattern-2-index-based-access>)
 
-### RecipeBookState.cs (Lines 149-159)
-```csharp
-for (int i = 0; i < leftGrid.childCount; i++)
-{
-    GameObject obj = leftGrid.GetChild(i).gameObject;
-    int recipeIndex = startIndex + i;
-    obj.SetActive(recipeIndex < recipeCount);
-    
-    RecipeBookButton button = obj.GetComponent<RecipeBookButton>();
-    if (button != null && recipeIndex < recipeCount)
-        button.onSetInfo(rb, rb.recipes[recipeIndex]);
-}
-```
-**Use Case**: Pagination with data-driven visibility
+<a id="verticallayoutcs-lines-36-55"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#verticallayoutcs-lines-36-55>)
 
-## Pattern 3: Component Batch Collection
-GetComponentsInChildren<T>() for operating on all matching components.
+<a id="recipebookstatecs-lines-149-159"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#recipebookstatecs-lines-149-159>)
 
-### GridObjectState.cs (Lines 47-52)
-```csharp
-previewRenderers = owner.GetComponentsInChildren<SpriteRenderer>();
-originalColors = new Color[previewRenderers.Length];
-for (int i = 0; i < previewRenderers.Length; i++)
-{
-    originalColors[i] = previewRenderers[i].color;
-}
-```
-**Use Case**: Caching renderer state for preview mode
+<a id="pattern-3-component-batch-collection"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#pattern-3-component-batch-collection>)
 
-### Tools.cs (Lines 366-389)
-```csharp
-Canvas[] canvases = root.GetComponentsInChildren<Canvas>(true);
-if (canvases == null || canvases.Length == 0)
-    return null;
+<a id="gridobjectstatecs-lines-47-52"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#gridobjectstatecs-lines-47-52>)
 
-Image firstFound = null;
-foreach (Canvas canvas in canvases)
-{
-    Image[] images = canvas.GetComponentsInChildren<Image>(true);
-    foreach (Image img in images)
-    {
-        if (img.gameObject == canvas.gameObject)
-            continue;
-        
-        if (img.gameObject.name.IndexOf("MainImage", System.StringComparison.OrdinalIgnoreCase) >= 0)
-            return img;
-        
-        if (firstFound == null)
-            firstFound = img;
-    }
-}
-return firstFound;
-```
-**Use Case**: Finding specific UI elements with name-based filtering
+<a id="toolscs-lines-366-389"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#toolscs-lines-366-389>)
 
-## Pattern 4: Conditional Visibility
-SetActive() driven by data validation and pagination logic.
+<a id="pattern-4-conditional-visibility"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#pattern-4-conditional-visibility>)
 
-### DialogSystem.cs (Lines 280-310)
-```csharp
-private void UpdateChoices(List<DialogChoice> choices)
-{
-    foreach (var btn in choicesButtons)
-        btn.SetActive(false);
-    
-    for (int i = 0; i < choices.Count && i < choicesButtons.Count; i++)
-    {
-        var choice = choices[i];
-        var button = choicesButtons[i];
-        
-        bool canShow = EvaluateParsedCommands(choice.conditionFunc);
-        button.SetActive(canShow);
-        
-        if (canShow)
-        {
-            ExecuteParsedCommands(choice.BeforeClickFunc);
-            var textComponent = button.GetComponentInChildren<TMP_Text>();
-            if (textComponent != null)
-                textComponent.text = choice.choiceText;
-        }
-    }
-}
-```
-**Use Case**: Conditional display of dialog choices
+<a id="dialogsystemcs-lines-280-310"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#dialogsystemcs-lines-280-310>)
 
-### ShowGameObjectButton_Visual.cs (Lines 135-143)
-```csharp
-private void SetObjectsActive(bool active)
-{
-    foreach (var obj in targetObjects)
-    {
-        if (obj != null)
-            obj.SetActive(active);
-    }
-}
-```
-**Use Case**: Batch visibility control
+<a id="showgameobjectbutton_visualcs-lines-135-143"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#showgameobjectbutton_visualcs-lines-135-143>)
 
-## Pattern 5: Character Updates
-Updating character sprite visibility by index with data-driven logic.
+<a id="pattern-5-character-updates"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#pattern-5-character-updates>)
 
-### DialogSystem.cs (Lines 245-268)
-```csharp
-private void UpdateCharacterSprite(List<string> characterNames)
-{
-    for (int i = 0; i < characterSprites.Count; i++)
-    {
-        if (i < characterNames.Count && !string.IsNullOrEmpty(characterNames[i]))
-        {
-            var sprite = Resources.Load<Sprite>($"DialogSystem/{dialogSheetName}/{characterNames[i]}");
-            if (sprite != null)
-            {
-                characterSprites[i].sprite = sprite;
-                characterSprites[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                characterSprites[i].gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            characterSprites[i].gameObject.SetActive(false);
-        }
-    }
-}
-```
-**Use Case**: Managing character sprite visibility and updates
+<a id="dialogsystemcs-lines-245-268"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#dialogsystemcs-lines-245-268>)
 
-## Key Methods Used
-- `transform.childCount`: Get total number of direct children
-- `transform.GetChild(i)`: Access child by index
-- `GetComponentsInChildren<T>()`: Collect components from children (recursive)
-- `GetComponent<T>()`: Get component from single game object
-- `SetActive(bool)`: Control game object visibility
-- `foreach (Transform child in transform)`: Iterate direct children
+<a id="key-methods-used"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#key-methods-used>)
 
-## Common Use Cases
-1. **Dialog Systems**: Managing character sprites and choice buttons
-2. **Layout Systems**: Arranging children with size/position calculations
-3. **UI Management**: Pagination and conditional visibility
-4. **Grid Placement**: Batch operations on child components
-5. **Inventory Management**: Collecting and managing inventory item icons
-
+<a id="common-use-cases"></a>
+[阅读原章节](<docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md#common-use-cases>)

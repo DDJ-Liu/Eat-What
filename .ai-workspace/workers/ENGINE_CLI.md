@@ -59,6 +59,8 @@ Complete/Fail/Yield沿用Prepare→一次真实app发送→Record→控制Receiv
 
 沿用上述一次status和一次editor_status/现有Get-UnityCliHeartbeat健康快照，先核同project/version/PID/port及新鲜心跳；Pipeline服务ready不等于ShortCycle验证宿主Ready。一次Arm前记录UTC armStartedAt，Arm使用本卡批准fresh task/run/isolatedRoot；宿主现有ValidateRequest仍要求旧DETACH-B13-20261019批次路径，不因新修复批次自动改根。正式卡scope必须同时覆盖宿主根和任务输出；不能为适配路径改生产bootstrap或擅自扩scope。
 
+已知限制（2026-11-24）：Get-StartupPlan 只从任务初始 businessScope.paths 定位任务输出目录；只有续行许可或 execution.approvedScope 中存在路径，无法补足初始范围。领取前核对本票输出与隔离路径。短循环 RE-02 已转人工，原两轮失败留存，本批不修启动器。
+
 用Invoke-TaskTool的StartupReadyContextPath指向本卡JSON：schemaVersion1、taskId、attempt、executionId、ownerThreadId、runId、isolatedRoot、armStartedAt、healthPath（现有健康快照）。同execution/run/root只可启动一次；上下文、健康文件与原流输出须在正式scope，缺失/旧Ready/错根/版本/PID等不匹配停止。OutputRoot明确指向本卡输出，ArgumentList留空，不能夹带截图或业务指令。wrapper先等待当前宿主日志enabled/factory1/Ready，再生成固定只读eval核实际PID/project/version/隔离根及Ready；返回summary及proofPath。之后再执行原卡完整业务就绪检查和授权业务，不能把此最小探针当成业务验收或截图。
 
 Ready默认45秒，ReadyTimeoutSeconds允许1～60秒；250ms间隔且最多241次本地观察，整体启动窗口从armStartedAt起90秒。入口Arm仍须30秒内，原健康新鲜度不延长；每个RPC客户端上限7秒，eval/CLI超时5秒，受剩余窗口约束。仅wrapper固定只读探针的精确启动期HTTP400允许最多3次总调用、间隔500ms，全部原流和失败留证。写操作、普通非启动调用、status/editor_status健康采集、平台拒绝、503及结果UNKNOWN不重试，不换工具/重启业务。超时或无法核根即正式按任务规则结算。AI303原生Arm→Ready为28.4569654秒，当轮RPC/capture/HTTP400均0；延迟与400夹具只证明边界，慢启动及旧400根因未证明。

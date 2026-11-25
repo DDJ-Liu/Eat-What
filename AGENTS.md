@@ -52,7 +52,7 @@
 
 2026-10-21 G87保留管线与产品分层、独立CODE离线REPAIR和必要SMOKE；现行次数与原卡处置按[2026-11-11 v2](.ai-workspace/protocol/WORKFLOW_FULL.md#acceptance-20261111)。修管线不能排除原引擎验收失败计数，也不授权回头给可人工检查原卡配对续验。原实际attempt/失败/许可不删除、不退款，不伪造repairContext或手改runtime。历史来源：.ai-workspace/inputs/派发/AI289-CLI-REPAIR-20261021/用户授权与覆盖关系.json。
 
-2026-10-24 派发补正：诊断和只读核对并入修复目标；许可/计量检查由CONTROL本地处理，仅生产脚本改动立卡；新节点默认初值+_TUNE、待U2终调。卡前路径/映射预检不编号，固定车道/停止门保持。详见[CONTROL规划规则](.ai-workspace/CONTROL_CHAT.md#dispatch-planning)。
+2026-10-24 派发补正：诊断和只读核对并入修复目标；许可/计量检查由CONTROL本地处理，仅生产脚本改动立卡；新节点默认初值+_TUNE、待U2终调。卡前路径/映射预检不编号，固定车道/停止门保持。2026-11-24 用户补充：领取前用正式队列核对登记范围、所需许可与卡面一致；先补正不一致项，再开轮。详见[CONTROL规划规则](.ai-workspace/CONTROL_CHAT.md#dispatch-planning)。
 
 ## 固定职能流水线（2026-10-12 用户决定）
 
