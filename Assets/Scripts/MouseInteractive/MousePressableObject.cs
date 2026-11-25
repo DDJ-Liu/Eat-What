@@ -9,6 +9,8 @@ public abstract class MousePressableObject : MonoBehaviour
     protected Collider2D _hoverCollider;
     protected bool _isHovered = false;
     public bool hasVisual { get; protected set; }
+    /// <summary>Runtime opt-in for drag sources whose click commits on release.</summary>
+    public bool DeferClickUntilDragRelease { get; set; }
 
     protected virtual void Start()
     {

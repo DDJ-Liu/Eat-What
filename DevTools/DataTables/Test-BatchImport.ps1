@@ -1,11 +1,135 @@
 [CmdletBinding()]
-param([switch]$FontTransactionOnly)
+param([switch]$FontTransactionOnly, [switch]$FontGlyphReportOnly, [string]$OutputRoot)
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 . (Join-Path $PSScriptRoot 'DataPipeline.Common.ps1')
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 $checks = [System.Collections.Generic.List[string]]::new()
+
+if ($FontGlyphReportOnly) {
+    if (-not $OutputRoot) { throw 'FontGlyphReportOnly requires an owned OutputRoot.' }
+    $OutputRoot=[IO.Path]::GetFullPath($OutputRoot)
+    [void][IO.Directory]::CreateDirectory($OutputRoot)
+    $fixture=Join-Path $OutputRoot "normal input ' space"
+    [void][IO.Directory]::CreateDirectory($fixture)
+    $stub=Join-Path $OutputRoot 'UnityGlyphBoundary.cs'
+    $source=[IO.File]::ReadAllText((Join-Path $PSScriptRoot 'StaticCompile/UnityStubs.cs'))
+    # Native handles remain fixture boundaries; JSON uses a real parser so the full importer runs.
+    $source=$source.Replace('return default(T);','return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(text);')
+    $source=$source.Replace('return "{}";','return Newtonsoft.Json.JsonConvert.SerializeObject(value);')
+    $create=@'
+public static void CreateAsset(Object asset, string path) {
+    var root=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+    var allowed=System.Environment.GetEnvironmentVariable("EATWHAT_GLYPH_FIXTURE_ROOT");
+    if(root!=allowed) throw new System.InvalidOperationException("Fixture root was not explicitly configured.");
+    var full=System.IO.Path.GetFullPath(System.IO.Path.Combine(root,path));
+    if(!full.StartsWith(root+System.IO.Path.DirectorySeparatorChar)) throw new System.InvalidOperationException("Fixture path escaped.");
+    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(full));
+    System.IO.File.WriteAllText(full,"offline native asset boundary");
+    ProofMain[path]=asset; ProofAll[path]=new Object[]{asset}; ProofObjectPaths[asset]=path; ProofFileIds[asset]=11400000;
+    ProofGuids[path]=System.Guid.NewGuid().ToString("N");
+    System.IO.File.WriteAllText(full+".meta","guid: "+ProofGuids[path]+System.Environment.NewLine);
+}
+'@
+    $source=$source.Replace('public static void CreateAsset(Object asset, string path) { }',$create)
+    $subasset=@'
+public static void AddObjectToAsset(Object asset, Object target) {
+    var path=ProofObjectPaths[target];
+    var list=new System.Collections.Generic.List<Object>(ProofAll[path]);list.Add(asset);ProofAll[path]=list.ToArray();
+    ProofObjectPaths[asset]=path;ProofFileIds[asset]=11400000+list.Count;
+}
+'@
+    $source=$source.Replace('public static void AddObjectToAsset(Object asset, Object target) { }',$subasset)
+    [IO.File]::WriteAllText($stub,$source,$utf8NoBom)
+    # Reuse the existing 76-source compile closure without changing its production source or assertions.
+    $hostSource=[IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Test-CK01BImportContracts.ps1'))
+    $hostSource=$hostSource.Replace("(Join-Path `$PSScriptRoot 'StaticCompile/UnityStubs.cs')",("'"+$stub.Replace("'","''")+"'"))
+    $hostSource=$hostSource.Replace('$PSScriptRoot',("'"+$PSScriptRoot.Replace("'","''")+"'"))
+    $hostPath=Join-Path $OutputRoot 'CompileGlyphHost.ps1'
+    [IO.File]::WriteAllText($hostPath,$hostSource,$utf8NoBom)
+    $compile=. $hostPath -CompileOnly
+    $checks=[Collections.Generic.List[string]]::new()
+    function Check([bool]$Pass,[string]$Name) { if(-not $Pass){throw $Name};$checks.Add($Name) }
+    foreach($relative in @('DataTables','Assets/Editor/DataTables')) {
+        $target=Join-Path $fixture $relative
+        [void][IO.Directory]::CreateDirectory((Split-Path -Parent $target))
+        Copy-Item -LiteralPath (Join-Path $repositoryRoot $relative) -Destination $target -Recurse
+    }
+    foreach($relative in @('DevTools/Fonts','Assets/Font/Heavy','Assets/Generated/DataTables')) {
+        [void][IO.Directory]::CreateDirectory((Join-Path $fixture $relative))
+    }
+    Copy-Item -LiteralPath (Join-Path $repositoryRoot 'DevTools/Fonts/Get-FontGlyphDecision.ps1') -Destination (Join-Path $fixture 'DevTools/Fonts/Get-FontGlyphDecision.ps1')
+    foreach($name in @('ShortCycle_Heavy_WithFallback.asset','ShortCycle_Heavy_Static.asset')) {
+        [IO.File]::WriteAllText((Join-Path $fixture "Assets/Font/Heavy/$name"),"  m_Unicode: 65`n",$utf8NoBom)
+    }
+    $names=@('PATH','EATWHAT_PWSH_PATH','EATWHAT_FONT_GLYPH_REPORT_ROOT','EATWHAT_GLYPH_FIXTURE_ROOT','EATWHAT_REBUILD_STATIC_FONT','EATWHAT_DATA_RUN_ID','EATWHAT_DATA_COMPLETION_NONCE','EATWHAT_DATA_COMPLETION_PATH','EATWHAT_DATA_SOURCE_TREE_SHA256','EATWHAT_DATA_INPUT_SNAPSHOT_SHA256')
+    $previous=@{};foreach($name in $names){$previous[$name]=[Environment]::GetEnvironmentVariable($name)}
+    $oldData=[UnityEngine.Application]::ProofDataPath
+    try {
+        [UnityEngine.Application]::ProofDataPath=Join-Path $fixture 'Assets'
+        [UnityEditor.AssetDatabase]::ResetProofFixture()
+        $env:EATWHAT_GLYPH_FIXTURE_ROOT=$fixture
+        $env:EATWHAT_FONT_GLYPH_REPORT_ROOT=Join-Path $OutputRoot "operator reports ' space"
+        # Hub-like PATH without Codex's added entry: exercise the approved user-profile runtime fallback.
+        $env:PATH=[Environment]::GetEnvironmentVariable('PATH','Machine')+';'+[Environment]::GetEnvironmentVariable('PATH','User')
+        $env:EATWHAT_PWSH_PATH=$null;$env:EATWHAT_REBUILD_STATIC_FONT=$null
+        $count={@(Get-ChildItem -LiteralPath $env:EATWHAT_FONT_GLYPH_REPORT_ROOT -Filter font-glyph-decision.json -Recurse -ErrorAction SilentlyContinue).Count}
+        $direct=[EatWhat.DataTables.DataTableImportService]::ImportAll()
+        Check ($direct.success -and $direct.fontGlyphReportStatus -eq 'OK') 'actual direct ImportAll succeeds and runs the existing script'
+        Check ((&$count) -eq 1) 'direct import produces one decision'
+        $decision=Get-Content -Raw -Encoding utf8 (Join-Path $direct.fontGlyphReportDirectory 'font-glyph-decision.json')|ConvertFrom-Json -DateKind String
+        Check (@($decision.sources|Where-Object{$_.path -like '*Localization.csv' -and $_.path.StartsWith($fixture)}).Count -eq 1) 'real child script reads the isolated current CSV'
+        Check (Test-Path -LiteralPath (Join-Path $direct.fontGlyphReportDirectory 'narrative-glyph-gaps.json')) 'narrative report remains independent'
+        [EatWhat.DataTables.DataTableImportService]::ImportAllMenu()
+        Check ((&$count) -eq 2) 'actual menu adds exactly one decision'
+        $env:EATWHAT_DATA_RUN_ID='GLYPH-FIXTURE';$env:EATWHAT_DATA_COMPLETION_NONCE=[guid]::NewGuid().ToString('N')
+        $env:EATWHAT_DATA_COMPLETION_PATH=Join-Path $fixture '.data-pipeline/batch-completion.json'
+        $env:EATWHAT_DATA_SOURCE_TREE_SHA256='A'*64;$env:EATWHAT_DATA_INPUT_SNAPSHOT_SHA256='B'*64
+        [EatWhat.DataTables.DataTableImportService]::ImportAllBatch()
+        $credential=Get-Content -Raw -Encoding utf8 $env:EATWHAT_DATA_COMPLETION_PATH|ConvertFrom-Json -DateKind String
+        Check ((&$count) -eq 3 -and $credential.fontGlyphReportStatus -eq 'OK') 'actual batch adds exactly one report and carries its path'
+        Check (-not $credential.fontBuildRequested -and -not $credential.fontBuildCompleted) 'absent batch flag never rebuilds'
+        $flags=[Reflection.BindingFlags]'NonPublic,Static'
+        $request=[EatWhat.DataTables.DataTableImportService].GetMethod('IsStaticFontBuildRequested',$flags)
+        $env:EATWHAT_REBUILD_STATIC_FONT='1';Check ([bool]$request.Invoke($null,@())) 'explicit 1 option retained without invoking a builder'
+        $env:EATWHAT_REBUILD_STATIC_FONT='0';Check (-not [bool]$request.Invoke($null,@())) 'explicit 0 stays disabled'
+        $env:EATWHAT_PWSH_PATH=Join-Path $fixture 'missing-pwsh.exe'
+        $failed=[EatWhat.DataTables.DataTableImportService]::ImportAll()
+        Check ($failed.success -and $failed.fontGlyphReportStatus -eq 'ERROR' -and $failed.fontGlyphReportError) 'missing host is explicit and does not invalidate DATA'
+        $invocation=Get-Content -Raw -Encoding utf8 (Join-Path $failed.fontGlyphReportDirectory 'font-glyph-invocation.json')|ConvertFrom-Json
+        Check ($invocation.status -eq 'ERROR' -and -not (Test-Path (Join-Path $failed.fontGlyphReportDirectory 'font-glyph-decision.json'))) 'host failure never fabricates a skip decision'
+        $env:EATWHAT_PWSH_PATH=Join-Path $PSHOME 'pwsh.exe'
+        $static=Join-Path $fixture 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'
+        Move-Item -LiteralPath $static -Destination ($static+'.fixture-missing')
+        $bad=[EatWhat.DataTables.DataTableImportService]::ImportAll()
+        $badDecision=Get-Content -Raw -Encoding utf8 (Join-Path $bad.fontGlyphReportDirectory 'font-glyph-decision.json')|ConvertFrom-Json
+        Check ($bad.success -and $bad.fontGlyphReportStatus -eq 'ERROR' -and $badDecision.status -eq 'ERROR' -and $null -eq $badDecision.requiresRebuild) 'real script failure preserves ERROR/null and successful DATA'
+        [UnityEngine.Application]::ProofDataPath=Join-Path $OutputRoot 'missing project/Assets'
+        $beforeCount=&$count;$invalid=[EatWhat.DataTables.DataTableImportService]::ImportAll()
+        Check (-not $invalid.success -and -not $invalid.fontGlyphReportStatus -and (&$count) -eq $beforeCount) 'failed DATA import does not run a report'
+        [UnityEngine.Application]::ProofDataPath=Join-Path $fixture 'Assets'
+        Move-Item -LiteralPath ($static+'.fixture-missing') -Destination $static
+        $fixtureTool=Join-Path $fixture 'DevTools/Fonts/Get-FontGlyphDecision.ps1'
+        Move-Item -LiteralPath $fixtureTool -Destination ($fixtureTool+'.fixture-missing')
+        $missingTool=[EatWhat.DataTables.DataTableImportService]::ImportAll()
+        Check ($missingTool.success -and $missingTool.fontGlyphReportStatus -eq 'ERROR' -and $missingTool.fontGlyphReportError.Contains('Existing font decision tool is missing')) 'missing decision script remains an independent FONT error after actual DATA success'
+        foreach($file in @('Run-DataPipeline.ps1','DataPipeline.Common.ps1')) {
+            $tokens=$null;$errors=$null;$ast=[Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot $file),[ref]$tokens,[ref]$errors)
+            Check ($errors.Count -eq 0) ($file+' parses')
+            $defaults=@($ast.FindAll({param($n)$n -is [Management.Automation.Language.ParameterAst] -and $n.Name.VariablePath.UserPath -eq 'RebuildStaticFont'},$true))
+            Check ($defaults.Count -eq 1 -and $defaults[0].DefaultValue.Extent.Text -eq '$false') ($file+' defaults to report only')
+        }
+        $summary=@{success=$true;checks=@($checks);checkCount=$checks.Count;compile=$compile;fixture=$fixture;unityStarted=$false;nativeAssetsAreStubs=$true;existingDecisionScriptActuallyExecuted=$true;directReport=$direct.fontGlyphReportDirectory;batchReport=$credential.fontGlyphReportDirectory}
+        $summary|ConvertTo-Json -Depth 10|Set-Content -Encoding utf8 (Join-Path $OutputRoot 'entry-results.json')
+        $summary|ConvertTo-Json -Depth 10
+    }
+    finally {
+        [UnityEngine.Application]::ProofDataPath=$oldData
+        foreach($name in $names){[Environment]::SetEnvironmentVariable($name,$previous[$name])}
+    }
+    return
+}
 
 function Assert-True {
     param([Parameter(Mandatory)][bool]$Condition, [Parameter(Mandatory)][string]$Message)

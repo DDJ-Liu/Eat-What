@@ -158,6 +158,35 @@ namespace EatWhat.Cooking.ShortCycle
         public ShortCycleTrayStateController StateController { get { return trayStateController; } }
         public string LastDiagnostic { get; private set; }
         public int BoundCount { get; private set; }
+        internal TraySlot ResolveDragAppearance(string itemId, string instanceId)
+        {
+            TraySlot matching = null;
+            TraySlot fallback = null;
+            foreach (var slot in slots ?? new TraySlot[0])
+            {
+                if (slot == null) continue;
+                if (fallback == null) fallback = slot;
+                if (!slot.gameObject.activeInHierarchy || slot.Display == null || slot.ItemId != itemId) continue;
+                if (slot.InstanceId == instanceId) return slot;
+                if (matching == null) matching = slot;
+            }
+            return matching == null ? fallback : matching;
+        }
+
+        internal Transform DragAppearanceRoot
+        {
+            get
+            {
+                foreach (var slot in slots ?? new TraySlot[0])
+                    if (slot != null)
+                    {
+                        for (var node = slot.transform; node != null; node = node.parent)
+                            if (node.GetComponent<ShortCyclePresentationSet>() != null) return node;
+                        return slot.transform.parent == null ? slot.transform : slot.transform.parent;
+                    }
+                return transform;
+            }
+        }
 
         public bool CanPresent(int capacity, out string diagnostic)
         {

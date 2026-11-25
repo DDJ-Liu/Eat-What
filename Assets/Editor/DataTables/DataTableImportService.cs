@@ -50,6 +50,9 @@ namespace EatWhat.DataTables
         public sealed class DataTableImportReport
         {
             public bool success;
+            public string fontGlyphReportDirectory;
+            public string fontGlyphReportStatus;
+            public string fontGlyphReportError;
             public string dataCatalogAsset = CK01ImportRegistry.DataCatalogAssetPath;
             public List<string> errors = new List<string>();
             public List<string> warnings = new List<string>();
@@ -64,6 +67,9 @@ namespace EatWhat.DataTables
         public sealed class DataBatchCompletionCredential
         {
             public int schemaVersion = 1;
+            public string fontGlyphReportDirectory;
+            public string fontGlyphReportStatus;
+            public string fontGlyphReportError;
             public bool success;
             public string runId;
             public string nonce;
@@ -186,8 +192,7 @@ namespace EatWhat.DataTables
                 // Prove the generated catalog and its dependency closure before
                 // attempting the independent font candidate in the same batch.
                 var dependencyProof = BuildBatchDependencyProof(runId, nonce);
-                var fontBuildRequested = Environment.GetEnvironmentVariable(
-                    "EATWHAT_REBUILD_STATIC_FONT") != "0";
+                var fontBuildRequested = IsStaticFontBuildRequested();
                 object fontManifest = null;
                 string fontBuildError = null;
                 if (fontBuildRequested)
@@ -217,6 +222,9 @@ namespace EatWhat.DataTables
                 var credential = new DataBatchCompletionCredential
                 {
                     success = true,
+                    fontGlyphReportDirectory = report.fontGlyphReportDirectory,
+                    fontGlyphReportStatus = report.fontGlyphReportStatus,
+                    fontGlyphReportError = report.fontGlyphReportError,
                     runId = runId,
                     nonce = nonce,
                     completedAtUtc = DateTimeOffset.Now.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture),
@@ -772,7 +780,133 @@ namespace EatWhat.DataTables
             }
 
             report.success = true;
+            WriteFontGlyphReport(report);
             return report;
+        }
+
+        private static bool IsStaticFontBuildRequested()
+        {
+            return string.Equals(Environment.GetEnvironmentVariable("EATWHAT_REBUILD_STATIC_FONT"),
+                "1", StringComparison.Ordinal);
+        }
+
+        // One shared success boundary: Menu and Batch call ImportAll, never this method again.
+        private static void WriteFontGlyphReport(DataTableImportReport report)
+        {
+            string executable = null;
+            try
+            {
+                var root = Environment.GetEnvironmentVariable("EATWHAT_FONT_GLYPH_REPORT_ROOT");
+                if (string.IsNullOrWhiteSpace(root))
+                    root = Path.Combine(ProjectRoot, "Library", "DataTableFontReports");
+                root = Path.GetFullPath(root);
+                foreach (var protectedRoot in new[] { "Assets", "DataTables", "Packages", "ProjectSettings", "DevTools" })
+                {
+                    var prefix = Path.GetFullPath(Path.Combine(ProjectRoot, protectedRoot)).TrimEnd(
+                        Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    if (string.Equals(root, prefix, StringComparison.OrdinalIgnoreCase) ||
+                        root.StartsWith(prefix + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidOperationException("Font report output cannot be inside project source: " + root);
+                }
+                report.fontGlyphReportDirectory = Path.Combine(root,
+                    DateTime.UtcNow.ToString("yyyyMMddTHHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(report.fontGlyphReportDirectory);
+                executable = ResolveFontReportPowerShell();
+                var tool = Path.Combine(ProjectRoot, "DevTools", "Fonts", "Get-FontGlyphDecision.ps1");
+                if (!File.Exists(tool)) throw new FileNotFoundException("Existing font decision tool is missing.", tool);
+                Func<string, string> literal = value => "'" + value.Replace("'", "''") + "'";
+                var command = "$ErrorActionPreference='Stop'; if ($PSVersionTable.PSVersion -lt [version]'7.5') { throw 'PowerShell 7.5+ required' }; & " +
+                    literal(tool) + " -ProjectRoot " + literal(ProjectRoot) + " -OutputDirectory " + literal(report.fontGlyphReportDirectory);
+                var start = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = executable, UseShellExecute = false, CreateNoWindow = true,
+                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+                    WorkingDirectory = ProjectRoot, RedirectStandardOutput = true, RedirectStandardError = true,
+                    Arguments = "-NoLogo -NoProfile -NonInteractive -EncodedCommand " + Convert.ToBase64String(Encoding.Unicode.GetBytes(command))
+                };
+                using (var process = System.Diagnostics.Process.Start(start))
+                {
+                    if (process == null) throw new InvalidOperationException("PowerShell report process did not start.");
+                    var stdout = process.StandardOutput.ReadToEndAsync();
+                    var stderr = process.StandardError.ReadToEndAsync();
+                    if (!process.WaitForExit(60000))
+                    {
+                        process.Kill();
+                        throw new TimeoutException("Font report exceeded 60 seconds.");
+                    }
+                    File.WriteAllText(Path.Combine(report.fontGlyphReportDirectory, "process.stdout.txt"), stdout.GetAwaiter().GetResult(), Encoding.UTF8);
+                    var error = stderr.GetAwaiter().GetResult();
+                    File.WriteAllText(Path.Combine(report.fontGlyphReportDirectory, "process.stderr.txt"), error, Encoding.UTF8);
+                    if (process.ExitCode != 0) throw new InvalidOperationException("Font report exited " + process.ExitCode + ": " + error);
+                }
+                var decision = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(
+                    Path.Combine(report.fontGlyphReportDirectory, "font-glyph-decision.json"), Encoding.UTF8));
+                if ((string)decision["status"] != "OK" || decision["requiresRebuild"] == null ||
+                    decision["requiresRebuild"].Type != Newtonsoft.Json.Linq.JTokenType.Boolean)
+                    throw new InvalidOperationException("Font report did not return an OK boolean decision.");
+                report.fontGlyphReportStatus = "OK";
+            }
+            catch (Exception exception)
+            {
+                report.fontGlyphReportStatus = "ERROR";
+                report.fontGlyphReportError = exception.GetType().Name + ": " + exception.Message;
+                report.warnings.Add("[FONT] Glyph report failed; DATA import remains valid: " + report.fontGlyphReportError);
+                // Tool stderr can contain compiler-looking lines. Keep it in the independent
+                // report, rather than making the existing DATA log gate see a false Unity error.
+                Debug.LogWarning("[FONT] Glyph report ERROR (" + exception.GetType().Name +
+                    "); DATA import remains valid; directory=" + report.fontGlyphReportDirectory);
+            }
+            if (report.fontGlyphReportDirectory != null && Directory.Exists(report.fontGlyphReportDirectory))
+            {
+                try
+                {
+                    var invocation = new Newtonsoft.Json.Linq.JObject
+                    {
+                        ["status"] = report.fontGlyphReportStatus, ["error"] = report.fontGlyphReportError,
+                        ["projectRoot"] = ProjectRoot, ["powershellExecutable"] = executable,
+                        ["reportDirectory"] = report.fontGlyphReportDirectory
+                    };
+                    File.WriteAllText(Path.Combine(report.fontGlyphReportDirectory, "font-glyph-invocation.json"), invocation.ToString(), Encoding.UTF8);
+                }
+                catch (Exception exception)
+                {
+                    report.fontGlyphReportStatus = "ERROR";
+                    report.fontGlyphReportError = "Could not save invocation evidence: " + exception.Message;
+                    report.warnings.Add("[FONT] " + report.fontGlyphReportError);
+                    Debug.LogWarning("[FONT] Could not save invocation evidence (" + exception.GetType().Name +
+                        "); directory=" + report.fontGlyphReportDirectory);
+                }
+            }
+            Debug.Log("[FONT] Glyph report status=" + report.fontGlyphReportStatus +
+                " directory=" + report.fontGlyphReportDirectory);
+        }
+
+        private static string ResolveFontReportPowerShell()
+        {
+            var configured = Environment.GetEnvironmentVariable("EATWHAT_PWSH_PATH");
+            if (!string.IsNullOrWhiteSpace(configured))
+            {
+                if (!Path.IsPathRooted(configured) || !File.Exists(configured))
+                    throw new FileNotFoundException("EATWHAT_PWSH_PATH must name an existing absolute PowerShell 7.5+ executable.", configured);
+                return configured;
+            }
+            var executable = Path.DirectorySeparatorChar == '\\' ? "pwsh.exe" : "pwsh";
+            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            if (!string.IsNullOrWhiteSpace(programFiles))
+            {
+                var standard = Path.Combine(programFiles, "PowerShell", "7", executable);
+                if (File.Exists(standard)) return standard;
+            }
+            foreach (var entry in (Environment.GetEnvironmentVariable("PATH") ?? string.Empty).Split(Path.PathSeparator))
+            {
+                if (string.IsNullOrWhiteSpace(entry)) continue;
+                var candidate = Path.Combine(entry.Trim('"'), executable);
+                if (Path.IsPathRooted(candidate) && File.Exists(candidate)) return candidate;
+            }
+            var user = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var bundled = Path.Combine(user, ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "native", "powershell", executable);
+            if (!string.IsNullOrWhiteSpace(user) && File.Exists(bundled)) return bundled;
+            throw new FileNotFoundException("PowerShell 7.5+ not found. Install normally or configure EATWHAT_PWSH_PATH; font report was not run.");
         }
 
         /// <summary>

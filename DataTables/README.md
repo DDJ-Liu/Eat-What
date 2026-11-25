@@ -1,5 +1,7 @@
 # DataTables CSV contract
 
+现行目录和填写入口见 [CSV 配表目录说明](../docs/CSV配表目录说明.md)。下文 14 表的计数与清单对应 2026 年 9 月的烹饪与本地化阶段。
+
 2026-10-04当前P2配表范围：CookingProcess是遗留参考，新P2将新建scene。本轮静态数据、格式/注释、忠实导出及隔离导表继续；P2真实场景配置/验证延期，状态UNVERIFIED不能冒充全场景通过。结构化配置依据和延期清单见 [P2新场景指导](../组件说明文档/P2新场景_配表与接线指导.md)。
 
 统一人工xlsx的字段中文表头说明集中在 DevTools/DataTables/Authoring/header-descriptions.mjs，并由同目录 authoring.mjs 按14份实时schema生成；现有工作簿的隔离注释候选入口为 Update-HeaderComments.ps1。AI193新增精确旧模板归属与独立备注保护审计：同作者未知增补、用户回复、未归属兼容备注保留或安全拒绝，不能仅凭值/类型/公式零差异发布。CODE仅生成候选；生产应用归DATA后续任务，不能用旧CSV反向覆盖人工工作簿。详见 DevTools/DataTables/Authoring/README.md。
@@ -7,8 +9,8 @@
 > 当前状态（2026-09-17阶段复核）：CK01业务契约为v2.4，JSON schemaVersion仍为2；14表及生成资产已导入并完成本轮验收。下述v1.2/v2.2段落保留为兼容契约历史，不表示当前等待重导。测试历史CSV已迁至DevTools/DataTables/Fixtures/；生产权威源仍为本目录。
 
 
-`DataTables/` is the human-editable, UTF-8 CSV source of truth for generated
-ScriptableObject data. It deliberately lives outside `Assets/`: editing a CSV
+`DataTables/` contains the UTF-8 CSV inputs exported from the authoring workbook
+for generated ScriptableObject data. It lives outside `Assets/`: editing a CSV
 does not create, move, or serialize Unity assets.
 
 Each table consists of a CSV under its system directory and a schema under
@@ -46,7 +48,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File DevTools/DataTables/Test-Val
 powershell -NoProfile -ExecutionPolicy Bypass -File DevTools/DataTables/Test-CK01BSchemas.ps1
 ```
 
-CK01-B currently defines fourteen source-only schemas: Recipes, RecipeSlots,
+The September 2026 CK01-B baseline defined fourteen source schemas: Recipes, RecipeSlots,
 RecipeSteps, Items, Tags, Tools, CookingGameConfig, Localization,
 FridgeCapacityLevels, InitialInventory, ProcessActions, ProcessingRecords,
 RecipeVariants, and KitchenAreas. The checked-in rows are the formal CK01 demo

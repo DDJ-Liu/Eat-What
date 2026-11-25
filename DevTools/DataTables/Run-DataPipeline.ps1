@@ -13,7 +13,7 @@ param(
     [string]$WorkspaceRoot,
     [string]$ReportDirectory,
     [ValidateRange(1, 7200)][int]$BatchTimeoutSeconds = 1800,
-    [bool]$RebuildStaticFont = $true,
+    [bool]$RebuildStaticFont = $false,
     [Parameter(ParameterSetName = 'CurrentCsv')][string]$FontPublishApprovalPath,
     [switch]$Publish,
     [switch]$PlanOnly
@@ -177,6 +177,13 @@ try {
         $source = Join-Path $repositoryRoot $relative
         if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination (Join-Path $batchRoot $relative) -Recurse }
     }
+    $glyphToolRelative = 'DevTools/Fonts/Get-FontGlyphDecision.ps1'
+    $isolatedGlyphTool = Join-Path $batchRoot $glyphToolRelative
+    $glyphToolSource = Join-Path $repositoryRoot $glyphToolRelative
+    if (Test-Path -LiteralPath $glyphToolSource -PathType Leaf) {
+        [void](New-Item -ItemType Directory -Force -Path (Split-Path -Parent $isolatedGlyphTool))
+        Copy-Item -LiteralPath $glyphToolSource -Destination $isolatedGlyphTool
+    }
     $fontManifestRelative = 'DevTools/Fonts/ShortCycleFontBuildManifest.json'
     $liveFontManifest = Join-Path $repositoryRoot $fontManifestRelative
     $fontManifestBeforeSha = $null
@@ -243,6 +250,7 @@ try {
             -SourceTreeSha256 $report.sourceTreeSha256 `
             -InputSnapshotSha256 $report.inputSnapshot.summarySha256 `
             -RebuildStaticFont $RebuildStaticFont `
+            -FontGlyphReportRoot (Join-Path $reportRoot 'font-glyph-reports') `
             -TimeoutSeconds $BatchTimeoutSeconds
         $report.batchProcessExitCode = $batchResult.exitCode
         $report.batchProcess = [ordered]@{
@@ -261,6 +269,11 @@ try {
             throw 'Isolated DATA source changed during Unity batch; publication refused.'
         }
         [System.IO.File]::Copy($completionPath, $completionEvidencePath, $false)
+        $report['fontGlyphReport'] = [ordered]@{
+            status=$completionEvidence.credential.fontGlyphReportStatus
+            directory=$completionEvidence.credential.fontGlyphReportDirectory
+            error=$completionEvidence.credential.fontGlyphReportError
+        }
         $report.dependencyProof = Confirm-DataBatchDependencyProof `
             -Credential $completionEvidence.credential `
             -ExpectedRunId $runId -ExpectedNonce $completionNonce `

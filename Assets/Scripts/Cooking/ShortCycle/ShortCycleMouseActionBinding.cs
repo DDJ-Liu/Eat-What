@@ -13,6 +13,11 @@ namespace EatWhat.Cooking.ShortCycle
         [SerializeField] private Collider2D trayDropRegion = null;
         [SerializeField] private TransitionController rejectedDropTransition = null;
         [SerializeField] private string rejectedDropPreset = "Return";
+        private MousePressableObject gesturePressable;
+        private bool originalDeferClick;
+        private MouseDraggableObject gestureDrag;
+        private DragContainer gestureContainer;
+        private ShortCycleIngredientDragPreview dragPreview;
 
         public string ActionName { get { return actionName; } }
         public string RecipeId { get { return recipeId; } }
@@ -25,13 +30,63 @@ namespace EatWhat.Cooking.ShortCycle
             actionRouter = router;
             actionName = configuredActionName;
             recipeId = configuredRecipeId;
+            if (isActiveAndEnabled) ConfigureClickGesture();
         }
 
         private void OnEnable()
-        { MouseManager.OnMouseCancel += HandleRightClick; }
+        { ConfigureClickGesture(); MouseManager.OnMouseCancel += HandleRightClick; }
 
         private void OnDisable()
-        { MouseManager.OnMouseCancel -= HandleRightClick; }
+        { RestoreClickGesture(); MouseManager.OnMouseCancel -= HandleRightClick; }
+
+        private void ConfigureClickGesture()
+        {
+            RestoreClickGesture();
+            if ((actionName != ShortCycleActionNames.InventoryTake || GetComponent<FridgeSlot>() == null) &&
+                (actionName != ShortCycleActionNames.InventoryPutBack || GetComponent<TraySlot>() == null)) return;
+            gesturePressable = GetComponent<MousePressableObject>();
+            if (gesturePressable != null)
+            {
+                originalDeferClick = gesturePressable.DeferClickUntilDragRelease;
+                gesturePressable.DeferClickUntilDragRelease = true;
+            }
+            gestureDrag = GetComponent<MouseDraggableObject>();
+            if (gestureDrag != null) gestureDrag.PreparingDrag += PrepareDrag;
+        }
+
+        private void RestoreClickGesture()
+        {
+            if (gestureDrag != null) gestureDrag.PreparingDrag -= PrepareDrag;
+            if (gestureContainer != null)
+            {
+                gestureContainer.CancelVisualDrag();
+                gestureContainer.VisualDragStart = null;
+                gestureContainer.VisualDragUpdate = null;
+                gestureContainer.VisualDragEnd = null;
+            }
+            if (dragPreview != null) dragPreview.SourceRebinding();
+            gestureContainer = null; gestureDrag = null;
+            if (gesturePressable != null) gesturePressable.DeferClickUntilDragRelease = originalDeferClick;
+            gesturePressable = null;
+        }
+
+        private void PrepareDrag(MouseDraggableObject drag)
+        {
+            var piece = GetComponent<ShortCycleGridPieceBase>();
+            var owner = sessionManager != null ? sessionManager : piece != null ? piece.OwnerSession : null;
+            var container = GetComponent<DragContainer>();
+            if (piece == null || owner == null || owner.TrayInteraction == null || container == null) return;
+            // The Return controller lives on TrayStateMachine, not on this slot.
+            // Cancel only this slot's old return so an immediate re-grab cannot race it.
+            if (rejectedDropTransition != null) rejectedDropTransition.CancelAll();
+            if (dragPreview == null) dragPreview = GetComponent<ShortCycleIngredientDragPreview>();
+            if (dragPreview == null) dragPreview = gameObject.AddComponent<ShortCycleIngredientDragPreview>();
+            dragPreview.Prepare(owner, piece, drag);
+            gestureContainer = container;
+            container.VisualDragStart = dragPreview.Begin;
+            container.VisualDragUpdate = dragPreview.Move;
+            container.VisualDragEnd = dragPreview.End;
+        }
 
         private void HandleRightClick()
         {
@@ -65,7 +120,15 @@ namespace EatWhat.Cooking.ShortCycle
             return false;
         }
         public ShortCycleActionResult Dispatch()
-        { return DispatchFromSource(gameObject, 0f); }
+        {
+            if (actionName == ShortCycleActionNames.Escape || actionName == ShortCycleActionNames.Return)
+            {
+                var gate = GetComponent<ShortCycleStateGatedInteraction>();
+                if (gate != null && !gate.InteractionAllowed)
+                    return ShortCycleActionResult.Failure("The page navigation button is not focused.");
+            }
+            return DispatchFromSource(gameObject, 0f);
+        }
 
         private ShortCycleActionResult DispatchFromSource(GameObject source, float delta)
         { return DispatchFromSource(source, delta, actionName); }
@@ -134,11 +197,17 @@ namespace EatWhat.Cooking.ShortCycle
         }
         // MouseDraggableObject.cancelDraggingEvent: return only the source visual.
         public void CancelDragVisual()
-        { ReturnDraggedVisual(); }
+        {
+            if (gestureContainer != null) gestureContainer.CancelVisualDrag();
+            if (dragPreview != null) dragPreview.Release();
+            ReturnDraggedVisual();
+        }
 
         private void ReturnDraggedVisual(GameObject source = null)
         {
             var sourceBinding = source == null ? null : source.GetComponent<ShortCycleMouseActionBinding>();
+            var preview = (source == null ? gameObject : source).GetComponent<ShortCycleIngredientDragPreview>();
+            if (preview != null && preview.HandledGesture) { preview.Release(); return; }
             var transition = sourceBinding != null && sourceBinding.rejectedDropTransition != null
                 ? sourceBinding.rejectedDropTransition : rejectedDropTransition;
             var preset = sourceBinding != null && sourceBinding.rejectedDropTransition != null

@@ -1,5 +1,42 @@
 # ShortCycle 字体工具
 
+## FONT-ATLAS-AUTO-a 离线字形判定（2026-11-24）
+
+正常导表成功后，菜单、直接ImportAll、隔离ImportAllBatch现在共用成功路径，自动实际调用此脚本一次；默认不重建/发布/提交字体。直接调用脚本本身仍不启动Unity、不改源表、现有字形清单或批准manifest：
+
+```powershell
+pwsh -NoProfile -File DevTools/Fonts/Get-FontGlyphDecision.ps1 -OutputDirectory .ai-workspace/outputs/<批次>/<本任务ID>/glyph-decision
+```
+
+默认输入为当前 `ShortCycle_Heavy_WithFallback.asset` 的实际characterTable（基线，不拿旧216硬编码）、`DataTables/Localization/Localization.csv` 的全部 `zh_cn`、`ShortCycle_Heavy_Static.asset` 的实际characterTable。CSV严格复用 `DataTableCsvParser`。可显式传 `-BaseCharacterList`、`-StaticGlyphList`、`-LocalizationCsv`、`-ProjectRoot`；清单支持TMP文本asset的m_Unicode条目或每行十进制/U+码点文本，不以批准manifest的历史requiredCodepoints冒充当前静态表。
+
+自动报告使用实际当前工程根；隔离批处理读取隔离工程本次CSV／字体输入。普通Editor报告在`Library/DataTableFontReports/<UTC-唯一ID>/`，Console打印目录；Runner报告在本轮报告根的`font-glyph-reports/`，完成凭据和总报告保留具体目录。详[DATA接线与宿主配置](../DataTables/DATA_PIPELINE.md)。需要配置宿主时使用绝对`EATWHAT_PWSH_PATH`，不依赖Hub继承Codex PATH；优先显式／正式安装／PATH，最后可用用户目录下既有可信捆绑运行时。PowerShell版本必须7.5+（脚本使用ConvertFrom-Json -DateKind）。
+
+报告失败可见ERROR及诊断，不伪装“无需重建”，同时不撤销成功的数据导入。没有可运行宿主时只有invocation错误记录、没有有效判定。批处理默认false，只有另获授权后显式`-RebuildStaticFont:$true`／批入口环境值1进入原构建器；下面历史段落中的旧默认开启已被此规则覆盖。报告不作为生产许可。
+
+最后局部核对：2026-11-24，仅当前字形输入、离线脚本与五用例、已保存的长循环字体引用，不代表引擎或整体视觉验收。
+
+保持空白、标点、换行和Unicode补充平面码点；按本卡明确要求剥除已识别的TMP富文本标签名及属性，保留标签内正文，有效3/4/6/8位十六进制颜色简写与数值scale标签不计字，br变LF，noparse内部保留字面文本，未知角括号文本保守保留。旧Builder目前逐字符收集原始标签语法，这点未改动；不能声称两入口对含标签文案完全等价。TMP_AddSynthesizedCharacters列明的布局控制码点单独报告，不要求仅为它们重绘图集；普通空格/标点仍参与缺字判断。
+
+输出为 `font-glyph-decision.json`，schemaVersion=1：
+
+| 字段 | 含义 |
+|---|---|
+| status / requiresRebuild | OK时为true或false；输入缺失/不可读/解析失败则ERROR、null并抛错使CLI非零退出，不保留旧false结论 |
+| policy / parser / sources | 收字规则、实际CSV解析入口及三个判定输入路径/字节数/SHA；不是字体批准凭据 |
+| base/localization/static/requiredCharacterCount | 当前实际去重码点数，required为基线与全部文案并集 |
+| addedCodepoints | 需要补入的可见码点与字符，按码点升序；true的直接依据 |
+| missingSerializedCodepoints / synthesizedLayoutControls | 未出现在静态表的全部码点，以及其中TMP合成控制码点；两者不混作可见缺字 |
+| requiredCodepoints / existingCharactersWillBeRetained | 提供-b的目标并集；扩展时不得删除静态已有字符 |
+| narrativeExcludedFromDecision | 八表独立扫描不再向判定并集添加字；不从“全部Localization”里剔除已在那里存在的剧情文案 |
+
+默认另输出 `narrative-glyph-gaps.json`：固定Characters/Dialogues/DialogueLines/CGs/Scenes/AmbientPools/SceneStates/SceneStatePlacements八表，按现行schema的loc_key列查Localization.zh_cn，列逐表行数、引用位置/原文、缺Static码点、无法解析的key及输入来源。ID、命令、文件名和注释不是显示文案，不拿它们扩充判定。该报告只读且includedInRebuildDecision=false。测试可用 `-SkipNarrativeReport`，正式交付须保留八表报告。
+
+-b须只接受status=OK并核对实际来源仍为要处理的版本；false跳过，true也只有在其正式任务和用户授权后才进引擎。ERROR、null或读取失败不当作跳过；不依据历史计数猜缺字。该文件不是自动执行许可，不自动触发-b。当前Run-DataPipeline内原有RebuildStaticFont行为没有被本工具接管或改写。
+
+五个规定用例：`pwsh -NoProfile -File DevTools/Fonts/Test-FontGlyphDecision.ps1 -OutputRoot <本任务输出>/fixtures`，只写隔离夹具/报告，复用实际项目CSV解析器。覆盖新增字/新key无新增字/不变/多行引号与标点空白标签和补充平面/缺输入不伪报跳过。不运行旧Fonts全域入口、布局审计或字体hook回归。后者仅按-b原卡必要时执行。
+
+
 > 2026-10-14 AI-000241 退出后发布合同：Static 发布凭据取本次隔离 Editor 退出、长度/mtime 稳定后的磁盘 SHA；批准 manifest 的旧 Static SHA 只保护 live 原值。Dynamic 只记录前后 glyph 数并要求最终 0，不把批内或候选 Dynamic SHA 当发布门。CurrentCsvValidation 的精确 AI-000235 选项 A + -Publish 只发布字体，Generated 不动。详见 [DATA 管线](../DataTables/DATA_PIPELINE.md) 与 [P-051](../../.ai-workspace/pitfalls/CODE.md#p-051-unity-font-post-exit)。本卡只改 DevTools，不代签原卡生产/视觉验收。
 
 > 2026-10-14 AI-000234 长期接口：既有 DATA 隔离 ImportAllBatch 默认重建 Static+空 Dynamic，可用 -RebuildStaticFont:$false 关闭；BuildAll 只保存自身脏资产，不调用全局 SaveAssets。实际字符集以当前 legacy 资产与 Localization.csv/zh_cn 的项目解析器并集为准，旧 216 是历史记录，不作当前数目断言。Static 缺字时增量扩展，不删既有字符或重建身份；导表成功和字体失败分别结算。发布由 Run-DataPipeline.ps1 的独立字体事务处理，备份、授权/CSV/字数/码点/SHA 审计及 STATIC_ONLY hook 合同见 [DATA 管线](../DataTables/DATA_PIPELINE.md)。本卡仅离线工具，不发布生产字体、不重跑 FontSwapOnce；实际发布和 Editor 验证分别留给 AI-000235/236。

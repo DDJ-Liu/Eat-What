@@ -1,5 +1,20 @@
 # DATA 隔离导表管线
 
+## 导表之后的离线字形判定（AI627，2026-11-24）
+
+当前菜单、直接 `DataTableImportService.ImportAll()`、隔离 `ImportAllBatch()` 共用 ImportAll 成功末尾的一次调用，实际运行既有 `DevTools/Fonts/Get-FontGlyphDecision.ps1`；失败的导表不运行报告。未改表或没有新增字也照常产生本次报告，不缓存旧false结论。脚本用实际项目CSV解析器比较当前legacy基线+全部Localization.zh_cn与Static实际字表，剧情八表只出独立缺字报告。规则与五用例见[字体工具说明](../Fonts/README.md#font-atlas-auto-a-离线字形判定2026-11-24)。单独检查CSV仍可显式运行原脚本。
+
+status=ERROR/判定null时报告失败，不得写成“不用重建”。OK/false只表示此版本无新增可见字符；OK/true交正式FONT-ATLAS-AUTO-b在另获用户授权后处理，不自动重建或提交。八表报告不额外并入判定；全部Localization中已有的剧情文案仍按现行全量文案定义收集。富文本标签名按本卡要求过滤；旧Builder仍按原文逐字符收字，含标签时存在口径差异，后继不能误称两入口等价。
+
+**默认只报告、不重建。** Run-DataPipeline 与 Invoke-DataBatchCommand 的 `RebuildStaticFont` 默认false；C#批入口仅 `EATWHAT_REBUILD_STATIC_FONT=1` 请求原构建器。已授权的显式 `-RebuildStaticFont:$true`、发布批准与非空检查原入口保持，报告的requiresRebuild=true不会自动进入构建或发布。下方旧“默认开启”段是历史接口说明，默认值以本段为准，不恢复旧任务。
+
+普通编辑器报告在当前工程 `Library/DataTableFontReports/<UTC-唯一ID>/`，Console的`[FONT] Glyph report`打印绝对目录。可配置进程环境`EATWHAT_FONT_GLYPH_REPORT_ROOT`改变报告父目录，禁止放在Assets、DataTables、Packages、ProjectSettings或DevTools源目录内。批处理由Runner指定本轮报告根的`font-glyph-reports/<唯一ID>/`；完成凭据和data-pipeline-report的`fontGlyphReport`记录status/directory/error，隔离项目读取自己本次输入。Runner复制原判定脚本，其SHA进入输入快照，不把报告复制到包或工程资产。
+
+PowerShell 7.5+查找依次为显式绝对`EATWHAT_PWSH_PATH`、Program Files正式安装、PATH、用户目录下既有Codex捆绑运行时；不写个人用户名、不安装软件或改系统设置。批处理默认向子进程提供当前PS7.5+可执行文件，保留显式配置。普通Hub缺少PS7 PATH时可使用受支持的现有回退；不存在或低于PS7.5时报告明确ERROR。
+
+报告工具失败不会撤销成功的DATA导入；ImportReport warnings、Console、`font-glyph-invocation.json`及双流可查。脚本自身失败还会留下其原ERROR/null判定；启动宿主失败没有判定文件，不能当作无缺字。报告写盘失败同样明确ERROR。数据导入自身的失败与原批处理退出语义保持。直接入口离线回归：`pwsh -File DevTools/DataTables/Test-BatchImport.ps1 -FontGlyphReportOnly -OutputRoot <本任务输出>/entry-tests`；只编译真实生产代码并在自有模拟native资产边界运行，不启动Unity。
+
+
 2026-10-19 续行政策：MANUAL每次真实人批1；AUTOMATIC默认3、SUPERVISED默认5个同根周期；首次执行和诊断不计，同周期修复与根续行不双扣。来源、消费和停止门统一见[TK-WF](../../.ai-workspace/toolkit/WF.md#approve-resume)，实现验收状态见任务报告；不授权执行器自行重启业务。
 
 

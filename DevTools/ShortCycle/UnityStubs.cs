@@ -11,6 +11,9 @@ namespace UnityEngine
     { public RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType type) { } }
     public class Object
     {
+        private static int nextInstanceId;
+        private readonly int instanceId=System.Threading.Interlocked.Increment(ref nextInstanceId);
+        public int GetInstanceID(){return instanceId;}
         public string name;
         public bool ValidationDestroyed {get;internal set;}
         public static void DontDestroyOnLoad(Object value) { }
@@ -65,13 +68,14 @@ namespace UnityEngine
         public Transform transform { get { return gameObject.transform; } }
         internal void Attach(GameObject owner) { attachedGameObject = owner; }
         public T GetComponent<T>() where T : class { return gameObject.GetComponent<T>(); }
+        public bool TryGetComponent<T>(out T value) where T : class { value = GetComponent<T>(); return value != null; }
         public T[] GetComponentsInChildren<T>() { return gameObject.GetComponentsInChildren<T>(false); }
         public T[] GetComponentsInChildren<T>(bool includeInactive) { return gameObject.GetComponentsInChildren<T>(includeInactive); }
     }
     public class Behaviour : Component
     {
         public bool enabled = true;
-        public bool isActiveAndEnabled { get { return enabled && gameObject.activeSelf; } }
+        public bool isActiveAndEnabled { get { return enabled && gameObject.activeInHierarchy; } }
     }
     public class MonoBehaviour : Behaviour
     {
@@ -163,6 +167,9 @@ namespace UnityEngine
     {
         public Rect rect;
         public float pixelsPerUnit;
+        public readonly List<Vector2[]> PhysicsShapes = new List<Vector2[]>();
+        public int GetPhysicsShapeCount(){return PhysicsShapes.Count;}
+        public int GetPhysicsShape(int index,List<Vector2> points){points.Clear();points.AddRange(PhysicsShapes[index]);return points.Count;}
     }
     public class AnimationClip : Object { }
     public class RuntimeAnimatorController : Object
@@ -216,10 +223,39 @@ namespace UnityEngine
         public static void Box(Rect position, string text) { DrawnLabels.Add(text); }
     }
     public class Material : Object { }
-    public class BoxCollider2D : Behaviour
+    public enum SpriteDrawMode { Simple, Sliced, Tiled }
+    public enum SpriteTileMode { Continuous, Adaptive }
+    public enum SpriteSortPoint { Center, Pivot }
+    public enum SpriteMaskInteraction { None, VisibleInsideMask, VisibleOutsideMask }
+    public class BoxCollider2D : global::Collider2D
     {
         public Vector2 size;
         public Vector2 offset;
+        public override bool OverlapPoint(Vector2 point)
+        {
+            if (ContainsPoint != null) return base.OverlapPoint(point);
+            var local=transform.InverseTransformPoint(point);
+            return Math.Abs(local.x-offset.x)<=size.x*.5f && Math.Abs(local.y-offset.y)<=size.y*.5f;
+        }
+    }
+    public class PolygonCollider2D : global::Collider2D
+    {
+        private readonly List<Vector2[]> paths=new List<Vector2[]>();
+        public int pathCount {get{return paths.Count;}set{while(paths.Count<value)paths.Add(new Vector2[0]);while(paths.Count>value)paths.RemoveAt(paths.Count-1);}}
+        public void SetPath(int index,Vector2[] points){paths[index]=points;}
+        public int GetPath(int index,List<Vector2> points){points.Clear();points.AddRange(paths[index]);return points.Count;}
+        public override bool OverlapPoint(Vector2 point)
+        {
+            var p=transform.InverseTransformPoint(point);
+            foreach(var path in paths)
+            {
+                var inside=false;
+                for(int i=0,j=path.Length-1;i<path.Length;j=i++)
+                    if((path[i].y>p.y)!=(path[j].y>p.y) && p.x<(path[j].x-path[i].x)*(p.y-path[i].y)/(path[j].y-path[i].y)+path[i].x)inside=!inside;
+                if(inside)return true;
+            }
+            return false;
+        }
     }
     public static class Shader
     {
@@ -234,15 +270,22 @@ namespace UnityEngine
     public class Renderer : Behaviour
     {
         public Bounds bounds;
+        public int sortingLayerID;
+        public int sortingOrder;
     }
     public class SpriteRenderer : Renderer
     {
+        public bool flipX, flipY;
+        public SpriteDrawMode drawMode;
+        public SpriteTileMode tileMode;
+        public SpriteSortPoint spriteSortPoint;
+        public SpriteMaskInteraction maskInteraction;
+        public Vector2 size;
+        public float adaptiveModeThreshold;
         public Sprite sprite;
         public Material material;
         public Material sharedMaterial;
         public Color color;
-        public int sortingLayerID;
-        public int sortingOrder;
         public void GetPropertyBlock(MaterialPropertyBlock block) { }
         public void SetPropertyBlock(MaterialPropertyBlock block) { }
     }
@@ -280,6 +323,7 @@ namespace UnityEngine
         public GameObject()
         {
             transform = new Transform();
+            transform.localScale = Vector3.one;
             AttachExistingComponent(transform);
         }
 
@@ -295,6 +339,10 @@ namespace UnityEngine
         {
             var component = new T();
             AttachExistingComponent(component);
+#if EATWHAT_TRAY_POINTER_PLATFORM
+            var polygon=component as PolygonCollider2D;
+            if(polygon!=null)global::Physics2D.Colliders.Add(polygon);
+#endif
             return component;
         }
 
@@ -331,7 +379,17 @@ namespace UnityEngine
         {
             if (ThrowOnSetActive) throw new InvalidOperationException("SetActive is forbidden by the lifecycle test sentinel.");
             SetActiveCallCount++;
+            var changed = activeSelf != value;
             activeSelf = value;
+#if EATWHAT_DRAG_PREVIEW_PLATFORM
+            if(changed) foreach(var component in components.ToArray())
+            {
+                var behaviour=component as Behaviour;
+                if(behaviour==null || !behaviour.enabled)continue;
+                var method=component.GetType().GetMethod(value?"OnEnable":"OnDisable",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                if(method!=null)method.Invoke(component,null);
+            }
+#endif
         }
     }
     public class Camera : MonoBehaviour
@@ -353,13 +411,27 @@ namespace UnityEngine
             return point;
         }
     }
-    public struct Quaternion { public static Quaternion identity { get { return new Quaternion(); } } }
+    public struct Quaternion
+    {
+        public float x,y,z,w;
+        public static Quaternion identity { get { return new Quaternion {w=1}; } }
+        public static Quaternion Inverse(Quaternion q) { return new Quaternion {x=-q.x,y=-q.y,z=-q.z,w=q.w}; }
+        public static Quaternion Euler(float x,float y,float z) { var a=z*Math.PI/360;return new Quaternion {z=(float)Math.Sin(a),w=(float)Math.Cos(a)}; }
+        public static Quaternion operator *(Quaternion a,Quaternion b) { return new Quaternion {x=a.w*b.x+a.x*b.w+a.y*b.z-a.z*b.y,y=a.w*b.y-a.x*b.z+a.y*b.w+a.z*b.x,z=a.w*b.z+a.x*b.y-a.y*b.x+a.z*b.w,w=a.w*b.w-a.x*b.x-a.y*b.y-a.z*b.z}; }
+        public static Vector3 operator *(Quaternion q,Vector3 v) { var p=q*new Quaternion{x=v.x,y=v.y,z=v.z}*Inverse(q);return new Vector3(p.x,p.y,p.z); }
+    }
     public class Transform : Component
     {
         private Transform parentValue;
         private readonly List<Transform> childTransforms = new List<Transform>();
+#if EATWHAT_DRAG_PREVIEW_PLATFORM
+        private Vector3 localPositionValue;
+        public Vector3 position { get {return parent==null?localPositionValue:parent.TransformPoint(localPositionValue);} set{localPositionValue=parent==null?value:parent.InverseTransformPoint(value);} }
+        public Vector3 localPosition {get{return localPositionValue;}set{localPositionValue=value;}}
+#else
         public Vector3 position;
         public Vector3 localPosition;
+#endif
         public Vector3 localScale;
         public Vector3 eulerAngles;
         public Vector3 localEulerAngles;
@@ -368,8 +440,22 @@ namespace UnityEngine
             get { return parentValue; }
             set { SetParent(value, true); }
         }
-        public Quaternion rotation;
-        public Vector3 lossyScale { get { return localScale; } }
+        public Quaternion localRotation=Quaternion.identity;
+        public Quaternion rotation {get{return parent==null?localRotation:parent.rotation*localRotation;}set{localRotation=parent==null?value:Quaternion.Inverse(parent.rotation)*value;}}
+        public Vector3 lossyScale { get {
+#if EATWHAT_DRAG_PREVIEW_PLATFORM
+            return parent==null?localScale:Vector3.Scale(parent.lossyScale,localScale);
+#else
+            return localScale;
+#endif
+        } }
+        public Vector3 TransformPoint(Vector3 p){return position+TransformVector(p);}
+        public Vector3 InverseTransformPoint(Vector3 p){var a=Quaternion.Inverse(rotation)*(p-position);var s=lossyScale;return new Vector3(a.x/s.x,a.y/s.y,a.z/s.z);}
+        public Vector3 TransformVector(Vector3 p){return rotation*Vector3.Scale(p,lossyScale);}
+        public Vector3 InverseTransformDirection(Vector3 p){return Quaternion.Inverse(rotation)*p;}
+        public Vector3 TransformDirection(Vector3 p){return rotation*p;}
+        public Vector3 right {get{return rotation*Vector3.right;}}
+        public Vector3 up {get{return rotation*Vector3.up;}}
         public Object[] children = new Object[0];
         internal IList<Transform> ChildTransforms { get { return childTransforms; } }
         public bool IsChildOf(Transform other)
@@ -380,10 +466,14 @@ namespace UnityEngine
 
         public void SetParent(Transform value, bool worldPositionStays)
         {
+            var world=position;
             if (parentValue == value) return;
             if (parentValue != null) parentValue.childTransforms.Remove(this);
             parentValue = value;
             if (parentValue != null && !parentValue.childTransforms.Contains(this)) parentValue.childTransforms.Add(this);
+#if EATWHAT_DRAG_PREVIEW_PLATFORM
+            if(worldPositionStays)position=world;
+#endif
         }
 
         public new T[] GetComponentsInChildren<T>() { return gameObject.GetComponentsInChildren<T>(false); }
@@ -407,6 +497,20 @@ namespace UnityEngine
 
         public static Vector3 zero { get { return new Vector3(0f, 0f, 0f); } }
         public static Vector3 one { get { return new Vector3(1f, 1f, 1f); } }
+        public static Vector3 up {get{return new Vector3(0,1,0);}}
+        public static Vector3 right {get{return new Vector3(1,0,0);}}
+        public float magnitude {get{return Distance(this,zero);}}
+        public float sqrMagnitude {get{return x*x+y*y+z*z;}}
+        public Vector3 normalized {get{return magnitude==0?zero:this/magnitude;}}
+        public static Vector3 Scale(Vector3 a,Vector3 b){return new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);}
+        public static Vector3 ClampMagnitude(Vector3 a,float b){return a.magnitude>b?a.normalized*b:a;}
+        public static Vector3 operator +(Vector3 a,Vector3 b){return new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);}
+        public static Vector3 operator -(Vector3 a,Vector3 b){return new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);}
+        public static Vector3 operator /(Vector3 a,float b){return new Vector3(a.x/b,a.y/b,a.z/b);}
+        public static bool operator ==(Vector3 a,Vector3 b){return Distance(a,b)<.00001f;}
+        public static bool operator !=(Vector3 a,Vector3 b){return !(a==b);}
+        public override bool Equals(object o){return o is Vector3 && this==(Vector3)o;}
+        public override int GetHashCode(){return x.GetHashCode()^y.GetHashCode()^z.GetHashCode();}
         public static implicit operator Vector2(Vector3 value) { return new Vector2(value.x, value.y); }
 
         public static Vector3 operator *(Vector3 value, float multiplier)
@@ -482,6 +586,17 @@ namespace UnityEngine
         }
 
         public static Vector2 zero { get { return new Vector2(0f, 0f); } }
+        public static Vector2 up {get{return new Vector2(0,1);}}
+        public static Vector2 down {get{return new Vector2(0,-1);}}
+        public static Vector2 left {get{return new Vector2(-1,0);}}
+        public static Vector2 right {get{return new Vector2(1,0);}}
+        public static Vector2 operator +(Vector2 a,Vector2 b){return new Vector2(a.x+b.x,a.y+b.y);}
+        public static Vector2 operator -(Vector2 a,Vector2 b){return new Vector2(a.x-b.x,a.y-b.y);}
+        public static Vector2 operator *(Vector2 a,float b){return new Vector2(a.x*b,a.y*b);}
+        public static bool operator ==(Vector2 a,Vector2 b){return Distance(a,b)<.00001f;}
+        public static bool operator !=(Vector2 a,Vector2 b){return !(a==b);}
+        public override bool Equals(object o){return o is Vector2 && this==(Vector2)o;}
+        public override int GetHashCode(){return x.GetHashCode()^y.GetHashCode();}
         public static implicit operator Vector3(Vector2 value) { return new Vector3(value.x, value.y, 0f); }
         public static float Distance(Vector2 a, Vector2 b) { return (float)Math.Sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)); }
     }
@@ -598,6 +713,8 @@ namespace UnityEngine
     }
     public static class Mathf
     {
+        public static float Min(float a,float b){return Math.Min(a,b);}
+        public static int Min(int a,int b){return Math.Min(a,b);}
         public static float Max(float a, float b) { return Math.Max(a,b); }
         public static float Abs(float value) { return Math.Abs(value); }
         public static float Clamp01(float value) { return Math.Max(0f, Math.Min(1f, value)); }
@@ -841,19 +958,26 @@ namespace UnityEngine.InputSystem.Controls
 
 namespace UnityEngine.Rendering
 {
-    public class SortingGroup : UnityEngine.Behaviour { }
+    public class SortingGroup : UnityEngine.Behaviour { public int sortingLayerID; public int sortingOrder; }
 }
 
 namespace TMPro
 {
     public enum TextAlignmentOptions { Center, TopLeft }
-    public sealed class TextRect { public UnityEngine.Vector2 pivot; }
+    public sealed class TextRect { public UnityEngine.Vector2 pivot; public UnityEngine.Vector2 sizeDelta; }
     public class TMP_Text : UnityEngine.Behaviour
     {
         public string text;
         public float fontSize = 3f;
         public TextRect rectTransform = new TextRect();
         public TextAlignmentOptions alignment;
+        public object font,fontSharedMaterial;
+        public int fontStyle,textWrappingMode,overflowMode;
+        public UnityEngine.Color color;
+        public bool richText,enableAutoSizing;
+        public float fontSizeMin,fontSizeMax,characterSpacing,wordSpacing,lineSpacing,paragraphSpacing;
+        public UnityEngine.Vector4 margin;
+        public UnityEngine.Renderer renderer { get {var r=GetComponent<UnityEngine.Renderer>();return r??gameObject.AddComponent<UnityEngine.Renderer>();} }
     }
 
     public sealed class TextMeshPro : TMP_Text { }
@@ -920,8 +1044,19 @@ public enum DropTag
     None = 0, Ingredient = 1 << 0, Tool = 1 << 1, Recipe = 1 << 2,
     Trash = 1 << 3, FridgeIngredient = 1 << 4, Everything = ~0
 }
+#if !EATWHAT_TRAY_POINTER_PLATFORM
+public interface IMouseHitDepth
+{
+    object MouseHitScope {get;}
+    string MouseHitKey {get;}
+    bool TryGetMouseHitDepth(UnityEngine.Vector2 point,out float depth);
+}
+#endif
 public class MouseDraggableObject : UnityEngine.MonoBehaviour
 {
+    public event Action<MouseDraggableObject> PreparingDrag { add{} remove{} }
+    public bool dragging;
+    public void cancelDrag(){dragging=false;}
     public DropTag allowedDropTags = DropTag.Everything;
 }
 public class MouseScrollableObject : UnityEngine.MonoBehaviour
@@ -931,8 +1066,9 @@ public class MouseScrollableObject : UnityEngine.MonoBehaviour
 }
 public class Collider2D : UnityEngine.Behaviour
 {
+    public bool isTrigger;
     public Func<UnityEngine.Vector2, bool> ContainsPoint;
-    public bool OverlapPoint(UnityEngine.Vector2 point)
+    public virtual bool OverlapPoint(UnityEngine.Vector2 point)
     { return ContainsPoint != null && ContainsPoint(point); }
 }
 public class HiddenButtonIdentifier : UnityEngine.MonoBehaviour { }
@@ -959,6 +1095,7 @@ public static class SortingLayer
 }
 public class MouseManager : UnityEngine.MonoBehaviour
 {
+    public UnityEngine.Vector3 dragStartPos;
     public static MouseManager Instance;
     public static event Action<float> OnScrollStep;
     public static event Action OnMouseCancel;
@@ -1034,6 +1171,10 @@ public class ScrollBar_Controller : UnityEngine.MonoBehaviour
 }
 public class DragContainer : UnityEngine.MonoBehaviour
 {
+    public System.Action<DragContainer> VisualDragStart { get; set; }
+    public System.Action<DragContainer> VisualDragUpdate { get; set; }
+    public System.Action<DragContainer> VisualDragEnd { get; set; }
+    public void CancelVisualDrag(){if(VisualDragEnd!=null)VisualDragEnd(this);}
     public enum DragMode { Vertical, Horizontal, Composite }
     public enum LimitMode { Manual, DragLimit }
     public enum SizeSource { BoxCollider2D, RectTransform }

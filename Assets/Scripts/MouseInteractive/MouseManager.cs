@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class MouseManager : MonoBehaviour
 {
@@ -53,6 +54,11 @@ public class MouseManager : MonoBehaviour
     public bool dragPerforming = false;
     public Vector3 dragStartPos;
     public float dragMoveThreshold;
+    private bool pointerCaptured;
+    private MouseDraggableObject pressedDraggable;
+    private MousePressableObject pressedPressable;
+    private MousePressableObject releaseClickTarget;
+    private MouseInteractionLayer pressedLayer;
 
     [Header("MouseHold")]
     public MouseHoldObject currentHoldObject;
@@ -132,16 +138,18 @@ public class MouseManager : MonoBehaviour
 
     private void OnDisable()
     {
+        CancelPointerGesture();
         ResetScrollInput();
-        dragStartAction.Disable();
+        if (dragStartAction != null) dragStartAction.Disable();
         // ȡ������
-        dragStartAction.started -= OnDragStart;
+        if (dragStartAction != null) dragStartAction.started -= OnDragStart;
     }
     // Update is called once per frame
     void Update()
     {
         if (mouseInteractiveLayers == null || mouseInteractiveLayers.Count == 0)
         {
+            CancelPointerGesture();
             ResetScrollInput();
             currentLayer = string.Empty;
             currentScrollableObject = null;
@@ -166,6 +174,8 @@ public class MouseManager : MonoBehaviour
         if (mouseInteractiveLayers.Count > 0)
         {
             setMouseHover(mouseWorldPosition);
+            if (pointerCaptured && pressedLayer != currentMouseLayer) CancelPointerGesture();
+            if (CapturedDragInvalid()) CancelPointerGesture();
 
             if (dragStarted)
             {
@@ -299,7 +309,7 @@ public class MouseManager : MonoBehaviour
         }
     }
 
-    private T tryGetMouseObject<T>(Collider2D[] cols)
+    private T tryGetMouseObject<T>(Collider2D[] cols) where T : Behaviour
     {
         if(cols == null || cols.Length == 0)
         {
@@ -309,7 +319,13 @@ public class MouseManager : MonoBehaviour
         List<Collider2D> possibles = new List<Collider2D>();
         foreach(Collider2D col in cols)
         {
-            if(col.gameObject.GetComponent<T>() != null)
+            if (col == null || !col.enabled || !col.gameObject.activeInHierarchy) continue;
+            var candidate = col.gameObject.GetComponent<T>();
+            if (candidate == null || !candidate.isActiveAndEnabled) continue;
+            // Co-located drag/click components share the authored interaction gate.
+            var pressable = col.GetComponent<MousePressableObject>();
+            if (candidate is MouseDraggableObject && pressable != null && !pressable.isActiveAndEnabled) continue;
+            if(candidate != null)
             {
                 possibles.Add(col);
             }
@@ -336,6 +352,8 @@ public class MouseManager : MonoBehaviour
     private static Collider2D SelectHighestPriority(Collider2D[] hits)
     {
         if(hits == null || hits.Length <= 0) return null;
+        Vector3 pointer;
+        var hasPointer = Tools.TryGetMousePos(out pointer);
         System.Array.Sort(hits, (a, b) =>
         {
             // 规则1: HiddenButtonIdentifier 最高优先
@@ -344,33 +362,61 @@ public class MouseManager : MonoBehaviour
             if (aHidden != bHidden) return aHidden ? -1 : 1;
 
             // 规则2: 有视觉组件（SpriteRenderer 或子Canvas下的Image）优先于没有
-            var aPressable = a.GetComponent<MousePressableObject>();
-            var bPressable = b.GetComponent<MousePressableObject>();
-            bool aHasVisual = aPressable != null ? aPressable.hasVisual : a.GetComponent<SpriteRenderer>() != null;
-            bool bHasVisual = bPressable != null ? bPressable.hasVisual : b.GetComponent<SpriteRenderer>() != null;
+            int aLayer, aOrder, bLayer, bOrder;
+            bool aHasVisual = TryGetVisualSorting(a, out aLayer, out aOrder);
+            bool bHasVisual = TryGetVisualSorting(b, out bLayer, out bOrder);
             if (aHasVisual != bHasVisual) return aHasVisual ? -1 : 1;
 
             // 都没有视觉组件，视为同优先级
             if (!aHasVisual) return 0;
 
             // 规则3: Sorting Layer 值更大的优先（仅 SpriteRenderer）
-            SpriteRenderer aSR = a.GetComponent<SpriteRenderer>();
-            SpriteRenderer bSR = b.GetComponent<SpriteRenderer>();
-            if (aSR != null && bSR != null)
-            {
-                int aLayerValue = SortingLayer.GetLayerValueFromID(aSR.sortingLayerID);
-                int bLayerValue = SortingLayer.GetLayerValueFromID(bSR.sortingLayerID);
-                if (aLayerValue != bLayerValue) return bLayerValue.CompareTo(aLayerValue);
+            if (aLayer != bLayer) return bLayer.CompareTo(aLayer);
+            if (aOrder != bOrder) return bOrder.CompareTo(aOrder);
 
-                // 规则4: Order in Layer 更大的优先
-                if (aSR.sortingOrder != bSR.sortingOrder)
-                    return bSR.sortingOrder.CompareTo(aSR.sortingOrder);
+            // Only explicit providers in the same product scope resolve an exact
+            // visual-rank tie. Pressable blocking calls this same comparator.
+            var aHit = a.GetComponent<IMouseHitDepth>();
+            var bHit = b.GetComponent<IMouseHitDepth>();
+            var scope = aHit == null ? null : aHit.MouseHitScope;
+            float aDepth, bDepth;
+            if (hasPointer && scope != null && bHit != null && object.ReferenceEquals(scope,bHit.MouseHitScope) &&
+                aHit.TryGetMouseHitDepth(pointer,out aDepth) && bHit.TryGetMouseHitDepth(pointer,out bDepth))
+            {
+                var difference = bDepth.CompareTo(aDepth);
+                if (difference != 0) return difference;
+                difference = StringComparer.Ordinal.Compare(aHit.MouseHitKey,bHit.MouseHitKey);
+                if (difference != 0) return difference;
+                return a.gameObject.GetInstanceID().CompareTo(b.gameObject.GetInstanceID());
             }
 
             return 0;
         });
 
         return hits[0];
+    }
+
+    private static bool TryGetVisualSorting(Collider2D collider, out int layer, out int order)
+    {
+        layer = 0; order = 0;
+        SpriteRenderer visual = null;
+        SortingGroup group = null;
+        for (var node = collider.transform; node != null; node = node.parent)
+        {
+            var candidate = node.GetComponent<SpriteRenderer>();
+            if (visual == null && candidate != null && candidate.enabled && candidate.gameObject.activeInHierarchy)
+                visual = candidate;
+            var sorting = node.GetComponent<SortingGroup>();
+            if (group == null && sorting != null && sorting.enabled) group = sorting;
+        }
+        if (visual != null)
+        {
+            layer = SortingLayer.GetLayerValueFromID(group == null ? visual.sortingLayerID : group.sortingLayerID);
+            order = group == null ? visual.sortingOrder : group.sortingOrder;
+            return true;
+        }
+        var pressable = collider.GetComponent<MousePressableObject>();
+        return pressable != null && pressable.hasVisual;
     }
 
     private bool IsBlockedByPressable(Collider2D[] hits, Collider2D targetCol)
@@ -383,9 +429,9 @@ public class MouseManager : MonoBehaviour
         if (hits == null || targetCol == null) return null;
         foreach (Collider2D col in hits)
         {
-            if (col == targetCol) continue;
+            if (col == targetCol || col.gameObject == targetCol.gameObject) continue;
             MousePressableObject pressable = col.GetComponent<MousePressableObject>();
-            if (pressable == null) continue;
+            if (pressable == null || !pressable.isActiveAndEnabled) continue;
             Collider2D winner = SelectHighestPriority(new Collider2D[] { col, targetCol });
             if (winner == col)
                 return pressable;
@@ -405,7 +451,7 @@ public class MouseManager : MonoBehaviour
         {
             if (col == targetCol) continue;
             MousePressableObject pressable = col.GetComponent<MousePressableObject>();
-            if (pressable == null) continue;
+            if (pressable == null || !pressable.isActiveAndEnabled) continue;
             Collider2D winner = SelectHighestPriority(new Collider2D[] { col, targetCol });
             if (winner != col) continue;
             if (scrollable.CanScrollThroughPressable(pressable))
@@ -510,6 +556,7 @@ public class MouseManager : MonoBehaviour
     private void OnApplicationFocus(bool hasFocus)
     {
         if (!hasFocus) ResetScrollInput();
+        if (!hasFocus) CancelPointerGesture();
     }
 
 
@@ -519,11 +566,20 @@ public class MouseManager : MonoBehaviour
         if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
 
         OnMouseConfirm?.Invoke();
+        CapturePointer(mouseWorldPosition);
         // 一次性 raycast 查找点击目标
-        MousePressableObject target = RaycastPressable(mouseWorldPosition);
+        MousePressableObject target = pressedPressable;
         if (target != null)
         {
-            target.MouseSelect();
+            // Only an eligible co-located draggable defers its click. Ordinary
+            // buttons keep press-time selection and their existing hold behavior.
+            if (target.DeferClickUntilDragRelease && pressedDraggable != null &&
+                target.gameObject == pressedDraggable.gameObject)
+            {
+                releaseClickTarget = target;
+                dragStarted = true;
+            }
+            else target.MouseSelect();
         }
         else if (currentMouseLayer != null && currentMouseLayer.clickNullEqualsCancel)
         {
@@ -597,22 +653,10 @@ public class MouseManager : MonoBehaviour
 
     public void OnMouseCancelPress()
     {
+        Vector3 pointer;
+        if (!dragStarted && !dragPerforming && Tools.TryGetMousePos(out pointer)) setMouseHover(pointer);
         OnMouseCancel?.Invoke();
-
-        // 取消拖拽
-        if (dragPerforming)
-        {
-            dragPerforming = false;
-            if (currentDraggableObject != null)
-            {
-                currentDraggableObject.cancelDrag();
-                currentDraggableObject = null;
-            }
-        }
-        if (dragStarted)
-        {
-            dragStarted = false;
-        }
+        CancelPointerGesture();
     }
 
     public void OnDragStart(InputAction.CallbackContext context)
@@ -620,16 +664,17 @@ public class MouseManager : MonoBehaviour
         Vector3 mouseWorldPosition;
         if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
 
-        dragStarted = true;
-        dragPerforming = false;
-        dragStartPos = mouseWorldPosition;
+        CapturePointer(mouseWorldPosition);
+        if (!dragPerforming) dragStarted = true;
         OnDragStarted?.Invoke(dragStartPos);
     }
 
     public void OnDragPerform()
     {
+        releaseClickTarget = null;
+        if (pointerCaptured) currentDraggableObject = pressedDraggable;
         OnDragPerformed?.Invoke();
-        if(currentDraggableObject != null)
+        if(currentDraggableObject != null && currentDraggableObject.isActiveAndEnabled)
         {
             currentDraggableObject.enterDrag();
         }
@@ -638,6 +683,35 @@ public class MouseManager : MonoBehaviour
     public void OnMouseLeftButtonHoldStart()
     {
 
+    }
+
+    private void CapturePointer(Vector3 position)
+    {
+        if (pointerCaptured) return;
+        dragStarted = false; dragPerforming = false;
+        setMouseHover(position);
+        pressedDraggable = currentDraggableObject;
+        pressedPressable = RaycastPressable(position);
+        pressedLayer = currentMouseLayer;
+        releaseClickTarget = null;
+        dragStartPos = position;
+        pointerCaptured = true;
+    }
+
+    private void CancelPointerGesture()
+    {
+        var source = pointerCaptured ? pressedDraggable : currentDraggableObject;
+        var wasDragging = dragPerforming;
+        pointerCaptured = false; pressedDraggable = null; pressedPressable = null;
+        releaseClickTarget = null; pressedLayer = null;
+        dragStarted = false; dragPerforming = false; currentDraggableObject = null;
+        if (wasDragging && source != null && source.dragging) source.cancelDrag();
+    }
+
+    private bool CapturedDragInvalid()
+    {
+        return pointerCaptured && dragPerforming &&
+            (pressedDraggable == null || !pressedDraggable.isActiveAndEnabled || !pressedDraggable.dragging);
     }
 
     private void CheckDropZone(MouseDraggableObject draggable, Vector2 mouseWorldPosition)
@@ -662,26 +736,33 @@ public class MouseManager : MonoBehaviour
     public void OnMouseLeftButtonRelease()
     {
         Vector3 mouseWorldPosition;
-        if (!Tools.TryGetMousePos(out mouseWorldPosition)) return;
+        if (!Tools.TryGetMousePos(out mouseWorldPosition)) { CancelPointerGesture(); return; }
 
         OnMouseRelease?.Invoke();
+        if (pointerCaptured && pressedLayer != currentMouseLayer) { CancelPointerGesture(); return; }
+        if (CapturedDragInvalid()) { CancelPointerGesture(); return; }
+        // A fast release can arrive before Update sampled the threshold crossing.
+        if (pointerCaptured && dragStarted && Vector3.Distance(dragStartPos, mouseWorldPosition) > dragMoveThreshold)
+        { dragStarted = false; dragPerforming = true; OnDragPerform(); }
+        var source = pointerCaptured ? pressedDraggable : currentDraggableObject;
+        var click = releaseClickTarget;
+        var wasDragging = dragPerforming;
+        pointerCaptured = false; pressedDraggable = null; pressedPressable = null;
+        releaseClickTarget = null; pressedLayer = null;
+        dragStarted = false; dragPerforming = false;
         //Debug.Log("release");
         //Drag
-        if(dragPerforming)
+        if(wasDragging)
         {
-            dragPerforming = false;
-            if(currentDraggableObject != null)
+            if(source != null && source.isActiveAndEnabled)
             {
-                CheckDropZone(currentDraggableObject, mouseWorldPosition);
-                currentDraggableObject.exitDrag();
+                CheckDropZone(source, mouseWorldPosition);
+                if (source != null) source.exitDrag();
                 currentDraggableObject = null;
             }
         }
-        if(dragStarted)
-        {
-            dragStarted = false;
-            dragPerforming = false;
-        }
+        else if (click != null && click.isActiveAndEnabled && RaycastPressable(mouseWorldPosition) == click)
+            click.MouseSelect();
         //Hold
         if (holdPerforming && currentHoldObject != null)
         {

@@ -1,9 +1,12 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath, [switch]$CompileOnly, [string]$CoreAssemblyReportRoot)
+param([string]$UnityEditorPath, [switch]$CompileOnly, [string]$CoreAssemblyReportRoot, [switch]$ReturnButtonsOnly, [switch]$TrayPointerOnly, [switch]$DragPreviewOnly, [string]$BeforeDragContainerPath, [switch]$AuthoredTrayPickOnly, [string]$BeforeTraySlotPath)
+
+if($AuthoredTrayPickOnly){$DragPreviewOnly=$true}
+if($DragPreviewOnly){$TrayPointerOnly=$true}
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$coreAssemblyOnly=$env:EATWHAT_CORE_ASSEMBLY_ONLY -eq '1'
+$coreAssemblyOnly=$env:EATWHAT_CORE_ASSEMBLY_ONLY -eq '1' -or $ReturnButtonsOnly -or $TrayPointerOnly
 $jointProbeOnly=$env:EATWHAT_JOINT_PREREQUISITES_ONLY -eq '1'
 $validationHostOnly=$env:EATWHAT_VALIDATION_HOST_ONLY -eq '1' -or $jointProbeOnly
 $catalogFeedbackOnly=$env:EATWHAT_CATALOG_FEEDBACK_ONLY -eq '1'
@@ -357,9 +360,9 @@ Assert-SourceContains $toolsSource '(?s)missingMainCameraWarningIssued.*?Debug\.
     'Tools must throttle the missing-main-camera warning to one per missing episode.'
 Assert-SourceContains $mouseManagerSource '(?s)void\s+Update\s*\([^)]*\).*?Vector3\s+mouseWorldPosition\s*;.*?TryGetMousePos\s*\(\s*out\s+mouseWorldPosition\s*\).*?return\s*;.*?setMouseHover\s*\(\s*mouseWorldPosition\s*\).*?Vector3\.Distance\s*\(\s*dragStartPos\s*,\s*mouseWorldPosition\s*\).*?OnScroll\s*\(\s*mouseWorldPosition\s*\)' `
     'MouseManager Update must stop before hover, drag, and scroll sampling when no real pointer is available.'
-Assert-SourceContains $mouseManagerSource '(?s)OnMouseConfirmPress\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?RaycastPressable\s*\(\s*mouseWorldPosition\s*\).*?HasAnyInteractiveObject\s*\(\s*mouseWorldPosition\s*\)' `
+Assert-SourceContains $mouseManagerSource '(?s)OnMouseConfirmPress\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?CapturePointer\s*\(\s*mouseWorldPosition\s*\).*?HasAnyInteractiveObject\s*\(\s*mouseWorldPosition\s*\).*?CapturePointer\s*\(\s*Vector3\s+position\s*\).*?RaycastPressable\s*\(\s*position\s*\)' `
     'Mouse confirm must not raycast or synthesize an origin click without a real pointer.'
-Assert-SourceContains $mouseManagerSource '(?s)OnDragStart\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?dragStarted\s*=\s*true.*?dragStartPos\s*=\s*mouseWorldPosition' `
+Assert-SourceContains $mouseManagerSource '(?s)OnDragStart\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?CapturePointer\s*\(\s*mouseWorldPosition\s*\).*?dragStarted\s*=\s*true.*?CapturePointer\s*\(\s*Vector3\s+position\s*\).*?if\s*\(\s*pointerCaptured\s*\)\s*return\s*;.*?dragStartPos\s*=\s*position' `
     'Drag start must preserve prior state and skip the event when no real pointer is available.'
 Assert-SourceContains $mouseManagerSource '(?s)OnMouseLeftButtonRelease\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?OnMouseRelease.*?CheckDropZone\s*\([^,]+,\s*mouseWorldPosition\s*\).*?OverlapPoint\s*\(\s*mouseWorldPosition\s*\)' `
     'Release/drop/hold hit testing must stop before state mutation when no real pointer is available.'
@@ -937,6 +940,15 @@ $sourcePaths = @(
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01ProcessingRecordData.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01RecipeVariantData.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01InitialInventoryData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01OptionalValues.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01CharacterData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01DialogueData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01DialogueLineData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01CGData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01SceneData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01SceneStateData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01SceneStatePlacementData.cs'),
+    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01AmbientPoolData.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\KitchenAreaData.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\Localization\LocTextCatalog.cs'),
     (Join-Path $repoRoot 'Assets\Scripts\DataBase\Localization\LocTableAsset.cs'),
@@ -962,6 +974,66 @@ $sourcePaths = @(
     Get-ChildItem -LiteralPath (Join-Path $repoRoot "Assets/Scripts/Tools/Security"),(Join-Path $repoRoot "Assets/Scripts/Tools/Persistence") -Filter "*.cs" -File | Select-Object -ExpandProperty FullName
 )
 
+if($TrayPointerOnly){
+    if(-not $CoreAssemblyReportRoot){throw 'Tray pointer tests require an explicit fresh CoreAssemblyReportRoot.'}
+    $pointerRoot=[IO.Path]::GetFullPath($CoreAssemblyReportRoot)
+    foreach($existing in @('PointerPlatform.cs','ShortCycle.Core.offline.dll','ShortCycle.Core.Tests.offline.dll')){
+        if(Test-Path -LiteralPath (Join-Path $pointerRoot $existing)){throw 'Pointer output already exists; use a fresh report directory.'}
+    }
+    [void][IO.Directory]::CreateDirectory($pointerRoot)
+    $pointerStub=[IO.File]::ReadAllText($unityStubsPath)
+    # Keep the existing platform fixture, replacing its mouse algorithm doubles
+    # with real framework sources. Original UnityStubs.cs is never rewritten.
+    $replacedTypes=@('MouseManager','MousePressableObject','MouseDraggableObject','MouseScrollableObject','DropZone','Physics2D')
+    if($DragPreviewOnly){$replacedTypes+=@('DragContainer','DragLimit')}
+    foreach($typeName in $replacedTypes){
+        $match=[regex]::Match($pointerStub,'(?m)^public (?:abstract |static )?class '+[regex]::Escape($typeName)+'\b[^\{]*\{')
+        if(-not $match.Success){throw ('Missing unique pointer fixture declaration: '+$typeName)}
+        $depth=1;$end=$match.Index+$match.Length
+        while($depth -gt 0 -and $end -lt $pointerStub.Length){
+            if($pointerStub[$end] -eq '{'){$depth++}elseif($pointerStub[$end] -eq '}'){$depth--};$end++
+        }
+        if($depth -ne 0){throw ('Unbalanced pointer fixture declaration: '+$typeName)}
+        $pointerStub=$pointerStub.Remove($match.Index,$end-$match.Index)
+    }
+    $pointerStub=[regex]::Replace($pointerStub,'(public T GetComponent<T>\(\)) where T : class(\s*\{[^}]*?)return null;','$1$2return default(T);')
+    $pointerStub=$pointerStub.Replace('GetComponent<T>() where T : class','GetComponent<T>()').Replace('return components[index] as T;','return (T)(object)components[index];')
+    $pointerStub=$pointerStub.Replace('public static float Clamp(float value,','public static float Sign(float value) { return Math.Sign(value); } public static float Clamp(float value,')
+    $pointerStub=$pointerStub.Replace('public class SortingGroup : UnityEngine.Behaviour { }','public class SortingGroup : UnityEngine.Behaviour { public int sortingLayerID; public int sortingOrder; }')
+    $pointerStub=$pointerStub.Replace('public class InputManager : UnityEngine.MonoBehaviour'+"`r`n"+'{','public class InputManager : UnityEngine.MonoBehaviour'+"`r`n"+'{ public static InputManager Instance; public void StartRecordKey(KeyboardListener listener) {}')
+    $pointerStub=$pointerStub.Replace('public class InputManager : UnityEngine.MonoBehaviour'+"`n"+'{','public class InputManager : UnityEngine.MonoBehaviour'+"`n"+'{ public static InputManager Instance; public void StartRecordKey(KeyboardListener listener) {}')
+    $pointerStub=$pointerStub.Replace('public static bool HasMouseWorldPosition = true;','public static object FindImageInChildCanvas(UnityEngine.GameObject value) { return null; } public static bool HasMouseWorldPosition = true;')
+    $pointerStub=$pointerStub.Replace('public static UnityEngine.Vector3 MouseWorldPosition;','public static UnityEngine.Vector3 MouseWorldPosition; public static UnityEngine.Vector3 getMousePos() { return MouseWorldPosition; }')
+    $pointerStub=$pointerStub.Replace('public bool manualStackLayer;','public bool manualStackLayer; public bool clickNullEqualsCancel; public UnityEngine.Events.UnityEvent onClickNullCancel;')
+    $pointerStubPath=Join-Path $pointerRoot 'PointerPlatform.cs'
+    [IO.File]::WriteAllText($pointerStubPath,$pointerStub,[Text.UTF8Encoding]::new($false))
+    $sourcePaths=@($sourcePaths|Where-Object{$_ -ne $unityStubsPath -and -not ([IO.Path]::GetDirectoryName($_) -eq $PSScriptRoot -and $_ -match 'Tests\.cs$')})
+    $sourcePaths+=@($pointerStubPath,(Join-Path $PSScriptRoot 'ShortCycleTrayPointerTests.cs'))
+    if($DragPreviewOnly){
+        $sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleDragPreviewTests.cs')
+        $sourcePaths+=@('DragContainer.cs','DragLimit.cs'|ForEach-Object{Join-Path $repoRoot ('Assets/Scripts/MouseInteractive/Drag/'+$_)})
+        if($BeforeDragContainerPath){
+            $beforeSource=[IO.File]::ReadAllText([IO.Path]::GetFullPath($BeforeDragContainerPath))
+            $beforeSource=[regex]::Replace($beforeSource,'\bDragContainer\b','BeforeDragContainer')
+            $beforeCopy=Join-Path $pointerRoot 'BeforeDragContainer.cs'
+            if(Test-Path -LiteralPath $beforeCopy){throw 'Before source already exists; use a fresh report directory.'}
+            [IO.File]::WriteAllText($beforeCopy,$beforeSource,[Text.UTF8Encoding]::new($false))
+            $sourcePaths+=@($beforeCopy)
+        }
+    }
+    $sourcePaths+=@('MouseManager.cs','MousePressableObject.cs','Drag/MouseDraggableObject.cs','DropZone/DropZone.cs',
+        'Scroll/MouseScrollableObject.cs','Button/Button_MouseInteract.cs','Button/Visuals/Button_Visual.cs',
+        'Button/Logic/Button_Logic.cs','Button/IButtonComponent.cs','ConditionReceiver.cs','Hold/MouseHoldObject.cs',
+        'HoverTrigger/HoverTrigger.cs','Keyboard/KeyboardListener.cs'|ForEach-Object{Join-Path $repoRoot ('Assets/Scripts/MouseInteractive/'+$_)})
+}
+if($ReturnButtonsOnly){$sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleReturnButtonTests.cs')}
+if($BeforeTraySlotPath){
+    if(-not $AuthoredTrayPickOnly){throw 'BeforeTraySlotPath is only supported by the authored tray regression.'}
+    $oldTraySource=[IO.Path]::GetFullPath($BeforeTraySlotPath)
+    if(-not (Test-Path -LiteralPath $oldTraySource -PathType Leaf)){throw 'Before tray source is missing.'}
+    $currentTraySource=Join-Path $repoRoot 'Assets/Scripts/Cooking/ShortCycle/TraySlot.cs'
+    $sourcePaths=@($sourcePaths|ForEach-Object{if($_ -eq $currentTraySource){$oldTraySource}else{$_}})
+}
 if($clueOnly -or $clueRepairOnly){$sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleClueBoardTests.cs')}
 $jsonPackage=@(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
 if($jsonPackage.Count -ne 1){throw 'Expected exactly one installed JSON package.'}
@@ -971,6 +1043,18 @@ $bclReferences=@(Get-ChildItem -LiteralPath (Join-Path $PSHOME 'ref') -File -Fil
 $hostReferences=$bclReferences+@($jsonReference)
 $coreAssemblyReportRoot=if($CoreAssemblyReportRoot){[IO.Path]::GetFullPath($CoreAssemblyReportRoot)}else{Join-Path ([IO.Path]::GetTempPath()) ('EatWhat-ShortCycleCore-'+[guid]::NewGuid().ToString('N'))}
 [void][IO.Directory]::CreateDirectory($coreAssemblyReportRoot)
+if(-not $TrayPointerOnly){
+    foreach($existing in @('LegacyPlatform.cs','ShortCycle.Core.offline.dll','ShortCycle.Core.Tests.offline.dll')){
+        if(Test-Path -LiteralPath (Join-Path $coreAssemblyReportRoot $existing)){throw 'Legacy output already exists; use a fresh report directory.'}
+    }
+    # API shape only for legacy unit suites; the pointer suite compiles the real
+    # Pressable and Manager. Keep the permanent UnityStubs source unchanged.
+    $legacyStub=[IO.File]::ReadAllText($unityStubsPath).Replace('public bool hasVisual { get; protected set; }',
+        'public bool hasVisual { get; protected set; } public bool DeferClickUntilDragRelease { get; set; }')
+    $legacyStubPath=Join-Path $coreAssemblyReportRoot 'LegacyPlatform.cs'
+    [IO.File]::WriteAllText($legacyStubPath,$legacyStub,[Text.UTF8Encoding]::new($false))
+    $sourcePaths=@($sourcePaths|ForEach-Object{if($_ -eq $unityStubsPath){$legacyStubPath}else{$_}})
+}
 $shortCycleCoreDll=Join-Path $coreAssemblyReportRoot 'ShortCycle.Core.offline.dll'
 $shortCycleCoreTestsDll=Join-Path $coreAssemblyReportRoot 'ShortCycle.Core.Tests.offline.dll'
 if(Test-Path -LiteralPath $shortCycleCoreDll){throw 'Core assembly output already exists; use a fresh report directory.'}
@@ -1014,7 +1098,63 @@ if($mgOnly){
     if(Test-Path -LiteralPath $shortDll){Remove-Item -LiteralPath $shortDll -Force}
     Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences -OutputAssembly $shortDll
     Add-Type -Path $shortDll
-}else{Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences}
+}elseif($TrayPointerOnly){
+    $pointerCompilerErrors=$null
+    $pointerDefines=if($DragPreviewOnly){@('/define:EATWHAT_TRAY_POINTER_PLATFORM,EATWHAT_DRAG_PREVIEW_PLATFORM','/nowarn:0414')}else{@('/define:EATWHAT_TRAY_POINTER_PLATFORM')}
+    Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences -CompilerOptions $pointerDefines -ErrorAction Continue -ErrorVariable pointerCompilerErrors
+    if($pointerCompilerErrors){throw 'Pointer production-source compilation failed; all compiler errors are preserved above.'}
+}
+else{Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences}
+if($TrayPointerOnly){
+    if($CompileOnly){@{action='TRAY_POINTER_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $pointer=[ShortCycleTrayPointerTests]::Run()
+    if($DragPreviewOnly){
+        $oldPointerCases=@([ShortCycleTrayPointerTests]::Cases);$oldPointerChecks=[ShortCycleTrayPointerTests]::Checks
+        $preview=[ShortCycleDragPreviewTests]::Run()
+        if($AuthoredTrayPickOnly){
+            @{pointerResult=$pointer;pointerChecks=$oldPointerChecks;previewResult=$preview;
+                previewChecks=[ShortCycleDragPreviewTests]::Checks;coreAssemblyTests=$coreAssemblyResult;
+                beforeTraySource=$BeforeTraySlotPath;nativeInvocations=0}|ConvertTo-Json -Depth 5|
+                Set-Content -Encoding utf8 (Join-Path $coreAssemblyReportRoot 'authored-prior-suites.json')
+            $authored=[ShortCycleDragPreviewTests]::RunAuthoredPickup($repoRoot)
+            @{success=$true;authoredResult=$authored;authoredCases=[ShortCycleDragPreviewTests]::AuthoredCases;
+                authoredChecks=[ShortCycleDragPreviewTests]::AuthoredCases.Count;
+                authoredOccupiedSlotPick=[ShortCycleDragPreviewTests]::AuthoredOccupiedPickPassed;
+                repeatReleaseAndTrayBackground=[ShortCycleDragPreviewTests]::AuthoredReleaseBackgroundPassed;
+                acceptedVisualsAndFridgePreserved=[ShortCycleDragPreviewTests]::AuthoredVisualsPreservedPassed;
+                importedOverlapSelectsFood=[ShortCycleDragPreviewTests]::ImportedOverlapSelectsFood;
+                hitOrderIndependent=[ShortCycleDragPreviewTests]::HitOrderIndependent;
+                firstReturnAndTrayBackgroundPreserved=([ShortCycleDragPreviewTests]::AuthoredOccupiedPickPassed -and [ShortCycleDragPreviewTests]::AuthoredReleaseBackgroundPassed);
+                eggOverlapDepth=[ShortCycleDragPreviewTests]::EggOverlapDepth;soupOverlapDepth=[ShortCycleDragPreviewTests]::SoupOverlapDepth;
+                pointerChecks=$oldPointerChecks;pointerCases=$oldPointerCases;
+                previewChecks=[ShortCycleDragPreviewTests]::Checks;previewCases=[ShortCycleDragPreviewTests]::Cases;
+                coreAssemblyTests=$coreAssemblyResult;nativeInvocations=0;
+                boundary='Real MouseManager/Draggable/DragContainer, authored slot transforms/box and the three fixed Unity imported Sprite physics-shape paths; controlled input fixture, no Editor/Play.'}|ConvertTo-Json -Depth 7;return
+        }
+        @{success=$true;pointerResult=$pointer;pointerChecks=$oldPointerChecks;
+            pointerCases=$oldPointerCases;previewResult=$preview;
+            previewChecks=[ShortCycleDragPreviewTests]::Checks;previewCases=[ShortCycleDragPreviewTests]::Cases;
+            sharedTrayAppearanceAboveTray=[ShortCycleDragPreviewTests]::AppearancePassed;
+            consecutiveReturnsKeepSourcePickable=[ShortCycleDragPreviewTests]::ReusePassed;
+            gestureCleanupAndExistingInputsPreserved=[ShortCycleDragPreviewTests]::CleanupPassed;
+            baselineSourceStable=[ShortCycleDragPreviewTests]::BaselineSourceStable;baselineObservation=[ShortCycleDragPreviewTests]::BaselineObservation;
+            coreAssemblyTests=$coreAssemblyResult;sourceCount=$sourcePaths.Count;nativeInvocations=0;
+            boundary='Real production MouseManager/Draggable/DragContainer/DropZone/ShortCycle; controlled platform geometry, no native input claim.'}|ConvertTo-Json -Depth 6;return
+    }
+    @{success=$true;result=$pointer;checks=[ShortCycleTrayPointerTests]::Checks;cases=[ShortCycleTrayPointerTests]::Cases;
+        sourceCount=$sourcePaths.Count;coreAssemblyTests=$coreAssemblyResult;nativeInvocations=0;
+        boundary='Real MouseManager/Pressable/Button/Draggable/DropZone and current ShortCycle source; controlled platform geometry and input fixtures, no native input claim.'}|ConvertTo-Json -Depth 6;return
+}
+if($ReturnButtonsOnly){
+    if($CompileOnly){@{action='RETURN_BUTTONS_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $buttons=[ShortCycleReturnButtonTests]::Run()
+    $coreIntegration=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $recipeBook=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    @{success=$true;returnButtons=$buttons;returnButtonCases=[ShortCycleReturnButtonTests]::Cases;
+        returnButtonChecks=[ShortCycleReturnButtonTests]::Checks;coreAssemblyTests=$coreAssemblyResult;
+        coreIntegration=$coreIntegration;recipeBook=$recipeBook;integrationSourceCount=$sourcePaths.Count;
+        nativeInvocations=0}|ConvertTo-Json -Depth 6;return
+}
 if($coreAssemblyOnly){
     if($CompileOnly){@{action='CORE_ASSEMBLY_COMPILED';coreSourceCount=$coreSourcePaths.Count;integrationSourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
     $coreIntegration=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
