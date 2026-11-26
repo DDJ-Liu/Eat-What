@@ -1,0 +1,19 @@
+# 旧链参考文档保留清单
+
+2026-10-17按用户采纳的S1反馈，以下9份定位为参考资料，当前全部留原位。不是现行工程事实的独立权威；使用时对照源码与当前项目文档。
+
+共同前置：ASM-01正式关闭后，重新核未关闭任务/活动引用及恢复包，再决定是否归档。Spine Sample文件还需相关Spine预研关闭。未满足前置时不得执行整批归档，也不触发ASM-01。
+
+| 原路径 | 本轮处置 | 后续条件 |
+| --- | --- | --- |
+| ChildrenManagementPatterns_Report.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| CookingPrepare场景脚本与功能整理.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| CookingProcess场景脚本与功能整理.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| CutDice_Refactoring_Analysis.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| CutDice_Reference_Template.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| Ingredient_Interaction_System_Report.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| Spine Sample场景脚本与功能整理.md | 参考；原位保留 | ASM-01关闭＋相关Spine预研关闭＋一般归档条件 |
+| 做菜短循环设计文档与代码评估_2026-08-11_191051.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+| 食材交互反馈系统分析报告.md | 参考；原位保留 | ASM-01关闭＋一般归档条件 |
+
+未来实际完成归档后，再在 .ai-workspace/codebase/legacy-build.md 增加真实归档入口；目前不伪造归档路径。

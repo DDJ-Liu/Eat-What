@@ -63,7 +63,12 @@
       "lane": "CODE",
       "window3": false,
       "commit": "1a754d7cc0bc3eb03c6e447ad3a847d9a5be2326",
-      "review": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-321.json"
+      "review": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-321.json",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "PLAYERLOG-01",
@@ -118,7 +123,12 @@
       "replacementTaskIds": [
         "AI-000357",
         "AI-000359"
-      ]
+      ],
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "TK-01",
@@ -136,7 +146,12 @@
       "lane": "CODE",
       "window3": false,
       "executionId": "d17e39ff0e0e4d2c9766f573d4f8fc27",
-      "review": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-323.json"
+      "review": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-323.json",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "FIX-A2",
@@ -203,7 +218,12 @@
         "AI-000358",
         "AI-000360",
         "AI-000361"
-      ]
+      ],
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "TRAY-01",
@@ -229,7 +249,12 @@
       "repairCycle": "AI325:CODE326:retry1",
       "note": "325原Complete/拒验及326修复记录均保留；326四合同12事实独立通过，正式Resolve325；root1of5，场景待TRAY-02窗口③。",
       "repairReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-326.json",
-      "resolution": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/resolve-325.json"
+      "resolution": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/resolve-325.json",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "CLUE-01",
@@ -274,7 +299,12 @@
       },
       "repairReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-328.json",
       "rejectionResolution": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/resolve-327.json",
-      "rejectionHistory": "Original327 rejection preserved; resolved after accepted328, no new business Fail/refund."
+      "rejectionHistory": "Original327 rejection preserved; resolved after accepted328, no new business Fail/refund.",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "P2-C10",
@@ -301,7 +331,12 @@
         "AI-000328"
       ],
       "codeReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-329.json",
-      "completedAt": "2026-10-24T03:48:26.5510753+08:00"
+      "completedAt": "2026-10-24T03:48:26.5510753+08:00",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "P2-C11",
@@ -355,7 +390,12 @@
       "repairReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-331.json",
       "rejectionResolution": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/resolve-330.json",
       "rejectionHistory": "Original330 rejection retained, resolved after accepted331; root1of5 retained, no business re-claim.",
-      "completedAt": "2026-10-24T04:33:53.62827+08:00"
+      "completedAt": "2026-10-24T04:33:53.62827+08:00",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "MG0-STUB",
@@ -409,7 +449,12 @@
       "rejectionHistory": "Original332 Complete/rejection and29files retained; accepted333 fixed opening lifecycle, formal Resolve332. Root1of5 no refund. Actual333 Unity-reference source count Core2/ShortCycle80; original79 report retained with correction.",
       "repairReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-333.json",
       "rejectionResolution": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/resolve-332.json",
-      "repairCompletedAt": "2026-10-24T05:14:55.343052+08:00"
+      "repairCompletedAt": "2026-10-24T05:14:55.343052+08:00",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "P2-C9",
@@ -523,7 +568,12 @@
         "policyAvailable": true
       },
       "accepted": true,
-      "humanVisualAccepted": false
+      "humanVisualAccepted": false,
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "FIX-A1",
@@ -578,7 +628,12 @@
       },
       "replacementTaskIds": [
         "AI-000357"
-      ]
+      ],
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "CLUE-02",
@@ -806,7 +861,12 @@
           "statusSource": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\BATCH2-INDEPENDENT-20261023\\AI362-attempt4-confirmed-claim-20261031.json"
         }
       ],
-      "reviewSha256": "50546B79831A35207F5A25885C19EB2097F18BD59EDC52B21D3E00B093EC2670"
+      "reviewSha256": "50546B79831A35207F5A25885C19EB2097F18BD59EDC52B21D3E00B093EC2670",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "TRAY-02",
@@ -1001,6 +1061,11 @@
         "dispatchToken": "a8cf6c02bb51498bb5e5a1b0cd2c6cdb",
         "pairedRepairTaskId": null,
         "otherTasksWholePreserved": 394
+      },
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
       }
     },
     {
@@ -1133,7 +1198,12 @@
           "cleanupProven": true,
           "failedHoverTarget": null
         }
-      ]
+      ],
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "PROBE-CI-01",
@@ -1177,7 +1247,12 @@
         "failuresPreserved": 3,
         "taskId": "AI-000404"
       },
-      "accepted": true
+      "accepted": true,
+      "disposition20261124": {
+        "status": "FROZEN",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "CORE-ASM-02",
@@ -1250,7 +1325,12 @@
         "nativePassed": true
       },
       "independentReview": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\BATCH2-INDEPENDENT-20261023\\independent-review-411-complete3.json",
-      "reviewSha256": "DF522CAB22BB0A24344AC9A9861D4E1AB976E31FC24A17ABB7DFD0A9A9E74D8C"
+      "reviewSha256": "DF522CAB22BB0A24344AC9A9861D4E1AB976E31FC24A17ABB7DFD0A9A9E74D8C",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "BUILD-RELEASE-01",
@@ -1351,7 +1431,14 @@
       "formalBudget": "M80",
       "latestState": "原用户真实追加1已唯一登记并实际消费；AI418 attempt2 RUNNING，根4156/0/6。独立3/3后原415同human1配对不双扣，无重Build。",
       "codeAccepted": true,
-      "nativeInstruction": "D:\\GameProject\\Eat-What\\.ai-workspace\\inputs\\派发\\BATCH2-INDEPENDENT-20261023\\AI415_BUILD-RELEASE_五场景首次Release完整ENGINE_20261103.txt"
+      "nativeInstruction": "D:\\GameProject\\Eat-What\\.ai-workspace\\inputs\\派发\\BATCH2-INDEPENDENT-20261023\\AI415_BUILD-RELEASE_五场景首次Release完整ENGINE_20261103.txt",
+      "disposition20261124": {
+        "status": "TOOL_CLOSED_BUILD_REPLACED",
+        "replacement": [
+          "RE-04"
+        ],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "MIGF08-HOOK",
@@ -1365,7 +1452,15 @@
       "stage": "ACCEPTED_AWAITING_PREDECESSOR",
       "taskIds": [],
       "lane": "CODE",
-      "window3": false
+      "window3": false,
+      "disposition20261124": {
+        "status": "REPLACED_NO_OLD_CLAIM",
+        "replacement": [
+          "MIGF08-HOOK-V2a",
+          "MIGF08-HOOK-V2b"
+        ],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "FONT-ATLAS-AUTO",
@@ -1380,7 +1475,15 @@
       "taskIds": [],
       "lane": "CODE_then_ENGINE_CLI",
       "window3": false,
-      "splitRule": "同一逻辑卡按CODE离线产物与ENGINE原生验收分段，CODE无Unity/资源写入；两段通过才逻辑完成。精确路径/合同以实际交接注册，不预造完成。"
+      "splitRule": "同一逻辑卡按CODE离线产物与ENGINE原生验收分段，CODE无Unity/资源写入；两段通过才逻辑完成。精确路径/合同以实际交接注册，不预造完成。",
+      "disposition20261124": {
+        "status": "REPLACED_NO_OLD_CLAIM",
+        "replacement": [
+          "FONT-ATLAS-AUTO-a",
+          "FONT-ATLAS-AUTO-b"
+        ],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "MIGF06-MCPCFG",
@@ -1394,7 +1497,14 @@
       "stage": "ACCEPTED_AWAITING_PREDECESSOR",
       "taskIds": [],
       "lane": "CODE",
-      "window3": false
+      "window3": false,
+      "disposition20261124": {
+        "status": "REPLACED_NO_OLD_CLAIM",
+        "replacement": [
+          "MIGF06-MCPCFG-V2"
+        ],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "E06-SCAN",
@@ -1419,7 +1529,12 @@
       "independentReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-344.json",
       "reviewSha256": "9CC5ADCD13B955AB70F209B3A21E02720652DBE7A0AB4CA2831129E9F648B754",
       "completedAt": "2026-10-24T09:29:04.6442714+08:00",
-      "latestState": "Complete/Receive及两合同9事实独立通过；已有P0P1生产静态使用者，地图仅局部补充；非native验收。"
+      "latestState": "Complete/Receive及两合同9事实独立通过；已有P0P1生产静态使用者，地图仅局部补充；非native验收。",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "MIGF10-LEGACY-MAP",
@@ -1444,7 +1559,12 @@
       "independentReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-345.json",
       "reviewSha256": "ADFB29545B472767EC7922664B8C3AC082328283F4A99697DD577691F8D283CA",
       "completedAt": "2026-10-24T09:46:34.1785941+08:00",
-      "latestState": "Complete/Receive及三合同10事实独立通过；可删为空，22Examples组待定、42Legacy脚本14留28待定、CookingProcess启用及加载链保留；非native。"
+      "latestState": "Complete/Receive及三合同10事实独立通过；可删为空，22Examples组待定、42Legacy脚本14留28待定、CookingProcess启用及加载链保留；非native。",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "MIGF07-SCHEMA",
@@ -1469,7 +1589,12 @@
       "independentReview": ".ai-workspace/outputs/control/BATCH2-INDEPENDENT-20261023/independent-review-346.json",
       "reviewSha256": "DA053A51FD98F36C6E5544AD0BDD4D3804C8553EAE65330E1C5AB3BD841568BB",
       "completedAt": "2026-10-24T10:00:10.1888585+08:00",
-      "latestState": "Complete/Receive及两合同9事实PASSED；源声明/4CLI原流/3Coplay本地块已核；完整运行schema与实际公布数unknown，不推性能/token账单。"
+      "latestState": "Complete/Receive及两合同9事实PASSED；源声明/4CLI原流/3Coplay本地块已核；完整运行schema与实际公布数unknown，不推性能/token账单。",
+      "disposition20261124": {
+        "status": "LOGICAL_CLOSED",
+        "replacement": [],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     },
     {
       "logicalCard": "DOCS-ENG-01",
@@ -1484,7 +1609,14 @@
       "stage": "ACCEPTED_AWAITING_PREDECESSOR",
       "taskIds": [],
       "lane": "CODE",
-      "window3": false
+      "window3": false,
+      "disposition20261124": {
+        "status": "REPLACED_NO_OLD_CLAIM",
+        "replacement": [
+          "DOCS-ENG-01-V2"
+        ],
+        "source": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md"
+      }
     }
   ],
   "registeredTaskIds": [
@@ -5928,5 +6060,11 @@
     "reviewPath": "D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\BATCH2-INDEPENDENT-20261023\\independent-review-404-complete4.json",
     "reviewSha256": "6FBDA54FE7D6A4A7D7B94E1E6C8E2F791A5B9F649F3DA8F37EEF6D0139153511",
     "failuresPreserved": 3
+  },
+  "replacement20261124": {
+    "batch": "SHORTCYCLE-B2-20261124",
+    "reference": ".ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/执行登记.md",
+    "allOriginalCards": "本批原24卡停止按旧编排领取。18逻辑关闭、1冻结、1工具关闭/实际构建替代、4重出。",
+    "historicalStagesPreserved": true
   }
 }

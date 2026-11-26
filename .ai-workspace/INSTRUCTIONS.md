@@ -4426,3 +4426,304 @@ PROJECT_GRANT_SHA256=19F09B0E239BF88DBDA17ECEAC958A422AC5E81E5FD491DD351B8AE9340
 > SUPERVISED RESUME_APPROVED at 2026-11-23T22:29:06.8104218+08:00: {"verification":"原attempt1正式退出6：沙盒无权读取Editor发现文件，未向平台请求审批，无生产写入。独审在 .ai-workspace/outputs/control/PLAYABLE-DEMO015-20261121/AI-000624-attempt1-failure-review.json。已核绑定chat已完成且IDLE，用户新批准在 .ai-workspace/inputs/派发/PLAYABLE-DEMO015-20261121/同卡打包续行授权_20261123.json","taskId":"AI-000624","used":0,"cycles":["grant:00dc659e0e9e46dab1596c6d8ed46f21"],"scope":{"paths":[".ai-workspace/inputs/grants/AI-000624.grant.json",".ai-workspace/outputs/PLAYABLE-DEMO015-20261121/AI-000624","Assets","Library/CatalogBlobBuild.journal.json","Library/LastBuild.buildreport","ProjectSettings/ProjectSettings.asset","release/demo-0.1.5"],"operations":["build","build-owned-temporary-input-create-and-journaled-cleanup","evidence-write","idempotence-check","normal-player-start-once","offline-compilation","project-settings","read-only-inspect","release-package-write","restore-author-scene-setup"]},"authorizationSource":"HUMAN","reserved":1,"remaining":4,"rootTaskId":"AI-000624","grantId":"2aa9d050c718470ba05a319877fbfcab","sourceApprovalId":"01a208ce-a59c-7c42-a981-20e1701293d8"}
 
 > SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-23T22:39:19.1145689+08:00: {"at":"2026-11-23T22:39:18.9386974+08:00","reason":"ALL_SCOPE_TASKS_RESOLVED","taskIds":["AI-000600","AI-000601","AI-000602","AI-000603","AI-000604","AI-000605","AI-000606","AI-000607","AI-000608","AI-000609","AI-000610","AI-000611","AI-000612","AI-000613","AI-000614","AI-000615","AI-000616","AI-000617","AI-000618","AI-000619","AI-000620","AI-000621","AI-000622","AI-000623","AI-000624"],"cancelledTaskIds":["AI-000622"],"pendingUserTaskIds":["AI-000618","AI-000619","AI-000620"]}
+## AI-000625 | [CODE] [SC24-RE-01] RE-01 短循环批次二续
+
+- 序号：625
+- 提交时间：2026-11-24T05:55:43.5213926+08:00
+- 模块 ID：SC24-RE-01
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+严格执行原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/RE-01.md 和本批索引、项目常驻规则。固定14类入口和9条源码结论。报告可以真实包含红、缺失或部分，均不在卡内补做。多个类别确实共用同一入口时单次执行并如实映射。严禁全量探针/布局审计；真实 runner 先核不会在工作树写入，输出重定向到任务目录。 只写原卡允许文件、卡内报告和原始运行证据。正式合同 .ai-workspace/inputs/acceptance/本任务ID.json，用实际ID；报告 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN。按固定车道结算并即时向绑定CONTROL回传。
+
+> SUPERVISED POLICY at 2026-11-24T05:55:44.4472583+08:00: {"policy":{"resourceKeys":["shortcycle-code"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"本批原卡范围；控制台独审后派相关后继，用户门另行登记。","updatedAt":"2026-11-24T05:55:44.1614812+08:00","supervisionLevel":"full"},"taskId":"AI-000625"}
+## AI-000626 | [CODE] [SC24-MIGF08-HOOK-V2a] MIGF08-HOOK-V2a 短循环批次二续
+
+- 序号：626
+- 提交时间：2026-11-24T05:55:45.0272497+08:00
+- 模块 ID：SC24-MIGF08-HOOK-V2a
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+严格执行原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/MIGF08-HOOK-V2a.md 和本批索引、项目常驻规则。逐文件列保护来源、LFS属性、真实hook次序和基线选择；空清单也如实交付。 只写原卡允许文件、卡内报告和原始运行证据。正式合同 .ai-workspace/inputs/acceptance/本任务ID.json，用实际ID；报告 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN。按固定车道结算并即时向绑定CONTROL回传。
+
+> SUPERVISED POLICY at 2026-11-24T05:55:45.8319037+08:00: {"policy":{"resourceKeys":["shortcycle-code"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"本批原卡范围；控制台独审后派相关后继，用户门另行登记。","updatedAt":"2026-11-24T05:55:45.5743936+08:00","supervisionLevel":"full"},"taskId":"AI-000626"}
+## AI-000627 | [CODE] [SC24-FONT-ATLAS-AUTO-a] FONT-ATLAS-AUTO-a 短循环批次二续
+
+- 序号：627
+- 提交时间：2026-11-24T05:55:46.3676336+08:00
+- 模块 ID：SC24-FONT-ATLAS-AUTO-a
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+严格执行原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/FONT-ATLAS-AUTO-a.md 和本批索引、项目常驻规则。沿用现有工具和项目数据入口。实现与测试留DevTools/Fonts；实际缺字、输入来源和机器可用判定随报告交付；独立剧情报告。 只写原卡允许文件、卡内报告和原始运行证据。正式合同 .ai-workspace/inputs/acceptance/本任务ID.json，用实际ID；报告 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN。按固定车道结算并即时向绑定CONTROL回传。
+
+> SUPERVISED POLICY at 2026-11-24T05:55:47.2060164+08:00: {"policy":{"resourceKeys":["shortcycle-code"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"本批原卡范围；控制台独审后派相关后继，用户门另行登记。","updatedAt":"2026-11-24T05:55:46.9250108+08:00","supervisionLevel":"full"},"taskId":"AI-000627"}
+## AI-000628 | [ENGINE_CLI] [SC24-RE-02] RE-02 短循环批次二续
+
+- 序号：628
+- 提交时间：2026-11-24T05:55:47.7586539+08:00
+- 模块 ID：SC24-RE-02
+- 初始状态：QUEUED
+- 前置依赖：AI-000625
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+严格执行原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/RE-02.md 和本批索引、项目常驻规则。本批唯一集成冒烟S40，一次Play且仅五条，领取前需CONTROL独审RE-01。真存档隔离，原场景保存0。不动既有恢复文件。 只写原卡允许文件、卡内报告和原始运行证据。正式合同 .ai-workspace/inputs/acceptance/本任务ID.json，用实际ID；报告 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN。按固定车道结算并即时向绑定CONTROL回传。
+
+> SUPERVISED POLICY at 2026-11-24T05:55:48.6527328+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"本批原卡范围；控制台独审后派相关后继，用户门另行登记。","updatedAt":"2026-11-24T05:55:48.3189717+08:00","supervisionLevel":"full"},"taskId":"AI-000628"}
+## AI-000629 | [CODE] [SC24-RE-05] RE-05 短循环批次二续
+
+- 序号：629
+- 提交时间：2026-11-24T05:55:49.2142145+08:00
+- 模块 ID：SC24-RE-05
+- 初始状态：QUEUED
+- 前置依赖：AI-000625, AI-000628
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+严格执行原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/RE-05.md 和本批索引、项目常驻规则。给用户的文档以原索引第五节为底，不使用内部编号；未做和部分项必须按实际定位，五列说明。 只写原卡允许文件、卡内报告和原始运行证据。正式合同 .ai-workspace/inputs/acceptance/本任务ID.json，用实际ID；报告 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN。按固定车道结算并即时向绑定CONTROL回传。
+
+> SUPERVISED POLICY at 2026-11-24T05:55:50.0349936+08:00: {"policy":{"resourceKeys":["shortcycle-code"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"本批原卡范围；控制台独审后派相关后继，用户门另行登记。","updatedAt":"2026-11-24T05:55:49.7884010+08:00","supervisionLevel":"full"},"taskId":"AI-000629"}
+
+> SUPERVISED START at 2026-11-24T05:55:50.5055685+08:00: {"sessionId":"5f82666d810249989b3388d9fb1e47c2","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000625","AI-000626","AI-000627","AI-000628","AI-000629"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-24T05:55:50.5034115+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+## AI-000630 | [ENGINE_CLI] [SC24-RE-04] RE-04 四场景Windows64试构建与普通启动读回
+
+- 序号：630
+- 提交时间：2026-11-24T06:10:42.0363589+08:00
+- 模块 ID：SC24-RE-04
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/RE-04.md，用户已于 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/用户授权_四场景试构建与原方法复测.json 明确批准一次本次四场景试构建。沿已核0.1.5 PrepareSnapshot、BuildPrepared(options,staging)成熟路径和正式CLI预检；参考 .ai-workspace/outputs/control/SHORTCYCLE-B2-20261124/RE-04-入口与旧依赖只读核对.json。只用当前版本、现有已编译指纹、静态数据，不改工程版本/持久资产/任何场景/Build Settings，不改构建链。严格按原顺序，显式Boot、LongLoop_Street、ShortCycle_P0P1、ShortCycle_P2；候选首选独立新目录 交付文件/短循环四场景试构建_20261124，若存在则选同目录全新后缀并先记录，不覆盖历史或本次残留。真实编辑器dirty就停，不保存用户成果。Build一次，分别取Build与清理恢复凭据。普通Player一次启动退出，不写用户真实存档，取三实名菜谱的包内数据证据；没有做成品内实际短循环体验。更新 CODEBASE_MAP.md 发布节和本卡 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN 原始输出与报告，金额/次数/错误用真实值。以当前环境的三类正式权限为准，官方CLI已知在沙盒被拒时通过正常require_escalated审批，不换工具，不重放旧415/418。新卡独立目标，与历史6/6并列，原失败完整。结算即时回传。
+
+> SUPERVISED POLICY at 2026-11-24T06:10:42.8879223+08:00: {"policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"本次用户明确批准四场景一次试构建。","updatedAt":"2026-11-24T06:10:42.5899931+08:00","supervisionLevel":"full"},"taskId":"AI-000630"}
+
+> SUPERVISED EXTEND at 2026-11-24T06:10:43.2018071+08:00: {"taskIds":["AI-000630"],"reason":"本次用户明确批准 RE-04，独立四场景试构建。"}
+
+> SUPERVISED PauseSupervision at 2026-11-24T06:18:37.6070855+08:00: {"reason":"本批新索引1.6已取代旧票，支持的短时行政窗口。","userDecision":""}
+
+> Superseded AI-000418 : {"at":"2026-11-24T06:18:37.9556073+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"NEEDS_USER","accepted":false,"reason":"用户重投索引1.6，以四场景RE-04替代旧五场景执行；原失败、根额度、报告完整保留，未验收。","userDecision":"对相关未完成任务做了一定程度的调整和重新下发，你做下接收并推进相关内容的开发","verification":"已核 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/旧36卡处置.json、AI415四次/AI418两次失败、最终共根6/6及AI630新目标授权。"}
+
+> Superseded AI-000415 : {"at":"2026-11-24T06:18:38.6236327+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"NEEDS_USER","accepted":false,"reason":"用户重投索引1.6，以四场景RE-04替代旧五场景执行；原失败、根额度、报告完整保留，未验收。","userDecision":"对相关未完成任务做了一定程度的调整和重新下发，你做下接收并推进相关内容的开发","verification":"已核 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/旧36卡处置.json、AI415四次/AI418两次失败、最终共根6/6及AI630新目标授权。"}
+
+> SUPERVISED ResumeSupervision at 2026-11-24T06:18:39.4054346+08:00: {"reason":"旧票行政结案完毕，继续本批已授权工作。","userDecision":"对相关未完成任务做了一定程度的调整和重新下发，你做下接收并推进相关内容的开发"}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-24T06:25:55.6389556+08:00: {"remaining":4,"rootTaskId":"AI-000628","reserved":1,"cycles":["AI628:retry1"],"used":0,"authorizationSource":"POLICY","grantId":"1d562c5b494f42358698dae0367e1557","scope":{"paths":[".ai-workspace/outputs/DETACH-B13-20261019/AI-000628/isolated-saves",".ai-workspace/outputs/SHORTCYCLE-B2-20261124/AI-000628"],"operations":["author-scene-restore","engine-smoke","evidence","idempotence-check","isolated-session","read"]},"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","verification":"ENGINE_CLI 最新实际turn completed、app idle，队列无运行所有者；独审AI628-attempt1-independent-failure.json及初次隔离范围补正，原失败/次数保留。","taskId":"AI-000628"}
+## AI-000631 | [ENGINE_CLI] [SC24-RE-04] RE-04 四场景试构建（补全未执行建单）
+
+- 序号：631
+- 提交时间：2026-11-24T06:42:53.8018320+08:00
+- 模块 ID：SC24-RE-04
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/RE-04.md，用户已于 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/用户授权_四场景试构建与原方法复测.json 明确批准一次本次四场景试构建。沿已核0.1.5 PrepareSnapshot、BuildPrepared(options,staging)成熟路径和正式CLI预检；参考 .ai-workspace/outputs/control/SHORTCYCLE-B2-20261124/RE-04-入口与旧依赖只读核对.json。只用当前版本、现有已编译指纹、静态数据，不改工程版本/持久资产/任何场景/Build Settings，不改构建链。严格按原顺序，显式Boot、LongLoop_Street、ShortCycle_P0P1、ShortCycle_P2；候选首选独立新目录 交付文件/短循环四场景试构建_20261124，若存在则选同目录全新后缀并先记录，不覆盖历史或本次残留。真实编辑器dirty就停，不保存用户成果。Build一次，分别取Build与清理恢复凭据。普通Player一次启动退出，不写用户真实存档，取三实名菜谱的包内数据证据；没有做成品内实际短循环体验。更新 CODEBASE_MAP.md 发布节和本卡 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN 原始输出与报告，金额/次数/错误用真实值。以当前环境的三类正式权限为准，官方CLI已知在沙盒被拒时通过正常require_escalated审批，不换工具，不重放旧415/418。新卡独立目标，与历史6/6并列，原失败完整。结算即时回传。
+本票在原建单尚未领取且操作数为0时补全正式初始范围与当前项目许可。用户仍只授权总计一次构建、一次普通启动。正式写操作采用原0.1.5标准Write预检与本票grant/逐次intent。Assets仅准正式BuildPrepared创建带随机名的自有输入、StreamingAssets自有输入并按journal清理；禁止改现有资产、版本、指纹、场景、初始设置。原Street仅按现有清理恢复，禁止保存。固定成品目录为 交付文件/短循环四场景试构建_20261124，若已存在停在写前。原AI630仅建单，封存后才领取本票。
+
+PROJECT_GRANT_PATH=.ai-workspace/inputs/grants/AI-000631.grant.json
+PROJECT_GRANT_SHA256=D2FD776F870321E00622CF1ABC03F215353613AB91046556E80533C093C07CE6
+
+> SUPERVISED POLICY at 2026-11-24T06:47:37.8889194+08:00: {"taskId":"AI-000631","policy":{"resourceKeys":["unity-project"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"沿原RE-04项目互斥与用户的一次四场景试构建许可；替代未领取登记后才派发。","updatedAt":"2026-11-24T06:47:37.6300182+08:00","supervisionLevel":"full"}}
+
+> SUPERVISED PauseSupervision at 2026-11-24T06:59:00.3855934+08:00: {"reason":"RE-04领取前的建单补正，仍只运行已批准的一次原卡。原登记未派票/领取、操作与失败全为0，漏挂正式初始范围及许可。先原样封存零执行登记，再发同一业务的完整票；不影响AI628及旧415/418累计。","userDecision":""}
+
+> Superseded AI-000630 : {"at":"2026-11-24T06:59:00.7593382+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"QUEUED","accepted":false,"reason":"RE-04领取前的建单补正，仍只运行已批准的一次原卡。原登记未派票/领取、操作与失败全为0，漏挂正式初始范围及许可。先原样封存零执行登记，再发同一业务的完整票；不影响AI628及旧415/418累计。","userDecision":"授权本次四场景试构建","verification":"旧票0次领取、0个许可、0失败、0构建，无后继在执行；已独核授权原文、新票真实范围和哈希。行政替换原建单；用户授权内容仅为一次构建。"}
+
+> SUPERVISED ResumeSupervision at 2026-11-24T06:59:01.4618677+08:00: {"reason":"继续用户已授权的短循环批次，行政登记完成后使用正式监管派票。","userDecision":"对相关未完成任务做了一定程度的调整和重新下发，你做下接收并推进相关内容的开发。授权本次四场景试构建。"}
+
+> SUPERVISED EXTEND at 2026-11-24T06:59:01.9201886+08:00: {"reason":"RE-04领取前的建单补正，仍只运行已批准的一次原卡。原登记未派票/领取、操作与失败全为0，漏挂正式初始范围及许可。先原样封存零执行登记，再发同一业务的完整票；不影响AI628及旧415/418累计。","taskIds":["AI-000631"]}
+> Instruction revision for AI-000629 at 2026-11-24T07:06:39.9073165+08:00
+
+严格执行原卡 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124/cards/RE-05.md 和本批索引、项目常驻规则。给用户的文档以原索引第五节为底，不使用内部编号；未做和部分项必须按实际定位，五列说明。 只写原卡允许文件、卡内报告和原始运行证据。正式合同 .ai-workspace/inputs/acceptance/本任务ID.json，用实际ID；报告 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/本任务ID/attemptN。按固定车道结算并即时向绑定CONTROL回传。
+原卡RE-05第3条明确接收RE-02红色结果。两轮实机预跑已正式回传、经CONTROL独审，均停在进入Play前。文档现在可以据两份真实失败报告写，无需把预跑判通过。文档内如实记五项实机尚未验证以及报告时点；如后续最后一轮结果变化，CONTROL维护该段。依据 .ai-workspace/outputs/control/SHORTCYCLE-B2-20261124/AI-000628-attempt2-independent-failure.json 与 RE-05-输入逐项核对.json，原索引第五节共27项，其中第27项仅限字体真实重建后。截至现在重建尚待授权。本卡仅交给用户阅读，H1仍待真正人工走查。
+
+> Dependency correction for AI-000629 at 2026-11-24T07:06:40.7160966+08:00: AI-000625
+## AI-000632 | [CODE] [SC24-DOCS-ENG-01-V2] 工程事实文档整理
+
+- 序号：632
+- 提交时间：2026-11-24T14:44:49.6052851+08:00
+- 模块 ID：SC24-DOCS-ENG-01-V2
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+执行接收原卡 DOCS-ENG-01-V2.md 及签收与处置_20261124.json。用户批准现在整理。先固定代码地图和8专题、工具登记及12篇、九份8月旧分析的清点与备份。现状与日期历史分离，不删历史，保全有存量diff的工作树原字节；按实际程序集和功能入口核对。开发端指定源文档历史查阅位置 docs/archive/工程事实_20261124/（工程文档可随源码保留），内部任务原始证据在本票输出。归档八份符合条件的旧资料前核原字节和链接，保留Spine原件（AI345未支持归档）。历史原件的可恢复字节、活动链接、历史链接的正确解析都要顾及；核对旧保留清单，历史原文保留，在现行入口挂上归档/索引。永久清单及现行文件零移动不改清单；绝不碰用户待办与其它卡证据。既有与现行不符在报告列出（包括字体自动报告接线尚待独立卡），不凭推断改写。交付清点（前后字节）、移动、指针三表和文本报告包。只在列明范围工作，发现范围确实漏项先联系CONTROL。无Unity、生产代码、配表、Git写入。全工程完整核验日期不抬。 原卡/设计决定在 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124，具体获批写入范围为 .ai-workspace/outputs/control/SHORTCYCLE-B2-20261124/AI-000632-scope.json，证据/报告为 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/AI-000632/attemptN，以本票真实身份申领。原断言与旧许可保留。按正式流程结算，监管即时回传。
+
+> SUPERVISED POLICY at 2026-11-24T14:45:21.5709190+08:00: {"taskId":"AI-000632","policy":{"resourceKeys":["documentation","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前已授权工作；实名范围、项目资源互斥和CODE身份已核。","updatedAt":"2026-11-24T14:45:21.2559494+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-11-24T14:45:21.9076306+08:00: {"taskIds":["AI-000632"],"reason":"工程事实文档整理"}
+
+> SUPERVISED PauseSupervision at 2026-11-24T14:45:23.6448419+08:00: {"reason":"按用户原卡转人工结案，同一窗口保存已有两次失败。","userDecision":""}
+
+> Superseded AI-000628 : {"at":"2026-11-24T14:45:23.9945196+08:00","decision":"CLOSED_SUPERSEDED","previousStatus":"NEEDS_USER","accepted":false,"reason":"五项实机检查未执行，转人工走查。以普通Play人工走查承接原机器卡。","userDecision":"AI-000628以“五项实机检查未执行，转人工走查”结案；两轮失败保留，最后一轮不用。不修启动器。","verification":"两次正式Fail与独审，验收累计2/3；从未进入Play，未用最后一轮；本次关闭不验收、不再领取；原执行号和日志保留。"}
+
+> Verification resolved for AI-000625 at 2026-11-24T14:45:24.8436756+08:00: decision=VERIFIED; summary=用户接受九条需求核对，保留原测试红项。; evidence=签收与处置_20261124.json；原方法复测与原脚本失败分别记录，本次签收范围为该核对文档。
+
+> SUPERVISED ResumeSupervision at 2026-11-24T14:45:25.6902357+08:00: {"reason":"按用户同条指令推进文档整理与只报告的导表流程。","userDecision":"文档整理（DOCS-ENG-01-V2）现在可以开始，不用等人工走查。"}
+## AI-000633 | [CODE] [SC24-FONT-POSTIMPORT-REPORT] 导表后自动运行现有字形判定并只报告
+
+- 序号：633
+- 提交时间：2026-11-24T14:47:17.3774813+08:00
+- 模块 ID：SC24-FONT-POSTIMPORT-REPORT
+- 初始状态：QUEUED
+- 前置依赖：AI-000627
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户要求判定脚本每次导表后实际运行，只报告；没有授予本轮重建或正式导表。基于确认的共用 DataTableImportService.ImportAll 成功路径、菜单/直接调用/隔离批处理，最小接线已有 Get-FontGlyphDecision.ps1，按真实项目输入，在隔离项目读取其本次实际输入、写回本轮可找的独立报告，单次导表不重复。保护空表、旧调用正常数据导入和失败语义；报告工具自身失败明确可查，不能谎报无差异，不让字体报告回写工程或污染包。PS普通导表及C#批入口均不得缺省重建；明确授权的显式重建现行入口/原非空门保留。不得实跑重建、发布、实际导表/启动Unity/改静态字体及清单、改表、改构建链、改CK01CharacterData旧红项；不申请该红项修复。剧情表只生成独立报告，沿用原卡已定字符集来源，不能把剧情八表作为额外静态输入。兼顾pwsh可发现性、路径带空格、报告目录和隔离/失败；不硬编码本机/借旧任务号/扩大允许的执行内容。优先沿用项目工具，覆盖正式导表入口的离线验证、实际既有判定与必要的测试；原断言不减。范围不够先联系CONTROL。独立回传；更新现有工具使用说明。 原卡/设计决定在 .ai-workspace/inputs/派发/SHORTCYCLE-B2-20261124，具体获批写入范围为 .ai-workspace/outputs/control/SHORTCYCLE-B2-20261124/AI-000633-scope.json，证据/报告为 .ai-workspace/outputs/SHORTCYCLE-B2-20261124/AI-000633/attemptN，以本票真实身份申领。原断言与旧许可保留。按正式流程结算，监管即时回传。
+
+> SUPERVISED POLICY at 2026-11-24T14:47:18.7008140+08:00: {"taskId":"AI-000633","policy":{"resourceKeys":["documentation","workflow-devtools"],"reviewDependsOn":[],"humanGateAfter":false,"gateApproved":false,"reason":"当前已授权工作；实名范围、项目资源互斥和CODE身份已核。","updatedAt":"2026-11-24T14:47:18.4013489+08:00","supervisionLevel":"light"}}
+
+> SUPERVISED EXTEND at 2026-11-24T14:47:19.1890808+08:00: {"reason":"导表后自动运行现有字形判定并只报告","taskIds":["AI-000633"]}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-24T15:09:09.9329128+08:00: {"verification":"已核实际CODE线程上轮 01a20c4d-afe3-7740-b284-7a3ebe2b934f 已 completed，队列释放。原代码示例第182行为围栏内文本。32源文档保持。只改本票候选生成、重验通过后按原范围正式整理。","grantId":"62e59f22d9ba4ae289309ea64168de38","authorizationSource":"POLICY","cycles":["AI632:retry1"],"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","used":0,"scope":{"paths":[".ai-workspace/codebase/data.md",".ai-workspace/codebase/entry.md",".ai-workspace/codebase/legacy-build.md",".ai-workspace/codebase/resources.md",".ai-workspace/codebase/scroll.md",".ai-workspace/codebase/shortcycle.md",".ai-workspace/codebase/validation.md",".ai-workspace/codebase/visual-effects.md",".ai-workspace/inputs/DOC-REVIEW-20261017/旧链参考文档保留清单.md",".ai-workspace/outputs/SHORTCYCLE-B2-20261124/AI-000632",".ai-workspace/TOOLKIT_REGISTRY.md",".ai-workspace/toolkit/CMD.md",".ai-workspace/toolkit/DAT.md",".ai-workspace/toolkit/DBG.md",".ai-workspace/toolkit/INDEX.md",".ai-workspace/toolkit/INT.md",".ai-workspace/toolkit/LAY.md",".ai-workspace/toolkit/LOC.md",".ai-workspace/toolkit/MOT.md",".ai-workspace/toolkit/PST.md",".ai-workspace/toolkit/RND.md",".ai-workspace/toolkit/SEC.md",".ai-workspace/toolkit/WF.md","食材交互反馈系统分析报告.md","做菜短循环设计文档与代码评估_2026-08-11_191051.md","ChildrenManagementPatterns_Report.md","CODEBASE_MAP.md","CookingPrepare场景脚本与功能整理.md","CookingProcess场景脚本与功能整理.md","CutDice_Refactoring_Analysis.md","CutDice_Reference_Template.md","docs/archive/工程事实_20261124","Ingredient_Interaction_System_Report.md","Spine Sample场景脚本与功能整理.md"],"operations":["archive-source-documents","documentation","evidence","idempotence-check","read"]},"rootTaskId":"AI-000632","remaining":4,"reserved":1,"taskId":"AI-000632"}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-24T16:01:19.4938905+08:00: {"at":"2026-11-24T16:01:19.4078663+08:00","reason":"ALL_SCOPE_TASKS_RESOLVED","taskIds":["AI-000625","AI-000626","AI-000627","AI-000628","AI-000629","AI-000630","AI-000631","AI-000632","AI-000633"],"cancelledTaskIds":["AI-000628","AI-000630"],"pendingUserTaskIds":["AI-000627"]}
+## AI-000634 | [CODE] [SC24-H1-TEST] 修复短循环原测试入口的 CK01CharacterData 编译依赖
+
+- 序号：634
+- 提交时间：2026-11-24T18:26:27.2868022+08:00
+- 模块 ID：SC24-H1-TEST
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：S / 40
+
+### 指令
+
+上批已指定的下一批短循环代码前置独立卡。核上批AI625原错误，以已登记同一正式入口 EATWHAT_CORE_ASSEMBLY_ONLY=1 与本卡独立 CoreAssemblyReportRoot 修正真实编译输入，保留真实类型及所有老断言，跑同一入口证明。用旧版在临时目录或引用AI625确切失败；不写历史卡目录、不改产品、不借旧任务身份、不用stub伪装通过。若同一编译输入串存在直接造成的遗漏，一并最小补齐。 固定CODE。本票第三方/平台及既有许可保持；写入限定 .ai-workspace/outputs/control/SHORTCYCLE-H1-20261124/AI-000634-scope.json。合同 .ai-workspace/inputs/acceptance/AI-000634.json，文本报告和证据放 .ai-workspace/outputs/SHORTCYCLE-H1-20261124/AI-000634/attemptN。监管正式结算并即时通知CONTROL。
+## AI-000635 | [CODE] [SC24-H1-RETURN] 食谱与冰箱往返各只显示本页返回按钮
+
+- 序号：635
+- 提交时间：2026-11-24T18:26:28.2079662+08:00
+- 模块 ID：SC24-H1-RETURN
+- 初始状态：QUEUED
+- 前置依赖：AI-000634
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+现场场景两个左下角按钮均挂 CameraViewportAnchor；Escape_Button_TUNE、Return_Button_TUNE 分属 P0/P1，父空间可能作为视觉背景或视野集合保留。分别核实来回实际途径。最小修复只让当前阶段按钮可见可点，重复往返一致；保留 P0 ESC／模态优先级、P1返回、书页背景、相机与用户布局。复用现有接线，优先按既有动作识别，仅控制目标按钮的显示和命中（含关联键盘处理，不破坏原合法快捷键）。用真实生产方法做离线切换回归，写五列复测；不引擎、不手改 YAML。 固定CODE。本票第三方/平台及既有许可保持；写入限定 .ai-workspace/outputs/control/SHORTCYCLE-H1-20261124/AI-000635-scope.json。合同 .ai-workspace/inputs/acceptance/AI-000635.json，文本报告和证据放 .ai-workspace/outputs/SHORTCYCLE-H1-20261124/AI-000635/attemptN。监管正式结算并即时通知CONTROL。
+## AI-000636 | [CODE] [SC24-H1-TRAY] 备菜点击拖动分流、托盘拖出退回及前景命中
+
+- 序号：636
+- 提交时间：2026-11-24T18:26:29.0530571+08:00
+- 模块 ID：SC24-H1-TRAY
+- 初始状态：QUEUED
+- 前置依赖：AI-000635
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户明确三项同一鼠标链路。压下冰箱食材不提交；未达原拖动阈值的正常点击在松手放进一次；认定为拖动后屏蔽同次点击，合法落托盘只加一次，区外/取消不加。捕获真实初始指针源，拖出托盘内已预留的单位到托盘外释放还回一次（无需命中冰箱），松在托盘内/取消保持。托盘在其可见交互范围遮住后排冰箱，优先托盘自身已占用格→托盘面→后方冰箱，涵盖点击/拖动/右键，无点击穿透，外侧冰箱正常点击/右键，保留三态／原滚轮及库存语义。读实际场景区域、当前层、Collider2D及Prefab事件，区分位置与槽位/画面排序；不要通过无条件全局延迟按钮或调整美术位置修。应尽量复用当前接线和通用框架；如需新增接口/文件或改场景，先回CONTROL补定合适范围，不手改YAML。旧源复现、修后实际入口离线回归及五列人工表。 固定CODE。本票第三方/平台及既有许可保持；写入限定 .ai-workspace/outputs/control/SHORTCYCLE-H1-20261124/AI-000636-scope.json。合同 .ai-workspace/inputs/acceptance/AI-000636.json，文本报告和证据放 .ai-workspace/outputs/SHORTCYCLE-H1-20261124/AI-000636/attemptN。监管正式结算并即时通知CONTROL。
+
+> SUPERVISED START at 2026-11-24T18:26:29.7700500+08:00: {"sessionId":"c2513548087d434197c412891744bcc7","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000634","AI-000635","AI-000636"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-24T18:26:29.7674190+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED RESUME_APPROVED at 2026-11-24T22:01:31.9422653+08:00: {"used":0,"scope":{"paths":[".ai-workspace/outputs/SHORTCYCLE-H1-20261124/AI-000636","Assets/Scripts/Cooking/ShortCycle/FridgeSlot.cs","Assets/Scripts/Cooking/ShortCycle/Interaction/ShortCycleStateGatedInteraction.cs","Assets/Scripts/Cooking/ShortCycle/Presentation/ShortCycleTrayPresentation.cs","Assets/Scripts/Cooking/ShortCycle/ShortCycleMouseActionBinding.cs","Assets/Scripts/Cooking/ShortCycle/ShortCycleTrayInteraction.cs","Assets/Scripts/Cooking/ShortCycle/TraySlot.cs","Assets/Scripts/MouseInteractive/Button/Button_MouseInteract.cs","Assets/Scripts/MouseInteractive/Drag/MouseDraggableObject.cs","Assets/Scripts/MouseInteractive/DropZone/DropZone.cs","Assets/Scripts/MouseInteractive/MouseManager.cs","Assets/Scripts/MouseInteractive/MousePressableObject.cs","DevTools/ShortCycle/ShortCycleTrayPointerTests.cs","DevTools/ShortCycle/ShortCycleTrayTests.cs","DevTools/ShortCycle/Test-CK01CShortCycle.ps1"],"operations":["development-tool","documentation","evidence","idempotence-check","offline-regression","read","source-edit"]},"cycles":["AI636:retry1"],"sourceApprovalId":"call_37410ba043344e9f81b4ce3ef3472a18:0","authorizationSource":"POLICY","rootTaskId":"AI-000636","remaining":4,"grantId":"7ae6084dabd44a82b846394db0c6d18d","reserved":1,"verification":"固定CODE上轮 01a20d35-fef3-7d92-955d-8a473dfd8568 正常结束并释放，官方原报告自证失败3次，真实73例/原回归/正式程序集均过。只续报告，保留坐标变化与旧证据。","taskId":"AI-000636"}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-24T22:20:39.6961281+08:00: {"at":"2026-11-24T22:20:39.6604513+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000634","AI-000635","AI-000636"],"cancelledTaskIds":[],"pendingUserTaskIds":["AI-000636"]}
+## AI-000637 | [CODE] [SC25-DRAG-PRESENT] 备菜拖动使用托盘统一前景画面并恢复连续退回
+
+- 序号：637
+- 提交时间：2026-11-25T06:48:35.2837590+08:00
+- 模块 ID：SC25-DRAG-PRESENT
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+用户已明确授权定位后直接开卡。当前保存的30个冰箱格、20个托盘格，都以同物件 MouseDraggableObject 的 start/update/end UnityEvent 直接驱动 DragContainer.onDrag*，移动整个来源格与其 Collider。两类根图、图标缩放、排序不同，托盘面父图25、托盘格组30。归还命中或错过均在来源回调先 Dispatch，托盘同步重绑/压紧/停用后才 ReturnDraggedVisual；不得把首次成功或直接调用业务 TryPutBack 当连续实用证明。请核实含失效/重绑/动态几何和门控的第二次不响应原因，在卡内离线复现和修复。实现一个局部一致的拖动视觉：两个方向复用托盘里当前对应食材的实际跟手画面基准（已保存槽的资源/底图、食材图标、显示层与世界大小，不用冰箱格风格或另猜常量；空托盘时有已存在的未激活模板，不依赖已有人物操作）。拖中绘制在托盘与托盘格之上，预览自身不拿输入/不劫持落点，不改变静态和普通命中排序；不挪活来源槽及其Collider；在松手、取消、失焦、换页、来源停用/重绑时可靠释放，支持快速连续拖、堆叠保留、清空后再装入、不同来源，数据每次只变一次。按现有场景绑定和脚本生命周期保证正常入口工作；只在短循环备菜启用，不影响旧拖动/点击/冰箱右键/托盘三态/其他UI，保留必要的原视觉反馈。可采用复用的纯视觉代理，避免克隆活动绑定/收输入组件，保持两边同样式比例与源体稳定，必要时排查层组/裁切mask。验证须覆盖真实生产拖动回调顺序、Press/Move/Release、重复松手及真实复用后的场景位置/可拾取，避免每次独立夹具或只断言数据；使用原入口与可读的失败佐证及针对性回归、正式Unity引用离线编译、五列复测。无法证实实机细因时只报已证范围。无引擎Play/操作、场景/Prefab/YAML/配表或Git写入，不覆盖任何用户调位。允许范围为本卡scope；若需要本卡未列实现文件提前说明。使用仓库原测试框架，无须重跑无关内容。输出 .ai-workspace/outputs/SHORTCYCLE-DRAG-20261125/AI-000637/attemptN；按固定CODE领票，正式结算后监管即时回传。
+
+> SUPERVISED START at 2026-11-25T06:48:36.4239272+08:00: {"sessionId":"9ecee1b291d94e699ac0ffef053d47f4","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000637"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-25T06:48:36.4210671+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-25T07:23:27.1179922+08:00: {"at":"2026-11-25T07:23:27.0794766+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000637"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+## AI-000638 | [CODE] [SC25-TRAY-FIRST-PICK] 托盘占用格首次拖出与后续归还
+
+- 序号：638
+- 提交时间：2026-11-25T17:51:16.5957303+08:00
+- 模块 ID：SC25-TRAY-FIRST-PICK
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+从已保存 ShortCycle_P0P1 的真实格件/覆盖属性、输入和展示调用链及用户本次已有 Editor.log 被动记录定位。日志多次 TrayDropRegion_TUNE.toggle_detail、冰箱 take 成功，不能据此断定鼠标坐标。逐项核实首个托盘格真实 Collider 宽高/偏移与动态 Sprite 可见大小/图标热点不一致、排序/输入遮挡、占用/激活后 Collider 及 pressable/drag/binding 的实际门值、P1页面/托盘态重复刷新或同身份重绑取消拖动等。修实证缺口，复现正式按下→捕获→拖过阈值→松开，使用实际保存参数/层级/生命周期，不用简化夹具人为开启原本没有的命中。空盘面三态、冰箱遮挡、右键、点击放入和已签收的双向拖影与层级保持；允许修可拾取区域或输入路由，优先局部源码，避免靠全局排序置顶。原托盘回归及两种物品补位后立即重抓保留。面上非食材区域仍可切详情，P2暂缓。若实际现场证据仍不足，应指明已知与未知，必要时用项目现有诊断或精简人工回报，不能以绿的旧夹具判用户问题修复。不执行自动输入、探针或新Play/引擎行为验收，不改场景或Prefab/配表或Git。补充与实际场景匹配的离线回归，正式 Unity 引用离线编译，输出三合同、复测说明和报告。其余两项已人工签收。 卡面 .ai-workspace/inputs/派发/SHORTCYCLE-DRAG-20261125/cards/TRAY-FIRST-PICK.md。本卡输出 .ai-workspace/outputs/SHORTCYCLE-DRAG-20261125/AI-000638/attemptN。
+
+> SUPERVISED START at 2026-11-25T17:52:24.6033205+08:00: {"sessionId":"e4bd531a9d77493aa581f6452727d8f9","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000638"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-25T17:52:24.5946007+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-25T18:32:56.6944952+08:00: {"at":"2026-11-25T18:32:56.6681013+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000638"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+
+> Verification rejected for AI-000638 at 2026-11-25T18:58:26.0131839+08:00: decision=REJECTED; reason=真实 Sprite 导入轮廓下相邻可见食材的点被首格抢占；保留首格蛋体修复及已签收外观。
+
+> SUPERVISED START at 2026-11-25T19:08:35.7942374+08:00: {"sessionId":"b909f794c8714cd383b3eb9d2923f5ce","status":"ACTIVE","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","taskIds":["AI-000638"],"heartbeatAutomationId":"watch-60","createdAt":"2026-11-25T19:08:35.7850128+08:00","stopRequested":false,"exitRequested":false,"reservations":[],"lastSweepAt":null,"delegatedAuthority":"Task-scoped project execution and necessary repair; not human review, product decisions, or platform permission bypass.","heartbeatMinutes":60,"maxRepairsPerProblem":3,"maxRepairsPerTask":6}
+## AI-000639 | [CODE] [SC25-TRAY-OVERLAP] 同优先级托盘食材导入轮廓重叠时的拾取
+
+- 序号：639
+- 提交时间：2026-11-25T19:11:29.9941042+08:00
+- 模块 ID：SC25-TRAY-OVERLAP
+- 初始状态：QUEUED
+- 前置依赖：无
+- 允许越过：False
+- 最大尝试次数：3
+- 复杂度/轮次预算：M / 80
+
+### 指令
+
+638正式控制独审的对照在只替换为实际导入轮廓后失败，证据和可直接用于源码测试的3个Sprite物理路径见控制目录 AI-000638-正式轮廓控制复核未过.json、AI-000638-正式拾取资源轮廓.json，生产文件当前不含修正。修复同绘制优先级的重叠托盘食材拾取；相对第一格(.1727,.0977)，前格鸡蛋透明、后格高汤可见，实际两份Unity简化轮廓均包含此点。考虑等优先级且二者明确为托盘食材时比较指针在轮廓内的深度（前蛋边距离.0105/后汤.0300世界单位）或其它可证的局部办法；避免改变其它系统优先级、冰箱取放与已签收拖影。实际输入按下/drag与pressable遮挡应一致，不依赖碰撞数组的顺序。使用真实36、79+38、67点固定样例替代厚重PNG条带，保持本来相邻点及原断言，增反序/已占用首次、空盘面的关键用例，原核心和指针回归按需。独立离线Unity引用编译。禁止引擎行为/新Play/场景Prefab配表编辑和Git写入。实机手感仍由用户复测；回传正式报告。 卡面 .ai-workspace/inputs/派发/SHORTCYCLE-DRAG-20261125/cards/TRAY-OVERLAP.md。输出 .ai-workspace/outputs/SHORTCYCLE-DRAG-20261125/AI-000639/attemptN。
+
+> SUPERVISED EXTEND at 2026-11-25T19:12:43.4757575+08:00: {"taskIds":["AI-000639"],"reason":"真实导入物理轮廓的独立复核未过；同根1轮原范围修复。"}
+> Control rejection resolved AI-000638 : {"at":"2026-11-25T19:37:41.8478397+08:00","decision":"CONTROL_REJECTION_RESOLVED","problemKey":"TRAY_EQUAL_PRIORITY_IMPORTED_CONTOURS_OVERLAP","repairTaskId":"AI-000639","controllerThreadId":"01a1ceb8-6581-7cb1-9e94-7e747f457ec2","userDecision":"用户要求继续修复托盘拖出，两项外观已经验收。","verification":"已独立复核三张正式Sprite的几何、原冲突点及颠倒候选顺序，通过26项，并核查编译和已验收项目。","evidencePath":"D:\\GameProject\\Eat-What\\.ai-workspace\\outputs\\control\\SHORTCYCLE-DRAG-20261125\\AI-000638-真实轮廓修复独立结论.json","evidenceSha256":"315698DEA45983D02D0548508D5DC1C05D53FFF16B1070E30BFC52CDB9A860B1","rejectedResultSha256":"D9AC6BF33487070388DA2AB5CE2659880C6A8C3E02E5DB6BD65D2F2AFC6232F0","repairResultSha256":"1150CF6EE8F651280011B5939ADAA7C66C8F42D67CCDF7850A82FF9BE4253EF7"}
+
+> SUPERVISED AUTO_COMPLETE_TO_MANUAL at 2026-11-25T19:38:07.6663208+08:00: {"at":"2026-11-25T19:38:07.6141586+08:00","reason":"ALL_SCOPE_TASKS_SUCCEEDED","taskIds":["AI-000638","AI-000639"],"cancelledTaskIds":[],"pendingUserTaskIds":[]}
+
+> Verification resolved for AI-000636 at 2026-11-26T03:23:17.7774766+08:00: decision=VERIFIED; summary=普通 Play 中托盘拖回经用户复测通过。首轮场景差异保留，当前提交采用复测时已保存的同一场景。; evidence=2026-11-26 用户确认“这回验收通过了”，结合前轮拖影层级和双向外观签收。对照 AI-000636 次轮说明和 AI-000638 领取基线，当前场景 SHA 为 21AAC88CF81A138631EF2BCA7751E0334DAE4309D41E4EA58D89400492B69777。该差异不影响三项代码合同；出自何人未核定。P2 仍待后续验收。

@@ -1,9 +1,14 @@
 [CmdletBinding()]
-param([string]$UnityEditorPath, [switch]$CompileOnly, [string]$CoreAssemblyReportRoot)
+param([string]$UnityEditorPath, [switch]$CompileOnly, [string]$CoreAssemblyReportRoot, [switch]$ReturnButtonsOnly, [switch]$TrayPointerOnly, [switch]$DragPreviewOnly, [string]$BeforeDragContainerPath, [switch]$AuthoredTrayPickOnly, [string]$BeforeTraySlotPath)
+
+if($AuthoredTrayPickOnly){$DragPreviewOnly=$true}
+if($DragPreviewOnly){$TrayPointerOnly=$true}
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$coreAssemblyOnly=$env:EATWHAT_CORE_ASSEMBLY_ONLY -eq '1'
+$legacyScripts = Join-Path $repoRoot 'Assets/Legacy/Scripts'
+$legacyEditor = Join-Path $legacyScripts 'Editor'
+$coreAssemblyOnly=$env:EATWHAT_CORE_ASSEMBLY_ONLY -eq '1' -or $ReturnButtonsOnly -or $TrayPointerOnly
 $jointProbeOnly=$env:EATWHAT_JOINT_PREREQUISITES_ONLY -eq '1'
 $validationHostOnly=$env:EATWHAT_VALIDATION_HOST_ONLY -eq '1' -or $jointProbeOnly
 $catalogFeedbackOnly=$env:EATWHAT_CATALOG_FEEDBACK_ONLY -eq '1'
@@ -58,84 +63,84 @@ function Resolve-MigratedSource {
     return $matches[0]
 }
 
-$builderPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\ShortCycleSceneBuilder.cs'
-$inputAdapterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleMouseActionBinding.cs'
-$layerStackPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleInteractionLayerStack.cs'
+$builderPath = Join-Path $legacyEditor 'ShortCycle\ShortCycleSceneBuilder.cs'
+$inputAdapterPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleMouseActionBinding.cs'
+$layerStackPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleInteractionLayerStack.cs'
 if($env:EATWHAT_PHASE2_STACK_SOURCE_OVERRIDE){
     $before=[IO.Path]::GetFullPath((Join-Path $repoRoot '.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/AI-000397/snapshots/before/ShortCycleInteractionLayerStack.cs'))
     if(-not $p2LayerRepairOnly -or [IO.Path]::GetFullPath($env:EATWHAT_PHASE2_STACK_SOURCE_OVERRIDE) -cne $before -or
         -not (Test-Path -LiteralPath $before -PathType Leaf)){throw 'AI397 old-source snapshot override only.'}
     $layerStackPath=$before
 }
-$presenterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleScenePresenter.cs'
-$stateMachinePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleStateMachine.cs'
-$trayStateMachinePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleTrayStateMachine.cs'
-$probePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleAutomatedProbe.cs'
-$commandBridgePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleCommandBridge.cs'
-$actionRegistryPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleActionRegistry.cs'
-$actionRouterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleActionRouter.cs'
-$cameraPanPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleCameraPanController.cs'
-$overflowGatePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleOverflowVisibilityGate.cs'
-$manualDriverPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleManualVerificationDriver.cs'
-$localizedTextPath = Join-Path $repoRoot 'Assets\Scripts\Tools\Localization\LocalizedText.cs'
-$toolsPath = Join-Path $repoRoot 'Assets\Scripts\Tools\Tools.cs'
-$sessionManagerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleSessionManager.cs'
-$directorPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Runtime\ShortCyclePresentationDirector.cs'
-$travelerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\ShortCycleTravelingElement.cs'
-$spacePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\ShortCycleSpace.cs'
-$trayControllerPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleTrayStateController.cs'
-$fridgeBinderPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Content\ShortCycleFridgeBinder.cs'
-$fridgeScrollAdapterPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Interaction\ShortCycleScrollAdapter.cs'
-$fridgeScrollTraceProbePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Debug\ShortCycleFridgeScrollTraceProbe.cs'
-$mouseScrollableObjectPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\Scroll\MouseScrollableObject.cs'
-$fridgeScrollLabDriverPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Debug\FridgeScrollLabDriver.cs'
-$modalScrollVerificationControlPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Debug\ShortCycleModalScrollVerificationControl.cs'
-$fridgeScrollLabBuilderPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\FridgeScrollLabBuilder.cs'
-$fridgeScrollLabAuditPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\FridgeScrollLabAudit.cs'
-$mouseManagerPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\MouseManager.cs'
-$configDataPath = Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01CookingGameConfigData.cs'
+$presenterPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleScenePresenter.cs'
+$stateMachinePath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleStateMachine.cs'
+$trayStateMachinePath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleTrayStateMachine.cs'
+$probePath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleAutomatedProbe.cs'
+$commandBridgePath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleCommandBridge.cs'
+$actionRegistryPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleActionRegistry.cs'
+$actionRouterPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleActionRouter.cs'
+$cameraPanPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleCameraPanController.cs'
+$overflowGatePath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleOverflowVisibilityGate.cs'
+$manualDriverPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleManualVerificationDriver.cs'
+$localizedTextPath = Join-Path $legacyScripts 'Tools\Localization\LocalizedText.cs'
+$toolsPath = Join-Path $legacyScripts 'Tools\Tools.cs'
+$sessionManagerPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleSessionManager.cs'
+$directorPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Runtime\ShortCyclePresentationDirector.cs'
+$travelerPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Presentation\ShortCycleTravelingElement.cs'
+$spacePath = Join-Path $legacyScripts 'Cooking\ShortCycle\Presentation\ShortCycleSpace.cs'
+$trayControllerPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleTrayStateController.cs'
+$fridgeBinderPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Content\ShortCycleFridgeBinder.cs'
+$fridgeScrollAdapterPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Interaction\ShortCycleScrollAdapter.cs'
+$fridgeScrollTraceProbePath = Join-Path $legacyScripts 'Cooking\ShortCycle\Debug\ShortCycleFridgeScrollTraceProbe.cs'
+$mouseScrollableObjectPath = Join-Path $legacyScripts 'MouseInteractive\Scroll\MouseScrollableObject.cs'
+$fridgeScrollLabDriverPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Debug\FridgeScrollLabDriver.cs'
+$modalScrollVerificationControlPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Debug\ShortCycleModalScrollVerificationControl.cs'
+$fridgeScrollLabBuilderPath = Join-Path $legacyEditor 'ShortCycle\FridgeScrollLabBuilder.cs'
+$fridgeScrollLabAuditPath = Join-Path $legacyEditor 'ShortCycle\FridgeScrollLabAudit.cs'
+$mouseManagerPath = Join-Path $legacyScripts 'MouseInteractive\MouseManager.cs'
+$configDataPath = Join-Path $legacyScripts 'DataBase\CookingData\CK01CookingGameConfigData.cs'
 $cookingConfigCsvPath = Join-Path $repoRoot 'DataTables\Cooking\CookingGameConfig.csv'
 $cookingConfigSchemaPath = Join-Path $repoRoot 'DataTables\Schemas\Cooking\CookingGameConfig.schema.json'
-$wheelProbePath = Join-Path $repoRoot 'Assets\Editor\ProjectValidation\ScrollWheelProbe.cs'
-$clueBinderPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Content\ShortCycleClueBoardBinder.cs'
-$stateGatePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Interaction\ShortCycleStateGatedInteraction.cs'
-$gridPieceBasePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleGridPieceBase.cs'
-$v22LayoutPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleV22LayoutContracts.cs'
-$trayAnchorLayoutPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleTrayAnchorLayout.cs'
-$subCardPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleSubCard.cs'
+$wheelProbePath = Join-Path $legacyEditor 'ProjectValidation\ScrollWheelProbe.cs'
+$clueBinderPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Content\ShortCycleClueBoardBinder.cs'
+$stateGatePath = Join-Path $legacyScripts 'Cooking\ShortCycle\Interaction\ShortCycleStateGatedInteraction.cs'
+$gridPieceBasePath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleGridPieceBase.cs'
+$v22LayoutPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleV22LayoutContracts.cs'
+$trayAnchorLayoutPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleTrayAnchorLayout.cs'
+$subCardPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleSubCard.cs'
 $migrationV2Path = Join-Path $repoRoot 'DevTools\ShortCycle\Migrations\ShortCycleSceneMigrationV2.cs'
 $gridPiecePaths = @(
-    (Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\FridgeSlot.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\TraySlot.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\CatalogCard.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\IngredientCard.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\SlotBlock.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Sticker.cs')
+    (Join-Path $legacyScripts 'Cooking\ShortCycle\FridgeSlot.cs'),
+    (Join-Path $legacyScripts 'Cooking\ShortCycle\TraySlot.cs'),
+    (Join-Path $legacyScripts 'Cooking\ShortCycle\CatalogCard.cs'),
+    (Join-Path $legacyScripts 'Cooking\ShortCycle\IngredientCard.cs'),
+    (Join-Path $legacyScripts 'Cooking\ShortCycle\SlotBlock.cs'),
+    (Join-Path $legacyScripts 'Cooking\ShortCycle\Sticker.cs')
 )
-$runtimeManagersPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\ShortCycleRuntimeManagers.cs'
-$catalogPath = Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01GeneratedDataCatalog.cs'
-$buttonPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\Button\Button_MouseInteract.cs'
-$textFitterPath = Resolve-MigratedSource (Join-Path $repoRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs') (Join-Path $repoRoot 'Assets/Scripts/Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs')
-$fridgeCatBlinkSchedulerPath = Resolve-MigratedSource (Join-Path $repoRoot 'Assets/Scripts/Cooking/Prepare/RecipeBook/Fridge/FridgeCatBlinkScheduler.cs') (Join-Path $repoRoot 'Assets/Scripts/Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeCatBlinkScheduler.cs')
-$fridgeCatRigPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatRig.cs'
-$fridgeCatTierPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatTier.cs'
-$fridgeCatEyePath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\FridgeCatEye.cs'
-$presentationSetPath = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle\Presentation\ShortCyclePresentationSet.cs'
-$cameraViewportAnchorPath = Join-Path $repoRoot 'Assets\Scripts\Tools\Layout\CameraViewportAnchor.cs'
-$scrollAreaPath = Join-Path $repoRoot 'Assets\Scripts\MouseInteractive\ScrollArea\ScrollArea_Controller.cs'
+$runtimeManagersPath = Join-Path $legacyScripts 'Cooking\ShortCycle\ShortCycleRuntimeManagers.cs'
+$catalogPath = Join-Path $legacyScripts 'DataBase\CookingData\CK01GeneratedDataCatalog.cs'
+$buttonPath = Join-Path $legacyScripts 'MouseInteractive\Button\Button_MouseInteract.cs'
+$textFitterPath = Resolve-MigratedSource (Join-Path $legacyScripts 'Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs') (Join-Path $legacyScripts 'Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeIngredientLabelTextFitter.cs')
+$fridgeCatBlinkSchedulerPath = Resolve-MigratedSource (Join-Path $legacyScripts 'Cooking/Prepare/RecipeBook/Fridge/FridgeCatBlinkScheduler.cs') (Join-Path $legacyScripts 'Legacy/Cooking/Prepare/RecipeBook/Fridge/FridgeCatBlinkScheduler.cs')
+$fridgeCatRigPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Presentation\FridgeCatRig.cs'
+$fridgeCatTierPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Presentation\FridgeCatTier.cs'
+$fridgeCatEyePath = Join-Path $legacyScripts 'Cooking\ShortCycle\Presentation\FridgeCatEye.cs'
+$presentationSetPath = Join-Path $legacyScripts 'Cooking\ShortCycle\Presentation\ShortCyclePresentationSet.cs'
+$cameraViewportAnchorPath = Join-Path $legacyScripts 'Tools\Layout\CameraViewportAnchor.cs'
+$scrollAreaPath = Join-Path $legacyScripts 'MouseInteractive\ScrollArea\ScrollArea_Controller.cs'
 $unityStubsPath = Join-Path $PSScriptRoot 'UnityStubs.cs'
-$outlinePath = Join-Path $repoRoot 'Assets\Scripts\Rendering\SpriteOutline2D.cs'
-$outlineGroupPath = Join-Path $repoRoot 'Assets\Scripts\Rendering\SpriteOutlineGroup2D.cs'
-$outlineDefaultsPath = Join-Path $repoRoot 'Assets\Scripts\Rendering\SpriteOutlineDefaults.cs'
-$outlineEditorPath = Join-Path $repoRoot 'Assets\Editor\Rendering\SpriteOutline2DEditor.cs'
-$outlineGroupEditorPath = Join-Path $repoRoot 'Assets\Editor\Rendering\SpriteOutlineGroup2DEditor.cs'
-$cameraFrameRuntimePath = Join-Path $repoRoot 'Assets\Scripts\Tools\Debug\CameraFrameGizmo.cs'
-$cameraFrameDrawerPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\CameraFrameGizmo.cs'
-$cameraFrameMenuPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\CameraFrameGizmoMenu.cs'
+$outlinePath = Join-Path $legacyScripts 'Rendering\SpriteOutline2D.cs'
+$outlineGroupPath = Join-Path $legacyScripts 'Rendering\SpriteOutlineGroup2D.cs'
+$outlineDefaultsPath = Join-Path $legacyScripts 'Rendering\SpriteOutlineDefaults.cs'
+$outlineEditorPath = Join-Path $legacyEditor 'Rendering\SpriteOutline2DEditor.cs'
+$outlineGroupEditorPath = Join-Path $legacyEditor 'Rendering\SpriteOutlineGroup2DEditor.cs'
+$cameraFrameRuntimePath = Join-Path $legacyScripts 'Tools\Debug\CameraFrameGizmo.cs'
+$cameraFrameDrawerPath = Join-Path $legacyEditor 'ShortCycle\CameraFrameGizmo.cs'
+$cameraFrameMenuPath = Join-Path $legacyEditor 'ShortCycle\CameraFrameGizmoMenu.cs'
 $projectSettingsPath = Join-Path $repoRoot 'ProjectSettings\ProjectSettings.asset'
-$scenePath = Join-Path $repoRoot 'Assets\Scenes\Cooking\ShortCycle_P0P1.unity'
-$globalInputManagerPath = Resolve-MigratedSource (Join-Path $repoRoot 'Assets/Scripts/Controller/InputManager.cs') (Join-Path $repoRoot 'Assets/Scripts/Tools/Input/InputManager.cs')
-$inputActionsPath = Join-Path $repoRoot 'Assets\Scripts\Controller\PlayerControl.inputactions'
+$scenePath = Join-Path $repoRoot 'Assets\Legacy\Scenes\Cooking\ShortCycle_P0P1.unity'
+$globalInputManagerPath = Resolve-MigratedSource (Join-Path $legacyScripts 'Controller/InputManager.cs') (Join-Path $legacyScripts 'Tools/Input/InputManager.cs')
+$inputActionsPath = Join-Path $legacyScripts 'Controller\PlayerControl.inputactions'
 $inputActionsMetaPath = $inputActionsPath + '.meta'
 
 function Assert-SourceContains {
@@ -212,15 +217,15 @@ $sceneSource = Get-Content -Raw -LiteralPath $scenePath
 $globalInputManagerSource = Get-Content -Raw -LiteralPath $globalInputManagerPath
 $inputActionsSource = Get-Content -Raw -LiteralPath $inputActionsPath
 $inputActionsMetaSource = Get-Content -Raw -LiteralPath $inputActionsMetaPath
-$shortCycleRoot = Join-Path $repoRoot 'Assets\Scripts\Cooking\ShortCycle'
+$shortCycleRoot = Join-Path $legacyScripts 'Cooking\ShortCycle'
 $coreSourceRoot = Join-Path $shortCycleRoot 'Core'
 $coreSourcePaths = @(Get-ChildItem -LiteralPath $coreSourceRoot -Filter '*.cs' -File -Recurse | Select-Object -ExpandProperty FullName)
 $shortCycleCompilePaths = @(Get-ChildItem -LiteralPath $shortCycleRoot -Filter '*.cs' -File -Recurse |
     Where-Object { -not $_.FullName.StartsWith($coreSourceRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) } |
     Select-Object -ExpandProperty FullName)
 if(-not $mgOnly){$shortCycleCompilePaths=@($shortCycleCompilePaths|Where-Object{$_ -notmatch '[\\/](CountdownStubMiniGame|ShortCycleWaitingProcess)\.cs$'})}
-$transitionCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Assets\Scripts\Tools\Transition') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
-$layoutCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Assets\Scripts\Tools\Layout') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
+$transitionCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $legacyScripts 'Tools\Transition') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
+$layoutCompilePaths = @(Get-ChildItem -LiteralPath (Join-Path $legacyScripts 'Tools\Layout') -Filter '*.cs' -File | Select-Object -ExpandProperty FullName)
 $shortCycleProductionSource = ($shortCycleCompilePaths |
     ForEach-Object { Get-Content -Raw -LiteralPath $_ }) -join "`n"
 $shortCycleCoreSource = @(Get-ChildItem -LiteralPath (Join-Path $shortCycleRoot 'Core') -Filter '*.cs' -File -Recurse |
@@ -357,9 +362,9 @@ Assert-SourceContains $toolsSource '(?s)missingMainCameraWarningIssued.*?Debug\.
     'Tools must throttle the missing-main-camera warning to one per missing episode.'
 Assert-SourceContains $mouseManagerSource '(?s)void\s+Update\s*\([^)]*\).*?Vector3\s+mouseWorldPosition\s*;.*?TryGetMousePos\s*\(\s*out\s+mouseWorldPosition\s*\).*?return\s*;.*?setMouseHover\s*\(\s*mouseWorldPosition\s*\).*?Vector3\.Distance\s*\(\s*dragStartPos\s*,\s*mouseWorldPosition\s*\).*?OnScroll\s*\(\s*mouseWorldPosition\s*\)' `
     'MouseManager Update must stop before hover, drag, and scroll sampling when no real pointer is available.'
-Assert-SourceContains $mouseManagerSource '(?s)OnMouseConfirmPress\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?RaycastPressable\s*\(\s*mouseWorldPosition\s*\).*?HasAnyInteractiveObject\s*\(\s*mouseWorldPosition\s*\)' `
+Assert-SourceContains $mouseManagerSource '(?s)OnMouseConfirmPress\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?CapturePointer\s*\(\s*mouseWorldPosition\s*\).*?HasAnyInteractiveObject\s*\(\s*mouseWorldPosition\s*\).*?CapturePointer\s*\(\s*Vector3\s+position\s*\).*?RaycastPressable\s*\(\s*position\s*\)' `
     'Mouse confirm must not raycast or synthesize an origin click without a real pointer.'
-Assert-SourceContains $mouseManagerSource '(?s)OnDragStart\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?dragStarted\s*=\s*true.*?dragStartPos\s*=\s*mouseWorldPosition' `
+Assert-SourceContains $mouseManagerSource '(?s)OnDragStart\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?CapturePointer\s*\(\s*mouseWorldPosition\s*\).*?dragStarted\s*=\s*true.*?CapturePointer\s*\(\s*Vector3\s+position\s*\).*?if\s*\(\s*pointerCaptured\s*\)\s*return\s*;.*?dragStartPos\s*=\s*position' `
     'Drag start must preserve prior state and skip the event when no real pointer is available.'
 Assert-SourceContains $mouseManagerSource '(?s)OnMouseLeftButtonRelease\s*\([^)]*\).*?TryGetMousePos.*?return\s*;.*?OnMouseRelease.*?CheckDropZone\s*\([^,]+,\s*mouseWorldPosition\s*\).*?OverlapPoint\s*\(\s*mouseWorldPosition\s*\)' `
     'Release/drop/hold hit testing must stop before state mutation when no real pointer is available.'
@@ -917,33 +922,42 @@ finally {
 }
 $sourcePaths = @(
     $unityStubsPath,
-    (Join-Path $repoRoot 'Assets/Scripts/Tools/TagFilter.cs'),
-    (Join-Path $repoRoot 'Assets/Scripts/Tools/TidyLayout.cs'),
-    (Join-Path $repoRoot 'Assets/Scripts/Tools/StackedIcon.cs'),
-    (Join-Path $repoRoot 'Assets/Scripts/Tools/PlaceholderRule.cs'),
+    (Join-Path $legacyScripts 'Tools/TagFilter.cs'),
+    (Join-Path $legacyScripts 'Tools/TidyLayout.cs'),
+    (Join-Path $legacyScripts 'Tools/StackedIcon.cs'),
+    (Join-Path $legacyScripts 'Tools/PlaceholderRule.cs'),
     $outlinePath,
     $outlineGroupPath,
     $outlineDefaultsPath,
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CookingEnums.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01DataModels.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01RecipeSlotData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01RecipeStepData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01ItemData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01TagData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01ToolData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01CookingGameConfigData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01FridgeCapacityLevelData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01ProcessActionData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01ProcessingRecordData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01RecipeVariantData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\CK01InitialInventoryData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\CookingData\KitchenAreaData.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\Localization\LocTextCatalog.cs'),
-    (Join-Path $repoRoot 'Assets\Scripts\DataBase\Localization\LocTableAsset.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CookingEnums.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01DataModels.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01RecipeSlotData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01RecipeStepData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01ItemData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01TagData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01ToolData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01CookingGameConfigData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01FridgeCapacityLevelData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01ProcessActionData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01ProcessingRecordData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01RecipeVariantData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01InitialInventoryData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01OptionalValues.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01CharacterData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01DialogueData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01DialogueLineData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01CGData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01SceneData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01SceneStateData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01SceneStatePlacementData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\CK01AmbientPoolData.cs'),
+    (Join-Path $legacyScripts 'DataBase\CookingData\KitchenAreaData.cs'),
+    (Join-Path $legacyScripts 'DataBase\Localization\LocTextCatalog.cs'),
+    (Join-Path $legacyScripts 'DataBase\Localization\LocTableAsset.cs'),
     $catalogPath,
-    (Join-Path $repoRoot "Assets/Scripts/DataBase/CookingData/RecipeView.cs"),
-    (Join-Path $repoRoot "Assets/Scripts/DataBase/CookingData/Phase2DataViews.cs"),
-    (Join-Path $repoRoot "Assets/Editor/DataTables/DataTableValidationCore.cs"),
+    (Join-Path $legacyScripts "DataBase/CookingData/RecipeView.cs"),
+    (Join-Path $legacyScripts "DataBase/CookingData/Phase2DataViews.cs"),
+    (Join-Path $legacyEditor "DataTables/DataTableValidationCore.cs"),
     (Join-Path $PSScriptRoot "ShortCycleRecipeBookTests.cs"),
     (Join-Path $PSScriptRoot "ToolkitCoreTests.cs"),
     (Join-Path $PSScriptRoot "ShortCyclePhase2Tests.cs"),
@@ -959,9 +973,69 @@ $sourcePaths = @(
     $cameraFrameMenuPath,
     (Join-Path $PSScriptRoot 'ShortCycleCoreTests.cs')
 ) + $shortCycleCompilePaths + $transitionCompilePaths + $layoutCompilePaths + @(
-    Get-ChildItem -LiteralPath (Join-Path $repoRoot "Assets/Scripts/Tools/Security"),(Join-Path $repoRoot "Assets/Scripts/Tools/Persistence") -Filter "*.cs" -File | Select-Object -ExpandProperty FullName
+    Get-ChildItem -LiteralPath (Join-Path $legacyScripts "Tools/Security"),(Join-Path $legacyScripts "Tools/Persistence") -Filter "*.cs" -File | Select-Object -ExpandProperty FullName
 )
 
+if($TrayPointerOnly){
+    if(-not $CoreAssemblyReportRoot){throw 'Tray pointer tests require an explicit fresh CoreAssemblyReportRoot.'}
+    $pointerRoot=[IO.Path]::GetFullPath($CoreAssemblyReportRoot)
+    foreach($existing in @('PointerPlatform.cs','ShortCycle.Core.offline.dll','ShortCycle.Core.Tests.offline.dll')){
+        if(Test-Path -LiteralPath (Join-Path $pointerRoot $existing)){throw 'Pointer output already exists; use a fresh report directory.'}
+    }
+    [void][IO.Directory]::CreateDirectory($pointerRoot)
+    $pointerStub=[IO.File]::ReadAllText($unityStubsPath)
+    # Keep the existing platform fixture, replacing its mouse algorithm doubles
+    # with real framework sources. Original UnityStubs.cs is never rewritten.
+    $replacedTypes=@('MouseManager','MousePressableObject','MouseDraggableObject','MouseScrollableObject','DropZone','Physics2D')
+    if($DragPreviewOnly){$replacedTypes+=@('DragContainer','DragLimit')}
+    foreach($typeName in $replacedTypes){
+        $match=[regex]::Match($pointerStub,'(?m)^public (?:abstract |static )?class '+[regex]::Escape($typeName)+'\b[^\{]*\{')
+        if(-not $match.Success){throw ('Missing unique pointer fixture declaration: '+$typeName)}
+        $depth=1;$end=$match.Index+$match.Length
+        while($depth -gt 0 -and $end -lt $pointerStub.Length){
+            if($pointerStub[$end] -eq '{'){$depth++}elseif($pointerStub[$end] -eq '}'){$depth--};$end++
+        }
+        if($depth -ne 0){throw ('Unbalanced pointer fixture declaration: '+$typeName)}
+        $pointerStub=$pointerStub.Remove($match.Index,$end-$match.Index)
+    }
+    $pointerStub=[regex]::Replace($pointerStub,'(public T GetComponent<T>\(\)) where T : class(\s*\{[^}]*?)return null;','$1$2return default(T);')
+    $pointerStub=$pointerStub.Replace('GetComponent<T>() where T : class','GetComponent<T>()').Replace('return components[index] as T;','return (T)(object)components[index];')
+    $pointerStub=$pointerStub.Replace('public static float Clamp(float value,','public static float Sign(float value) { return Math.Sign(value); } public static float Clamp(float value,')
+    $pointerStub=$pointerStub.Replace('public class SortingGroup : UnityEngine.Behaviour { }','public class SortingGroup : UnityEngine.Behaviour { public int sortingLayerID; public int sortingOrder; }')
+    $pointerStub=$pointerStub.Replace('public class InputManager : UnityEngine.MonoBehaviour'+"`r`n"+'{','public class InputManager : UnityEngine.MonoBehaviour'+"`r`n"+'{ public static InputManager Instance; public void StartRecordKey(KeyboardListener listener) {}')
+    $pointerStub=$pointerStub.Replace('public class InputManager : UnityEngine.MonoBehaviour'+"`n"+'{','public class InputManager : UnityEngine.MonoBehaviour'+"`n"+'{ public static InputManager Instance; public void StartRecordKey(KeyboardListener listener) {}')
+    $pointerStub=$pointerStub.Replace('public static bool HasMouseWorldPosition = true;','public static object FindImageInChildCanvas(UnityEngine.GameObject value) { return null; } public static bool HasMouseWorldPosition = true;')
+    $pointerStub=$pointerStub.Replace('public static UnityEngine.Vector3 MouseWorldPosition;','public static UnityEngine.Vector3 MouseWorldPosition; public static UnityEngine.Vector3 getMousePos() { return MouseWorldPosition; }')
+    $pointerStub=$pointerStub.Replace('public bool manualStackLayer;','public bool manualStackLayer; public bool clickNullEqualsCancel; public UnityEngine.Events.UnityEvent onClickNullCancel;')
+    $pointerStubPath=Join-Path $pointerRoot 'PointerPlatform.cs'
+    [IO.File]::WriteAllText($pointerStubPath,$pointerStub,[Text.UTF8Encoding]::new($false))
+    $sourcePaths=@($sourcePaths|Where-Object{$_ -ne $unityStubsPath -and -not ([IO.Path]::GetDirectoryName($_) -eq $PSScriptRoot -and $_ -match 'Tests\.cs$')})
+    $sourcePaths+=@($pointerStubPath,(Join-Path $PSScriptRoot 'ShortCycleTrayPointerTests.cs'))
+    if($DragPreviewOnly){
+        $sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleDragPreviewTests.cs')
+        $sourcePaths+=@('DragContainer.cs','DragLimit.cs'|ForEach-Object{Join-Path $legacyScripts ('MouseInteractive/Drag/'+$_)})
+        if($BeforeDragContainerPath){
+            $beforeSource=[IO.File]::ReadAllText([IO.Path]::GetFullPath($BeforeDragContainerPath))
+            $beforeSource=[regex]::Replace($beforeSource,'\bDragContainer\b','BeforeDragContainer')
+            $beforeCopy=Join-Path $pointerRoot 'BeforeDragContainer.cs'
+            if(Test-Path -LiteralPath $beforeCopy){throw 'Before source already exists; use a fresh report directory.'}
+            [IO.File]::WriteAllText($beforeCopy,$beforeSource,[Text.UTF8Encoding]::new($false))
+            $sourcePaths+=@($beforeCopy)
+        }
+    }
+    $sourcePaths+=@('MouseManager.cs','MousePressableObject.cs','Drag/MouseDraggableObject.cs','DropZone/DropZone.cs',
+        'Scroll/MouseScrollableObject.cs','Button/Button_MouseInteract.cs','Button/Visuals/Button_Visual.cs',
+        'Button/Logic/Button_Logic.cs','Button/IButtonComponent.cs','ConditionReceiver.cs','Hold/MouseHoldObject.cs',
+        'HoverTrigger/HoverTrigger.cs','Keyboard/KeyboardListener.cs'|ForEach-Object{Join-Path $legacyScripts ('MouseInteractive/'+$_)})
+}
+if($ReturnButtonsOnly){$sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleReturnButtonTests.cs')}
+if($BeforeTraySlotPath){
+    if(-not $AuthoredTrayPickOnly){throw 'BeforeTraySlotPath is only supported by the authored tray regression.'}
+    $oldTraySource=[IO.Path]::GetFullPath($BeforeTraySlotPath)
+    if(-not (Test-Path -LiteralPath $oldTraySource -PathType Leaf)){throw 'Before tray source is missing.'}
+    $currentTraySource=Join-Path $legacyScripts 'Cooking/ShortCycle/TraySlot.cs'
+    $sourcePaths=@($sourcePaths|ForEach-Object{if($_ -eq $currentTraySource){$oldTraySource}else{$_}})
+}
 if($clueOnly -or $clueRepairOnly){$sourcePaths+=@(Join-Path $PSScriptRoot 'ShortCycleClueBoardTests.cs')}
 $jsonPackage=@(Get-ChildItem -LiteralPath (Join-Path $repoRoot 'Library/PackageCache') -Directory -Filter 'com.unity.nuget.newtonsoft-json*')
 if($jsonPackage.Count -ne 1){throw 'Expected exactly one installed JSON package.'}
@@ -971,6 +1045,18 @@ $bclReferences=@(Get-ChildItem -LiteralPath (Join-Path $PSHOME 'ref') -File -Fil
 $hostReferences=$bclReferences+@($jsonReference)
 $coreAssemblyReportRoot=if($CoreAssemblyReportRoot){[IO.Path]::GetFullPath($CoreAssemblyReportRoot)}else{Join-Path ([IO.Path]::GetTempPath()) ('EatWhat-ShortCycleCore-'+[guid]::NewGuid().ToString('N'))}
 [void][IO.Directory]::CreateDirectory($coreAssemblyReportRoot)
+if(-not $TrayPointerOnly){
+    foreach($existing in @('LegacyPlatform.cs','ShortCycle.Core.offline.dll','ShortCycle.Core.Tests.offline.dll')){
+        if(Test-Path -LiteralPath (Join-Path $coreAssemblyReportRoot $existing)){throw 'Legacy output already exists; use a fresh report directory.'}
+    }
+    # API shape only for legacy unit suites; the pointer suite compiles the real
+    # Pressable and Manager. Keep the permanent UnityStubs source unchanged.
+    $legacyStub=[IO.File]::ReadAllText($unityStubsPath).Replace('public bool hasVisual { get; protected set; }',
+        'public bool hasVisual { get; protected set; } public bool DeferClickUntilDragRelease { get; set; }')
+    $legacyStubPath=Join-Path $coreAssemblyReportRoot 'LegacyPlatform.cs'
+    [IO.File]::WriteAllText($legacyStubPath,$legacyStub,[Text.UTF8Encoding]::new($false))
+    $sourcePaths=@($sourcePaths|ForEach-Object{if($_ -eq $unityStubsPath){$legacyStubPath}else{$_}})
+}
 $shortCycleCoreDll=Join-Path $coreAssemblyReportRoot 'ShortCycle.Core.offline.dll'
 $shortCycleCoreTestsDll=Join-Path $coreAssemblyReportRoot 'ShortCycle.Core.Tests.offline.dll'
 if(Test-Path -LiteralPath $shortCycleCoreDll){throw 'Core assembly output already exists; use a fresh report directory.'}
@@ -992,8 +1078,8 @@ $coreResultBytes=[Text.UTF8Encoding]::new($false).GetBytes($coreResult)
 $coreResultStream=[IO.FileStream]::new($coreResultPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
 try{$coreResultStream.Write($coreResultBytes,0,$coreResultBytes.Length)}finally{$coreResultStream.Dispose()}
 $hostReferences+=@($shortCycleCoreDll)
-$sourcePaths+=@(Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')
-$sourcePaths+=@('ICatalogSource.cs','ScriptableObjectSource.cs','EncryptedBlobSource.cs','CatalogBlobSerializer.cs','Build/CatalogBuildFingerprint.g.cs'|ForEach-Object{Join-Path $repoRoot ("Assets/Scripts/DataBase/CookingData/"+$_)})
+$sourcePaths+=@(Join-Path $legacyEditor 'ProjectValidation/ShortCycleValidationLauncher.cs')
+$sourcePaths+=@('ICatalogSource.cs','ScriptableObjectSource.cs','EncryptedBlobSource.cs','CatalogBlobSerializer.cs','Build/CatalogBuildFingerprint.g.cs'|ForEach-Object{Join-Path $legacyScripts ("DataBase/CookingData/"+$_)})
 if($mgOnly){
     $mgTaskId=if($p2PresentationOnly){$env:EATWHAT_PHASE2_PRESENTATION_TASK_ID}else{$env:EATWHAT_MINIGAME_TASK_ID}
     $taskRoot=[IO.Path]::GetFullPath((Join-Path $repoRoot ('.ai-workspace/outputs/BATCH2-INDEPENDENT-20261023/'+$mgTaskId)))
@@ -1002,7 +1088,7 @@ if($mgOnly){
     [void][IO.Directory]::CreateDirectory($mgReport)
     $coreDll=Join-Path $mgReport 'MiniGames.Core.offline.dll'
     if(Test-Path -LiteralPath $coreDll){Remove-Item -LiteralPath $coreDll -Force}
-    $corePaths=@((Join-Path $repoRoot 'Assets/Scripts/MiniGames/Core/IMiniGame.cs'),(Join-Path $repoRoot 'Assets/Scripts/MiniGames/Core/MiniGameHost.cs'))
+    $corePaths=@((Join-Path $legacyScripts 'MiniGames/Core/IMiniGame.cs'),(Join-Path $legacyScripts 'MiniGames/Core/MiniGameHost.cs'))
     Add-Type -Path $corePaths -ReferencedAssemblies $hostReferences -OutputAssembly $coreDll
     Add-Type -Path $coreDll
     $hostReferences+=@($coreDll)
@@ -1014,7 +1100,63 @@ if($mgOnly){
     if(Test-Path -LiteralPath $shortDll){Remove-Item -LiteralPath $shortDll -Force}
     Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences -OutputAssembly $shortDll
     Add-Type -Path $shortDll
-}else{Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences}
+}elseif($TrayPointerOnly){
+    $pointerCompilerErrors=$null
+    $pointerDefines=if($DragPreviewOnly){@('/define:EATWHAT_TRAY_POINTER_PLATFORM,EATWHAT_DRAG_PREVIEW_PLATFORM','/nowarn:0414')}else{@('/define:EATWHAT_TRAY_POINTER_PLATFORM')}
+    Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences -CompilerOptions $pointerDefines -ErrorAction Continue -ErrorVariable pointerCompilerErrors
+    if($pointerCompilerErrors){throw 'Pointer production-source compilation failed; all compiler errors are preserved above.'}
+}
+else{Add-Type -Path $sourcePaths -ReferencedAssemblies $hostReferences}
+if($TrayPointerOnly){
+    if($CompileOnly){@{action='TRAY_POINTER_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $pointer=[ShortCycleTrayPointerTests]::Run()
+    if($DragPreviewOnly){
+        $oldPointerCases=@([ShortCycleTrayPointerTests]::Cases);$oldPointerChecks=[ShortCycleTrayPointerTests]::Checks
+        $preview=[ShortCycleDragPreviewTests]::Run()
+        if($AuthoredTrayPickOnly){
+            @{pointerResult=$pointer;pointerChecks=$oldPointerChecks;previewResult=$preview;
+                previewChecks=[ShortCycleDragPreviewTests]::Checks;coreAssemblyTests=$coreAssemblyResult;
+                beforeTraySource=$BeforeTraySlotPath;nativeInvocations=0}|ConvertTo-Json -Depth 5|
+                Set-Content -Encoding utf8 (Join-Path $coreAssemblyReportRoot 'authored-prior-suites.json')
+            $authored=[ShortCycleDragPreviewTests]::RunAuthoredPickup($repoRoot)
+            @{success=$true;authoredResult=$authored;authoredCases=[ShortCycleDragPreviewTests]::AuthoredCases;
+                authoredChecks=[ShortCycleDragPreviewTests]::AuthoredCases.Count;
+                authoredOccupiedSlotPick=[ShortCycleDragPreviewTests]::AuthoredOccupiedPickPassed;
+                repeatReleaseAndTrayBackground=[ShortCycleDragPreviewTests]::AuthoredReleaseBackgroundPassed;
+                acceptedVisualsAndFridgePreserved=[ShortCycleDragPreviewTests]::AuthoredVisualsPreservedPassed;
+                importedOverlapSelectsFood=[ShortCycleDragPreviewTests]::ImportedOverlapSelectsFood;
+                hitOrderIndependent=[ShortCycleDragPreviewTests]::HitOrderIndependent;
+                firstReturnAndTrayBackgroundPreserved=([ShortCycleDragPreviewTests]::AuthoredOccupiedPickPassed -and [ShortCycleDragPreviewTests]::AuthoredReleaseBackgroundPassed);
+                eggOverlapDepth=[ShortCycleDragPreviewTests]::EggOverlapDepth;soupOverlapDepth=[ShortCycleDragPreviewTests]::SoupOverlapDepth;
+                pointerChecks=$oldPointerChecks;pointerCases=$oldPointerCases;
+                previewChecks=[ShortCycleDragPreviewTests]::Checks;previewCases=[ShortCycleDragPreviewTests]::Cases;
+                coreAssemblyTests=$coreAssemblyResult;nativeInvocations=0;
+                boundary='Real MouseManager/Draggable/DragContainer, authored slot transforms/box and the three fixed Unity imported Sprite physics-shape paths; controlled input fixture, no Editor/Play.'}|ConvertTo-Json -Depth 7;return
+        }
+        @{success=$true;pointerResult=$pointer;pointerChecks=$oldPointerChecks;
+            pointerCases=$oldPointerCases;previewResult=$preview;
+            previewChecks=[ShortCycleDragPreviewTests]::Checks;previewCases=[ShortCycleDragPreviewTests]::Cases;
+            sharedTrayAppearanceAboveTray=[ShortCycleDragPreviewTests]::AppearancePassed;
+            consecutiveReturnsKeepSourcePickable=[ShortCycleDragPreviewTests]::ReusePassed;
+            gestureCleanupAndExistingInputsPreserved=[ShortCycleDragPreviewTests]::CleanupPassed;
+            baselineSourceStable=[ShortCycleDragPreviewTests]::BaselineSourceStable;baselineObservation=[ShortCycleDragPreviewTests]::BaselineObservation;
+            coreAssemblyTests=$coreAssemblyResult;sourceCount=$sourcePaths.Count;nativeInvocations=0;
+            boundary='Real production MouseManager/Draggable/DragContainer/DropZone/ShortCycle; controlled platform geometry, no native input claim.'}|ConvertTo-Json -Depth 6;return
+    }
+    @{success=$true;result=$pointer;checks=[ShortCycleTrayPointerTests]::Checks;cases=[ShortCycleTrayPointerTests]::Cases;
+        sourceCount=$sourcePaths.Count;coreAssemblyTests=$coreAssemblyResult;nativeInvocations=0;
+        boundary='Real MouseManager/Pressable/Button/Draggable/DropZone and current ShortCycle source; controlled platform geometry and input fixtures, no native input claim.'}|ConvertTo-Json -Depth 6;return
+}
+if($ReturnButtonsOnly){
+    if($CompileOnly){@{action='RETURN_BUTTONS_COMPILED';sourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
+    $buttons=[ShortCycleReturnButtonTests]::Run()
+    $coreIntegration=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
+    $recipeBook=[ShortCycleRecipeBookTests]::Run($repoRoot)
+    @{success=$true;returnButtons=$buttons;returnButtonCases=[ShortCycleReturnButtonTests]::Cases;
+        returnButtonChecks=[ShortCycleReturnButtonTests]::Checks;coreAssemblyTests=$coreAssemblyResult;
+        coreIntegration=$coreIntegration;recipeBook=$recipeBook;integrationSourceCount=$sourcePaths.Count;
+        nativeInvocations=0}|ConvertTo-Json -Depth 6;return
+}
 if($coreAssemblyOnly){
     if($CompileOnly){@{action='CORE_ASSEMBLY_COMPILED';coreSourceCount=$coreSourcePaths.Count;integrationSourceCount=$sourcePaths.Count}|ConvertTo-Json -Compress;return}
     $coreIntegration=[EatWhat.Cooking.ShortCycle.Tests.ShortCycleCoreTests]::Run()
@@ -1298,25 +1440,25 @@ if($validationHostOnly){
         $shortCycleAssembly=Join-Path $repoRoot 'Library/ScriptAssemblies/ShortCycle.dll'
         $toolkitAssembly=Join-Path $repoRoot 'Library/ScriptAssemblies/Toolkit.dll'
         if(-not(Test-Path -LiteralPath $shortCycleAssembly) -or -not(Test-Path -LiteralPath $toolkitAssembly)){throw 'Existing native-compiled host dependencies missing; do not refresh Unity from CODE.'}
-        $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($shortCycleAssembly,$toolkitAssembly)) 'UNITY_EDITOR'
+        $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $legacyEditor 'ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($shortCycleAssembly,$toolkitAssembly)) 'UNITY_EDITOR'
         $value=@{taskId=$validationTaskId;success=$true;behavior=$behavior;cases=$hostCases;cancellation=$cancelBehavior;cancellationCases=$cancelCases;defaultPathReads=[UnityEngine.Application]::PersistentPathReads;compiled=@($launcher);dependency=@{shortCycle=$shortCycleAssembly;sha256=(Get-FileHash -LiteralPath $shortCycleAssembly -Algorithm SHA256).Hash};nativeInvocations=0;forcedEnteredEditForPendingSuccess=$false;apiBoundary='Changed Launcher compiled against real installed UnityEditor/UnityEngine and already-native-compiled unchanged ShortCycle/Toolkit dependencies. No Unity execution or unrelated module recompile.'}
         [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 15),[Text.UTF8Encoding]::new($false))
         $value|ConvertTo-Json -Depth 8;return
     }
-    $toolkitSources=@(Get-ChildItem (Join-Path $repoRoot 'Assets/Scripts/Tools/Security'),(Join-Path $repoRoot 'Assets/Scripts/Tools/Persistence') -Filter '*.cs' -File|ForEach-Object FullName)
+    $toolkitSources=@(Get-ChildItem (Join-Path $legacyScripts 'Tools/Security'),(Join-Path $legacyScripts 'Tools/Persistence') -Filter '*.cs' -File|ForEach-Object FullName)
     $toolkit=Compile-ValidationApi 'Toolkit.Validation' $toolkitSources $baseRefs ''
     # Project declarations only; all Unity/Editor APIs below are the real installed DLLs.
     # Actual host behavior above uses original Session/Isolation/Probe source, not this declaration shim.
     $shim=Join-Path $out 'ProjectContract.cs'
     $shimText='using UnityEngine;public sealed class LocTableEntry {} namespace EatWhat.Cooking.ShortCycle { public sealed class ShortCycleSessionManager:MonoBehaviour {internal bool PersistenceAwakeStarted,PersistenceEnded,PersistenceIsolationRequired;internal CK01GeneratedDataCatalog ValidationCatalog {get{return null;}}internal void RequirePersistenceIsolation(){PersistenceIsolationRequired=true;}internal void DisableIsolatedStorage(){} } public sealed class ShortCycleAutomatedProbe:MonoBehaviour {public void RunProbe(){}} }'
     [IO.File]::WriteAllText($shim,$shimText,[Text.UTF8Encoding]::new($false))
-    $runtime=@($shim,(Join-Path $repoRoot 'Assets/Scripts/Cooking/ShortCycle/Runtime/ShortCycleSaveIsolation.cs'),(Join-Path $repoRoot 'Assets/Scripts/Cooking/ShortCycle/Debug/ShortCycleValidationBootstrap.cs'))
+    $runtime=@($shim,(Join-Path $legacyScripts 'Cooking/ShortCycle/Runtime/ShortCycleSaveIsolation.cs'),(Join-Path $legacyScripts 'Cooking/ShortCycle/Debug/ShortCycleValidationBootstrap.cs'))
     $catalogAssembly=Join-Path $repoRoot 'Library/ScriptAssemblies/Generated.DataTables.dll'
     if(-not(Test-Path -LiteralPath $catalogAssembly -PathType Leaf)){throw 'Existing native Catalog assembly is missing; CODE cannot refresh.'}
     $player=Compile-ValidationApi 'Validation.PlayerRelease' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'CK01_ENCRYPTED_DATA'
     $dev=Compile-ValidationApi 'Validation.PlayerDevelopment' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'DEVELOPMENT_BUILD'
     $authoring=Compile-ValidationApi 'Validation.EditorRuntime' $runtime ($baseRefs+$engine+@($toolkit,$catalogAssembly)) 'UNITY_EDITOR'
-    $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $repoRoot 'Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($toolkit,$catalogAssembly,$authoring)) 'UNITY_EDITOR'
+    $launcher=Compile-ValidationApi 'Validation.EditorLauncher' @((Join-Path $legacyEditor 'ProjectValidation/ShortCycleValidationLauncher.cs')) ($baseRefs+$engine+$editor+@($toolkit,$catalogAssembly,$authoring)) 'UNITY_EDITOR'
     $value=@{taskId=$validationTaskId;success=$true;behavior=$behavior;cases=$hostCases;playerDataBehavior=$playerDataBehavior;playerDataCases=$playerDataCases;baselineSha256=$baselineSha;hostSources=$sourcePaths.Count;isolatedRunPrefix=$run;defaultPathReads=[UnityEngine.Application]::PersistentPathReads;compiled=@($toolkit,$player,$dev,$authoring,$launcher);catalogDependency=@{path=$catalogAssembly;sha256=(Get-FileHash -LiteralPath $catalogAssembly -Algorithm SHA256).Hash};nativeInvocations=0;apiBoundary='Real Unity6000.3.24f1 Engine/Editor DLLs and installed Catalog assembly; project declaration shim only for API compilation. Behavioral fixtures execute actual current Session/Catalog/host source. No native lifecycle claim.'}
     if($productRepairOnly){$value.reentrancy=$repairResult;$value.reentrancyCases=@([ShortCyclePhase2TransitionTests]::ReentrancyCases)}
     [IO.File]::WriteAllText((Join-Path $report 'result.json'),($value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))

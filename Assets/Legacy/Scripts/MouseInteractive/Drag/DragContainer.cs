@@ -6,6 +6,13 @@ using UnityEngine.Events;
 [RequireComponent(typeof(BoxCollider2D))]
 public class DragContainer : MonoBehaviour
 {
+    // Optional runtime presentation. The authored drag events still reach this
+    // component, but opted-in visuals never move the live source or its collider.
+    public System.Action<DragContainer> VisualDragStart { get; set; }
+    public System.Action<DragContainer> VisualDragUpdate { get; set; }
+    public System.Action<DragContainer> VisualDragEnd { get; set; }
+    private bool visualDragActive;
+    private bool visualGestureHandled;
     public BoxCollider2D col;
     public Vector3 startPos;
 
@@ -378,6 +385,17 @@ public class DragContainer : MonoBehaviour
 
     public void onDragStart()
     {
+        if (VisualDragStart != null)
+        {
+            StopAllMotion();
+            isDragging = false;
+            visualGestureHandled = true;
+            visualDragActive = true;
+            VisualDragStart(this);
+            onDragStartEvent?.Invoke();
+            return;
+        }
+        visualGestureHandled = false;
         startPos = Tools.getMousePos();
 
         // useLocalSpace 时确保边界是最新的
@@ -402,6 +420,12 @@ public class DragContainer : MonoBehaviour
 
     public void onDragUpdate()
     {
+        if (visualGestureHandled)
+        {
+            if (visualDragActive) VisualDragUpdate?.Invoke(this);
+            onDragUpdateEvent?.Invoke(Vector3.zero);
+            return;
+        }
         moveToDragPos();
 
         // 计算当前速度
@@ -413,6 +437,12 @@ public class DragContainer : MonoBehaviour
 
     public void onDragEnd()
     {
+        if (visualGestureHandled)
+        {
+            CancelVisualDrag();
+            onDragEndEvent?.Invoke(Vector3.zero);
+            return;
+        }
         isDragging = false;
 
         // 计算最终速度
@@ -435,6 +465,15 @@ public class DragContainer : MonoBehaviour
             }
         }
     }
+
+    public void CancelVisualDrag()
+    {
+        if (!visualDragActive) return;
+        visualDragActive = false;
+        VisualDragEnd?.Invoke(this);
+    }
+
+    private void OnDisable() { CancelVisualDrag(); }
 
     public void moveToDragPos()
     {

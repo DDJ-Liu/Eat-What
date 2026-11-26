@@ -46,6 +46,11 @@ namespace EatWhat.Cooking.ShortCycle
         protected bool ContentVisible { get { return contentVisible; } }
         public bool InteractionAllowed { get; private set; }
         public ShortCycleGridPieceDisplay Display { get; private set; }
+        internal ShortCycleSessionManager OwnerSession { get { return sessionManager; } }
+        internal SpriteRenderer DragIcon { get { return iconRenderer; } }
+        internal SpriteRenderer DragPlaceholder { get { return placeholderRenderer; } }
+        internal TextMeshPro DragName { get { return nameLabel; } }
+        internal TextMeshPro DragBadge { get { return badgeLabel; } }
 
         protected virtual void OnEnable()
         {
@@ -76,6 +81,8 @@ namespace EatWhat.Cooking.ShortCycle
 
         public void Configure(ShortCycleGridPieceDisplay display)
         {
+            var preview = GetComponent<ShortCycleIngredientDragPreview>();
+            if (preview != null) preview.SourceRebinding();
             Display = display ?? new ShortCycleGridPieceDisplay();
             if (iconRenderer != null)
             {
@@ -132,6 +139,11 @@ namespace EatWhat.Cooking.ShortCycle
         {
             allowed = allowed && contentVisible && ContentAllowsInteraction;
             InteractionAllowed = allowed;
+            if (!allowed)
+            {
+                var preview = GetComponent<ShortCycleIngredientDragPreview>();
+                if (preview != null) preview.SourceRebinding();
+            }
             foreach (var behaviour in mouseInteractBehaviours)
             {
                 if (behaviour != null)

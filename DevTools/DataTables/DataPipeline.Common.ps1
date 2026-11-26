@@ -356,13 +356,16 @@ function Get-DataPipelineInputSnapshot {
             fileCount = $manifest.Count
         }
     })
-    $summaryRows = @($entries | ForEach-Object { "$($_.scope)|$($_.exists)|$($_.fileCount)|$($_.sha256)" })
+    $glyphToolRelative = 'DevTools/Fonts/Get-FontGlyphDecision.ps1'
+    $glyphToolPath = Join-Path $root $glyphToolRelative
+    $glyphToolHash = if (Test-Path -LiteralPath $glyphToolPath -PathType Leaf) { (Get-FileHash -LiteralPath $glyphToolPath -Algorithm SHA256).Hash } else { $null }
+    $summaryRows = @($entries | ForEach-Object { "$($_.scope)|$($_.exists)|$($_.fileCount)|$($_.sha256)" }) + @("$glyphToolRelative|$glyphToolHash")
     $sha256 = [System.Security.Cryptography.SHA256]::Create()
     try {
         $summary = [Convert]::ToHexString($sha256.ComputeHash([Text.Encoding]::UTF8.GetBytes(($summaryRows -join "`n"))))
     }
     finally { $sha256.Dispose() }
-    return [pscustomobject]@{ summarySha256=$summary; scopes=$entries }
+    return [pscustomobject]@{ summarySha256=$summary; scopes=$entries; glyphDecisionTool=[pscustomobject]@{path=$glyphToolRelative;sha256=$glyphToolHash} }
 }
 
 function Get-DataProjectUnityVersion {
@@ -437,7 +440,8 @@ function Invoke-DataBatchCommand {
         [Parameter(Mandatory)][string]$CompletionNonce,
         [string]$SourceTreeSha256,
         [string]$InputSnapshotSha256,
-        [bool]$RebuildStaticFont = $true,
+        [bool]$RebuildStaticFont = $false,
+        [string]$FontGlyphReportRoot,
         [ValidateRange(1, 7200)][int]$TimeoutSeconds = 1800
     )
 
@@ -472,6 +476,10 @@ function Invoke-DataBatchCommand {
     $startInfo.Environment['EATWHAT_DATA_COMPLETION_NONCE'] = $CompletionNonce
     $startInfo.Environment['EATWHAT_DATA_COMPLETION_PATH'] = $fullCompletionPath
     $startInfo.Environment['EATWHAT_REBUILD_STATIC_FONT'] = if ($RebuildStaticFont) {'1'} else {'0'}
+    if ($FontGlyphReportRoot) { $startInfo.Environment['EATWHAT_FONT_GLYPH_REPORT_ROOT'] = [IO.Path]::GetFullPath($FontGlyphReportRoot) }
+    if (-not $startInfo.Environment['EATWHAT_PWSH_PATH']) {
+        $startInfo.Environment['EATWHAT_PWSH_PATH'] = Join-Path $PSHOME $(if ($IsWindows) {'pwsh.exe'} else {'pwsh'})
+    }
     if ($SourceTreeSha256) { $startInfo.Environment['EATWHAT_DATA_SOURCE_TREE_SHA256'] = $SourceTreeSha256 }
     if ($InputSnapshotSha256) { $startInfo.Environment['EATWHAT_DATA_INPUT_SNAPSHOT_SHA256'] = $InputSnapshotSha256 }
 

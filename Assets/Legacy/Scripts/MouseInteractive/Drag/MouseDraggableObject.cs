@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+// Optional same-scope tie policy. Existing UI has no provider and keeps its ranking.
+public interface IMouseHitDepth
+{
+    object MouseHitScope { get; }
+    string MouseHitKey { get; }
+    bool TryGetMouseHitDepth(Vector2 point, out float depth);
+}
+
 public class MouseDraggableObject : MonoBehaviour
 {
+    public event System.Action<MouseDraggableObject> PreparingDrag;
     public enum InteractionBoundsMode { None, RectTransform, Collider }
 
     public bool dragging = false;
@@ -65,6 +74,7 @@ public class MouseDraggableObject : MonoBehaviour
     public void enterDrag()
     {
         dragging = true;
+        PreparingDrag?.Invoke(this);
         startDraggingEvent.Invoke();
     }
 

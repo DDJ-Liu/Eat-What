@@ -1,5 +1,9 @@
 # 工具库 · CMD
 
+最后完整核验：**2026-09-17**（不提高）。本次仅整理文档与核对源码归属；任务执行过程、当时的测试与许可记录移至历史，不能据历史状态启动业务。执行规则以 AGENTS.md、WORKFLOW.md 的现行优先条款为准。工具表保留原能力、使用限制与来源语义，旧候选／待验标签不代表本次重新验收。
+
+## 现状
+
 > 从 [INDEX.md](INDEX.md) 定位；状态与公开面沿用原登记。
 
 <a id="tk-mot-07"></a>
@@ -13,28 +17,31 @@
 
 ## 8. CMD · 命令
 
-### AI-000067 扩充登记（2026-09-07，未验收检查点）
-
-| ID | 本轮公开面与消费说明 | 状态/边界 |
-|---|---|---|
-| TK-MOT-07 | Traveler 继续消费 `TransitionBehaviour_Position.MoveTo` 对应的既有 `PlayTo`；新增 `SnapTo(space)` 复用原锚点并取消活动移动；Set 新增 `DeactivateMode.RendererHidden`，避免宿主停用杀死运动协程 | 沿用；AI-000067 编辑器外初始 P0、P0 Clue 校正、P0↔P1 路径通过；真实场景由 FIX-T3 验收 |
-| TK-DBG-01 | 既有世界空间 TMP 在 LateUpdate 跟随显式 Camera 或 Main Camera，3% 左/上边距；字号按 ortho/7.2 缩放；退出恢复位置/旋转/字号/对齐/pivot | 沿用·保护；不新增 UI 输入通道，键位不变；实际画面待引擎验收 |
-| TK-DBG-04 | 增加共享引用合并、过期 arrival、防停宿主、Renderer/gate 恢复表、五步日志短路和相机/状态板测试 | 沿用·保护；使用原 runner/stubs，非 Unity 实测 |
-| TK-DBG-05 | `DeactivateMode` 默认 ContainerInactive；RendererHidden 缓存并隐藏全部子 Renderer，恢复原始 enabled；Director 汇总各 Space 引用后应用 Set 激活/焦点 | 沿用；保留 overflowRenderers 名单，本 CODE 任务不做序列化改动 |
-| TK-DBG-06 | `Assets/Scripts/Tools/Debug/CameraFrameGizmo.cs`：运行时数据组件，显式 camera、P1/P0-Left/P0-Center/Right marker、`FrameSize(Camera)`/`GetMarker(int)`；`Assets/Editor/ShortCycle/CameraFrameGizmo.cs` 的静态 `[DrawGizmo]` 绘制器及同目录 `CameraFrameGizmoMenu.cs` 保留 10% 网格/刻度、±2% 安全框、四色/最近机位加粗和四项对齐菜单 | 沿用·扩充；AI-000074/AI-000155 真实 Unity DLL 双段编译通过，runtime 不引用 UnityEditor；正式场景第四 Marker/引用和最终画面归 AI-000156，不新增平行工具 |
-
 本增补覆盖上述旧行中的本轮变化，其它条目及 TK-MOT-09 冻结状态不变。完整任务报告见 `.ai-workspace/outputs/CK01-K/FIX-T2_线索板可见性与调试参照框报告.md`。
 
-2026-09-08 AI-000074 完成复核：控制台已核实运行时新文件、Editor 绘制器与菜单存在，SHA-256 分别为 `B5971C87…667E5`、`77CC07FF…A0D1`、`2C7AECCC…B4746`，并合并到唯一 TK-DBG-06 登记。源码程序集修复完成，不等同于 AI-000069 场景挂载或最终人工段通过。报告：`.ai-workspace/outputs/CK01-K/FIX-T2d_CameraFrameGizmo_程序集归属修复报告.md`。
-
-| ID | 名称 / 路径 | 能力 | 公开面 | 状态 | 消费方 | 来源 | 备注 |
-|---|---|---|---|---|---|---|---|
-| TK-CMD-01 | `CommandManager` + `CommandBindingAsset` `Command/` | string key→命令 ID | — | 改造 | 提示类命令 | CK01-A #15 | 业务动作走 ActionRouter |
-| TK-CMD-02 | `ShortCycleCommandBridge` | `[Command]` 反射暴露具名动作 | 23 个手写 Command，含 `close_cover` | 沿用 | 调试/驱动 | C-T4 / C-T8 / AI-000071 | 单向消费唯一 ActionRouter；与 23 个具名动作的对应由既有 runner 校验 |
+| ID | 名称 / 路径 | 能力 | 公开面 | 状态 | 消费方 | 来源 | 备注 | 程序集／宿主 |
+|---|---|---|---|---|---|---|---| --- |
+| TK-CMD-01 | `CommandManager` + `CommandBindingAsset` `Command/` | string key→命令 ID | — | 改造 | 提示类命令 | CK01-A #15 | 业务动作走 ActionRouter | `Toolkit` |
+| TK-CMD-02 | `ShortCycleCommandBridge` | `[Command]` 反射暴露具名动作 | 23 个手写 Command，含 `close_cover` | 沿用 | 调试/驱动 | C-T4 / C-T8 / AI-000071 | 单向消费唯一 ActionRouter；与 23 个具名动作的对应由既有 runner 校验 | `ShortCycle` |
 
 ---
 
+## 已核程序集与文件定位
 
-2026-10-19 AI-000264：TK-CMD-01新增受限ResolveDeclaringType兼容解析，CommandEntry按void(CommandContext)/特性/实例标志核签名；CommandManager复用解析。TK-CMD-02实际23项全覆盖旧/新ID离线测试通过，默认资源中DialogSystem两条旧ID保留。候选归属TK-CMD-01→Toolkit、TK-CMD-02→ShortCycle，尚未ENGINE安装，不把预期归属写成生产已落地；无新TK。
+按当前 `.asmdef`／最近 `.asmref` 解析；下列只是源码归属，不代表重新编译、运行或验收。
 
-2026-10-19 AI-000265 attempt2：TK-CMD-01正式归Toolkit、TK-CMD-02归ShortCycle，原生23命令及全部旧ID/现有绑定解析通过，当前场景263项事件目标方法未缺失。Play探针在状态/输入锁序列未通过，不能把兼容解析通过视为全部动作回归通过；整体阶段尚未验收。
+| 程序集 | 定义／归属入口 | 本页相关源码例 |
+| --- | --- | --- |
+| `Editor.ShortCycle` | [Assets/Editor/ShortCycle/Editor.ShortCycle.asmdef](<../../Assets/Editor/ShortCycle/Editor.ShortCycle.asmdef>) | [CameraFrameGizmo.cs](<../../Assets/Editor/ShortCycle/CameraFrameGizmo.cs>)；[CameraFrameGizmoMenu.cs](<../../Assets/Editor/ShortCycle/CameraFrameGizmoMenu.cs>) |
+| `ShortCycle` | [Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef](<../../Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef>) | [ShortCycleCommandBridge.cs](<../../Assets/Scripts/Cooking/ShortCycle/ShortCycleCommandBridge.cs>) |
+| `Toolkit` | [Assets/Scripts/Tools/Toolkit.asmdef](<../../Assets/Scripts/Tools/Toolkit.asmdef>) | [CameraFrameGizmo.cs](<../../Assets/Scripts/Tools/Debug/CameraFrameGizmo.cs>)；[Tools.cs](<../../Assets/Scripts/Tools/Tools.cs>)；[TransitionBehaviour_Position.cs](<../../Assets/Scripts/Tools/Transition/TransitionBehaviour_Position.cs>) |
+| `Toolkit` | [Assets/Scripts/Command/Toolkit.asmref](<../../Assets/Scripts/Command/Toolkit.asmref>) | [CommandBindingAsset.cs](<../../Assets/Scripts/Command/CommandBindingAsset.cs>)；[CommandContext.cs](<../../Assets/Scripts/Command/CommandContext.cs>)；[CommandManager.cs](<../../Assets/Scripts/Command/CommandManager.cs>) |
+
+## 历史
+
+[本页整理前全文与历史记录](<../../docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/CMD.md>)；[归档与原字节恢复索引](<../../docs/archive/工程事实_20261124/README.md>)；[已知不符与保留边界](<../../docs/archive/工程事实_20261124/差异与保留边界.md>)。
+
+### 历史章节兼容锚点
+
+<a id="ai-000067-扩充登记2026-09-07未验收检查点"></a>
+[原章节](<../../docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/CMD.md#ai-000067-扩充登记2026-09-07未验收检查点>)

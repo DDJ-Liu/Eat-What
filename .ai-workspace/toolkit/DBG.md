@@ -1,5 +1,9 @@
 # 工具库 · DBG
 
+最后完整核验：**2026-09-17**（不提高）。本次仅整理文档与核对源码归属；任务执行过程、当时的测试与许可记录移至历史，不能据历史状态启动业务。执行规则以 AGENTS.md、WORKFLOW.md 的现行优先条款为准。工具表保留原能力、使用限制与来源语义，旧候选／待验标签不代表本次重新验收。
+
+## 现状
+
 > 从 [INDEX.md](INDEX.md) 定位；状态与公开面沿用原登记。
 
 <a id="tk-dbg-01"></a>
@@ -13,23 +17,29 @@
 
 ## 7. DBG · 调试与审计（G26 保护）
 
-| ID | 名称 / 路径 | 能力 | 公开面 | 状态 | 消费方 | 来源 | 备注 |
-|---|---|---|---|---|---|---|---|
-| TK-DBG-01 | `ShortCycleManualVerificationDriver` | 既有键位→具名动作 + 世界空间状态板 + DRIVER 日志 | 键位表见 C-T8 报告；状态含 `hasSelectedRecipe` | 沿用·保护 | 人工段 / FIX-T4b | C-T8 / AI-000071 / AI-000072 | AI-000072 已在真实 Play 完成空选菜、选菜、Catalog 往返及分层 ESC 驱动验证；键位不变，不删不降级 |
-| TK-DBG-02 | `ShortCycleAutomatedProbe` | 固定序列自动探针 | Cover→Catalog→select→Browse 后继续 P0/P1 与逐层 ESC | 沿用·保护 | 回归 / FIX-T4b | A-5 / AI-000071 / AI-000072 | 使用显式 `verificationRecipeId`、按 PanCompleted 等待；AI-000072 真实 Play 返回 PASS |
-| TK-DBG-03 | `ShortCycleLayoutAudit`（Editor） | 只读：根序/禁名/UGUI/Missing/启用集合/坐标、命中区与Spaces字体审计 | 菜单项；输出`spacesStaticFontValid`及逐路径差异 | 沿用·保护/扩充 | C-T5a-R / 5b / 5c / PRE-1 | C-T5a / AI-000156 / AI-000161 | 度量与写入分离（§7 模板 C）；静态字体未生成/未迁移时断言如实为false，不反写场景 |
-| TK-DBG-04 | `Test-CK01CShortCycle.ps1` + `ShortCycleCoreTests.cs` + `UnityStubs.cs`；`CoordinateSpaceRegression/Test-DragLimitCoordinateSpace.ps1` `DevTools/ShortCycle/` | Editor 外纯逻辑测试、静态哨兵与隔离坐标回归 | 命令行；93 源码单元 / 267 静态契约；4 组生产坐标路径 | 沿用·扩充 | 每个 CODE 任务 | C-T1~C-T8 / AI-000071 / 074 / 075 / 077 / 083 / 085 / 086 / 088 / 113 / 153 / 155 | 新增③→① Pan+锁+延迟激活、①↔④无Pan、四区bounds、同目的地Traveler无协程、Core/Find/四Marker哨兵；覆盖原 CAM-T2b 返向/取消/生命周期。仍不等于真实 Unity/画面证明 |
-| TK-DBG-05 | `ShortCyclePresentationSet.overflowRenderers` + 缓存 Renderer 世界 bounds | Set 逻辑激活与相机世界矩形相交、出画例外、退出/禁用/销毁恢复 | `IsInView(Rect)` `TryGetWorldBounds(out Bounds)` `MarkBoundsDirty()` `SetFocus` `RestoreTransientState()` + Inspector `overflowRenderers[]` | 沿用·扩充 | Phase0/Phase1 PresentationSet | K-T2 / K-T3 / AI-000083 / AI-000155 | 稳定帧不重复枚举/分配 Renderer 数组；层级/动画/校验置脏并对已缓存 bounds 变化复核。无 Renderer 或无可用相机时保留逻辑可见并节流告警；overflowRenderers 仍只作强制隐藏例外；OnDisable/OnDestroy 不重入同层级 SetActive |
-| TK-DBG-07 | `ShortCycleFridgeScrollTraceProbe` `Cooking/ShortCycle/Debug/` | 默认关闭的真实滚轮只读分层诊断：设备/焦点/InputLock→层栈/候选/阻挡/原因→raw/step/Adapter映射→层级/位移 | `SetTraceEnabled`、会话/快照/导出 API；读取 MouseManager 同帧 resolve/dispatch 权威字段、Adapter raw/mapped、Presentation focus 与 InputLock；前缀 `[CK01-F-SCROLL-TRACE]` | 沿用·扩充/P0P1机器门通过/硬件待验 | P0P1 挂载；FridgeScrollLab；用户真实鼠标复验 | AI-000075 / AI-000076 / AI-000088 / AI-000090 / AI-000113 / AI-000114 | 默认关闭且不注入事件/动作、不改 Tier；P0P1已补Fridge Set/InputLock引用并完成SIMULATED四点/链路/生命周期证据，真实硬件raw/step、方向/焦点与手感仍待用户人工验收 |
-| TK-DBG-08 | `VisualEffectsLabDriver` + `VisualEffectsLabBuilder/Audit` + Outline `Driver/Builder/Audit` + Rendering runners | 单一 Lab 的 VERIFY-TEMP 手工驱动、显式幂等增量装配、独立只读审计与离线回归 | 原型/正式矩阵、隔离Cat、Defaults；Forward_2显式正规化、确定性透明边夹具、Play聚焦/恢复、接线/几何/机位审计；预算导出 | 沿用·正式Lab后端与Forward_2原点位机器门通过 | VisualEffectsLab T2/T3、OUT-L1c/T1b/OUT-T2/OUT-MEMBER | AI-000079/080/081/097/098/099/100/101/102/103/104/096/093/094/105/095/107/111/112 | 入口拒绝未知夹具覆盖；AI112已证明第二次零重写、当前Importer/scene合同、固定机位GPU A/B、两次Play复现、相机恢复及RT/材质清理，主观视觉继续后置 |
-| TK-DBG-09 | `FridgeScrollLabDriver` + `FridgeScrollLabBuilder/Audit` + `ShortCycleModalScrollVerificationControl` | 独立冰箱滚轮 Lab 的合法 Phase1 薄宿主、REAL_INPUT/SIMULATED 对照、显式幂等搭建/审计及 Phase1 临时 Modal 验收按钮 | Driver ContextMenu；`OpenForVerification` / `CloseForVerification` / `IsOpen`；`BuildOrOpen`；`AuditActiveScene/RunAudit` | 沿用·扩充/Modal修复待ENGINE与人工验收 | `FridgeScrollLab.unity`；`ShortCycle_P0P1` 临时入口 | AI-000088 / 089 / 090 / 153 | VERIFY-TEMP 控件只压入独立零命中层，离开Phase1/禁用/销毁自动清理；不改正式 Layer_Modal/FSM，正式入口完成后删除。长期Wheel Probe在Modal保持开启时锁定manager/adapter/tier并验证关闭恢复；物理鼠标与主观手感仍由用户人工验收 |
+| ID | 名称 / 路径 | 能力 | 公开面 | 状态 | 消费方 | 来源 | 备注 | 程序集／宿主 |
+|---|---|---|---|---|---|---|---| --- |
+| TK-DBG-01 | `ShortCycleManualVerificationDriver` | 既有键位→具名动作 + 世界空间状态板 + DRIVER 日志 | 键位表见 C-T8 报告；状态含 `hasSelectedRecipe` | 沿用·保护 | 人工段 / FIX-T4b | C-T8 / AI-000071 / AI-000072 | AI-000072 已在真实 Play 完成空选菜、选菜、Catalog 往返及分层 ESC 驱动验证；键位不变，不删不降级 | `ShortCycle` |
+| TK-DBG-02 | `ShortCycleAutomatedProbe` | 固定序列自动探针 | Cover→Catalog→select→Browse 后继续 P0/P1 与逐层 ESC | 沿用·保护 | 回归 / FIX-T4b | A-5 / AI-000071 / AI-000072 | 使用显式 `verificationRecipeId`、按 PanCompleted 等待；AI-000072 真实 Play 返回 PASS | `ShortCycle` |
+| TK-DBG-03 | `ShortCycleLayoutAudit`（Editor） | 只读：根序/禁名/UGUI/Missing/启用集合/坐标、命中区与Spaces字体审计 | 菜单项；输出`spacesStaticFontValid`及逐路径差异 | 沿用·保护/扩充 | C-T5a-R / 5b / 5c / PRE-1 | C-T5a / AI-000156 / AI-000161 | 度量与写入分离（§7 模板 C）；静态字体未生成/未迁移时断言如实为false，不反写场景 | `Editor.ShortCycle` |
+| TK-DBG-04 | `Test-CK01CShortCycle.ps1` + `ShortCycleCoreTests.cs` + `UnityStubs.cs`；`CoordinateSpaceRegression/Test-DragLimitCoordinateSpace.ps1` `DevTools/ShortCycle/` | Editor 外纯逻辑测试、静态哨兵与隔离坐标回归 | 命令行；93 源码单元 / 267 静态契约；4 组生产坐标路径 | 沿用·扩充 | 每个 CODE 任务 | C-T1~C-T8 / AI-000071 / 074 / 075 / 077 / 083 / 085 / 086 / 088 / 113 / 153 / 155 | 新增③→① Pan+锁+延迟激活、①↔④无Pan、四区bounds、同目的地Traveler无协程、Core/Find/四Marker哨兵；覆盖原 CAM-T2b 返向/取消/生命周期。仍不等于真实 Unity/画面证明 | PowerShell／编辑器外入口 |
+| TK-DBG-05 | `ShortCyclePresentationSet.overflowRenderers` + 缓存 Renderer 世界 bounds | Set 逻辑激活与相机世界矩形相交、出画例外、退出/禁用/销毁恢复 | `IsInView(Rect)` `TryGetWorldBounds(out Bounds)` `MarkBoundsDirty()` `SetFocus` `RestoreTransientState()` + Inspector `overflowRenderers[]` | 沿用·扩充 | Phase0/Phase1 PresentationSet | K-T2 / K-T3 / AI-000083 / AI-000155 | 稳定帧不重复枚举/分配 Renderer 数组；层级/动画/校验置脏并对已缓存 bounds 变化复核。无 Renderer 或无可用相机时保留逻辑可见并节流告警；overflowRenderers 仍只作强制隐藏例外；OnDisable/OnDestroy 不重入同层级 SetActive | `ShortCycle` |
+| TK-DBG-07 | `ShortCycleFridgeScrollTraceProbe` `Cooking/ShortCycle/Debug/` | 默认关闭的真实滚轮只读分层诊断：设备/焦点/InputLock→层栈/候选/阻挡/原因→raw/step/Adapter映射→层级/位移 | `SetTraceEnabled`、会话/快照/导出 API；读取 MouseManager 同帧 resolve/dispatch 权威字段、Adapter raw/mapped、Presentation focus 与 InputLock；前缀 `[CK01-F-SCROLL-TRACE]` | 沿用·扩充/P0P1机器门通过/硬件待验 | P0P1 挂载；FridgeScrollLab；用户真实鼠标复验 | AI-000075 / AI-000076 / AI-000088 / AI-000090 / AI-000113 / AI-000114 | 默认关闭且不注入事件/动作、不改 Tier；P0P1已补Fridge Set/InputLock引用并完成SIMULATED四点/链路/生命周期证据，真实硬件raw/step、方向/焦点与手感仍待用户人工验收 | `ShortCycle`、`Toolkit` |
+| TK-DBG-08 | `VisualEffectsLabDriver` + `VisualEffectsLabBuilder/Audit` + Outline `Driver/Builder/Audit` + Rendering runners | 单一 Lab 的 VERIFY-TEMP 手工驱动、显式幂等增量装配、独立只读审计与离线回归 | 原型/正式矩阵、隔离Cat、Defaults；Forward_2显式正规化、确定性透明边夹具、Play聚焦/恢复、接线/几何/机位审计；预算导出 | 沿用·正式Lab后端与Forward_2原点位机器门通过 | VisualEffectsLab T2/T3、OUT-L1c/T1b/OUT-T2/OUT-MEMBER | AI-000079/080/081/097/098/099/100/101/102/103/104/096/093/094/105/095/107/111/112 | 入口拒绝未知夹具覆盖；AI112已证明第二次零重写、当前Importer/scene合同、固定机位GPU A/B、两次Play复现、相机恢复及RT/材质清理，主观视觉继续后置 | `Editor.Project`、`Toolkit` |
+| TK-DBG-09 | `FridgeScrollLabDriver` + `FridgeScrollLabBuilder/Audit` + `ShortCycleModalScrollVerificationControl` | 独立冰箱滚轮 Lab 的合法 Phase1 薄宿主、REAL_INPUT/SIMULATED 对照、显式幂等搭建/审计及 Phase1 临时 Modal 验收按钮 | Driver ContextMenu；`OpenForVerification` / `CloseForVerification` / `IsOpen`；`BuildOrOpen`；`AuditActiveScene/RunAudit` | 沿用·扩充/Modal修复待ENGINE与人工验收 | `FridgeScrollLab.unity`；`ShortCycle_P0P1` 临时入口 | AI-000088 / 089 / 090 / 153 | VERIFY-TEMP 控件只压入独立零命中层，离开Phase1/禁用/销毁自动清理；不改正式 Layer_Modal/FSM，正式入口完成后删除。长期Wheel Probe在Modal保持开启时锁定manager/adapter/tier并验证关闭恢复；物理鼠标与主观手感仍由用户人工验收 | `Editor.ShortCycle`、`ShortCycle` |
 
-2026-10-19 AI-000264：TK-DBG-02固定线索板以起始世界位置为基线，pan逐帧采样并保留往返移动失败；13项编号检查点输出到AutomatedProbeCheckpoints/日志，旧anchor序列化字段保留且不驱动生产。TK-DBG-04与三个获批相关runner适配旧/新源码位置和默认/拆分DLL，缺失或双源显式失败。96源/282静态契约及17项测量/路径用例通过，未声称原生Play通过。候选DBG-02→ShortCycle、CameraFrame运行组件→Toolkit，真实安装后才登记为当前归属。
+## 已核程序集与文件定位
 
-2026-10-19 AI-000265 attempt2：既有ShortCycleAutomatedProbe经实际Play单次运行，13编号检查点7通过6失败；固定线索板测量检查8/11通过，线索板层开关及后续镜头输入锁/状态序列失败，详见outputs/DETACH-B13-20261019/AI-000265/attempt2/probe-result.json。原临时DebugAndReferences启用已在退出Play后恢复，场景clean且无保存；保留探针，不重跑、不改接线、不新增工具。
+按当前 `.asmdef`／最近 `.asmref` 解析；下列只是源码归属，不代表重新编译、运行或验收。
 
-2026-10-19 AI-000268（根AI265/诊断AI267）CODE修复：仅ShortCycleAutomatedProbe改变。等待使用目标Context、IsAtSlot/真实marker、!IsPanning和输入解锁的有界状态条件；选菜后及分层ESC逐段等待，同槽位同步完成可直接满足状态，不依赖可能已错过的事件。StartCooking后立即Return保留，并要求ErrorCode.Locked。线索板Open/Close核真实View和Phase0基础层Contains/Top，保留旧序列化字段。8/10/11/12依赖真实Phase1到达和成功返回，缺引用/超时/未覆盖均明确FAIL，13编号保留。AI265 attempt2的8/10/11/12旧PASS不能证明真实往返；原始7PASS/6FAIL与两次失败保留。离线真实DLL编译和既有CK runner通过，不代表13点Play通过；原AI265一次补验尚未由本卡消费，不重做安装/移动/身份设置。
+| 程序集 | 定义／归属入口 | 本页相关源码例 |
+| --- | --- | --- |
+| `Editor.Project` | [Assets/Editor/Editor.Project.asmdef](<../../Assets/Editor/Editor.Project.asmdef>) | [VisualEffectsLabBuilder.cs](<../../Assets/Editor/VisualEffects/VisualEffectsLabBuilder.cs>) |
+| `Editor.ShortCycle` | [Assets/Editor/ShortCycle/Editor.ShortCycle.asmdef](<../../Assets/Editor/ShortCycle/Editor.ShortCycle.asmdef>) | [FridgeScrollLabBuilder.cs](<../../Assets/Editor/ShortCycle/FridgeScrollLabBuilder.cs>)；[ShortCycleLayoutAudit.cs](<../../Assets/Editor/ShortCycle/ShortCycleLayoutAudit.cs>) |
+| `ShortCycle` | [Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef](<../../Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef>) | [FridgeScrollLabDriver.cs](<../../Assets/Scripts/Cooking/ShortCycle/Debug/FridgeScrollLabDriver.cs>)；[ShortCycleFridgeScrollTraceProbe.cs](<../../Assets/Scripts/Cooking/ShortCycle/Debug/ShortCycleFridgeScrollTraceProbe.cs>)；[ShortCycleModalScrollVerificationControl.cs](<../../Assets/Scripts/Cooking/ShortCycle/Debug/ShortCycleModalScrollVerificationControl.cs>) |
+| `Toolkit` | [Assets/Scripts/MouseInteractive/Toolkit.asmref](<../../Assets/Scripts/MouseInteractive/Toolkit.asmref>) | [MouseManager.cs](<../../Assets/Scripts/MouseInteractive/MouseManager.cs>) |
+| `Toolkit` | [Assets/Scripts/Tools/Toolkit.asmdef](<../../Assets/Scripts/Tools/Toolkit.asmdef>) | [VisualEffectsLabDriver.cs](<../../Assets/Scripts/Tools/Debug/VisualEffectsLabDriver.cs>) |
 
-2026-10-19 AI-000265 attempt3：AI268修复的既有ShortCycleAutomatedProbe原生编译/Play单次13/13通过，包括到位/解锁等待、基础层保留、Locked负向Return、实际Phase1往返及固定板测量；CookingProcess单次运行新增Error0。已Stop并恢复原场景clean、DebugAndReferences=false、runOnStart=false。原attempt2的7/13及两失败证据保留，未重跑安装/改业务锁或场景接线，无新工具；整体仍需CONTROL及DATA后继。
+## 历史
 
-2026-10-19 AI273扩充既有TK-DBG-04：Test-CK01CShortCycle纳入ShortCyclePhase2Tests，保留282静态、188既有行为及完整18探针源码，新增92纯逻辑断言覆盖Schema§八六分支、工序输入多重集、X5/工具/载具、步骤折叠/回退/尾事件；与既有校验器链序报告比对。真实CSV与显式纯夹具分开标识；首次夹具重名编译失败保留并同key解决。112文件离线编译不代表Unity/Console/Play验收。
+[本页整理前全文与历史记录](<../../docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/DBG.md>)；[归档与原字节恢复索引](<../../docs/archive/工程事实_20261124/README.md>)；[已知不符与保留边界](<../../docs/archive/工程事实_20261124/差异与保留边界.md>)。

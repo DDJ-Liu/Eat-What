@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "source": "AI-000632 approved documentation scope",
+  "originalByteCopies": [
+    {
+      "originalPath": "CODEBASE_MAP.md",
+      "beforeBytes": 79287,
+      "beforeSha256": "83267d463057cd408dcac2a2ac6af963285d599bea71c1e039f1d29de50eb4df",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/CODEBASE_MAP.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/CODEBASE_MAP.md",
+      "activePath": "CODEBASE_MAP.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/data.md",
+      "beforeBytes": 16165,
+      "beforeSha256": "cca8e81b1ae600051f0c8a35090cac811a46f309df6884c091dba26289f17e4c",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/data.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/data.md",
+      "activePath": ".ai-workspace/codebase/data.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/entry.md",
+      "beforeBytes": 10827,
+      "beforeSha256": "11a8ab132ae85e91dde3c72769e65182d0ba5a9502c9bab729ad589d0efc4068",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/entry.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/entry.md",
+      "activePath": ".ai-workspace/codebase/entry.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/legacy-build.md",
+      "beforeBytes": 1729,
+      "beforeSha256": "1397d091fc27c823b6399d42b01712b68b5a87d33c05d0a4bc65898f325e35ff",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/legacy-build.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/legacy-build.md",
+      "activePath": ".ai-workspace/codebase/legacy-build.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/resources.md",
+      "beforeBytes": 1317,
+      "beforeSha256": "9a7146e154ebf8e02b4e49be47e8ef6f3fcc15dd2746dcf3c4aca9dae4d78864",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/resources.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/resources.md",
+      "activePath": ".ai-workspace/codebase/resources.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/scroll.md",
+      "beforeBytes": 2459,
+      "beforeSha256": "74f8a1a3912a02ec44baa852309ea4600d9beb48b7e5c8fb5668e143b52e87e4",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/scroll.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/scroll.md",
+      "activePath": ".ai-workspace/codebase/scroll.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/shortcycle.md",
+      "beforeBytes": 18618,
+      "beforeSha256": "9707023253d0abc58a62644ada52096a47680e03d3b325d013d52a7c2f6c79df",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/shortcycle.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/shortcycle.md",
+      "activePath": ".ai-workspace/codebase/shortcycle.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/validation.md",
+      "beforeBytes": 15270,
+      "beforeSha256": "6154b22457131378e78547e8fecf0c5515057eec59838073049f20fa1ff0f01f",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/validation.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/validation.md",
+      "activePath": ".ai-workspace/codebase/validation.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/codebase/visual-effects.md",
+      "beforeBytes": 1537,
+      "beforeSha256": "9fb87b6941ef1597c0dcf336e908a47d95ea79f78ce5bec2d16ccd996267c77b",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/codebase/visual-effects.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/codebase/visual-effects.md",
+      "activePath": ".ai-workspace/codebase/visual-effects.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/TOOLKIT_REGISTRY.md",
+      "beforeBytes": 8850,
+      "beforeSha256": "7c2af00bf5cca15485140696820ff72dbed540c8e5a105374afaf9e197f855f2",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/TOOLKIT_REGISTRY.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/TOOLKIT_REGISTRY.md",
+      "activePath": ".ai-workspace/TOOLKIT_REGISTRY.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/CMD.md",
+      "beforeBytes": 4068,
+      "beforeSha256": "796cff892309fb6b15ccd49e6e179ce8db163a23bd9aaed5b30f98c3f55c9dd0",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/CMD.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/CMD.md",
+      "activePath": ".ai-workspace/toolkit/CMD.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/DAT.md",
+      "beforeBytes": 16214,
+      "beforeSha256": "ee317085fb8b81d9fb43ed9b18dbed902832652448bd56bb73128b4b2adf2438",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/DAT.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/DAT.md",
+      "activePath": ".ai-workspace/toolkit/DAT.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/DBG.md",
+      "beforeBytes": 8149,
+      "beforeSha256": "0ec9aca1b96434d50c6bcd2d1c43a6c58ac1d9a27065bbb1d0dab139486be2f3",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/DBG.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/DBG.md",
+      "activePath": ".ai-workspace/toolkit/DBG.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/INDEX.md",
+      "beforeBytes": 11686,
+      "beforeSha256": "16d6f8a09185dab54f1e73ddfcc023c266c7305c30f8707b9d434689f758582e",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/INDEX.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/INDEX.md",
+      "activePath": ".ai-workspace/toolkit/INDEX.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/INT.md",
+      "beforeBytes": 11299,
+      "beforeSha256": "4bf3c9b77706b07daa98a4ce50b5ee1e0257ed636e60e571819a60ae6f462540",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/INT.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/INT.md",
+      "activePath": ".ai-workspace/toolkit/INT.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/LAY.md",
+      "beforeBytes": 4460,
+      "beforeSha256": "1e2a150d8642adab00f2adc0d53fd33639a87d139551970abd5b82b247289d90",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/LAY.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/LAY.md",
+      "activePath": ".ai-workspace/toolkit/LAY.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/LOC.md",
+      "beforeBytes": 9183,
+      "beforeSha256": "111e880ac6bdbefbec6bd6041adf336a38984696dcd7a3315ea3efbd679b08f3",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/LOC.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/LOC.md",
+      "activePath": ".ai-workspace/toolkit/LOC.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/MOT.md",
+      "beforeBytes": 6481,
+      "beforeSha256": "58e4db54b3f0f34b8db2373555202a29923c91690b6afd605a6001da97d10c6c",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/MOT.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/MOT.md",
+      "activePath": ".ai-workspace/toolkit/MOT.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/PST.md",
+      "beforeBytes": 8931,
+      "beforeSha256": "2ea01f79dc7e30530dad9b12bafc3d8efdd35107eb4951a3dd4193fb8bb10955",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/PST.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/PST.md",
+      "activePath": ".ai-workspace/toolkit/PST.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/RND.md",
+      "beforeBytes": 4843,
+      "beforeSha256": "040ceeb4d31e959de2fc73fd0e9095058914a310c73f764ade9b89b07bb0e13a",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/RND.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/RND.md",
+      "activePath": ".ai-workspace/toolkit/RND.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/SEC.md",
+      "beforeBytes": 10419,
+      "beforeSha256": "d060f8962de522e1d28c84f2a194d989a9f9c95a8ab6ba1a9862d0712913f583",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/SEC.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/SEC.md",
+      "activePath": ".ai-workspace/toolkit/SEC.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": ".ai-workspace/toolkit/WF.md",
+      "beforeBytes": 80838,
+      "beforeSha256": "8d6e1a581b1877e44b3ae3bffa8377a26aecf51095a08113d7dc425d7add6d3b",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/toolkit/WF.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/toolkit/WF.md",
+      "activePath": ".ai-workspace/toolkit/WF.md",
+      "disposition": "current path retained; chronology separated"
+    },
+    {
+      "originalPath": "ChildrenManagementPatterns_Report.md",
+      "beforeBytes": 6430,
+      "beforeSha256": "65562c976ae963c38505ac6b941c7e48b52409b7dada307551c8aaf781364308",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/ChildrenManagementPatterns_Report.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/ChildrenManagementPatterns_Report.md",
+      "activePath": "ChildrenManagementPatterns_Report.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "CookingPrepare场景脚本与功能整理.md",
+      "beforeBytes": 22367,
+      "beforeSha256": "cd264bc4769c610327989f9fe1fc4e64aff7a97f1bd0b67dd1bae64703332807",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/CookingPrepare场景脚本与功能整理.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/CookingPrepare场景脚本与功能整理.md",
+      "activePath": "CookingPrepare场景脚本与功能整理.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "CookingProcess场景脚本与功能整理.md",
+      "beforeBytes": 13111,
+      "beforeSha256": "1855f70fad2c455a870e4864473666383ba79d7452fa04bedd29e6ee424aa06e",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/CookingProcess场景脚本与功能整理.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/CookingProcess场景脚本与功能整理.md",
+      "activePath": "CookingProcess场景脚本与功能整理.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "CutDice_Refactoring_Analysis.md",
+      "beforeBytes": 9745,
+      "beforeSha256": "f5c312bc4d4317d07a240d48945f29e1091662c77699e8e2a788b09a6f003545",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/CutDice_Refactoring_Analysis.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/CutDice_Refactoring_Analysis.md",
+      "activePath": "CutDice_Refactoring_Analysis.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "CutDice_Reference_Template.md",
+      "beforeBytes": 21362,
+      "beforeSha256": "621b97eea4783d3c04a24d6c354b51a9fd203ec6f3831ff62a3acf6e14925571",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/CutDice_Reference_Template.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/CutDice_Reference_Template.md",
+      "activePath": "CutDice_Reference_Template.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "Ingredient_Interaction_System_Report.md",
+      "beforeBytes": 468,
+      "beforeSha256": "d4f0e71ebf46bc2cf3132e319b3e39eecaa82cae693f99b05fdf902010d62575",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/Ingredient_Interaction_System_Report.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/Ingredient_Interaction_System_Report.md",
+      "activePath": "Ingredient_Interaction_System_Report.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "Spine Sample场景脚本与功能整理.md",
+      "beforeBytes": 9322,
+      "beforeSha256": "c05910504399a5f3636d2faea4280a26db878b55b7ed3b1d56b3f11f87861751",
+      "rawRecoveryPath": null,
+      "readableHistoryPath": null,
+      "activePath": "Spine Sample场景脚本与功能整理.md",
+      "disposition": "unchanged retained Spine"
+    },
+    {
+      "originalPath": "做菜短循环设计文档与代码评估_2026-08-11_191051.md",
+      "beforeBytes": 14919,
+      "beforeSha256": "0c071691fc737c80267dc5ac7d92436b1bda7df1d778bb4df3c22dd6243b4530",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/做菜短循环设计文档与代码评估_2026-08-11_191051.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/做菜短循环设计文档与代码评估_2026-08-11_191051.md",
+      "activePath": "做菜短循环设计文档与代码评估_2026-08-11_191051.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": "食材交互反馈系统分析报告.md",
+      "beforeBytes": 59331,
+      "beforeSha256": "83e32e6b0ab9820120dfff2293ab7d34e51fa7ba7cb1eb116da4c3684f4816bd",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/食材交互反馈系统分析报告.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/食材交互反馈系统分析报告.md",
+      "activePath": "食材交互反馈系统分析报告.md",
+      "disposition": "old analysis archived; compatibility pointer"
+    },
+    {
+      "originalPath": ".ai-workspace/inputs/DOC-REVIEW-20261017/旧链参考文档保留清单.md",
+      "beforeBytes": 1630,
+      "beforeSha256": "af3b3f89ea54ae167e6a55af9399a358c39eb0aab601113a462e4400833288ff",
+      "rawRecoveryPath": "docs/archive/工程事实_20261124/bytes/.ai-workspace/inputs/DOC-REVIEW-20261017/旧链参考文档保留清单.md.txt",
+      "readableHistoryPath": "docs/archive/工程事实_20261124/history/.ai-workspace/inputs/DOC-REVIEW-20261017/旧链参考文档保留清单.md",
+      "activePath": ".ai-workspace/inputs/DOC-REVIEW-20261017/旧链参考文档保留清单.md",
+      "disposition": "current path retained; chronology separated"
+    }
+  ],
+  "rawCopyRule": "bytes/*.md.txt are exact UTF-8 source bytes, not rendered Markdown; resolve their old links relative to originalPath. history/*.md are readable copies with local URLs rebased. No task raw evidence is stored here."
+}

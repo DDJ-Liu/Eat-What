@@ -1,41 +1,14 @@
 # 模块正文：2. ShortCycle 当前主链
 
-2026-10-22 AI289 attempt10（原HUMAN条件式Runs1，grant e18671a184bc4c3c834ffc4054ba9e37/cycle grant:5649470492f5473fb2f0d7562c49038e；真实claim后根9/9、grant1/1）：306/307原未用许可重核与303完整烟测均CONTROL独立通过后，本卡一次fresh a10 pre-Awake/精确root/factory1/lease/Ready及首RPC成功；正式常量OpenCover→Catalog、SelectRecipe→已解锁清汤面Browse、OpenStepDetail→RecipeBrowse基底+StepDetail modal。三张本卡同run原生screen1024×576/no-save图已逐张打开，完整CLI/PNG门通过；新stdout无损gzip与SHA/长度/解压映射保留，原回执不改。原attempt6单字段/1～20/19与20交接返回/P2/Build采用明确旧SHA证据，不重跑；本轮六合同机器通过，待CONTROL独立验收，未代A/B/A+C/USER-U5。Stop后clean Edit/7根1062对象/原adapter与Presenter/Probe原位inactive，host关闭/armedfalse/restore空；同session809→839新增Error0、历史7保留，source4F5F…保持。九失败/唯一备份/旧图/全部许可完整保留；本线不自续、不派B。完整核验日期不提高。证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000289/attempt10/REPORT.md。
+最后完整核验：**2026-09-17**（不提高）。本次仅整理文档与核对源码归属；任务执行过程、当时的测试与许可记录移至历史，不能据历史状态启动业务。执行规则以 AGENTS.md、WORKFLOW.md 的现行优先条款为准。工具表保留原能力、使用限制与来源语义，旧候选／待验标签不代表本次重新验收。
 
+## 食谱与备菜的返回、托盘鼠标输入
 
-2026-10-20 AI289 attempt6（HUMAN call_cbb6abcbc1994847ba0b9fbfc63db19e:0/cycle AI289:retry5，根5/5余0）：按新批准卸载clean源后，仅原组件1205938951.m_Script复制审定新引用，保留所有ID/原Presenter引用，重开后唯一adapter恢复。source SHA4F5F375E28FC610381A836C18A014A8B80267EAC8720B0E5E81D0CB8607FE057，未额外SaveScene/重编译/P2/view5/Build重做。fresh a6-joint pre-Awake/factory1隔离成立，原1～20一次全PASS，19/20只读审计均true无hook异常，实际P2交接/同库存/recipe-prep/P1全部Set与线索板Renderer隐藏/卸载返回/owner释放及数量守恒通过。随后Catalog截图前状态JSON直接包含Vector3触发normalized自引用错误，capture尚未调用，三PNG均缺；原合同5/6，全卡失败，不称D-T2完整交付。G26清理后clean Edit/7根1062对象/adapter1/原Presenter已绑定/宿主关闭/armedfalse/restore空/Probe复原；连续CLI日志582→657新增Error0，旧seq582/总error7历史保留，最终UI0Error16Warning不替代历史。保留已通过修复、原六次失败/295诊断/全部备份；额度耗尽，不自重试或另建卡绕限。A机器/B/A+C/USER-U5门保持，完整复核日期不提高。证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000289/attempt6/REPORT.md。
+两个视口锚定的返回按钮随各自页面集合的焦点同步画面和输入，入口为 `ShortCycleStateGatedInteraction` 和 `ShortCycleMouseActionBinding`。冰箱与托盘格由后者启用松手点击，`MouseManager` 以按下时的来源区分点击与拖放，并按前景图形／排序组处理竞争命中。拖动开始时，绑定将两种来源格交给 `ShortCycleIngredientDragPreview`。预览从现有托盘格读取外观和世界尺寸，按指针移动；来源格及其碰撞框留在原位。已占用的托盘格由 `TraySlot` 将当前食材 Sprite 的导入轮廓映射到格子，作为鼠标拾取范围。图标缺失或没有轮廓时沿用原格的方形命中区域；空格不截获盘面输入。同一托盘内两个占用格绘制优先级相同且轮廓相交时，按下和拖动共用同一选择：取指针更深入其食材轮廓的格子。托盘外松手由来源格归还食材，`ShortCycleTrayInteraction.Refresh` 随即压紧或清空托盘格，下一次可直接抓取当前格的食材。用户复测及线索板状态见[短循环人工说明](../../docs/短循环前半段人工检查说明.md)。
 
-
-2026-10-20 AI289 attempt5（POLICY AI289:retry4，实际claim后根4/5余1）定向状态：按CONTROL勘误修正既有payload全部3个regex，实际保存文件无U+0008，两个完整块各1（311/402B）、11字段及未知字段/无匹配/重复块反例离线均通过。未重导入/重编译新meta；原生GetClass/GUID正确、294源码保持。单次接线到SerializedProperty.DeleteArrayElementAtIndex时Unity拒绝修改data property（Console seq582），随后“Exact stale slot did not remove”失败；尚未AddComponent/改Presenter/SaveScene/Play，catch Undo已回退。原生最终clean Edit/7根1062对象/旧2槽native116368/adapter0/Presenter托管null/宿主Disabled，Console1Error10Warning，新增错误保留不清屏。源scene E7D540…、P2 D2751E…/meta、Build C51646…及新adapter meta均保持；本次1～20/P2往返/三截图未执行，原5次失败及attempt4诊断勘误完整保留。原6合同仅人工门未冒验项true，不能Complete；A/B/A+C/USER-U5门保持。正式Fail及一次回传见attempt5结算记录，执行器不再尝试删除方式/换工具；完整复核日期不提高。证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000289/attempt5/REPORT.md。
-
-
-2026-10-20 AI289 attempt4（HUMAN call_dfcbfc1d52b54f86969b0765d4edc0e3:0，配对AI294/cycle AI289:CODE294:retry3，根3/5未双扣）定向状态：Editor单次正常导入adapter源并生成唯一meta（GUID58cf8eebfe5fe8a49967ee11bf6f22cc，SHA B77C025750B4C112166D3BE28315A9C3F4027451BB84ADB6D5AD53BC1F078FC3），原生MonoScript.GetClass完整类型与294新探针方法均已加载、编译未失败。随后精确槽绑定eval在任何Undo/写入前报Stale ownership proof drift；CONTROL勘误：原payload两个实际U+0008使旧块提取均0；181B仅先修正boundary但仍留literal z的中间态，旧块完整仍在，并非资产漂移。未修正重放、未挂新组件/改Presenter/保存场景/进入Play，原源scene E7D540…、P2 D2751E…/meta及Build C51646…保持；新meta为已批准成果留存。原生只读最终clean Edit/7根1062对象/有效adapter0/Presenter托管引用null/宿主Disabled、Console0Error10Warning。原生1～20、P2交接返回和三截图本次未执行；保留四次失败与原探针NRE，不称D-T2/P2完成，A/B/A+C/USER-U5门保持。正式Fail回传由本次结算记录确认，执行器不自重试；完整复核日期不提高。证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000289/attempt4/REPORT.md。
-
-
-2026-10-20 AI294同根源码修复（AI289:CODE294:retry3，claim后根3/5）：原14～18提为同一生产协程，目录前置按Cover→OpenCover、Browse→OpenCatalog、Catalog保持处理，并等待真实镜头/锁/基础层；17兼容已Browse或Catalog重选，原ID/锁定拒绝、本地化标题、步骤行、收藏与还原断言保留，无可用菜谱明确FAIL。原1～13与19/20源码不变。转场adapter原类体原样移至同目录ShortCyclePhase2TransitionAdapter.cs，Session本体/序列化字段/API不变，尚无新meta/原生挂载。142源stub编译、实际14～18六场景22断言及原19/20六场景13断言通过，用户路径读取0；未调用Unity。原289仍NEEDS_USER，待CONTROL独立验收及正式配对续行由ENGINE生成meta、挂既有P2S对象、绑定presenter再补原生1～20/截图；既有19节点/view5/Build落盘不重做。A/B/A+C/USER-U5门与完整复核日期保持。证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000294/REPORT.md。
-
-2026-10-20 AI289 attempt3（POLICY AI289:retry2）定向状态：Build单文件通过非持久快照→native staging全字段/仅P2追加验证→同快照正式保存一次，现磁盘/内存均原0/1+P2 index2，SHA C516468DC909BCE31112DC0DFEA664185AB17BFC1A178269C4BEA43A739E3A58。19空GO/源view5及scene E7D540…/P2 D2751E…保持，未重建。新本卡a3-joint pre-Awake隔离/Root/factory1真实成立；原1～20联合一次，1～14 PASS、15～20 FAIL。14重建Cover后15直接OpenCatalog前置缺口交CODE复核；原生SourceAdapterCount0/Presenter.transitionAdapter未绑定，19/20未实际进P2，两条自有只读审计NRE如实保留。三实景未拍，真实交接/隐藏/返回未验，不称D-T2/P2完成。自有probe父级/回调/后台标志及Play已恢复，最终clean Edit/7根1062对象/无宿主/Console0Error18Warning；旧seq502和失败史保持。A验后B/A+C/USER-U5门保持，不提高完整复核日期，证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000289/attempt3/REPORT.md。
-
-
-2026-10-20 AI288 attempt4定向原生收口（与CODE293配对AI288:CODE293:retry3，不双扣）：单次必要原生编译加载293 Launcher修复，失败0；一次同命令ArmAndPlay立即Stop取消，未Play/工厂增量0/run目录未建，自动恢复原clean Edit且消费restore记录；一个正常隔离Ready→Stop相关复核同样自动恢复，原生记录目标先销毁再释放租约。最终7根1062对象/无宿主或pending/armedfalse/恢复记录空、Console0Error/16Warning。293仍保留同handle/记录/版本的单次update守卫与未知dirty/非空/场景变化拒绝，不靠手工恢复代验。scene SHA4C4B4BF7A56E96848F64D496562B25D584B0010934950CF4A9FD22CF233BF982不变；49GO/124+12、10锚点、旧错目标证据沿用精确SHA，未重做；原3次失败/13meta/恢复点完整。原6合同已由CONTROL独立6合同/17复核通过；原289失败与续行链见最新289条，联合1～20/三截图仍未通过，A需288+289独立通过才B，A+C/USER-U5门保持。不提高完整复核日期，证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000288/attempt4/REPORT.md。
-
-
-
-2026-10-20 AI287窗口②A存档隔离宿主源码定向通过：新增Debug/ShortCycleValidationBootstrap与Editor/ProjectValidation/ShortCycleValidationLauncher，Editor以SessionState显式武装并用干净临时空场景进入fresh生命周期，Player仅明确验证参数启用；固定ShortCycle_P0P1#Managers/SessionManager，root严格绑定本批实际task/run。ForTarget在BeforeSceneLoad或ForScene在加载前安装，失败先复用既有内部拒回退/撤销门封锁已知Session再停机销毁，先销毁/卸载目标后释放租约。41项实际宿主/launcher离线断言、5个真实Unity引用API编译面通过，默认路径读取0；原API/Session/SaveBoundary及1～20探针整源SHA不变。原生时序、禁用Reload实际行为、真实1～20/Player尚待ENGINE；A及A验后B已获执行许可，A+C/USER-U5产品验收未通过。完整复核日期不提高。证据.ai-workspace/outputs/DETACH-B13-20261019/AI-000287/REPORT.md。
-
-2026-10-19 AI275：Tools/Persistence的SaveEnvelope/EnvelopeAuthenticator/JsonSaveStore/PlainJsonCodec/SaveCodecFactory属于Toolkit（TK-DAT-09，旧包07编号冲突已映射，原07/08保留）。使用现有Newtonsoft/JToken、格式1/schema2.4.1、UTC及payload.player_profile；未知节保留，独立派生用途HMAC认证规范化字节。Store有slot/root/reparse校验、观察内容漂移拒绝、同根临时flush/原子替换/保留backup；坏/未知版本/校验失败锁slot自动写入，不覆盖原件。ShortCycle/Runtime/SaveBoundary是应用IO宿主，Session在首次BeginSession前None恢复，并将同host给原FSM/Processor两保存点；ObservableNoOp观察API/原18探针不改，收藏/退出/每帧不新增保存点。默认路径只用Application.persistentDataPath/saves/default.json；本轮测试注入隔离根，离线stub禁止真实用户路径。Editor/Dev明文+Envelope HMAC，release复用V2加密，ISaveCodec/key片段/原CBC标签不改，Core仍无IO/Unity。44隔离断言×主机/三Mono条件、原安全305/306及ShortCycle128/282/188+92+15通过；原生/Play/用户真实存档未验，详见PST及AI275交接。
-
-2026-10-19 AI273 / P2L-01：Core/Phase2/ProcessingMatcher使用纯只读ProcessingRecordView/ProcessingToolView、既有RecipeWhitelist/AreaConstraint，匹配无序输入多重集、supported_actions、当前分区allowed_actions/allowed_carriers与实际可用承载物，按白名单序取首条；拒绝码区分无白名单命中（返回配置unknown产物）与工具/分区/载具非法操作（无产物），不查其它区。AreaConstraintValidator不是第二个AreaConstraint模型；S-02源码及R-01路径未变。StepProgress在完整备菜区快照变化后按链序计算None/Dynamic/Permanent，数量增加视为新增、unknown排除、动态消失回退、永久不回退；FinalDishReady仅队尾由未完成转完成后通知，重复快照不重复发，FSM/Director后继仍由宿主决定。Generated的Phase2DataViews为无Unity字段的不可变快照；Catalog.TryGetProcessingRecords(ids)/TryGetProcessingTool/TryGetStepChain复用原查询与验证链序，未改变导入结构或程序集。既有runner保留S-02/188行为及18探针，追加92纯逻辑行为，三菜4/4/3链序与校验器一致；无Unity/Play/场景写入。当前数据tool_hand已存在、三白名单9/8/1且含stp_，并有动作支持/白菜路线缺口；DATA-FOLLOWUPS交USER-U5，纯夹具通过不代表生产三菜可玩。P2S-HANDOFF列调用/事件/接线边界；不接P2场景、不提升TK-DAT-08或全项目复核日期。
-
-
-2026-10-19 AI269/AI272 / D-T1a/b源码阶段：CookingData（既有Generated.DataTables归属）的只读RecipeView含slot/tag/ingredient及RecipeStepView步骤快照。Catalog.TryGetRecipeView/EnumerateRecipesOrdered继续唯一数据源，步骤复用TryGetRecipeStepChain，按T1.first_step_id→T3.next_step_id顺序组装display_text_key、T4食材/T7工具图标，最多10行，无Generated→ShortCycle回边或导入结构改动。RecipeBookBinder填目录8槽、标题/成品图/食材/便签/当前菜签，并接Content/StepDetailModalPiece及StepDetailRowPiece按既有VerticalLayout锚点填无标题无编号的步骤；不启停容器、不写Set或Transform、不订阅FSM。Runtime/PlayerProfileManager包装现有PlayerProfile组件，提供ToggleFavorite/GetSnapshot/ApplySnapshot；快照复制去重集合、只读且与调用者/活态隔离；纯内存、无加密/落盘。既有shortcycle.toggle_favorite保持23动作，通过Session.TryToggleFavorite刷新目录和当前星标；Session.ApplyProfileSnapshot仅在None恢复并清空内容，解锁为T1默认∪profile。直接manager.ApplySnapshot是低层能力，恢复宿主用Session入口；ISaveBoundary.Reach与NoOp边界不改，SAVE-01适配见SAVE-HANDOFF。Session启动/选菜/None/销毁继续绑定清空，ClueBoard共用slots；>8分页未实现。AI269已独立验收，AI272离线107源码/282静态/188行为通过并与校验器三菜链序一致（4/4/3）；原16探针前缀不变，新增17行数及18收藏×3一致性仅实现未Play。场景/字体/生产数据未写，原生Console/真实18探针及布局人工验收归D-T2窗口②，A+C保持。交接见outputs/DETACH-B13-20261019/AI-000272/{ENGINE-HANDOFF,SAVE-HANDOFF}.json（相对.ai-workspace）；不提高完整复核日期。
-
-
-2026-10-19 AI-000264定向核对：Command三类已支持已审程序集发现与旧Assembly-CSharp命令ID解析；ShortCycleAutomatedProbe改为固定线索板测量和13个编号检查点，四个runner兼容迁移前后路径/DLL。程序集候选仅在任务输出，尚待AI-000265 ENGINE安装与原生验证；不更新完整复核日期。
+## 现状
 
 旧命令配置不改写；仅旧默认程序集名/未限定名称允许在白名单内唯一匹配，重名或未知类型拒绝。实际ShortCycleCommandBridge为23个命令（AI263“9项”为计数误记，原记录保留）。探针保留旧序列化anchor字段但不再用其要求板体移动；检查点列表通过AutomatedProbeCheckpoints和CK01-C-PROBE CHECK日志提供，真实Play仍待ENGINE。
-
-来源：根文档按模块迁移，原文字段和历史结论保留。最后完整核验仍为2026-09-17；日期段落是对应时点记录，当前状态以根入口/正式队列为准，不构成重试授权。涉及本模块时核实际源码/资源，禁止仅凭旧结论改生产。
 
 ## 2. ShortCycle 当前主链
 
@@ -49,19 +22,19 @@ InputManager → MouseManager → MouseInteractionLayer 栈顶
 
 源码以 `Assets/Scripts/Cooking/ShortCycle/` 为根：
 
-| 功能 | 文件/目录 |
-| --- | --- |
-| 会话入口与运行数据 | ShortCycleSessionManager.cs、ShortCycleContext.cs、ShortCycleRuntimeManagers.cs |
-| 三相/Phase0 子态、托盘状态 | ShortCycleStateMachine.cs、ShortCycleTrayStateMachine.cs |
-| 具名动作与命令桥 | ShortCycleActionRegistry.cs、ShortCycleActionRouter.cs、ShortCycleCommandBridge.cs |
-| 表现编排 | Runtime/ShortCyclePresentationDirector.cs |
-| Space/Set/Traveler | Presentation/ShortCycleSpace.cs、ShortCyclePresentationSet.cs、ShortCycleTravelingElement.cs |
-| 冰箱/线索板内容绑定 | Content/ShortCycleFridgeBinder.cs、ShortCycleClueBoardBinder.cs |
-| 整猫与层级池 | Presentation/FridgeCatRig.cs、FridgeCatTier.cs、FridgeCatEye.cs |
-| 镜头与层栈 | ShortCycleCameraPanController.cs、ShortCycleInteractionLayerStack.cs、ShortCycleInputLockController.cs |
-| 滚轮物理入口 | Interaction/ShortCycleScrollAdapter.cs |
-| P2 交接 | ShortCycleContracts.cs、ShortCyclePhase2HandoffPresenter.cs；TransitionAdapter 位于同目录独立 ShortCyclePhase2TransitionAdapter.cs（保持原类型/API） |
-| 人工/自动验证 | ShortCycleManualVerificationDriver.cs、ShortCycleAutomatedProbe.cs、Debug/ |
+| 功能 | 文件/目录 | 程序集／宿主 |
+| --- | --- | --- |
+| 会话入口与运行数据 | ShortCycleSessionManager.cs、ShortCycleContext.cs、ShortCycleRuntimeManagers.cs | `ShortCycle` |
+| 三相/Phase0 子态、托盘状态 | ShortCycleStateMachine.cs、ShortCycleTrayStateMachine.cs | `ShortCycle` |
+| 具名动作与命令桥 | ShortCycleActionRegistry.cs、ShortCycleActionRouter.cs、ShortCycleCommandBridge.cs | `ShortCycle` |
+| 表现编排 | Runtime/ShortCyclePresentationDirector.cs | `ShortCycle` |
+| Space/Set/Traveler | Presentation/ShortCycleSpace.cs、ShortCyclePresentationSet.cs、ShortCycleTravelingElement.cs | `ShortCycle` |
+| 冰箱/线索板内容绑定 | Content/ShortCycleFridgeBinder.cs、ShortCycleClueBoardBinder.cs | `ShortCycle` |
+| 整猫与层级池 | Presentation/FridgeCatRig.cs、FridgeCatTier.cs、FridgeCatEye.cs | `ShortCycle` |
+| 镜头与层栈 | ShortCycleCameraPanController.cs、ShortCycleInteractionLayerStack.cs、ShortCycleInputLockController.cs | `ShortCycle` |
+| 滚轮物理入口 | Interaction/ShortCycleScrollAdapter.cs | `ShortCycle` |
+| P2 交接 | ShortCycleContracts.cs、ShortCyclePhase2HandoffPresenter.cs；TransitionAdapter 位于同目录独立 ShortCyclePhase2TransitionAdapter.cs（保持原类型/API） | `ShortCycle` |
+| 人工/自动验证 | ShortCycleManualVerificationDriver.cs、ShortCycleAutomatedProbe.cs、Debug/ | `ShortCycle` |
 
 Session 初始化顺序：Catalog 校验 → FridgeBinder.Bind → 无菜谱时跳过线索板绑定 → 本地化刷新 → FSM Enter；选菜成功后再绑定业务内容。默认菜谱调试开关不等于正式自动选菜。
 
@@ -69,6 +42,18 @@ Session 初始化顺序：Catalog 校验 → FridgeBinder.Bind → 无菜谱时�
 
 Cover 隐藏旧书底/展开页；Catalog/Browse 恢复；目录签只在 Browse 显示；CurrentRecipeTab 在Browse/ClueBoardShell显示，Kitchen以Visual Only保留背景。Scene 的唯一 Host 是 Managers/PresentationDirector；旧 Presenter/Builder 兼容实现不能替代此入口。
 
-2026-10-14 AI226：Shared/StepDetailModal、GenericModal、HoverCard 三根已各接现成 CameraViewportAnchor，MainCamera/自身根、viewport=(0.5,0.5)、inset=(0,0)、保持worldZ；内部局部排版及ModalSet/Layer_Modal不变。四机位与转场帧末跟随机器通过，用户2026-10-14已明确人工验收通过并关闭AI226；配置详见组件说明文档/ShortCycle状态显隐与镜头切换_配置说明.md。
+## 已核程序集与文件定位
 
-2026-10-19 AI-000268（根AI265/诊断AI267）CODE修复：仅ShortCycleAutomatedProbe改变。等待使用目标Context、IsAtSlot/真实marker、!IsPanning和输入解锁的有界状态条件；选菜后及分层ESC逐段等待，同槽位同步完成可直接满足状态，不依赖可能已错过的事件。StartCooking后立即Return保留，并要求ErrorCode.Locked。线索板Open/Close核真实View和Phase0基础层Contains/Top，保留旧序列化字段。8/10/11/12依赖真实Phase1到达和成功返回，缺引用/超时/未覆盖均明确FAIL，13编号保留。AI265 attempt2的8/10/11/12旧PASS不能证明真实往返；原始7PASS/6FAIL与两次失败保留。离线真实DLL编译和既有CK runner通过，不代表13点Play通过；原AI265一次补验尚未由本卡消费，不重做安装/移动/身份设置。
+按当前 `.asmdef`／最近 `.asmref` 解析；下列只是源码归属，不代表重新编译、运行或验收。
+
+| 程序集 | 定义／归属入口 | 本页相关源码例 |
+| --- | --- | --- |
+| `Editor.ProjectValidation` | [Assets/Editor/ProjectValidation/Editor.ProjectValidation.asmdef](<../../Assets/Editor/ProjectValidation/Editor.ProjectValidation.asmdef>) | [ShortCycleValidationLauncher.cs](<../../Assets/Editor/ProjectValidation/ShortCycleValidationLauncher.cs>) |
+| `ShortCycle` | [Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef](<../../Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef>) | [ShortCycleClueBoardBinder.cs](<../../Assets/Scripts/Cooking/ShortCycle/Content/ShortCycleClueBoardBinder.cs>)；[ShortCycleFridgeBinder.cs](<../../Assets/Scripts/Cooking/ShortCycle/Content/ShortCycleFridgeBinder.cs>)；[ShortCycleScrollAdapter.cs](<../../Assets/Scripts/Cooking/ShortCycle/Interaction/ShortCycleScrollAdapter.cs>) |
+| `ShortCycle.Core` | [Assets/Scripts/Cooking/ShortCycle/Core/ShortCycle.Core.asmdef](<../../Assets/Scripts/Cooking/ShortCycle/Core/ShortCycle.Core.asmdef>) | [IShortCyclePresentationHost.cs](<../../Assets/Scripts/Cooking/ShortCycle/Core/IShortCyclePresentationHost.cs>) |
+| `Toolkit` | [Assets/Scripts/Tools/Toolkit.asmdef](<../../Assets/Scripts/Tools/Toolkit.asmdef>) | [InputManager.cs](<../../Assets/Scripts/Tools/Input/InputManager.cs>)；[CameraViewportAnchor.cs](<../../Assets/Scripts/Tools/Layout/CameraViewportAnchor.cs>)；[EnvelopeAuthenticator.cs](<../../Assets/Scripts/Tools/Persistence/EnvelopeAuthenticator.cs>) |
+| `Toolkit` | [Assets/Scripts/MouseInteractive/Toolkit.asmref](<../../Assets/Scripts/MouseInteractive/Toolkit.asmref>) | [MouseInteractionLayer.cs](<../../Assets/Scripts/MouseInteractive/MouseInteractionLayer.cs>)；[MouseManager.cs](<../../Assets/Scripts/MouseInteractive/MouseManager.cs>) |
+
+## 历史
+
+[本页整理前全文与历史记录](<../../docs/archive/工程事实_20261124/history/.ai-workspace/codebase/shortcycle.md>)；[归档与原字节恢复索引](<../../docs/archive/工程事实_20261124/README.md>)；[已知不符与保留边界](<../../docs/archive/工程事实_20261124/差异与保留边界.md>)。

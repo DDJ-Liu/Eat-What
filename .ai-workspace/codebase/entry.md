@@ -1,40 +1,26 @@
 # 模块正文：1. 工程入口
 
-2026-10-19 AI274：Tools/Security及Tools/Persistence新建共享ISaveCodec（Encode JSON文本→byte[]；TryDecode→完整文本或false/null/通用diagnostic）。Toolkit仅BCL，认证V2 CBC+HMAC与HKDF独立子密钥、随机IV和严格Blob；不引入JSON库或上游引用，不读写路径/存档，不替换旧DataEncryptor/Generated加载。Unity真实引用可编译GCM而捆绑Mono运行抛PlatformNotSupportedException，已采用原卡批准的显式V2回退；主机305/捆绑Mono306及互读通过，原生/IL2CPP仍未验。SAVE-01复用接口并负责Envelope/PlainJsonCodec/Store/SaveBoundary，SEC-02负责发布选择与Catalog读取，均未由本卡实现；定位与格式见toolkit/SEC.md及AI274交接。
+最后完整核验：**2026-09-17**（不提高）。本次仅整理文档与核对源码归属；任务执行过程、当时的测试与许可记录移至历史，不能据历史状态启动业务。执行规则以 AGENTS.md、WORKFLOW.md 的现行优先条款为准。工具表保留原能力、使用限制与来源语义，旧候选／待验标签不代表本次重新验收。
 
-来源：根文档按模块迁移，原文字段和历史结论保留。最后完整核验仍为2026-09-17；日期段落是对应时点记录，当前状态以根入口/正式队列为准，不构成重试授权。涉及本模块时核实际源码/资源，禁止仅凭旧结论改生产。
+## 现状
 
 ## 1. 工程入口
 
-| 项目 | 当前事实 |
-| --- | --- |
-| 引擎与渲染 | Unity 6000.3.24f1、URP 17.3.0；原工作区H接棒通过 |
-| 输入 | 本迁移分支Input System 1.20.0、Uniform；MIG-F01源码已统一滚轮单位并移除Windows `×120`桥接，Play/真实硬件仍待本批验收 |
-| 当前 Build 列表 | ShortCycle_P0P1 index0、CookingProcess index1，Profile不覆盖，Prepare文件保留；原目录已同步 |
-| 本轮开发/验收入口 | Assets/Scenes/Cooking/ShortCycle_P0P1.unity；两目录均已加入Build；原目录H通过、冻结解除，后续开发在codex/unity6-followup分支 |
-| 视觉统一试验 | Assets/Scenes/ToolTests/VisualEffectsLab.unity |
-| 滚轮独立试验 | Assets/Scenes/ToolTests/FridgeScrollLab.unity |
-| 盘点 | Assets/Scripts 249 个 C#；Assets/Editor 63 个 C#（含4个保留迁移验证文件）；Assets/Scenes 15 个场景；Prefabs/Resources 共 71 个 Prefab |
-| 配表 | 14 个 schema；Assets/Generated/DataTables 实际 122 个 asset（含 catalog、共享资源） |
-| 程序集 | 实际Toolkit / Generated.DataTables / ShortCycle / Legacy / MiniGames.Core / LongLoop及Editor.*已落地；第三方另计，原默认程序集条目已过时 |
-| 验证 | DevTools 离线编译/契约测试、Unity 场景探针和人工验收；Assets/Tests 当前为视效夹具，不等于已有 NUnit 测试程序集 |
+工程版本、包清单和 Build 列表分别查 `ProjectSettings/ProjectVersion.txt`、`Packages/manifest.json`、`ProjectSettings/EditorBuildSettings.asset`；本页不沿用旧盘点数量。只读保存文件为 Unity 6000.3.24f1、URP 17.3.0、Input System 1.20.1、Cinemachine 3.1.7；共享 Build 场景为 Boot、ShortCycle_P0P1、CookingProcess、ShortCycle_P2、LongLoop_Street，单次构建仍可显式指定子集。场景操作入口仍由实际任务指定。
 
-Packages清单/锁文件及LocalPackages/com.coplaydev.unity-mcp固定Editor包进入版本管理。DevTools/MCP记录服务端10.1.2、源码提交和uv锁文件；Editor为同提交10.1.3-beta.4，迁移目录6.3连接与实例路由已实测。自动客户端改写已用10文件本地补丁关闭；主动Configure仍可用，未提供完整服务端离线镜像。详见DevTools/MCP/README.md。原目录H接棒已恢复相同本地包及独立venv，新实例Eat-What@d5759c75ae7cb5de连接/路由通过；本轮验证服务收尾停止，未来使用重新发现实例。
+## 已核程序集与文件定位
 
-以上版本表指已验收E1基线及已经完成H接棒的原工作区。独立Eat-What-U6副本已导入6000.3.24f1：URP17.3.0、Input System1.20.0、UGUI2.0.0、Cinemachine2.10.7；Coplay已收敛为工程内固定包；M4连接MIG、H重新发现并验证原目录实例，原队列未接入。API Updater把HorizontalPlayerController.cs与QuickAddForce.cs的Rigidbody2D.velocity改为linearVelocity。M2已保存Compatibility=false、无兼容宏，Windows构建通过；TMP目录已升级为84文件，M3R按N1取消忽略并随Git/LFS跟踪，保留原GUID和快照。精确变化和人工复核见[M2/M3执行结果](../../.ai-workspace/MIG63/M2M3_执行结果与人工验收.md)，原目录H运行回归已通过，H后格式更新已按用户最新决定随本次集成进入main；unity6.3-baseline标签保持37bb854，新业务使用codex/unity6-followup。
+按当前 `.asmdef`／最近 `.asmref` 解析；下列只是源码归属，不代表重新编译、运行或验收。
 
-迁移侧验证工具变化：DevTools/Rendering/Test-OutlineMerge.ps1、Test-EtherBubbleDistortion.ps1、DevTools/ShortCycle/Test-CK01CShortCycle.ps1及CoordinateSpaceRegression/Invoke-CoordinateCompilation.ps1按项目版本定位Hub/旧Editor；泡泡测试引用URP17的2D.Runtime程序集。H磁盘接棒已同步这些工具，九组离线回归通过。原临时验证链已移除；E2 保 GUID 按功能更名后长期入口为 `Assets/Editor/ProjectValidation/` 下的 `ScrollWheelProbe.cs`、`TomatoAnimationProbe.cs`、`SpineSceneProbe.cs` 和 `SceneValidationSession.cs`，菜单 `Tools/Project Validation/`，说明 `DevTools/ProjectValidation/README.md`。历史输出已归档，见[迁移验证归档](../archive/2026-10-17-oversize-slim/README.md)；会话键 `MIG63.Validation.` 不变。两侧新增DevTools/GitHooks字体工作树/index保护，最终机器结果不覆盖硬件鼠标和同分辨率全视觉对照。
+| 程序集 | 定义／归属入口 | 本页相关源码例 |
+| --- | --- | --- |
+| `Editor.Project` | [Assets/Editor/Editor.Project.asmdef](<../../Assets/Editor/Editor.Project.asmdef>) | [FontSwapOnce.cs](<../../Assets/Editor/Fonts/FontSwapOnce.cs>) |
+| `Editor.ProjectValidation` | [Assets/Editor/ProjectValidation/Editor.ProjectValidation.asmdef](<../../Assets/Editor/ProjectValidation/Editor.ProjectValidation.asmdef>) | [SceneValidationSession.cs](<../../Assets/Editor/ProjectValidation/SceneValidationSession.cs>)；[ScrollWheelProbe.cs](<../../Assets/Editor/ProjectValidation/ScrollWheelProbe.cs>)；[SpineSceneProbe.cs](<../../Assets/Editor/ProjectValidation/SpineSceneProbe.cs>) |
+| `Generated.DataTables` | [Assets/Scripts/DataBase/CookingData/Generated.DataTables.asmref](<../../Assets/Scripts/DataBase/CookingData/Generated.DataTables.asmref>) | [CK01GeneratedDataCatalog.cs](<../../Assets/Scripts/DataBase/CookingData/CK01GeneratedDataCatalog.cs>) |
+| `ShortCycle` | [Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef](<../../Assets/Scripts/Cooking/ShortCycle/ShortCycle.asmdef>) | [SaveBoundary.cs](<../../Assets/Scripts/Cooking/ShortCycle/Runtime/SaveBoundary.cs>)；[ShortCycleSessionManager.cs](<../../Assets/Scripts/Cooking/ShortCycle/ShortCycleSessionManager.cs>) |
+| `Toolkit` | [Assets/Scripts/Tools/Toolkit.asmdef](<../../Assets/Scripts/Tools/Toolkit.asmdef>) | [CameraFollower.cs](<../../Assets/Scripts/Tools/CameraFollower.cs>)；[PlainJsonCodec.cs](<../../Assets/Scripts/Tools/Persistence/PlainJsonCodec.cs>)；[Tools.cs](<../../Assets/Scripts/Tools/Tools.cs>) |
+| `Toolkit` | [Assets/Scripts/MouseInteractive/Toolkit.asmref](<../../Assets/Scripts/MouseInteractive/Toolkit.asmref>) | [MouseManager.cs](<../../Assets/Scripts/MouseInteractive/MouseManager.cs>) |
 
-引擎迁移须同时检查Assets内依赖：Spine 3.8（2021-11-10）、Text Animator 2.3.1、NuGet/EPPlus及MCP相关DLL。旧链CookingPhaseState.cs、CameraFollower.cs使用Cinemachine 2 API；自制视效通过相机回调及离屏RT调度，Renderer2D的Renderer Features为空。当前执行依据为[MIG63迁移基线](../../.ai-workspace/MIG63/迁移基线.md)，不沿用历史6.6候选评估作为目标。
+## 历史
 
-Spine保护范围：Assets/Scenes/Spine Sample.unity和Assets/Scenes/ToolTests/HorizontalPlayerControllerTest.unity。M4在这两处保留原Prefab/对象身份，使用场景override绑定现有Tomato 3.8.99；E2 更名后的动画控制器为Avatars/Tomato/TomatoPreview.controller（原 GUID 不变；idle/walk/kick，Idle/Walk/Kick触发器）。三个SkeletonMecanim的MeshRenderer磁盘均为禁用，由已有SpineRuntimeMeshRendererBootstrap在Start启用，避免场景恢复旧网格产生Invalid worldAABB。CharacterEquipment采用Tomato_Non和7部位；Sample的Bottom槽保持Test_EquipBottom按钮契约。HorizontalPlayerController保留Rigidbody2D移动和Animator路径，spineAnimation仍为空；另一SkeletonAnimation用法由长期Tomato双路径探针覆盖。旧Sample/output4 3.8.75及Prefab/runtime/Shader未覆盖或删除，直接读取旧骨骼仍是已登记历史缺陷。ShortCycle/两个Lab不依赖Spine。保存场景与双路径GPU通过并不表示全部皮肤、混合模式或重打包均验收。
-
-Spine旧载荷日志策略（AI-000240源码阶段）：Assets/Spine/Runtime/spine-unity/Asset Types/SkeletonDataAsset.cs 的 GetSkeletonData 在本次读取 catch 内，只有实际来自 SkeletonBinary.ReadSkeletonData 的原有 3.8.75 unsupported 异常、Sample/output4 的 SDA 与 skeleton 精确路径/GUID 以及已批准二进制 SHA 同时匹配，才置本次调用标记；Clear/下次读取重置。Assets/Spine/Editor/spine-unity/Editor/Windows/SkeletonBaker.cs 的自动 Mecanim 导入按标记把重复 Error 改为去重 Warning，仍返回 null、不生成动画；非白名单或漂移保留 DATA_SPINE_LOAD_FAILURE Error。非 quiet 读取 catch 复用同一提示，SkeletonBinary 版本拒绝与 SkeletonDataCompatibility 不变。编辑器外定向回归入口为 DevTools/DataTables/Test-SpineLegacyGate.ps1 -PackagePolicyOnly（真实包类+最小 stubs，非 Unity DLL）；原生 Editor 编译/导入与 AI-000235 续行均尚未获本任务完成证明。
-
-已知异常命中时跳过后续编辑器兼容性诊断，仅用于防止再次报 Error；该兼容表目前包含 3.8.0，因此离线 stub 对“兼容性也报 Error”的覆盖属于防御性分支测试，不代表已在原生 Editor 观察到该重复日志。
-
-迁移侧滚轮专项：`Assets/Scripts/MouseInteractive/MouseManager.cs` 直接累计Input System统一滚轮单位，冷却期最多保留一步，目标/层/失焦时清理，冷却使用unscaled time；Windows专用`×120`桥接已在MIG-F01移除。手感参数来自T8 `fridge_scroll_threshold`（缺失/非法默认1）与`fridge_scroll_cooldown`（缺失/非法默认0.2秒），由`CK01GeneratedDataCatalog`按invariant culture解析，再经`ShortCycleSessionManager.Start → MouseManager.ConfigureScrollInput`单一路径应用，FridgeScrollLab不设旁路。配置人员入口见[区域滚动说明](../../组件说明文档/区域滚动_配置与复用说明.md)。本轮源码/静态验证完成，生成资产刷新、Play与Windows/Mac真实硬件手感由后续F3/F4及人工验收完成；旧2022回退基线不用于打开已接棒目录。Windows API保持D3D11优先/D3D12第二，Auto=false。
-
-2026-10-13 ShortCycle显隐/镜头专项：AI224在既有FSM→Director→Space/Set→CameraPan上增加可选IShortCyclePresentationBatchHost，将Hide/Leave→Enter/Show合并为一次显示决策。每Set的Appear At Progress/Disappear At Progress按0～1经过时间进度由PanProgressed驱动；反转取消旧计划，同槽/零时长即时完成。Space.Visual Only Sets仅为当前聚焦/准备中的Space保留视觉、豁免到位后视野停用，不授焦点。AI225已取消ClueBoard全局常显，仅Browse/ClueBoardShell/Kitchen请求显示；Kitchen的Visual Only Sets为Phase0_RecipeBook父根及Browse_Group/OpenBookStructure/CurrentRecipeTab、ClueBoard_Group，Cover/Catalog子组仍分别关闭。15组正式阈值0/0，用户锚点(-16.39,-0.68,-0.3)、四机位和0.45秒配置保留。原生0/0.5/1、同槽、内部折返及后台交互已检查，最终Edit/scene clean；用户本轮已明确人工验收通过，AI223/225已签收；原分段测量及会话重载记录保留，不改写为机器重新实测。其他Modal/Tray动画沿原控制，不构建按每条状态边分别配置的时间轴。配置入口见[状态显隐与镜头切换说明](../../组件说明文档/ShortCycle状态显隐与镜头切换_配置说明.md)。
-
-2026-10-05 FONT-R2 / AI205：一次性迁移入口为 `Assets/Editor/Fonts/FontSwapOnce.cs`（AI205交付141行；现行AI213为262行），菜单 `Tools/CK01/Fonts/Swap To Static (once)`；`Run(true)`只读预检，`Run(false)`复用三材质GUID，按原CSV去重171身份，使用TMP公开fontSharedMaterial→font（AI213修正顺序），源样式→Static atlas→UpdateShaderRatios，场景实例先于Prefab源保存。旧ShortCycleFontSwapTool及专属测试原字节移至 `DevTools/Fonts/deprecated/`，长期AtlasBuilder/LayoutAudit/hook保留。Fonts聚合改为Test-ShortCycleFonts + Test-FontSwapOnce；本机Unity6000.3.24f1/TMP DLL编译、436项生产核心离线断言及37项hook测试通过，生产序列化写入为零；AI206已在同工程Unity6000.3.24f1完成真实Refresh/Compile，FontSwapOnce已加载到Editor程序集，Console新增Error为0；3398个既有序列化文件SHA/时间戳不变，仅Editor导入新增该脚本meta。AI207迁移/原生ratio/截图/Build尚待执行。详见 `DevTools/Fonts/README.md`。
+[本页整理前全文与历史记录](<../../docs/archive/工程事实_20261124/history/.ai-workspace/codebase/entry.md>)；[归档与原字节恢复索引](<../../docs/archive/工程事实_20261124/README.md>)；[已知不符与保留边界](<../../docs/archive/工程事实_20261124/差异与保留边界.md>)。
