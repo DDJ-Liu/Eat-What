@@ -228,7 +228,7 @@ try {
     }
 
     $isolatedGenerated = Join-Path $batchRoot 'Assets/Generated/DataTables'
-    $isolatedFonts = Join-Path $batchRoot 'Assets/Font/Heavy'
+    $isolatedFonts = Join-Path $batchRoot 'Assets/Fonts/Heavy'
     $before = @(Get-DataDirectoryManifest -Root $isolatedGenerated)
     $fontBefore = @(Get-DataDirectoryManifest -Root $isolatedFonts)
     [void](Assert-SnapshotUnchanged -Expected $report.inputSnapshot -Root $repositoryRoot -Stage 'before Unity batch')
@@ -400,7 +400,7 @@ try {
                 throw 'FONT_FAILED: live font manifest drifted after isolation copy.'
             }
             try {
-                $report.postExitStaticCredential = Get-StablePostExitStaticCredential -Path (Join-Path $batchRoot 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset')
+                $report.postExitStaticCredential = Get-StablePostExitStaticCredential -Path (Join-Path $batchRoot 'Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset')
                 $fontPublication = Invoke-FontPublicationTransaction `
                     -RepositoryRoot $repositoryRoot -StagedProjectRoot $batchRoot `
                     -BackupRoot (Join-Path $repositoryRoot ("DevTools/Fonts/backup/$safeRoundId/$runId")) `

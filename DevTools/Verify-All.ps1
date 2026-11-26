@@ -90,7 +90,7 @@ function Get-AffectedProfiles {
         if ($path -match '^(Assets/Scripts/Cooking/ShortCycle/|Assets/Scripts/MouseInteractive/|DevTools/ShortCycle/)') { $profiles.Add('ShortCycle') }
         if ($path -match '^(DataTables/|Assets/(Editor/)?[^/]*/?Data|Assets/Editor/DataTables/|Assets/Scripts/DataBase/|DevTools/DataTables/)') { $profiles.Add('DataTables') }
         if ($path -match '^(Assets/(Scripts/.*Rendering|Shaders/2D)/|DevTools/Rendering/)') { $profiles.Add('Rendering') }
-        if ($path -match '^(Assets/Editor/Fonts/|Assets/Font/|DevTools/Fonts/|Assets/Editor/ShortCycle/ShortCycleLayoutAudit\.cs|DevTools/GitHooks/(check-mig63-font\.sh|test-font-guard\.py|README\.md))') { $profiles.Add('Fonts') }
+        if ($path -match '^(Assets/Editor/Fonts/|Assets/Fonts/|DevTools/Fonts/|Assets/Editor/ShortCycle/ShortCycleLayoutAudit\.cs|DevTools/GitHooks/(check-mig63-font\.sh|test-font-guard\.py|README\.md))') { $profiles.Add('Fonts') }
     }
     return @($profiles | Select-Object -Unique)
 }

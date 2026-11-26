@@ -1112,7 +1112,7 @@ function Invoke-FontPublicationTransaction {
     $names = @('ShortCycle_Heavy_Static.asset','ShortCycle_Heavy_DynamicFallback.asset')
     $before = @{}; $after = @{}; $paths = @{}; $stagedPaths = @{}
     foreach ($name in $names) {
-        $relative = Join-Path 'Assets/Font/Heavy' $name
+        $relative = Join-Path 'Assets/Fonts/Heavy' $name
         $paths[$name] = Join-Path $root $relative
         $stagedPaths[$name] = Join-Path $stagedRoot $relative
         foreach ($path in @($paths[$name],$stagedPaths[$name],($paths[$name]+'.meta'),($stagedPaths[$name]+'.meta'))) {

@@ -4,10 +4,10 @@ set -eu
 root=$(git rev-parse --show-toplevel)
 cd "$root"
 
-legacy='Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset'
+legacy='Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset'
 legacy_baseline='1d379a7eb64de1871194614f83bf61ac52e0d323677048fe237e3fbd3b399cc2'
-static_asset='Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'
-dynamic_asset='Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset'
+static_asset='Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset'
+dynamic_asset='Assets/Fonts/Heavy/ShortCycle_Heavy_DynamicFallback.asset'
 manifest='DevTools/Fonts/ShortCycleFontBuildManifest.json'
 
 fail() { echo "MIG63 font guard: $*" >&2; exit 1; }

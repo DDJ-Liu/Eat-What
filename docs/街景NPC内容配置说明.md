@@ -252,7 +252,7 @@ Street 当前已保存以下接入，新增 NPC 应复用本场景对象，不�
 | --- | --- |
 | `NarrativeRuntime_TUNE` / Narrative Runtime Entry | Presentation Config 指向 `Assets/Settings/Narrative/DialoguePresentationConfig.asset`；Data Catalog 指向现 `CK01GeneratedDataCatalog.asset` |
 | 同对象 / Narrative Bubble View | Surface Provider 指向同对象的 Narrative Bubble Canvas Renderer |
-| 同对象 / Narrative Bubble Canvas Renderer | World Camera=`Cam_Street`；Font Asset=`Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset`，均为显式引用 |
+| 同对象 / Narrative Bubble Canvas Renderer | World Camera=`Cam_Street`；Font Asset=`Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset`，均为显式引用 |
 | `NarrativeTargetRegistry_TUNE` | Player 指向 `PlayerRoot_TUNE/Foot_TUNE`，用于地面距离与内建 `player` 目标 |
 | `NarrativeSceneStateApplier_TUNE` | Runtime Entry、Target Registry、Bubble View 接上述对象；Generic Npc Prefab 接 `GenericNPC.prefab`；Placeholder Visual Prefab 接现白块占位；Generated Npc Parent 接自身 Transform；Apply Default On Start 当前 true |
 

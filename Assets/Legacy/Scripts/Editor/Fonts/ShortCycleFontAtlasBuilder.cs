@@ -19,13 +19,13 @@ namespace EatWhat.EditorTools.Fonts
     public static class ShortCycleFontAtlasBuilder
     {
         public const string LegacyFontAssetPath =
-            "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
+            "Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset";
         public const string StaticFontAssetPath =
-            "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset";
+            "Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset";
         public const string DynamicFallbackAssetPath =
-            "Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset";
+            "Assets/Fonts/Heavy/ShortCycle_Heavy_DynamicFallback.asset";
         public const string SourceHanFallbackAssetPath =
-            "Assets/Font/Heavy/SourceHanSansSC-Heavy SDF.asset";
+            "Assets/Fonts/Heavy/SourceHanSansSC-Heavy SDF.asset";
         public const string LocalizationCsvPath =
             "DataTables/Localization/Localization.csv";
         public const string BuildManifestPath =

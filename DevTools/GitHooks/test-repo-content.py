@@ -16,7 +16,7 @@ import argparse
 ROOT = Path(__file__).resolve().parents[2]
 CHECKER = ROOT / 'DevTools/GitHooks/check-repo-content.py'
 PORTABLE = ROOT / '.ai-workspace/MIG63/pre-commit.sh'
-LEGACY = 'Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset'
+LEGACY = 'Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset'
 SHELL = str(Path(os.environ.get('ProgramFiles', 'C:/Program Files')) / 'Git/bin/bash.exe') if os.name == 'nt' else 'sh'
 ENV = os.environ.copy()
 ENV.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull, GIT_OPTIONAL_LOCKS='0')

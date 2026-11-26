@@ -8,9 +8,9 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
-LEGACY = 'Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset'
-STATIC = 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset'
-DYNAMIC = 'Assets/Font/Heavy/ShortCycle_Heavy_DynamicFallback.asset'
+LEGACY = 'Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset'
+STATIC = 'Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset'
+DYNAMIC = 'Assets/Fonts/Heavy/ShortCycle_Heavy_DynamicFallback.asset'
 MANIFEST = 'DevTools/Fonts/ShortCycleFontBuildManifest.json'
 SHELL = str(Path(os.environ.get('ProgramFiles', 'C:/Program Files')) / 'Git/bin/bash.exe') if os.name == 'nt' else 'sh'
 ENV = os.environ.copy()

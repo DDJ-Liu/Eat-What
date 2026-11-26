@@ -126,7 +126,7 @@
 | Background Color / Text Color | 暗色半透明(0.08,0.08,0.08,0.88) / 白色 | 保源码初值 | 底图受颜色调制，浅底/白字是否可读须实看；没有已批准配色建议 |
 | Sorting Order | 100 | 100 | 相对其它 Overlay UI；不等于修改街景物件排序 |
 
-World Camera 当前显式接 `Cam_Street`；Font Asset 当前为 `Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset`，Font Material=None，使用该字体共享材质；Bubble View.Surface Provider 已序列化接同对象 Renderer。新图不应通过改这些字体/材质或加另一套 Canvas 来接入。淡入、存活、上漂与淡出仍由原 tier 配置决定，详见[气泡专题](../组件说明文档/视觉特效/剧情气泡配置与使用说明.md)。
+World Camera 当前显式接 `Cam_Street`；Font Asset 当前为 `Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset`，Font Material=None，使用该字体共享材质；Bubble View.Surface Provider 已序列化接同对象 Renderer。新图不应通过改这些字体/材质或加另一套 Canvas 来接入。淡入、存活、上漂与淡出仍由原 tier 配置决定，详见[气泡专题](../组件说明文档/视觉特效/剧情气泡配置与使用说明.md)。
 
 ### 命名、目录和补齐步骤
 

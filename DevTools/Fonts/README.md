@@ -53,7 +53,7 @@ pwsh -NoProfile -File DevTools/Fonts/Get-FontGlyphDecision.ps1 -OutputDirectory 
 
 源类别固定取CSV，重复运行不从现有Static推测旧来源。86项SourceHan、77项Legacy、8项Heavy；CoverTitle必须单列为Static + FromHeavy，并输出转换日志。工具不会抓图；AI207的CoverTitle前图、后图和五视图都必须由同一个已建立的StaticGuard覆盖受控渲染前后，具体见AI213后继用法。
 
-| 现有材质（Assets/Font/Heavy/Materials/） | 必须保留的GUID |
+| 现有材质（Assets/Fonts/Heavy/Materials/） | 必须保留的GUID |
 | --- | --- |
 | ShortCycle_Static_FromSourceHan.mat | 8e525bf3cdd33804189d28645ca0f556 |
 | ShortCycle_Static_FromLegacyShortCycle.mat | 87a7857d7b1355641aee5b8ac50c5c1b |
@@ -141,7 +141,7 @@ guard.Around("approved save", () => { /* 唯一审定保存动作 */ });
 1. 先独立核对本版源码 SHA、真实 Editor6000.3.24f1/dataPath、编译与 Console；本轮 CODE 未操作 Editor。先审定保护方案，当前生产 Static 保持失败字节；不要直接运行本版 Run 试错，它将有意拒绝该 SHA。
 2. 在有明确归属/关闭和清理计划的隔离字体对象上做真实原生正反例。可把已核 E877 Git LFS 载荷（不是指针文本）复制为 `Assets/Tests/FontSwapOnce/Static.asset` 的临时隔离资源，由 Editor 生成独立 meta/GUID；这个路径是后继 ENGINE 须纳入自身临时资产许可的试验入口，本 CODE 未创建它。使用 `BeginIsolatedStaticGuard(path, distinctGuid)`，仍固定 E877 精确字节和 A/B/C=1，拒绝正式路径、路径穿越及正式 GUID；它不写文件，也不能影响 Run 的正式路径/期望。保存隔离资源的源字节核验、绑定 GUID、前后快照和清理证据。
 3. 隔离测试分别覆盖加载、受控渲染、绑定、每种保存前后：同时记录磁盘 SHA、内存状态/dirty、实际保存次数。旧顺序必须真实走 atlas 不匹配→默认材质→padding 的负例；新顺序必须真实走至少一次 font 改变而保留外部 atlas，验证默认材质不变和 Prefab override。当前生产171全匹配只会跳过 Bind，不能作修复证据。需要故障注入的负例在隔离资源执行；一次检测失败即停并保全，不能重采基线继续，新的独立用例先按归属清理并建立新干净 domain。
-4. 四边界原生证据独立通过后，才进入已批准单 Static 恢复写阶段。fresh Editor/未知dirty检查、当前 2C531…现场、目标 Git blob/LFS 指针与实际载荷 SHA/写前副本 E877…逐项复核，直接复制到 `Assets/Font/Heavy/ShortCycle_Heavy_Static.asset`。meta/GUID、六份场景/Prefab部分成果、三外部材质保持。不得创建恢复ref/index/tree、全量回退、暂存或提交；用户提交。文件恢复和重新加载分开留证，旧的内存污染不得作为新基线；fresh加载后立即建立固定基线 guard，受控 Refresh/后续加载前后按同一 guard 检查。若因旧内存或首次生命周期无法建立基线，停止留证，由控制端处理，不能绕过检查。
+4. 四边界原生证据独立通过后，才进入已批准单 Static 恢复写阶段。fresh Editor/未知dirty检查、当前 2C531…现场、目标 Git blob/LFS 指针与实际载荷 SHA/写前副本 E877…逐项复核，直接复制到 `Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset`。meta/GUID、六份场景/Prefab部分成果、三外部材质保持。不得创建恢复ref/index/tree、全量回退、暂存或提交；用户提交。文件恢复和重新加载分开留证，旧的内存污染不得作为新基线；fresh加载后立即建立固定基线 guard，受控 Refresh/后续加载前后按同一 guard 检查。若因旧内存或首次生命周期无法建立基线，停止留证，由控制端处理，不能绕过检查。
 5. 恢复写阶段必须如实列出这一个已审定文件变化，不能称“全部生产未变”。新的真实编译/单次 `Run(true)`、恢复后3399完整资源清单与守卫证据交控制端独立验收，再用正式许可续原 AI207（同slot配对、旧attempt/错误/恢复不清零）。之后完成原11项、原生ratio、幂等、五视图/CoverTitle、Build与动态图集清空；R4用户视觉及F/P2/Excel/E2保持原闸门。
 
 ### 夹具语义、行数与证据

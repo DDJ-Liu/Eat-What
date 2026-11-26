@@ -26,7 +26,7 @@ namespace EatWhat.EditorTools.VisualEffects
 
         private const string InputActionsPath = "Assets/Scripts/Controller/PlayerControl.inputactions";
         private const string OutlineMaterialPath = "Assets/Materials/2D/SpriteOutline2D.mat";
-        private const string ChineseFontPath = "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
+        private const string ChineseFontPath = "Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset";
 
         [MenuItem("Tools/Visual Effects Lab/Build or Open Lab")]
         public static void BuildOrOpenFromMenu()

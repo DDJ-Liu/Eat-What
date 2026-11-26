@@ -132,7 +132,7 @@
 ## MIG63 接棒后的保护边界（后续编号由主控制台统一分配）
 
 - 同一提交的文本资产可能因clone行尾转换产生不同工作树SHA；跨机器等价核对拟改Git规范化blob，原始SHA继续用于精确备份。真实字段差异和未暂存变更仍须拦截，不能仅比较HEAD。MIG-F08登记待实现，不宣称保护工具已经升级。
-- Assets/Font/**/*.asset已走LFS与-text；字体保护检查的是真实内容SHA/指针OID，不能仅改为LFS指针blob。TMP动态图集在Play/重载/构建均可能写回，先保全、核实归属，再按Editor恢复完整资产，不能自动覆盖未知人工修改。
+- Assets/Fonts/**/*.asset已走LFS与-text；字体保护检查的是真实内容SHA/指针OID，不能仅改为LFS指针blob。TMP动态图集在Play/重载/构建均可能写回，先保全、核实归属，再按Editor恢复完整资产，不能自动覆盖未知人工修改。
 - 静态主字体+动态回退为MIG-F09待用户决定；当前包确有Clear Dynamic Data On Build，但这不能消除日常Play漂移，也不授权删除回退资产或源字体。216字形基线和提交检查继续。
 - API Updater选项表示允许范围，实际影响仍以转换前后源码/资源对照为准；H实测只有忽略示例RaggedySpineboy.cs两处velocity→linearVelocity，31个示例资源普通导入更新。未入库示例的E2去留为MIG-F10，不因有快照自动删除。
 

@@ -2009,7 +2009,7 @@ __OLD_EXPRESSION__
   check(WorldTmpFontAllowed("Shared/Clue/Label",ShortCycleFallbackFontPath),"shared-fallback");
   check(WorldTmpFontAllowed("Shared/Clue/Label",ShortCycleStaticFontPath),"shared-static");
   check(!WorldTmpFontAllowed("Spaces/P0/Label",ShortCycleFallbackFontPath),"spaces-wrong-font");
-  check(!WorldTmpFontAllowed("Shared/Clue/Label","Assets/Font/Other.asset"),"shared-wrong-font");
+  check(!WorldTmpFontAllowed("Shared/Clue/Label","Assets/Fonts/Other.asset"),"shared-wrong-font");
   check(WorldTmpRendererContractValid(2,0,0,0,2),"migrated-world-renderers");
   check(!WorldTmpRendererContractValid(2,1,0,0,2),"font-drift-rejected");
   check(!WorldTmpRendererContractValid(2,0,1,0,1),"missing-renderer-rejected");

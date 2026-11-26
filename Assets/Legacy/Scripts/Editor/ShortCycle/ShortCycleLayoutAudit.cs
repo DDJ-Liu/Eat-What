@@ -17,9 +17,9 @@ using UnityEngine.UI;
 public static class ShortCycleLayoutAudit
 {
     private const string ShortCycleStaticFontPath =
-        "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset";
+        "Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset";
     private const string ShortCycleFallbackFontPath =
-        "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
+        "Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset";
 
     // These paths are the set-owned interaction contract, including the clue-board
     // hit area added after the original thirteen-gate takeover audit.

@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 internal static class SceneValidationSession
 {
     const string Key = "MIG63.Validation.";
-    const string Font = "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
+    const string Font = "Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset";
     const string FontHash = "1d379a7eb64de1871194614f83bf61ac52e0d323677048fe237e3fbd3b399cc2";
     static bool busy;
     internal static double Next;

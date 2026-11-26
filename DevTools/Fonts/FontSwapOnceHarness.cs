@@ -308,7 +308,7 @@ public static class FontSwapOnceHarness
             sources[i].Floats["_GradientScale"] = 4 + i;
             GlobalObjectId.Objects[ids[i]] = sources[i];
             targets[i] = new Material(atlas) { name = "ShortCycle_Static_From" + names[i], shader = standard };
-            Register("Assets/Font/Heavy/Materials/" + targets[i].name + ".mat", guids[i], targets[i]);
+            Register("Assets/Fonts/Heavy/Materials/" + targets[i].name + ".mat", guids[i], targets[i]);
         }
         var legacy = new TMPro.TMP_FontAsset { name = "Legacy", material = sources[1], atlasTexture = sources[1].GetTexture("_MainTex") };
         var heavy = new TMPro.TMP_FontAsset { name = "Heavy", material = sources[2], atlasTexture = sources[2].GetTexture("_MainTex") };
@@ -726,7 +726,7 @@ public static class FontSwapOnceHarness
             if (scenario == "dirtyMaterial") EditorUtility.SetDirty(targets[2]);
             if (scenario == "dirtyStatic") EditorUtility.SetDirty(font);
             if (scenario == "missingMaterial") AssetDatabase.Objects.Remove(AssetDatabase.GUIDToAssetPath("389683e661c8d24468fea402edba0841"));
-            if (scenario == "wrongGuid") AssetDatabase.Guids["Assets/Font/Heavy/Materials/ShortCycle_Static_FromHeavy.mat"] = "wrong";
+            if (scenario == "wrongGuid") AssetDatabase.Guids["Assets/Fonts/Heavy/Materials/ShortCycle_Static_FromHeavy.mat"] = "wrong";
             if (scenario == "missingSource") GlobalObjectId.Objects.Clear();
             if (scenario == "missingObject") last.transform.gameObject.Texts.Clear();
             if (scenario == "unknownFont") first.font = new TMPro.TMP_FontAsset { name = "Unexpected" };

@@ -33,7 +33,7 @@
 
 捕获相机只见 `TransparentFX`，深度低于主相机，并把当帧后景写入每主相机唯一一份自有 RenderTexture。所有 Lit 2D 后景以及 `GlobalLight2D` 都必须在 `TransparentFX`；否则捕获相机看不到全局光，RT 会是黑色。泡泡、角色、前景和状态字使用 Default；主相机同时看 TransparentFX 与 Default。背景排序 -200~-100，泡泡 0~20，前景 100~200，状态字 500。Sorting order 只决定同相机绘制次序，GameObject Layer/cullingMask 决定是否进入捕获；只读 Audit 的 `globalLightLayerValid` 会防止该问题回归。
 
-Builder 创建的世界空间 TMP 显式只读复用 `Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset`，确保中文测试字不依赖 TMP 默认字体；不得修改该共享字体资产。
+Builder 创建的世界空间 TMP 显式只读复用 `Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset`，确保中文测试字不依赖 TMP 默认字体；不得修改该共享字体资产。
 
 ## 参数与预设
 

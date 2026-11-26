@@ -16,7 +16,7 @@ $materialGuids = @{
 }
 $materialEvidence = @()
 foreach ($name in $materialGuids.Keys) {
-    $path = Join-Path $repoRoot "Assets/Font/Heavy/Materials/ShortCycle_Static_From$name.mat"
+    $path = Join-Path $repoRoot "Assets/Fonts/Heavy/Materials/ShortCycle_Static_From$name.mat"
     if (-not (Test-Path -LiteralPath $path)) { throw "Existing material missing: $path" }
     if ([IO.File]::ReadAllText("$path.meta") -notmatch "(?m)^guid: $($materialGuids[$name])\s*$") { throw "Existing GUID changed: $path" }
     $materialEvidence += [pscustomobject]@{ name=$name; guid=$materialGuids[$name]; sha256=(Get-FileHash $path).Hash; metaSha256=(Get-FileHash "$path.meta").Hash }

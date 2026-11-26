@@ -17,7 +17,7 @@ namespace EatWhat.EditorTools.Fonts
     {
         public const string Mapping = ".ai-workspace/outputs/control/U1-PRE-20260923/PRE1_字体材质迁移逐项草案.csv";
         public const string StaticGuid = "9b07c6c50dde09d4b8719754c27ddc96";
-        public const string StaticPath = "Assets/Font/Heavy/ShortCycle_Heavy_Static.asset";
+        public const string StaticPath = "Assets/Fonts/Heavy/ShortCycle_Heavy_Static.asset";
         public const string StaticSha256 = "E877950344A043B02BE025B7C2E12E2889E9EC69D20E72A3C90785F5B8EE1220";
         public const string Cover = "Spaces/Phase0_RecipeBook/Cover_Group/CoverTitle";
         static readonly string[] Names = { "SourceHan", "LegacyShortCycle", "Heavy" };
@@ -102,7 +102,7 @@ namespace EatWhat.EditorTools.Fonts
             Require(path != null && path.StartsWith("Assets/Tests/FontSwapOnce/", StringComparison.Ordinal) && !path.Contains("..") && !path.Contains("\\") && !string.IsNullOrEmpty(guid) && guid != StaticGuid, "Requires an isolated fixture path and distinct GUID");
             return BeginGuard(path, guid);
         }
-        static string MaterialPath(int style) => "Assets/Font/Heavy/Materials/ShortCycle_Static_From" + Names[style] + ".mat";
+        static string MaterialPath(int style) => "Assets/Fonts/Heavy/Materials/ShortCycle_Static_From" + Names[style] + ".mat";
         const string StandardShader = "TextMeshPro/Distance Field", MobileShader = "TextMeshPro/Mobile/Distance Field";
         // Properties shared by the two checked-in SDF shaders, including every native ratio input/output.
         const string CommonProperties = "_MainTex _TextureWidth _TextureHeight _GradientScale _FaceColor _FaceDilate _OutlineColor _OutlineWidth _OutlineSoftness " +

@@ -6,7 +6,7 @@ $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $builderPath = Join-Path $repoRoot 'Assets\Editor\Fonts\ShortCycleFontAtlasBuilder.cs'
 $layoutAuditPath = Join-Path $repoRoot 'Assets\Editor\ShortCycle\ShortCycleLayoutAudit.cs'
 $parserPath = Join-Path $repoRoot 'Assets\Editor\DataTables\DataTableValidationCore.cs'
-$legacyPath = Join-Path $repoRoot 'Assets\Font\Heavy\ShortCycle_Heavy_WithFallback.asset'
+$legacyPath = Join-Path $repoRoot 'Assets\Fonts\Heavy\ShortCycle_Heavy_WithFallback.asset'
 $localizationPath = Join-Path $repoRoot 'DataTables\Localization\Localization.csv'
 $staticAssertions = 0
 

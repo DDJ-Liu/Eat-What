@@ -24,7 +24,7 @@ namespace EatWhat.EditorTools.ShortCycle
         public const string SlotBlockPrefabPath = "Assets/Prefabs/Cooking/ShortCycle/GridPieces/SlotBlock.prefab";
         public const string CatalogPath = "Assets/Generated/DataTables/CK01GeneratedDataCatalog.asset";
         public const string InputActionsPath = "Assets/Scripts/Controller/PlayerControl.inputactions";
-        public const string FontPath = "Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset";
+        public const string FontPath = "Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset";
 
         private static readonly string[] RootNames =
         {
