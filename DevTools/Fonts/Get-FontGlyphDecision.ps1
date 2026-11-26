@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$ProjectRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
-    [string]$BaseCharacterList = 'Assets/Font/Heavy/ShortCycle_Heavy_WithFallback.asset',
+    [string]$BaseCharacterList = 'Assets/Fonts/Heavy/ShortCycle_Heavy_WithFallback.asset',
     [string]$StaticGlyphList = 'Assets/Font/Heavy/ShortCycle_Heavy_Static.asset',
     [string]$LocalizationCsv = 'DataTables/Localization/Localization.csv',
     [Parameter(Mandatory)][string]$OutputDirectory,
