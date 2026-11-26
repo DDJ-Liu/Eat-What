@@ -1,0 +1,217 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T22_SceneStatePlacements
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: scene_id
+    type: ref:T20
+    isId: 0
+  - name: state_id
+    type: ref:T21
+    isId: 0
+  - name: kind
+    type: enum(actor,object,exit)
+    isId: 0
+  - name: target
+    type: string
+    isId: 0
+  - name: anchor_id
+    type: string
+    isId: 0
+  - name: facing
+    type: enum(left,right)
+    isId: 0
+  - name: active
+    type: bool
+    isId: 0
+  - name: dialogue_id
+    type: ref:T17
+    isId: 0
+  - name: ambient_pool
+    type: ref:T23
+    isId: 0
+  - name: marker
+    type: enum(none,talk,story)
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_tomato
+    - 
+    - 
+    - true
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_passer_a
+    - test_street_01
+    - right
+    - true
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_passer_a#2
+    - test_street_02
+    - left
+    - true
+    - dlg_test_talk_b
+    - amb_test_c
+    - none
+    - 
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_passer_b
+    - test_street_03
+    - 
+    - false
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_tomato
+    - 
+    - 
+    - true
+    - 
+    - amb_test_b
+    - story
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_potato
+    - test_street_03
+    - right
+    - true
+    - dlg_test_talk_a
+    - amb_test_a
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_passer_a#2
+    - test_street_02
+    - left
+    - false
+    - 
+    - amb_test_c
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_passer_b
+    - test_street_01
+    - 
+    - true
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_potato
+    - 
+    - 
+    - true
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_passer_a
+    - 
+    - 
+    - false
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_talker
+    - test_street_04
+    - 
+    - true
+    - dlg_test_talk_a
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_talker
+    - test_street_04
+    - 
+    - true
+    - dlg_test_talk_a
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_default
+    - actor
+    - chr_test_host
+    - test_street_05
+    - 
+    - true
+    - dlg_test_cast_3
+    - 
+    - 
+    - 
+  - cells:
+    - scn_test_street
+    - test_second
+    - actor
+    - chr_test_host
+    - test_street_05
+    - 
+    - false
+    - 
+    - 
+    - 
+    - 

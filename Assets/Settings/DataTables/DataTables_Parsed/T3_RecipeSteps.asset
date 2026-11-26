@@ -1,0 +1,153 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T3_RecipeSteps
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: step_id
+    type: string
+    isId: 1
+  - name: recipe_id
+    type: ref:T1
+    isId: 0
+  - name: next_step_id
+    type: ref:T3
+    isId: 0
+  - name: display_text_key
+    type: ref:T9
+    isId: 0
+  - name: standard_ingredients
+    type: list<ref:T4>
+    isId: 0
+  - name: standard_tools
+    type: list<ref:T7>
+    isId: 0
+  - name: trigger_items
+    type: list<ref:T4>
+    isId: 0
+  - name: permanent_trigger_items
+    type: list<ref:T4>
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - step_qt_01
+    - rcp_qingtang_noodle
+    - step_qt_02
+    - step_qt_01.text
+    - ing_noodle_dried
+    - tool_pot
+    - prd_noodle_boiled;prd_instant_noodle_boiled;prd_rice_noodle_boiled
+    - prd_qingtang_dish;prd_qingtang_dish
+    - "\u716E\u9762"
+  - cells:
+    - step_qt_02
+    - rcp_qingtang_noodle
+    - step_qt_03
+    - step_qt_02.text
+    - ing_clear_broth
+    - tool_pot
+    - ing_clear_broth;prd_clear_broth;prd_nongtangbao_soup;prd_milktea_liquid;prd_paomian_soup
+    - prd_qingtang_dish;prd_qingtang_dish
+    - "\u6C64\u5E95"
+  - cells:
+    - step_qt_03
+    - rcp_qingtang_noodle
+    - step_qt_04
+    - step_qt_03.text
+    - ing_egg
+    - tool_pan
+    - prd_fried_egg;ing_pidan;ing_octopus_leg;ing_ham_sausage
+    - prd_qingtang_dish;prd_qingtang_dish
+    - "\u6D47\u5934"
+  - cells:
+    - step_qt_04
+    - rcp_qingtang_noodle
+    - 
+    - step_qt_04.text
+    - prd_noodle_boiled;ing_clear_broth;prd_fried_egg
+    - tool_pot
+    - prd_qingtang_dish;prd_qingtang_dish
+    - 
+    - "\u961F\u5C3E=\u6700\u7EC8\u6210\u54C1\u6B65\u9AA4"
+  - cells:
+    - step_te_01
+    - rcp_tomato_egg
+    - step_te_02
+    - step_te_01.text
+    - ing_egg
+    - tool_bowl;tool_chopsticks
+    - prd_egg_liquid;prd_danhuangpai_sui
+    - prd_tomato_egg_dish;prd_tomato_egg_soup;prd_ofanqie_danhuangpai
+    - "\u6253\u86CB"
+  - cells:
+    - step_te_02
+    - rcp_tomato_egg
+    - step_te_03
+    - step_te_02.text
+    - ing_tomato
+    - tool_board;tool_knife
+    - prd_tomato_cut;prd_ofanqie_sui
+    - prd_tomato_egg_dish;prd_tomato_egg_soup;prd_ofanqie_danhuangpai
+    - "\u5207\u756A\u8304"
+  - cells:
+    - step_te_03
+    - rcp_tomato_egg
+    - step_te_04
+    - step_te_03.text
+    - prd_egg_liquid
+    - tool_pan;tool_spatula
+    - prd_scrambled_egg;prd_danhuangpai_sui
+    - prd_tomato_egg_dish;prd_tomato_egg_soup;prd_ofanqie_danhuangpai
+    - "\u8D70\u86CB\u82B1\u6C64\u8DEF\u7EBF\u65F6\u672C\u6B65\u88AB\u6C38\u4E45\u6298\u53E0\uFF08\u6C38\u4E45\u7F6E\u5B8C\u6210\u793A\u8303\uFF09"
+  - cells:
+    - step_te_04
+    - rcp_tomato_egg
+    - 
+    - step_te_04.text
+    - ing_tomato
+    - tool_pan
+    - prd_tomato_egg_dish;prd_tomato_egg_soup;prd_ofanqie_danhuangpai
+    - 
+    - "\u961F\u5C3E\uFF1B\u4E24\u4E2A\u6210\u54C1\u4EFB\u4E00\u547D\u4E2D"
+  - cells:
+    - step_kc_01
+    - rcp_kaishui_cabbage
+    - step_kc_02
+    - step_kc_01.text
+    - ing_cabbage
+    - tool_hand
+    - ing_cabbage
+    - 
+    - "\u6458\u6D17"
+  - cells:
+    - step_kc_02
+    - rcp_kaishui_cabbage
+    - step_kc_03
+    - step_kc_02.text
+    - ing_octopus_leg
+    - tool_stove
+    - prd_clear_broth
+    - 
+    - "\u7B49\u5F85\u5904\u7406\u793A\u8303"
+  - cells:
+    - step_kc_03
+    - rcp_kaishui_cabbage
+    - 
+    - step_kc_03.text
+    - ing_cabbage
+    - tool_pot
+    - prd_kaishui_dish
+    - 
+    - "\u961F\u5C3E"

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T19_CGs
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: cg_id
+    type: string
+    isId: 1
+  - name: cg_sprite
+    type: string
+    isId: 0
+  - name: transition_mode
+    type: enum(black_fade,cross_fade)
+    isId: 0
+  - name: fade_in
+    type: float
+    isId: 0
+  - name: fade_out
+    type: float
+    isId: 0
+  - name: ken_burns_zoom
+    type: float
+    isId: 0
+  - name: ken_burns_pan_x
+    type: float
+    isId: 0
+  - name: ken_burns_pan_y
+    type: float
+    isId: 0
+  - name: ken_burns_duration
+    type: float
+    isId: 0
+  - name: ken_burns_curve
+    type: enum(linear,quadratic,smooth_step,ease_in_out)
+    isId: 0
+  - name: keep_box
+    type: bool
+    isId: 0
+  - name: keep_portraits
+    type: bool
+    isId: 0
+  - name: keep_name
+    type: bool
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows: []

@@ -60,6 +60,9 @@ __pycache__/
 /Packages/*
 !/Packages/manifest.json
 !/Packages/packages-lock.json
+# NuGetForUnity project manifest and restored packages moved here from Assets/Packages.
+!/Packages/nuget-packages/
+!/Packages/nuget-packages/**
 
 # Live AI state/evidence is local. Formal rules/scripts/design outside these roots stay source.
 /.ai-workspace/runtime/

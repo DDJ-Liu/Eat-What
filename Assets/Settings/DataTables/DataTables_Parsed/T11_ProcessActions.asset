@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T11_ProcessActions
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: act_id
+    type: string
+    isId: 1
+  - name: name_key
+    type: ref:T9
+    isId: 0
+  - name: process_class
+    type: enum(regular,waiting)
+    isId: 0
+  - name: process_template
+    type: string
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - act_cut
+    - act_cut.name
+    - regular
+    - tpl_popup_cut
+    - "\u5E38\u89C4\u5904\u7406\uFF1A\u5207"
+  - cells:
+    - act_whisk
+    - act_whisk.name
+    - regular
+    - tpl_popup_whisk
+    - "\u5E38\u89C4\u5904\u7406\uFF1A\u6253/\u62CC"
+  - cells:
+    - act_stirfry
+    - act_stirfry.name
+    - regular
+    - tpl_popup_stirfry
+    - "\u5E38\u89C4\u5904\u7406\uFF1A\u7092"
+  - cells:
+    - act_wash
+    - act_wash.name
+    - regular
+    - tpl_popup_wash
+    - "\u5E38\u89C4\u5904\u7406\uFF1A\u624B\u5373\u53EF"
+  - cells:
+    - act_boil
+    - act_boil.name
+    - waiting
+    - tpl_wait_boil
+    - "\u7B49\u5F85\u5904\u7406\uFF1A\u62D6\u5165\u5206\u533A\u89E6\u53D1"
+  - cells:
+    - act_stew
+    - act_stew.name
+    - waiting
+    - tpl_wait_stew
+    - "\u7B49\u5F85\u5904\u7406\uFF1A\u540A\u6C64"
+  - cells:
+    - act_no_process
+    - act_no_process.name
+    - regular
+    - 
+    - "\u65E0\u8868\u73B0\u76F4\u63A5\u5B8C\u6210"
+  - cells:
+    - act_smash
+    - act_smash.name
+    - regular
+    - tpl_popup_smash
+    - "\u78BE\u788E\u5904\u7406"
+  - cells:
+    - act_mix
+    - act_mix.name
+    - regular
+    - tpl_popup_mix
+    - "\u6DF7\u5408\uFF0C\u6C99\u62C9\u7B49\u5904\u7406"
+  - cells:
+    - act_fry
+    - act_fry.name
+    - regular
+    - tpl_popup_fry
+    - "\u714E\u7269"

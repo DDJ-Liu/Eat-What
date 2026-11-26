@@ -1,0 +1,809 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T9_Localization
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: loc_key
+    type: string
+    isId: 1
+  - name: zh_cn
+    type: string
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - act_boil.name
+    - "\u716E"
+    - 
+  - cells:
+    - act_cut.name
+    - "\u5207\u5272"
+    - 
+  - cells:
+    - act_no_process.name
+    - "\u76F4\u63A5\u653E\u5165"
+    - 
+  - cells:
+    - act_stew.name
+    - "\u7096"
+    - 
+  - cells:
+    - act_stirfry.name
+    - "\u7FFB\u7092"
+    - 
+  - cells:
+    - act_wash.name
+    - "\u6458\u6D17"
+    - 
+  - cells:
+    - act_whisk.name
+    - "\u6405\u62CC"
+    - 
+  - cells:
+    - act_smash.name
+    - "\u6363\u788E"
+    - 
+  - cells:
+    - act_mix.name
+    - "\u62CC\u6DF7"
+    - 
+  - cells:
+    - act_fry.name
+    - "\u714E\u70B8"
+    - 
+  - cells:
+    - ing_cabbage.flavor
+    - "\u5F00\u6C34\u767D\u83DC\u7684\u6392\u9762\u62C5\u5F53"
+    - 
+  - cells:
+    - ing_cabbage.name
+    - "\u767D\u83DC\u5FC3"
+    - 
+  - cells:
+    - ing_egg.flavor
+    - "\u5E73\u5E73\u65E0\u5947\uFF0C\u4F46\u8C01\u4E5F\u79BB\u4E0D\u5F00\u5B83"
+    - 
+  - cells:
+    - ing_egg.name
+    - "\u9E21\u86CB"
+    - 
+  - cells:
+    - ing_giant_egg.flavor
+    - "\u4E00\u9897\u9876\u4E09\u9897\uFF0C\u519C\u573A\u76F4\u9001\u7684\u81EA\u4FE1"
+    - 
+  - cells:
+    - ing_giant_egg.name
+    - "\u8D85\u7EA7\u6709\u673A\u519C\u573A\u5DE8\u86CB"
+    - 
+  - cells:
+    - ing_ham_sausage.flavor
+    - "\u4E94\u8FDE\u88C5\uFF0C\u63B0\u4E00\u6839\u5C11\u4E00\u6839"
+    - 
+  - cells:
+    - ing_ham_sausage.name
+    - "\u597D\u5403\u7684\u91D1\u9523\u738B"
+    - 
+  - cells:
+    - ing_milk_box.flavor
+    - "\u5F00\u76D2\u540E\u8BF7\u5C3D\u5FEB\u559D\u5B8C"
+    - 
+  - cells:
+    - ing_milk_box.name
+    - "\u725B\u5976\uFF08\u76D2\uFF09"
+    - 
+  - cells:
+    - ing_noodle_dried.flavor
+    - "\u62B1\u6210\u4E00\u6346\u624D\u6709\u5B89\u5168\u611F\u7684\u9762\u6761\u4EEC"
+    - 
+  - cells:
+    - ing_noodle_dried.name
+    - "\u4E00\u628A\u6302\u9762"
+    - 
+  - cells:
+    - ing_noodle_instant.flavor
+    - "\u957F\u4E86\u811A\u4E5F\u9003\u4E0D\u6389\u88AB\u716E\u7684\u547D\u8FD0"
+    - 
+  - cells:
+    - ing_noodle_instant.name
+    - "\u6CE1\u9762\u997C"
+    - 
+  - cells:
+    - ing_octopus_leg.flavor
+    - "\u4E0D\u77E5\u9053\u672C\u4F53\u53BB\u54EA\u4E86\uFF0C\u53EA\u5269\u4E00\u6761"
+    - 
+  - cells:
+    - ing_octopus_leg.name
+    - "\u7AE0\u9C7C\u811A"
+    - 
+  - cells:
+    - ing_scallion.flavor
+    - "\u6492\u4E0A\u5C31\u9999\uFF0C\u4E0D\u6492\u5C31\u5DEE\u70B9\u610F\u601D"
+    - 
+  - cells:
+    - ing_scallion.name
+    - "\u5C0F\u8471"
+    - 
+  - cells:
+    - ing_tomato.flavor
+    - "\u5DE8\u597D\u5403\u723D\u8304\uFF0C\u672C\u8304\u8BA4\u8BC1"
+    - 
+  - cells:
+    - ing_tomato.name
+    - "\u756A\u8304"
+    - 
+  - cells:
+    - ing_danhuangpai.flavor
+    - "\u86CB\u9EC4\u6D3E\uFF01\uFF01"
+    - 
+  - cells:
+    - ing_danhuangpai.name
+    - "\u86CB\u9EC4\u6D3E"
+    - 
+  - cells:
+    - ing_ofanqie.flavor
+    - "\u54E6\uFF01\uFF01\uFF01\u756A\u8304\uFF01\uFF01\uFF01"
+    - 
+  - cells:
+    - ing_ofanqie.name
+    - "\u54E6\uFF01\u756A\u8304"
+    - 
+  - cells:
+    - ing_pidan.flavor
+    - "\u4F20\u8BF4\u67D0\u4E2A\u4E16\u754C\u91CC\u5B83\u66FE\u662F\u8D85\u7EA7\u53CD\u6D3E"
+    - 
+  - cells:
+    - ing_pidan.name
+    - "\u76AE\u86CB"
+    - 
+  - cells:
+    - ing_noodle_rice.flavor
+    - "\u8FC7\u6865\u2014\u2014"
+    - 
+  - cells:
+    - ing_noodle_rice.name
+    - "\u7C73\u7EBF"
+    - 
+  - cells:
+    - ing_nongtangbao.flavor
+    - "\u6D53\u6C64\u5B9D\u2014\u2014"
+    - 
+  - cells:
+    - ing_nongtangbao.name
+    - "\u6D53\u6C64\u5B9D"
+    - 
+  - cells:
+    - ing_milktea_fen.flavor
+    - "\u56E0\u4E3A\u4F60\u662F\u6211\u7684\u826F\u4E50\u7F8E\u554A~~"
+    - 
+  - cells:
+    - ing_milktea_fen.name
+    - "\u5976\u8336\u7C89\u5305"
+    - 
+  - cells:
+    - ing_paomianbao.flavor
+    - "\u6700\u6076\u6BD2\u7684\u8BC5\u5492\u83AB\u8FC7\u4E8E\u6CE1\u9762\u6CA1\u6709\u8C03\u6599\u5305"
+    - 
+  - cells:
+    - ing_paomianbao.name
+    - "\u6CE1\u9762\u8C03\u6599\u5305"
+    - 
+  - cells:
+    - prd_instant_noodle_boiled.flavor
+    - "\u716E\u597D\u7684\u6CE1\u9762\uFF01"
+    - 
+  - cells:
+    - prd_instant_noodle_boiled.name
+    - "\u716E\u597D\u7684\u6CE1\u9762"
+    - 
+  - cells:
+    - prd_rice_noodle_boiled.flavor
+    - "\u8FC7\u6865\u7684\u7C73\u7EBF"
+    - 
+  - cells:
+    - prd_rice_noodle_boiled.name
+    - "\u716E\u597D\u7684\u7C73\u7EBF"
+    - 
+  - cells:
+    - prd_cabbage_washed.flavor
+    - "\u6458\u597D\u7684\u767D\u83DC\u5FC3\uFF01"
+    - 
+  - cells:
+    - prd_cabbage_washed.name
+    - "\u6458\u597D\u7684\u767D\u83DC\u5FC3"
+    - 
+  - cells:
+    - prd_clear_broth.flavor
+    - "\u9AD8\u6C64\uFF01\uFF01\uFF01"
+    - 
+  - cells:
+    - prd_clear_broth.name
+    - "\u6E05\u4EAE\u9AD8\u6C64"
+    - 
+  - cells:
+    - prd_egg_liquid.flavor
+    - "\u86CB\u6DB2\uFF01"
+    - 
+  - cells:
+    - prd_egg_liquid.name
+    - "\u86CB\u6DB2"
+    - 
+  - cells:
+    - prd_kaishui_dish.flavor
+    - "\u5F00\u6C34\u767D\u83DC!"
+    - 
+  - cells:
+    - prd_kaishui_dish.name
+    - "\u5F00\u6C34\u767D\u83DC"
+    - 
+  - cells:
+    - prd_unknown.name
+    - "\u4E0D\u660E\u7269\u4F53"
+    - 
+  - cells:
+    - prd_unknown.flavor
+    - "\u2026\u2026\u8FD9\u662F\u4EC0\u4E48\uFF1F"
+    - 
+  - cells:
+    - prd_noodle_boiled.flavor
+    - "\u716E\u597D\u7684\u9762!"
+    - 
+  - cells:
+    - prd_noodle_boiled.name
+    - "\u716E\u597D\u7684\u9762"
+    - 
+  - cells:
+    - prd_qingtang_dish.flavor
+    - "\u6E05\u6C64\u9762!"
+    - 
+  - cells:
+    - prd_qingtang_dish.name
+    - "\u6E05\u6C64\u9762"
+    - 
+  - cells:
+    - prd_fried_egg.flavor
+    - "\u4F20\u8BF4\u67D0\u4E2A\u4E16\u754C\u91CC\u5BF9\u6297\u76AE\u86CB\u5927\u9B54\u738B\u7684\u52C7\u8005"
+    - 
+  - cells:
+    - prd_fried_egg.name
+    - "\u714E\u86CB"
+    - 
+  - cells:
+    - prd_scrambled_egg.flavor
+    - "\u7092\u597D\u7684\u86CB!"
+    - 
+  - cells:
+    - prd_scrambled_egg.name
+    - "\u7092\u597D\u7684\u86CB"
+    - 
+  - cells:
+    - prd_danhuangpai_sui.flavor
+    - "\u86CB\u9EC4\u6D3E\u788E\uFF01"
+    - 
+  - cells:
+    - prd_danhuangpai_sui.name
+    - "\u86CB\u9EC4\u6D3E\u788E"
+    - 
+  - cells:
+    - prd_tomato_cut.flavor
+    - "\u5207\u597D\u7684\u756A\u8304!"
+    - 
+  - cells:
+    - prd_tomato_cut.name
+    - "\u5207\u597D\u7684\u756A\u8304"
+    - 
+  - cells:
+    - prd_ofanqie_sui.flavor
+    - "\u54E6\u756A\u8304\u788E\uFF01"
+    - 
+  - cells:
+    - prd_ofanqie_sui.name
+    - "\u54E6\u756A\u8304\u788E"
+    - 
+  - cells:
+    - prd_nongtangbao_soup.flavor
+    - "\u6D53\u6C64\u5B9D\u6C64\uFF01"
+    - 
+  - cells:
+    - prd_nongtangbao_soup.name
+    - "\u6D53\u6C64\u5B9D\u6C64"
+    - 
+  - cells:
+    - prd_milktea_liquid.flavor
+    - "\u51B2\u6CE1\u5976\u8336\uFF01"
+    - 
+  - cells:
+    - prd_milktea_liquid.name
+    - "\u51B2\u6CE1\u5976\u8336"
+    - 
+  - cells:
+    - prd_paomian_soup.flavor
+    - "\u6CE1\u9762\u6C64\uFF01"
+    - 
+  - cells:
+    - prd_paomian_soup.name
+    - "\u6CE1\u9762\u6C64"
+    - 
+  - cells:
+    - prd_pidan_milktea_noodle.flavor
+    - "\u76AE\u86CB\u5976\u8336\u9762\uFF01"
+    - 
+  - cells:
+    - prd_pidan_milktea_noodle.name
+    - "\u76AE\u86CB\u5976\u8336\u9762"
+    - 
+  - cells:
+    - prd_ofanqie_danhuangpai.flavor
+    - "\u54E6\u756A\u8304\u62CC\u86CB\u9EC4\u6D3E\uFF01"
+    - 
+  - cells:
+    - prd_ofanqie_danhuangpai.name
+    - "\u54E6\u756A\u8304\u62CC\u86CB\u9EC4\u6D3E"
+    - 
+  - cells:
+    - prd_tomato_egg_dish.flavor
+    - "\u756A\u8304\u7092\u86CB!"
+    - 
+  - cells:
+    - prd_tomato_egg_dish.name
+    - "\u756A\u8304\u7092\u86CB"
+    - 
+  - cells:
+    - prd_tomato_egg_soup.flavor
+    - "\u756A\u8304\u86CB\u82B1\u6C64!"
+    - 
+  - cells:
+    - prd_tomato_egg_soup.name
+    - "\u756A\u8304\u86CB\u82B1\u6C64"
+    - 
+  - cells:
+    - rcp_kaishui_cabbage.flavor
+    - "\u5F00\u6C34\u767D\u83DC!"
+    - 
+  - cells:
+    - rcp_kaishui_cabbage.name
+    - "\u5F00\u6C34\u767D\u83DC"
+    - 
+  - cells:
+    - rcp_qingtang_noodle.flavor
+    - "\u6E05\u6C64\u9762!"
+    - 
+  - cells:
+    - rcp_qingtang_noodle.name
+    - "\u6E05\u6C64\u9762"
+    - 
+  - cells:
+    - rcp_tomato_egg.flavor
+    - "\u756A\u8304\u7092\u86CB!"
+    - 
+  - cells:
+    - rcp_tomato_egg.name
+    - "\u756A\u8304\u7092\u86CB"
+    - 
+  - cells:
+    - step_kc_01.text
+    - "\u767D\u83DC\u5FC3\u6458\u597D\u6D17\u5E72\u51C0"
+    - 
+  - cells:
+    - step_kc_02.text
+    - "\u6162\u6162\u7096\u4E00\u9505\u6E05\u6C64"
+    - 
+  - cells:
+    - step_kc_03.text
+    - "\u767D\u83DC\u6C46\u4E00\u4E0B\uFF0C\u6D47\u4E0A\u6C64"
+    - 
+  - cells:
+    - step_qt_01.text
+    - "\u6C34\u5F00\u4E86\u5C31\u628A\u9762\u4E22\u8FDB\u53BB"
+    - 
+  - cells:
+    - step_qt_02.text
+    - "\u71AC\u5236\u9AD8\u6C64"
+    - 
+  - cells:
+    - step_qt_03.text
+    - "\u714E\u86CB\uFF0C\u6216\u7092\u5236\u522B\u7684\u6D47\u5934"
+    - 
+  - cells:
+    - step_qt_04.text
+    - "\u716E\u597D\u7684\u9762\u653E\u5165\u9AD8\u6C64\uFF0C\u6DFB\u52A0\u6D47\u5934\uFF0C\u51FA\u9505"
+    - 
+  - cells:
+    - step_te_01.text
+    - "\u628A\u86CB\u6253\u6210\u86CB\u6DB2"
+    - 
+  - cells:
+    - step_te_02.text
+    - "\u756A\u8304\u5207\u6210\u5C0F\u5757"
+    - 
+  - cells:
+    - step_te_03.text
+    - "\u70ED\u6CB9\u4E0B\u9505\u5148\u7092\u86CB"
+    - 
+  - cells:
+    - step_te_04.text
+    - "\u756A\u8304\u4E0B\u9505\u4E00\u8D77\u7092\uFF0C\u51FA\u9505"
+    - 
+  - cells:
+    - stp_oil.flavor
+    - "\u70ED\u9505\u51B7\u6CB9"
+    - 
+  - cells:
+    - stp_oil.name
+    - "\u98DF\u7528\u6CB9"
+    - 
+  - cells:
+    - stp_salt.flavor
+    - "\u54B8\u5473\u7684\u6765\u6E90"
+    - 
+  - cells:
+    - stp_salt.name
+    - "\u76D0"
+    - 
+  - cells:
+    - stp_water.flavor
+    - "\u65E0\u9650\u4F9B\u5E94"
+    - 
+  - cells:
+    - stp_water.name
+    - "\u6E05\u6C34"
+    - 
+  - cells:
+    - tag_dairy.name
+    - "\u5976\u7C7B"
+    - 
+  - cells:
+    - tag_dish_boil.name
+    - "\u716E"
+    - 
+  - cells:
+    - tag_dish_deepfry.name
+    - "\u70B8"
+    - 
+  - cells:
+    - tag_dish_stew.name
+    - "\u7096"
+    - 
+  - cells:
+    - tag_dish_stirfry.name
+    - "\u7092"
+    - 
+  - cells:
+    - tag_dish_salad.name
+    - "\u6C99\u62C9\u53F0"
+    - 
+  - cells:
+    - tag_egg.name
+    - "\u86CB\u7C7B"
+    - 
+  - cells:
+    - tag_flavor_confused.name
+    - "\u5403\u4E0D\u61C2"
+    - 
+  - cells:
+    - tag_flavor_easy.name
+    - "\u7B80\u5355\u597D\u505A"
+    - 
+  - cells:
+    - tag_flavor_fancy.name
+    - "\u770B\u7740\u5C31\u8D35"
+    - 
+  - cells:
+    - tag_flavor_spicy.name
+    - "\u8FA3\u722A"
+    - 
+  - cells:
+    - tag_flavor_yummy.name
+    - "\u771F\u6EF4\u5F88\u9999"
+    - 
+  - cells:
+    - tag_fruit.name
+    - "\u6C34\u679C"
+    - 
+  - cells:
+    - tag_meat.name
+    - "\u8089\u7C7B"
+    - 
+  - cells:
+    - tag_seafood.name
+    - "\u6D77\u9C9C"
+    - 
+  - cells:
+    - tag_staplefood.name
+    - "\u4E3B\u98DF"
+    - 
+  - cells:
+    - tag_veg.name
+    - "\u852C\u83DC"
+    - 
+  - cells:
+    - tool_board.name
+    - "\u6848\u677F"
+    - 
+  - cells:
+    - tool_board_station.name
+    - "\u7827\u677F\u53F0"
+    - 
+  - cells:
+    - tool_bowl.name
+    - "\u7897"
+    - 
+  - cells:
+    - tool_chopsticks.name
+    - "\u7B77\u5B50"
+    - 
+  - cells:
+    - tool_freezer.name
+    - "\u5C0F\u51B0\u67DC"
+    - 
+  - cells:
+    - tool_hand.name
+    - "\u624B"
+    - 
+  - cells:
+    - tool_knife.name
+    - "\u83DC\u5200"
+    - 
+  - cells:
+    - tool_oven.name
+    - "\u70E4\u7BB1"
+    - 
+  - cells:
+    - tool_pan.name
+    - "\u7092\u9505"
+    - 
+  - cells:
+    - tool_pot.name
+    - "\u6C64\u9505"
+    - 
+  - cells:
+    - tool_salad_station.name
+    - "\u6C99\u62C9\u53F0"
+    - 
+  - cells:
+    - tool_scissors.name
+    - "\u526A\u5200"
+    - 
+  - cells:
+    - tool_spatula.name
+    - "\u9505\u94F2"
+    - 
+  - cells:
+    - tool_stove.name
+    - "\u7076\u53F0"
+    - 
+  - cells:
+    - tool_stick.name
+    - "\u64C0\u9762\u6756"
+    - 
+  - cells:
+    - tool_saladbowl.name
+    - "\u6C99\u62C9\u7897"
+    - 
+  - cells:
+    - ui_cook_pending_feature.text
+    - "\u8BF7\u671F\u5F85\u6B63\u5F0F\u7248"
+    - "\u53A8\u5177\u914D\u7F6E\u5360\u4F4D\u5F39\u7A97"
+  - cells:
+    - ui_p0_catalog_tab.text
+    - "\u76EE\u5F55"
+    - "\u76EE\u5F55\u9875\u7B7E"
+  - cells:
+    - ui_p0_current_recipe_tab.text
+    - "\u5F53\u524D"
+    - "\u6587\u6848\u5F85\u6700\u7EC8\u4EBA\u5DE5\u5BF9\u9F50"
+  - cells:
+    - ui_p0_escape.text
+    - ESC
+    - "\u53BB\u9664\u6D88\u8D39\u7AEF\u786C\u7F16\u7801"
+  - cells:
+    - ui_p0_favorite.text
+    - "\u6536\u85CF"
+    - "\u661F\u6807\u60AC\u505C"
+  - cells:
+    - ui_p0_ingredient_list_header.text
+    - "\u6240\u9700\u98DF\u6750"
+    - "\u6587\u6848\u5F85\u6700\u7EC8\u4EBA\u5DE5\u5BF9\u9F50"
+  - cells:
+    - ui_p0_start_cooking.text
+    - "\u5F00\u59CB\u505A\u996D"
+    - "\u5B57\u56FE\u4F18\u5148\uFF0CTMP \u56DE\u9000"
+  - cells:
+    - ui_p1_clueboard_tips.text
+    - "TIPS\uFF1A\u4EBA\u88AB\u6740\u5C31\u4F1A\u6B7B\n\u4E0D\u77E5\u9053\u600E\u4E48\u529E\u7684\u8BDD\uFF1A\u4E0D\u59A8\u5C1D\u8BD5\u5148\u653E\u7A7A\u5927\u8111\u5427\u3002"
+    - "\u53C2\u8003\u56FE\u539F\u6587\uFF1B\u6587\u6848\u5F85\u6700\u7EC8\u4EBA\u5DE5\u5BF9\u9F50"
+  - cells:
+    - ui_p1_return.text
+    - "\u8FD4\u56DE"
+    - "\u7BAD\u5934\u60AC\u505C/\u65E0\u56FE\u56DE\u9000"
+  - cells:
+    - var_kaishui_std.name
+    - "\u5F00\u6C34\u767D\u83DC"
+    - 
+  - cells:
+    - var_qingtang_std.name
+    - "\u6E05\u6C64\u9762"
+    - 
+  - cells:
+    - var_tomato_egg_soup.name
+    - "\u756A\u8304\u86CB\u82B1\u6C64"
+    - 
+  - cells:
+    - var_tomato_egg_std.name
+    - "\u756A\u8304\u7092\u86CB"
+    - 
+  - cells:
+    - var_pidan_milktea_noodle.name
+    - "\u76AE\u86CB\u5976\u8336\u9762"
+    - 
+  - cells:
+    - var_ofanqie_danhuangpai.name
+    - "\u86CB\u9EC4\u756A\u8304\u6C99\u62C9"
+    - 
+  - cells:
+    - ui_p0_cover_bubble_a.text
+    - "\u5403\u4EC0\u4E48"
+    - 
+  - cells:
+    - ui_p0_cover_bubble_b.text
+    - "\u6C6A\uFF01"
+    - 
+  - cells:
+    - test_chr_tomato.name
+    - "\u756A\u8304"
+    - 
+  - cells:
+    - test_chr_passer_a.name
+    - "\u4EBA\u4E00"
+    - 
+  - cells:
+    - test_chr_passer_b.name
+    - "\u4EBA\u4E09"
+    - 
+  - cells:
+    - test_scene_street.name
+    - "\u8BD5\u573A"
+    - 
+  - cells:
+    - test_line_single_a.text
+    - "\u4F60\u597D"
+    - 
+  - cells:
+    - test_line_single_b.text
+    - "\u5403\u4EC0\u4E48"
+    - 
+  - cells:
+    - test_line_three_1.text
+    - "\u756A\u8304\u6C64"
+    - 
+  - cells:
+    - test_line_three_2.text
+    - "\u597D\u559D"
+    - 
+  - cells:
+    - test_line_three_3.text
+    - "\u771F\u9999"
+    - 
+  - cells:
+    - test_line_pair_1.text
+    - "\u770B\u8FD9\u91CC"
+    - 
+  - cells:
+    - test_line_pair_2.text
+    - "\u597D"
+    - 
+  - cells:
+    - test_chr_potato.name
+    - "\u571F\u8C46"
+    - 
+  - cells:
+    - test_chr_talker.name
+    - "\u4EBA\u56DB"
+    - 
+  - cells:
+    - test_chr_player.name
+    - "\u6211"
+    - 
+  - cells:
+    - test_name_unknown.name
+    - "\uFF1F\uFF1F\uFF1F"
+    - 
+  - cells:
+    - test_line_talk_a_01.text
+    - "\u4F60\u597D\uFF0C\u4ECA\u5929\u5403\u4EC0\u4E48\uFF1F"
+    - 
+  - cells:
+    - test_line_talk_a_02.text
+    - "\u5979\u770B\u4E86\u770B\u83DC\u5355\u3002"
+    - 
+  - cells:
+    - test_line_talk_a_03.text
+    - "\u756A\u8304\u6C64\uFF0C\u597D\u559D\u3002"
+    - 
+  - cells:
+    - test_line_talk_a_04.text
+    - "\u597D\uFF0C\u771F\u9999\uFF01"
+    - 
+  - cells:
+    - test_line_talk_a_05.text
+    - "\u4ECA\u5929\u7684\u83DC\u5355\u6709\u756A\u8304\u6C64\u3001\u571F\u8C46\u548C\u70ED\u996D\u3002\u4F60\u770B\uFF0C\u6C64\u91CC\u6709\u756A\u8304\u3001\u571F\u8C46\uFF0C\u8FD8\u6709\u9999\u9999\u7684\u7C73\u996D\u2026\u2026\u597D\u559D\uFF1F\uFF01\u518D\u5403\u4E00\u53E3\uFF0C\u771F\u9999\u3002"
+    - 
+  - cells:
+    - test_line_talk_b_01.text
+    - "\u4F60\u597D\uFF0C\u5403\u4EC0\u4E48\uFF1F"
+    - 
+  - cells:
+    - test_line_talk_b_02.text
+    - "\u5403\u756A\u8304\u6C64\u5427\u3002"
+    - 
+  - cells:
+    - test_line_talk_b2_01.text
+    - "\u597D\uFF0C\u4E00\u8D77\u5403\u3002"
+    - 
+  - cells:
+    - test_line_talk_c_01.text
+    - "\u771F\u9999\u3002"
+    - 
+  - cells:
+    - ui_street_talk.text
+    - "\u4EA4\u8C08"
+    - 
+  - cells:
+    - test_chr_host.name
+    - "\u4EBA\u4E94"
+    - 
+  - cells:
+    - test_line_cast_3_01.text
+    - "\u4ECA\u5929\u7684\u6C64\uFF0C\u8C01\u6765\u716E\uFF1F"
+    - 
+  - cells:
+    - test_line_cast_3_02.text
+    - "\u6211\u6765\u5427\u3002"
+    - 
+  - cells:
+    - test_line_cast_3_03.text
+    - "\u90A3\u6211\u8D1F\u8D23\u524A\u76AE\u3002"
+    - 
+  - cells:
+    - test_line_cast_3_04.text
+    - "\u597D\uFF0C\u5C31\u8FD9\u4E48\u5B9A\u4E86\uFF01"
+    - 
+  - cells:
+    - test_line_cast_3_05.text
+    - "\u4E09\u4E2A\u4EBA\u7B11\u4E86\u8D77\u6765\u3002"
+    - 
+  - cells:
+    - test_line_cast_4_01.text
+    - "\u4EBA\u5230\u9F50\u4E86\u5417\uFF1F"
+    - 
+  - cells:
+    - test_line_cast_4_02.text
+    - "\u5230\u9F50\u4E86\u3002"
+    - 
+  - cells:
+    - test_line_cast_4_03.text
+    - "\u90A3\u5C31\u5F00\u59CB\u5427\u3002"
+    - 
+  - cells:
+    - test_line_cast_4_04.text
+    - "\u7B49\u7B49\u6211\uFF01"
+    - 
+  - cells:
+    - test_line_cast_custom_01.text
+    - "\u6211\u6362\u4E2A\u4F4D\u7F6E\u7AD9\u3002"
+    - 
+  - cells:
+    - test_line_cast_custom_02.text
+    - "\u6211\u7AD9\u540E\u9762\u4E00\u70B9\u3002"
+    - 

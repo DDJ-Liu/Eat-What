@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T15_InitialInventory
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: item_id
+    type: ref:T4
+    isId: 0
+  - name: quantity
+    type: int
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - ing_noodle_dried
+    - 3
+    - 
+  - cells:
+    - ing_noodle_instant
+    - 2
+    - 
+  - cells:
+    - ing_egg
+    - 6
+    - 
+  - cells:
+    - ing_danhuangpai
+    - 2
+    - 
+  - cells:
+    - ing_tomato
+    - 4
+    - 
+  - cells:
+    - ing_ofanqie
+    - 1
+    - 
+  - cells:
+    - ing_pidan
+    - 1
+    - 
+  - cells:
+    - ing_octopus_leg
+    - 2
+    - 
+  - cells:
+    - ing_ham_sausage
+    - 2
+    - "1\u76D2=5\u6839"
+  - cells:
+    - ing_milk_box
+    - 2
+    - "\u6D4B\u8BD5\u7528\uFF1A2\u76D2\u5404\u6EE11000ml"
+  - cells:
+    - ing_noodle_rice
+    - 1
+    - 
+  - cells:
+    - ing_nongtangbao
+    - 1
+    - 
+  - cells:
+    - ing_milktea_fen
+    - 1
+    - 
+  - cells:
+    - ing_paomianbao
+    - 1
+    - 

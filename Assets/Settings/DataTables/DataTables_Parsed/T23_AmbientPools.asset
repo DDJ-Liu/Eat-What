@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T23_AmbientPools
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: pool_id
+    type: string
+    isId: 1
+  - name: scope
+    type: string
+    isId: 0
+  - name: dialogue_ids
+    type: list<ref:T17>
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - amb_test_a
+    - 
+    - dlg_test_single_a;dlg_test_single_b
+    - 
+  - cells:
+    - amb_test_b
+    - 
+    - dlg_test_three
+    - 
+  - cells:
+    - amb_test_c
+    - 
+    - dlg_test_pair
+    - 

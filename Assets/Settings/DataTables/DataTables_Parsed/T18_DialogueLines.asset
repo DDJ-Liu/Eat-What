@@ -1,0 +1,403 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T18_DialogueLines
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: line_id
+    type: string
+    isId: 1
+  - name: dialogue_id
+    type: ref:T17
+    isId: 0
+  - name: next_line
+    type: ref:T18
+    isId: 0
+  - name: speaker
+    type: ref:T16
+    isId: 0
+  - name: name_override_key
+    type: ref:T9
+    isId: 0
+  - name: text_key
+    type: ref:T9
+    isId: 0
+  - name: commands
+    type: string
+    isId: 0
+  - name: expression
+    type: string
+    isId: 0
+  - name: emotion
+    type: string
+    isId: 0
+  - name: emphasis
+    type: string
+    isId: 0
+  - name: scene_emote
+    type: string
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - ln_test_single_a_01
+    - dlg_test_single_a
+    - 
+    - 
+    - 
+    - test_line_single_a.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_single_b_01
+    - dlg_test_single_b
+    - 
+    - 
+    - 
+    - test_line_single_b.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_three_01
+    - dlg_test_three
+    - ln_test_three_02
+    - 
+    - 
+    - test_line_three_1.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_three_02
+    - dlg_test_three
+    - ln_test_three_03
+    - 
+    - 
+    - test_line_three_2.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_three_03
+    - dlg_test_three
+    - 
+    - 
+    - 
+    - test_line_three_3.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_pair_01
+    - dlg_test_pair
+    - ln_test_pair_02
+    - chr_test_tomato
+    - 
+    - test_line_pair_1.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_pair_02
+    - dlg_test_pair
+    - 
+    - chr_test_passer_a
+    - 
+    - test_line_pair_2.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_a_01
+    - dlg_test_talk_a
+    - ln_test_talk_a_02
+    - chr_test_talker
+    - 
+    - test_line_talk_a_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_a_02
+    - dlg_test_talk_a
+    - ln_test_talk_a_03
+    - chr_test_narrator
+    - 
+    - test_line_talk_a_02.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_a_03
+    - dlg_test_talk_a
+    - ln_test_talk_a_04
+    - chr_test_talker
+    - test_name_unknown.name
+    - test_line_talk_a_03.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_a_04
+    - dlg_test_talk_a
+    - ln_test_talk_a_05
+    - chr_test_player
+    - 
+    - test_line_talk_a_04.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_a_05
+    - dlg_test_talk_a
+    - 
+    - chr_test_talker
+    - 
+    - test_line_talk_a_05.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_b_01
+    - dlg_test_talk_b
+    - ln_test_talk_b_02
+    - chr_test_passer_a
+    - 
+    - test_line_talk_b_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_b_02
+    - dlg_test_talk_b
+    - 
+    - chr_test_passer_a
+    - 
+    - test_line_talk_b_02.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_b2_01
+    - dlg_test_talk_b2
+    - 
+    - chr_test_passer_a
+    - 
+    - test_line_talk_b2_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_talk_c_01
+    - dlg_test_talk_c
+    - 
+    - chr_test_potato
+    - 
+    - test_line_talk_c_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_3_01
+    - dlg_test_cast_3
+    - ln_test_cast_3_02
+    - chr_test_tomato
+    - 
+    - test_line_cast_3_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_3_02
+    - dlg_test_cast_3
+    - ln_test_cast_3_03
+    - chr_test_talker
+    - 
+    - test_line_cast_3_02.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_3_03
+    - dlg_test_cast_3
+    - ln_test_cast_3_04
+    - chr_test_potato
+    - 
+    - test_line_cast_3_03.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_3_04
+    - dlg_test_cast_3
+    - ln_test_cast_3_05
+    - chr_test_tomato
+    - 
+    - test_line_cast_3_04.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_3_05
+    - dlg_test_cast_3
+    - 
+    - chr_test_narrator
+    - 
+    - test_line_cast_3_05.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_4_01
+    - dlg_test_cast_4
+    - ln_test_cast_4_02
+    - chr_test_talker
+    - 
+    - test_line_cast_4_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_4_02
+    - dlg_test_cast_4
+    - ln_test_cast_4_03
+    - chr_test_tomato
+    - 
+    - test_line_cast_4_02.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_4_03
+    - dlg_test_cast_4
+    - ln_test_cast_4_04
+    - chr_test_player
+    - 
+    - test_line_cast_4_03.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_4_04
+    - dlg_test_cast_4
+    - 
+    - chr_test_potato
+    - 
+    - test_line_cast_4_04.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_custom_01
+    - dlg_test_cast_custom
+    - ln_test_cast_custom_02
+    - chr_test_potato
+    - 
+    - test_line_cast_custom_01.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - ln_test_cast_custom_02
+    - dlg_test_cast_custom
+    - 
+    - chr_test_talker
+    - 
+    - test_line_cast_custom_02.text
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 

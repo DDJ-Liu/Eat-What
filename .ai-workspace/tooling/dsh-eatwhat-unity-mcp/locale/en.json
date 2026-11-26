@@ -1,0 +1,1 @@
+{"meta":{"title":"Local Unity MCP connection","description":"Connects to the Unity MCP server on local port 8080. Connect the Editor first, then ask for instances and verify the project path. The connection itself is not read-only."}}

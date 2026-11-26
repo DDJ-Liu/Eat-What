@@ -1,0 +1,212 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T2_RecipeSlots
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: slot_id
+    type: string
+    isId: 1
+  - name: standard_ingredient
+    type: ref:T4
+    isId: 0
+  - name: standard_action
+    type: ref:T11
+    isId: 0
+  - name: required_count
+    type: int
+    isId: 0
+  - name: sub_01
+    type: ref:T4
+    isId: 0
+  - name: sub_02
+    type: ref:T4
+    isId: 0
+  - name: sub_03
+    type: ref:T4
+    isId: 0
+  - name: sub_04
+    type: ref:T4
+    isId: 0
+  - name: sub_05
+    type: ref:T4
+    isId: 0
+  - name: sub_06
+    type: ref:T4
+    isId: 0
+  - name: sub_07
+    type: ref:T4
+    isId: 0
+  - name: sub_08
+    type: ref:T4
+    isId: 0
+  - name: sub_01_count
+    type: int
+    isId: 0
+  - name: sub_02_count
+    type: int
+    isId: 0
+  - name: sub_03_count
+    type: int
+    isId: 0
+  - name: sub_04_count
+    type: int
+    isId: 0
+  - name: sub_05_count
+    type: int
+    isId: 0
+  - name: sub_06_count
+    type: int
+    isId: 0
+  - name: sub_07_count
+    type: int
+    isId: 0
+  - name: sub_08_count
+    type: int
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - slot_noodle_1
+    - ing_noodle_dried
+    - act_boil
+    - 1
+    - ing_noodle_instant
+    - ing_noodle_rice
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 1
+    - 1
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - "\u9762\uFF1A\u6302\u9762\u6807\u51C6\u716E\uFF0C\u6CE1\u9762\u997C 1 \u9876
+      1"
+  - cells:
+    - slot_broth_1
+    - ing_clear_broth
+    - act_boil
+    - 1
+    - ing_nongtangbao
+    - ing_milktea_fen
+    - ing_paomianbao
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 1
+    - 1
+    - 1
+    - 
+    - 
+    - 
+    - 
+    - 
+    - "\u9AD8\u6C64"
+  - cells:
+    - slot_jiaotou_1
+    - ing_egg
+    - act_fry
+    - 1
+    - ing_pidan
+    - ing_octopus_leg
+    - ing_ham_sausage
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 1
+    - 1
+    - 1
+    - 
+    - 
+    - 
+    - 
+    - 
+    - "\u6D47\u5934"
+  - cells:
+    - slot_egg_3
+    - ing_egg
+    - act_whisk
+    - 1
+    - ing_danhuangpai
+    - ing_pidan
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 1
+    - 1
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - "\u86CB\xD73 \u6253\u6563\uFF1B\u5DE8\u86CB 1 \u9876 3\uFF08\u66FF\u4EE3\u54C1\u6570\u91CF\u6BD4\u793A\u8303\uFF09"
+  - cells:
+    - slot_tomato_2
+    - ing_tomato
+    - act_cut
+    - 1
+    - ing_ofanqie
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 1
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - "\u756A\u8304\xD72 \u5207\u5757"
+  - cells:
+    - slot_cabbage_1
+    - ing_cabbage
+    - act_wash
+    - 1
+    - ing_octopus_leg
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 3
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - "\u767D\u83DC\u5FC3\xD71 \u6458\u6D17"

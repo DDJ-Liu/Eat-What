@@ -1,0 +1,601 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T4_Items
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: item_id
+    type: string
+    isId: 1
+  - name: item_kind
+    type: enum(raw,product,staple)
+    isId: 0
+  - name: name_key
+    type: ref:T9
+    isId: 0
+  - name: ingredient_categories
+    type: list<ref:T6>
+    isId: 0
+  - name: stack_type
+    type: enum(single,stack,container,pack)
+    isId: 0
+  - name: display_order_in_fridge
+    type: int
+    isId: 0
+  - name: icon_sprite
+    type: string
+    isId: 0
+  - name: flavor_key
+    type: ref:T9
+    isId: 0
+  - name: container_capacity
+    type: float
+    isId: 0
+  - name: container_use_step
+    type: float
+    isId: 0
+  - name: pack_size
+    type: int
+    isId: 0
+  - name: shelf_life
+    type: int
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - ing_noodle_dried
+    - raw
+    - ing_noodle_dried.name
+    - tag_staplefood
+    - stack
+    - 10
+    - ui_shicai_guamian
+    - ing_noodle_dried.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6302\u9762"
+  - cells:
+    - ing_noodle_instant
+    - raw
+    - ing_noodle_instant.name
+    - tag_staplefood
+    - stack
+    - 20
+    - ui_shicai_paomian
+    - ing_noodle_instant.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6CE1\u9762"
+  - cells:
+    - ing_egg
+    - raw
+    - ing_egg.name
+    - tag_egg
+    - stack
+    - 30
+    - ui_shicai_jidan
+    - ing_egg.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u86CB"
+  - cells:
+    - ing_danhuangpai
+    - raw
+    - ing_danhuangpai.name
+    - tag_egg;tag_staplefood
+    - single
+    - 40
+    - ui_shicai_zhangyujiao
+    - ing_danhuangpai.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u86CB\u9EC4\u6D3E\uFF08\u5F85\u8865\u5145\u7D20\u6750\uFF0C\u8003\u8651\u627E\u627E\u65E7\u56FE\u6807\uFF09"
+  - cells:
+    - ing_tomato
+    - raw
+    - ing_tomato.name
+    - tag_veg;tag_fruit
+    - stack
+    - 50
+    - ui_shicai_zhangyujiao
+    - ing_tomato.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u756A\u8304\uFF0C\u7F3A\u65B0\u98DF\u6750\u56FE\u6807\uFF0C\u8003\u8651\u5148\u7528\u65E7\u7684\u66FF\u6362"
+  - cells:
+    - ing_ofanqie
+    - raw
+    - ing_ofanqie.name
+    - tag_staplefood
+    - single
+    - 60
+    - ui_shicai_zhangyujiao
+    - ing_ofanqie.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u54E6\u756A\u8304\uFF1B\u627E\u65E7\u98DF\u6750\u56FE\u6807"
+  - cells:
+    - ing_octopus_leg
+    - raw
+    - ing_octopus_leg.name
+    - tag_seafood
+    - single
+    - 80
+    - ui_shicai_zhangyujiao
+    - ing_octopus_leg.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u7AE0\u9C7C\u811A"
+  - cells:
+    - ing_ham_sausage
+    - raw
+    - ing_ham_sausage.name
+    - tag_meat
+    - pack
+    - 90
+    - ui_shicai_huotuichang
+    - ing_ham_sausage.flavor
+    - 
+    - 
+    - 5
+    - 
+    - "\u53C2\u8003\u56FE1\uFF1Bpack \u5F62\u6001\u793A\u8303\uFF1Bdemo \u6682\u65E0\u6D88\u8D39\u98DF\u8C31"
+  - cells:
+    - ing_milk_box
+    - raw
+    - ing_milk_box.name
+    - tag_dairy
+    - container
+    - 100
+    - ui_shicai_zhangyujiao
+    - ing_milk_box.flavor
+    - 1000
+    - 200
+    - 
+    - 
+    - "\u725B\u5976\u3002\u6D4B\u8BD5\u7528\uFF08container \u673A\u5236\u9A8C\u8BC1\uFF0C\u4E0D\u5165\u6B63\u5F0F\u5185\u5BB9\u6E05\u5355\uFF09"
+  - cells:
+    - ing_pidan
+    - raw
+    - ing_pidan.name
+    - tag_egg
+    - pack
+    - 31
+    - ui_shicai_pidan
+    - ing_pidan.flavor
+    - 
+    - 
+    - 8
+    - 
+    - "\u76AE\u86CB"
+  - cells:
+    - ing_noodle_rice
+    - raw
+    - ing_noodle_rice.name
+    - tag_staplefood
+    - single
+    - 15
+    - ui_shicai_mixian
+    - ing_noodle_rice.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u7C73\u7EBF\uFF08\u6CE8\u610F\uFF09"
+  - cells:
+    - ing_nongtangbao
+    - raw
+    - ing_nongtangbao.name
+    - tag_staplefood
+    - pack
+    - 21
+    - ui_shicai_nongtangbao
+    - ing_nongtangbao.flavor
+    - 
+    - 
+    - 6
+    - 
+    - "\u6D53\u6C64\u5B9D"
+  - cells:
+    - ing_milktea_fen
+    - raw
+    - ing_milktea_fen.name
+    - tag_staplefood
+    - stack
+    - 25
+    - ui_shicai_naichafen
+    - ing_milktea_fen.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u5976\u8336\u7C89"
+  - cells:
+    - ing_paomianbao
+    - raw
+    - ing_paomianbao.name
+    - tag_staplefood
+    - stack
+    - 22
+    - ui_shicai_paomiantiaoliao
+    - ing_paomianbao.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6CE1\u9762\u5305"
+  - cells:
+    - ing_cabbage
+    - raw
+    - ing_cabbage.name
+    - tag_veg
+    - stack
+    - 111
+    - ui_shicai_zhangyujiao
+    - ing_cabbage.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u751F\u83DC\uFF08\u5360\u4F4D\uFF09"
+  - cells:
+    - ing_clear_broth
+    - raw
+    - prd_clear_broth.name
+    - tag_meat
+    - single
+    - 999
+    - ui_shicai_gaotang
+    - prd_clear_broth.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u9AD8\u6C64\u5360\u4F4D\u7528"
+  - cells:
+    - stp_water
+    - staple
+    - stp_water.name
+    - 
+    - single
+    - 
+    - ui_shicai_qingshui
+    - stp_water.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u5FC5\u5907\u54C1-\u6C34"
+  - cells:
+    - stp_salt
+    - staple
+    - stp_salt.name
+    - 
+    - single
+    - 
+    - ui_shicai_yan
+    - stp_salt.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u5FC5\u5907\u54C1-\u76D0\uFF08\u597D\u50CF\u7528\u4E0D\u4E0A\uFF1F\uFF09"
+  - cells:
+    - stp_oil
+    - staple
+    - stp_oil.name
+    - 
+    - single
+    - 
+    - ui_shicai_shiyongyou
+    - stp_oil.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u5FC5\u5907\u54C1-\u6CB9"
+  - cells:
+    - prd_noodle_boiled
+    - product
+    - prd_noodle_boiled.name
+    - 
+    - single
+    - 
+    - ui_shicai_zhuhaodemian
+    - prd_noodle_boiled.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u6302\u9762+\u6C34\u716E"
+  - cells:
+    - prd_instant_noodle_boiled
+    - product
+    - prd_instant_noodle_boiled.name
+    - 
+    - single
+    - 
+    - ui_shicai_zhuhaodemian
+    - prd_instant_noodle_boiled.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u6CE1\u9762+\u6C34\u716E"
+  - cells:
+    - prd_rice_noodle_boiled
+    - product
+    - prd_rice_noodle_boiled.name
+    - 
+    - single
+    - 
+    - ui_shicai_zhuhaodemian
+    - prd_rice_noodle_boiled.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u7C73\u7EBF+\u6C34\u716E"
+  - cells:
+    - prd_egg_liquid
+    - product
+    - prd_egg_liquid.name
+    - 
+    - single
+    - 
+    - ui_shicai_danye
+    - prd_egg_liquid.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u86CB\u6DB2"
+  - cells:
+    - prd_danhuangpai_sui
+    - product
+    - prd_danhuangpai_sui.name
+    - 
+    - single
+    - 
+    - ui_shicai_danhuangpaisui
+    - prd_danhuangpai_sui.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u86CB\u9EC4\u6D3E\u6363\u788E"
+  - cells:
+    - prd_tomato_cut
+    - product
+    - prd_tomato_cut.name
+    - 
+    - single
+    - 
+    - ui_shicai_qiehaodefanqie
+    - prd_tomato_cut.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u756A\u8304\u4E01"
+  - cells:
+    - prd_ofanqie_sui
+    - product
+    - prd_ofanqie_sui.name
+    - 
+    - single
+    - 
+    - ui_shicai_ofanqiesui
+    - prd_ofanqie_sui.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u54E6\u756A\u8304\u6363\u788E"
+  - cells:
+    - prd_fried_egg
+    - product
+    - prd_fried_egg.name
+    - 
+    - single
+    - 
+    - ui_shicai_jiandan
+    - prd_fried_egg.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u714E\u86CB"
+  - cells:
+    - prd_scrambled_egg
+    - product
+    - prd_scrambled_egg.name
+    - 
+    - single
+    - 
+    - ui_shicai_chaohaodedan
+    - prd_scrambled_egg.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u7092\u86CB"
+  - cells:
+    - prd_clear_broth
+    - product
+    - prd_clear_broth.name
+    - 
+    - single
+    - 
+    - ui_shicai_gaotang
+    - prd_clear_broth.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u6807\u51C6\u9AD8\u6C64"
+  - cells:
+    - prd_nongtangbao_soup
+    - product
+    - prd_nongtangbao_soup.name
+    - 
+    - single
+    - 
+    - ui_shicai_gaotang
+    - prd_nongtangbao_soup.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u6D53\u6C64\u5B9D\u6C64"
+  - cells:
+    - prd_milktea_liquid
+    - product
+    - prd_milktea_liquid.name
+    - 
+    - single
+    - 
+    - ui_shicai_naicha
+    - prd_milktea_liquid.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u51B2\u6CE1\u5976\u8336"
+  - cells:
+    - prd_paomian_soup
+    - product
+    - prd_paomian_soup.name
+    - 
+    - single
+    - 
+    - ui_shicai_gaotang
+    - prd_paomian_soup.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4EA7\u51FA\u7269-\u6CE1\u9762\u6C64"
+  - cells:
+    - prd_qingtang_dish
+    - product
+    - prd_qingtang_dish.name
+    - 
+    - single
+    - 
+    - ui_caipin_qingtangmian
+    - prd_qingtang_dish.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6210\u54C1-\u6E05\u6C64\u9762"
+  - cells:
+    - prd_pidan_milktea_noodle
+    - product
+    - prd_pidan_milktea_noodle.name
+    - 
+    - single
+    - 
+    - ui_caipin_pidannaichamian
+    - prd_pidan_milktea_noodle.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6210\u54C1-\u76AE\u86CB\u5976\u8336\u9762"
+  - cells:
+    - prd_tomato_egg_dish
+    - product
+    - prd_tomato_egg_dish.name
+    - 
+    - single
+    - 
+    - ui_caipin_fanqiechaodan
+    - prd_tomato_egg_dish.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6210\u54C1\uFF08\u6807\u51C6\u53D8\u4F53\uFF09"
+  - cells:
+    - prd_tomato_egg_soup
+    - product
+    - prd_tomato_egg_soup.name
+    - 
+    - single
+    - 
+    - ui_caipin_fanqiedanhuatang
+    - prd_tomato_egg_soup.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6210\u54C1\uFF08\u716E\u8DEF\u7EBF\u53D8\u4F53\uFF09"
+  - cells:
+    - prd_ofanqie_danhuangpai
+    - product
+    - prd_ofanqie_danhuangpai.name
+    - 
+    - single
+    - 
+    - ui_caipin_ofanqiechaodan
+    - prd_ofanqie_danhuangpai.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6210\u54C1-\u54E6\u756A\u8304\u7092\u86CB"
+  - cells:
+    - prd_kaishui_dish
+    - product
+    - prd_kaishui_dish.name
+    - 
+    - single
+    - 
+    - ui_caipin_kaishuibaicai
+    - prd_kaishui_dish.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u6210\u54C1-\u5F00\u6C34\u767D\u83DC"
+  - cells:
+    - prd_unknown
+    - product
+    - prd_unknown.name
+    - 
+    - single
+    - 
+    - ui_caipin_unknown_AIGC
+    - prd_unknown.flavor
+    - 
+    - 
+    - 
+    - 
+    - "\u4E0D\u660E\u7269\u4F53 fallback\uFF08S-04\uFF09"

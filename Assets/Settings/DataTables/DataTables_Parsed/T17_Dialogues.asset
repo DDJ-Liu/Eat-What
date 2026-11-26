@@ -1,0 +1,587 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T17_Dialogues
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: dialogue_id
+    type: string
+    isId: 1
+  - name: tier
+    type: enum(ambient,normal,story)
+    isId: 0
+  - name: cast_01
+    type: ref:T16
+    isId: 0
+  - name: cast_01_station
+    type: string
+    isId: 0
+  - name: cast_01_pos_x
+    type: float
+    isId: 0
+  - name: cast_01_pos_y
+    type: float
+    isId: 0
+  - name: cast_01_scale
+    type: float
+    isId: 0
+  - name: cast_01_order
+    type: int
+    isId: 0
+  - name: cast_02
+    type: ref:T16
+    isId: 0
+  - name: cast_02_station
+    type: string
+    isId: 0
+  - name: cast_02_pos_x
+    type: float
+    isId: 0
+  - name: cast_02_pos_y
+    type: float
+    isId: 0
+  - name: cast_02_scale
+    type: float
+    isId: 0
+  - name: cast_02_order
+    type: int
+    isId: 0
+  - name: cast_03
+    type: ref:T16
+    isId: 0
+  - name: cast_03_station
+    type: string
+    isId: 0
+  - name: cast_03_pos_x
+    type: float
+    isId: 0
+  - name: cast_03_pos_y
+    type: float
+    isId: 0
+  - name: cast_03_scale
+    type: float
+    isId: 0
+  - name: cast_03_order
+    type: int
+    isId: 0
+  - name: cast_04
+    type: ref:T16
+    isId: 0
+  - name: cast_04_station
+    type: string
+    isId: 0
+  - name: cast_04_pos_x
+    type: float
+    isId: 0
+  - name: cast_04_pos_y
+    type: float
+    isId: 0
+  - name: cast_04_scale
+    type: float
+    isId: 0
+  - name: cast_04_order
+    type: int
+    isId: 0
+  - name: tier_profile
+    type: string
+    isId: 0
+  - name: entrance_profile
+    type: string
+    isId: 0
+  - name: exit_profile
+    type: string
+    isId: 0
+  - name: layout_profile
+    type: string
+    isId: 0
+  - name: speaker_profile
+    type: string
+    isId: 0
+  - name: expression_profile
+    type: string
+    isId: 0
+  - name: text_profile
+    type: string
+    isId: 0
+  - name: reaction_profile
+    type: string
+    isId: 0
+  - name: cg_profile
+    type: string
+    isId: 0
+  - name: overrides
+    type: string
+    isId: 0
+  - name: first_line
+    type: ref:T18
+    isId: 0
+  - name: next_dialogue
+    type: ref:T17
+    isId: 0
+  - name: on_end
+    type: string
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - dlg_test_single_a
+    - ambient
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_single_a_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_single_b
+    - ambient
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_single_b_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_three
+    - ambient
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_three_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_pair
+    - ambient
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_pair_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_talk_a
+    - normal
+    - chr_test_talker
+    - 
+    - 
+    - 
+    - 
+    - 
+    - chr_test_player
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_talk_a_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_talk_b
+    - normal
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_talk_b_01
+    - dlg_test_talk_b2
+    - 
+    - 
+  - cells:
+    - dlg_test_talk_b2
+    - normal
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - entrance.boxMode=ScalePop;text.charsPerSecond=12
+    - ln_test_talk_b2_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_talk_c
+    - normal
+    - chr_test_potato
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_talk_c_01
+    - 
+    - 
+    - 
+  - cells:
+    - dlg_test_cast_3
+    - normal
+    - chr_test_tomato
+    - 
+    - 
+    - 
+    - 
+    - 
+    - chr_test_talker
+    - 
+    - 
+    - 
+    - 
+    - 
+    - chr_test_potato
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_cast_3_01
+    - dlg_test_cast_4
+    - 
+    - 
+  - cells:
+    - dlg_test_cast_4
+    - normal
+    - chr_test_talker
+    - 
+    - 
+    - 
+    - 
+    - 
+    - chr_test_tomato
+    - 
+    - 
+    - 
+    - 
+    - 
+    - chr_test_player
+    - 
+    - 
+    - 
+    - 
+    - 
+    - chr_test_potato
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_cast_4_01
+    - dlg_test_cast_custom
+    - 
+    - 
+  - cells:
+    - dlg_test_cast_custom
+    - normal
+    - chr_test_potato
+    - s3-left
+    - 
+    - 
+    - 
+    - 
+    - chr_test_talker
+    - 
+    - -600
+    - 80
+    - 0.8
+    - -1
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - ln_test_cast_custom_01
+    - 
+    - 
+    - 

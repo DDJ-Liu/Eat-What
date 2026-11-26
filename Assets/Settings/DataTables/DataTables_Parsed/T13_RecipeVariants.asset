@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T13_RecipeVariants
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: var_id
+    type: string
+    isId: 1
+  - name: recipe_id
+    type: ref:T1
+    isId: 0
+  - name: final_item
+    type: ref:T4
+    isId: 0
+  - name: name_key
+    type: ref:T9
+    isId: 0
+  - name: actual_dish_category
+    type: ref:T6
+    isId: 0
+  - name: display_sprite
+    type: string
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - var_qingtang_std
+    - rcp_qingtang_noodle
+    - prd_qingtang_dish
+    - var_qingtang_std.name
+    - tag_dish_boil
+    - ui_caipin_qingtangmian
+    - "\u6807\u51C6\u53D8\u4F53"
+  - cells:
+    - var_pidan_milktea_noodle
+    - rcp_qingtang_noodle
+    - prd_pidan_milktea_noodle
+    - var_pidan_milktea_noodle.name
+    - tag_dish_boil
+    - ui_caipin_pidannaichamian
+    - "\u76AE\u86CB\u5976\u8336\u9762"
+  - cells:
+    - var_tomato_egg_std
+    - rcp_tomato_egg
+    - prd_tomato_egg_dish
+    - var_tomato_egg_std.name
+    - tag_dish_stirfry
+    - ui_caipin_fanqiechaodan
+    - "\u6807\u51C6\u53D8\u4F53"
+  - cells:
+    - var_tomato_egg_soup
+    - rcp_tomato_egg
+    - prd_tomato_egg_soup
+    - var_tomato_egg_soup.name
+    - tag_dish_boil
+    - ui_caipin_fanqiedanhuatang
+    - "\u716E\u8DEF\u7EBF\u53D8\u4F53\uFF08\u53D8\u4F53\u7CFB\u7EDF\u793A\u8303\uFF09"
+  - cells:
+    - var_ofanqie_danhuangpai
+    - rcp_tomato_egg
+    - prd_ofanqie_danhuangpai
+    - var_ofanqie_danhuangpai.name
+    - tag_dish_salad
+    - ui_caipin_ofanqiechaodan
+    - "\u6C99\u62C9\u756A\u8304\u86CB"
+  - cells:
+    - var_kaishui_std
+    - rcp_kaishui_cabbage
+    - prd_kaishui_dish
+    - var_kaishui_std.name
+    - tag_dish_boil
+    - ui_caipin_kaishuibaicai
+    - "\u6807\u51C6\u53D8\u4F53"

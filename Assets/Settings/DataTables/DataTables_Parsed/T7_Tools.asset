@@ -1,0 +1,167 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T7_Tools
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: tool_id
+    type: string
+    isId: 1
+  - name: name_key
+    type: ref:T9
+    isId: 0
+  - name: tool_kind
+    type: enum(handheld,carrier,facility,hand)
+    isId: 0
+  - name: supported_actions
+    type: list<ref:T11>
+    isId: 0
+  - name: mapped_dish_category
+    type: ref:T6
+    isId: 0
+  - name: icon_sprite
+    type: string
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - tool_hand
+    - tool_hand.name
+    - hand
+    - act_smash;act_whisk;act_stirfry;act_mix
+    - 
+    - ui_chuju_shou
+    - "\u624B\u515C\u5E95"
+  - cells:
+    - tool_knife
+    - tool_knife.name
+    - handheld
+    - act_cut
+    - 
+    - ui_chuju_caidao
+    - "\u5200"
+  - cells:
+    - tool_scissors
+    - tool_scissors.name
+    - handheld
+    - act_cut
+    - 
+    - ui_chuju_jiandao
+    - "\u591A\u5DE5\u5177\u652F\u6301\u5207\u5272\u793A\u8303"
+  - cells:
+    - tool_spatula
+    - tool_spatula.name
+    - handheld
+    - act_stirfry
+    - 
+    - ui_chuju_guochan
+    - "\u9505\u94F2"
+  - cells:
+    - tool_chopsticks
+    - tool_chopsticks.name
+    - handheld
+    - act_whisk;act_stirfry;act_mix
+    - 
+    - ui_chuju_kuaizi
+    - "\u7B77\u5B50"
+  - cells:
+    - tool_stick
+    - tool_stick.name
+    - handheld
+    - act_smash
+    - 
+    - ui_chuju_ganmianzhang
+    - "\u64C0\u9762\u6756"
+  - cells:
+    - tool_bowl
+    - tool_bowl.name
+    - carrier
+    - 
+    - 
+    - ui_chuju_wan
+    - "\u627F\u8F7D\u7269-\u7897"
+  - cells:
+    - tool_saladbowl
+    - tool_saladbowl.name
+    - carrier
+    - 
+    - 
+    - ui_chuju_shalawan
+    - "\u6C99\u62C9\u76C6"
+  - cells:
+    - tool_board
+    - tool_board.name
+    - carrier
+    - 
+    - 
+    - ui_chuju_anban
+    - "\u627F\u8F7D\u7269-\u6848\u677F"
+  - cells:
+    - tool_pan
+    - tool_pan.name
+    - carrier
+    - 
+    - tag_dish_stirfry
+    - ui_chuju_chaoguo
+    - "\u6700\u7EC8\u6B65\u53A8\u5177\u2192\u7092"
+  - cells:
+    - tool_pot
+    - tool_pot.name
+    - carrier
+    - 
+    - tag_dish_boil
+    - ui_chuju_tangguo
+    - "\u6700\u7EC8\u6B65\u53A8\u5177\u2192\u716E"
+  - cells:
+    - tool_stove
+    - tool_stove.name
+    - facility
+    - 
+    - 
+    - ui_chuju_zaotai
+    - "\u56FA\u5B9A\u8BBE\u65BD\uFF1A\u7076\u53F0\u533A\u6838\u5FC3-\u7076\u53F0"
+  - cells:
+    - tool_board_station
+    - tool_board_station.name
+    - facility
+    - 
+    - 
+    - ui_chuju_anbantai
+    - "\u56FA\u5B9A\u8BBE\u65BD\uFF1A\u64CD\u4F5C\u53F0\u533A\u6838\u5FC3\uFF08\u4E0E\u624B\u6301\u6848\u677F
+      tool_board \u533A\u5206\uFF09"
+  - cells:
+    - tool_oven
+    - tool_oven.name
+    - facility
+    - 
+    - 
+    - ui_chuju_kaoxiang
+    - "\u56FA\u5B9A\u8BBE\u65BD\uFF1A\u70E4\u7BB1\u533A\u6838\u5FC3\uFF08demo \u672A\u89E3\u9501\uFF09"
+  - cells:
+    - tool_salad_station
+    - tool_salad_station.name
+    - facility
+    - 
+    - 
+    - ui_chuju_shalatai
+    - "\u56FA\u5B9A\u8BBE\u65BD\uFF1A\u6C99\u62C9\u53F0\u533A\u6838\u5FC3\uFF08demo
+      \u672A\u89E3\u9501\uFF09"
+  - cells:
+    - tool_freezer
+    - tool_freezer.name
+    - facility
+    - 
+    - 
+    - ui_chuju_xiaobinggui
+    - "\u56FA\u5B9A\u8BBE\u65BD\uFF1A\u51B7\u67DC\u533A\u6838\u5FC3\uFF08demo \u672A\u89E3\u9501\uFF09"

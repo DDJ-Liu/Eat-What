@@ -1,0 +1,9 @@
+- insert:
+    - id: eatwhat-local-unity-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: unity
+        transport: streamable-http
+        url: http://127.0.0.1:8080/mcp
+        startupTimeoutMs: 15000
+        failOnStartupError: true

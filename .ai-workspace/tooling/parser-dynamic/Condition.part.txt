@@ -1,0 +1,266 @@
+    // Compile against one sheet's headers; evaluate on rows of that same schema.
+    public interface IRuleContext
+    {
+        bool HasField(string field);
+        bool HasTable(string tableId);
+        bool HasTableField(string tableId, string field);
+        string ReadField(string field); // A present but empty cell is an empty string.
+        bool TryLookup(string tableId, string key, string targetField, out string value);
+    }
+
+    // Takes the expression INSIDE conditional(...). null means manual verification needed.
+    public static Func<IRuleContext, bool?> CompileCondition(string expression, IRuleContext schema)
+    {
+        if (schema == null) throw new ArgumentNullException(nameof(schema));
+        return new ConditionParser(expression, schema).Compile();
+    }
+
+    private sealed class ConditionParser
+    {
+        const int MaxChars = 4096, MaxTokens = 256, MaxDepth = 32, MaxOptions = 64, MaxArgs = 32;
+        enum Kind { End, Name, Text, Number, Symbol }
+        enum ValueType { Cell, Text, Number, Boolean }
+        struct Token
+        {
+            public Kind Kind;
+            public string Text;
+            public int At;
+            public Token(Kind kind, string text, int at) { Kind = kind; Text = text; At = at; }
+        }
+        sealed class Operand
+        {
+            public readonly ValueType Type;
+            public readonly Func<IRuleContext, string> Read;
+            public Operand(ValueType type, Func<IRuleContext, string> read) { Type = type; Read = read; }
+        }
+
+        readonly IRuleContext schema;
+        readonly List<Token> tokens = new List<Token>();
+        int index;
+        Token Here => tokens[index];
+        static FormatException Error(int at, string text) => new FormatException($"条件表达式第 {at + 1} 个字符：{text}");
+        static bool Digit(char c) => c >= '0' && c <= '9';
+        static bool AsNumber(string s, out double n) => double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out n)
+            && !double.IsNaN(n) && !double.IsInfinity(n);
+
+        public ConditionParser(string s, IRuleContext schema)
+        {
+            this.schema = schema;
+            if (s == null || s.Length == 0) throw Error(0, "条件为空。");
+            if (s.Length > MaxChars) throw Error(MaxChars, $"条件超过 {MaxChars} 个字符。");
+            for (int i = 0; i < s.Length;)
+            {
+                int start = i;
+                char c = s[i++];
+                if (char.IsWhiteSpace(c)) continue;
+                if (tokens.Count == MaxTokens) throw Error(start, $"条件超过 {MaxTokens} 个词元，请拆分。");
+                Kind kind;
+                if (char.IsLetter(c) || c == '_')
+                {
+                    while (i < s.Length && (char.IsLetterOrDigit(s[i]) || s[i] == '_')) i++;
+                    kind = Kind.Name;
+                }
+                else if (Digit(c) || ((c == '-' || c == '+') && i < s.Length && Digit(s[i])))
+                {
+                    while (i < s.Length && Digit(s[i])) i++;
+                    if (i < s.Length && s[i] == '.') { i++; while (i < s.Length && Digit(s[i])) i++; }
+                    if (i < s.Length && (s[i] == 'e' || s[i] == 'E'))
+                    {
+                        i++; if (i < s.Length && (s[i] == '+' || s[i] == '-')) i++;
+                        while (i < s.Length && Digit(s[i])) i++;
+                    }
+                    if (!AsNumber(s.Substring(start, i - start), out _)) throw Error(start, "需要有限数值。");
+                    kind = Kind.Number;
+                }
+                else if (c == '"' || c == '\'')
+                {
+                    var text = new System.Text.StringBuilder();
+                    bool closed = false;
+                    while (i < s.Length)
+                    {
+                        char ch = s[i++];
+                        if (ch == c) { closed = true; break; }
+                        if (ch == '\\')
+                        {
+                            if (i == s.Length) throw Error(i - 1, "字符串转义未完成。");
+                            switch (ch = s[i++])
+                            {
+                                case '\\': case '"': case '\'': break;
+                                case 'n': ch = '\n'; break;
+                                case 'r': ch = '\r'; break;
+                                case 't': ch = '\t'; break;
+                                default: throw Error(i - 1, "未知字符串转义。");
+                            }
+                        }
+                        text.Append(ch);
+                    }
+                    if (!closed) throw Error(start, "字符串缺少结束引号。");
+                    tokens.Add(new Token(Kind.Text, text.ToString(), start));
+                    continue;
+                }
+                else
+                {
+                    if ("=!<>".IndexOf(c) >= 0)
+                    {
+                        if (i < s.Length && s[i] == '=') i++;
+                        else if (c == '=' || c == '!') throw Error(start, "比较请使用 == 或 !=。");
+                    }
+                    else if ("(),.[]".IndexOf(c) < 0) throw Error(start, $"不支持字符“{c}”。");
+                    kind = Kind.Symbol;
+                }
+                tokens.Add(new Token(kind, s.Substring(start, i - start), start));
+            }
+            tokens.Add(new Token(Kind.End, "", s.Length));
+        }
+
+        bool Take(string word)
+        {
+            if ((Here.Kind != Kind.Name && Here.Kind != Kind.Symbol) || Here.Text != word) return false;
+            index++; return true;
+        }
+        void Need(string word) { if (!Take(word)) throw Error(Here.At, $"需要“{word}”。"); }
+        Token Identifier(string label)
+        {
+            if (Here.Kind != Kind.Name) throw Error(Here.At, "需要" + label + "。");
+            return tokens[index++];
+        }
+        string CheckField(Token token)
+        {
+            if (!schema.HasField(token.Text)) throw Error(token.At, "当前表没有字段：" + token.Text);
+            return token.Text;
+        }
+        void LimitDepth(int d) { if (d > MaxDepth) throw Error(Here.At, $"嵌套超过 {MaxDepth} 层。"); }
+
+        public Func<IRuleContext, bool?> Compile()
+        {
+            var test = Or(0);
+            if (Here.Kind != Kind.End) throw Error(Here.At, "条件末尾有多余内容，或缺少 and/or。");
+            return test;
+        }
+        Func<IRuleContext, bool?> Or(int d)
+        {
+            var test = And(d);
+            while (Take("or"))
+            {
+                var left = test; var right = And(d); // Compile both branches before evaluating either.
+                test = row => { var a = left(row); return a == true ? true : a | right(row); };
+            }
+            return test;
+        }
+        Func<IRuleContext, bool?> And(int d)
+        {
+            var test = Unary(d);
+            while (Take("and"))
+            {
+                var left = test; var right = Unary(d);
+                test = row => { var a = left(row); return a == false ? false : a & right(row); };
+            }
+            return test;
+        }
+        Func<IRuleContext, bool?> Unary(int d)
+        {
+            LimitDepth(d);
+            if (Take("not")) { var arg = Unary(d + 1); return row => !arg(row); }
+            if (Take("(")) { var arg = Or(d + 1); Need(")"); return arg; }
+            return Predicate(d);
+        }
+
+        Operand Value(int d)
+        {
+            LimitDepth(d);
+            var t = Here;
+            if (t.Kind == Kind.Text || t.Kind == Kind.Number)
+            {
+                index++;
+                return new Operand(t.Kind == Kind.Text ? ValueType.Text : ValueType.Number, row => t.Text);
+            }
+            Identifier("字段名、字面量或函数");
+            if (!Take("("))
+            {
+                if (t.Text == "true" || t.Text == "false") return new Operand(ValueType.Boolean, row => t.Text);
+                string name = CheckField(t);
+                return new Operand(ValueType.Cell, row => row.ReadField(name) ?? "");
+            }
+            if (t.Text == "nonempty")
+            {
+                string name = CheckField(Identifier("当前表字段名")); Need(")");
+                return new Operand(ValueType.Boolean, row => string.IsNullOrWhiteSpace(row.ReadField(name)) ? "false" : "true");
+            }
+            if (t.Text == "lookup")
+            {
+                var table = Identifier("目标表 ID");
+                if (!schema.HasTable(table.Text)) throw Error(table.At, "目标表不存在：" + table.Text);
+                Need(","); string key = CheckField(Identifier("当前表的引用字段名")); Need(")"); Need(".");
+                var col = Identifier("目标字段名");
+                if (!schema.HasTableField(table.Text, col.Text)) throw Error(col.At, "目标表没有字段：" + table.Text + "." + col.Text);
+                return new Operand(ValueType.Cell, row => {
+                    var id = row.ReadField(key);
+                    return !string.IsNullOrEmpty(id) && row.TryLookup(table.Text, id, col.Text, out var cell) ? cell ?? "" : null;
+                });
+            }
+            // External predicates are opaque: parse every argument and check referenced fields,
+            // but never resolve a method, invoke user code, or even evaluate their arguments.
+            if (!Take(")"))
+            {
+                int args = 0;
+                do
+                {
+                    if (++args > MaxArgs) throw Error(Here.At, $"函数参数超过 {MaxArgs} 个。");
+                    Value(d + 1);
+                } while (Take(","));
+                Need(")");
+            }
+            return new Operand(ValueType.Boolean, row => null);
+        }
+
+        Func<IRuleContext, bool?> Predicate(int d)
+        {
+            var a = Value(d);
+            if (Take("in"))
+            {
+                Need("["); var options = new HashSet<string>(StringComparer.Ordinal); int count = 0;
+                do
+                {
+                    if (Here.Kind != Kind.Text) throw Error(Here.At, "in 列表需要带引号的字符串。");
+                    if (++count > MaxOptions) throw Error(Here.At, $"in 列表超过 {MaxOptions} 项。");
+                    options.Add(tokens[index++].Text);
+                } while (Take(","));
+                Need("]");
+                return row => { var s = a.Read(row); return s == null ? (bool?)null : options.Contains(s); };
+            }
+            var op = Here;
+            if (op.Kind == Kind.Symbol && (op.Text == "==" || op.Text == "!=" || op.Text == "<" || op.Text == "<=" || op.Text == ">" || op.Text == ">="))
+            {
+                index++; var b = Value(d);
+                bool ordered = op.Text != "==" && op.Text != "!=";
+                if (a.Type != ValueType.Cell && b.Type != ValueType.Cell && a.Type != b.Type)
+                    throw Error(op.At, "比较两侧字面量类型不同。");
+                if (ordered && (a.Type == ValueType.Text || a.Type == ValueType.Boolean || b.Type == ValueType.Text || b.Type == ValueType.Boolean))
+                    throw Error(op.At, "大小比较只接受字段或有限数值。");
+                return row => {
+                    string x = a.Read(row), y = b.Read(row);
+                    if (x == null || y == null) return null;
+                    int cmp;
+                    if (ordered || a.Type == ValueType.Number || b.Type == ValueType.Number)
+                    {
+                        if (!AsNumber(x, out var m) || !AsNumber(y, out var n)) return null;
+                        cmp = m.CompareTo(n);
+                    }
+                    else if (a.Type == ValueType.Boolean || b.Type == ValueType.Boolean)
+                    {
+                        if (!bool.TryParse(x, out var p) || !bool.TryParse(y, out var q)) return null;
+                        cmp = p.CompareTo(q);
+                    }
+                    else cmp = string.CompareOrdinal(x, y);
+                    switch (op.Text)
+                    {
+                        case "==": return cmp == 0; case "!=": return cmp != 0;
+                        case "<": return cmp < 0; case "<=": return cmp <= 0;
+                        case ">": return cmp > 0; default: return cmp >= 0;
+                    }
+                };
+            }
+            if (a.Type != ValueType.Boolean) throw Error(Here.At, "字段或值后需要比较运算符或 in 列表。");
+            return row => { var s = a.Read(row); return s == null ? (bool?)null : s == "true"; };
+        }
+    }

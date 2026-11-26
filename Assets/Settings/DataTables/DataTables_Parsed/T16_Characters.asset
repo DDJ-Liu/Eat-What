@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T16_Characters
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: character_id
+    type: string
+    isId: 1
+  - name: name_key
+    type: ref:T9
+    isId: 0
+  - name: portrait_sprite
+    type: string
+    isId: 0
+  - name: portrait_offset_x
+    type: float
+    isId: 0
+  - name: portrait_offset_y
+    type: float
+    isId: 0
+  - name: portrait_scale
+    type: float
+    isId: 0
+  - name: street_visual_prefab
+    type: string
+    isId: 0
+  - name: expressions
+    type: string
+    isId: 0
+  - name: emote_offset_x
+    type: float
+    isId: 0
+  - name: emote_offset_y
+    type: float
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - chr_test_tomato
+    - test_chr_tomato.name
+    - Tomato
+    - 
+    - 0.3
+    - 1.43
+    - npc_visual_tomato
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_passer_a
+    - test_chr_passer_a.name
+    - 
+    - 
+    - 
+    - 
+    - npc_visual_tomato
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_passer_b
+    - test_chr_passer_b.name
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_potato
+    - test_chr_potato.name
+    - Potato
+    - 
+    - 0.3
+    - 1.36
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_talker
+    - test_chr_talker.name
+    - Pomegranate-1
+    - 
+    - 0.3
+    - 1.58
+    - npc_visual_tomato
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_narrator
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_player
+    - test_chr_player.name
+    - Octopus
+    - 
+    - 0.3
+    - 1.44
+    - 
+    - 
+    - 
+    - 
+    - 
+  - cells:
+    - chr_test_host
+    - test_chr_host.name
+    - 
+    - 
+    - 
+    - 
+    - npc_visual_tomato
+    - 
+    - 
+    - 
+    - 

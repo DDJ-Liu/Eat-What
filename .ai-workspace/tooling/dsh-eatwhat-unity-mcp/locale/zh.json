@@ -1,0 +1,1 @@
+{"meta":{"title":"Unity MCP 本机连接","description":"连接本机 8080 端口的 Unity MCP 服务。先在 Unity 中连接，再在对话中查询实例并确认工程路径。此连接本身不限制工具为只读。"}}

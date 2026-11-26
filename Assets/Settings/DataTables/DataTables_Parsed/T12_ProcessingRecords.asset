@@ -1,0 +1,273 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T12_ProcessingRecords
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: proc_id
+    type: string
+    isId: 1
+  - name: output_item
+    type: ref:T4
+    isId: 0
+  - name: input_01
+    type: ref:T4
+    isId: 0
+  - name: input_02
+    type: ref:T4
+    isId: 0
+  - name: input_03
+    type: ref:T4
+    isId: 0
+  - name: input_04
+    type: ref:T4
+    isId: 0
+  - name: input_05
+    type: ref:T4
+    isId: 0
+  - name: input_06
+    type: ref:T4
+    isId: 0
+  - name: action
+    type: ref:T11
+    isId: 0
+  - name: carrier
+    type: ref:T7
+    isId: 0
+  - name: is_final_product
+    type: bool
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - proc_noodle_boiled
+    - prd_noodle_boiled
+    - ing_noodle_dried
+    - stp_water
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - false
+    - "\u6C34\u716E\u6302\u9762"
+  - cells:
+    - proc_instant_noodle_boiled
+    - prd_instant_noodle_boiled
+    - ing_noodle_instant
+    - stp_water
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - false
+    - "\u6C34\u716E\u65B9\u4FBF\u9762"
+  - cells:
+    - proc_rice_noodle_boiled
+    - prd_rice_noodle_boiled
+    - ing_noodle_rice
+    - stp_water
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - False
+    - "\u6C34\u716E\u7C73\u7EBF"
+  - cells:
+    - proc_egg_liquid
+    - prd_egg_liquid
+    - ing_egg
+    - 
+    - 
+    - 
+    - 
+    - 
+    - act_whisk
+    - tool_bowl
+    - false
+    - "\u86CB\u6DB2"
+  - cells:
+    - proc_danhuangpai_sui
+    - prd_danhuangpai_sui
+    - ing_danhuangpai
+    - 
+    - 
+    - 
+    - 
+    - 
+    - act_smash
+    - tool_board
+    - false
+    - "\u86CB\u9EC4\u6D3E\u788E"
+  - cells:
+    - proc_tomato_cut
+    - prd_tomato_cut
+    - ing_tomato
+    - 
+    - 
+    - 
+    - 
+    - 
+    - act_cut
+    - tool_board
+    - false
+    - "\u5207\u756A\u8304\uFF08\u83DC\u5200/\u526A\u5200\u5747\u53EF\u89E6\u53D1\uFF09"
+  - cells:
+    - proc_ofanqie_sui
+    - prd_ofanqie_sui
+    - ing_ofanqie
+    - 
+    - 
+    - 
+    - 
+    - 
+    - act_smash
+    - tool_board
+    - false
+    - "\u54E6\u756A\u8304\u788E"
+  - cells:
+    - proc_fried_egg
+    - prd_fried_egg
+    - ing_egg
+    - stp_oil
+    - 
+    - 
+    - 
+    - 
+    - act_fry
+    - tool_pan
+    - False
+    - "\u714E\u86CB"
+  - cells:
+    - proc_scrambled_egg
+    - prd_scrambled_egg
+    - prd_egg_liquid
+    - stp_oil
+    - 
+    - 
+    - 
+    - 
+    - act_stirfry
+    - tool_pan
+    - False
+    - "\u7092\u86CB"
+  - cells:
+    - proc_nongtangbao_soup
+    - prd_nongtangbao_soup
+    - ing_nongtangbao
+    - stp_water
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - false
+    - "\u6D53\u6C64\u5B9D\u6C64"
+  - cells:
+    - proc_milktea_liquid
+    - prd_milktea_liquid
+    - ing_milktea_fen
+    - stp_water
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - false
+    - "\u51B2\u6CE1\u5976\u8336"
+  - cells:
+    - proc_paomian_soup
+    - prd_paomian_soup
+    - ing_paomianbao
+    - stp_water
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - False
+    - "\u6CE1\u9762\u6C64"
+  - cells:
+    - proc_qingtang_dish
+    - prd_qingtang_dish
+    - prd_noodle_boiled
+    - prd_fried_egg
+    - 
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - True
+    - "\u6210\u54C1-\u6E05\u6C64\u9762"
+  - cells:
+    - proc_pidan_milktea_noodle
+    - prd_pidan_milktea_noodle
+    - ing_pidan
+    - prd_milktea_liquid
+    - prd_instant_noodle_boiled
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - True
+    - "\u6210\u54C1-\u76AE\u86CB\u5976\u8336\u9762"
+  - cells:
+    - proc_tomato_egg_dish
+    - prd_tomato_egg_dish
+    - prd_scrambled_egg
+    - prd_tomato_cut
+    - 
+    - 
+    - 
+    - 
+    - act_stirfry
+    - tool_pan
+    - True
+    - "\u6210\u54C1\uFF08\u6807\u51C6\u53D8\u4F53\uFF09"
+  - cells:
+    - proc_tomato_egg_soup
+    - prd_tomato_egg_soup
+    - prd_egg_liquid
+    - prd_tomato_cut
+    - stp_water
+    - 
+    - 
+    - 
+    - act_boil
+    - tool_pot
+    - True
+    - "\u53D8\u4F53\u6210\u54C1\uFF1A\u756A\u8304\u86CB\u82B1\u6C64\uFF08\u716E\u8DEF\u7EBF\uFF09"
+  - cells:
+    - proc_ofanqie_danhuangpai
+    - prd_ofanqie_danhuangpai
+    - prd_danhuangpai_sui
+    - prd_ofanqie_sui
+    - 
+    - 
+    - 
+    - 
+    - act_mix
+    - tool_saladbowl
+    - True
+    - "\u6210\u54C1-\u54E6\u756A\u8304\u7092\u86CB"

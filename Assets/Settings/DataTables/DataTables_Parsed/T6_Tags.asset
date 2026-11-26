@@ -1,0 +1,173 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0912708f9ca844dc994992dcd64ada52, type: 3}
+  m_Name: T6_Tags
+  m_EditorClassIdentifier: Assembly-CSharp::ParsedDataTable
+  columns:
+  - name: tag_id
+    type: string
+    isId: 1
+  - name: tag_class
+    type: enum(ingredient,flavor,dish)
+    isId: 0
+  - name: name_key
+    type: ref:T9
+    isId: 0
+  - name: icon_sprite
+    type: string
+    isId: 0
+  - name: sticker_sprite
+    type: string
+    isId: 0
+  - name: filter_order
+    type: int
+    isId: 0
+  - name: comment
+    type: string
+    isId: 0
+  rows:
+  - cells:
+    - tag_veg
+    - ingredient
+    - tag_veg.name
+    - ui_tag_shucai
+    - 
+    - 1
+    - "\u98DF\u6750\u7C7B\u76EE"
+  - cells:
+    - tag_fruit
+    - ingredient
+    - tag_fruit.name
+    - ui_tag_shuiguo
+    - 
+    - 2
+    - "\u98DF\u6750\u7C7B\u76EE"
+  - cells:
+    - tag_egg
+    - ingredient
+    - tag_egg.name
+    - ui_tag_danlei
+    - 
+    - 3
+    - "\u98DF\u6750\u7C7B\u76EE"
+  - cells:
+    - tag_meat
+    - ingredient
+    - tag_meat.name
+    - ui_tag_roulei
+    - 
+    - 4
+    - "\u98DF\u6750\u7C7B\u76EE"
+  - cells:
+    - tag_seafood
+    - ingredient
+    - tag_seafood.name
+    - ui_tag_haixian
+    - 
+    - 5
+    - "\u98DF\u6750\u7C7B\u76EE"
+  - cells:
+    - tag_staplefood
+    - ingredient
+    - tag_staplefood.name
+    - ui_tag_zhushi
+    - 
+    - 6
+    - "\u98DF\u6750\u7C7B\u76EE"
+  - cells:
+    - tag_dairy
+    - ingredient
+    - tag_dairy.name
+    - ui_tag_nailei
+    - 
+    - 7
+    - "\u98DF\u6750\u7C7B\u76EE\uFF08\u6D4B\u8BD5\u5BB9\u5668\u98DF\u6750\u7528\uFF09"
+  - cells:
+    - tag_dish_boil
+    - dish
+    - tag_dish_boil.name
+    - ui_tag_zhu
+    - 
+    - 
+    - "\u83DC\u54C1\u5206\u7C7B\u5F69\u7B7E"
+  - cells:
+    - tag_dish_stirfry
+    - dish
+    - tag_dish_stirfry.name
+    - ui_tag_chao
+    - 
+    - 
+    - "\u83DC\u54C1\u5206\u7C7B\u5F69\u7B7E"
+  - cells:
+    - tag_dish_deepfry
+    - dish
+    - tag_dish_deepfry.name
+    - ui_tag_zha
+    - 
+    - 
+    - "\u83DC\u54C1\u5206\u7C7B\u5F69\u7B7E\uFF08demo \u65E0\u83DC\u4F7F\u7528\uFF0C\u5148\u7ACB\u884C\uFF09"
+  - cells:
+    - tag_dish_stew
+    - dish
+    - tag_dish_stew.name
+    - ui_tag_dun
+    - 
+    - 
+    - "\u83DC\u54C1\u5206\u7C7B\u5F69\u7B7E\uFF08demo \u65E0\u83DC\u4F7F\u7528\uFF0C\u5148\u7ACB\u884C\uFF09"
+  - cells:
+    - tag_dish_salad
+    - dish
+    - tag_dish_salad.name
+    - ui_tag_shala
+    - 
+    - 
+    - "\u83DC\u54C1\u5206\u7C7B\u5F69\u7B7E"
+  - cells:
+    - tag_flavor_yummy
+    - flavor
+    - tag_flavor_yummy.name
+    - 
+    - ui_tiezhi_zhendihenxiang
+    - 
+    - "\u98CE\u5473\u7B7E\uFF08\u53C2\u8003\u56FE2\uFF09"
+  - cells:
+    - tag_flavor_confused
+    - flavor
+    - tag_flavor_confused.name
+    - 
+    - ui_tiezhi_chibudong
+    - 
+    - "\u98CE\u5473\u7B7E\uFF08\u53C2\u8003\u56FE2\uFF09"
+  - cells:
+    - tag_flavor_spicy
+    - flavor
+    - tag_flavor_spicy.name
+    - 
+    - 
+    - 
+    - "\u98CE\u5473\u7B7E\uFF08\u53C2\u8003\u56FE2\uFF1B\u65E0\u4E13\u5C5E\u8D34\u7EB8\u8D70\u901A\u7528\u6A21\u677F\uFF09"
+  - cells:
+    - tag_flavor_easy
+    - flavor
+    - tag_flavor_easy.name
+    - 
+    - 
+    - 
+    - "\u98CE\u5473\u7B7E"
+  - cells:
+    - tag_flavor_fancy
+    - flavor
+    - tag_flavor_fancy.name
+    - 
+    - 
+    - 
+    - "\u98CE\u5473\u7B7E"
